@@ -1,0 +1,91 @@
+/* Interface specification for PWL transfer function code model. */
+
+NAME_TABLE:
+
+Spice_Model_Name:      xfer
+C_Function_Name:       cm_xfer
+Description:           "AC transfer function block"
+
+
+PORT_TABLE:
+
+Port_Name:           in                out
+Description:         "input"           "output"
+Direction:           in                out
+Default_Type:        v                 v
+Allowed_Types:       [v,vd,i,id]       [v,vd,i,id]
+Vector:               no               no
+Vector_Bounds:        -                -
+Null_Allowed:        no                no
+
+PARAMETER_TABLE:
+
+Parameter_Name:     table
+Description:        "PWL table: frequency/magnitude/phase"
+Data_Type:          real
+Default_Value:      -
+Limits:             -
+Vector:             yes
+Vector_Bounds:      [3 -]
+Null_Allowed:       no
+
+PARAMETER_TABLE:
+
+Parameter_Name:     r_i
+Description:        "table is in real/imaginary format"
+Data_Type:          boolean
+Default_Value:      false
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     db
+Description:        "table is in magnitude(dB)/phase format"
+Data_Type:          boolean
+Default_Value:      true
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     rad
+Description:        "phase in radians, not degrees"
+Data_Type:          boolean
+Default_Value:      false
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     span                     offset
+Description:        "Length of table rows"   "Offset within row"
+Data_Type:          int                      int
+Default_Value:      3                        1
+Limits:             [ 3 - ]                  [ 1 - ]
+Vector:             no                       no
+Vector_Bounds:      -                        -
+Null_Allowed:       yes                      yes
+
+/* This is used internally to store the table in compact complex form. */
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    table
+Description:        "Internal copy of data"
+Data_Type:          pointer
+
+/* Only warn once about use in transient analysis. */
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    warned
+Description:        "Warning indicator"
+Data_Type:          int
+

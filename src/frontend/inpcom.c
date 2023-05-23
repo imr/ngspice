@@ -152,7 +152,7 @@ static char inp_get_elem_ident(char *type);
 static void rem_mfg_from_models(struct card *start_card);
 static void inp_fix_macro_param_func_paren_io(struct card *begin_card);
 static void inp_fix_gnd_name(struct card *deck);
-static void inp_chk_for_multi_in_vcvs(struct card *deck, int *line_number);
+static void inp_chk_for_e_source_to_xspice(struct card *deck, int *line_number);
 static void inp_add_control_section(struct card *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
@@ -985,7 +985,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         subckt_w_params = NULL;
         if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
             inp_fix_gnd_name(working);
-        inp_chk_for_multi_in_vcvs(working, &rv.line_number);
+        inp_chk_for_e_source_to_xspice(working, &rv.line_number);
 
         /* "addcontrol" variable is set if "ngspice -a file" was used. */
 
@@ -1899,7 +1899,6 @@ static void inp_fix_gnd_name(struct card *c)
     }
 }
 
-
 /*
  * transform a VCVS "gate" instance into a XSPICE instance
  *
@@ -1917,7 +1916,336 @@ static void inp_fix_gnd_name(struct card *c)
  *   the x,y list is fixed to length 2
  */
 
-static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
+static int inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
+{
+    char *fcn_b, *line;
+
+    line = c->line;
+    if (((fcn_b = strstr(line, "nand(")) != NULL ||
+         (fcn_b = strstr(line, "and(")) != NULL ||
+         (fcn_b = strstr(line, "nor(")) != NULL ||
+         (fcn_b = strstr(line, "or(")) != NULL) &&
+        isspace_c(fcn_b[-1])) {
+#ifndef XSPICE
+        fprintf(stderr,
+                "\n"
+                "Error: XSPICE is required to run the 'multi-input "
+                "pwl' option in line %d\n"
+                "  %s\n"
+                "\n"
+                "See manual chapt. 31 for installation "
+                "instructions\n",
+                *line_number, line);
+        controlled_exit(EXIT_BAD);
+#else
+        char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+        char *out_str, *ctrl_nodes_str,
+             *xy_values1_b = NULL, *ref_str, *fcn_name,
+             *fcn_e = NULL, *out_b, *out_e, *ref_e;
+        char *m_instance, *m_model;
+        char *xy_values2_b = NULL, *xy_values1_e = NULL,
+             *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
+        int xy_count1, xy_count2;
+        bool ok = FALSE;
+
+        do {
+            ref_e = skip_non_ws(line);
+
+            out_b = skip_ws(ref_e);
+
+            out_e = skip_back_ws(fcn_b, out_b);
+            if (out_e <= out_b)
+                break;
+
+            fcn_e = strchr(fcn_b, '(');
+
+            ctrl_nodes_b = strchr(fcn_e, ')');
+            if (!ctrl_nodes_b)
+                break;
+            ctrl_nodes_b = skip_ws(ctrl_nodes_b + 1);
+
+            comma_ptr = strchr(ctrl_nodes_b, ',');
+            if (!comma_ptr)
+                break;
+
+            xy_values1_b = skip_back_ws(comma_ptr, ctrl_nodes_b);
+            if (xy_values1_b[-1] == '}') {
+                while (--xy_values1_b >= ctrl_nodes_b)
+                    if (*xy_values1_b == '{')
+                        break;
+            } else {
+                xy_values1_b = skip_back_non_ws(xy_values1_b, ctrl_nodes_b);
+            }
+            if (xy_values1_b <= ctrl_nodes_b)
+                break;
+
+            ctrl_nodes_e = skip_back_ws(xy_values1_b, ctrl_nodes_b);
+            if (ctrl_nodes_e <= ctrl_nodes_b)
+                break;
+
+            xy_values1_e = skip_ws(comma_ptr + 1);
+            if (*xy_values1_e == '{') {
+                xy_values1_e = inp_spawn_brace(xy_values1_e);
+            } else {
+                xy_values1_e = skip_non_ws(xy_values1_e);
+            }
+            if (!xy_values1_e)
+                break;
+
+            xy_values2_b = skip_ws(xy_values1_e);
+
+            ok = TRUE;
+        } while (0);
+
+        if (!ok) {
+            fprintf(stderr, "ERROR: malformed line: %s\n", line);
+            controlled_exit(EXIT_FAILURE);
+        }
+
+        ref_str = copy_substring(line, ref_e);
+        out_str = copy_substring(out_b, out_e);
+        fcn_name = copy_substring(fcn_b, fcn_e);
+        ctrl_nodes_str = copy_substring(ctrl_nodes_b, ctrl_nodes_e);
+
+        keep = *xy_values1_e;
+        *xy_values1_e = '\0';
+        xy_count1 =
+            get_comma_separated_values(xy_values1, xy_values1_b);
+        *xy_values1_e = keep;
+
+        xy_count2 = get_comma_separated_values(xy_values2, xy_values2_b);
+
+        // place restrictions on only having 2 point values; this can
+        // change later
+        if (xy_count1 != 2 && xy_count2 != 2)
+            fprintf(stderr,
+                    "ERROR: only expecting 2 pair values for "
+                    "multi-input vcvs!\n");
+
+        m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s", ref_str,
+                             ctrl_nodes_str, out_str, ref_str);
+        m_instance[0] = 'a';
+
+        m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y "
+                          "= [%s %s] model = \"%s\" )",
+                          ref_str, xy_values1[0], xy_values2[0], xy_values1[1],
+                          xy_values2[1], fcn_name);
+
+        tfree(ref_str);
+        tfree(out_str);
+        tfree(fcn_name);
+        tfree(ctrl_nodes_str);
+        tfree(xy_values1[0]);
+        tfree(xy_values1[1]);
+        tfree(xy_values2[0]);
+        tfree(xy_values2[1]);
+
+        *c->line = '*';
+        c = insert_new_line(c, m_instance, (*line_number)++, c->linenum_orig);
+        c = insert_new_line(c, m_model, (*line_number)++, c->linenum_orig);
+#endif
+        return 1;
+    } else {
+        return 0;       // No keyword match. */
+    }
+}
+
+/* replace the E and G source FREQ function by an XSPICE xfer instance
+ * (used by Touchstone to netlist converter programs).
+ * E1 n1 n2 FREQ {expression} = DB values ...
+ * will become
+ * B1_gen 1_gen 0 v = expression
+ * A1_gen 1_gen %d(n1 n2) 1_gen
+ * .model 1_gen xfer db=true table=[ values ]
+ */
+
+static void replace_freq(struct card *c, int *line_number)
+{
+#ifdef XSPICE
+    char *line, *e, *e_e, *n1, *n1_e, *n2, *n2_e, *freq;
+    char *expr, *expr_e, *in, *in_e, *keywd, *cp, *list, *list_e;
+    int   db, ri, rad, got_key, diff;
+    char  pt, key[4];
+
+    line = c->line;
+
+    /* First token is a node name. */
+
+    e = line + 1;
+    e_e = skip_non_ws(e);
+    n1 = skip_ws(e_e);
+    n1_e = skip_non_ws(n1);
+    freq = strstr(n1_e, "freq");
+    if (!freq || !isspace_c(freq[-1]) || !isspace_c(freq[4]))
+        return;
+    n2 = skip_ws(n1_e);
+    if (n2 == freq) {
+        n2 = NULL;
+    } else {
+        n2_e = skip_non_ws(n2);
+        if (freq != skip_ws(n2_e)) // Three nodes or another keyword.
+            return;
+    }
+
+    /* Isolate the input expression. */
+
+    expr = skip_ws(freq + 4);
+    if (*expr != '{')
+        return;
+    expr = skip_ws(expr + 1);
+    expr_e = strchr(expr, '}');
+    if (!expr_e)
+        return;
+    skip_back_ws(expr_e, expr);
+
+    /* Is the expression just a node name, or v(node) or v(node1, node2)? */
+
+    in = NULL;
+    diff = 0;
+    if (*expr < '0' || *expr > '9') {
+        for (in_e = expr; in_e < expr_e; ++in_e) {
+            if ((*in_e < '0' || *in_e > '9') && (*in_e < 'a' || *in_e > 'z') &&
+                *in_e != '_')
+            break;
+        }
+        if (in_e == expr_e) {
+            /* A simple identifier. */
+
+            in = expr;
+        }
+    }
+    if (expr[0] == 'v' && expr[1] == '(' && expr_e[-1] == ')') {
+        in = expr + 2;
+        in_e = expr_e - 1;
+        cp = strchr(in, ',');
+        diff =  (cp && cp < in_e); // Assume v(n1, n2)
+    }
+
+    /* Look for a keyword.  Previous processing may put braces around it. */
+
+    keywd = skip_ws(expr_e + 1);
+    if (*keywd == '=')
+        keywd = skip_ws(keywd + 1);
+
+    db = 1;
+    rad = 0;
+    ri = 0;
+    do {
+        if (!keywd)
+            return;
+        list = keywd; // Perhaps not keyword
+        if (*keywd == '{')
+            ++keywd;
+        cp = key;
+        while (*keywd && !isspace_c(*keywd) && *keywd != '}' &&
+               cp - key < sizeof key - 1) {
+            *cp++ = *keywd++;
+        }
+        *cp = 0;
+        if (*keywd == '}')
+            ++keywd;
+        if (!isspace_c(*keywd))
+            return;
+
+        /* Parse the format keyword, if any. */
+
+        got_key = 0;
+        if (!strcmp(key, "mag")) {
+            db = 0;
+            got_key = 1;
+        } else if (!strcmp(key, "db")) {
+            db = 1;
+            got_key = 1;
+        } else if (!strcmp(key, "rad")) {
+            rad = 1;
+            got_key = 1;
+        } else if (!strcmp(key, "deg")) {
+            rad = 0;
+            got_key = 1;
+        } else if (!strcmp(key, "r_i")) {
+            ri = 1;
+            got_key = 1;
+        }
+
+        /* Get the list of values. */
+
+        if (got_key)
+            list = skip_ws(keywd);
+        if (!list)
+            return;
+        keywd = list;
+    } while(got_key);
+
+    list_e = list + strlen(list) - 1;
+    skip_back_ws(list_e, list);
+    if (list >= list_e)
+        return;
+
+    /* All good, rewrite the line.
+     * Macro BSTR is used to pass counted string arguments to tprintf().
+     */
+
+#define BSTR(s) (int)(s##_e - s), s
+
+    pt = (*line == 'e') ? 'v' : 'i';
+    *line = '*';    // Make a comment
+    if (in) {
+        /* Connect input nodes directly. */
+
+        if (diff) {
+            /* Differential input. */
+
+            if (n2) {
+                line = tprintf("a_gen_%.*s %%vd(%.*s) %%%cd(%.*s %.*s) "
+                           "gen_model_%.*s",
+                           BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(n2), BSTR(e));
+            } else {
+                line = tprintf("a_gen_%.*s %%vd(%.*s) %%%c(%.*s) "
+                               "gen_model_%.*s",
+                               BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(e));
+            }
+        } else {
+            /* Single node input. */
+
+            if (n2) {
+                line = tprintf("a_gen_%.*s %.*s  %%%cd(%.*s %.*s) "
+                               "gen_model_%.*s",
+                               BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(n2),
+                               BSTR(e));
+            } else {
+                line = tprintf("a_gen_%.*s %.*s %%%c(%.*s) gen_model_%.*s",
+                               BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(e));
+            }
+        }
+    } else {
+        /* Use a B-source for input. */
+
+        line = tprintf("b_gen_%.*s gen_node_%.*s 0 v=%.*s",
+                       BSTR(e), BSTR(e), BSTR(expr));
+        c = insert_new_line(c, line, (*line_number)++, c->linenum_orig);
+        if (n2) {
+            line = tprintf("a_gen_%.*s gen_node_%.*s  %%%cd(%.*s %.*s) "
+                           "gen_model_%.*s",
+                           BSTR(e), BSTR(e), pt, BSTR(n1), BSTR(n2), BSTR(e));
+        } else {
+            line = tprintf("a_gen_%.*s gen_node_%.*s %%%c(%.*s) "
+                           "gen_model_%.*s",
+                           BSTR(e), BSTR(e), pt, BSTR(n1), BSTR(e));
+        }
+    }
+    c = insert_new_line(c, line, (*line_number)++, c->linenum_orig);
+
+    line = tprintf(".model gen_model_%.*s xfer %s table = [%.*s]",
+                   BSTR(e),
+                   ri ? "r_i=true" : rad ? "rad=true" : !db ? "db=false" : "",
+                   BSTR(list));
+     c = insert_new_line(c, line, (*line_number)++, c->linenum_orig);
+#endif
+}
+
+/* Convert some E and G-source variants to XSPICE code models. */
+
+static void inp_chk_for_e_source_to_xspice(struct card *c, int *line_number)
 {
     int skip_control = 0;
 
@@ -1938,142 +2266,16 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
             continue;
         }
 
-        if (*line == 'e') {
+        if (*line == 'e' && inp_chk_for_multi_in_vcvs(c, line_number))
+            continue;
+        if (*line != 'e' && *line != 'g')
+            continue;
 
-            char *fcn_b;
+        /* Is it the FREQ form with S-parameter table? */
 
-            if (((fcn_b = strstr(line, "nand(")) != NULL ||
-                        (fcn_b = strstr(line, "and(")) != NULL ||
-                        (fcn_b = strstr(line, "nor(")) != NULL ||
-                        (fcn_b = strstr(line, "or(")) != NULL) &&
-                    isspace_c(fcn_b[-1])) {
-#ifndef XSPICE
-                fprintf(stderr,
-                        "\n"
-                        "Error: XSPICE is required to run the 'multi-input "
-                        "pwl' option in line %d\n"
-                        "  %s\n"
-                        "\n"
-                        "See manual chapt. 31 for installation "
-                        "instructions\n",
-                        *line_number, line);
-                controlled_exit(EXIT_BAD);
-#else
-                char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *out_str, *ctrl_nodes_str,
-                        *xy_values1_b = NULL, *ref_str, *fcn_name,
-                        *fcn_e = NULL, *out_b, *out_e, *ref_e;
-                char *m_instance, *m_model;
-                char *xy_values2_b = NULL, *xy_values1_e = NULL,
-                     *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
-                int xy_count1, xy_count2;
-                bool ok = FALSE;
-
-                do {
-                    ref_e = skip_non_ws(line);
-
-                    out_b = skip_ws(ref_e);
-
-                    out_e = skip_back_ws(fcn_b, out_b);
-                    if (out_e <= out_b)
-                        break;
-
-                    fcn_e = strchr(fcn_b, '(');
-
-                    ctrl_nodes_b = strchr(fcn_e, ')');
-                    if (!ctrl_nodes_b)
-                        break;
-                    ctrl_nodes_b = skip_ws(ctrl_nodes_b + 1);
-
-                    comma_ptr = strchr(ctrl_nodes_b, ',');
-                    if (!comma_ptr)
-                        break;
-
-                    xy_values1_b = skip_back_ws(comma_ptr, ctrl_nodes_b);
-                    if (xy_values1_b[-1] == '}') {
-                        while (--xy_values1_b >= ctrl_nodes_b)
-                            if (*xy_values1_b == '{')
-                                break;
-                    }
-                    else {
-                        xy_values1_b =
-                                skip_back_non_ws(xy_values1_b, ctrl_nodes_b);
-                    }
-                    if (xy_values1_b <= ctrl_nodes_b)
-                        break;
-
-                    ctrl_nodes_e = skip_back_ws(xy_values1_b, ctrl_nodes_b);
-                    if (ctrl_nodes_e <= ctrl_nodes_b)
-                        break;
-
-                    xy_values1_e = skip_ws(comma_ptr + 1);
-                    if (*xy_values1_e == '{') {
-                        xy_values1_e = inp_spawn_brace(xy_values1_e);
-                    }
-                    else {
-                        xy_values1_e = skip_non_ws(xy_values1_e);
-                    }
-                    if (!xy_values1_e)
-                        break;
-
-                    xy_values2_b = skip_ws(xy_values1_e);
-
-                    ok = TRUE;
-                } while (0);
-
-                if (!ok) {
-                    fprintf(stderr, "ERROR: malformed line: %s\n", line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                ref_str = copy_substring(line, ref_e);
-                out_str = copy_substring(out_b, out_e);
-                fcn_name = copy_substring(fcn_b, fcn_e);
-                ctrl_nodes_str = copy_substring(ctrl_nodes_b, ctrl_nodes_e);
-
-                keep = *xy_values1_e;
-                *xy_values1_e = '\0';
-                xy_count1 =
-                        get_comma_separated_values(xy_values1, xy_values1_b);
-                *xy_values1_e = keep;
-
-                xy_count2 =
-                        get_comma_separated_values(xy_values2, xy_values2_b);
-
-                // place restrictions on only having 2 point values; this can
-                // change later
-                if (xy_count1 != 2 && xy_count2 != 2)
-                    fprintf(stderr,
-                            "ERROR: only expecting 2 pair values for "
-                            "multi-input vcvs!\n");
-
-                m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s", ref_str,
-                        ctrl_nodes_str, out_str, ref_str);
-                m_instance[0] = 'a';
-
-                m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y "
-                                  "= [%s %s] model = \"%s\" )",
-                        ref_str, xy_values1[0], xy_values2[0], xy_values1[1],
-                        xy_values2[1], fcn_name);
-
-                tfree(ref_str);
-                tfree(out_str);
-                tfree(fcn_name);
-                tfree(ctrl_nodes_str);
-                tfree(xy_values1[0]);
-                tfree(xy_values1[1]);
-                tfree(xy_values2[0]);
-                tfree(xy_values2[1]);
-
-                *c->line = '*';
-                c = insert_new_line(c, m_instance, (*line_number)++, c->linenum_orig);
-                c = insert_new_line(c, m_model, (*line_number)++, c->linenum_orig);
-#endif
-            }
-        }
+        replace_freq(c, line_number);
     }
 }
-
 
 /* If ngspice is started with option -a, then variable 'autorun'
  * will be set and a control section is inserted to try and ensure
