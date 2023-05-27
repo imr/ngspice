@@ -367,7 +367,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
         else
             maxstepsize = ckt->CKTmaxStep;
 
-        ckt->CKTsizeIncr = 10;
+        ckt->CKTsizeIncr = 100;
         ckt->CKTtimeIndex = -1; /* before the DC soln has been stored */
         ckt->CKTtimeListSize = (int) ceil( opfinaltime / maxstepsize );
         ltra_num = CKTtypelook("LTRA");
