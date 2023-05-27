@@ -47,6 +47,14 @@ retry:
             /* either singular equations or no memory, in either case,
              * let caller handle problem
              */
+
+            int i, j ;
+            SMPgetError(ckt->CKTmatrix, &i, &j);
+            if(eq(NODENAME(ckt, i), NODENAME(ckt, j)))
+                SPfrontEnd->IFerrorf(ERR_WARNING, "singular matrix:  check node %s\n", NODENAME(ckt, i));
+            else
+                SPfrontEnd->IFerrorf(ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+
             return(error);
         }
     }
@@ -61,6 +69,14 @@ retry:
                  * current LU factorization.  Maybe if we reload and
                  * try to reorder again it will help...
                  */
+
+                int i, j ;
+                SMPgetError(ckt->CKTmatrix, &i, &j);
+                if(eq(NODENAME(ckt, i), NODENAME(ckt, j)))
+                    SPfrontEnd->IFerrorf(ERR_WARNING, "singular matrix:  check node %s\n", NODENAME(ckt, i));
+                else
+                    SPfrontEnd->IFerrorf(ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+
                 ckt->CKTniState |= NIACSHOULDREORDER;
                 goto retry;
             }

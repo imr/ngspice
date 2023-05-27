@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "ngspice/config.h"
 #include "ngspice/devdefs.h"
 #include <stdint.h>
 
@@ -19,6 +20,9 @@ typedef struct OsdiRegistryEntry {
   uint32_t inst_offset;
   uint32_t dt;
   uint32_t temp;
+#ifdef KLU
+  uint32_t matrix_ptr_offset;
+#endif
 } OsdiRegistryEntry;
 
 typedef struct OsdiObjectFile {
