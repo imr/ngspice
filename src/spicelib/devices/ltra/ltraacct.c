@@ -48,7 +48,7 @@ LTRAaccept(CKTcircuit* ckt, GENmodel* inModel)
             here = LTRAnextInstance(here)) {
 
             if (ckt->CKTmode & MODEINITTRAN) {
-                here->LTRAinstListSize = (int)max(10, ckt->CKTtimeListSize);
+                here->LTRAinstListSize = 10;
 
                 LTRAmemMANAGE(here->LTRAv1, here->LTRAinstListSize)
                 LTRAmemMANAGE(here->LTRAi1, here->LTRAinstListSize)
@@ -64,7 +64,6 @@ LTRAaccept(CKTcircuit* ckt, GENmodel* inModel)
              */
             if (ckt->CKTtimeIndex >= here->LTRAinstListSize) {	/* need more space */
                 here->LTRAinstListSize += ckt->CKTsizeIncr;
-                ckt->CKTsizeIncr = (int)ceil(1.4 * ckt->CKTsizeIncr);
 
                 here->LTRAv1 = TREALLOC(double, here->LTRAv1, here->LTRAinstListSize);
                 here->LTRAi1 = TREALLOC(double, here->LTRAi1, here->LTRAinstListSize);
