@@ -106,7 +106,11 @@ x1  2 3 4 5    6 7 8 9 test
 VS1   1    0   PWL(15.9NS 0.0 16.1Ns 5.0 31.9Ns 5.0 32.1Ns 0.0)
 
 .control
-TRAN   0.2NS  50NS 
+option noinit
+TRAN   0.2NS  50NS
+rusage
+*set color0=white
+set xbrushwidth=3
 plot v(1) v(2) v(6) v(7) v(8) v(9)
 .endc
 *

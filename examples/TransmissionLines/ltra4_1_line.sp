@@ -53,6 +53,9 @@ x3 3 4 10 dioload
 +reltol=1e-3 abstol=1e-14
 .control
 tran 0.1ns 60ns
+rusage
+set color0=white
+set xbrushwidth=3
 plot v(1) v(2) v(3)
 .endc
 

@@ -75,6 +75,9 @@ rt2 5 0 50
 .options acct reltol=1e-3 abstol=1e-12
 .control
 tran 0.1ns 60ns
+rusage
+*set color0=white
+set xbrushwidth=3
 plot v(2) v(4) v(5)
 .endc
 
