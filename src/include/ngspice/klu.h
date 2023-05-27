@@ -963,26 +963,29 @@ int BindKluCompareCSCKLUforCIDER (const void *a, const void *b) ;
 #endif
 
 typedef struct sKLUmatrix {
-    klu_common *KLUmatrixCommon ;              /* KLU common object */
-    klu_symbolic *KLUmatrixSymbolic ;          /* KLU symbolic object */
-    klu_numeric *KLUmatrixNumeric ;            /* KLU numeric object */
-    int *KLUmatrixAp ;                         /* KLU column pointer */
-    int *KLUmatrixAi ;                         /* KLU row pointer */
-    double *KLUmatrixAx ;                      /* KLU Real Elements */
-    double *KLUmatrixAxComplex ;               /* KLU Complex Elements */
-    unsigned int KLUmatrixIsComplex:1 ;        /* KLU Matrix Is Complex Flag */
-    #define KLUmatrixReal 0                    /* KLU Matrix Real definition */
-    #define KLUMatrixComplex 1                 /* KLU Matrix Complex definition */
-    double *KLUmatrixIntermediate ;            /* KLU RHS Intermediate for Solve Real Step */
-    double *KLUmatrixIntermediateComplex ;     /* KLU iRHS Intermediate for Solve Complex Step */
-    unsigned int KLUmatrixN ;                  /* KLU N */
-    unsigned int KLUmatrixNZ ;                 /* KLU nz */
-    BindElement *KLUmatrixBindStructCOO ;      /* KLU COO Binding Structure */
-    KluLinkedListCOO *KLUmatrixLinkedListCOO ; /* KLU COO in Linked List Format for Initial Parsing */
-    unsigned int KLUmatrixLinkedListNZ ;       /* KLU nz for the Initial Parsing */
-    double *KLUmatrixTrashCOO ;                /* KLU COO Trash Pointer for Ground Node not Stored in the Matrix */
-    double **KLUmatrixDiag ;                   /* KLU pointer to diagonal element to perform Gmin */
-    unsigned int KLUloadDiagGmin:1 ;           /* KLU flag to load Diag Gmin */
+    klu_common *KLUmatrixCommon ;                   /* KLU common object */
+    klu_symbolic *KLUmatrixSymbolic ;               /* KLU symbolic object */
+    klu_numeric *KLUmatrixNumeric ;                 /* KLU numeric object */
+    int *KLUmatrixAp ;                              /* KLU column pointer */
+    int *KLUmatrixAi ;                              /* KLU row pointer */
+    double *KLUmatrixAx ;                           /* KLU Real Elements */
+    double *KLUmatrixAxComplex ;                    /* KLU Complex Elements */
+    unsigned int KLUmatrixIsComplex:1 ;             /* KLU Matrix Is Complex Flag */
+    #define KLUmatrixReal 0                         /* KLU Matrix Real definition */
+    #define KLUMatrixComplex 1                      /* KLU Matrix Complex definition */
+    double *KLUmatrixIntermediate ;                 /* KLU RHS Intermediate for Solve Real Step */
+    double *KLUmatrixIntermediateComplex ;          /* KLU iRHS Intermediate for Solve Complex Step */
+    unsigned int KLUmatrixN ;                       /* KLU N */
+    unsigned int KLUmatrixNrhs ;                    /* KLU N for RHS - needed by Node Collapsing */
+    unsigned int KLUmatrixNZ ;                      /* KLU nz */
+    BindElement *KLUmatrixBindStructCOO ;           /* KLU COO Binding Structure */
+    KluLinkedListCOO *KLUmatrixLinkedListCOO ;      /* KLU COO in Linked List Format for Initial Parsing */
+    unsigned int *KLUmatrixNodeCollapsingOldToNew ; /* KLU Node Collapsing Mapping from New Node to Old Node */
+    unsigned int *KLUmatrixNodeCollapsingNewToOld ; /* KLU Node Collapsing Mapping from New Node to Old Node */
+    unsigned int KLUmatrixLinkedListNZ ;            /* KLU nz for the Initial Parsing */
+    double *KLUmatrixTrashCOO ;                     /* KLU COO Trash Pointer for Ground Node not Stored in the Matrix */
+    double **KLUmatrixDiag ;                        /* KLU pointer to diagonal element to perform Gmin */
+    unsigned int KLUloadDiagGmin:1 ;                /* KLU flag to load Diag Gmin */
 
 #ifdef CIDER
     int *KLUmatrixColCOOforCIDER ;             /* KLU Col Index for COO storage (for CIDER) */
