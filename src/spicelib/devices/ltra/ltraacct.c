@@ -30,7 +30,7 @@ LTRAaccept(CKTcircuit* ckt, GENmodel* inModel)
     if ( a != NULL) FREE(a);\
     a = TMALLOC(double, b);
 
-            model->LTRAmodelListSize = 10;
+            model->LTRAmodelListSize = 100;
 
             LTRAmemMANAGE(model->LTRAh1dashCoeffs, model->LTRAmodelListSize)
             LTRAmemMANAGE(model->LTRAh2Coeffs, model->LTRAmodelListSize)
@@ -48,7 +48,7 @@ LTRAaccept(CKTcircuit* ckt, GENmodel* inModel)
             here = LTRAnextInstance(here)) {
 
             if (ckt->CKTmode & MODEINITTRAN) {
-                here->LTRAinstListSize = 10;
+                here->LTRAinstListSize = (int)MAX(10, ckt->CKTtimeListSize);
 
                 LTRAmemMANAGE(here->LTRAv1, here->LTRAinstListSize)
                 LTRAmemMANAGE(here->LTRAi1, here->LTRAinstListSize)

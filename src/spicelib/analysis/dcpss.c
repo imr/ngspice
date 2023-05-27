@@ -194,7 +194,7 @@ DCpss(CKTcircuit *ckt,
         else
             maxstepsize = ckt->CKTmaxStep;
 
-        ckt->CKTsizeIncr = 10;
+        ckt->CKTsizeIncr = 100;
         ckt->CKTtimeIndex = -1; /* before the DC soln has been stored */
         ckt->CKTtimeListSize = (int)(1 / ckt->CKTguessedFreq / maxstepsize + 0.5);
         ltra_num = CKTtypelook("LTRA");
