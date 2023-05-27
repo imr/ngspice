@@ -135,7 +135,9 @@ VS1  2   0  PULSE (0 5 15.9Ns 0.2Ns 0.2Ns 15.8Ns 32Ns)
 VS2  4   0  PULSE (0 5 15.9Ns 0.2Ns 0.2Ns 15.8Ns 32Ns)
 
 .control
+option noinit
 TRAN 0.1N 47.9N
+rusage
 plot v(5) v(6) v(7) v(8) v(9) v(10) v(11) v(12)
 .endc
 *
