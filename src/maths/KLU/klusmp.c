@@ -209,13 +209,11 @@ void SMPconvertCOOtoCSC (SMPmatrix *Matrix)
 
     /* Look for columns with all structural zeroes, not numerical zeroes - Circuits Matrix are NxN, so checking for columns is sufficient */
     unsigned int n = MatrixCOO [Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ - 1].col + 1 ;
-//    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = (unsigned int *) malloc (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ * sizeof (unsigned int)) ;
-    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld = (unsigned int *) malloc (MAX (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, n + 1) * sizeof (unsigned int)) ;
-    for (i = 0 ; i < MAX (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, n) ; i++) {
+//    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = (unsigned int *) malloc ((n + 1) * sizeof (unsigned int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld = (unsigned int *) malloc ((n + 1) * sizeof (unsigned int)) ;
+    for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ ; i++) {
         // Initialization
-//        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [i] = 0 ; // Pre-Allocation to 0
 //        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [MatrixCOO [i].col] = MatrixCOO [i].col ;
-        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld [i] = 0 ; // Pre-Allocation to 0
         Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld [MatrixCOO [i].col] = MatrixCOO [i].col ;
     }
 //    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [n] = n ;
