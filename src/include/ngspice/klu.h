@@ -980,7 +980,7 @@ typedef struct sKLUmatrix {
     unsigned int KLUmatrixNZ ;                      /* KLU nz */
     BindElement *KLUmatrixBindStructCOO ;           /* KLU COO Binding Structure */
     KluLinkedListCOO *KLUmatrixLinkedListCOO ;      /* KLU COO in Linked List Format for Initial Parsing */
-    unsigned int *KLUmatrixNodeCollapsingOldToNew ; /* KLU Node Collapsing Mapping from New Node to Old Node */
+//    unsigned int *KLUmatrixNodeCollapsingOldToNew ; /* KLU Node Collapsing Mapping from New Node to Old Node */
     unsigned int *KLUmatrixNodeCollapsingNewToOld ; /* KLU Node Collapsing Mapping from New Node to Old Node */
     unsigned int KLUmatrixLinkedListNZ ;            /* KLU nz for the Initial Parsing */
     double *KLUmatrixTrashCOO ;                     /* KLU COO Trash Pointer for Ground Node not Stored in the Matrix */
