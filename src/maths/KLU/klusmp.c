@@ -208,17 +208,17 @@ void SMPconvertCOOtoCSC (SMPmatrix *Matrix)
     }
 
     /* Look for columns with all structural zeroes, not numerical zeroes - Circuits Matrix are NxN, so checking for columns is sufficient */
-    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = (unsigned int *) malloc (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ * sizeof (unsigned int)) ;
-    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld = (unsigned int *) malloc (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ * sizeof (unsigned int)) ;
-    for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ ; i++) {
+    unsigned int n = MatrixCOO [Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ - 1].col + 1 ;
+//    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = (unsigned int *) malloc (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ * sizeof (unsigned int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld = (unsigned int *) malloc (MAX (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, n + 1) * sizeof (unsigned int)) ;
+    for (i = 0 ; i < MAX (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, n) ; i++) {
         // Initialization
-        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [i] = 0 ; // Pre-Allocation to 0
-        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [MatrixCOO [i].col] = MatrixCOO [i].col ;
+//        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [i] = 0 ; // Pre-Allocation to 0
+//        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [MatrixCOO [i].col] = MatrixCOO [i].col ;
         Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld [i] = 0 ; // Pre-Allocation to 0
         Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld [MatrixCOO [i].col] = MatrixCOO [i].col ;
     }
-    unsigned int n = MatrixCOO [Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ - 1].col + 1 ;
-    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [n] = n ;
+//    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [n] = n ;
     Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld [n] = n ;
 
     unsigned int search_index = 0 ;
@@ -243,7 +243,7 @@ void SMPconvertCOOtoCSC (SMPmatrix *Matrix)
             for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ ; i++)
             {
                 if (MatrixCOO [i].col > (unsigned int)col_index) {
-                    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [MatrixCOO [i].col] = MatrixCOO [i].col - col_diff + 1 ;
+//                    Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew [MatrixCOO [i].col] = MatrixCOO [i].col - col_diff + 1 ;
                     Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld [MatrixCOO [i].col - col_diff + 1] = MatrixCOO [i].col ;
                     MatrixCOO [i].col = MatrixCOO [i].col - col_diff + 1 ;
                 }
@@ -1086,7 +1086,7 @@ SMPnewMatrix (SMPmatrix *Matrix, int size)
         Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixNZ = 0 ;
         Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
-        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = NULL ;
+//        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixDiag = NULL ;
 
@@ -1175,7 +1175,7 @@ SMPdestroy (SMPmatrix *Matrix)
         free (Matrix->SMPkluMatrix->KLUmatrixIntermediate) ;
         free (Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex) ;
         free (Matrix->SMPkluMatrix->KLUmatrixBindStructCOO) ;
-        free (Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew) ;
+//        free (Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew) ;
         free (Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld) ;
         free (Matrix->SMPkluMatrix->KLUmatrixTrashCOO) ;
         Matrix->SMPkluMatrix->KLUmatrixAp = NULL ;
@@ -1185,7 +1185,7 @@ SMPdestroy (SMPmatrix *Matrix)
         Matrix->SMPkluMatrix->KLUmatrixIntermediate = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
-        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = NULL ;
+//        Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingOldToNew = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixNodeCollapsingNewToOld = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixTrashCOO = NULL ;
         free (Matrix->SMPkluMatrix->KLUmatrixDiag) ;
