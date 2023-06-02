@@ -81,8 +81,16 @@ TWOdestroy(TWOdevice *pDevice)
       }
   }
 
+  if (pDevice->pFirstContact) {
+      struct sTWOcontact* pFCtmp = pDevice->pFirstContact;
+      while (pFCtmp) {
+          struct sTWOcontact* pFCtmpnext = pFCtmp->next;
+          FREE(pFCtmp);
+          pFCtmp = pFCtmpnext;
+      }
+  }
 
-  /* destroy the contacts & channels */
+  /* destroy the channels */
   /* NOT IMPLEMENTED */
 
   FREE( pDevice );
