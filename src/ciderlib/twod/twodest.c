@@ -66,8 +66,21 @@ TWOdestroy(TWOdevice *pDevice)
       FREE( pElem );
     }
     FREE( pDevice->elements );
+    for (int xIndex = 1; xIndex < pDevice->numXNodes; xIndex++) {
+      FREE(pDevice->elemArray[xIndex]);
+    }
     FREE( pDevice->elemArray );
   }
+
+  if (pDevice->pMaterials) {
+      TWOmaterial* pMtmp = pDevice->pMaterials;
+      while (pMtmp) {
+          TWOmaterial* pMtmpnext = pMtmp->next;
+          FREE(pMtmp);
+          pMtmp = pMtmpnext;
+      }
+  }
+
 
   /* destroy the contacts & channels */
   /* NOT IMPLEMENTED */
