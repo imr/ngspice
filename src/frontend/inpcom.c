@@ -705,6 +705,116 @@ static void inp_stitch_continuation_lines(struct card* working)
     ds_free(&newline);
 }
 
+#ifdef CIDER
+/* Only if we have a CIDER .model line with regular structure
+'.model modname modtype level',
+with modtype being one of numos, numd, nbjt:
+Concatenate lines
+line1
+   + line2
+   ---->
+   line1 line 2
+Store the original lines in card->actualLine, to be used for
+CIDER model parameter parsing in INPparseNumMod() of inpgmod.c
+   */
+static void inp_cider_models(struct card* working)
+{
+    struct card* prev = NULL;
+    bool iscmod = FALSE;
+
+    while (working) {
+        char *s, c, *buffer;
+
+        for (s = working->line; (c = *s) != '\0' && c <= ' '; s++)
+            ;
+
+        if(!iscmod)
+            iscmod = is_cider_model(s);
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("In inp_read, processing linked list element line = %d, s = "
+            "%s . . . \n",
+            working->linenum, s);
+#endif
+
+        if (iscmod) {
+            switch (c) {
+            case '#':
+            case '$':
+            case '*':
+            case '\0':
+                /* skip these cards, and keep prev as the last regular card */
+                working = working->nextcard; /* for these chars, go to next
+                                                card */
+                break;
+
+            case '+': /* handle continuation */
+                if (!prev) {
+                    working->error =
+                        copy("Illegal continuation line: ignored.");
+                    working = working->nextcard;
+                    break;
+                }
+
+                /* We now may have lept over some comment lines, which are
+                located among the continuation lines. We have to delete them
+                here to prevent a memory leak */
+                while (prev->nextcard != working) {
+                    struct card* tmpl = prev->nextcard->nextcard;
+                    line_free_x(prev->nextcard, FALSE);
+                    prev->nextcard = tmpl;
+                }
+
+                /* create buffer and write last and current line into it.
+                   When reading a PDK, the following may be called more than 1e6 times. */
+#if defined (_MSC_VER)
+                   /* vsnprintf (used by tprintf) in Windows is efficient, VS2019 arb. referencevalue 7,
+                      cat2strings() yields ref. speed value 12 only, CYGWIN is 12 in both cases,
+                      MINGW is 36. */
+                buffer = tprintf("%s %s", prev->line, s + 1);
+#else
+                   /* vsnprintf in Linux is very inefficient, ref. value 24
+                      cat2strings() is efficient with  ref. speed value 6,
+                      MINGW is 12 */
+                buffer = cat2strings(prev->line, s + 1, TRUE);
+#endif
+                /* replace prev->line by buffer */
+                s = prev->line;
+                prev->line = buffer;
+                prev->nextcard = working->nextcard;
+                working->nextcard = NULL;
+                /* add original line to prev->actualLine */
+                if (prev->actualLine) {
+                    struct card* end;
+                    for (end = prev->actualLine; end->nextcard;
+                        end = end->nextcard)
+                        ;
+                    end->nextcard = working;
+                    tfree(s);
+                }
+                else {
+                    prev->actualLine =
+                        insert_new_line(NULL, s, prev->linenum, 0);
+                    prev->actualLine->level = prev->level;
+                    prev->actualLine->nextcard = working;
+                }
+                working = prev->nextcard;
+                break;
+
+            default: /* regular one-line card */
+                prev = working;
+                working = working->nextcard;
+                iscmod = is_cider_model(s);
+                break;
+            }
+        }
+        else
+            working = working->nextcard;
+    }
+}
+#endif
+
 /*
  * search for `=' assignment operator
  *   take care of `!=' `<=' `==' and `>='
@@ -1579,6 +1689,10 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
        into a normal comment with a '*' at the start.  Some special handling
        if this is a command file or called from within a .control section. */
     inp_stripcomments_deck(cc->nextcard, comfile || is_control);
+
+#ifdef CIDER
+    inp_cider_models(cc->nextcard);
+#endif
 
     inp_stitch_continuation_lines(cc->nextcard);
 
