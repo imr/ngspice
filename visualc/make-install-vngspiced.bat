@@ -37,7 +37,7 @@ goto end
 
 :b64
 
-set dst=c:\Spice64d
+set dst=c:\Spice64d_KLU
 set cmsrc=.\codemodels\x64\Debug
 
 mkdir %dst%\bin
