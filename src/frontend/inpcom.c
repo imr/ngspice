@@ -9016,7 +9016,7 @@ utf8_syntax_check(struct card *deck)
         s = utf8_check((unsigned char*)curr_line);
 
         if (s) {
-            fprintf(stderr, "Error: UTF-8 syntax error in line %d at %s\n", card->linenum_orig, s);
+            fprintf(stderr, "Error: UTF-8 syntax error in input deck,\n    line %d at token/word %s\n", card->linenum_orig, s);
             controlled_exit(1);
         }
     }
