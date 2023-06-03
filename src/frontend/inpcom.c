@@ -4558,7 +4558,7 @@ static void inp_fix_param_values(struct card *c)
                    brackets around all params
                    inside a pair of square brackets */
                 end_of_str = beg_of_str;
-                while (*end_of_str != ']')
+                while (*end_of_str != ']' && *end_of_str != '\0')
                     end_of_str++;
                 /* string xx yyy from vector [xx yyy] */
                 tmp_str = vec_str =
@@ -4634,7 +4634,7 @@ static void inp_fix_param_values(struct card *c)
                 /* A complex value following the '=' token: code to put curly
                    brackets around all params inside a pair < > */
                 end_of_str = beg_of_str;
-                while (*end_of_str != '>')
+                while (*end_of_str != '>' && *end_of_str != '\0')
                     end_of_str++;
                 /* string xx yyy from vector [xx yyy] */
                 vec_str = copy_substring(beg_of_str + 1, end_of_str);
