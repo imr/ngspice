@@ -131,6 +131,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 here->VSRCrGiven = FALSE;
                 break;
             }
+
+            if (!here->VSRCcoeffs || here->VSRCfunctionOrder < 2) {
+                here->VSRCrGiven = FALSE;
+                break;
+            }
+
             here->VSRCr = value->rValue;
             here->VSRCrGiven = TRUE;
 
