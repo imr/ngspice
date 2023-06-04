@@ -8421,7 +8421,17 @@ static void inp_check_syntax(struct card *deck)
         /* check for missing ac <val> in voltage or current source */
         if (check_control == 0 && strchr("VvIi", *cut_line)) {
             int err = 0;
-            char* acline = search_plain_identifier(cut_line, "ac");
+            char* acline;
+            /* skip instance name and nodes */
+            acline = nexttok(cut_line);
+            acline = nexttok(acline);
+            acline = nexttok(acline);
+            if (!acline) {
+                fprintf(stderr, "Error in line   %s\n", cut_line);
+                fprintf(stderr, "    Not enough parameters\n");
+                controlled_exit(EXIT_BAD);
+            }
+            acline = search_plain_identifier(acline, "ac");
             if (acline == NULL)
                 continue;
             /* skip ac */
@@ -8438,17 +8448,20 @@ static void inp_check_syntax(struct card *deck)
                 char* nnacline = nacline;
                 /* get first token after ac */
                 char* numtok = gettok_node(&nnacline);
-                char* numtokfree = numtok;
-                /* Check if token is a parameter, to be filled in later */
-                if (*numtok == '\'' || *numtok == '{') {
-                    err = 0;
+                if (numtok) {
+                    char* numtokfree = numtok;
+                    /* Check if token is a parameter, to be filled in later */
+                    if (*numtok == '\'' || *numtok == '{') {
+                        err = 0;
+                    }
+                    else {
+                        /* check if token is a valid number */
+                        INPevaluate(&numtok, &err, 0);
+                    }
+                    tfree(numtokfree);
                 }
-                else {
-                    /* check if token is a valid number */
-                    INPevaluate(&numtok, &err, 0);
-                }
-
-                tfree(numtokfree);
+                else
+                    err = 1;
             }
             /* if no number, replace 'ac' by 'ac 1 0' */
             if (err){
