@@ -6240,14 +6240,9 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                /* if not, equation may start with a '(' */
-                str_ptr = strchr(cut_line, '(');
-                if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed R line: %s\n",
-                            curr_line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
+                fprintf(stderr, "ERROR: mal formed R line: %s\n", curr_line);
+                fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
+                controlled_exit(EXIT_FAILURE);
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
@@ -6324,14 +6319,9 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                /* if not, equation may start with a '(' */
-                str_ptr = strchr(cut_line, '(');
-                if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed C line: %s\n",
-                            curr_line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
+                fprintf(stderr, "ERROR: mal formed C line: %s\n", curr_line);
+                fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
+                controlled_exit(EXIT_FAILURE);
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
@@ -6399,14 +6389,9 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                /* if not, equation may start with a '(' */
-                str_ptr = strchr(cut_line, '(');
-                if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed L line: %s\n",
-                            curr_line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
+                fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
+                fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
+                controlled_exit(EXIT_FAILURE);
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
