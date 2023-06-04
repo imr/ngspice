@@ -1032,8 +1032,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         utf8_syntax_check(working);
 #endif		
 
-        /* some syntax checks, including title line */
-        inp_check_syntax(cc);
+        /* some syntax checks, excluding title line */
+        inp_check_syntax(working);
 
         if (newcompat.lt && newcompat.a)
             ltspice_compat_a(working);
