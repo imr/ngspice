@@ -4,7 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /** \file cmath2.c
-    \brief functions for the control language parser: norm, uminus, rnd, sunif, sgauss, poisson, exponential, mean, stddev, length, vector, unitvec, plus, minus, times, mod, max, min, d, avg, floor, ceil, nint
+    \brief functions for the control language parser: norm, uminus, rnd, sunif, sgauss, poisson, exponential, mean, stddev, length, vector, cvector, unitvec, plus, minus, times, mod, max, min, d, avg, floor, ceil, nint
 
     Routines to do complex mathematical functions. These routines require
     the -lm libraries. We sacrifice a lot of space to be able
@@ -479,7 +479,7 @@ cx_length(void *data, short int type, int length, int *newlength, short int *new
 
 
 /* Return a vector from 0 to the magnitude of the argument. Length of the
- * argument is irrelevent.
+ * argument is irrelevant.
  */
 
 void *
@@ -505,6 +505,38 @@ cx_vector(void *data, short int type, int length, int *newlength, short int *new
         d[i] = i;
     return ((void *) d);
 }
+
+/* Return a complex vector. Argument sets the length of the vector.
+The real part ranges from 0 to the magnitude of the argument. The imaginary
+part is set to 0.
+ */
+
+void*
+cx_cvector(void* data, short int type, int length, int* newlength, short int* newtype)
+{
+    ngcomplex_t* cc = (ngcomplex_t*)data;
+    double* dd = (double*)data;
+    int i, len;
+    ngcomplex_t* d;
+
+    NG_IGNORE(length);
+
+    if (type == VF_REAL)
+        len = (int)fabs(*dd);
+    else
+        len = (int)cmag(*cc);
+    if (len == 0)
+        len = 1;
+    d = alloc_c(len);
+    *newlength = len;
+    *newtype = VF_COMPLEX;
+    for (i = 0; i < len; i++) {
+        realpart(d[i]) = i;
+        imagpart(d[i]) = 0;
+    }
+    return ((void*)d);
+}
+
 
 
 /* Create a vector of the given length composed of all ones. */

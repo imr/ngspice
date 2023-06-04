@@ -360,6 +360,7 @@ struct func ft_funcs[] = {
     { "avg",         cx_avg }, /* A.Roldan 03/06/05 incremental average new function */
     { "group_delay", (cx_function_t*)(void *) cx_group_delay }, /* A.Roldan 10/06/05 group delay new function */
     { "vector",      cx_vector },
+    { "cvector",     cx_cvector },
     { "unitvec",     cx_unitvec },
     { "length",      cx_length },
     { "vecmin",      cx_min },
