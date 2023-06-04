@@ -132,6 +132,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 break;
             }
 
+            /* buggy input? r is not a repetition coefficient */
             if (!here->VSRCcoeffs || here->VSRCfunctionOrder < 2) {
                 here->VSRCrGiven = FALSE;
                 break;
