@@ -8349,20 +8349,24 @@ static void inp_check_syntax(struct card *deck)
         if (*cut_line == '*' || *cut_line == '\0')
             continue;
         // check for unusable leading characters and change them to '*'
-        if (strchr("=[]?()&%$\"!:,\f;", *cut_line)) {
+        if (strchr("=[]?()&%$\"!:,\f", *cut_line)) {
             if (ft_stricterror) {
                 fprintf(stderr, "Error: '%c' is not allowed as first character in line %s.\n", *cut_line, cut_line);
                 controlled_exit(EXIT_BAD);
             }
             else {
                 if (!check_ch) {
-                    fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,;\\f'\n", *cut_line);
+                    fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,\\f'\n", *cut_line);
                     fprintf(stderr, "    in netlist or included files, will be replaced with '*'.\n");
                     fprintf(stderr, "    Check line no %d:  %s\n\n", card->linenum_orig, cut_line);
                     check_ch = 1; /* just one warning */
                 }
                 *cut_line = '*';
             }
+        }
+        /* leading end-of-line delimiter ';' silently change to '*' */
+        else if (*cut_line == ';') {
+            *cut_line = '*';
         }
         // check for .control ... .endc
         if (ciprefix(".control", cut_line)) {
