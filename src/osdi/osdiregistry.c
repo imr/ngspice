@@ -358,12 +358,15 @@ extern OsdiObjectFile load_object_file(const char *input) {
     const OsdiDescriptor *descr = &OSDI_DESCRIPTORS[i];
 
     uint32_t dt = descr->num_params + descr->num_opvars;
+    bool has_m = false;
     uint32_t temp = descr->num_params + descr->num_opvars + 1;
     for (uint32_t param_id = 0; param_id < descr->num_params; param_id++) {
       OsdiParamOpvar *param = &descr->param_opvar[param_id];
       for (uint32_t j = 0; j < 1 + param->num_alias; j++) {
         char *name = param->name[j];
-        if (!strcmp(name, "dt")) {
+        if (!strcmp(name, "m")) {
+          has_m = true;
+        } else if (!strcmp(name, "dt")) {
           dt = UINT32_MAX;
         } else if (!strcasecmp(name, "dtemp") || !strcasecmp(name, "dt")) {
           dt = param_id;
@@ -382,6 +385,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
         .inst_offset = (uint32_t)inst_off,
         .dt = dt,
         .temp = temp,
+        .has_m = has_m,
     };
   }
 

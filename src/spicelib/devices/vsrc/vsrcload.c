@@ -298,43 +298,48 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                     break;
 
                     case PWL: {
-                        int i = 0, num_repeat = 0, ii = 0;
-                        double foo, repeat_time = 0, end_time, breakpt_time, itime;
+                        int    i;
+                        double end_time, itime;
 
                         time -= here->VSRCrdelay;
-
-                        if(time < *(here->VSRCcoeffs)) {
-                            foo = *(here->VSRCcoeffs + 1) ;
-                            value = foo;
-                            goto loadDone;
+                        if (time < here->VSRCcoeffs[0]) {
+                            value = here->VSRCcoeffs[1];
+                            value = value;
+                            break;
                         }
 
-                        do {
-                            for(i=ii ; i<(here->VSRCfunctionOrder/2)-1; i++ ) {
-                                itime = *(here->VSRCcoeffs+2*i);
-                                if (  AlmostEqualUlps(itime+repeat_time, time, 3 )) {
-                                    foo   = *(here->VSRCcoeffs+2*i+1);
-                                    value = foo;
-                                    goto loadDone;
-                                } else if ( (*(here->VSRCcoeffs+2*i)+repeat_time < time)
-                                   && (*(here->VSRCcoeffs+2*(i+1))+repeat_time > time) ) {
-                                    foo   = *(here->VSRCcoeffs+2*i+1) + (((time-(*(here->VSRCcoeffs+2*i)+repeat_time))/
-                                       (*(here->VSRCcoeffs+2*(i+1)) - *(here->VSRCcoeffs+2*i))) *
-                                       (*(here->VSRCcoeffs+2*i+3)    - *(here->VSRCcoeffs+2*i+1)));
-                                    value = foo;
-                                    goto loadDone;
-                                }
+                        end_time =
+                            here->VSRCcoeffs[here->VSRCfunctionOrder - 2];
+                        if (time > end_time) {
+                            double period;
+
+                            if (here->VSRCrGiven) {
+                                /* Repeating. */
+
+                                period = end_time -
+                                    here->VSRCcoeffs[here->VSRCrBreakpt];
+                                time -= period * floor(time / period);
+                                time += here->VSRCcoeffs[here->VSRCrBreakpt];
+                            } else {
+                                value =
+                                    here->VSRCcoeffs[here->VSRCfunctionOrder - 1];
+                                break;
                             }
-                            foo = *(here->VSRCcoeffs+ here->VSRCfunctionOrder-1) ;
-                            value = foo;
+                        }
 
-                            if ( !here->VSRCrGiven ) goto loadDone;
-
-                            end_time = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
-                            breakpt_time = *(here->VSRCcoeffs + here->VSRCrBreakpt);
-                            repeat_time  = end_time + (end_time - breakpt_time)*num_repeat++ - breakpt_time;
-                            ii            = here->VSRCrBreakpt/2;
-                        } while ( here->VSRCrGiven );
+                        for (i = 2;  i < here->VSRCfunctionOrder; i += 2) {
+                            itime = here->VSRCcoeffs[i];
+                            if (itime >= time) {
+                                time -= here->VSRCcoeffs[i - 2];
+                                time /=  here->VSRCcoeffs[i] -
+                                             here->VSRCcoeffs[i - 2];
+                                value = here->VSRCcoeffs[i - 1];
+                                value += time *
+                                    ( here->VSRCcoeffs[i + 1] -
+                                      here->VSRCcoeffs[i - 1]);
+                                break;
+                            }
+                        }
                         break;
                     }
 
@@ -418,7 +423,6 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
 
                 } // switch
             } // else (line 48)
-loadDone:
 
 /* gtri - begin - wbk - modify for supply ramping option */
 #ifdef XSPICE_EXP

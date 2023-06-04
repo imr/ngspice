@@ -22,7 +22,6 @@ Modified: 2001 AlansFixes
 
 /* Limit the number of 'singular matrix' warnings */
 static int msgcount = 0;
-void NIresetwarnmsg(void);
 
 /* NIiter() - return value is non-zero for convergence failure */
 

@@ -84,6 +84,9 @@ VS2 268  0  PULSE (0 5 15.9N 0.2N 0.2N 15.8N 60N)
 *
 .control
 TRAN 0.2N 47.9NS
+rusage
+set color0=white
+set xbrushwidth=3
 PLOT v(648) v(651) v(751)
 .endc
 *

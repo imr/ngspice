@@ -100,6 +100,11 @@ void com_optran(wordlist* wl) {
         getdata = TRUE;
     }
 
+    if (!getdata && !ft_curckt) {
+        /* no circuit, but optran already set */
+        return;
+    }
+
     int saved = errno;
     errno = 0;
     nooptran = FALSE;
@@ -159,14 +164,14 @@ void com_optran(wordlist* wl) {
     if (err || (*stpstr != '\0'))
         goto bugquit;
     if (opstepsize > opfinaltime) {
-        fprintf(stderr, "Error: Step size larger than final time.\n");
+        fprintf(stderr, "Error: Optran step size larger than final time.\n");
         goto bugquit;
     }
     if (opstepsize > opfinaltime/50.) {
-        fprintf(stderr, "Warning: Step size potentially too small.\n");
+        fprintf(stderr, "Warning: Optran step size potentially too large.\n");
     }
     if (opramptime > opfinaltime) {
-        fprintf(stderr, "Error: Ramp time larger than final time.\n");
+        fprintf(stderr, "Error: Optran ramp time larger than final time.\n");
         goto bugquit;
     }
     /* optran deselected by setting opstepsize to 0 */
@@ -362,7 +367,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
         else
             maxstepsize = ckt->CKTmaxStep;
 
-        ckt->CKTsizeIncr = 10;
+        ckt->CKTsizeIncr = 100;
         ckt->CKTtimeIndex = -1; /* before the DC soln has been stored */
         ckt->CKTtimeListSize = (int) ceil( opfinaltime / maxstepsize );
         ltra_num = CKTtypelook("LTRA");
@@ -657,7 +662,7 @@ resume:
 
         /* supply ramping, when opramptime > 0 */
         if (opramptime > 0)
-            ckt->CKTsrcFact = MIN(1., optime / opramptime);
+            ckt->CKTsrcFact = 0.5 * (1 - cos(M_PI * optime / opramptime));
 
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);

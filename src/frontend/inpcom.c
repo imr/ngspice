@@ -136,7 +136,6 @@ static void inp_reorder_params(
 static int inp_split_multi_param_lines(struct card *deck, int line_number);
 static void inp_sort_params(struct card *param_cards,
         struct card *card_bf_start, struct card *s_c, struct card *e_c);
-char *inp_remove_ws(char *s);
 static void inp_compat(struct card *deck);
 static void inp_bsource_compat(struct card *deck);
 static bool inp_temper_compat(struct card *card);
@@ -153,7 +152,7 @@ static char inp_get_elem_ident(char *type);
 static void rem_mfg_from_models(struct card *start_card);
 static void inp_fix_macro_param_func_paren_io(struct card *begin_card);
 static void inp_fix_gnd_name(struct card *deck);
-static void inp_chk_for_multi_in_vcvs(struct card *deck, int *line_number);
+static void inp_chk_for_e_source_to_xspice(struct card *deck, int *line_number);
 static void inp_add_control_section(struct card *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
@@ -167,7 +166,6 @@ static void inp_check_syntax(struct card *deck);
 static char *inp_spawn_brace(char *s);
 
 static char *inp_pathresolve_at(const char *name, const char *dir);
-char *search_plain_identifier(char *str, const char *identifier);
 
 struct nscope *inp_add_levels(struct card *deck);
 static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
@@ -177,6 +175,7 @@ static struct modellist *inp_find_model(
         struct nscope *scope, const char *name);
 
 void tprint(struct card *deck);
+static char* libprint(struct card* t, const char *dir);
 
 static void inp_repair_dc_ps(struct card* oldcard);
 static void inp_get_w_l_x(struct card* oldcard);
@@ -184,8 +183,6 @@ static void inp_get_w_l_x(struct card* oldcard);
 static char* eval_m(char* line, char* tline);
 static char* eval_tc(char* line, char* tline);
 static char* eval_mvalue(char* line, char* tline);
-
-static void rem_double_braces(struct card* card);
 
 extern void inp_probe(struct card* card);
 #ifndef EXT_ASC
@@ -619,16 +616,19 @@ static char *cat2strings(char *s1, char *s2, bool spa)
 /* line1
    + line2
    ---->
-   line1 line 2
+   line1 line2
    Proccedure: store regular card in prev, skip comment lines (*..) and some
-   others
+   others, add tokens from + lines to prev using dstring.
    */
-static void inp_stitch_continuation_lines(struct card *working)
+static void inp_stitch_continuation_lines(struct card* working)
 {
-    struct card *prev = NULL;
+    struct card* prev = NULL;
+    bool firsttime = TRUE;
+
+    DS_CREATE(newline, 200);
 
     while (working) {
-        char *s, c, *buffer;
+        char* s, c;
 
         for (s = working->line; (c = *s) != '\0' && c <= ' '; s++)
             ;
@@ -636,11 +636,110 @@ static void inp_stitch_continuation_lines(struct card *working)
 #ifdef TRACE
         /* SDB debug statement */
         printf("In inp_read, processing linked list element line = %d, s = "
-               "%s . . . \n",
-                working->linenum, s);
+            "%s . . . \n",
+            working->linenum, s);
 #endif
 
         switch (c) {
+        case '#':
+        case '$':
+        case '*':
+        case '\0':
+            /* skip these cards, and keep prev as the last regular card */
+            working = working->nextcard; /* for these chars, go to next
+                                            card */
+            break;
+
+        case '+': /* handle continuation */
+            if (!prev) {
+                working->error =
+                    copy("Illegal continuation line: ignored.");
+                working = working->nextcard;
+                break;
+            }
+
+            /* We now may have lept over some comment lines, which are
+            located among the continuation lines. We have to delete them
+            here to prevent a memory leak */
+            while (prev->nextcard != working) {
+                struct card* tmpl = prev->nextcard->nextcard;
+                line_free_x(prev->nextcard, FALSE);
+                prev->nextcard = tmpl;
+            }
+
+            if (firsttime) {
+                sadd(&newline, prev->line);
+                firsttime = FALSE;
+            }
+            else {
+                /* replace '+' by space */
+                *s = ' ';
+                sadd(&newline, s);
+                /* mark for later removal */
+                *s = '*';
+            }
+
+            break;
+
+        default: /* regular one-line card */
+            if (!firsttime) {
+                tfree(prev->line);
+                prev->line = copy(ds_get_buf(&newline));
+                ds_clear(&newline);
+                firsttime = TRUE;
+                /* remove final used '+' line, if regular line is following */
+                struct card* tmpl = prev->nextcard->nextcard;
+                line_free_x(prev->nextcard, FALSE);
+                prev->nextcard = tmpl;
+            }
+            prev = working;
+            working = working->nextcard;
+            break;
+        }
+    }
+    /* remove final used '+' line when no regular line is following */
+    if (!firsttime) {
+        tfree(prev->line);
+        prev->line = copy(ds_get_buf(&newline));
+    }
+    ds_free(&newline);
+}
+
+#ifdef CIDER
+/* Only if we have a CIDER .model line with regular structure
+'.model modname modtype level',
+with modtype being one of numos, numd, nbjt:
+Concatenate lines
+line1
+   + line2
+   ---->
+   line1 line 2
+Store the original lines in card->actualLine, to be used for
+CIDER model parameter parsing in INPparseNumMod() of inpgmod.c
+   */
+static void inp_cider_models(struct card* working)
+{
+    struct card* prev = NULL;
+    bool iscmod = FALSE;
+
+    while (working) {
+        char *s, c, *buffer;
+
+        for (s = working->line; (c = *s) != '\0' && c <= ' '; s++)
+            ;
+
+        if(!iscmod)
+            iscmod = is_cider_model(s);
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("In inp_read, processing linked list element line = %d, s = "
+            "%s . . . \n",
+            working->linenum, s);
+#endif
+
+        if (iscmod) {
+            switch (c) {
             case '#':
             case '$':
             case '*':
@@ -653,7 +752,7 @@ static void inp_stitch_continuation_lines(struct card *working)
             case '+': /* handle continuation */
                 if (!prev) {
                     working->error =
-                            copy("Illegal continuation line: ignored.");
+                        copy("Illegal continuation line: ignored.");
                     working = working->nextcard;
                     break;
                 }
@@ -662,7 +761,7 @@ static void inp_stitch_continuation_lines(struct card *working)
                 located among the continuation lines. We have to delete them
                 here to prevent a memory leak */
                 while (prev->nextcard != working) {
-                    struct card *tmpl = prev->nextcard->nextcard;
+                    struct card* tmpl = prev->nextcard->nextcard;
                     line_free_x(prev->nextcard, FALSE);
                     prev->nextcard = tmpl;
                 }
@@ -670,14 +769,14 @@ static void inp_stitch_continuation_lines(struct card *working)
                 /* create buffer and write last and current line into it.
                    When reading a PDK, the following may be called more than 1e6 times. */
 #if defined (_MSC_VER)
-                /* vsnprintf (used by tprintf) in Windows is efficient, VS2019 arb. referencevalue 7,
-                   cat2strings() yields ref. speed value 12 only, CYGWIN is 12 in both cases,
-                   MINGW is 36. */
+                   /* vsnprintf (used by tprintf) in Windows is efficient, VS2019 arb. referencevalue 7,
+                      cat2strings() yields ref. speed value 12 only, CYGWIN is 12 in both cases,
+                      MINGW is 36. */
                 buffer = tprintf("%s %s", prev->line, s + 1);
 #else
-                /* vsnprintf in Linux is very inefficient, ref. value 24
-                   cat2strings() is efficient with  ref. speed value 6,
-                   MINGW is 12 */
+                   /* vsnprintf in Linux is very inefficient, ref. value 24
+                      cat2strings() is efficient with  ref. speed value 6,
+                      MINGW is 12 */
                 buffer = cat2strings(prev->line, s + 1, TRUE);
 #endif
                 /* replace prev->line by buffer */
@@ -687,16 +786,16 @@ static void inp_stitch_continuation_lines(struct card *working)
                 working->nextcard = NULL;
                 /* add original line to prev->actualLine */
                 if (prev->actualLine) {
-                    struct card *end;
+                    struct card* end;
                     for (end = prev->actualLine; end->nextcard;
-                            end = end->nextcard)
+                        end = end->nextcard)
                         ;
                     end->nextcard = working;
                     tfree(s);
                 }
                 else {
                     prev->actualLine =
-                            insert_new_line(NULL, s, prev->linenum, 0);
+                        insert_new_line(NULL, s, prev->linenum, 0);
                     prev->actualLine->level = prev->level;
                     prev->actualLine->nextcard = working;
                 }
@@ -706,11 +805,15 @@ static void inp_stitch_continuation_lines(struct card *working)
             default: /* regular one-line card */
                 prev = working;
                 working = working->nextcard;
+                iscmod = is_cider_model(s);
                 break;
+            }
         }
+        else
+            working = working->nextcard;
     }
 }
-
+#endif
 
 /*
  * search for `=' assignment operator
@@ -929,8 +1032,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         utf8_syntax_check(working);
 #endif		
 
-        /* some syntax checks, including title line */
-        inp_check_syntax(cc);
+        /* some syntax checks, excluding title line */
+        inp_check_syntax(working);
 
         if (newcompat.lt && newcompat.a)
             ltspice_compat_a(working);
@@ -992,7 +1095,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         subckt_w_params = NULL;
         if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
             inp_fix_gnd_name(working);
-        inp_chk_for_multi_in_vcvs(working, &rv.line_number);
+        inp_chk_for_e_source_to_xspice(working, &rv.line_number);
 
         /* "addcontrol" variable is set if "ngspice -a file" was used. */
 
@@ -1587,6 +1690,10 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
        if this is a command file or called from within a .control section. */
     inp_stripcomments_deck(cc->nextcard, comfile || is_control);
 
+#ifdef CIDER
+    inp_cider_models(cc->nextcard);
+#endif
+
     inp_stitch_continuation_lines(cc->nextcard);
 
     rv.line_number = line_number;
@@ -1906,7 +2013,6 @@ static void inp_fix_gnd_name(struct card *c)
     }
 }
 
-
 /*
  * transform a VCVS "gate" instance into a XSPICE instance
  *
@@ -1924,7 +2030,336 @@ static void inp_fix_gnd_name(struct card *c)
  *   the x,y list is fixed to length 2
  */
 
-static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
+static int inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
+{
+    char *fcn_b, *line;
+
+    line = c->line;
+    if (((fcn_b = strstr(line, "nand(")) != NULL ||
+         (fcn_b = strstr(line, "and(")) != NULL ||
+         (fcn_b = strstr(line, "nor(")) != NULL ||
+         (fcn_b = strstr(line, "or(")) != NULL) &&
+        isspace_c(fcn_b[-1])) {
+#ifndef XSPICE
+        fprintf(stderr,
+                "\n"
+                "Error: XSPICE is required to run the 'multi-input "
+                "pwl' option in line %d\n"
+                "  %s\n"
+                "\n"
+                "See manual chapt. 31 for installation "
+                "instructions\n",
+                *line_number, line);
+        controlled_exit(EXIT_BAD);
+#else
+        char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+        char *out_str, *ctrl_nodes_str,
+             *xy_values1_b = NULL, *ref_str, *fcn_name,
+             *fcn_e = NULL, *out_b, *out_e, *ref_e;
+        char *m_instance, *m_model;
+        char *xy_values2_b = NULL, *xy_values1_e = NULL,
+             *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
+        int xy_count1, xy_count2;
+        bool ok = FALSE;
+
+        do {
+            ref_e = skip_non_ws(line);
+
+            out_b = skip_ws(ref_e);
+
+            out_e = skip_back_ws(fcn_b, out_b);
+            if (out_e <= out_b)
+                break;
+
+            fcn_e = strchr(fcn_b, '(');
+
+            ctrl_nodes_b = strchr(fcn_e, ')');
+            if (!ctrl_nodes_b)
+                break;
+            ctrl_nodes_b = skip_ws(ctrl_nodes_b + 1);
+
+            comma_ptr = strchr(ctrl_nodes_b, ',');
+            if (!comma_ptr)
+                break;
+
+            xy_values1_b = skip_back_ws(comma_ptr, ctrl_nodes_b);
+            if (xy_values1_b[-1] == '}') {
+                while (--xy_values1_b >= ctrl_nodes_b)
+                    if (*xy_values1_b == '{')
+                        break;
+            } else {
+                xy_values1_b = skip_back_non_ws(xy_values1_b, ctrl_nodes_b);
+            }
+            if (xy_values1_b <= ctrl_nodes_b)
+                break;
+
+            ctrl_nodes_e = skip_back_ws(xy_values1_b, ctrl_nodes_b);
+            if (ctrl_nodes_e <= ctrl_nodes_b)
+                break;
+
+            xy_values1_e = skip_ws(comma_ptr + 1);
+            if (*xy_values1_e == '{') {
+                xy_values1_e = inp_spawn_brace(xy_values1_e);
+            } else {
+                xy_values1_e = skip_non_ws(xy_values1_e);
+            }
+            if (!xy_values1_e)
+                break;
+
+            xy_values2_b = skip_ws(xy_values1_e);
+
+            ok = TRUE;
+        } while (0);
+
+        if (!ok) {
+            fprintf(stderr, "ERROR: malformed line: %s\n", line);
+            controlled_exit(EXIT_FAILURE);
+        }
+
+        ref_str = copy_substring(line, ref_e);
+        out_str = copy_substring(out_b, out_e);
+        fcn_name = copy_substring(fcn_b, fcn_e);
+        ctrl_nodes_str = copy_substring(ctrl_nodes_b, ctrl_nodes_e);
+
+        keep = *xy_values1_e;
+        *xy_values1_e = '\0';
+        xy_count1 =
+            get_comma_separated_values(xy_values1, xy_values1_b);
+        *xy_values1_e = keep;
+
+        xy_count2 = get_comma_separated_values(xy_values2, xy_values2_b);
+
+        // place restrictions on only having 2 point values; this can
+        // change later
+        if (xy_count1 != 2 && xy_count2 != 2)
+            fprintf(stderr,
+                    "ERROR: only expecting 2 pair values for "
+                    "multi-input vcvs!\n");
+
+        m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s", ref_str,
+                             ctrl_nodes_str, out_str, ref_str);
+        m_instance[0] = 'a';
+
+        m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y "
+                          "= [%s %s] model = \"%s\" )",
+                          ref_str, xy_values1[0], xy_values2[0], xy_values1[1],
+                          xy_values2[1], fcn_name);
+
+        tfree(ref_str);
+        tfree(out_str);
+        tfree(fcn_name);
+        tfree(ctrl_nodes_str);
+        tfree(xy_values1[0]);
+        tfree(xy_values1[1]);
+        tfree(xy_values2[0]);
+        tfree(xy_values2[1]);
+
+        *c->line = '*';
+        c = insert_new_line(c, m_instance, (*line_number)++, c->linenum_orig);
+        c = insert_new_line(c, m_model, (*line_number)++, c->linenum_orig);
+#endif
+        return 1;
+    } else {
+        return 0;       // No keyword match. */
+    }
+}
+
+/* replace the E and G source FREQ function by an XSPICE xfer instance
+ * (used by Touchstone to netlist converter programs).
+ * E1 n1 n2 FREQ {expression} = DB values ...
+ * will become
+ * B1_gen 1_gen 0 v = expression
+ * A1_gen 1_gen %d(n1 n2) 1_gen
+ * .model 1_gen xfer db=true table=[ values ]
+ */
+
+static void replace_freq(struct card *c, int *line_number)
+{
+#ifdef XSPICE
+    char *line, *e, *e_e, *n1, *n1_e, *n2, *n2_e, *freq;
+    char *expr, *expr_e, *in, *in_e, *keywd, *cp, *list, *list_e;
+    int   db, ri, rad, got_key, diff;
+    char  pt, key[4];
+
+    line = c->line;
+
+    /* First token is a node name. */
+
+    e = line + 1;
+    e_e = skip_non_ws(e);
+    n1 = skip_ws(e_e);
+    n1_e = skip_non_ws(n1);
+    freq = strstr(n1_e, "freq");
+    if (!freq || !isspace_c(freq[-1]) || !isspace_c(freq[4]))
+        return;
+    n2 = skip_ws(n1_e);
+    if (n2 == freq) {
+        n2 = NULL;
+    } else {
+        n2_e = skip_non_ws(n2);
+        if (freq != skip_ws(n2_e)) // Three nodes or another keyword.
+            return;
+    }
+
+    /* Isolate the input expression. */
+
+    expr = skip_ws(freq + 4);
+    if (*expr != '{')
+        return;
+    expr = skip_ws(expr + 1);
+    expr_e = strchr(expr, '}');
+    if (!expr_e)
+        return;
+    skip_back_ws(expr_e, expr);
+
+    /* Is the expression just a node name, or v(node) or v(node1, node2)? */
+
+    in = NULL;
+    diff = 0;
+    if (*expr < '0' || *expr > '9') {
+        for (in_e = expr; in_e < expr_e; ++in_e) {
+            if ((*in_e < '0' || *in_e > '9') && (*in_e < 'a' || *in_e > 'z') &&
+                *in_e != '_')
+            break;
+        }
+        if (in_e == expr_e) {
+            /* A simple identifier. */
+
+            in = expr;
+        }
+    }
+    if (expr[0] == 'v' && expr[1] == '(' && expr_e[-1] == ')') {
+        in = expr + 2;
+        in_e = expr_e - 1;
+        cp = strchr(in, ',');
+        diff =  (cp && cp < in_e); // Assume v(n1, n2)
+    }
+
+    /* Look for a keyword.  Previous processing may put braces around it. */
+
+    keywd = skip_ws(expr_e + 1);
+    if (*keywd == '=')
+        keywd = skip_ws(keywd + 1);
+
+    db = 1;
+    rad = 0;
+    ri = 0;
+    do {
+        if (!keywd)
+            return;
+        list = keywd; // Perhaps not keyword
+        if (*keywd == '{')
+            ++keywd;
+        cp = key;
+        while (*keywd && !isspace_c(*keywd) && *keywd != '}' &&
+               cp - key < sizeof key - 1) {
+            *cp++ = *keywd++;
+        }
+        *cp = 0;
+        if (*keywd == '}')
+            ++keywd;
+        if (!isspace_c(*keywd))
+            return;
+
+        /* Parse the format keyword, if any. */
+
+        got_key = 0;
+        if (!strcmp(key, "mag")) {
+            db = 0;
+            got_key = 1;
+        } else if (!strcmp(key, "db")) {
+            db = 1;
+            got_key = 1;
+        } else if (!strcmp(key, "rad")) {
+            rad = 1;
+            got_key = 1;
+        } else if (!strcmp(key, "deg")) {
+            rad = 0;
+            got_key = 1;
+        } else if (!strcmp(key, "r_i")) {
+            ri = 1;
+            got_key = 1;
+        }
+
+        /* Get the list of values. */
+
+        if (got_key)
+            list = skip_ws(keywd);
+        if (!list)
+            return;
+        keywd = list;
+    } while(got_key);
+
+    list_e = list + strlen(list) - 1;
+    skip_back_ws(list_e, list);
+    if (list >= list_e)
+        return;
+
+    /* All good, rewrite the line.
+     * Macro BSTR is used to pass counted string arguments to tprintf().
+     */
+
+#define BSTR(s) (int)(s##_e - s), s
+
+    pt = (*line == 'e') ? 'v' : 'i';
+    *line = '*';    // Make a comment
+    if (in) {
+        /* Connect input nodes directly. */
+
+        if (diff) {
+            /* Differential input. */
+
+            if (n2) {
+                line = tprintf("a_gen_%.*s %%vd(%.*s) %%%cd(%.*s %.*s) "
+                           "gen_model_%.*s",
+                           BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(n2), BSTR(e));
+            } else {
+                line = tprintf("a_gen_%.*s %%vd(%.*s) %%%c(%.*s) "
+                               "gen_model_%.*s",
+                               BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(e));
+            }
+        } else {
+            /* Single node input. */
+
+            if (n2) {
+                line = tprintf("a_gen_%.*s %.*s  %%%cd(%.*s %.*s) "
+                               "gen_model_%.*s",
+                               BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(n2),
+                               BSTR(e));
+            } else {
+                line = tprintf("a_gen_%.*s %.*s %%%c(%.*s) gen_model_%.*s",
+                               BSTR(e), BSTR(in), pt, BSTR(n1), BSTR(e));
+            }
+        }
+    } else {
+        /* Use a B-source for input. */
+
+        line = tprintf("b_gen_%.*s gen_node_%.*s 0 v=%.*s",
+                       BSTR(e), BSTR(e), BSTR(expr));
+        c = insert_new_line(c, line, (*line_number)++, c->linenum_orig);
+        if (n2) {
+            line = tprintf("a_gen_%.*s gen_node_%.*s  %%%cd(%.*s %.*s) "
+                           "gen_model_%.*s",
+                           BSTR(e), BSTR(e), pt, BSTR(n1), BSTR(n2), BSTR(e));
+        } else {
+            line = tprintf("a_gen_%.*s gen_node_%.*s %%%c(%.*s) "
+                           "gen_model_%.*s",
+                           BSTR(e), BSTR(e), pt, BSTR(n1), BSTR(e));
+        }
+    }
+    c = insert_new_line(c, line, (*line_number)++, c->linenum_orig);
+
+    line = tprintf(".model gen_model_%.*s xfer %s table = [%.*s]",
+                   BSTR(e),
+                   ri ? "r_i=true" : rad ? "rad=true" : !db ? "db=false" : "",
+                   BSTR(list));
+     c = insert_new_line(c, line, (*line_number)++, c->linenum_orig);
+#endif
+}
+
+/* Convert some E and G-source variants to XSPICE code models. */
+
+static void inp_chk_for_e_source_to_xspice(struct card *c, int *line_number)
 {
     int skip_control = 0;
 
@@ -1945,142 +2380,16 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
             continue;
         }
 
-        if (*line == 'e') {
+        if (*line == 'e' && inp_chk_for_multi_in_vcvs(c, line_number))
+            continue;
+        if (*line != 'e' && *line != 'g')
+            continue;
 
-            char *fcn_b;
+        /* Is it the FREQ form with S-parameter table? */
 
-            if (((fcn_b = strstr(line, "nand(")) != NULL ||
-                        (fcn_b = strstr(line, "and(")) != NULL ||
-                        (fcn_b = strstr(line, "nor(")) != NULL ||
-                        (fcn_b = strstr(line, "or(")) != NULL) &&
-                    isspace_c(fcn_b[-1])) {
-#ifndef XSPICE
-                fprintf(stderr,
-                        "\n"
-                        "Error: XSPICE is required to run the 'multi-input "
-                        "pwl' option in line %d\n"
-                        "  %s\n"
-                        "\n"
-                        "See manual chapt. 31 for installation "
-                        "instructions\n",
-                        *line_number, line);
-                controlled_exit(EXIT_BAD);
-#else
-                char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *out_str, *ctrl_nodes_str,
-                        *xy_values1_b = NULL, *ref_str, *fcn_name,
-                        *fcn_e = NULL, *out_b, *out_e, *ref_e;
-                char *m_instance, *m_model;
-                char *xy_values2_b = NULL, *xy_values1_e = NULL,
-                     *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
-                int xy_count1, xy_count2;
-                bool ok = FALSE;
-
-                do {
-                    ref_e = skip_non_ws(line);
-
-                    out_b = skip_ws(ref_e);
-
-                    out_e = skip_back_ws(fcn_b, out_b);
-                    if (out_e <= out_b)
-                        break;
-
-                    fcn_e = strchr(fcn_b, '(');
-
-                    ctrl_nodes_b = strchr(fcn_e, ')');
-                    if (!ctrl_nodes_b)
-                        break;
-                    ctrl_nodes_b = skip_ws(ctrl_nodes_b + 1);
-
-                    comma_ptr = strchr(ctrl_nodes_b, ',');
-                    if (!comma_ptr)
-                        break;
-
-                    xy_values1_b = skip_back_ws(comma_ptr, ctrl_nodes_b);
-                    if (xy_values1_b[-1] == '}') {
-                        while (--xy_values1_b >= ctrl_nodes_b)
-                            if (*xy_values1_b == '{')
-                                break;
-                    }
-                    else {
-                        xy_values1_b =
-                                skip_back_non_ws(xy_values1_b, ctrl_nodes_b);
-                    }
-                    if (xy_values1_b <= ctrl_nodes_b)
-                        break;
-
-                    ctrl_nodes_e = skip_back_ws(xy_values1_b, ctrl_nodes_b);
-                    if (ctrl_nodes_e <= ctrl_nodes_b)
-                        break;
-
-                    xy_values1_e = skip_ws(comma_ptr + 1);
-                    if (*xy_values1_e == '{') {
-                        xy_values1_e = inp_spawn_brace(xy_values1_e);
-                    }
-                    else {
-                        xy_values1_e = skip_non_ws(xy_values1_e);
-                    }
-                    if (!xy_values1_e)
-                        break;
-
-                    xy_values2_b = skip_ws(xy_values1_e);
-
-                    ok = TRUE;
-                } while (0);
-
-                if (!ok) {
-                    fprintf(stderr, "ERROR: malformed line: %s\n", line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                ref_str = copy_substring(line, ref_e);
-                out_str = copy_substring(out_b, out_e);
-                fcn_name = copy_substring(fcn_b, fcn_e);
-                ctrl_nodes_str = copy_substring(ctrl_nodes_b, ctrl_nodes_e);
-
-                keep = *xy_values1_e;
-                *xy_values1_e = '\0';
-                xy_count1 =
-                        get_comma_separated_values(xy_values1, xy_values1_b);
-                *xy_values1_e = keep;
-
-                xy_count2 =
-                        get_comma_separated_values(xy_values2, xy_values2_b);
-
-                // place restrictions on only having 2 point values; this can
-                // change later
-                if (xy_count1 != 2 && xy_count2 != 2)
-                    fprintf(stderr,
-                            "ERROR: only expecting 2 pair values for "
-                            "multi-input vcvs!\n");
-
-                m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s", ref_str,
-                        ctrl_nodes_str, out_str, ref_str);
-                m_instance[0] = 'a';
-
-                m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y "
-                                  "= [%s %s] model = \"%s\" )",
-                        ref_str, xy_values1[0], xy_values2[0], xy_values1[1],
-                        xy_values2[1], fcn_name);
-
-                tfree(ref_str);
-                tfree(out_str);
-                tfree(fcn_name);
-                tfree(ctrl_nodes_str);
-                tfree(xy_values1[0]);
-                tfree(xy_values1[1]);
-                tfree(xy_values2[0]);
-                tfree(xy_values2[1]);
-
-                *c->line = '*';
-                c = insert_new_line(c, m_instance, (*line_number)++, c->linenum_orig);
-                c = insert_new_line(c, m_model, (*line_number)++, c->linenum_orig);
-#endif
-            }
-        }
+        replace_freq(c, line_number);
     }
 }
-
 
 /* If ngspice is started with option -a, then variable 'autorun'
  * will be set and a control section is inserted to try and ensure
@@ -3300,13 +3609,23 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
  *    every library section reference (when the given section_name_ === NULL)
  * or
  *    just those references occuring in the given library section definition
+ *
+ * Command .libsave saves the loaded and parsed lib, to be read by .include
  */
 
 static void expand_section_references(struct card *c, const char *dir_name)
 {
-    for (; c; c = c->nextcard)
-        if (ciprefix(".lib", c->line))
+    for (; c; c = c->nextcard) {
+        struct card* p = c;
+        if (ciprefix(".libsave", c->line)) {
             c = expand_section_ref(c, dir_name);
+            char *filename = libprint(p, dir_name);
+            fprintf(stdout, "\nLibrary\n%s\nsaved to %s\n", p->line + 9, filename);
+            tfree(filename);
+        }
+        else if (ciprefix(".lib", c->line))
+            c = expand_section_ref(c, dir_name);
+    }
 }
 
 
@@ -4239,7 +4558,7 @@ static void inp_fix_param_values(struct card *c)
                    brackets around all params
                    inside a pair of square brackets */
                 end_of_str = beg_of_str;
-                while (*end_of_str != ']')
+                while (*end_of_str != ']' && *end_of_str != '\0')
                     end_of_str++;
                 /* string xx yyy from vector [xx yyy] */
                 tmp_str = vec_str =
@@ -4315,7 +4634,7 @@ static void inp_fix_param_values(struct card *c)
                 /* A complex value following the '=' token: code to put curly
                    brackets around all params inside a pair < > */
                 end_of_str = beg_of_str;
-                while (*end_of_str != '>')
+                while (*end_of_str != '>' && *end_of_str != '\0')
                     end_of_str++;
                 /* string xx yyy from vector [xx yyy] */
                 vec_str = copy_substring(beg_of_str + 1, end_of_str);
@@ -4480,13 +4799,17 @@ static int inp_get_param_level(
     return level;
 }
 
-
+/* Return the number of terminals for a given device, characterized by
+   the first letter of its instance line. Returns 0 upon error. */
 int get_number_terminals(char *c)
 {
     int i, j, k;
     char *name[12];
     char nam_buf[128];
     bool area_found = FALSE;
+
+    if (!c)
+        return 0;
 
     switch (*c) {
         case 'r':
@@ -5917,14 +6240,9 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                /* if not, equation may start with a '(' */
-                str_ptr = strchr(cut_line, '(');
-                if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed R line: %s\n",
-                            curr_line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
+                fprintf(stderr, "ERROR: mal formed R line: %s\n", curr_line);
+                fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
+                controlled_exit(EXIT_FAILURE);
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
@@ -6001,14 +6319,9 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                /* if not, equation may start with a '(' */
-                str_ptr = strchr(cut_line, '(');
-                if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed C line: %s\n",
-                            curr_line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
+                fprintf(stderr, "ERROR: mal formed C line: %s\n", curr_line);
+                fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
+                controlled_exit(EXIT_FAILURE);
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
@@ -6076,14 +6389,9 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                /* if not, equation may start with a '(' */
-                str_ptr = strchr(cut_line, '(');
-                if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed L line: %s\n",
-                            curr_line);
-                    controlled_exit(EXIT_FAILURE);
-                }
-                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
+                fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
+                fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
+                controlled_exit(EXIT_FAILURE);
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
@@ -6920,6 +7228,27 @@ static void inp_poly_err(struct card *card)
 }
 
 #endif
+
+/* Print the parsed library to lib_out?.lib, with ? a growing number
+   if multiple libs are saved in a single run. Don't save the .libsave line.*/
+static char* libprint(struct card* t, const char *dir_name)
+{
+    struct card* tmp;
+    static int npr = 1;
+    char *outfile = tprintf("%s/lib_out%d.lib", dir_name, npr);
+    npr++;
+    FILE* fd = fopen(outfile, "w");
+    if (fd) {
+        for (tmp = t; tmp; tmp = tmp->nextcard)
+            if (*(tmp->line) != '*' && !ciprefix(".libsave", tmp->line))
+                fprintf(fd, "%s\n", tmp->line);
+        fclose(fd);
+    }
+    else {
+        fprintf(stderr, "Warning: Can't open file %s \n    command .libsave ignored!\n", outfile);
+    }
+    return outfile;
+}
 
 
 /* Used for debugging. You may add
@@ -8020,20 +8349,24 @@ static void inp_check_syntax(struct card *deck)
         if (*cut_line == '*' || *cut_line == '\0')
             continue;
         // check for unusable leading characters and change them to '*'
-        if (strchr("=[]?()&%$\"!:,\f;", *cut_line)) {
+        if (strchr("=[]?()&%$\"!:,\f", *cut_line)) {
             if (ft_stricterror) {
                 fprintf(stderr, "Error: '%c' is not allowed as first character in line %s.\n", *cut_line, cut_line);
                 controlled_exit(EXIT_BAD);
             }
             else {
                 if (!check_ch) {
-                    fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,;\\f'\n", *cut_line);
+                    fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,\\f'\n", *cut_line);
                     fprintf(stderr, "    in netlist or included files, will be replaced with '*'.\n");
                     fprintf(stderr, "    Check line no %d:  %s\n\n", card->linenum_orig, cut_line);
                     check_ch = 1; /* just one warning */
                 }
                 *cut_line = '*';
             }
+        }
+        /* leading end-of-line delimiter ';' silently change to '*' */
+        else if (*cut_line == ';') {
+            *cut_line = '*';
         }
         // check for .control ... .endc
         if (ciprefix(".control", cut_line)) {
@@ -8092,7 +8425,17 @@ static void inp_check_syntax(struct card *deck)
         /* check for missing ac <val> in voltage or current source */
         if (check_control == 0 && strchr("VvIi", *cut_line)) {
             int err = 0;
-            char* acline = search_plain_identifier(cut_line, "ac");
+            char* acline;
+            /* skip instance name and nodes */
+            acline = nexttok(cut_line);
+            acline = nexttok(acline);
+            acline = nexttok(acline);
+            if (!acline) {
+                fprintf(stderr, "Error in line   %s\n", cut_line);
+                fprintf(stderr, "    Not enough parameters\n");
+                controlled_exit(EXIT_BAD);
+            }
+            acline = search_plain_identifier(acline, "ac");
             if (acline == NULL)
                 continue;
             /* skip ac */
@@ -8109,17 +8452,20 @@ static void inp_check_syntax(struct card *deck)
                 char* nnacline = nacline;
                 /* get first token after ac */
                 char* numtok = gettok_node(&nnacline);
-                char* numtokfree = numtok;
-                /* Check if token is a parameter, to be filled in later */
-                if (*numtok == '\'' || *numtok == '{') {
-                    err = 0;
+                if (numtok) {
+                    char* numtokfree = numtok;
+                    /* Check if token is a parameter, to be filled in later */
+                    if (*numtok == '\'' || *numtok == '{') {
+                        err = 0;
+                    }
+                    else {
+                        /* check if token is a valid number */
+                        INPevaluate(&numtok, &err, 0);
+                    }
+                    tfree(numtokfree);
                 }
-                else {
-                    /* check if token is a valid number */
-                    INPevaluate(&numtok, &err, 0);
-                }
-
-                tfree(numtokfree);
+                else
+                    err = 1;
             }
             /* if no number, replace 'ac' by 'ac 1 0' */
             if (err){
@@ -8672,7 +9018,7 @@ utf8_syntax_check(struct card *deck)
         s = utf8_check((unsigned char*)curr_line);
 
         if (s) {
-            fprintf(stderr, "Error: UTF-8 syntax error in line %d at %s\n", card->linenum_orig, s);
+            fprintf(stderr, "Error: UTF-8 syntax error in input deck,\n    line %d at token/word %s\n", card->linenum_orig, s);
             controlled_exit(1);
         }
     }

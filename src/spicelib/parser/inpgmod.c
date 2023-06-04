@@ -462,8 +462,10 @@ INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessa
                     /* Add card structure to model */
                     info = INPcardTab[lastType];
                     error = info->newCard(&tmpCard, model->INPmodfast);
-                    if (error)
+                    if (error) {
+                        FREE(cardName);
                         return error;
+                    }
                     /* Handle parameter-less cards */
                 } else if (cinprefix(cardName, "title", 3)) {
                     /* Do nothing */
@@ -472,6 +474,7 @@ INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessa
                 } else if (cinprefix(cardName, "end", 3)) {
                     /* Terminate parsing */
                     *errMessage = err;
+                    FREE(cardName);
                     return 0;
                 } else {
                     /* Error */
@@ -479,6 +482,7 @@ INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessa
                                     tprintf("Error on card %d : unrecognized name (%s) - ignored",
                                             cardNum, cardName));
                 }
+                FREE(cardName);
             }
         }
 
@@ -525,6 +529,8 @@ INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessa
                 }
 
                 error = info->setCardParm(info->cardParms[idx].id, value, tmpCard);
+                if (info->cardParms[idx].dataType & IF_STRING)
+                    FREE(value->sValue);
                 if (error)
                     return error;
             }

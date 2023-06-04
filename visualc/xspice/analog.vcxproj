@@ -254,6 +254,8 @@
     <ClCompile Include="icm\analog\file_source\file_source-ifspec.c" />
     <ClCompile Include="icm\analog\delay\delay-cfunc.c" />
     <ClCompile Include="icm\analog\delay\delay-ifspec.c" />
+    <ClCompile Include="icm\analog\xfer\xfer-cfunc.c" />
+    <ClCompile Include="icm\analog\xfer\xfer-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
@@ -297,6 +299,8 @@
     <None Include="..\..\src\xspice\icm\analog\file_source\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\delay\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\delay\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\xfer\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\xfer\ifspec.ifs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\ngspice\dstring.h" />

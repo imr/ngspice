@@ -32,7 +32,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
     if (instPtr) { 
         if (inInstPtr)
 	    *inInstPtr = instPtr;
-        return E_EXISTS;
+        return E_EXISTS_BAD;
     }
 
     type = modPtr->GENmodType;

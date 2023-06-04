@@ -50,6 +50,7 @@ typedef struct sVSRCinstance {
     int VSRCfunctionType;   /* code number of function type for source */
     int VSRCfunctionOrder;  /* order of the function for the source */
     int VSRCrBreakpt;       /* pwl repeat breakpoint index */
+    double  VSRCbreak_time; /* time of most-recent breakpoint */
     double *VSRCcoeffs; /* pointer to array of coefficients */
 
     double VSRCdcValue; /* DC and TRANSIENT value of source */

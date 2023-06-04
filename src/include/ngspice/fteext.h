@@ -93,6 +93,7 @@ extern void *cx_mean(void *, short int , int , int *, short int *);
 extern void *cx_stddev(void *, short int , int , int *, short int *);
 extern void *cx_length(void *, short int , int , int *, short int *);
 extern void *cx_vector(void *, short int , int , int *, short int *);
+extern void *cx_cvector(void *, short int , int , int *, short int *);
 extern void *cx_unitvec(void *, short int , int , int *, short int *);
 extern void *cx_plus(void *, void *, short int , short int , int );
 extern void *cx_minus(void *, void *, short int , short int , int );

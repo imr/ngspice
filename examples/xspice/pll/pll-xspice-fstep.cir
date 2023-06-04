@@ -66,9 +66,10 @@ abridge-w1 [d_divout d_ref d_Un d_D] [s1 s2 u1 d1] dac1 ; change to d_u or d_Un
 
 .control
 save cont s1 s2 u1 d1
+set xbrushwidth=2
 let isbmode = $?batchmode
 if isbmode = 0
-  iplot cont
+  iplot -w $&simtime cont
 endif
 * calculate breakpoint for switching frequency
 let t1_3 = simtime/3

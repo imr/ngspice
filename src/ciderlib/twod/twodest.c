@@ -66,10 +66,31 @@ TWOdestroy(TWOdevice *pDevice)
       FREE( pElem );
     }
     FREE( pDevice->elements );
+    for (int xIndex = 1; xIndex < pDevice->numXNodes; xIndex++) {
+      FREE(pDevice->elemArray[xIndex]);
+    }
     FREE( pDevice->elemArray );
   }
 
-  /* destroy the contacts & channels */
+  if (pDevice->pMaterials) {
+      TWOmaterial* pMtmp = pDevice->pMaterials;
+      while (pMtmp) {
+          TWOmaterial* pMtmpnext = pMtmp->next;
+          FREE(pMtmp);
+          pMtmp = pMtmpnext;
+      }
+  }
+
+  if (pDevice->pFirstContact) {
+      struct sTWOcontact* pFCtmp = pDevice->pFirstContact;
+      while (pFCtmp) {
+          struct sTWOcontact* pFCtmpnext = pFCtmp->next;
+          FREE(pFCtmp);
+          pFCtmp = pFCtmpnext;
+      }
+  }
+
+  /* destroy the channels */
   /* NOT IMPLEMENTED */
 
   FREE( pDevice );

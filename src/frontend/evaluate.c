@@ -191,7 +191,7 @@ doop(char what,
     struct dvec *v1, *v2, *res;
     ngcomplex_t *c1 = NULL, *c2 = NULL, lc;
     double *d1 = NULL, *d2 = NULL, ld;
-    int length = 0, i;
+    int length = 0, i, longer;
     void *data;
     bool free1 = FALSE, free2 = FALSE, relflag = FALSE;
 
@@ -253,6 +253,7 @@ doop(char what,
     /* Make sure we have data of the same length. */
     length = ((v1->v_length > v2->v_length) ? v1->v_length : v2->v_length);
     if (v1->v_length < length) {
+        longer = 2;
         free1 = TRUE;
         if (isreal(v1)) {
             ld = 0.0;
@@ -275,6 +276,7 @@ doop(char what,
                 c1[i] = lc;
         }
     } else {
+        longer = 0;
         if (isreal(v1))
             d1 = v1->v_realdata;
         else
@@ -282,6 +284,7 @@ doop(char what,
     }
 
     if (v2->v_length < length) {
+        longer = 1;
         free2 = TRUE;
         if (isreal(v2)) {
             ld = 0.0;
@@ -335,10 +338,27 @@ doop(char what,
     }
 
     /* This is a non-obvious thing */
+
     if (v1->v_scale != v2->v_scale) {
-        fprintf(cp_err, "Warning: scales of %s and %s are different.\n",
-                v1->v_name, v2->v_name);
-        res->v_scale = NULL;
+        switch (longer) {
+        case 0:
+            if (!v1->v_scale)
+                res->v_scale = v2->v_scale;
+            else if (!v2->v_scale)
+                res->v_scale = v1->v_scale;
+            else
+                fprintf(cp_err,
+                         "Warning: scales of %s and %s are different.\n",
+                        v1->v_name, v2->v_name);
+            res->v_scale = v1->v_scale; // Do something!
+            break;
+        case 1:
+            res->v_scale = v1->v_scale;
+            break;
+        case 2:
+            res->v_scale = v2->v_scale;
+            break;
+        }
     } else {
         res->v_scale = v1->v_scale;
     }

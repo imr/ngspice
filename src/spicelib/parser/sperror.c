@@ -29,7 +29,10 @@ const char *SPerror(int type)
     case E_EXISTS:
 	msg = "device already exists, existing one being used";
 	break;
-    case E_NODEV:
+    case E_EXISTS_BAD:
+	msg = "device already exists, bail out";
+	break;
+	case E_NODEV:
 	msg = "no such device";
 	break;
     case E_NOMOD:

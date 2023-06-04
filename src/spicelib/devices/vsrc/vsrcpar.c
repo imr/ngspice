@@ -131,6 +131,13 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 here->VSRCrGiven = FALSE;
                 break;
             }
+
+            /* buggy input? r is not a repetition coefficient */
+            if (!here->VSRCcoeffs || here->VSRCfunctionOrder < 2) {
+                here->VSRCrGiven = FALSE;
+                break;
+            }
+
             here->VSRCr = value->rValue;
             here->VSRCrGiven = TRUE;
 
@@ -140,7 +147,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             }
 
             end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);
-            if ( here->VSRCr > end_time ) {
+            if ( here->VSRCr >= end_time ) {
               fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source must be smaller than final time point given!\n", here->VSRCr );
               return ( E_PARMVAL );
             }

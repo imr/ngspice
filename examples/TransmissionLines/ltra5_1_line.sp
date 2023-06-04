@@ -60,6 +60,9 @@ x1 2 3 xonecm
 tran 0.001ns 10ns 0 0.1ns
 * onecm10
 *tran 0.001ns 10ns 0 0.01ns
+rusage
+set color0=white
+set xbrushwidth=3
 plot v(1) v(2) v(3)
 .endc
 

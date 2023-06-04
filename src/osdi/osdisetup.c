@@ -186,7 +186,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
   OsdiInitInfo init_info;
   OsdiNgspiceHandle handle;
   GENmodel *gen_model;
-  int res;
+  int res = (OK);
   int error;
   CKTnode *tmp;
   GENinstance *gen_inst;
@@ -304,7 +304,7 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
   OsdiInitInfo init_info;
   OsdiNgspiceHandle handle;
   GENmodel *gen_model;
-  int res;
+  int res = (OK);
   GENinstance *gen_inst;
 
   OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);

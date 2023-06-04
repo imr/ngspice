@@ -86,6 +86,7 @@
     if $?batchmode
     else
       run
+      rusage time
       plot v(16) v(13) v(17) v(1)+6 v(4)+6 v(3)+6
     end
     .endc

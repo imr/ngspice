@@ -895,6 +895,9 @@ void inp_probe(struct card* deck)
                 else if (err == 2) {
                     fprintf(stderr, "Warning: Zero voltage sources already set,\n   .probe %s will be ignored\n", wltmp->wl_word);
                 }
+                else if (err == 3) {
+                    fprintf(stderr, "Warning: Number of nodes mismatch,\n   .probe %s will be ignored\n", wltmp->wl_word);
+                }
                 continue;
             }
             else if (!haveall) {
@@ -1357,6 +1360,15 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         char* newnode = tprintf("probe_int_%s_%s_%d", strnode1, instname, nodenum);
         char nodenumstr[3];
         char *nodename1 = get_terminal_name(instname, itoa10(nodenum, nodenumstr), instances);
+
+        if (!nodename1) {
+            tfree(begstr);
+            tfree(strnode1);
+            ds_free(&BVrefline);
+            ds_free(&Bpowerline);
+            ds_free(&Bpowersave);
+            return 3;
+        }
 
         newline = tprintf("%s %s %s", begstr, newnode, instline);
 

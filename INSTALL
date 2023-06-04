@@ -18,7 +18,7 @@ Table of contents
     1.5.1 Most useful options
     1.5.2 Options Specific to Enable Ngspice as a shared library
     1.5.3 Options Useful for Debugging Ngspice
-   1.6 Installation on Red Hat, Oracle or Centos Linux
+   1.6 Installation on Red Hat, Oracle or CentOS Linux
   2 Compilers and Options
   3 Compiling For Multiple Architectures
   4 Installation Names
@@ -67,32 +67,40 @@ This file describes the procedures to install ngspice from sources.
  If libfftw is detected on your system, it will be used instead of the
  internal fft algorithms.
 
- If you want to compile the source from the git repository you need
- additional software: autoconf, automake, libtool.
+ If you want to compile the source from the git repository, or if you want to
+ use the compile script ./compile_linux.sh, you will need  additional software:
+ autoconf, automake, libtool.
 
  The following software may be needed when enabling additional features:
- editline, tcl/tk, adms.
+ editline, tcl/tk.
 
- Please have a look at the actual ngspice manual, downloadable at
+ Please have a look at the current ngspice manual, downloadable at
  http://ngspice.sourceforge.net/docs.html, which gives you much more
  information on ngspice and its usage.
 
  For compiling ngspice as a shared library, see section 1.4.
 
 
-1.2 Install from tarball (e.g. ngspice-36.tar.gz)
+1.2 Install from tarball (e.g. ngspice-40.tar.gz)
 
  This covers installation from a release distribution (for example
- ngspice-36.tar.gz, the so called tar ball).
+ ngspice-40.tar.gz, the so called tar ball).
 
- After downloading the tar ball to a local directory unpack it using:
+ After downloading the tar ball to a local directory, unpack it by command:
 
- $ tar -zxvf ngspice-36.tar.gz
+ $ tar -zxvf ngspice-40.tar.gz
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
 
- You should be able to do:
+ The most comfortable way to compile ngspice is running the compile script
+ compile_linux.sh within the terminal window by ./compile_linux.sh. Admin
+ rights are required to allow the installation included in the script.
+
+ CentOS users may need to add -std=c99 to the CFLAGS in the ../configure
+ statement.
+
+ If you want to compile ngspice manually, you should be able to do:
 
  $ mkdir release
  $ cd release
@@ -105,18 +113,15 @@ This file describes the procedures to install ngspice from sources.
  A simple ../configure might be sufficient for a basic ngspice, but the preferred
  arguments to ../configure are
   --with-x --with-readline=yes and --disable-debug
- providing you with a comfortably working ngspice (see section 1.4 for details).
+ providing you with a comfortably working ngspice.
 
- See the section titled 'Advanced Install' for instructions about additional arguments
+ See the section 1.5 titled 'Advanced Install' for instructions about additional arguments
  that can be passed to ../configure to customise the build and installation.
-
- Do not use the script ./autogen.sh, because it is not required for
- compiling and installing ngspice from the tarball.
 
  A fully featured ngspice on LINUX may be obtained with the following commands:
  $ mkdir release
  $ cd release
- $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp
+ $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-osdi --enable-openmp
  $ make 2>&1 | tee make.log
  $ sudo make install
 
@@ -141,6 +146,12 @@ This file describes the procedures to install ngspice from sources.
  The project uses the GNU build process. The compile output should go into a separate
  directory, so to e.g. maintain separate debug and release versions.
 
+ The most comfortable way to compile ngspice is running the compile script
+ compile_linux.sh within the terminal window by ./compile_linux.sh. Admin
+ rights are required to allow the installation included in the script.
+
+ If you want to copile ngspice manually, you may run
+
  $ ./autogen.sh
  $ mkdir debug
  $ cd debug
@@ -148,7 +159,7 @@ This file describes the procedures to install ngspice from sources.
  $ make
  $ sudo make install
 
- See the section titled 'Advanced Install' for instructions about arguments
+ See the section 1.5 titled 'Advanced Install' for instructions about arguments
  that can be passed to ./configure to customize the build and installation.
 
  Preferred arguments to ./configure to obtain a comfortably working ngspice may be
@@ -156,21 +167,21 @@ This file describes the procedures to install ngspice from sources.
  executable).
 
  A fully featured ngspice on LINUX may be obtained with the following commands:
- $ ./autogen.sh --adms
+ $ ./autogen.sh
  $ mkdir release
  $ cd release
- $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-adms
+ $ ../configure --with-x --enable-xspice --disable-debug --enable-cider --with-readline=yes --enable-openmp --enable-osdi
  $ make 2>&1 | tee make.log
  $ sudo make install
 
- A bash script compile_linux.sh is available including all useful options,
+ The bash script compile_linux.sh includes all the useful options,
  compiling and installation procedures.
 
 
 1.4 ngspice as a shared library
 
  The relevant configure options for the ngspice shared library are:
- $ --with-ngshared --enable-xspice --disable-debug --enable-cider --enable-openmp
+ $ --with-ngshared --enable-xspice --disable-debug --enable-cider --enable-osdi --enable-openmp
 
  Typically the two aliases libngspice.so, libngspice.so.0 and the compiled
  library libngspice.so.0.0.1 are made. The install locations depend on
@@ -312,12 +323,16 @@ This file describes the procedures to install ngspice from sources.
  problem yourself, then the development team will love to hear from you.
 
 
-1.6 Installation on Red Hat, Oracle or Centos
+1.6 Installation on Red Hat, Oracle or CentOS
 
- These OSs, widely distributed among commercial users, require some
+ These OSs, widely distributed among commercial users, but offering
+ only an old gcc compiler, e.g. version 4.8, will require some
  special considerations. There is an extra document, "NGSPICE on Red
  Hat Like Distributions.pdf", provided by Justin Fisher, available with
  the ngspice distribution.
+
+ CentOS users may need to add -std=c99 to the CFLAGS in their ../configure
+ statement.
 
 
 2 Compilers and Options
@@ -502,10 +517,10 @@ This file describes the procedures to install ngspice from sources.
  --disable-debug (-O2 optimization, no debug information)
 
  A fully featured ngspice on Windows may be obtained with the following commands:
- $ ./autogen.sh --adms
+ $ ./autogen.sh
  $ mkdir release
  $ cd release
- $ ../configure --with-wingui --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-adms
+ $ ../configure --with-wingui --enable-cider --disable-debug --enable-openmp --enable-xspice --enable-osdi
  $ make install
 
  However, to compile code extracted from the git repository the procedure is
@@ -523,7 +538,7 @@ This file describes the procedures to install ngspice from sources.
  Go to directory ngspice
  $ cd /d/Spice/ngspice
  Start compiling, e.g. by calling
- $ ./autogen.sh --adms
+ $ ./autogen.sh
  $ ./compile_min.sh
 
  Update the ngspice files:
@@ -680,7 +695,7 @@ This file describes the procedures to install ngspice from sources.
  You then will not have any graphics interface. In CYGWIN you may add --with-x
  for the X11 graphics (not available in mingw). A typical configure command
  may look like
- ./configure --enable-adms --enable-xspice --enable-cider --enable-openmp
+ ./configure --enable-osdi --enable-xspice --enable-cider --enable-openmp
  --disable-debug CFLAGS=-m64 LDFLAGS=-m64 prefix=C:/Spice64
 
 
@@ -708,7 +723,9 @@ cross-compile-shared.sh.
  3. Execute this command:
       sudo port install autoconf automake libtool bison flex ncurses
            readline fontconfig freetype libomp xorg-libXaw
- 4. Use one of the scripts provided: compile_macos.sh or build-for-mac-os.sh
+ 4. Use one of the scripts provided: compile_macos_clang.sh or compile_macos_gcc.sh
+    gcc may be installed from Homebre at https://formulae.brew.sh/formula/gcc, with the
+    advantage that it supports OpenMP.
  5. Or run the commands manually:  Configure NGSPICE invoking "./configure".
     A complete set of features is:
       ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no

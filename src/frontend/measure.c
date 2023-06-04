@@ -283,6 +283,22 @@ do_measure(
         resname = gettok(&line);
         meastype = gettok(&line);
 
+        if (!an_type){
+            fprintf(cp_err, "\nWarning: Incomplete measurement statement in line\n    %s\nignored!\n", meas_card->line);
+            continue;
+        }
+        if (!resname){
+            fprintf(cp_err, "\nWarning: Incomplete measurement statement in line\n    %s\nignored!\n", meas_card->line);
+            tfree(an_type);
+            continue;
+        }
+        if (!meastype) {
+            fprintf(cp_err, "\nWarning: Incomplete measurement statement in line\n    %s\nignored!\n", meas_card->line);
+            tfree(an_type);
+            tfree(resname);
+            continue;
+        }
+
         if (chkAnalysisType(an_type) != TRUE) {
             if (!chk_only) {
                 fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->linenum);
@@ -398,6 +414,20 @@ do_measure(
         an_type = gettok(&line);
         resname = gettok(&line);
         meastype = gettok(&line);
+
+        if (!an_type) {
+            /* Warnings have already been issued in first pass */
+            continue;
+        }
+        if (!resname) {
+            tfree(an_type);
+            continue;
+        }
+        if (!meastype) {
+            tfree(an_type);
+            tfree(resname);
+            continue;
+        }
 
         if (chkAnalysisType(an_type) != TRUE) {
             if (!chk_only) {

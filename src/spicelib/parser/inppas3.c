@@ -148,6 +148,8 @@ INPpas3(CKTcircuit *ckt, struct card *data, INPtables *tab, TSKtask *task,
                         FREE(name);
                         /* Gobble the rest of the token */
                         line = nexttok(line);
+                        if (!line)
+                            break;
                         continue;
                     }
                     ptemp.rValue = INPevaluate(&line,&error,1);
