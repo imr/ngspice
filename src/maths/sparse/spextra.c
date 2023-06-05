@@ -23,10 +23,9 @@
  */
 
 #define spINSIDE_SPARSE
-#include "spconfig.h"
+#include "spConfig.h"
 #include "ngspice/spmatrix.h"
-#include "spdefs.h"
-
+#include "spDefs.h"
 
 void
 spConstMult(MatrixPtr matrix, double constant)

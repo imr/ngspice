@@ -1,5 +1,3 @@
-#ifndef ngspice_SPDEFS_H
-#define ngspice_SPDEFS_H
 /*
  *  DATA STRUCTURE AND MACRO DEFINITIONS for Sparse.
  *
@@ -15,30 +13,67 @@
 /*
  *  Revision and copyright information.
  *
- *  Copyright (c) 1985,86,87,88,89,90
- *  by Kenneth S. Kundert and the University of California.
+ *  Copyright (c) 1985-2003 by Kenneth S. Kundert
  *
- *  Permission to use, copy, modify, and distribute this software and
- *  its documentation for any purpose and without fee is hereby granted,
- *  provided that the copyright notices appear in all copies and
- *  supporting documentation and that the authors and the University of
- *  California are properly credited.  The authors and the University of
- *  California make no representations as to the suitability of this
- *  software for any purpose.  It is provided `as is', without express
- *  or implied warranty.
+ *  $Date: 2003/06/29 04:19:52 $
+ *  $Revision: 1.2 $
  */
 
 
 
 
 /*
- *  IMPORTS
+ *  If running lint, change some of the compiler options to get a more
+ *  complete inspection.
  */
 
-#include <stdio.h>
+#ifdef lint
+#undef  REAL
+#undef  spCOMPLEX
+#undef  EXPANDABLE
+#undef  TRANSLATE
+#undef  INITIALIZE
+#undef  DELETE
+#undef  STRIP
+#undef  MODIFIED_NODAL
+#undef  QUAD_ELEMENT
+#undef  TRANSPOSE
+#undef  SCALING
+#undef  DOCUMENTATION
+#undef  MULTIPLICATION
+#undef  DETERMINANT
+#undef  CONDITION
+#undef  PSEUDOCONDITION
+#undef  FORTRAN
+#undef  DEBUG
 
-#undef  ABORT
-#undef  FREE
+#define  REAL                           YES
+#define  spCOMPLEX                      YES
+#define  EXPANDABLE                     YES
+#define  TRANSLATE                      YES
+#define  INITIALIZE                     YES
+#define  DELETE                         YES
+#define  STRIP                          YES
+#define  MODIFIED_NODAL                 YES
+#define  QUAD_ELEMENT                   YES
+#define  TRANSPOSE                      YES
+#define  SCALING                        YES
+#define  DOCUMENTATION                  YES
+#define  MULTIPLICATION                 YES
+#define  DETERMINANT                    YES
+#define  CONDITION                      YES
+#define  PSEUDOCONDITION                YES
+#define  FORTRAN                        YES
+#define  DEBUG                          YES
+
+#define  LINT                           YES
+#else /* not lint */
+#define  LINT                           NO
+#endif /* not lint */
+
+
+
+
 
 
 
@@ -46,9 +81,10 @@
  *   MACRO DEFINITIONS
  *
  *   Macros are distinguished by using solely capital letters in their
- *   identifiers.  This contrasts with C defined identifiers which are
- *   strictly lower case, and program variable and procedure names
- *   which use both upper and lower case.  */
+ *   identifiers.  This contrasts with C defined identifiers which are strictly
+ *   lower case, and program variable and procedure names which use both upper
+ *   and lower case.
+ */
 
 /* Begin macros. */
 
@@ -56,15 +92,32 @@
 #define  BOOLEAN        int
 #define  NO             0
 #define  YES            1
+#define  NOT            !
+#define  AND            &&
+#define  OR             ||
 
-#define  SPARSE_ID      0x772773        /* Arbitrary (is Sparse on phone). */
-#define  IS_SPARSE(matrix)      ((matrix) != NULL &&            \
-                                 (matrix)->ID == SPARSE_ID)
-#define  IS_VALID(matrix)       ((matrix) != NULL &&            \
-                                 (matrix)->ID == SPARSE_ID &&   \
-                                 (matrix)->Error >= spOKAY &&   \
-                                 (matrix)->Error < spFATAL)
-#define  IS_FACTORED(matrix)    ((matrix)->Factored && !(matrix)->NeedsOrdering)
+/* NULL pointer */
+#ifndef  NULL
+#define  NULL           0
+#endif
+
+/* Define macros for validating matrix. */
+#define  SPARSE_ID			0xDeadBeef	/* Arbitrary. */
+#define  IS_SPARSE(matrix)		(((matrix) != NULL) AND \
+                                	 ((matrix)->ID == SPARSE_ID))
+#define  NO_ERRORS(matrix)		(((matrix)->Error >= spOKAY) AND \
+				 	 ((matrix)->Error < spFATAL))
+#define  IS_FACTORED(matrix)    	((matrix)->Factored AND \
+					 NOT (matrix)->NeedsOrdering)
+
+#define  ASSERT_IS_SPARSE(matrix)	vASSERT( IS_SPARSE(matrix), \
+					 spcMatrixIsNotValid )
+#define  ASSERT_NO_ERRORS(matrix)	vASSERT( NO_ERRORS(matrix), \
+					 spcErrorsMustBeCleared )
+#define  ASSERT_IS_FACTORED(matrix)	vASSERT( IS_FACTORED(matrix), \
+					 spcMatrixMustBeFactored )
+#define  ASSERT_IS_NOT_FACTORED(matrix)	vASSERT( NOT (matrix)->Factored, \
+					 spcMatrixMustNotBeFactored )
 
 /* Macro commands */
 /* Macro functions that return the maximum or minimum independent of type. */
@@ -78,36 +131,20 @@
 #define  SQR(a)             ((a)*(a))
 
 /* Macro procedure that swaps two entities. */
-#define SWAP(type, a, b)                        \
-    do {                                        \
-        type SWAP_macro_local = a;              \
-        a = b;                                  \
-        b = SWAP_macro_local;                   \
-    } while(0)
+#define  SWAP(type, a, b)   {type swapx; swapx = a; a = b; b = swapx;}
 
 
+/*
+ * COMPLEX OPERATION MACROS
+ */
+#ifndef ngspice_COMPLEX_H
 
-/* Real and Complex numbers definition */
-
-#define spREAL  double
-
-/* Begin `realNumber'. */
-typedef  spREAL  RealNumber, *RealVector;
-
-/* Begin `ComplexNumber'. */
-typedef  struct
-{   RealNumber  Real;
-    RealNumber  Imag;
-} ComplexNumber, *ComplexVector;
-
-/* Macro function that returns the approx absolute value of a complex
-   number. */
+/* Macro function that returns the approx absolute value of a complex number. */
+#if spCOMPLEX
 #define  ELEMENT_MAG(ptr)   (ABS((ptr)->Real) + ABS((ptr)->Imag))
- 
-#define  CMPLX_ASSIGN_VALUE(cnum, vReal, vImag)		\
-{   (cnum).Real = vReal;	\
-    (cnum).Imag = vImag;	\
-}         
+#else
+#define  ELEMENT_MAG(ptr)   ((ptr)->Real < 0.0 ? -(ptr)->Real : (ptr)->Real)
+#endif
 
 /* Complex assignment statements. */
 #define  CMPLX_ASSIGN(to,from)  \
@@ -126,19 +163,10 @@ typedef  struct
 {   (to).Real = -(from).Real;                   \
     (to).Imag = (from).Imag;                    \
 }
-
 #define  CMPLX_CONJ(a)  (a).Imag = -(a).Imag
-
-#define  CONJUGATE(a)	(a).Imag = -(a).Imag
-
 #define  CMPLX_NEGATE(a)        \
 {   (a).Real = -(a).Real;       \
     (a).Imag = -(a).Imag;       \
-}
-
-#define  CMPLX_NEGATE_SELF(cnum)	\
-{   (cnum).Real = -(cnum).Real;	\
-    (cnum).Imag = -(cnum).Imag;	\
 }
 
 /* Macro that returns the approx magnitude (L-1 norm) of a complex number. */
@@ -148,17 +176,12 @@ typedef  struct
 #define  CMPLX_INF_NORM(a)      (MAX (ABS((a).Real),ABS((a).Imag)))
 
 /* Macro function that returns the magnitude (L-2 norm) of a complex number. */
-#define  CMPLX_2_NORM(a)        (hypot((a).Real, (a).Imag))
+#define  CMPLX_2_NORM(a)        (sqrt((a).Real*(a).Real + (a).Imag*(a).Imag))
 
 /* Macro function that performs complex addition. */
 #define  CMPLX_ADD(to,from_a,from_b)            \
 {   (to).Real = (from_a).Real + (from_b).Real;  \
     (to).Imag = (from_a).Imag + (from_b).Imag;  \
-}
-
-/* Macro function that performs addition of a complex and a scalar. */
-#define  CMPLX_ADD_SELF_SCALAR(cnum, scalar)      \
-{   (cnum).Real += scalar;   \
 }
 
 /* Macro function that performs complex subtraction. */
@@ -178,7 +201,7 @@ typedef  struct
 {   (to).Real -= (from).Real;           \
     (to).Imag -= (from).Imag;           \
 }
- 
+
 /* Macro function that multiplies a complex number by a scalar. */
 #define  SCLR_MULT(to,sclr,cmplx)       \
 {   (to).Real = (sclr) * (cmplx).Real;  \
@@ -198,32 +221,13 @@ typedef  struct
     (to).Imag = (from_a).Real * (from_b).Imag + \
                 (from_a).Imag * (from_b).Real;  \
 }
- 
-/* Macro function that multiplies a complex number and a scalar. */
-#define  CMPLX_MULT_SCALAR(to,from, scalar)      \
-{   (to).Real = (from).Real * scalar;   \
-    (to).Imag = (from).Imag * scalar;   \
-}
- 
-/* Macro function that implements *= for a complex and a scalar number. */
- 
-#define  CMPLX_MULT_SELF_SCALAR(cnum, scalar)      \
-{   (cnum).Real *= scalar;   \
-    (cnum).Imag *= scalar;   \
-}
-
-/* Macro function that multiply-assigns a complex number by a scalar. */
-#define  SCLR_MULT_ASSIGN(to,sclr)      \
-{   (to).Real *= (sclr);                \
-    (to).Imag *= (sclr);                \
-}
 
 /* Macro function that implements to *= from for complex numbers. */
 #define  CMPLX_MULT_ASSIGN(to,from)             \
-{   RealNumber to_Real_ = (to).Real;            \
-    (to).Real = to_Real_ * (from).Real -        \
+{   RealNumber to_real_ = (to).Real;            \
+    (to).Real = to_real_ * (from).Real -        \
                 (to).Imag * (from).Imag;        \
-    (to).Imag = to_Real_ * (from).Imag +        \
+    (to).Imag = to_real_ * (from).Imag +        \
                 (to).Imag * (from).Real;        \
 }
 
@@ -309,8 +313,8 @@ typedef  struct
 /* Complex division:  to = num / den */
 #define CMPLX_DIV(to,num,den)                                           \
 {   RealNumber  r_, s_;                                                 \
-    if (((den).Real >= (den).Imag && (den).Real > -(den).Imag) ||       \
-        ((den).Real < (den).Imag && (den).Real <= -(den).Imag))         \
+    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
+        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
     {   r_ = (den).Imag / (den).Real;                                   \
         s_ = (den).Real + r_*(den).Imag;                                \
         (to).Real = ((num).Real + r_*(num).Imag)/s_;                    \
@@ -327,8 +331,8 @@ typedef  struct
 /* Complex division and assignment:  num /= den */
 #define CMPLX_DIV_ASSIGN(num,den)                                       \
 {   RealNumber  r_, s_, t_;                                             \
-    if (((den).Real >= (den).Imag && (den).Real > -(den).Imag) ||       \
-        ((den).Real < (den).Imag && (den).Real <= -(den).Imag))         \
+    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
+        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
     {   r_ = (den).Imag / (den).Real;                                   \
         s_ = (den).Real + r_*(den).Imag;                                \
         t_ = ((num).Real + r_*(num).Imag)/s_;                           \
@@ -347,8 +351,8 @@ typedef  struct
 /* Complex reciprocation:  to = 1.0 / den */
 #define CMPLX_RECIPROCAL(to,den)                                        \
 {   RealNumber  r_;                                                     \
-    if (((den).Real >= (den).Imag && (den).Real > -(den).Imag) ||       \
-        ((den).Real < (den).Imag && (den).Real <= -(den).Imag))         \
+    if (((den).Real >= (den).Imag AND (den).Real > -(den).Imag) OR      \
+        ((den).Real < (den).Imag AND (den).Real <= -(den).Imag))        \
     {   r_ = (den).Imag / (den).Real;                                   \
         (to).Imag = -r_*((to).Real = 1.0/((den).Real + r_*(den).Imag)); \
     }                                                                   \
@@ -360,40 +364,184 @@ typedef  struct
 
 
 
-
-
-
-/* Allocation */
-
-extern void * tmalloc(size_t);
-extern void   txfree(const void *);
-extern void * trealloc(const void *, size_t);
-
-#define SP_MALLOC(type,number)  (type *) tmalloc((size_t)(number) * sizeof(type))
-#define SP_REALLOC(ptr,type,number) \
-           ptr = (type *) trealloc(ptr, (size_t)(number) * sizeof(type))
-#define SP_FREE(ptr) { if ((ptr) != NULL) txfree(ptr); (ptr) = NULL; }
-
-
-#include "ngspice/config.h"
-
-/* A new calloc */
-#ifndef HAVE_LIBGC
-#define SP_CALLOC(ptr,type,number)                           \
-{ ptr = (type *) calloc((size_t)(number), sizeof(type));     \
-}
-#else /* HAVE_LIBCG */
-#define SP_CALLOC(ptr,type,number)                           \
-{ ptr = (type *) tmalloc((size_t)(number) * sizeof(type));   \
-}
-#include <gc/gc.h>
-#define tmalloc(m)      GC_malloc(m)
-#define trealloc(m, n)  GC_realloc((m), (n))
-#define tfree(m)
-#define txfree(m)
 #endif
 
-#include "ngspice/defines.h"
+
+
+/*
+ *  ASSERT and ABORT
+ *
+ *  Macro used to assert that if the code is working correctly, then 
+ *  a condition must be true.  If not, then execution is terminated
+ *  and an error message is issued stating that there is an internal
+ *  error and giving the file and line number.  These assertions are
+ *  not evaluated unless the DEBUG flag is true.
+ */
+
+#if DEBUG
+#define ASSERT(condition)	\
+{   if (NOT(condition))		\
+    {   (void)fflush(stdout);	\
+	(void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n    assertion `%s' failed.\n",\
+	__FILE__, __LINE__, spcQUOTE(condition) ); \
+        (void)fflush(stderr);	\
+	abort();		\
+    }				\
+}
+#else
+#define ASSERT(condition)
+#endif
+
+#if DEBUG
+#define vASSERT(condition,message)	\
+{   if (NOT(condition))			\
+	vABORT(message);		\
+}
+#else
+#define vASSERT(condition,message)
+#endif
+
+#if DEBUG
+#define  vABORT(message)	\
+{   (void)fflush(stdout);	\
+    (void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n    %s.\n", __FILE__, __LINE__, message );\
+    (void)fflush(stderr);	\
+    abort();			\
+}
+
+#define  ABORT()		\
+{   (void)fflush(stdout);	\
+    (void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n", __FILE__, __LINE__ );	\
+    (void)fflush(stderr);	\
+    abort();			\
+}
+#else
+#define  vABORT(message)	abort()
+#define  ABORT()		abort()
+#endif
+
+
+
+
+
+
+/*
+ *  IMAGINARY VECTORS
+ *
+ *  The imaginary vectors iRHS and iSolution are only needed when the
+ *  options spCOMPLEX and spSEPARATED_COMPLEX_VECTORS are set.  The following
+ *  macro makes it easy to include or exclude these vectors as needed.
+ */
+
+#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
+#define IMAG_VECTORS    , iRHS, iSolution
+#define IMAG_RHS        , iRHS
+#define IMAG_RHS_DECL   , RealVector iRHS
+#define IMAG_VECT_DECL  , RealVector iRHS, RealVector iSolution
+#else
+#define IMAG_VECTORS
+#define IMAG_RHS
+#define IMAG_RHS_DECL
+#define IMAG_VECT_DECL
+#endif
+
+
+
+
+
+
+/*
+ * MEMORY ALLOCATION
+ */
+#include <stddef.h>
+spcEXTERN void *malloc(size_t size);
+spcEXTERN void *calloc(size_t nmemb, size_t size);
+spcEXTERN void *realloc(void *ptr, size_t size);
+spcEXTERN void free(void *ptr);
+spcEXTERN void abort(void);
+
+#define ALLOC(type,number)  ((type *)malloc((unsigned)(sizeof(type)*(number))))
+#define REALLOC(ptr,type,number)  \
+           ptr = (type *)realloc((char *)ptr,(unsigned)(sizeof(type)*(number)))
+#define FREE(ptr) { if ((ptr) != NULL) free((char *)(ptr)); (ptr) = NULL; }
+
+
+/* Calloc that properly handles allocating a cleared vector. */
+#define CALLOC(ptr,type,number)                         \
+{   int i; ptr = ALLOC(type, number);                   \
+    if (ptr != (type *)NULL)                            \
+        for(i=(number)-1;i>=0; i--) ptr[i] = (type) 0;  \
+}
+
+
+
+
+
+
+
+/*
+ * Utility Functions
+ */
+/*
+ * Compute the product of two intergers while avoiding overflow.
+ * Used when computing Markowitz products.
+ */
+
+#define spcMarkoProd(product, op1, op2) \
+        if (( (op1) > LARGEST_SHORT_INTEGER AND (op2) != 0) OR \
+            ( (op2) > LARGEST_SHORT_INTEGER AND (op1) != 0)) \
+        {   double fProduct = (double)(op1) * (double)(op2); \
+            if (fProduct >= LARGEST_LONG_INTEGER) \
+                (product) = LARGEST_LONG_INTEGER; \
+            else \
+                (product) = (long)fProduct; \
+        } \
+        else (product) = (op1)*(op2);
+
+
+
+
+
+
+/*
+ *  REAL NUMBER
+ */
+
+/* Begin `RealNumber'. */
+
+typedef  spREAL  RealNumber, *RealVector;
+
+
+
+
+
+
+
+
+/*
+ *  COMPLEX NUMBER DATA STRUCTURE
+ *
+ *  >>> Structure fields:
+ *  Real  (RealNumber)
+ *      The real portion of the number.  Real must be the first
+ *      field in this structure.
+ *  Imag  (RealNumber)
+ *      The imaginary portion of the number. This field must follow
+ *      immediately after Real.
+ */
+
+/* Begin `ComplexNumber'. */
+
+typedef  struct
+{   RealNumber  Real;
+    RealNumber  Imag;
+} ComplexNumber, *ComplexVector;
+
+
+
+
+
+
 
 
 /*
@@ -427,7 +575,7 @@ extern void * trealloc(const void *, size_t);
  *      NextInCol contains a pointer to the next element in the column below
  *      this element.  If this element is the last nonzero in the column then
  *      NextInCol contains NULL.
- *  pInitInfo  (void *)
+ *  pInitInfo  (spGenericPtr)
  *      Pointer to user data used for initialization of the matrix element.
  *      Initialized to NULL.
  *
@@ -442,15 +590,16 @@ extern void * trealloc(const void *, size_t);
 /* Begin `MatrixElement'. */
 
 struct  MatrixElement
-{
-    RealNumber   Real;
+{   RealNumber   Real;
+#if spCOMPLEX
     RealNumber   Imag;
+#endif
     int          Row;
     int          Col;
     struct MatrixElement  *NextInRow;
     struct MatrixElement  *NextInCol;
 #if INITIALIZE
-    void        *pInitInfo;
+    spGenericPtr pInitInfo;
 #endif
 };
 
@@ -482,8 +631,7 @@ typedef  ElementPtr  *ArrayOfElementPtrs;
 
 /* Begin `AllocationRecord'. */
 struct AllocationRecord
-{
-    void  *AllocatedPtr;
+{   void  *AllocatedPtr;
     struct  AllocationRecord  *NextRecord;
 };
 
@@ -518,19 +666,9 @@ typedef  struct  AllocationRecord  *AllocationListPtr;
 
 /* Begin `FillinListNodeStruct'. */
 struct FillinListNodeStruct
-{
-    ElementPtr  pFillinList;
+{   ElementPtr  pFillinList;
     int         NumberOfFillinsInList;
     struct      FillinListNodeStruct  *Next;
-};
-
-/* Similar to above, but keeps track of the original Elements */
-/* Begin `ElementListNodeStruct'. */
-struct ElementListNodeStruct
-{
-    ElementPtr  pElementList;
-    int         NumberOfElementsInList;
-    struct      ElementListNodeStruct  *Next;
 };
 
 
@@ -566,7 +704,7 @@ struct ElementListNodeStruct
  *      grow to when EXPANDABLE is set true and AllocatedSize is the largest
  *      the matrix can get without requiring that the matrix frame be
  *      reallocated.
- *  Complex  (int)
+ *  Complex  (BOOLEAN)
  *      The flag which indicates whether the matrix is complex (true) or
  *      real.
  *  CurrentSize  (int)
@@ -575,18 +713,19 @@ struct ElementListNodeStruct
  *      rows and columns that have elements in them.
  *  Diag  (ArrayOfElementPtrs)
  *      Array of pointers that points to the diagonal elements.
- *  DoCmplxDirect  (int *)
+ *  DoCmplxDirect  (BOOLEAN *)
  *      Array of flags, one for each column in matrix.  If a flag is true
  *      then corresponding column in a complex matrix should be eliminated
  *      in spFactor() using direct addressing (rather than indirect
  *      addressing).
- *  DoRealDirect  (int *)
+ *  DoRealDirect  (BOOLEAN *)
  *      Array of flags, one for each column in matrix.  If a flag is true
  *      then corresponding column in a real matrix should be eliminated
  *      in spFactor() using direct addressing (rather than indirect
  *      addressing).
  *  Elements  (int)
- *	The total number of elements present in matrix.
+ *      The number of original elements (total elements minus fill ins)
+ *      present in matrix.
  *  Error  (int)
  *      The error status of the sparse matrix package.
  *  ExtSize  (int)
@@ -597,7 +736,7 @@ struct ElementListNodeStruct
  *  ExtToIntRowMap  (int [])
  *      An array that is used to convert external row numbers to internal
  *      external row numbers.  Present only if TRANSLATE option is set true.
- *  Factored  (int)
+ *  Factored  (BOOLEAN)
  *      Indicates if matrix has been factored.  This flag is set true in
  *      spFactor() and spOrderAndFactor() and set false in spCreate()
  *      and spClear().
@@ -618,8 +757,8 @@ struct ElementListNodeStruct
  *      array used during forward and backward substitution.  It is
  *      commonly called y when the forward and backward substitution process is
  *      denoted  Ax = b => Ly = b and Ux = y.
- *  InternalVectorsAllocated  (int)
- *      A flag that indicates whether the Markowitz vectors and the
+ *  InternalVectorsAllocated  (BOOLEAN)
+ *      A flag that indicates whether theMmarkowitz vectors and the
  *      Intermediate vector have been created.
  *      These vectors are created in spcCreateInternalVectors().
  *  IntToExtColMap  (int [])
@@ -642,19 +781,16 @@ struct ElementListNodeStruct
  *      The maximum number of off-diagonal element in the rows of L, the
  *      lower triangular matrix.  This quantity is used when computing an
  *      estimate of the roundoff error in the matrix.
- *  NeedsOrdering  (int)
+ *  NeedsOrdering  (BOOLEAN)
  *      This is a flag that signifies that the matrix needs to be ordered
  *      or reordered.  NeedsOrdering is set true in spCreate() and
  *      spGetElement() or spGetAdmittance() if new elements are added to the
  *      matrix after it has been previously factored.  It is set false in
  *      spOrderAndFactor().
- *  NumberOfInterchangesIsOdd  (int)
+ *  NumberOfInterchangesIsOdd  (BOOLEAN)
  *      Flag that indicates the sum of row and column interchange counts
  *      is an odd number.  Used when determining the sign of the determinant.
- *  Originals  (int)
- *      The number of original elements (total elements minus fill ins)
- *      present in matrix.
- *  Partitioned  (int)
+ *  Partitioned  (BOOLEAN)
  *      This flag indicates that the columns of the matrix have been 
  *      partitioned into two groups.  Those that will be addressed directly
  *      and those that will be addressed indirectly in spFactor().
@@ -664,7 +800,7 @@ struct ElementListNodeStruct
  *      Row pivot was chosen from.
  *  PivotSelectionMethod  (char)
  *      Character that indicates which pivot search method was successful.
- *  PreviousMatrixWasComplex  (int)
+ *  PreviousMatrixWasComplex  (BOOLEAN)
  *      This flag in needed to determine how to clear the matrix.  When
  *      dealing with real matrices, it is important that the imaginary terms
  *      in the matrix elements be zero.  Thus, if the previous matrix was
@@ -673,11 +809,11 @@ struct ElementListNodeStruct
  *  RelThreshold  (RealNumber)
  *      The magnitude an element must have relative to others in its row
  *      to be considered as a pivot candidate, except as a last resort.
- *  Reordered  (int)
+ *  Reordered  (BOOLEAN)
  *      This flag signifies that the matrix has been reordered.  It
  *      is cleared in spCreate(), set in spMNA_Preorder() and
  *      spOrderAndFactor() and is used in spPrint().
- *  RowsLinked  (int)
+ *  RowsLinked  (BOOLEAN)
  *      A flag that indicates whether the row pointers exist.  The AddByIndex
  *      routines do not generate the row pointers, which are needed by some
  *      of the other routines, such as spOrderAndFactor() and spScale().
@@ -734,44 +870,42 @@ struct ElementListNodeStruct
 
 /* Begin `MatrixFrame'. */
 struct  MatrixFrame
-{
-    RealNumber                   AbsThreshold;
+{   RealNumber                   AbsThreshold;
     int                          AllocatedSize;
     int                          AllocatedExtSize;
-    int                      Complex;
+    BOOLEAN                      Complex;
     int                          CurrentSize;
     ArrayOfElementPtrs           Diag;
-    int                     *DoCmplxDirect;
-    int                     *DoRealDirect;
+    BOOLEAN                     *DoCmplxDirect;
+    BOOLEAN                     *DoRealDirect;
     int                          Elements;
     int                          Error;
     int                          ExtSize;
     int                         *ExtToIntColMap;
     int                         *ExtToIntRowMap;
-    int                      Factored;
+    BOOLEAN                      Factored;
     int                          Fillins;
     ArrayOfElementPtrs           FirstInCol;
     ArrayOfElementPtrs           FirstInRow;
     unsigned long                ID;
     RealVector                   Intermediate;
-    int                      InternalVectorsAllocated;
+    BOOLEAN                      InternalVectorsAllocated;
     int                         *IntToExtColMap;
     int                         *IntToExtRowMap;
     int                         *MarkowitzRow;
     int                         *MarkowitzCol;
     long                        *MarkowitzProd;
     int                          MaxRowCountInLowerTri;
-    int                      NeedsOrdering;
-    int                      NumberOfInterchangesIsOdd;
-    int                          Originals;
-    int                      Partitioned;
+    BOOLEAN                      NeedsOrdering;
+    BOOLEAN                      NumberOfInterchangesIsOdd;
+    BOOLEAN                      Partitioned;
     int                          PivotsOriginalCol;
     int                          PivotsOriginalRow;
     char                         PivotSelectionMethod;
-    int                      PreviousMatrixWasComplex;
+    BOOLEAN                      PreviousMatrixWasComplex;
     RealNumber                   RelThreshold;
-    int                      Reordered;
-    int                      RowsLinked;
+    BOOLEAN                      Reordered;
+    BOOLEAN                      RowsLinked;
     int                          SingularCol;
     int                          SingularRow;
     int                          Singletons;
@@ -782,29 +916,32 @@ struct  MatrixFrame
     int                          RecordsRemaining;
     ElementPtr                   NextAvailElement;
     int                          ElementsRemaining;
-    struct ElementListNodeStruct *FirstElementListNode;
-    struct ElementListNodeStruct *LastElementListNode;
     ElementPtr                   NextAvailFillin;
     int                          FillinsRemaining;
     struct FillinListNodeStruct *FirstFillinListNode;
     struct FillinListNodeStruct *LastFillinListNode;
 };
+typedef  struct MatrixFrame  *MatrixPtr;
+
+
 
 
 /*
- *  Function declarations
+ *  Declarations
  */
 
-extern ElementPtr spcGetElement( MatrixPtr );
-extern ElementPtr spcGetFillin( MatrixPtr );
-extern ElementPtr spcFindElementInCol( MatrixPtr, ElementPtr*, int, int, int );
-extern ElementPtr spcCreateElement( MatrixPtr, int, int, ElementPtr*, int );
-extern void spcCreateInternalVectors( MatrixPtr );
-extern void spcLinkRows( MatrixPtr );
-extern void spcColExchange( MatrixPtr, int, int );
-extern void spcRowExchange( MatrixPtr, int, int );
+spcEXTERN ElementPtr spcGetElement( MatrixPtr );
+spcEXTERN ElementPtr spcGetFillin( MatrixPtr );
+spcEXTERN ElementPtr spcFindElementInCol( MatrixPtr, ElementPtr*, int, int, int );
+spcEXTERN ElementPtr spcFindDiag( MatrixPtr, int );
+spcEXTERN ElementPtr spcCreateElement( MatrixPtr, int, int,
+				ElementPtr*, ElementPtr*, int );
+spcEXTERN void spcCreateInternalVectors( MatrixPtr );
+spcEXTERN void spcLinkRows( MatrixPtr );
+spcEXTERN void spcColExchange( MatrixPtr, int, int );
+spcEXTERN void spcRowExchange( MatrixPtr, int, int );
 
-void spErrorMessage(MatrixPtr, FILE *, char *);
-
-#endif
-
+spcEXTERN char spcMatrixIsNotValid[];
+spcEXTERN char spcErrorsMustBeCleared[];
+spcEXTERN char spcMatrixMustBeFactored[];
+spcEXTERN char spcMatrixMustNotBeFactored[];

@@ -3,16 +3,16 @@
 noinst_LTLIBRARIES = libsparse.la
 
 libsparse_la_SOURCES = \
-	spalloc.c	\
-	spbuild.c	\
-	spconfig.h	\
-	spdefs.h	\
+	spAllocate.c	\
+	spBuild.c	\
+	spConfig.h	\
+	spDefs.h	\
 	spextra.c	\
-	spfactor.c	\
-	spoutput.c	\
-	spsmp.c		\
-	spsolve.c	\
-	sputils.c
+	spFactor.c	\
+	spOutput.c	\
+	spSMP.c		\
+	spSolve.c	\
+	spUtils.c
 
 
 
