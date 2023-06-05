@@ -27,6 +27,7 @@
 #include "ngspice/spmatrix.h"
 #include "spDefs.h"
 
+
 void
 spConstMult(MatrixPtr matrix, double constant)
 {
