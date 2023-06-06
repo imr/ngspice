@@ -102,22 +102,22 @@
 #endif
 
 /* Define macros for validating matrix. */
-#define  SPARSE_ID			0xDeadBeef	/* Arbitrary. */
-#define  IS_SPARSE(matrix)		(((matrix) != NULL) AND \
-                                	 ((matrix)->ID == SPARSE_ID))
-#define  NO_ERRORS(matrix)		(((matrix)->Error >= spOKAY) AND \
-				 	 ((matrix)->Error < spFATAL))
-#define  IS_FACTORED(matrix)    	((matrix)->Factored AND \
-					 NOT (matrix)->NeedsOrdering)
+#define  SPARSE_ID          0xDeadBeef  /* Arbitrary. */
+#define  IS_SPARSE(matrix)      (((matrix) != NULL) AND \
+                                     ((matrix)->ID == SPARSE_ID))
+#define  NO_ERRORS(matrix)      (((matrix)->Error >= spOKAY) AND \
+                     ((matrix)->Error < spFATAL))
+#define  IS_FACTORED(matrix)        ((matrix)->Factored AND \
+                     NOT (matrix)->NeedsOrdering)
 
-#define  ASSERT_IS_SPARSE(matrix)	vASSERT( IS_SPARSE(matrix), \
-					 spcMatrixIsNotValid )
-#define  ASSERT_NO_ERRORS(matrix)	vASSERT( NO_ERRORS(matrix), \
-					 spcErrorsMustBeCleared )
-#define  ASSERT_IS_FACTORED(matrix)	vASSERT( IS_FACTORED(matrix), \
-					 spcMatrixMustBeFactored )
-#define  ASSERT_IS_NOT_FACTORED(matrix)	vASSERT( NOT (matrix)->Factored, \
-					 spcMatrixMustNotBeFactored )
+#define  ASSERT_IS_SPARSE(matrix)   vASSERT( IS_SPARSE(matrix), \
+                     spcMatrixIsNotValid )
+#define  ASSERT_NO_ERRORS(matrix)   vASSERT( NO_ERRORS(matrix), \
+                     spcErrorsMustBeCleared )
+#define  ASSERT_IS_FACTORED(matrix) vASSERT( IS_FACTORED(matrix), \
+                     spcMatrixMustBeFactored )
+#define  ASSERT_IS_NOT_FACTORED(matrix) vASSERT( NOT (matrix)->Factored, \
+                     spcMatrixMustNotBeFactored )
 
 /* Macro commands */
 /* Macro functions that return the maximum or minimum independent of type. */
@@ -371,7 +371,7 @@
 /*
  *  ASSERT and ABORT
  *
- *  Macro used to assert that if the code is working correctly, then 
+ *  Macro used to assert that if the code is working correctly, then
  *  a condition must be true.  If not, then execution is terminated
  *  and an error message is issued stating that there is an internal
  *  error and giving the file and line number.  These assertions are
@@ -379,45 +379,45 @@
  */
 
 #if DEBUG
-#define ASSERT(condition)	\
-{   if (NOT(condition))		\
-    {   (void)fflush(stdout);	\
-	(void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n    assertion `%s' failed.\n",\
-	__FILE__, __LINE__, spcQUOTE(condition) ); \
-        (void)fflush(stderr);	\
-	abort();		\
-    }				\
+#define ASSERT(condition)   \
+{   if (NOT(condition))     \
+    {   (void)fflush(stdout);   \
+    (void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n    assertion `%s' failed.\n",\
+    __FILE__, __LINE__, spcQUOTE(condition) ); \
+        (void)fflush(stderr);   \
+    abort();        \
+    }               \
 }
 #else
 #define ASSERT(condition)
 #endif
 
 #if DEBUG
-#define vASSERT(condition,message)	\
-{   if (NOT(condition))			\
-	vABORT(message);		\
+#define vASSERT(condition,message)  \
+{   if (NOT(condition))         \
+    vABORT(message);        \
 }
 #else
 #define vASSERT(condition,message)
 #endif
 
 #if DEBUG
-#define  vABORT(message)	\
-{   (void)fflush(stdout);	\
+#define  vABORT(message)    \
+{   (void)fflush(stdout);   \
     (void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n    %s.\n", __FILE__, __LINE__, message );\
-    (void)fflush(stderr);	\
-    abort();			\
+    (void)fflush(stderr);   \
+    abort();            \
 }
 
-#define  ABORT()		\
-{   (void)fflush(stdout);	\
-    (void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n", __FILE__, __LINE__ );	\
-    (void)fflush(stderr);	\
-    abort();			\
+#define  ABORT()        \
+{   (void)fflush(stdout);   \
+    (void)fprintf(stderr, "sparse: internal error detected in file `%s' at line %d.\n", __FILE__, __LINE__ );   \
+    (void)fflush(stderr);   \
+    abort();            \
 }
 #else
-#define  vABORT(message)	abort()
-#define  ABORT()		abort()
+#define  vABORT(message)    abort()
+#define  ABORT()        abort()
 #endif
 
 
@@ -799,7 +799,7 @@ struct FillinListNodeStruct
  *      Flag that indicates the sum of row and column interchange counts
  *      is an odd number.  Used when determining the sign of the determinant.
  *  Partitioned  (BOOLEAN)
- *      This flag indicates that the columns of the matrix have been 
+ *      This flag indicates that the columns of the matrix have been
  *      partitioned into two groups.  Those that will be addressed directly
  *      and those that will be addressed indirectly in spFactor().
  *  PivotsOriginalCol  (int)
@@ -943,7 +943,7 @@ spcEXTERN ElementPtr spcGetFillin( MatrixPtr );
 spcEXTERN ElementPtr spcFindElementInCol( MatrixPtr, ElementPtr*, int, int, int );
 spcEXTERN ElementPtr spcFindDiag( MatrixPtr, int );
 spcEXTERN ElementPtr spcCreateElement( MatrixPtr, int, int,
-				ElementPtr*, ElementPtr*, int );
+                ElementPtr*, ElementPtr*, int );
 spcEXTERN void spcCreateInternalVectors( MatrixPtr );
 spcEXTERN void spcLinkRows( MatrixPtr );
 spcEXTERN void spcColExchange( MatrixPtr, int, int );

@@ -30,7 +30,7 @@
  *  ExchangeColElements         ExchangeRowElements
  *  RealRowColElimination       ComplexRowColElimination
  *  UpdateMarkowitzNumbers      MatrixIsSingular
- *  ZeroPivot			WriteStatus
+ *  ZeroPivot           WriteStatus
  */
 
 
@@ -82,9 +82,9 @@ static RealNumber FindLargestInCol( ElementPtr );
 static RealNumber FindBiggestInColExclude( MatrixPtr, ElementPtr, int );
 static void ExchangeRowsAndCols( MatrixPtr, ElementPtr, int );
 static void ExchangeColElements( MatrixPtr, int, ElementPtr, int,
-					  ElementPtr, int );
+                      ElementPtr, int );
 static void ExchangeRowElements( MatrixPtr, int, ElementPtr, int,
-					  ElementPtr, int );
+                      ElementPtr, int );
 static void RealRowColElimination( MatrixPtr, ElementPtr );
 static void ComplexRowColElimination( MatrixPtr, ElementPtr );
 static void UpdateMarkowitzNumbers( MatrixPtr, ElementPtr );
@@ -106,7 +106,7 @@ static void WriteStatus( MatrixPtr, int );
  *  diagonal terms of \a U are one.
  *
  *  \return
- *  The error code is returned.  Possible errors are \a spNO_MEMORY, 
+ *  The error code is returned.  Possible errors are \a spNO_MEMORY,
  *  \a spSINGULAR and \a spSMALL_PIVOT.
  *  Error is cleared upon entering this function.
  *
@@ -498,7 +498,7 @@ ComplexNumber Mult, Pivot;
 /* Check for singular matrix. */
             Pivot = Dest[Step];
             if (CMPLX_1_NORM(Pivot) == 0.0) return ZeroPivot( Matrix, Step );
-            CMPLX_RECIPROCAL( *Matrix->Diag[Step], Pivot );  
+            CMPLX_RECIPROCAL( *Matrix->Diag[Step], Pivot );
         }
         else
         {   /* Update column using direct addressing scatter-gather. */
@@ -529,7 +529,7 @@ ComplexNumber Mult, Pivot;
 /* Check for singular matrix. */
             pElement = Matrix->Diag[Step];
             if (ELEMENT_MAG(pElement) == 0.0) return ZeroPivot( Matrix, Step );
-            CMPLX_RECIPROCAL( *pElement, *pElement );  
+            CMPLX_RECIPROCAL( *pElement, *pElement );
         }
     }
 
@@ -922,7 +922,7 @@ int  ExtRow;
  */
 
 static void
-MarkowitzProducts( 
+MarkowitzProducts(
     MatrixPtr Matrix,
     int Step
 )
@@ -1037,7 +1037,7 @@ ElementPtr  SearchEntireMatrix();
     {
 /*
  * Either no singletons exist or they weren't acceptable.  Take quick first
- * pass at searching diagonal.  First search for element on diagonal of 
+ * pass at searching diagonal.  First search for element on diagonal of
  * remaining submatrix with smallest Markowitz product, then check to see
  * if it okay numerically.  If not, QuicklySearchDiagonal fails.
  */
@@ -1111,7 +1111,7 @@ ElementPtr  SearchEntireMatrix();
  */
 
 static ElementPtr
-SearchForSingleton( 
+SearchForSingleton(
     MatrixPtr Matrix,
     int Step
 )
@@ -1193,10 +1193,10 @@ RealNumber  PivotMag, FindBiggestInColExclude();
             {   ChosenPivot = Matrix->FirstInCol[I];
                 while ((ChosenPivot != NULL) AND (ChosenPivot->Row < Step))
                     ChosenPivot = ChosenPivot->NextInCol;
-		if (ChosenPivot == NULL)
-		{   /* Reduced column has no elements, matrix is singular. */
-		    break;
-		}
+        if (ChosenPivot == NULL)
+        {   /* Reduced column has no elements, matrix is singular. */
+            break;
+        }
                 PivotMag = ELEMENT_MAG( ChosenPivot );
                 if
                 (    PivotMag > Matrix->AbsThreshold AND
@@ -1209,10 +1209,10 @@ RealNumber  PivotMag, FindBiggestInColExclude();
                     {   ChosenPivot = Matrix->FirstInRow[I];
                         while((ChosenPivot != NULL) AND (ChosenPivot->Col<Step))
                             ChosenPivot = ChosenPivot->NextInRow;
-			if (ChosenPivot == NULL)
-			{/* Reduced row has no elements, matrix is singular. */
-			    break;
-			}
+            if (ChosenPivot == NULL)
+            {/* Reduced row has no elements, matrix is singular. */
+                break;
+            }
                         PivotMag = ELEMENT_MAG(ChosenPivot);
                         if
                         (    PivotMag > Matrix->AbsThreshold AND
@@ -1228,10 +1228,10 @@ RealNumber  PivotMag, FindBiggestInColExclude();
             {   ChosenPivot = Matrix->FirstInRow[I];
                 while ((ChosenPivot != NULL) AND (ChosenPivot->Col < Step))
                     ChosenPivot = ChosenPivot->NextInRow;
-		if (ChosenPivot == NULL)
-		{   /* Reduced row has no elements, matrix is singular. */
-		    break;
-		}
+        if (ChosenPivot == NULL)
+        {   /* Reduced row has no elements, matrix is singular. */
+            break;
+        }
                 PivotMag = ELEMENT_MAG(ChosenPivot);
                 if
                 (    PivotMag > Matrix->AbsThreshold AND
@@ -1333,7 +1333,7 @@ RealNumber  PivotMag, FindBiggestInColExclude();
  */
 
 static ElementPtr
-QuicklySearchDiagonal( 
+QuicklySearchDiagonal(
     MatrixPtr Matrix,
     int Step
 )
@@ -1697,7 +1697,7 @@ RealNumber  FindBiggestInColExclude();
  */
 
 static ElementPtr
-SearchDiagonal( 
+SearchDiagonal(
     MatrixPtr Matrix,
     register int Step
 )
@@ -1864,7 +1864,7 @@ RealNumber  FindLargestInCol();
             }
 /* Calculate element's MarkowitzProduct. */
             spcMarkoProd( Product, Matrix->MarkowitzRow[pElement->Row],
-			  Matrix->MarkowitzCol[pElement->Col] );
+              Matrix->MarkowitzCol[pElement->Col] );
 
 /* Test to see if element is acceptable as a pivot candidate. */
             if ((Product <= MinMarkowitzProduct) AND
@@ -2090,7 +2090,7 @@ RealNumber  Largest, Magnitude;
  */
 
 static void
-ExchangeRowsAndCols( 
+ExchangeRowsAndCols(
     MatrixPtr Matrix,
     ElementPtr pPivot,
     register int Step
@@ -2129,7 +2129,7 @@ long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
                                        NOT Matrix->NumberOfInterchangesIsOdd;
             spcMarkoProd( Matrix->MarkowitzProd[Row],
                           Matrix->MarkowitzRow[Row],
-			  Matrix->MarkowitzCol[Row] );
+              Matrix->MarkowitzCol[Row] );
 
 /* Update singleton count. */
             if ((Matrix->MarkowitzProd[Row]==0) != (OldMarkowitzProd_Row==0))
@@ -2146,8 +2146,8 @@ long  OldMarkowitzProd_Step, OldMarkowitzProd_Row, OldMarkowitzProd_Col;
             Matrix->NumberOfInterchangesIsOdd =
                                        NOT Matrix->NumberOfInterchangesIsOdd;
             spcMarkoProd( Matrix->MarkowitzProd[Col],
-	    	          Matrix->MarkowitzCol[Col],
-			  Matrix->MarkowitzRow[Col] );
+                      Matrix->MarkowitzCol[Col],
+              Matrix->MarkowitzRow[Col] );
 
 /* Update singleton count. */
             if ((Matrix->MarkowitzProd[Col]==0) != (OldMarkowitzProd_Col==0))
@@ -2292,7 +2292,7 @@ ElementPtr  Element1, Element2;
  *
  *  Performs all required operations to exchange two columns. Those operations
  *  include: swap FirstInCol pointers, fixing up the NextInRow pointers,
- *  swapping column indexes in MatrixElements, and swapping Markowitz 
+ *  swapping column indexes in MatrixElements, and swapping Markowitz
  *  column counts.
  *
  *  >>> Arguments:
@@ -2735,20 +2735,20 @@ register  ElementPtr  pLower, pUpper;
 
         pSub = pUpper->NextInCol;
         pLower = pPivot->NextInCol;
-	ppAbove = &pUpper->NextInCol;
+    ppAbove = &pUpper->NextInCol;
         while (pLower != NULL)
         {   Row = pLower->Row;
 
 /* Find element in row that lines up with current lower triangular element. */
             while (pSub != NULL AND pSub->Row < Row)
-	    {   ppAbove = &pSub->NextInCol;
+        {   ppAbove = &pSub->NextInCol;
                 pSub = pSub->NextInCol;
-	    }
+        }
 
 /* Test to see if desired element was not found, if not, create fill-in. */
             if (pSub == NULL OR pSub->Row > Row)
             {   pSub = spcCreateElement( Matrix, Row, pUpper->Col,
-					 &pLower->NextInRow, ppAbove, YES );
+                     &pLower->NextInRow, ppAbove, YES );
                 if (pSub == NULL)
                 {   Matrix->Error = spNO_MEMORY;
                     return;
@@ -2828,20 +2828,20 @@ register  ElementPtr  pLower, pUpper;
 
         pSub = pUpper->NextInCol;
         pLower = pPivot->NextInCol;
-	ppAbove = &pUpper->NextInCol;
+    ppAbove = &pUpper->NextInCol;
         while (pLower != NULL)
         {   Row = pLower->Row;
 
 /* Find element in row that lines up with current lower triangular element. */
             while (pSub != NULL AND pSub->Row < Row)
-	    {   ppAbove = &pSub->NextInCol;
+        {   ppAbove = &pSub->NextInCol;
                 pSub = pSub->NextInCol;
-	    }
+        }
 
 /* Test to see if desired element was not found, if not, create fill-in. */
             if (pSub == NULL OR pSub->Row > Row)
             {   pSub = spcCreateElement( Matrix, Row, pUpper->Col,
-					 &pLower->NextInRow, ppAbove, YES );
+                     &pLower->NextInRow, ppAbove, YES );
                 if (pSub == NULL)
                 {   Matrix->Error = spNO_MEMORY;
                     return;

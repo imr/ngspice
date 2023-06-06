@@ -206,7 +206,7 @@ long int Min = LARGEST_LONG_INTEGER;
     }
     else if (Row < Min)
     StartAt = BorderDown;
-    
+
 /* Search column for element. */
     if ((StartAt == BorderDown) OR (StartAt == DiagDown))
     {   if (StartAt == BorderDown)
@@ -438,7 +438,7 @@ spcFindElementInCol(MatrixPtr Matrix, ElementPtr *LastAddr,
  */
 
 static void
-Translate( 
+Translate(
     MatrixPtr Matrix,
     int *Row,
     int *Col
@@ -1260,7 +1260,7 @@ spInstallInitInfo(
 
 /*!
  *   This function returns a pointer to a data structure that is used
- *   to contain initialization information to a matrix element. 
+ *   to contain initialization information to a matrix element.
  *
  *   \return
  *       The pointer to the initialiation information data structure

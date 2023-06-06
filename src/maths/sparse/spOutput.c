@@ -6,7 +6,7 @@
  *      UC Berkeley
  */
 /*! \file
- * 
+ *
  *  This file contains the output-to-file and output-to-screen routines for
  *  the matrix package.
  *
@@ -291,7 +291,7 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
 #if spCOMPLEX
             if (Matrix->Complex AND Data)
             {   if (Header)
-		    printf("    ");
+            printf("    ");
                 for (J = StartCol; J <= StopCol; J++)
                 {   if (pImagElements[J - StartCol] != NULL)
                     {   printf(" %8.2gj",
@@ -333,8 +333,8 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
         }
 
     /* Calculate and print sparsity and number of fill-ins created. */
-	printf("\nDensity = %2.2f%%.\n", ((double)ElementCount * 100.0)
-					 / (((double)Size * (double)Size)));
+    printf("\nDensity = %2.2f%%.\n", ((double)ElementCount * 100.0)
+                     / (((double)Size * (double)Size)));
         if (NOT Matrix->NeedsOrdering)
             printf("Number of fill-ins = %1d.\n", Matrix->Fillins);
     }
@@ -426,7 +426,7 @@ FILE  *pMatrixFile;
             (   pMatrixFile,
                 "Warning : The following matrix is factored in to LU form.\n"
             );
-	    if (Err < 0) return 0;
+        if (Err < 0) return 0;
         }
         if (fprintf(pMatrixFile, "%s\n", Label) < 0) return 0;
         Err = fprintf( pMatrixFile, "%d\t%s\n", Size,
@@ -643,7 +643,7 @@ FILE  *pMatrixFile;
 /*!
  *  Writes useful information concerning the matrix to a file.  Should be
  *  executed after the matrix is factored.
- * 
+ *
  *  \return
  *  One is returned if routine was successful, otherwise zero is returned.
  *  The calling function can query \a errno (the system global error variable)
@@ -741,7 +741,7 @@ FILE  *pStatsFile;
     fprintf(pStatsFile, "     Average number of elements per row = %f\n",
             (double)NumberOfElements / (double)Size);
     fprintf(pStatsFile,"     Density = %f%%\n",
-	    (100.0*(double)NumberOfElements)/((double)Size*(double)Size));
+        (100.0*(double)NumberOfElements)/((double)Size*(double)Size));
     fprintf(pStatsFile,"     Relative Threshold = %e\n", Matrix->RelThreshold);
     fprintf(pStatsFile,"     Absolute Threshold = %e\n", Matrix->AbsThreshold);
     fprintf(pStatsFile,"     Largest Element = %e\n", LargestElement);

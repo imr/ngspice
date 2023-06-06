@@ -546,7 +546,7 @@ RecordAllocation(
 
 
 /*
- *  ADD A BLOCK OF SLOTS TO ALLOCATION LIST     
+ *  ADD A BLOCK OF SLOTS TO ALLOCATION LIST
  *
  *  This routine increases the size of the allocation list.
  *
@@ -840,7 +840,7 @@ spFillinCount( spMatrix eMatrix )
  *  \param eMatrix
  *      Pointer to matrix.
  */
- 
+
 /* FIXME: Seems no different size entries available anymore */
 
 int
