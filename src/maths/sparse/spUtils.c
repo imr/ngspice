@@ -170,7 +170,7 @@ static RealNumber ComplexCondition( MatrixPtr, RealNumber, int* );
  *  The algorithm used in this function was developed by Ken Kundert and
  *  Tom Quarles.
  *
- *  \param *  eMatrix
+ *  \param *  Matrix
  *      Pointer to the matrix to be preordered.
  */
 /*  >>> Local variables;
@@ -193,9 +193,8 @@ static RealNumber ComplexCondition( MatrixPtr, RealNumber, int* );
  */
 
 void
-spMNA_Preorder( spMatrix eMatrix )
+spMNA_Preorder( MatrixPtr Matrix )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  int  J, Size;
 ElementPtr  pTwin1, pTwin2;
 int  Twins, StartAt = 1;
@@ -362,7 +361,7 @@ int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
  *  the RHS and Solution vectors descaled.  Lastly, this function
  *  should not be executed before the function spMNA_Preorder().
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix to be scaled.
  *  \param SolutionScaleFactors
  *      The array of Solution scale factors.  These factors scale the columns.
@@ -385,12 +384,11 @@ int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
 
 void
 spScale(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL RHS_ScaleFactors[],
     spREAL SolutionScaleFactors[]
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register ElementPtr  pElement;
 register int  I, lSize, *pExtOrder;
 RealNumber  ScaleFactor;
@@ -579,7 +577,7 @@ RealNumber  ScaleFactor;
  *  as a test to see if solutions are correct.  It should not be used
  *  before spMNA_Preorder().
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  *  \param RHS
  *      RHS is the right hand side. This is what is being solved for.
@@ -597,7 +595,7 @@ RealNumber  ScaleFactor;
 
 void
 spMultiply(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL RHS[],
     spREAL Solution[]
 #if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
@@ -610,7 +608,6 @@ register  ElementPtr  pElement;
 register  RealVector  Vector;
 register  RealNumber  Sum;
 register  int  I, *pExtOrder;
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 extern void ComplexMatrixMultiply();
 
 /* Begin `spMultiply'. */
@@ -770,7 +767,7 @@ register  int  I, *pExtOrder;
  *  as a test to see if solutions are correct.  It should not be used
  *  before spMNA_Preorder().
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  *  \param RHS
  *      RHS is the right hand side. This is what is being solved for.
@@ -788,7 +785,7 @@ register  int  I, *pExtOrder;
 
 void
 spMultTransposed(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL RHS[],
     spREAL Solution[]
 #if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
@@ -801,7 +798,6 @@ register  ElementPtr  pElement;
 register  RealVector  Vector;
 register  RealNumber  Sum;
 register  int  I, *pExtOrder;
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 extern void ComplexTransposedMatrixMultiply();
 
 /* Begin `spMultTransposed'. */
@@ -973,7 +969,7 @@ register  int  I, *pExtOrder;
  *  point number.  For this reason the determinant is scaled to a
  *  reasonable value and the logarithm of the scale factor is returned.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      A pointer to the matrix for which the determinant is desired.
  *  \param pExponent
  *      The logarithm base 10 of the scale factor for the determinant.  To find
@@ -998,7 +994,7 @@ register  int  I, *pExtOrder;
 
 void
 spDeterminant(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int *pExponent,
     spREAL *pDeterminant
 #if spCOMPLEX
@@ -1006,7 +1002,6 @@ spDeterminant(
 #endif
 )
 {
-register MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register int I, Size;
 RealNumber Norm, nr, ni;
 ComplexNumber Pivot, cDeterminant;
@@ -1133,7 +1128,7 @@ ComplexNumber Pivot, cDeterminant;
 /*!
  *  Strips the matrix of all fill-ins.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix to be stripped.
  */
 /*  >>> Local variables:
@@ -1151,9 +1146,8 @@ ComplexNumber Pivot, cDeterminant;
  */
 
 void
-spStripFills( spMatrix eMatrix )
+spStripFills( MatrixPtr Matrix )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 struct FillinListNodeStruct  *pListNode;
 
 /* Begin `spStripFills'. */
@@ -1225,7 +1219,7 @@ struct FillinListNodeStruct  *pListNode;
  *  Sparse will abort if an attempt is made to delete a row or column that
  *  doesn't exist.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix in which the row and column are to be deleted.
  *  \param Row
  *      Row to be deleted.
@@ -1252,12 +1246,11 @@ struct FillinListNodeStruct  *pListNode;
 
 void
 spDeleteRowAndCol(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int  Row,
     int  Col
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  ElementPtr  pElement, *ppElement, pLastElement;
 int  Size, ExtRow, ExtCol;
 
@@ -1358,14 +1351,13 @@ int  Size, ExtRow, ExtCol;
  *  The magnitude of the ratio of the largest to smallest pivot used during
  *  previous factorization.  If the matrix was singular, zero is returned.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  */
 
 spREAL
-spPseudoCondition( spMatrix eMatrix )
+spPseudoCondition( MatrixPtr Matrix )
 {
-    MatrixPtr  Matrix = (MatrixPtr)eMatrix;
     register int I;
     register ArrayOfElementPtrs Diag;
     RealNumber MaxPivot, MinPivot, Mag;
@@ -1437,7 +1429,7 @@ spPseudoCondition( spMatrix eMatrix )
  *  The reciprocal of the condition number.  If the matrix was singular,
  *  zero is returned.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  *  \param NormOfMatrix
  *      The L-infinity norm of the unfactored matrix as computed by
@@ -1449,12 +1441,11 @@ spPseudoCondition( spMatrix eMatrix )
 
 spREAL
 spCondition(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL NormOfMatrix,
     int *pError
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register ElementPtr pElement;
 register RealVector T, Tm;
 register int I, K, Row;
@@ -1844,14 +1835,13 @@ ComplexNumber Wp, Wm;
  *  \return
  *  The largest absolute row sum of matrix.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  */
 
 spREAL
-spNorm( spMatrix eMatrix )
+spNorm( MatrixPtr Matrix )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register ElementPtr pElement;
 register int I;
 RealNumber Max = 0.0, AbsRowSum;
@@ -1959,14 +1949,13 @@ RealNumber Max = 0.0, AbsRowSum;
  *  the matrix.  If the matrix is factored, a bound on the magnitude of the
  *  largest element in any of the reduced submatrices is returned.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  */
 
 spREAL
-spLargestElement( spMatrix eMatrix )
+spLargestElement( MatrixPtr Matrix )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register int I;
 RealNumber Mag, AbsColSum, Max = 0.0, MaxRow = 0.0, MaxCol = 0.0;
 RealNumber Pivot;
@@ -2073,7 +2062,7 @@ register ElementPtr pElement, pDiag;
  *  Returns a bound on the magnitude of the largest element in
  *  \f$ E = A - LU \f$.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  *  \param Rho
  *      The bound on the magnitude of the largest element in any of the
@@ -2084,11 +2073,10 @@ register ElementPtr pElement, pDiag;
 
 spREAL
 spRoundoff(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL Rho
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register ElementPtr pElement;
 register int Count, I, MaxCount = 0;
 RealNumber Reid, Gear;
@@ -2099,7 +2087,7 @@ RealNumber Reid, Gear;
     ASSERT_IS_FACTORED( Matrix );
 
 /* Compute Barlow's bound if it is not given. */
-    if (Rho < 0.0) Rho = spLargestElement( eMatrix );
+    if (Rho < 0.0) Rho = spLargestElement( Matrix );
 
 /* Find the maximum number of off-diagonals in L if not previously computed. */
     if (Matrix->MaxRowCountInLowerTri < 0)
@@ -2139,7 +2127,7 @@ RealNumber Reid, Gear;
  *  of sparse.  No message is produced if there is no error.
  *  The error state is cleared.
  *
- *  \param eMatrix
+ *  \param Matrix
  *  Matrix for which the error message is to be printed.
  *  \param Stream
  *  Stream to which the error message is to be printed.
@@ -2150,7 +2138,7 @@ RealNumber Reid, Gear;
 
 void
 spErrorMessage(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     FILE *Stream,
     char *Originator
 )
@@ -2158,11 +2146,11 @@ spErrorMessage(
 int Row, Col, Error;
 
 /* Begin `spErrorMessage'. */
-    if (eMatrix == NULL)
+    if (Matrix == NULL)
     Error = spNO_MEMORY;
     else
-    {   ASSERT_IS_SPARSE( (MatrixPtr)eMatrix );
-    Error = ((MatrixPtr)eMatrix)->Error;
+    {   ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
+    Error = ((MatrixPtr)Matrix)->Error;
     }
 
     if (Error == spOKAY) return;
@@ -2184,12 +2172,12 @@ int Row, Col, Error;
     else if (Error == spMANGLED)
     fprintf( Stream, "matrix is mangled.\n");
     else if (Error == spSINGULAR)
-    {   spWhereSingular( eMatrix, &Row, &Col );
+    {   spWhereSingular( Matrix, &Row, &Col );
     fprintf( Stream, "singular matrix detected at row %d and column %d.\n",
          Row, Col);
     }
     else if (Error == spZERO_DIAG)
-    {   spWhereSingular( eMatrix, &Row, &Col );
+    {   spWhereSingular( Matrix, &Row, &Col );
     fprintf( Stream, "zero diagonal detected at row %d and column %d.\n",
          Row, Col);
     }
@@ -2199,7 +2187,7 @@ int Row, Col, Error;
     }
     else ABORT();
 
-    ((MatrixPtr)eMatrix)->Error = spOKAY;
+    ((MatrixPtr)Matrix)->Error = spOKAY;
     return;
 }
 #endif /* DOCUMENTATION */

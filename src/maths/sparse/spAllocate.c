@@ -119,7 +119,7 @@ static void AllocateBlockOfAllocationList( MatrixPtr );
  *      A pointer to the matrix frame being created.
  */
 
-spMatrix
+MatrixPtr
 spCreate(
     int  Size,
     int  Complex,
@@ -263,14 +263,14 @@ int  AllocatedSize;
     if (Matrix->Error == spNO_MEMORY)
         goto MemoryError;
 
-    return (char *)Matrix;
+    return Matrix;
 
 MemoryError:
 
 /* Deallocate matrix and return no pointer to matrix if there is not enough
    memory. */
     *pError = spNO_MEMORY;
-    spDestroy( (char *)Matrix);
+    spDestroy( Matrix );
     return NULL;
 }
 
@@ -605,7 +605,7 @@ register  AllocationListPtr  ListPtr;
 /*!
  *  Destroys a matrix and frees all memory associated with it.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix frame which is to be destroyed.
  */
 /*  >>> Local variables:
@@ -620,9 +620,8 @@ register  AllocationListPtr  ListPtr;
  */
 
 void
-spDestroy( spMatrix eMatrix )
+spDestroy( MatrixPtr Matrix )
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
 register  AllocationListPtr  ListPtr, NextListPtr;
 
 /* Begin `spDestroy'. */
@@ -666,18 +665,18 @@ register  AllocationListPtr  ListPtr, NextListPtr;
  *  \return
  *      The error status of the given matrix.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      The pointer to the matrix for which the error status is desired.
  */
 
 spError
-spErrorState( spMatrix eMatrix )
+spErrorState( MatrixPtr Matrix )
 {
 /* Begin `spErrorState'. */
 
-    if (eMatrix != NULL)
-    {   ASSERT_IS_SPARSE( (MatrixPtr)eMatrix );
-        return ((MatrixPtr)eMatrix)->Error;
+    if (Matrix != NULL)
+    {   ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
+        return ((MatrixPtr)Matrix)->Error;
     }
     else return spNO_MEMORY;   /* This error may actually be spPANIC,
                                 * no way to tell. */
@@ -698,7 +697,7 @@ spErrorState( spMatrix eMatrix )
  *  allowed on the last factorization). Pivoting is performed only in
  *  spOrderAndFactor().
  *
- *  \param eMatrix
+ *  \param Matrix
  *      The matrix for which the error status is desired.
  *  \param pRow
  *      The row number.
@@ -708,13 +707,11 @@ spErrorState( spMatrix eMatrix )
 
 void
 spWhereSingular(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int *pRow,
     int *pCol
 )
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
-
 /* Begin `spWhereSingular'. */
     ASSERT_IS_SPARSE( Matrix );
 
@@ -735,7 +732,7 @@ MatrixPtr Matrix = (MatrixPtr)eMatrix;
  *  Returns the size of the matrix.  Either the internal or external size of
  *  the matrix is returned.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param External
  *      If \a External is set true, the external size , i.e., the value of the
@@ -746,12 +743,10 @@ MatrixPtr Matrix = (MatrixPtr)eMatrix;
 
 int
 spGetSize(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int External
 )
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
-
 /* Begin `spGetSize'. */
     ASSERT_IS_SPARSE( Matrix );
 
@@ -775,18 +770,18 @@ MatrixPtr Matrix = (MatrixPtr)eMatrix;
 /*!
  *  Forces matrix to be real.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  */
 
 void
-spSetReal( spMatrix eMatrix )
+spSetReal( MatrixPtr Matrix )
 {
 /* Begin `spSetReal'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)eMatrix );
+    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
     vASSERT( REAL, "Sparse not compiled to handle real matrices" );
-    ((MatrixPtr)eMatrix)->Complex = NO;
+    ((MatrixPtr)Matrix)->Complex = NO;
     return;
 }
 
@@ -794,18 +789,18 @@ spSetReal( spMatrix eMatrix )
 /*!
  *  Forces matrix to be complex.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  */
 
 void
-spSetComplex( spMatrix eMatrix )
+spSetComplex( MatrixPtr Matrix )
 {
 /* Begin `spSetComplex'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)eMatrix );
+    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
     vASSERT( spCOMPLEX, "Sparse not compiled to handle complex matrices" );
-    ((MatrixPtr)eMatrix)->Complex = YES;
+    ((MatrixPtr)Matrix)->Complex = YES;
     return;
 }
 
@@ -820,44 +815,44 @@ spSetComplex( spMatrix eMatrix )
 /*!
  *  This function returns the number of fill-ins that currently exists in a matrix.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  */
 
 int
-spFillinCount( spMatrix eMatrix )
+spFillinCount( MatrixPtr Matrix )
 {
 /* Begin `spFillinCount'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)eMatrix );
-    return ((MatrixPtr)eMatrix)->Fillins;
+    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
+    return ((MatrixPtr)Matrix)->Fillins;
 }
 
 
 /*!
  *  This function returns the total number of elements (including fill-ins) that currently exists in a matrix.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  */
 
 /* FIXME: Seems no different size entries available anymore */
 
 int
-spElementCount( spMatrix eMatrix )
+spElementCount( MatrixPtr Matrix )
 {
 /* Begin `spElementCount'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)eMatrix );
-    return ((MatrixPtr)eMatrix)->Elements;
+    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
+    return ((MatrixPtr)Matrix)->Elements;
 }
 
 int
-spOriginalCount( spMatrix eMatrix )
+spOriginalCount( MatrixPtr Matrix )
 {
     /* Begin `spOriginalCount'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)eMatrix );
-    return ((MatrixPtr)eMatrix)->Elements;
+    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
+    return ((MatrixPtr)Matrix)->Elements;
 }
 

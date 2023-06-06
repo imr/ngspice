@@ -98,7 +98,7 @@
 
 typedef  spREAL  *RealVector;
 
-static void LoadGmin(char *Matrix, double Gmin);
+static void LoadGmin(MatrixPtr Matrix, double Gmin);
 
 /*
  * SMPaddElt()
@@ -109,8 +109,8 @@ SMPmatrix *Matrix,
 int Row, int Col,
 double Value)
 {
-    *spGetElement( (char *)Matrix, Row, Col ) = Value;
-    return spErrorState( (char *)Matrix );
+    *spGetElement( Matrix, Row, Col ) = Value;
+    return spErrorState( Matrix );
 }
 
 /*
@@ -121,7 +121,7 @@ SMPmakeElt(
 SMPmatrix *Matrix,
 int Row, int Col)
 {
-    return spGetElement( (char *)Matrix, Row, Col );
+    return spGetElement( Matrix, Row, Col );
 }
 
 /*
@@ -131,7 +131,7 @@ void
 SMPcClear(
 SMPmatrix *Matrix)
 {
-    spClear( (char *)Matrix );
+    spClear( Matrix );
 }
 
 /*
@@ -141,7 +141,7 @@ void
 SMPclear(
 SMPmatrix *Matrix)
 {
-    spClear( (char *)Matrix );
+    spClear( Matrix );
 }
 
 /*
@@ -153,8 +153,8 @@ SMPcLUfac(
 SMPmatrix *Matrix,
 double PivTol)
 {
-    spSetComplex( (char *)Matrix );
-    return spFactor( (char *)Matrix );
+    spSetComplex( Matrix );
+    return spFactor( Matrix );
 }
 
 /*
@@ -166,9 +166,9 @@ SMPluFac(
 SMPmatrix *Matrix,
 double PivTol, double Gmin)
 {
-    spSetReal( (char *)Matrix );
-    LoadGmin( (char *)Matrix, Gmin );
-    return spFactor( (char *)Matrix );
+    spSetReal( Matrix );
+    LoadGmin( Matrix, Gmin );
+    return spFactor( Matrix );
 }
 
 /*
@@ -181,8 +181,8 @@ double PivTol, double PivRel,
 int *NumSwaps)
 {
     *NumSwaps = 0;
-    spSetComplex( (char *)Matrix );
-    return spOrderAndFactor( (char *)Matrix, (spREAL*)NULL,
+    spSetComplex( Matrix );
+    return spOrderAndFactor( Matrix, (spREAL*)NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -194,9 +194,9 @@ SMPreorder(
 SMPmatrix *Matrix,
 double PivTol, double PivRel, double Gmin)
 {
-    spSetComplex( (char *)Matrix );
-    LoadGmin( (char *)Matrix, Gmin );
-    return spOrderAndFactor( (char *)Matrix, (spREAL*)NULL,
+    spSetComplex( Matrix );
+    LoadGmin( Matrix, Gmin );
+    return spOrderAndFactor( Matrix, (spREAL*)NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -208,7 +208,7 @@ SMPcaSolve(
 SMPmatrix *Matrix,
 double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
-    spSolveTransposed( (char *)Matrix, RHS, RHS, iRHS, iRHS );
+    spSolveTransposed( Matrix, RHS, RHS, iRHS, iRHS );
 }
 
 /*
@@ -219,7 +219,7 @@ SMPcSolve(
 SMPmatrix *Matrix,
 double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
-    spSolve( (char *)Matrix, RHS, RHS, iRHS, iRHS );
+    spSolve( Matrix, RHS, RHS, iRHS, iRHS );
 }
 
 /*
@@ -230,7 +230,7 @@ SMPsolve(
 SMPmatrix *Matrix,
 double RHS[], double Spare[])
 {
-    spSolve( (char *)Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
+    spSolve( Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
 }
 
 /*
@@ -240,7 +240,7 @@ int
 SMPmatSize(
 SMPmatrix *Matrix)
 {
-    return spGetSize( (char *)Matrix, 1 );
+    return spGetSize( Matrix, 1 );
 }
 
 /*
@@ -263,7 +263,7 @@ void
 SMPdestroy(
 SMPmatrix *Matrix)
 {
-    spDestroy( (char *)Matrix );
+    spDestroy( Matrix );
 }
 
 /*
@@ -273,8 +273,8 @@ int
 SMPpreOrder(
 SMPmatrix *Matrix)
 {
-    spMNA_Preorder( (char *)Matrix );
-    return spErrorState( (char *)Matrix );
+    spMNA_Preorder( Matrix );
+    return spErrorState( Matrix );
 }
 
 /*
@@ -295,7 +295,7 @@ SMPprint(
 SMPmatrix *Matrix,
 char *File)
 {
-    spPrint( (char *)Matrix, 0, 1, 1 );
+    spPrint( Matrix, 0, 1, 1 );
 }
 
 /*
@@ -306,7 +306,7 @@ SMPgetError(
 SMPmatrix *Matrix,
 int *Row, int *Col)
 {
-    spWhereSingular( (char *)Matrix, Row, Col );
+    spWhereSingular( Matrix, Row, Col );
 }
 
 /*
@@ -318,9 +318,9 @@ SMPmatrix *Matrix,
 SPcomplex *pMantissa,
 int *pExponent)
 {
-    spDeterminant( (char *)Matrix, pExponent, &(pMantissa->real),
+    spDeterminant( Matrix, pExponent, &(pMantissa->real),
                                               &(pMantissa->imag) );
-    return spErrorState( (char *)Matrix );
+    return spErrorState( Matrix );
 }
 
 /*
@@ -419,10 +419,9 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
 #include "spDefs.h"
 static void
 LoadGmin(
-char *eMatrix,
+MatrixPtr Matrix,
 register double Gmin)
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
 register int I;
 register ArrayOfElementPtrs Diag;
 

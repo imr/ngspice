@@ -57,53 +57,64 @@
  */
 
 /* Begin error macros. */
-#define  spOKAY     0  /*!<
-                * Error code that indicates that no error has
-                * occurred.
-                */
-#define  spSMALL_PIVOT  1  /*!<
-                * Non-fatal error code that indicates that, when
-                * reordering the matrix, no element was found that
-                * satisfies the absolute threshold criteria. The
-                * largest element in the matrix was chosen as pivot.
-                */
-#define  spZERO_DIAG    2  /*!<
-                * Fatal error code that indicates that, a zero was
-                * encountered on the diagonal the matrix. This does
-                * not necessarily imply that the matrix is singular.
-                * When this error occurs, the matrix should be
-                * reconstructed and factored using
-                * spOrderAndFactor().
-                */
-#define  spSINGULAR 3  /*!<
-                * Fatal error code that indicates that, matrix is
-                * singular, so no unique solution exists.
-                */
-#define  spMANGLED  4  /*!<
-                * Fatal error code that indicates that, matrix has
-                * been mangled, results of requested operation are
-                * garbage.
-                */
-#define  spNO_MEMORY    5  /*!<
-                * Fatal error code that indicates that not enough
-                * memory is available.
-                */
-#define  spPANIC    6  /*!<
-                * Fatal error code that indicates that the routines
-                * are not prepared to handle the matrix that has
-                * been requested.  This may occur when the matrix
-                * is specified to be real and the routines are not
-                * compiled for real matrices, or when the matrix is
-                * specified to be complex and the routines are not
-                * compiled to handle complex matrices.
-                */
-#define  spFATAL    2  /*!<
-                * Error code that is not an error flag, but rather
-                * the dividing line between fatal errors and
-                * warnings.
-                */
+//#define  spOKAY     0  /*!<
+//                * Error code that indicates that no error has
+//                * occurred.
+//                */
+//#define  spSMALL_PIVOT  1  /*!<
+//                * Non-fatal error code that indicates that, when
+//                * reordering the matrix, no element was found that
+//                * satisfies the absolute threshold criteria. The
+//                * largest element in the matrix was chosen as pivot.
+//                */
+//#define  spZERO_DIAG    2  /*!<
+//                * Fatal error code that indicates that, a zero was
+//                * encountered on the diagonal the matrix. This does
+//                * not necessarily imply that the matrix is singular.
+//                * When this error occurs, the matrix should be
+//                * reconstructed and factored using
+//                * spOrderAndFactor().
+//                */
+//#define  spSINGULAR 3  /*!<
+//                * Fatal error code that indicates that, matrix is
+//                * singular, so no unique solution exists.
+//                */
+//#define  spMANGLED  4  /*!<
+//                * Fatal error code that indicates that, matrix has
+//                * been mangled, results of requested operation are
+//                * garbage.
+//                */
+//#define  spNO_MEMORY    5  /*!<
+//                * Fatal error code that indicates that not enough
+//                * memory is available.
+//                */
+//#define  spPANIC    6  /*!<
+//                * Fatal error code that indicates that the routines
+//                * are not prepared to handle the matrix that has
+//                * been requested.  This may occur when the matrix
+//                * is specified to be real and the routines are not
+//                * compiled for real matrices, or when the matrix is
+//                * specified to be complex and the routines are not
+//                * compiled to handle complex matrices.
+//                */
+//#define  spFATAL    2  /*!<
+//                * Error code that is not an error flag, but rather
+//                * the dividing line between fatal errors and
+//                * warnings.
+//                */
 
+#include "ngspice/sperror.h"  /* Spice error definitions. */
 
+/* Begin error macros. */
+#define  spOKAY                 OK
+#define  spSMALL_PIVOT          OK
+#define  spZERO_DIAG            E_SINGULAR
+#define  spSINGULAR             E_SINGULAR
+#define  spNO_MEMORY            E_NOMEM
+#define  spPANIC                E_BADMATRIX
+#define  spMANGLED              E_BADMATRIX
+
+#define  spFATAL                E_BADMATRIX
 
 
 
@@ -289,6 +300,7 @@ struct  spTemplate
 
 
 
+typedef struct MatrixFrame *MatrixPtr;
 
 
 /*
@@ -299,78 +311,78 @@ struct  spTemplate
 
 /* Begin function declarations. */
 
-spcEXTERN  void       spClear( spMatrix );
-spcEXTERN  spREAL     spCondition( spMatrix, spREAL, int* );
-spcEXTERN  spMatrix   spCreate( int, int, spError* );
-spcEXTERN  void       spDeleteRowAndCol( spMatrix, int, int );
-spcEXTERN  void       spDestroy( spMatrix );
-spcEXTERN  int        spElementCount( spMatrix );
-spcEXTERN  int        spOriginalCount( spMatrix );
-spcEXTERN  spError    spErrorState( spMatrix );
+spcEXTERN  void       spClear( MatrixPtr );
+spcEXTERN  spREAL     spCondition( MatrixPtr, spREAL, int* );
+spcEXTERN  MatrixPtr   spCreate( int, int, spError* );
+spcEXTERN  void       spDeleteRowAndCol( MatrixPtr, int, int );
+spcEXTERN  void       spDestroy( MatrixPtr );
+spcEXTERN  int        spElementCount( MatrixPtr );
+spcEXTERN  int        spOriginalCount( MatrixPtr );
+spcEXTERN  spError    spErrorState( MatrixPtr );
 #ifdef EOF
-    spcEXTERN void    spErrorMessage( spMatrix, FILE*, char* );
+    spcEXTERN void    spErrorMessage( MatrixPtr, FILE*, char* );
 #else
 #   define spErrorMessage(a,b,c) spcFUNC_NEEDS_FILE(_spErrorMessage,stdio)
 #endif
 
 
-spcEXTERN  spError    spFactor( spMatrix );
-spcEXTERN  int        spFileMatrix( spMatrix, char*, char*, int, int, int );
-spcEXTERN  int        spFileStats( spMatrix, char*, char* );
-spcEXTERN  int        spFillinCount( spMatrix );
-spcEXTERN  spElement *spFindElement( spMatrix, int, int );
-spcEXTERN  spError    spGetAdmittance( spMatrix, int, int,
+spcEXTERN  spError    spFactor( MatrixPtr );
+spcEXTERN  int        spFileMatrix( MatrixPtr, char*, char*, int, int, int );
+spcEXTERN  int        spFileStats( MatrixPtr, char*, char* );
+spcEXTERN  int        spFillinCount( MatrixPtr );
+spcEXTERN  spElement *spFindElement( MatrixPtr, int, int );
+spcEXTERN  spError    spGetAdmittance( MatrixPtr, int, int,
                 struct spTemplate* );
-spcEXTERN  spElement *spGetElement( spMatrix, int, int );
+spcEXTERN  spElement *spGetElement( MatrixPtr, int, int );
 spcEXTERN  spGenericPtr spGetInitInfo( spElement* );
-spcEXTERN  spError    spGetOnes( spMatrix, int, int, int,
+spcEXTERN  spError    spGetOnes( MatrixPtr, int, int, int,
                 struct spTemplate* );
-spcEXTERN  spError    spGetQuad( spMatrix, int, int, int, int,
+spcEXTERN  spError    spGetQuad( MatrixPtr, int, int, int, int,
                 struct spTemplate* );
-spcEXTERN  int        spGetSize( spMatrix, int );
-spcEXTERN  int        spInitialize( spMatrix, int (*pInit)(spElement *, spGenericPtr, int, int) );
+spcEXTERN  int        spGetSize( MatrixPtr, int );
+spcEXTERN  int        spInitialize( MatrixPtr, int (*pInit)(spElement *, spGenericPtr, int, int) );
 spcEXTERN  void       spInstallInitInfo( spElement*, spGenericPtr );
-spcEXTERN  spREAL     spLargestElement( spMatrix );
-spcEXTERN  void       spMNA_Preorder( spMatrix );
-spcEXTERN  spREAL     spNorm( spMatrix );
-spcEXTERN  spError    spOrderAndFactor( spMatrix, spREAL[], spREAL,
+spcEXTERN  spREAL     spLargestElement( MatrixPtr );
+spcEXTERN  void       spMNA_Preorder( MatrixPtr );
+spcEXTERN  spREAL     spNorm( MatrixPtr );
+spcEXTERN  spError    spOrderAndFactor( MatrixPtr, spREAL[], spREAL,
                 spREAL, int );
-spcEXTERN  void       spPartition( spMatrix, int );
-spcEXTERN  void       spPrint( spMatrix, int, int, int );
-spcEXTERN  spREAL     spPseudoCondition( spMatrix );
-spcEXTERN  spREAL     spRoundoff( spMatrix, spREAL );
-spcEXTERN  void       spScale( spMatrix, spREAL[], spREAL[] );
-spcEXTERN  void       spSetComplex( spMatrix );
-spcEXTERN  void       spSetReal( spMatrix );
-spcEXTERN  void       spStripFills( spMatrix );
-spcEXTERN  void       spWhereSingular( spMatrix, int*, int* );
-spcEXTERN  void       spConstMult( spMatrix, double );
+spcEXTERN  void       spPartition( MatrixPtr, int );
+spcEXTERN  void       spPrint( MatrixPtr, int, int, int );
+spcEXTERN  spREAL     spPseudoCondition( MatrixPtr );
+spcEXTERN  spREAL     spRoundoff( MatrixPtr, spREAL );
+spcEXTERN  void       spScale( MatrixPtr, spREAL[], spREAL[] );
+spcEXTERN  void       spSetComplex( MatrixPtr );
+spcEXTERN  void       spSetReal( MatrixPtr );
+spcEXTERN  void       spStripFills( MatrixPtr );
+spcEXTERN  void       spWhereSingular( MatrixPtr, int*, int* );
+spcEXTERN  void       spConstMult( MatrixPtr, double );
 
 /* Functions with argument lists that are dependent on options. */
 
 #if spCOMPLEX
-spcEXTERN  void       spDeterminant( spMatrix, int*, spREAL*, spREAL* );
+spcEXTERN  void       spDeterminant( MatrixPtr, int*, spREAL*, spREAL* );
 #else /* NOT spCOMPLEX */
-spcEXTERN  void       spDeterminant( spMatrix, int*, spREAL* );
+spcEXTERN  void       spDeterminant( MatrixPtr, int*, spREAL* );
 #endif /* NOT spCOMPLEX */
 #if spCOMPLEX && spSEPARATED_COMPLEX_VECTORS
-spcEXTERN  int        spFileVector( spMatrix, char* ,
+spcEXTERN  int        spFileVector( MatrixPtr, char* ,
                 spREAL[], spREAL[]);
-spcEXTERN  void       spMultiply( spMatrix, spREAL[], spREAL[],
+spcEXTERN  void       spMultiply( MatrixPtr, spREAL[], spREAL[],
                 spREAL[], spREAL[] );
-spcEXTERN  void       spMultTransposed( spMatrix, spREAL[], spREAL[],
+spcEXTERN  void       spMultTransposed( MatrixPtr, spREAL[], spREAL[],
                 spREAL[], spREAL[] );
-spcEXTERN  void       spSolve( spMatrix, spREAL[], spREAL[], spREAL[],
+spcEXTERN  void       spSolve( MatrixPtr, spREAL[], spREAL[], spREAL[],
                 spREAL[] );
-spcEXTERN  void       spSolveTransposed( spMatrix, spREAL[], spREAL[],
+spcEXTERN  void       spSolveTransposed( MatrixPtr, spREAL[], spREAL[],
                 spREAL[], spREAL[] );
 #else /* NOT  (spCOMPLEX && spSEPARATED_COMPLEX_VECTORS) */
-spcEXTERN  int        spFileVector( spMatrix, char* , spREAL[] );
-spcEXTERN  void       spMultiply( spMatrix, spREAL[], spREAL[] );
-spcEXTERN  void       spMultTransposed( spMatrix,
+spcEXTERN  int        spFileVector( MatrixPtr, char* , spREAL[] );
+spcEXTERN  void       spMultiply( MatrixPtr, spREAL[], spREAL[] );
+spcEXTERN  void       spMultTransposed( MatrixPtr,
                 spREAL[], spREAL[] );
-spcEXTERN  void       spSolve( spMatrix, spREAL[], spREAL[] );
-spcEXTERN  void       spSolveTransposed( spMatrix,
+spcEXTERN  void       spSolve( MatrixPtr, spREAL[], spREAL[] );
+spcEXTERN  void       spSolveTransposed( MatrixPtr,
                 spREAL[], spREAL[] );
 #endif /* NOT  (spCOMPLEX && spSEPARATED_COMPLEX_VECTORS) */
 #endif  /* spOKAY */

@@ -85,7 +85,7 @@ static void EnlargeMatrix( MatrixPtr, int );
 /*!
  *  Sets every element of the matrix to zero and clears the error flag.
  *
- *  \param eMatrix
+ *  \param Matrix
  *     Pointer to matrix that is to be cleared.
  */
 /*  >>> Local variables:
@@ -94,9 +94,8 @@ static void EnlargeMatrix( MatrixPtr, int );
  */
 
 void
-spClear( spMatrix eMatrix )
+spClear( MatrixPtr Matrix )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  ElementPtr  pElement;
 register  int  I;
 
@@ -156,7 +155,7 @@ register  int  I;
  *  \return
  *  A pointer to the desired element, or \a NULL if it does not exist.
  *
- *  \param eMatrix
+ *  \param Matrix
  *  Pointer to matrix.
  *  \param Row
  *      Row index for element.
@@ -172,12 +171,11 @@ register  int  I;
 
 spElement *
 spFindElement(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int Row,
     int Col
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register ElementPtr  pElement;
 int StartAt;
 long int Min = LARGEST_LONG_INTEGER;
@@ -256,7 +254,7 @@ long int Min = LARGEST_LONG_INTEGER;
  *  Returns a pointer to the element.  This pointer is then used to directly
  *  access the element during successive builds.
  *
- *  \param eMatrix
+ *  \param Matrix
  *     Pointer to the matrix that the element is to be added to.
  *  \param Row
  *     Row index for element.  Must be in the range of [0..Size] unless
@@ -280,12 +278,11 @@ long int Min = LARGEST_LONG_INTEGER;
 
 spElement *
 spGetElement(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int Row,
     int Col
 )
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
 ElementPtr pElement;
 
 /* Begin `spGetElement'. */
@@ -1152,7 +1149,7 @@ register int I, OldAllocatedSize = Matrix->AllocatedExtSize;
  *
  *   \return
  *  Returns the return value of the \a pInit() function.
- *   \param eMatrix
+ *   \param Matrix
  *      Pointer to matrix.
  *   \param pInit
  *      Pointer to a function that initializes an element.
@@ -1162,7 +1159,7 @@ register int I, OldAllocatedSize = Matrix->AllocatedExtSize;
 
 int
 spInitialize(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int (*pInit)(
     spElement *pElement,
     spGenericPtr pInitInfo,
@@ -1171,7 +1168,6 @@ spInitialize(
     )
 )
 {
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
 register ElementPtr pElement;
 int J, Error, Col;
 

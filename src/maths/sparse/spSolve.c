@@ -85,7 +85,7 @@ static void SolveComplexTransposedMatrix( MatrixPtr,
  *  in different way than is traditionally used in order to exploit the
  *  sparsity of the right-hand side.  See the reference in spRevision.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param RHS
  *      \a RHS is the input data array, the right hand side. This data is
@@ -137,7 +137,7 @@ static void SolveComplexTransposedMatrix( MatrixPtr,
 
 void
 spSolve(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL RHS[],
     spREAL Solution[]
 #   if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
@@ -146,7 +146,6 @@ spSolve(
 #   endif
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  ElementPtr  pElement;
 register  RealVector  Intermediate;
 register  RealNumber  Temp;
@@ -405,7 +404,7 @@ ComplexNumber  Temp;
  *  matrix and that the diagonal of the untransposed upper
  *  triangular matrix consists of ones.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param RHS
  *      \a RHS is the input data array, the right hand side. This data is
@@ -451,7 +450,7 @@ ComplexNumber  Temp;
 
 void
 spSolveTransposed(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL  RHS[],
     spREAL  Solution[]
 #   if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
@@ -460,7 +459,6 @@ spSolveTransposed(
 #   endif
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  ElementPtr  pElement;
 register  RealVector  Intermediate;
 register  int  I, *pExtOrder, Size;

@@ -30,13 +30,12 @@
 
 void
 spConstMult(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     double constant
 )
 {
 ElementPtr  pElement;
 int     I;
-MatrixPtr Matrix = (MatrixPtr)eMatrix;
 int     size = Matrix->Size;
 
     ASSERT_IS_SPARSE( Matrix );

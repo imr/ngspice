@@ -110,7 +110,7 @@ static void WriteStatus( MatrixPtr, int );
  *  \a spSINGULAR and \a spSMALL_PIVOT.
  *  Error is cleared upon entering this function.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to the matrix.
  *  \param RHS
  *      Representative right-hand side vector that is used to determine
@@ -187,14 +187,13 @@ static void WriteStatus( MatrixPtr, int );
 
 spError
 spOrderAndFactor(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     spREAL RHS[],
     spREAL RelThreshold,
     spREAL AbsThreshold,
     int DiagPivoting
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 ElementPtr  pPivot;
 int  Step, Size;
 ElementPtr SearchForPivot();
@@ -318,15 +317,14 @@ Done:
  *  \a spNO_MEMORY, \a spSINGULAR, \a spZERO_DIAG and \a spSMALL_PIVOT.
  *  Error is cleared upon entering this function.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \see spOrderAndFactor()
  */
 
 spError
-spFactor( spMatrix eMatrix )
+spFactor( MatrixPtr Matrix )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  ElementPtr  pElement;
 register  ElementPtr  pColumn;
 register  int  Step, Size;
@@ -338,10 +336,10 @@ RealNumber Mult;
     ASSERT_IS_NOT_FACTORED( Matrix );
 
     if (Matrix->NeedsOrdering)
-    {   return spOrderAndFactor( eMatrix, (RealVector)NULL,
+    {   return spOrderAndFactor( Matrix, (RealVector)NULL,
                                  0.0, 0.0, DIAG_PIVOTING_AS_DEFAULT );
     }
-    if (NOT Matrix->Partitioned) spPartition( eMatrix, spDEFAULT_PARTITION );
+    if (NOT Matrix->Partitioned) spPartition( Matrix, spDEFAULT_PARTITION );
 #if spCOMPLEX
     if (Matrix->Complex) return FactorComplexMatrix( Matrix );
 #endif
@@ -444,7 +442,7 @@ RealNumber Mult;
  */
 
 static int
-FactorComplexMatrix( MatrixPtr  Matrix )
+FactorComplexMatrix( MatrixPtr Matrix )
 {
 register  ElementPtr  pElement;
 register  ElementPtr  pColumn;
@@ -570,7 +568,7 @@ ComplexNumber Mult, Pivot;
  *  best to let Sparse choose the partition.  Otherwise, you should
  *  choose the partition based on the predicted density of the matrix.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param Mode
  *      Mode must be one of three special codes: \a spDIRECT_PARTITION,
@@ -579,11 +577,10 @@ ComplexNumber Mult, Pivot;
 
 void
 spPartition(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int Mode
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  ElementPtr  pElement, pColumn;
 register  int  Step, Size;
 register  int  *Nc, *No;

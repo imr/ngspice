@@ -65,7 +65,7 @@
  *  statistics are also output.  The matrix is output in a format that is
  *  readable by people.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param PrintReordered
  *      Indicates whether the matrix should be printed out in its original
@@ -129,13 +129,12 @@
 
 void
 spPrint(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     int PrintReordered,
     int Data,
     int Header
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  int  J = 0;
 int I, Row, Col, Size, Top, StartCol = 1, StopCol, Columns, ElementCount = 0;
 double  Magnitude, SmallestDiag, SmallestElement;
@@ -365,7 +364,7 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
  *  The calling function can query \a errno (the system global error variable)
  *  as to the reason why this routine failed.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param File
  *      Name of file into which matrix is to be written.
@@ -397,7 +396,7 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
 
 int
 spFileMatrix(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     char *File,
     char *Label,
     int Reordered,
@@ -405,7 +404,6 @@ spFileMatrix(
     int Header
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  int  I, Size;
 register  ElementPtr  pElement;
 int  Row, Col, Err;
@@ -528,7 +526,7 @@ FILE  *pMatrixFile;
  *  The calling function can query \a errno (the system global error variable)
  *  as to the reason why this routine failed.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param File
  *      Name of file into which matrix is to be written.
@@ -551,7 +549,7 @@ FILE  *pMatrixFile;
 
 int
 spFileVector(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     char *File,
     spREAL RHS[]
 #if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
@@ -559,7 +557,6 @@ spFileVector(
 #endif
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  int  I, Size, Err;
 FILE  *pMatrixFile;
 
@@ -649,7 +646,7 @@ FILE  *pMatrixFile;
  *  The calling function can query \a errno (the system global error variable)
  *  as to the reason why this routine failed.
  *
- *  \param eMatrix
+ *  \param Matrix
  *      Pointer to matrix.
  *  \param File
  *      Name of file into which matrix is to be written.
@@ -675,12 +672,11 @@ FILE  *pMatrixFile;
 
 int
 spFileStats(
-    spMatrix eMatrix,
+    MatrixPtr Matrix,
     char *File,
     char *Label
 )
 {
-MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 register  int  Size, I;
 register  ElementPtr  pElement;
 int NumberOfElements;
