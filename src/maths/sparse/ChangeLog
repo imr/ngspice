@@ -3,3 +3,48 @@
 	* spdefs.h: #includes spice.h instead of misc.h
 	added a few #undefs to avoid redaclarations 
 
+2023-06-06 Dietmar Warning
+spAllocate.c:
+	ReserveElements() not needed
+	Distinction between OriginalCount() and ElementCount() needed for ACCT report.
+	Structure Matrix has no "Original" member anymore, seems ELEMENTS plays this role.
+spBuild.c:
+	int Min is initialized with LARGEST_LONG_INTEGER follows in -1, Min should be long int
+spSMP.c:
+	Return value of SMP functions: what is meant for spError? the typedef to int or the spErrorState function?
+	SMPfindElt() calls spcFindElement() - it is not available
+	Compiling with spSEPARATED_COMPLEX_VECTORS=0 follows in error like this:
+spSMP.c: In function ‘SMPcSolve’:
+spSMP.c:222:5: error: too many arguments to function ‘spSolve’
+  222 |     spSolve( (char *)Matrix, RHS, RHS, iRHS, iRHS );
+      |     ^~~~~~~
+In file included from spSMP.c:93:
+../../../src/include/ngspice/spmatrix.h:371:23: note: declared here
+  371 | spcEXTERN  void       spSolve( spMatrix, spREAL[], spREAL[] );
+
+This shows that prototypes are OK, but in the call of the function is no difference in parameter count.
+
+spConfig.h:
+#define  REAL                           YES
+#define  EXPANDABLE                     YES
+#define  TRANSLATE                      YES
+#define  INITIALIZE                     NO
+#define  DIAGONAL_PIVOTING              YES
+#define  ARRAY_OFFSET                   NO
+#define  MODIFIED_MARKOWITZ             NO
+#define  DELETE                         NO
+#define  STRIP                          NO
+#define  MODIFIED_NODAL                 YES
+#define  QUAD_ELEMENT                   NO
+#define  TRANSPOSE                      YES
+#define  SCALING                        NO
+#define  DOCUMENTATION                  YES
+#define  MULTIPLICATION                 YES
+#define  DETERMINANT                    YES
+#define  STABILITY                      NO
+#define  CONDITION                      NO
+#define  PSEUDOCONDITION                NO
+#define  FORTRAN                        NO
+#define  DEBUG                          YES
+#define  spCOMPLEX                      1
+#define  spSEPARATED_COMPLEX_VECTORS    1

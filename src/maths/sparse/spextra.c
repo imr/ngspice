@@ -23,23 +23,42 @@
  */
 
 #define spINSIDE_SPARSE
+#include <stdio.h>
 #include "spConfig.h"
 #include "ngspice/spmatrix.h"
 #include "spDefs.h"
 
-
 void
-spConstMult(MatrixPtr matrix, double constant)
+spConstMult(
+    spMatrix eMatrix,
+    double constant
+)
 {
-	ElementPtr	e;
-	int		i;
-	int		size = matrix->Size;
+ElementPtr  pElement;
+int     I;
+MatrixPtr Matrix = (MatrixPtr)eMatrix;
+int     size = Matrix->Size;
 
-	for (i = 1; i <= size; i++) {
-		for (e = matrix->FirstInCol[i]; e; e = e->NextInCol) {
-			e->Real *= constant;
-			e->Imag *= constant;
-		}
-	}
+    ASSERT_IS_SPARSE( Matrix );
 
+#if spCOMPLEX
+    for (I = 1; I <= size; I++) {
+        for (pElement = Matrix->FirstInCol[I]; pElement; pElement = pElement->NextInCol) {
+            pElement->Real *= constant;
+            pElement->Imag *= constant;
+        }
+    }
+    return;
+#endif
+
+#if REAL
+    for (I = 1; I <= size; I++) {
+        pElement = Matrix->FirstInRow[I];
+            while (pElement != NULL)
+            {   pElement->Real *= constant;
+                pElement = pElement->NextInRow;
+            }
+    }
+    return;
+#endif /* REAL */
 }

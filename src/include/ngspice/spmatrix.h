@@ -344,6 +344,7 @@ spcEXTERN  void       spSetComplex( spMatrix );
 spcEXTERN  void       spSetReal( spMatrix );
 spcEXTERN  void       spStripFills( spMatrix );
 spcEXTERN  void       spWhereSingular( spMatrix, int*, int* );
+spcEXTERN  void       spConstMult( spMatrix, double );
 
 /* Functions with argument lists that are dependent on options. */
 
@@ -373,4 +374,3 @@ spcEXTERN  void       spSolveTransposed( spMatrix,
 				spREAL[], spREAL[] );
 #endif /* NOT  (spCOMPLEX && spSEPARATED_COMPLEX_VECTORS) */
 #endif  /* spOKAY */
-//spcEXTERN  void       spConstMult(spMatrix, double);

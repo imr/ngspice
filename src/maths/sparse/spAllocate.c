@@ -123,7 +123,7 @@ spMatrix
 spCreate(
     int  Size,
     int  Complex,
-    int *pError
+    spError *pError
 )
 {
 register  unsigned  SizePlusOne;
@@ -670,7 +670,7 @@ register  AllocationListPtr  ListPtr, NextListPtr;
  *      The pointer to the matrix for which the error status is desired.
  */
 
-int
+spError
 spErrorState( spMatrix eMatrix )
 {
 /* Begin `spErrorState'. */

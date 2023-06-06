@@ -96,7 +96,7 @@
 #define NO   0
 #define YES  1
 
-typedef  spREAL  RealNumber, *RealVector;
+typedef  spREAL  *RealVector;
 
 static void LoadGmin(char *Matrix, double Gmin);
 
@@ -417,7 +417,7 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
  *  for compatibility with Spice3.
  */
 #include "spDefs.h"
-void
+static void
 LoadGmin( eMatrix, Gmin )
 char *eMatrix;
 register double Gmin;

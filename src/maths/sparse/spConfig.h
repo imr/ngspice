@@ -151,7 +151,7 @@
  * matrix.  ARRAY_OFFSET must be either 0 or 1, no other offsets
  * are valid.
  */
-#define  ARRAY_OFFSET                   YES
+#define  ARRAY_OFFSET                   NO
 
 /*!
  * This specifies that the modified Markowitz method of pivot
