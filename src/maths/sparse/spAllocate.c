@@ -150,7 +150,7 @@ int  AllocatedSize;
     AllocatedSize = MAX( Size, MINIMUM_ALLOCATED_SIZE );
     SizePlusOne = (unsigned)(AllocatedSize + 1);
 
-    if ((Matrix = ALLOC(struct MatrixFrame, 1)) == NULL)
+    if ((Matrix = SP_MALLOC(struct MatrixFrame, 1)) == NULL)
     {   *pError = spNO_MEMORY;
         return NULL;
     }
@@ -211,26 +211,26 @@ int  AllocatedSize;
 #endif
 
 /* Allocate space in memory for Diag pointer vector. */
-    CALLOC( Matrix->Diag, ElementPtr, SizePlusOne);
+    SP_CALLOC( Matrix->Diag, ElementPtr, SizePlusOne);
     if (Matrix->Diag == NULL)
         goto MemoryError;
 
 /* Allocate space in memory for FirstInCol pointer vector. */
-    CALLOC( Matrix->FirstInCol, ElementPtr, SizePlusOne);
+    SP_CALLOC( Matrix->FirstInCol, ElementPtr, SizePlusOne);
     if (Matrix->FirstInCol == NULL)
         goto MemoryError;
 
 /* Allocate space in memory for FirstInRow pointer vector. */
-    CALLOC( Matrix->FirstInRow, ElementPtr, SizePlusOne);
+    SP_CALLOC( Matrix->FirstInRow, ElementPtr, SizePlusOne);
     if (Matrix->FirstInRow == NULL)
         goto MemoryError;
 
 /* Allocate space in memory for IntToExtColMap vector. */
-    if (( Matrix->IntToExtColMap = ALLOC(int, SizePlusOne)) == NULL)
+    if (( Matrix->IntToExtColMap = SP_MALLOC(int, SizePlusOne)) == NULL)
         goto MemoryError;
 
 /* Allocate space in memory for IntToExtRowMap vector. */
-    if (( Matrix->IntToExtRowMap = ALLOC(int, SizePlusOne)) == NULL)
+    if (( Matrix->IntToExtRowMap = SP_MALLOC(int, SizePlusOne)) == NULL)
         goto MemoryError;
 
 /* Initialize MapIntToExt vectors. */
@@ -241,11 +241,11 @@ int  AllocatedSize;
 
 #if TRANSLATE
 /* Allocate space in memory for ExtToIntColMap vector. */
-    if (( Matrix->ExtToIntColMap = ALLOC(int, SizePlusOne)) == NULL)
+    if (( Matrix->ExtToIntColMap = SP_MALLOC(int, SizePlusOne)) == NULL)
         goto MemoryError;
 
 /* Allocate space in memory for ExtToIntRowMap vector. */
-    if (( Matrix->ExtToIntRowMap = ALLOC(int, SizePlusOne)) == NULL)
+    if (( Matrix->ExtToIntRowMap = SP_MALLOC(int, SizePlusOne)) == NULL)
         goto MemoryError;
 
 /* Initialize MapExtToInt vectors. */
@@ -314,7 +314,7 @@ ElementPtr  pElement;
 
 /* Allocate block of MatrixElements if necessary. */
     if (Matrix->ElementsRemaining == 0)
-    {   pElement = ALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
+    {   pElement = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
         RecordAllocation( Matrix, (void *)pElement );
         if (Matrix->Error == spNO_MEMORY) return NULL;
         Matrix->ElementsRemaining = ELEMENTS_PER_ALLOCATION;
@@ -375,21 +375,21 @@ ElementPtr  pElement;
 /* Begin `InitializeElementBlocks'. */
 
 /* Allocate block of MatrixElements for elements. */
-    pElement = ALLOC(struct MatrixElement, InitialNumberOfElements);
+    pElement = SP_MALLOC(struct MatrixElement, InitialNumberOfElements);
     RecordAllocation( Matrix, (void *)pElement );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->ElementsRemaining = InitialNumberOfElements;
     Matrix->NextAvailElement = pElement;
 
 /* Allocate block of MatrixElements for fill-ins. */
-    pElement = ALLOC(struct MatrixElement, NumberOfFillinsExpected);
+    pElement = SP_MALLOC(struct MatrixElement, NumberOfFillinsExpected);
     RecordAllocation( Matrix, (void *)pElement );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->FillinsRemaining = NumberOfFillinsExpected;
     Matrix->NextAvailFillin = pElement;
 
 /* Allocate a fill-in list structure. */
-    Matrix->FirstFillinListNode = ALLOC(struct FillinListNodeStruct,1);
+    Matrix->FirstFillinListNode = SP_MALLOC(struct FillinListNodeStruct,1);
     RecordAllocation( Matrix, (void *)Matrix->FirstFillinListNode );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
@@ -457,14 +457,14 @@ ElementPtr  pFillins;
         else
         {
 /* Allocate block of fill-ins. */
-            pFillins = ALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
+            pFillins = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
             RecordAllocation( Matrix, (void *)pFillins );
             if (Matrix->Error == spNO_MEMORY) return NULL;
             Matrix->FillinsRemaining = ELEMENTS_PER_ALLOCATION;
             Matrix->NextAvailFillin = pFillins;
 
 /* Allocate a fill-in list structure. */
-            pListNode->Next = ALLOC(struct FillinListNodeStruct,1);
+            pListNode->Next = SP_MALLOC(struct FillinListNodeStruct,1);
             RecordAllocation( Matrix, (void *)pListNode->Next );
             if (Matrix->Error == spNO_MEMORY) return NULL;
             Matrix->LastFillinListNode = pListNode = pListNode->Next;
@@ -526,7 +526,7 @@ RecordAllocation(
     if (Matrix->RecordsRemaining == 0)
     {   AllocateBlockOfAllocationList( Matrix );
         if (Matrix->Error == spNO_MEMORY)
-        {   FREE(AllocatedPtr);
+        {   SP_FREE(AllocatedPtr);
             return;
         }
     }
@@ -571,7 +571,7 @@ register  AllocationListPtr  ListPtr;
 
 /* Begin `AllocateBlockOfAllocationList'. */
 /* Allocate block of records for allocation list. */
-    ListPtr = ALLOC(struct AllocationRecord, (ELEMENTS_PER_ALLOCATION+1));
+    ListPtr = SP_MALLOC(struct AllocationRecord, (ELEMENTS_PER_ALLOCATION+1));
     if (ListPtr == NULL)
     {   Matrix->Error = spNO_MEMORY;
         return;
@@ -629,19 +629,19 @@ register  AllocationListPtr  ListPtr, NextListPtr;
     ASSERT_IS_SPARSE( Matrix );
 
 /* Deallocate the vectors that are located in the matrix frame. */
-    FREE( Matrix->IntToExtColMap );
-    FREE( Matrix->IntToExtRowMap );
-    FREE( Matrix->ExtToIntColMap );
-    FREE( Matrix->ExtToIntRowMap );
-    FREE( Matrix->Diag );
-    FREE( Matrix->FirstInRow );
-    FREE( Matrix->FirstInCol );
-    FREE( Matrix->MarkowitzRow );
-    FREE( Matrix->MarkowitzCol );
-    FREE( Matrix->MarkowitzProd );
-    FREE( Matrix->DoCmplxDirect );
-    FREE( Matrix->DoRealDirect );
-    FREE( Matrix->Intermediate );
+    SP_FREE( Matrix->IntToExtColMap );
+    SP_FREE( Matrix->IntToExtRowMap );
+    SP_FREE( Matrix->ExtToIntColMap );
+    SP_FREE( Matrix->ExtToIntRowMap );
+    SP_FREE( Matrix->Diag );
+    SP_FREE( Matrix->FirstInRow );
+    SP_FREE( Matrix->FirstInCol );
+    SP_FREE( Matrix->MarkowitzRow );
+    SP_FREE( Matrix->MarkowitzCol );
+    SP_FREE( Matrix->MarkowitzProd );
+    SP_FREE( Matrix->DoCmplxDirect );
+    SP_FREE( Matrix->DoRealDirect );
+    SP_FREE( Matrix->Intermediate );
 
 /* Sequentially step through the list of allocated pointers freeing pointers
  * along the way. */

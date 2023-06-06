@@ -153,8 +153,8 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
 #else
     Top = Matrix->AllocatedSize;
 #endif
-    CALLOC( PrintOrdToIntRowMap, int, Top + 1 );
-    CALLOC( PrintOrdToIntColMap, int, Top + 1 );
+    SP_CALLOC( PrintOrdToIntRowMap, int, Top + 1 );
+    SP_CALLOC( PrintOrdToIntColMap, int, Top + 1 );
     if ( PrintOrdToIntRowMap == NULL OR PrintOrdToIntColMap == NULL)
     {   Matrix->Error = spNO_MEMORY;
         return;
@@ -341,8 +341,8 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
     putchar('\n');
     (void)fflush(stdout);
 
-    FREE(PrintOrdToIntColMap);
-    FREE(PrintOrdToIntRowMap);
+    SP_FREE(PrintOrdToIntColMap);
+    SP_FREE(PrintOrdToIntRowMap);
     return;
 }
 

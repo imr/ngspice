@@ -453,26 +453,35 @@
 /*
  * MEMORY ALLOCATION
  */
-#include <stddef.h>
-spcEXTERN void *malloc(size_t size);
-spcEXTERN void *calloc(size_t nmemb, size_t size);
-spcEXTERN void *realloc(void *ptr, size_t size);
-spcEXTERN void free(void *ptr);
+//#include <stddef.h>
+#include <stdlib.h>
+spcEXTERN void *tmalloc(size_t);
+spcEXTERN void *trealloc(const void *, size_t);
+spcEXTERN void txfree(const void *);
 spcEXTERN void abort(void);
 
-#define ALLOC(type,number)  ((type *)malloc((unsigned)(sizeof(type)*(number))))
-#define REALLOC(ptr,type,number)  \
-           ptr = (type *)realloc((char *)ptr,(unsigned)(sizeof(type)*(number)))
-#define FREE(ptr) { if ((ptr) != NULL) free((char *)(ptr)); (ptr) = NULL; }
+#define SP_MALLOC(type,number)  (type *) tmalloc((size_t)(number) * sizeof(type))
+#define SP_REALLOC(ptr,type,number) \
+           ptr = (type *) trealloc(ptr, (size_t)(number) * sizeof(type))
+#define SP_FREE(ptr) { if ((ptr) != NULL) txfree(ptr); (ptr) = NULL; }
 
+#include "ngspice/config.h"
 
-/* Calloc that properly handles allocating a cleared vector. */
-#define CALLOC(ptr,type,number)                         \
-{   int i; ptr = ALLOC(type, number);                   \
-    if (ptr != (type *)NULL)                            \
-        for(i=(number)-1;i>=0; i--) ptr[i] = (type) 0;  \
+/* A new calloc */
+#ifndef HAVE_LIBGC
+#define SP_CALLOC(ptr,type,number)                           \
+{ ptr = (type *) calloc((size_t)(number), sizeof(type));     \
 }
-
+#else /* HAVE_LIBCG */
+#define SP_CALLOC(ptr,type,number)                           \
+{ ptr = (type *) tmalloc((size_t)(number) * sizeof(type));   \
+}
+#include <gc/gc.h>
+#define tmalloc(m)      GC_malloc(m)
+#define trealloc(m, n)  GC_realloc((m), (n))
+#define tfree(m)
+#define txfree(m)
+#endif
 
 
 
