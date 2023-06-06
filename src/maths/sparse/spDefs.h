@@ -453,7 +453,6 @@
 /*
  * MEMORY ALLOCATION
  */
-//#include <stddef.h>
 #include <stdlib.h>
 spcEXTERN void *tmalloc(size_t);
 spcEXTERN void *trealloc(const void *, size_t);
