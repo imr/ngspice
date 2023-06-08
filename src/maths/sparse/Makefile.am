@@ -7,7 +7,7 @@ libsparse_la_SOURCES = \
 	spBuild.c	\
 	spConfig.h	\
 	spDefs.h	\
-	spextra.c	\
+	spExtra.c	\
 	spFactor.c	\
 	spOutput.c	\
 	spSMP.c		\
