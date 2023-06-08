@@ -194,7 +194,7 @@ SMPreorder(
 SMPmatrix *Matrix,
 double PivTol, double PivRel, double Gmin)
 {
-    spSetComplex( Matrix );
+    spSetReal( Matrix );
     LoadGmin( Matrix, Gmin );
     return spOrderAndFactor( Matrix, (spREAL*)NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
