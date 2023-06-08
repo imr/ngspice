@@ -69,14 +69,18 @@
  * Function declarations
  */
 
+#if spCOMPLEX
 static int  FactorComplexMatrix( MatrixPtr );
+#endif
 //static void CreateInternalVectors( MatrixPtr );
 static void CountMarkowitz( MatrixPtr, RealVector, int );
 static void MarkowitzProducts( MatrixPtr, int );
 static ElementPtr SearchForPivot( MatrixPtr, int, int );
 static ElementPtr SearchForSingleton( MatrixPtr, int );
+#if DIAGONAL_PIVOTING
 static ElementPtr QuicklySearchDiagonal( MatrixPtr, int );
 static ElementPtr SearchDiagonal( MatrixPtr, int );
+#endif
 static ElementPtr SearchEntireMatrix( MatrixPtr, int );
 static RealNumber FindLargestInCol( ElementPtr );
 static RealNumber FindBiggestInColExclude( MatrixPtr, ElementPtr, int );
@@ -325,11 +329,12 @@ Done:
 spError
 spFactor( MatrixPtr Matrix )
 {
+#if REAL
 register  ElementPtr  pElement;
 register  ElementPtr  pColumn;
 register  int  Step, Size;
 RealNumber Mult;
-
+#endif
 /* Begin `spFactor'. */
     ASSERT_IS_SPARSE( Matrix );
     ASSERT_NO_ERRORS( Matrix );
@@ -585,15 +590,23 @@ register  ElementPtr  pElement, pColumn;
 register  int  Step, Size;
 register  int  *Nc, *No;
 register  long  *Nm;
-BOOLEAN *DoRealDirect, *DoCmplxDirect;
-
+#if spCOMPLEX
+BOOLEAN *DoCmplxDirect;
+#endif
+#if REAL
+BOOLEAN *DoRealDirect;
+#endif
 /* Begin `spPartition'. */
     ASSERT_IS_SPARSE( Matrix );
 
     if (Matrix->Partitioned) return;
     Size = Matrix->Size;
+#if REAL
     DoRealDirect = Matrix->DoRealDirect;
+#endif
+#if spCOMPLEX
     DoCmplxDirect = Matrix->DoCmplxDirect;
+#endif
     Matrix->Partitioned = YES;
 
 /* If partition is specified by the user, this is easy. */

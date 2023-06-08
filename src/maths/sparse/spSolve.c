@@ -60,10 +60,12 @@
  */
 
 #if spSEPARATED_COMPLEX_VECTORS
+#if spCOMPLEX
 static void SolveComplexMatrix( MatrixPtr,
                         RealVector, RealVector, RealVector, RealVector );
 static void SolveComplexTransposedMatrix( MatrixPtr,
                         RealVector, RealVector, RealVector, RealVector );
+#endif
 #else
 static void SolveComplexMatrix( MatrixPtr, RealVector, RealVector );
 static void SolveComplexTransposedMatrix( MatrixPtr,
@@ -146,11 +148,13 @@ spSolve(
 #   endif
 )
 {
+#if REAL
 register  ElementPtr  pElement;
 register  RealVector  Intermediate;
 register  RealNumber  Temp;
 register  int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
+#endif
 void SolveComplexMatrix();
 
 /* Begin `spSolve'. */
@@ -459,11 +463,13 @@ spSolveTransposed(
 #   endif
 )
 {
+#if REAL
 register  ElementPtr  pElement;
 register  RealVector  Intermediate;
 register  int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
 RealNumber  Temp;
+#endif
 void SolveComplexTransposedMatrix();
 
 /* Begin `spSolveTransposed'. */

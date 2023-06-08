@@ -71,9 +71,10 @@
 /*
  *  Function declarations
  */
-
+#if MODIFIED_NODAL
 static int CountTwins( MatrixPtr, int, ElementPtr*, ElementPtr* );
 static void SwapCols( MatrixPtr, ElementPtr, ElementPtr );
+#endif
 #if spCOMPLEX AND SCALING
 static void ScaleComplexMatrix( MatrixPtr, RealVector, RealVector );
 #endif
@@ -604,10 +605,12 @@ spMultiply(
 #endif
 )
 {
+#if REAL
 register  ElementPtr  pElement;
 register  RealVector  Vector;
 register  RealNumber  Sum;
 register  int  I, *pExtOrder;
+#endif
 extern void ComplexMatrixMultiply();
 
 /* Begin `spMultiply'. */
@@ -794,11 +797,13 @@ spMultTransposed(
 #endif
 )
 {
+#if REAL
 register  ElementPtr  pElement;
 register  RealVector  Vector;
 register  RealNumber  Sum;
 register  int  I, *pExtOrder;
 extern void ComplexTransposedMatrixMultiply();
+#endif
 
 /* Begin `spMultTransposed'. */
     ASSERT_IS_SPARSE( Matrix );
@@ -2149,8 +2154,8 @@ int Row, Col, Error;
     if (Matrix == NULL)
     Error = spNO_MEMORY;
     else
-    {   ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
-    Error = ((MatrixPtr)Matrix)->Error;
+    {   ASSERT_IS_SPARSE( Matrix );
+    Error = Matrix->Error;
     }
 
     if (Error == spOKAY) return;
@@ -2187,7 +2192,7 @@ int Row, Col, Error;
     }
     else ABORT();
 
-    ((MatrixPtr)Matrix)->Error = spOKAY;
+    Matrix->Error = spOKAY;
     return;
 }
 #endif /* DOCUMENTATION */

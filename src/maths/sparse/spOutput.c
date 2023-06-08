@@ -139,7 +139,10 @@ register  int  J = 0;
 int I, Row, Col, Size, Top, StartCol = 1, StopCol, Columns, ElementCount = 0;
 double  Magnitude, SmallestDiag, SmallestElement;
 double  LargestElement = 0.0, LargestDiag = 0.0;
-ElementPtr  pElement, pImagElements[PRINTER_WIDTH/10+1];
+ElementPtr  pElement;
+#if spCOMPLEX
+ElementPtr  pImagElements[PRINTER_WIDTH/10+1];
+#endif
 int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
 
 /* Begin `spPrint'. */
@@ -258,8 +261,10 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
                 while(pElement != NULL AND pElement->Row != Row)
                     pElement = pElement->NextInCol;
 
+#if spCOMPLEX
                 if (Data)
                     pImagElements[J - StartCol] = pElement;
+#endif
 
                 if (pElement != NULL)
 
@@ -557,7 +562,10 @@ spFileVector(
 #endif
 )
 {
-register  int  I, Size, Err;
+register  int  I, Size;
+#if spCOMPLEX
+register  int Err;
+#endif
 FILE  *pMatrixFile;
 
 /* Begin `spFileVector'. */

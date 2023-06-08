@@ -675,8 +675,8 @@ spErrorState( MatrixPtr Matrix )
 /* Begin `spErrorState'. */
 
     if (Matrix != NULL)
-    {   ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
-        return ((MatrixPtr)Matrix)->Error;
+    {   ASSERT_IS_SPARSE( Matrix );
+        return (Matrix)->Error;
     }
     else return spNO_MEMORY;   /* This error may actually be spPANIC,
                                 * no way to tell. */
@@ -779,9 +779,9 @@ spSetReal( MatrixPtr Matrix )
 {
 /* Begin `spSetReal'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
+    ASSERT_IS_SPARSE( Matrix );
     vASSERT( REAL, "Sparse not compiled to handle real matrices" );
-    ((MatrixPtr)Matrix)->Complex = NO;
+    Matrix->Complex = NO;
     return;
 }
 
@@ -798,9 +798,9 @@ spSetComplex( MatrixPtr Matrix )
 {
 /* Begin `spSetComplex'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
+    ASSERT_IS_SPARSE( Matrix );
     vASSERT( spCOMPLEX, "Sparse not compiled to handle complex matrices" );
-    ((MatrixPtr)Matrix)->Complex = YES;
+    Matrix->Complex = YES;
     return;
 }
 
@@ -824,8 +824,8 @@ spFillinCount( MatrixPtr Matrix )
 {
 /* Begin `spFillinCount'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
-    return ((MatrixPtr)Matrix)->Fillins;
+    ASSERT_IS_SPARSE( Matrix );
+    return Matrix->Fillins;
 }
 
 
@@ -843,8 +843,8 @@ spElementCount( MatrixPtr Matrix )
 {
 /* Begin `spElementCount'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
-    return ((MatrixPtr)Matrix)->Elements;
+    ASSERT_IS_SPARSE( Matrix );
+    return Matrix->Elements;
 }
 
 int
@@ -852,7 +852,7 @@ spOriginalCount( MatrixPtr Matrix )
 {
     /* Begin `spOriginalCount'. */
 
-    ASSERT_IS_SPARSE( (MatrixPtr)Matrix );
-    return ((MatrixPtr)Matrix)->Elements;
+    ASSERT_IS_SPARSE( Matrix );
+    return Matrix->Elements;
 }
 

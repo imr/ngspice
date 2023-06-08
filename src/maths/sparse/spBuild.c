@@ -75,8 +75,9 @@
 static void Translate( MatrixPtr, int*, int* );
 static void ExpandTranslationArrays( MatrixPtr, int );
 #endif
+#if EXPANDABLE
 static void EnlargeMatrix( MatrixPtr, int );
-
+#endif
 
 
 
@@ -969,7 +970,7 @@ register  int  Col;
 
 
 
-
+#if EXPANDABLE
 
 /*
  *  ENLARGE MATRIX
@@ -1049,7 +1050,7 @@ register int I, OldAllocatedSize = Matrix->AllocatedSize;
 
     return;
 }
-
+#endif
 
 
 

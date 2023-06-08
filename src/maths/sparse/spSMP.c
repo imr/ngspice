@@ -208,7 +208,11 @@ SMPcaSolve(
 SMPmatrix *Matrix,
 double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
+#if spCOMPLEX
     spSolveTransposed( Matrix, RHS, RHS, iRHS, iRHS );
+#else
+    spSolveTransposed( Matrix, RHS, RHS );
+#endif
 }
 
 /*
@@ -219,7 +223,11 @@ SMPcSolve(
 SMPmatrix *Matrix,
 double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
+#if spCOMPLEX
     spSolve( Matrix, RHS, RHS, iRHS, iRHS );
+#else
+    spSolve( Matrix, RHS, RHS );
+#endif
 }
 
 /*
@@ -230,7 +238,11 @@ SMPsolve(
 SMPmatrix *Matrix,
 double RHS[], double Spare[])
 {
+#if spCOMPLEX
     spSolve( Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
+#else
+    spSolve( Matrix, RHS, RHS );
+#endif
 }
 
 /*
@@ -283,7 +295,11 @@ SMPmatrix *Matrix)
 void
 SMPprintRHS(SMPmatrix *Matrix, char *Filename, RealVector RHS, RealVector iRHS)
 {
+#if spCOMPLEX
     spFileVector( Matrix, Filename, RHS, iRHS );
+#else
+    spFileVector( Matrix, Filename, RHS );
+#endif
 }
 
 /*
@@ -318,8 +334,12 @@ SMPmatrix *Matrix,
 SPcomplex *pMantissa,
 int *pExponent)
 {
+#if spCOMPLEX
     spDeterminant( Matrix, pExponent, &(pMantissa->real),
                                               &(pMantissa->imag) );
+#else
+    spDeterminant( Matrix, pExponent, &(pMantissa->real) );
+#endif
     return spErrorState( Matrix );
 }
 
@@ -332,8 +352,12 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
     double  re, im, x, y, z;
     int     p;
 
+#if spCOMPLEX
     spDeterminant( Matrix, &p, &re, &im);
-
+#else
+    spDeterminant( Matrix, &p, &re );
+    im = 0.0;
+#endif
 #ifndef M_LN2
 #define M_LN2   0.69314718055994530942
 #endif
@@ -504,7 +528,9 @@ SMPcZeroCol(SMPmatrix *Matrix, int Col)
     Element = Element->NextInCol)
     {
     Element->Real = 0.0;
+#if spCOMPLEX
     Element->Imag = 0.0;
+#endif
     }
 
     return spErrorState( Matrix );
@@ -534,7 +560,9 @@ SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col)
         Accum = spcCreateElement(Matrix, Addend->Row, Accum_Col, Prev, 0, 0);
     }
     Accum->Real += Addend->Real;
+#if spCOMPLEX
     Accum->Imag += Addend->Imag;
+#endif
     Addend = Addend->NextInCol;
     }
 
@@ -548,7 +576,11 @@ SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col)
 void
 SMPmultiply(SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, double *iSolution)
 {
+#if spCOMPLEX
     spMultiply(Matrix, RHS, Solution, iRHS, iSolution);
+#else
+    spMultiply(Matrix, RHS, Solution);
+#endif
 }
 
 /*
