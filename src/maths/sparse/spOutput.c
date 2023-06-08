@@ -137,7 +137,7 @@ spPrint(
 {
 register  int  J = 0;
 int I, Row, Col, Size, Top, StartCol = 1, StopCol, Columns, ElementCount = 0;
-double  Magnitude, SmallestDiag, SmallestElement;
+double  Magnitude, SmallestDiag = 0.0, SmallestElement = 0.0;
 double  LargestElement = 0.0, LargestDiag = 0.0;
 ElementPtr  pElement;
 #if spCOMPLEX

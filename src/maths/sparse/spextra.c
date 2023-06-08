@@ -50,7 +50,6 @@ int     size = Matrix->Size;
     return;
 #endif
 
-#if REAL
     for (I = 1; I <= size; I++) {
         pElement = Matrix->FirstInRow[I];
             while (pElement != NULL)
@@ -59,5 +58,4 @@ int     size = Matrix->Size;
             }
     }
     return;
-#endif /* REAL */
 }

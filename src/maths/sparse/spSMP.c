@@ -96,6 +96,8 @@
 #define NO   0
 #define YES  1
 
+#define NG_IGNORE(x)  (void)x
+
 typedef  spREAL  *RealVector;
 
 static void LoadGmin(MatrixPtr Matrix, double Gmin);
@@ -153,6 +155,8 @@ SMPcLUfac(
 SMPmatrix *Matrix,
 double PivTol)
 {
+    NG_IGNORE(PivTol);
+
     spSetComplex( Matrix );
     return spFactor( Matrix );
 }
@@ -166,6 +170,8 @@ SMPluFac(
 SMPmatrix *Matrix,
 double PivTol, double Gmin)
 {
+    NG_IGNORE(PivTol);
+
     spSetReal( Matrix );
     LoadGmin( Matrix, Gmin );
     return spFactor( Matrix );
@@ -208,6 +214,9 @@ SMPcaSolve(
 SMPmatrix *Matrix,
 double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
+    NG_IGNORE(Spare);
+    NG_IGNORE(iSpare);
+
 #if spCOMPLEX
     spSolveTransposed( Matrix, RHS, RHS, iRHS, iRHS );
 #else
@@ -223,6 +232,9 @@ SMPcSolve(
 SMPmatrix *Matrix,
 double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
+    NG_IGNORE(Spare);
+    NG_IGNORE(iSpare);
+
 #if spCOMPLEX
     spSolve( Matrix, RHS, RHS, iRHS, iRHS );
 #else
@@ -238,6 +250,8 @@ SMPsolve(
 SMPmatrix *Matrix,
 double RHS[], double Spare[])
 {
+    NG_IGNORE(Spare);
+
 #if spCOMPLEX
     spSolve( Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
 #else
@@ -264,6 +278,8 @@ SMPmatrix **pMatrix,
 int dummy)
 {
 int Error;
+    NG_IGNORE(dummy);
+
     *pMatrix = (SMPmatrix *)spCreate( 0, 1, &Error );
     return Error;
 }
@@ -309,8 +325,11 @@ SMPprintRHS(SMPmatrix *Matrix, char *Filename, RealVector RHS, RealVector iRHS)
 void
 SMPprint(
 SMPmatrix *Matrix,
-char *File)
+char *Filename)
 {
+    if (Filename)
+        spFileMatrix(Matrix, Filename, "Circuit Matrix", 0, 1, 1 );
+    else
     spPrint( Matrix, 0, 1, 1 );
 }
 
