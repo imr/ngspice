@@ -40,22 +40,13 @@ int     size = Matrix->Size;
 
     ASSERT_IS_SPARSE( Matrix );
 
-#if spCOMPLEX
     for (I = 1; I <= size; I++) {
         for (pElement = Matrix->FirstInCol[I]; pElement; pElement = pElement->NextInCol) {
             pElement->Real *= constant;
+#if spCOMPLEX
             pElement->Imag *= constant;
-        }
-    }
-    return;
 #endif
-
-    for (I = 1; I <= size; I++) {
-        pElement = Matrix->FirstInRow[I];
-            while (pElement != NULL)
-            {   pElement->Real *= constant;
-                pElement = pElement->NextInRow;
-            }
+        }
     }
     return;
 }
