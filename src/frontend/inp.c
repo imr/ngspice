@@ -979,7 +979,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             ft_curckt->ci_meas  = NULL;
         }
 
-        for (dd = deck; dd; dd = dd->nextcard) {
+        for (dd = deck->nextcard; dd; dd = dd->nextcard) { /* skip title line */
             /* all parameter lines should be sequentially ordered and placed at
                beginning of deck */
             if (ciprefix(".para", dd->line)) {
