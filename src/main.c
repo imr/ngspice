@@ -1403,6 +1403,8 @@ int main(int argc, char **argv)
 
     if (ft_batchmode) {
 
+        int error3 = 1;
+
         /* If we get back here in batch mode then something is wrong,
          * so exit.  */
 
@@ -1425,6 +1427,9 @@ int main(int argc, char **argv)
 
         cp_interactive = FALSE;
 
+        /* Check if a simulation has run from a .control section */
+        cp_getvar("sim_status", CP_NUM, &error3, 0);
+
         if (rflag) {
             /* If -r is specified, then dot cards (.width, .plot, .print, .op, .meas, .tf)
                are ignored, except .save, which has been handled by ft_dotsaves()
@@ -1442,6 +1447,10 @@ int main(int argc, char **argv)
             /* Execute the .whatever lines found in the deck, after we are done running. */
             if (ft_cktcoms(FALSE) || error2)
                 sp_shutdown(EXIT_BAD);
+        }
+        else if (error3 == 0) {
+            fprintf(stdout, "Note: Simulation executed from .control section \n");
+            sp_shutdown(EXIT_NORMAL);
         }
         else {
             fprintf(stderr,
