@@ -182,6 +182,7 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     IFvalue *parm;		/* a pointer to a value struct for function returns */
     int which;			/* which analysis we are performing */
     char *steptype;		/* ac analysis, type of stepping function */
+    bool pdef = FALSE;  /* issue a warning if default parameters are used */
 
     NG_IGNORE(gnode);
 
@@ -193,15 +194,33 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     }
     IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task));
     INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
+    if (!*steptype || (!ciprefix("dec", steptype) && !ciprefix("oct", steptype) && !ciprefix("lin", steptype))) {
+        current->error = "Missing DEC, OCT, or LIN\n";
+        return (0);
+    }
     ptemp.iValue = 1;
     GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
     tfree(steptype);
+
     parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
+    if (parm->iValue == 0)
+        pdef = TRUE;
     GCA(INPapName, (ckt, which, foo, "numsteps", parm));
+
+    if(!isdigit(*line))
+        pdef = TRUE;
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
     GCA(INPapName, (ckt, which, foo, "start", parm));
+
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
+    if (parm->rValue == 0)
+        pdef = TRUE;
     GCA(INPapName, (ckt, which, foo, "stop", parm));
+
+    if (pdef) {
+        fprintf(stderr, "Warning, ngspice assumes default parameter(s) for ac simulation\n");
+        fprintf(stderr, "    Check your ac or .ac line\n\n");
+    }
     return (0);
 }
 
