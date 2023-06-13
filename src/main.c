@@ -19,6 +19,7 @@
 #ifdef HAVE_GNUREADLINE
 # include <readline/readline.h>
 # include <readline/history.h>
+# include "../misc/tilde.h"
 #endif
 
 /* editline development has added the following typdef to readline.h in 06/2018.
@@ -614,11 +615,15 @@ static void
 app_rl_init(void)
 {
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
+    char *home;
+
     /* ---  set up readline params --- */
-    strcpy(history_file, getenv("HOME"));
-    strcat(history_file, "/.");
-    strcat(history_file, application_name);
-    strcat(history_file, "_history");
+
+    if (get_local_home(0, &home) < 0)
+        return;
+    snprintf(history_file, sizeof history_file, "%s/.%s_history",
+             home, application_name);
+    tfree(home);
 
     using_history();
     read_history(history_file);
