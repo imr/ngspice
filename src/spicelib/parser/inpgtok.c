@@ -31,6 +31,9 @@ INPgetTok(char **line, char **token, int gobble)
     char *point;
     int signstate;
 
+    if (!*line)
+        return (E_PARMVAL);
+
     /* scan along throwing away garbage characters until end of line
        or a separation char is found */
     for (point = *line; *point != '\0'; point++) {
