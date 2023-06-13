@@ -431,10 +431,10 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
     if (y < z)
     y = z;
 
-#ifdef debug_print
     *pExponent = (int)(x + y);
     x = scalbn(re, (int) -y);
     z = scalbn(im, (int) -y);
+#ifdef debug_print
     printf(" ** values are: re %g, im %g, y %g, re' %g, im' %g\n",
         re, im, y, x, z);
 #endif

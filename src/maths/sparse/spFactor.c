@@ -1845,7 +1845,7 @@ register  int  I, Size = Matrix->Size;
 register  ElementPtr  pElement;
 int  NumberOfTies = 0;
 long  Product, MinMarkowitzProduct;
-ElementPtr  ChosenPivot, pLargestElement = NULL;
+ElementPtr  ChosenPivot, pLargestElement;
 RealNumber  Magnitude, LargestElementMag, Ratio, RatioOfAccepted = 0, LargestInCol;
 RealNumber  FindLargestInCol();
 
