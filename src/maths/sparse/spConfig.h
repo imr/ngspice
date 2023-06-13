@@ -151,7 +151,7 @@
  * matrix.  ARRAY_OFFSET must be either 0 or 1, no other offsets
  * are valid.
  */
-#define  ARRAY_OFFSET                   NO
+#define  ARRAY_OFFSET                   YES
 
 /*!
  * This specifies that the modified Markowitz method of pivot
@@ -234,7 +234,7 @@
 #define  DOCUMENTATION                  YES
 
 /*!
- * This specifies that routines that are used to multily the
+ * This specifies that routines that are used to multiply the
  * matrix by a vector, such as spMultiply() and spMultTransposed(), should be
  * compiled.
  */
