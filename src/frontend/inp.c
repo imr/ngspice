@@ -980,7 +980,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         }
 
         for (dd = deck; dd; dd = dd->nextcard) {
-            /* first line is title line */
+            /* first line is title line, skip it */
             if (deck == dd) {
                 prev_card = dd;
                 continue;
