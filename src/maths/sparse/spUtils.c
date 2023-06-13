@@ -2192,7 +2192,8 @@ int Row, Col, Error;
     }
     else ABORT();
 
-    Matrix->Error = spOKAY;
+    if (Matrix != NULL)
+        Matrix->Error = spOKAY;
     return;
 }
 #endif /* DOCUMENTATION */

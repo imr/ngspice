@@ -159,6 +159,8 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
     SP_CALLOC( PrintOrdToIntColMap, int, Top + 1 );
     if ( PrintOrdToIntRowMap == NULL OR PrintOrdToIntColMap == NULL)
     {   Matrix->Error = spNO_MEMORY;
+        SP_FREE(PrintOrdToIntColMap);
+        SP_FREE(PrintOrdToIntRowMap);
         return;
     }
     for (I = 1; I <= Size; I++)
