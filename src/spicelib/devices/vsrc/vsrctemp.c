@@ -48,7 +48,9 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->VSRCname);
             }
             else if (here->VSRCdcGiven && here->VSRCfuncTGiven
-                     && here->VSRCfunctionType != TRNOISE && here->VSRCfunctionType != TRRANDOM) {
+                     && here->VSRCfunctionType != TRNOISE
+                     && here->VSRCfunctionType != TRRANDOM
+                     && here->VSRCfunctionType != EXTERNAL) {
                 /* DC value and transient time 0 values given */
                 double time0value;
                 /* determine transient time 0 value */
