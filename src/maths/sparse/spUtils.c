@@ -240,7 +240,7 @@ BOOLEAN  Swapped, AnotherPassNeeded;
         if (AnotherPassNeeded)
         {   for (J = StartAt; NOT Swapped AND (J <= Size); J++)
             {   if (Matrix->Diag[J] == NULL)
-                {   Twins = CountTwins( Matrix, J, &pTwin1, &pTwin2 );
+                {   Twins = CountTwins( Matrix, J, &pTwin1, &pTwin2 ); /* FIXME: Twins is never used */
                     SwapCols( Matrix, pTwin1, pTwin2 );
                     Swapped = YES;
                 }

@@ -377,7 +377,7 @@ RealNumber Mult;
 
 /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
+            while (pColumn->Row < Step) /* FIXME: Access to Row results in dereference of NULL pointer */
             {   pElement = Matrix->Diag[pColumn->Row];
                 pColumn->Real = Dest[pColumn->Row] * pElement->Real;
                 while ((pElement = pElement->NextInCol) != NULL)
@@ -409,7 +409,7 @@ RealNumber Mult;
 
 /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
+            while (pColumn->Row < Step) /* FIXME: Access to Row results in dereference of NULL pointer */
             {   pElement = Matrix->Diag[pColumn->Row];
                 Mult = (*pDest[pColumn->Row] *= pElement->Real);
                 while ((pElement = pElement->NextInCol) != NULL)
@@ -486,7 +486,7 @@ ComplexNumber Mult, Pivot;
 
 /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
+            while (pColumn->Row < Step) /* FIXME: Access to Row results in dereference of NULL pointer */
             {   pElement = Matrix->Diag[pColumn->Row];
                 /* Cmplx expr: Mult = Dest[pColumn->Row] * (1.0 / *pPivot). */
                 CMPLX_MULT(Mult, Dest[pColumn->Row], *pElement);
@@ -524,7 +524,7 @@ ComplexNumber Mult, Pivot;
 
 /* Update column. */
             pColumn = Matrix->FirstInCol[Step];
-            while (pColumn->Row < Step)
+            while (pColumn->Row < Step) /* FIXME: Access to Row results in dereference of NULL pointer */
             {   pElement = Matrix->Diag[pColumn->Row];
                 /* Cmplx expr: Mult = *pDest[pColumn->Row] * (1.0 / *pPivot). */
                 CMPLX_MULT(Mult, *pDest[pColumn->Row], *pElement);
@@ -656,7 +656,7 @@ BOOLEAN *DoRealDirect;
         }
 
         pColumn = Matrix->FirstInCol[Step];
-        while (pColumn->Row < Step)
+        while (pColumn->Row < Step) /* FIXME: Access to Row results in dereference of NULL pointer */
         {   pElement = Matrix->Diag[pColumn->Row];
             Nm[Step]++;
             while ((pElement = pElement->NextInCol) != NULL)
@@ -2530,7 +2530,7 @@ register  ElementPtr  pElement;
                 pElement = *ElementAboveRow2;
             }   while (pElement->Row < Row2);
 
-        ElementBelowRow2 = Element2->NextInCol;
+            ElementBelowRow2 = Element2->NextInCol;/* FIXME: ElementBelowRow2 is never read */
 
 /* Move Element2 to Row1. */
             *ElementAboveRow2 = Element2->NextInCol;
@@ -2675,7 +2675,7 @@ register   ElementPtr  pElement;
                 pElement = *ElementLeftOfCol2;
             }   while (pElement->Col < Col2);
 
-            ElementRightOfCol2 = Element2->NextInRow;
+            ElementRightOfCol2 = Element2->NextInRow; /* FIXME: ElementRightOfCol2 is never read */
 
 /* Move Element2 to Col1. */
             *ElementLeftOfCol2 = Element2->NextInRow;

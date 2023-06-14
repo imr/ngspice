@@ -202,7 +202,7 @@ int  AllocatedSize;
     Matrix->FillinsRemaining = 0;
 
     RecordAllocation( Matrix, (void *)Matrix );
-    if (Matrix->Error == spNO_MEMORY) goto MemoryError;
+    if (Matrix->Error == spNO_MEMORY) goto MemoryError; /* FIXME: Use of memory after free */
 
 /* Take out the trash. */
     Matrix->TrashCan.Real = 0.0;

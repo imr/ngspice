@@ -185,7 +185,7 @@ spFindElement(
 )
 {
 register ElementPtr  pElement;
-int StartAt;
+int StartAt = 0;
 long int Min = LARGEST_LONG_INTEGER;
 #define BorderRight 0   /* Start at left border, move right. */
 #define BorderDown  1   /* Start at top border, move down. */
