@@ -78,6 +78,15 @@
  *
  *  Copyright (c) 1985-2003 by Kenneth S. Kundert
  */
+ 
+#ifdef notdef
+static char copyright[] =
+    "Sparse1.4: Copyright (c) 1985-2003 by Kenneth S. Kundert";
+static char RCSid[] =
+    "@(#)$Header: /cvsroot/sparse/src/spSMP.c,v 1.3 2003/06/30 19:40:51 kundert Exp $";
+#endif
+
+
 
 
 /*

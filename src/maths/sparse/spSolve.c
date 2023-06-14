@@ -32,6 +32,13 @@
  *  by Kenneth S. Kundert
  */
 
+#ifdef notdef
+static char copyright[] =
+    "Sparse1.4: Copyright (c) 1985-2003 by Kenneth S. Kundert";
+static char RCSid[] =
+    "@(#)$Header: /cvsroot/sparse/src/spSolve.c,v 1.3 2003/06/29 04:19:52 kundert Exp $";
+#endif
+
 
 
 /*
