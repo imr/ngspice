@@ -32,7 +32,9 @@
  *  SMPprint
  *  SMPgetError
  *  SMPcProdDiag
- */
+ *  LoadGmin
+ *  SMPfindElt
+*/
 
 /*
  *  To replace SMP with Sparse, rename the file spSpice3.h to
@@ -198,7 +200,7 @@ int *NumSwaps)
     *NumSwaps = 0;
     spSetComplex( Matrix );
     return spOrderAndFactor( Matrix, NULL,
-                             (spREAL)PivRel, (spREAL)PivTol, YES );
+                             PivRel, PivTol, YES );
 }
 
 /*
@@ -212,7 +214,7 @@ double PivTol, double PivRel, double Gmin)
     spSetReal( Matrix );
     LoadGmin( Matrix, Gmin );
     return spOrderAndFactor( Matrix, NULL,
-                             (spREAL)PivRel, (spREAL)PivTol, YES );
+                             PivRel, PivTol, YES );
 }
 
 /*
