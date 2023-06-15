@@ -197,7 +197,7 @@ int *NumSwaps)
 {
     *NumSwaps = 0;
     spSetComplex( Matrix );
-    return spOrderAndFactor( Matrix, (spREAL*)NULL,
+    return spOrderAndFactor( Matrix, NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -211,7 +211,7 @@ double PivTol, double PivRel, double Gmin)
 {
     spSetReal( Matrix );
     LoadGmin( Matrix, Gmin );
-    return spOrderAndFactor( Matrix, (spREAL*)NULL,
+    return spOrderAndFactor( Matrix, NULL,
                              (spREAL)PivRel, (spREAL)PivTol, YES );
 }
 
@@ -262,7 +262,7 @@ double RHS[], double Spare[])
     NG_IGNORE(Spare);
 
 #if spCOMPLEX
-    spSolve( Matrix, RHS, RHS, (spREAL*)NULL, (spREAL*)NULL );
+    spSolve( Matrix, RHS, RHS, NULL, NULL );
 #else
     spSolve( Matrix, RHS, RHS );
 #endif
