@@ -103,13 +103,12 @@ static char RCSid[] =
 
 #include "ngspice/spmatrix.h"
 #include "ngspice/smpdefs.h"
+#include "spDefs.h"
 
 #define NO   0
 #define YES  1
 
 #define NG_IGNORE(x)  (void)x
-
-typedef  spREAL  *RealVector;
 
 static void LoadGmin(MatrixPtr Matrix, double Gmin);
 
@@ -470,14 +469,14 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
  *  use of this routine is not recommended.  It is included here simply
  *  for compatibility with Spice3.
  */
-#include "spDefs.h"
 static void
 LoadGmin(
 MatrixPtr Matrix,
-register double Gmin)
+double Gmin)
 {
-register int I;
-register ArrayOfElementPtrs Diag;
+int I;
+ArrayOfElementPtrs Diag;
+ElementPtr diag;
 
 /* Begin `spLoadGmin'. */
     ASSERT_IS_SPARSE( Matrix );
