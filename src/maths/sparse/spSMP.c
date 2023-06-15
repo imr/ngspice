@@ -480,12 +480,15 @@ register ArrayOfElementPtrs Diag;
 /* Begin `spLoadGmin'. */
     ASSERT_IS_SPARSE( Matrix );
 
-    Diag = Matrix->Diag;
-    for (I = Matrix->Size; I > 0; I--)
-        Diag[I]->Real += Gmin;
+    if (Gmin != 0.0) {
+        Diag = Matrix->Diag;
+        for (I = Matrix->Size; I > 0; I--) {
+            if ((diag = Diag[I]) != NULL)
+                diag->Real += Gmin;
+        }
+    }
     return;
 }
-
 
 
 
@@ -499,27 +502,6 @@ register ArrayOfElementPtrs Diag;
  *  pointer to the new element is returned.
  */
 
-//SMPelement *
-//SMPfindElt( Matrix, Row, Col, CreateIfMissing )
-//
-//SMPmatrix *Matrix;
-//int Row, Col;
-//int CreateIfMissing;
-//{
-////MatrixPtr Matrix = (MatrixPtr)eMatrix;
-//spREAL *Element = (spREAL *)Matrix->FirstInCol[Col];
-//
-///* Begin `SMPfindElt'. */
-//    ASSERT_IS_SPARSE( Matrix );
-//    if (CreateIfMissing)
-//    {   Element = spcCreateElement( Matrix, Row, Col,
-//                    &Matrix->FirstInRow[Row],
-//                    &Matrix->FirstInCol[Col], NO );
-//    }
-//    else Element = spcFindElement( Matrix, Row, Col );
-//    return (SMPelement *)Element;
-//}
-
 SMPelement *
 SMPfindElt(SMPmatrix *Matrix, int Row, int Col, int CreateIfMissing)
 {
@@ -528,7 +510,6 @@ SMPfindElt(SMPmatrix *Matrix, int Row, int Col, int CreateIfMissing)
     /* Begin `SMPfindElt'. */
     ASSERT_IS_SPARSE( Matrix );
     Row = Matrix->ExtToIntRowMap[Row];
-
     Col = Matrix->ExtToIntColMap[Col];
 
     if (Col == -1)
@@ -597,6 +578,14 @@ SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col)
     return spErrorState( Matrix );
 }
 
+/*
+ * SMPconstMult()
+ */
+void
+SMPconstMult(SMPmatrix *Matrix, double constant)
+{
+    spConstMult(Matrix, constant);
+}
 
 /*
  * SMPmultiply()
@@ -611,11 +600,3 @@ SMPmultiply(SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, doub
 #endif
 }
 
-/*
- * SMPconstMult()
- */
-void
-SMPconstMult(SMPmatrix *Matrix, double constant)
-{
-    spConstMult(Matrix, constant);
-}
