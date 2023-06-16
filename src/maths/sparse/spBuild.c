@@ -104,8 +104,8 @@ static void EnlargeMatrix( MatrixPtr, int );
 void
 spClear( MatrixPtr Matrix )
 {
-register  ElementPtr  pElement;
-register  int  I;
+ElementPtr  pElement;
+int  I;
 
 /* Begin `spClear'. */
     ASSERT_IS_SPARSE( Matrix );
@@ -184,7 +184,7 @@ spFindElement(
     int Col
 )
 {
-register ElementPtr  pElement;
+ElementPtr  pElement;
 int StartAt = 0;
 long int Min = LARGEST_LONG_INTEGER;
 #define BorderRight 0   /* Start at left border, move right. */
@@ -449,7 +449,7 @@ Translate(
     int *Col
 )
 {
-register int IntRow, IntCol, ExtRow, ExtCol;
+int IntRow, IntCol, ExtRow, ExtCol;
 
 /* Begin `Translate'. */
     ExtRow = *Row;
@@ -649,7 +649,7 @@ spGetQuad(
         OR (Template->Element4Negated == NULL)
     )   return spNO_MEMORY;
 
-    if (Template->Element1 == &((MatrixPtr)Matrix)->TrashCan.Real)
+    if (Template->Element1 == &(Matrix)->TrashCan.Real)
         SWAP( RealNumber *, Template->Element1, Template->Element2 );
 
     return spOKAY;
@@ -756,10 +756,10 @@ spGetOnes(
 ElementPtr
 spcFindDiag(
     MatrixPtr Matrix,
-    register int Index
+    int Index
 )
 {
-register ElementPtr  pElement;
+ElementPtr  pElement;
 
 /* Begin `spcFindDiag'. */
     pElement = Matrix->FirstInCol[Index];
@@ -823,18 +823,18 @@ ElementPtr
 spcCreateElement(
     MatrixPtr Matrix,
     int Row,
-    register int Col,
-    register ElementPtr *ppToLeft,
-    register ElementPtr *ppAbove,
+    int Col,
+    ElementPtr *ppToLeft,
+    ElementPtr *ppAbove,
     BOOLEAN Fillin
 )
 {
-register ElementPtr  pElement, pCreatedElement;
+ElementPtr  pElement, pCreatedElement;
 
 /* Begin `spcCreateElement'. */
 
 /* Find element immediately above the desired element. */
-    pElement = *ppAbove;
+    pElement = *ppAbove;           /* FIXME: Dereference of null pointer */
     while ((pElement != NULL) AND (pElement->Row < Row))
     {   ppAbove = &pElement->NextInCol;
     pElement = *ppAbove;
@@ -937,7 +937,7 @@ register ElementPtr  pElement, pCreatedElement;
  *      currently being operated upon.
  *  FirstInRowArray  (ArrayOfElementPtrs)
  *      A pointer to the FirstInRow array.  Same as Matrix->FirstInRow but
- *      resides in a register and requires less indirection so is faster to
+ *      resides in a and requires less indirection so is faster to
  *      use.
  *  Col  (int)
  *      Column currently being operated upon.
@@ -946,9 +946,9 @@ register ElementPtr  pElement, pCreatedElement;
 void
 spcLinkRows( MatrixPtr Matrix )
 {
-register  ElementPtr  pElement, *FirstInRowEntry;
-register  ArrayOfElementPtrs  FirstInRowArray;
-register  int  Col;
+ElementPtr  pElement, *FirstInRowEntry;
+ArrayOfElementPtrs  FirstInRowArray;
+int  Col;
 
 /* Begin `spcLinkRows'. */
     FirstInRowArray = Matrix->FirstInRow;
@@ -998,10 +998,10 @@ register  int  Col;
 static void
 EnlargeMatrix(
     MatrixPtr Matrix,
-    register int NewSize
+    int NewSize
 )
 {
-register int I, OldAllocatedSize = Matrix->AllocatedSize;
+int I, OldAllocatedSize = Matrix->AllocatedSize;
 
 /* Begin `EnlargeMatrix'. */
     Matrix->Size = NewSize;
@@ -1087,10 +1087,10 @@ register int I, OldAllocatedSize = Matrix->AllocatedSize;
 static void
 ExpandTranslationArrays(
     MatrixPtr Matrix,
-    register int NewSize
+    int NewSize
 )
 {
-register int I, OldAllocatedSize = Matrix->AllocatedExtSize;
+int I, OldAllocatedSize = Matrix->AllocatedExtSize;
 
 /* Begin `ExpandTranslationArrays'. */
     Matrix->ExtSize = NewSize;
@@ -1176,7 +1176,7 @@ spInitialize(
     )
 )
 {
-register ElementPtr pElement;
+ElementPtr pElement;
 int J, Error, Col;
 
 /* Begin `spInitialize'. */

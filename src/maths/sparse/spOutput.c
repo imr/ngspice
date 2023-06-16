@@ -142,7 +142,7 @@ spPrint(
     int Header
 )
 {
-register  int  J = 0;
+int  J = 0;
 int I, Row, Col, Size, Top, StartCol = 1, StopCol, Columns, ElementCount = 0;
 double  Magnitude, SmallestDiag = 0.0, SmallestElement = 0.0;
 double  LargestElement = 0.0, LargestDiag = 0.0;
@@ -418,8 +418,8 @@ spFileMatrix(
     int Header
 )
 {
-register  int  I, Size;
-register  ElementPtr  pElement;
+int  I, Size;
+ElementPtr  pElement;
 int  Row, Col, Err;
 FILE  *pMatrixFile;
 
@@ -571,9 +571,9 @@ spFileVector(
 #endif
 )
 {
-register  int  I, Size;
+int  I, Size;
 #if spCOMPLEX
-register  int Err;
+int Err;
 #endif
 FILE  *pMatrixFile;
 
@@ -581,9 +581,12 @@ FILE  *pMatrixFile;
     ASSERT_IS_SPARSE( Matrix );
     vASSERT( RHS != NULL, "Vector missing" );
 
-/* Open File in append mode. */
-    if ((pMatrixFile = fopen(File,"a")) == NULL)
-        return 0;
+    if (File) {
+        /* Open File in write mode. */
+        pMatrixFile = fopen(File,"w");
+        if (pMatrixFile == NULL)
+            return 0;
+    }
 
 /* Correct array pointers for ARRAY_OFFSET. */
 #if NOT ARRAY_OFFSET
@@ -694,8 +697,8 @@ spFileStats(
     char *Label
 )
 {
-register  int  Size, I;
-register  ElementPtr  pElement;
+int  Size, I;
+ElementPtr  pElement;
 int NumberOfElements;
 RealNumber  Data, LargestElement, SmallestElement;
 FILE  *pStatsFile;

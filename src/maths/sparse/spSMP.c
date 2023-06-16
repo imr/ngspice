@@ -285,12 +285,11 @@ SMPmatrix *Matrix)
 int
 SMPnewMatrix(
 SMPmatrix **pMatrix,
-int dummy)
+int size)
 {
-int Error;
-    NG_IGNORE(dummy);
+    int Error;
 
-    *pMatrix = (SMPmatrix *)spCreate( 0, 1, &Error );
+    *pMatrix = (SMPmatrix *)spCreate( size, 1, &Error );
     return Error;
 }
 
@@ -562,18 +561,18 @@ SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col)
     Accum = *Prev;
 
     while (Addend != NULL) {
-    while (Accum && Accum->Row < Addend->Row) {
-        Prev = &Accum->NextInCol;
-        Accum = *Prev;
-    }
-    if (!Accum || Accum->Row > Addend->Row) {
-        Accum = spcCreateElement(Matrix, Addend->Row, Accum_Col, Prev, 0, 0);
-    }
-    Accum->Real += Addend->Real;
+        while (Accum && Accum->Row < Addend->Row) {
+            Prev = &Accum->NextInCol;
+            Accum = *Prev;
+        }
+        if (!Accum || Accum->Row > Addend->Row) {
+            Accum = spcCreateElement(Matrix, Addend->Row, Accum_Col, Prev, 0, NO);
+        }
+        Accum->Real += Addend->Real;
 #if spCOMPLEX
-    Accum->Imag += Addend->Imag;
+        Accum->Imag += Addend->Imag;
 #endif
-    Addend = Addend->NextInCol;
+        Addend = Addend->NextInCol;
     }
 
     return spErrorState( Matrix );

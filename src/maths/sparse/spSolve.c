@@ -156,13 +156,12 @@ spSolve(
 )
 {
 #if REAL
-register  ElementPtr  pElement;
-register  RealVector  Intermediate;
-register  RealNumber  Temp;
-register  int  I, *pExtOrder, Size;
+ElementPtr  pElement;
+RealVector  Intermediate;
+RealNumber  Temp;
+int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
 #endif
-void SolveComplexMatrix();
 
 /* Begin `spSolve'. */
     ASSERT_IS_SPARSE( Matrix );
@@ -301,12 +300,12 @@ SolveComplexMatrix(
 #   endif
 )
 {
-register  ElementPtr  pElement;
-register  ComplexVector  Intermediate;
-register  int  I, *pExtOrder, Size;
+ElementPtr  pElement;
+ComplexVector  Intermediate;
+int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
 #if NOT spSEPARATED_COMPLEX_VECTORS
-register ComplexVector  ExtVector;
+ComplexVector  ExtVector;
 #endif
 ComplexNumber  Temp;
 
@@ -471,13 +470,12 @@ spSolveTransposed(
 )
 {
 #if REAL
-register  ElementPtr  pElement;
-register  RealVector  Intermediate;
-register  int  I, *pExtOrder, Size;
+ElementPtr  pElement;
+RealVector  Intermediate;
+int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
 RealNumber  Temp;
 #endif
-void SolveComplexTransposedMatrix();
 
 /* Begin `spSolveTransposed'. */
     ASSERT_IS_SPARSE( Matrix );
@@ -618,11 +616,11 @@ SolveComplexTransposedMatrix(
 #   endif
 )
 {
-register  ElementPtr  pElement;
-register  ComplexVector  Intermediate;
-register  int  I, *pExtOrder, Size;
+ElementPtr  pElement;
+ComplexVector  Intermediate;
+int  I, *pExtOrder, Size;
 #if NOT spSEPARATED_COMPLEX_VECTORS
-register ComplexVector  ExtVector;
+ComplexVector  ExtVector;
 #endif
 ElementPtr  pPivot;
 ComplexNumber  Temp;

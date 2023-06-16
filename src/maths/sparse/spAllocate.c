@@ -133,9 +133,9 @@ spCreate(
     spError *pError
 )
 {
-register  unsigned  SizePlusOne;
-register  MatrixPtr  Matrix;
-register  int  I;
+unsigned  SizePlusOne;
+MatrixPtr  Matrix;
+int  I;
 int  AllocatedSize;
 
 /* Begin `spCreate'. */
@@ -201,7 +201,7 @@ int  AllocatedSize;
     Matrix->ElementsRemaining = 0;
     Matrix->FillinsRemaining = 0;
 
-    RecordAllocation( Matrix, (void *)Matrix );
+    RecordAllocation( Matrix, Matrix );
     if (Matrix->Error == spNO_MEMORY) goto MemoryError; /* FIXME: Use of memory after free */
 
 /* Take out the trash. */
@@ -322,7 +322,7 @@ ElementPtr  pElement;
 /* Allocate block of MatrixElements if necessary. */
     if (Matrix->ElementsRemaining == 0)
     {   pElement = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
-        RecordAllocation( Matrix, (void *)pElement );
+        RecordAllocation( Matrix, pElement );
         if (Matrix->Error == spNO_MEMORY) return NULL;
         Matrix->ElementsRemaining = ELEMENTS_PER_ALLOCATION;
         Matrix->NextAvailElement = pElement;
@@ -383,21 +383,21 @@ ElementPtr  pElement;
 
 /* Allocate block of MatrixElements for elements. */
     pElement = SP_MALLOC(struct MatrixElement, InitialNumberOfElements);
-    RecordAllocation( Matrix, (void *)pElement );
+    RecordAllocation( Matrix, pElement );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->ElementsRemaining = InitialNumberOfElements;
     Matrix->NextAvailElement = pElement;
 
 /* Allocate block of MatrixElements for fill-ins. */
     pElement = SP_MALLOC(struct MatrixElement, NumberOfFillinsExpected);
-    RecordAllocation( Matrix, (void *)pElement );
+    RecordAllocation( Matrix, pElement );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->FillinsRemaining = NumberOfFillinsExpected;
     Matrix->NextAvailFillin = pElement;
 
 /* Allocate a fill-in list structure. */
     Matrix->FirstFillinListNode = SP_MALLOC(struct FillinListNodeStruct,1);
-    RecordAllocation( Matrix, (void *)Matrix->FirstFillinListNode );
+    RecordAllocation( Matrix, Matrix->FirstFillinListNode );
     if (Matrix->Error == spNO_MEMORY) return;
     Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
 
@@ -465,14 +465,14 @@ ElementPtr  pFillins;
         {
 /* Allocate block of fill-ins. */
             pFillins = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
-            RecordAllocation( Matrix, (void *)pFillins );
+            RecordAllocation( Matrix, pFillins );
             if (Matrix->Error == spNO_MEMORY) return NULL;
             Matrix->FillinsRemaining = ELEMENTS_PER_ALLOCATION;
             Matrix->NextAvailFillin = pFillins;
 
 /* Allocate a fill-in list structure. */
             pListNode->Next = SP_MALLOC(struct FillinListNodeStruct,1);
-            RecordAllocation( Matrix, (void *)pListNode->Next );
+            RecordAllocation( Matrix, pListNode->Next );
             if (Matrix->Error == spNO_MEMORY) return NULL;
             Matrix->LastFillinListNode = pListNode = pListNode->Next;
 
@@ -505,7 +505,7 @@ ElementPtr  pFillins;
  *  >>> Arguments:
  *  Matrix  <input>    (MatrixPtr)
  *      Pointer to the matrix.
- *  AllocatedPtr  <input>  (void *)
+ *  AllocatedPtr  <input>  
  *      The pointer returned by malloc or calloc.  These pointers are saved in
  *      a list so that they can be easily freed.
  *
@@ -573,8 +573,8 @@ RecordAllocation(
 static void
 AllocateBlockOfAllocationList( MatrixPtr Matrix )
 {
-register  int  I;
-register  AllocationListPtr  ListPtr;
+int  I;
+AllocationListPtr  ListPtr;
 
 /* Begin `AllocateBlockOfAllocationList'. */
 /* Allocate block of records for allocation list. */
@@ -596,7 +596,7 @@ register  AllocationListPtr  ListPtr;
     }
 
 /* Record allocation of space for allocation list on allocation list. */
-    Matrix->TopOfAllocationList->AllocatedPtr = (void *)ListPtr;
+    Matrix->TopOfAllocationList->AllocatedPtr = ListPtr;
     Matrix->RecordsRemaining = ELEMENTS_PER_ALLOCATION;
 
     return;
@@ -629,7 +629,7 @@ register  AllocationListPtr  ListPtr;
 void
 spDestroy( MatrixPtr Matrix )
 {
-register  AllocationListPtr  ListPtr, NextListPtr;
+AllocationListPtr  ListPtr, NextListPtr;
 
 /* Begin `spDestroy'. */
     ASSERT_IS_SPARSE( Matrix );

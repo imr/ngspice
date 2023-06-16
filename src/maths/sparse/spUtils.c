@@ -203,7 +203,7 @@ static RealNumber ComplexCondition( MatrixPtr, RealNumber, int* );
 void
 spMNA_Preorder( MatrixPtr Matrix )
 {
-register  int  J, Size;
+int  J, Size;
 ElementPtr  pTwin1, pTwin2;
 int  Twins, StartAt = 1;
 BOOLEAN  Swapped, AnotherPassNeeded;
@@ -397,10 +397,9 @@ spScale(
     spREAL SolutionScaleFactors[]
 )
 {
-register ElementPtr  pElement;
-register int  I, lSize, *pExtOrder;
+ElementPtr  pElement;
+int  I, lSize, *pExtOrder;
 RealNumber  ScaleFactor;
-//void ScaleComplexMatrix();
 
 /* Begin `spScale'. */
     ASSERT_IS_SPARSE( Matrix );
@@ -523,12 +522,12 @@ RealNumber  ScaleFactor;
 static void
 ScaleComplexMatrix(
     MatrixPtr Matrix,
-    register RealVector RHS_ScaleFactors,
-    register RealVector SolutionScaleFactors
+    RealVector RHS_ScaleFactors,
+    RealVector SolutionScaleFactors
 )
 {
-register ElementPtr  pElement;
-register int  I, lSize, *pExtOrder;
+ElementPtr  pElement;
+int  I, lSize, *pExtOrder;
 RealNumber  ScaleFactor;
 
 /* Begin `ScaleComplexMatrix'. */
@@ -613,12 +612,11 @@ spMultiply(
 )
 {
 #if REAL
-register  ElementPtr  pElement;
-register  RealVector  Vector;
-register  RealNumber  Sum;
-register  int  I, *pExtOrder;
+ElementPtr  pElement;
+RealVector  Vector;
+RealNumber  Sum;
+int  I, *pExtOrder;
 #endif
-extern void ComplexMatrixMultiply();
 
 /* Begin `spMultiply'. */
     ASSERT_IS_SPARSE( Matrix );
@@ -710,10 +708,10 @@ ComplexMatrixMultiply(
 #endif
 )
 {
-register  ElementPtr  pElement;
-register  ComplexVector  Vector;
+ElementPtr  pElement;
+ComplexVector  Vector;
 ComplexNumber  Sum;
-register  int  I, *pExtOrder;
+int  I, *pExtOrder;
 
 /* Begin `ComplexMatrixMultiply'. */
 
@@ -805,11 +803,10 @@ spMultTransposed(
 )
 {
 #if REAL
-register  ElementPtr  pElement;
-register  RealVector  Vector;
-register  RealNumber  Sum;
-register  int  I, *pExtOrder;
-extern void ComplexTransposedMatrixMultiply();
+ElementPtr  pElement;
+RealVector  Vector;
+RealNumber  Sum;
+int  I, *pExtOrder;
 #endif
 
 /* Begin `spMultTransposed'. */
@@ -906,10 +903,10 @@ ComplexTransposedMatrixMultiply(
 #endif
 )
 {
-register  ElementPtr  pElement;
-register  ComplexVector  Vector;
+ElementPtr  pElement;
+ComplexVector  Vector;
 ComplexNumber  Sum;
-register  int  I, *pExtOrder;
+int  I, *pExtOrder;
 
 /* Begin `ComplexTransposedMatrixMultiply'. */
 
@@ -999,7 +996,7 @@ register  int  I, *pExtOrder;
  *  Norm  (RealNumber)
  *      L-infinity norm of a complex number.
  *  Size  (int)
- *      Local storage for Matrix->Size.  Placed in a register for speed.
+ *      Local storage for Matrix->Size.  Placed in a for speed.
  *  Temp  (RealNumber)
  *      Temporary storage for real portion of determinant.
  */
@@ -1014,7 +1011,7 @@ spDeterminant(
 #endif
 )
 {
-register int I, Size;
+int I, Size;
 RealNumber Norm, nr, ni;
 ComplexNumber Pivot, cDeterminant;
 
@@ -1170,7 +1167,7 @@ struct FillinListNodeStruct  *pListNode;
     Matrix->Fillins = 0;
 
 /* Mark the fill-ins. */
-    {   register  ElementPtr  pFillin, pLastFillin;
+    {   ElementPtr  pFillin, pLastFillin;
 
         pListNode = Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
         Matrix->FillinsRemaining = pListNode->NumberOfFillinsInList;
@@ -1186,8 +1183,8 @@ struct FillinListNodeStruct  *pListNode;
     }
 
 /* Unlink fill-ins by searching for elements marked with Row = 0. */
-    {   register  ElementPtr pElement, *ppElement;
-        register  int  I, Size = Matrix->Size;
+    {   ElementPtr pElement, *ppElement;
+        int  I, Size = Matrix->Size;
 
 /* Unlink fill-ins in all columns. */
         for (I = 1; I <= Size; I++)
@@ -1263,7 +1260,7 @@ spDeleteRowAndCol(
     int  Col
 )
 {
-register  ElementPtr  pElement, *ppElement, pLastElement;
+ElementPtr  pElement, *ppElement, pLastElement;
 int  Size, ExtRow, ExtCol;
 
 /* Begin `spDeleteRowAndCol'. */
@@ -1370,8 +1367,8 @@ int  Size, ExtRow, ExtCol;
 spREAL
 spPseudoCondition( MatrixPtr Matrix )
 {
-    register int I;
-    register ArrayOfElementPtrs Diag;
+    int I;
+    ArrayOfElementPtrs Diag;
     RealNumber MaxPivot, MinPivot, Mag;
 
     /* Begin `spPseudoCondition'. */
@@ -1458,9 +1455,9 @@ spCondition(
     int *pError
 )
 {
-register ElementPtr pElement;
-register RealVector T, Tm;
-register int I, K, Row;
+ElementPtr pElement;
+RealVector T, Tm;
+int I, K, Row;
 ElementPtr pPivot;
 int Size;
 RealNumber E, Em, Wp, Wm, ASp, ASm, ASw, ASy, ASv, ASz, MaxY, ScaleFactor;
@@ -1626,7 +1623,7 @@ RealNumber Linpack, OLeary, InvNormOfInverse, ComplexCondition();
     for (ASz = 0.0, I = Size; I > 0; I--) ASz += ABS(T[I]);
 
 #if NOT spCOMPLEX
-    FREE( Tm );
+    SP_FREE( Tm );
 #endif
 
     Linpack = ASy / ASz;
@@ -1669,9 +1666,9 @@ ComplexCondition(
     int *pError
 )
 {
-register ElementPtr pElement;
-register ComplexVector T, Tm;
-register int I, K, Row;
+ElementPtr pElement;
+ComplexVector T, Tm;
+int I, K, Row;
 ElementPtr pPivot;
 int Size;
 RealNumber E, Em, ASp, ASm, ASw, ASy, ASv, ASz, MaxY, ScaleFactor;
@@ -1827,7 +1824,7 @@ ComplexNumber Wp, Wm;
 /* Compute 1-norm of T, which now contains z. */
     for (ASz = 0.0, I = Size; I > 0; I--) ASz += CMPLX_1_NORM(T[I]);
 
-    FREE( Tm );
+    SP_FREE( Tm );
 
     Linpack = ASy / ASz;
     OLeary = E / MaxY;
@@ -1854,8 +1851,8 @@ ComplexNumber Wp, Wm;
 spREAL
 spNorm( MatrixPtr Matrix )
 {
-register ElementPtr pElement;
-register int I;
+ElementPtr pElement;
+int I;
 RealNumber Max = 0.0, AbsRowSum;
 
 /* Begin `spNorm'. */
@@ -1968,11 +1965,11 @@ RealNumber Max = 0.0, AbsRowSum;
 spREAL
 spLargestElement( MatrixPtr Matrix )
 {
-register int I;
+int I;
 RealNumber Mag, AbsColSum, Max = 0.0, MaxRow = 0.0, MaxCol = 0.0;
 RealNumber Pivot;
 ComplexNumber cPivot;
-register ElementPtr pElement, pDiag;
+ElementPtr pElement, pDiag;
 
 /* Begin `spLargestElement'. */
     ASSERT_IS_SPARSE( Matrix );
@@ -2089,8 +2086,8 @@ spRoundoff(
     spREAL Rho
 )
 {
-register ElementPtr pElement;
-register int Count, I, MaxCount = 0;
+ElementPtr pElement;
+int Count, I, MaxCount = 0;
 RealNumber Reid, Gear;
 
 /* Begin `spRoundoff'. */
