@@ -196,7 +196,7 @@ SMPmatrix *Matrix,
 double PivTol, double PivRel,
 int *NumSwaps)
 {
-    *NumSwaps = 0;
+    *NumSwaps = 1;
     spSetComplex( Matrix );
     return spOrderAndFactor( Matrix, NULL,
                              PivRel, PivTol, YES );

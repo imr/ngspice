@@ -402,7 +402,7 @@ spcFindElementInCol(MatrixPtr Matrix, ElementPtr *LastAddr,
 
     /* Element does not exist and must be created. */
     if (CreateIfMissing)
-    return spcCreateElement( Matrix, Row, Col, LastAddr, NO, 0);
+    return spcCreateElementOld( Matrix, Row, Col, LastAddr, NO);
     else
     return NULL;
 }
@@ -911,7 +911,114 @@ ElementPtr  pElement, pCreatedElement;
 }
 
 
+ElementPtr
+spcCreateElementOld(MatrixPtr Matrix, int  Row, int  Col,
+		 ElementPtr  *LastAddr, int Fillin)
+{
+    ElementPtr  pElement, pLastElement;
+    ElementPtr  pCreatedElement;
 
+    /* Begin `spcCreateElement'. */
+
+    if (Matrix->RowsLinked)
+    {
+	/* Row pointers cannot be ignored. */
+
+        if (Fillin)
+        {
+	    pElement = spcGetFillin( Matrix );
+            Matrix->Fillins++;
+        }
+        else
+        {
+	    pElement = spcGetElement( Matrix );
+	    Matrix->Elements++;
+
+            Matrix->NeedsOrdering = YES;
+        }
+        if (pElement == NULL) return NULL;
+
+	/* If element is on diagonal, store pointer in Diag. */
+        if (Row == Col) Matrix->Diag[Row] = pElement;
+
+	/* Initialize Element. */
+        pCreatedElement = pElement;
+        pElement->Row = Row;
+        pElement->Col = Col;
+        pElement->Real = 0.0;
+        pElement->Imag = 0.0;
+#if INITIALIZE
+        pElement->pInitInfo = NULL;
+#endif
+
+	/* Splice element into column. */
+        pElement->NextInCol = *LastAddr;
+        *LastAddr = pElement;
+
+	/* Search row for proper element position. */
+        pElement = Matrix->FirstInRow[Row];
+        pLastElement = NULL;
+        while (pElement != NULL)
+        {
+	    /* Search for element row position. */
+            if (pElement->Col < Col)
+            {
+		/* Have not reached desired element. */
+                pLastElement = pElement;
+                pElement = pElement->NextInRow;
+            }
+            else pElement = NULL;
+        }
+
+	/* Splice element into row. */
+        pElement = pCreatedElement;
+        if (pLastElement == NULL)
+        {
+	    /* Element is first in row. */
+            pElement->NextInRow = Matrix->FirstInRow[Row];
+            Matrix->FirstInRow[Row] = pElement;
+        }
+        else
+        {
+	    /* Element is not first in row. */
+            pElement->NextInRow = pLastElement->NextInRow;
+            pLastElement->NextInRow = pElement;
+        }
+
+    }
+    else
+    {
+	/* Matrix has not been factored yet.  Thus get element rather
+	 * than fill-in.  Also, row pointers can be ignored.  */
+
+	/* Allocate memory for Element. */
+        pElement = spcGetElement( Matrix );
+	    Matrix->Elements++;
+        if (pElement == NULL) return NULL;
+
+	/* If element is on diagonal, store pointer in Diag. */
+        if (Row == Col) Matrix->Diag[Row] = pElement;
+
+	/* Initialize Element. */
+        pCreatedElement = pElement;
+        pElement->Row = Row;
+#if DEBUG
+        pElement->Col = Col;
+#endif
+        pElement->Real = 0.0;
+        pElement->Imag = 0.0;
+#if INITIALIZE
+        pElement->pInitInfo = NULL;
+#endif
+
+	/* Splice element into column. */
+        pElement->NextInCol = *LastAddr;
+        *LastAddr = pElement;
+    }
+
+    Matrix->Elements++;
+    return pCreatedElement;
+}
 
 
 

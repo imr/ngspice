@@ -944,6 +944,8 @@ spcEXTERN ElementPtr spcFindElementInCol( MatrixPtr, ElementPtr*, int, int, int 
 spcEXTERN ElementPtr spcFindDiag( MatrixPtr, int );
 spcEXTERN ElementPtr spcCreateElement( MatrixPtr, int, int,
                 ElementPtr*, ElementPtr*, int );
+spcEXTERN ElementPtr spcCreateElementOld( MatrixPtr, int, int,
+                ElementPtr*, int );
 spcEXTERN void spcCreateInternalVectors( MatrixPtr );
 spcEXTERN void spcLinkRows( MatrixPtr );
 spcEXTERN void spcColExchange( MatrixPtr, int, int );
