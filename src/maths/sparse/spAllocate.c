@@ -654,7 +654,7 @@ AllocationListPtr  ListPtr, NextListPtr;
     ListPtr = Matrix->TopOfAllocationList;
     while (ListPtr != NULL)
     {   NextListPtr = ListPtr->NextRecord;
-        free( ListPtr->AllocatedPtr );
+        SP_FREE( ListPtr->AllocatedPtr );
         ListPtr = NextListPtr;
     }
     return;
@@ -683,7 +683,7 @@ spErrorState( MatrixPtr Matrix )
 
     if (Matrix != NULL)
     {   ASSERT_IS_SPARSE( Matrix );
-        return (Matrix)->Error;
+        return Matrix->Error;
     }
     else return spNO_MEMORY;   /* This error may actually be spPANIC,
                                 * no way to tell. */

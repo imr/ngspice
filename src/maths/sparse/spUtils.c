@@ -996,7 +996,7 @@ int  I, *pExtOrder;
  *  Norm  (RealNumber)
  *      L-infinity norm of a complex number.
  *  Size  (int)
- *      Local storage for Matrix->Size.  Placed in a for speed.
+ *      Local storage for Matrix->Size.  Placed in a register for speed.
  *  Temp  (RealNumber)
  *      Temporary storage for real portion of determinant.
  */
