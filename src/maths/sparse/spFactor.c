@@ -196,7 +196,7 @@ static void WriteStatus( MatrixPtr, int );
  *
  */
 
-spError
+int
 spOrderAndFactor(
     MatrixPtr Matrix,
     spREAL RHS[],
@@ -338,7 +338,7 @@ Done:
  *  \see spOrderAndFactor()
  */
 
-spError
+int
 spFactor( MatrixPtr Matrix )
 {
 #if REAL

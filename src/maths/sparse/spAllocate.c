@@ -18,7 +18,7 @@
 /*  >>> User accessible functions contained in this file:
  *  spCreate
  *  spDestroy
- *  spErrorState
+ *  spError
  *  spWhereSingular
  *  spGetSize
  *  spSetReal
@@ -92,7 +92,7 @@ char spcMatrixMustNotBeFactored[] = "Matrix must not be factored";
 
 //static spError ReserveElements( MatrixPtr, int );
 static void InitializeElementBlocks( MatrixPtr, int, int );
-static void RecordAllocation( MatrixPtr, void* );
+static void RecordAllocation( MatrixPtr, void * );
 static void AllocateBlockOfAllocationList( MatrixPtr );
 
 
@@ -115,7 +115,7 @@ static void AllocateBlockOfAllocationList( MatrixPtr );
  *      Further note that if a matrix will be both real and complex, it must
  *      be specified here as being complex.
  *  \param pError
- *      Returns error flag, needed because function \a spErrorState() will
+ *      Returns error flag, needed because function \a spError() will
  *      not work correctly if \a spCreate() returns \a NULL. Possible errors
  *      include \a  spNO_MEMORY and \a spPANIC.
  */
@@ -130,7 +130,7 @@ MatrixPtr
 spCreate(
     int  Size,
     int  Complex,
-    spError *pError
+    int *pError
 )
 {
 unsigned  SizePlusOne;
@@ -596,7 +596,7 @@ AllocationListPtr  ListPtr;
     }
 
 /* Record allocation of space for allocation list on allocation list. */
-    Matrix->TopOfAllocationList->AllocatedPtr = ListPtr;
+    Matrix->TopOfAllocationList->AllocatedPtr = (void *)ListPtr;
     Matrix->RecordsRemaining = ELEMENTS_PER_ALLOCATION;
 
     return;
@@ -654,7 +654,11 @@ AllocationListPtr  ListPtr, NextListPtr;
     ListPtr = Matrix->TopOfAllocationList;
     while (ListPtr != NULL)
     {   NextListPtr = ListPtr->NextRecord;
-        SP_FREE( ListPtr->AllocatedPtr );
+        if ((void *) ListPtr == ListPtr->AllocatedPtr) {
+            SP_FREE( ListPtr );
+        } else {
+            SP_FREE( ListPtr->AllocatedPtr );
+        }
         ListPtr = NextListPtr;
     }
     return;
@@ -676,10 +680,10 @@ AllocationListPtr  ListPtr, NextListPtr;
  *      The pointer to the matrix for which the error status is desired.
  */
 
-spError
-spErrorState( MatrixPtr Matrix )
+int
+spError( MatrixPtr Matrix )
 {
-/* Begin `spErrorState'. */
+/* Begin `spError'. */
 
     if (Matrix != NULL)
     {   ASSERT_IS_SPARSE( Matrix );

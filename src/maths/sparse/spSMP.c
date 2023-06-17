@@ -122,7 +122,7 @@ int Row, int Col,
 double Value)
 {
     *spGetElement( Matrix, Row, Col ) = Value;
-    return spErrorState( Matrix );
+    return spError( Matrix );
 }
 
 /*
@@ -311,7 +311,7 @@ SMPpreOrder(
 SMPmatrix *Matrix)
 {
     spMNA_Preorder( Matrix );
-    return spErrorState( Matrix );
+    return spError( Matrix );
 }
 
 /*
@@ -368,7 +368,7 @@ int *pExponent)
 #else
     spDeterminant( Matrix, pExponent, &(pMantissa->real) );
 #endif
-    return spErrorState( Matrix );
+    return spError( Matrix );
 }
 
 /*
@@ -454,7 +454,7 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
     printf("Determinant 10->2: (%20g,%20g)^%d\n", pMantissa->real,
     pMantissa->imag, *pExponent);
 #endif
-    return spErrorState( Matrix );
+    return spError( Matrix );
 }
 
 
@@ -542,7 +542,7 @@ SMPcZeroCol(SMPmatrix *Matrix, int Col)
 #endif
     }
 
-    return spErrorState( Matrix );
+    return spError( Matrix );
 }
 
 /*
@@ -575,7 +575,7 @@ SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col)
         Addend = Addend->NextInCol;
     }
 
-    return spErrorState( Matrix );
+    return spError( Matrix );
 }
 
 /*

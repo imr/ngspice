@@ -271,7 +271,7 @@ typedef spGenericPtr spMatrix;
 typedef spREAL spElement;
 
 /*! Declares the type of the Sparse error codes. */
-typedef int spError;
+//typedef int spError;
 
 
 
@@ -313,12 +313,12 @@ typedef struct MatrixFrame *MatrixPtr;
 
 spcEXTERN  void       spClear( MatrixPtr );
 spcEXTERN  spREAL     spCondition( MatrixPtr, spREAL, int* );
-spcEXTERN  MatrixPtr   spCreate( int, int, spError* );
+spcEXTERN  MatrixPtr  spCreate( int, int, int* );
 spcEXTERN  void       spDeleteRowAndCol( MatrixPtr, int, int );
 spcEXTERN  void       spDestroy( MatrixPtr );
 spcEXTERN  int        spElementCount( MatrixPtr );
 spcEXTERN  int        spOriginalCount( MatrixPtr );
-spcEXTERN  spError    spErrorState( MatrixPtr );
+spcEXTERN  int        spError( MatrixPtr );
 #ifdef EOF
     spcEXTERN void    spErrorMessage( MatrixPtr, FILE*, char* );
 #else
@@ -326,18 +326,18 @@ spcEXTERN  spError    spErrorState( MatrixPtr );
 #endif
 
 
-spcEXTERN  spError    spFactor( MatrixPtr );
+spcEXTERN  int        spFactor( MatrixPtr );
 spcEXTERN  int        spFileMatrix( MatrixPtr, char*, char*, int, int, int );
 spcEXTERN  int        spFileStats( MatrixPtr, char*, char* );
 spcEXTERN  int        spFillinCount( MatrixPtr );
 spcEXTERN  spElement *spFindElement( MatrixPtr, int, int );
-spcEXTERN  spError    spGetAdmittance( MatrixPtr, int, int,
+spcEXTERN  int        spGetAdmittance( MatrixPtr, int, int,
                 struct spTemplate* );
 spcEXTERN  spElement *spGetElement( MatrixPtr, int, int );
 spcEXTERN  spGenericPtr spGetInitInfo( spElement* );
-spcEXTERN  spError    spGetOnes( MatrixPtr, int, int, int,
+spcEXTERN  int        spGetOnes( MatrixPtr, int, int, int,
                 struct spTemplate* );
-spcEXTERN  spError    spGetQuad( MatrixPtr, int, int, int, int,
+spcEXTERN  int        spGetQuad( MatrixPtr, int, int, int, int,
                 struct spTemplate* );
 spcEXTERN  int        spGetSize( MatrixPtr, int );
 spcEXTERN  int        spInitialize( MatrixPtr, int (*pInit)(spElement *, spGenericPtr, int, int) );
@@ -345,7 +345,7 @@ spcEXTERN  void       spInstallInitInfo( spElement*, spGenericPtr );
 spcEXTERN  spREAL     spLargestElement( MatrixPtr );
 spcEXTERN  void       spMNA_Preorder( MatrixPtr );
 spcEXTERN  spREAL     spNorm( MatrixPtr );
-spcEXTERN  spError    spOrderAndFactor( MatrixPtr, spREAL[], spREAL,
+spcEXTERN  int        spOrderAndFactor( MatrixPtr, spREAL[], spREAL,
                 spREAL, int );
 spcEXTERN  void       spPartition( MatrixPtr, int );
 spcEXTERN  void       spPrint( MatrixPtr, int, int, int );
