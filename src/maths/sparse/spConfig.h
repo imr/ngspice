@@ -19,7 +19,6 @@
  *  Kenneth S. Kundert <kundert@users.sourceforge.net>
  */
 
-
 /*
  *  Revision and copyright information.
  *
@@ -29,12 +28,8 @@
  *  $Revision: 1.5 $
  */
 
-
 #ifndef spCONFIG_DEFS
 #define spCONFIG_DEFS
-
-
-
 
 #ifdef spINSIDE_SPARSE
 /*
@@ -67,7 +62,7 @@
  * slight speed and memory advantage if the routines are complied
  * to handle only real systems of equations.
  */
-#define  REAL                           YES
+#define REAL YES
 
 /*!
  * Setting this compiler flag true (1) makes the matrix
@@ -78,7 +73,7 @@
  * the size of the matrix need not be known before the matrix is
  * built.  The matrix can be allocated with size zero and expanded.
  */
-#define  EXPANDABLE                     YES
+#define EXPANDABLE YES
 
 /*!
  * This option allows the set of external row and column numbers
@@ -98,7 +93,7 @@
  * vectors must be at least as large as the external size, which
  * is the value of the largest given row or column numbers.
  */
-#define  TRANSLATE                      YES
+#define TRANSLATE YES
 
 /*!
  * Causes the spInitialize(), spGetInitInfo(), and
@@ -110,7 +105,7 @@
  * column numbers as arguments.  This allows the user to write
  * custom matrix initialization routines.
  */
-#define  INITIALIZE                     NO
+#define INITIALIZE NO
 
 /*!
  * Many matrices, and in particular node- and modified-node
@@ -136,7 +131,7 @@
  * options and constants are not used: \a MODIFIED_MARKOWITZ,
  * \a MAX_MARKOWITZ_TIES, and \a TIES_MULTIPLIER.
  */
-#define  DIAGONAL_PIVOTING              YES
+#define DIAGONAL_PIVOTING YES
 
 /*!
  * This determines whether arrays start at an index of zero or one.
@@ -151,7 +146,7 @@
  * matrix.  ARRAY_OFFSET must be either 0 or 1, no other offsets
  * are valid.
  */
-#define  ARRAY_OFFSET                   YES
+#define ARRAY_OFFSET YES
 
 /*!
  * This specifies that the modified Markowitz method of pivot
@@ -173,19 +168,19 @@
  * for use when working with very large matrices where the initial
  * factor time represents an unacceptable burden. \a NO is recommended.
  */
-#define  MODIFIED_MARKOWITZ             NO
+#define MODIFIED_MARKOWITZ NO
 
 /*!
  * This specifies that the spDeleteRowAndCol() routine
  * should be compiled.  Note that for this routine to be
  * compiled, both \a DELETE and \a TRANSLATE should be set true.
  */
-#define  DELETE                         NO
+#define DELETE NO
 
 /*!
  * This specifies that the spStripFills() routine should be compiled.
  */
-#define  STRIP                          NO
+#define STRIP NO
 
 /*!
  * This specifies that the routine that preorders modified node
@@ -193,7 +188,7 @@
  * in greater speed and accuracy if used with this type of
  * matrix.
  */
-#define  MODIFIED_NODAL                 YES
+#define MODIFIED_NODAL YES
 
 /*!
  * This specifies that the routines that allow four related
@@ -202,7 +197,7 @@
  * admittance.  The routines affected by \a QUAD_ELEMENT are the
  * spGetAdmittance(), spGetQuad() and spGetOnes() routines.
  */
-#define  QUAD_ELEMENT                   NO
+#define QUAD_ELEMENT NO
 
 /*!
  * This specifies that the routines that solve the matrix as if
@@ -210,7 +205,7 @@
  * useful when performing sensitivity analysis using the adjoint
  * method.
  */
-#define  TRANSPOSE                      YES
+#define TRANSPOSE YES
 
 /*!
  * This specifies that the routine that performs scaling on the
@@ -224,26 +219,26 @@
  * solution by the user or the scaled factors may simply be
  * thrown away. \a NO is recommended.
  */
-#define  SCALING                        NO
+#define SCALING NO
 
 /*!
  * This specifies that routines that are used to document the
  * matrix, such as spPrint() and spFileMatrix(), should be
  * compiled.
  */
-#define  DOCUMENTATION                  YES
+#define DOCUMENTATION YES
 
 /*!
  * This specifies that routines that are used to multiply the
  * matrix by a vector, such as spMultiply() and spMultTransposed(), should be
  * compiled.
  */
-#define  MULTIPLICATION                 YES
+#define MULTIPLICATION YES
 
 /*!
  * This specifies that the routine spDeterminant() should be complied.
  */
-#define  DETERMINANT                    YES
+#define DETERMINANT YES
 
 /*!
  * This specifies that spLargestElement() and spRoundoff() should
@@ -255,28 +250,28 @@
  * If the bound increases greatly after using spFactor(), then the
  * matrix should probably be reordered. Recomend \a NO.
  */
-#define  STABILITY                      NO
+#define STABILITY NO
 
 /*!
  * This specifies that spCondition() and spNorm(), the code that
  * computes a good estimate of the condition number of the matrix,
  * should be compiled. Recomend \a NO.
  */
-#define  CONDITION                      NO
+#define CONDITION NO
 
 /*!
  * This specifies that spPseudoCondition(), the code that computes
  * a crude and easily fooled indicator of ill-conditioning in the
  * matrix, should be compiled. Recomend \a NO.
  */
-#define  PSEUDOCONDITION                NO
+#define PSEUDOCONDITION NO
 
 /*!
  * This specifies that the \a FORTRAN interface routines should be
  * compiled.  When interfacing to \a FORTRAN programs, the \a ARRAY_OFFSET
  * options should be set to NO.
  */
-#define  FORTRAN                        NO
+#define FORTRAN NO
 
 /*!
  * This specifies that additional error checking will be compiled.
@@ -285,7 +280,7 @@
  * the routines have been integrated in and are running smoothly, this
  * option should be turned off. \a YES is recommended.
  */
-#define  DEBUG                          YES
+#define DEBUG YES
 
 #endif /* spINSIDE_SPARSE */
 
@@ -300,7 +295,7 @@
  * This specifies that the routines will be complied to handle
  * complex systems of equations.
  */
-#define  spCOMPLEX                      1
+#define spCOMPLEX 1
 
 /*!
  * This specifies the format for complex vectors.  If this is set
@@ -313,16 +308,10 @@
  * vector is represented by two arrays of \a spREALs, one with
  * the real terms, the other with the imaginary. \a NO is recommended.
  */
-#define  spSEPARATED_COMPLEX_VECTORS    1
+#define spSEPARATED_COMPLEX_VECTORS 1
 
 #ifdef spINSIDE_SPARSE
 
-
-
-
-
-
-
 /*
  *  MATRIX CONSTANTS
  *
@@ -339,28 +328,28 @@
  * not be less than or equal to zero nor larger than one.
  * 0.001 is recommended.
  */
-#define  DEFAULT_THRESHOLD              1.0e-3
+#define DEFAULT_THRESHOLD 1.0e-3
 
 /*!
  * This indicates whether spOrderAndFactor() should use diagonal
  * pivoting as default.  This issue only arises when
  * spOrderAndFactor() is called from spFactor(). \a YES is recommended.
  */
-#define  DIAG_PIVOTING_AS_DEFAULT       YES
+#define DIAG_PIVOTING_AS_DEFAULT YES
 
 /*!
  * This number multiplied by the size of the matrix equals the number
  * of elements for which memory is initially allocated in spCreate().
  * 6 is recommended.
  */
-#define  SPACE_FOR_ELEMENTS             6
+#define SPACE_FOR_ELEMENTS 6
 
 /*!
  * This number multiplied by the size of the matrix equals the number
  * of elements for which memory is initially allocated and specifically
  * reserved for fill-ins in spCreate(). 4 is recommended.
  */
-#define  SPACE_FOR_FILL_INS             4
+#define SPACE_FOR_FILL_INS 4
 
 /*!
  * The number of matrix elements requested from the malloc utility on
@@ -370,7 +359,7 @@
  * elements at a time (or some multiple thereof).
  * 31 is recommended.
  */
-#define  ELEMENTS_PER_ALLOCATION        31
+#define ELEMENTS_PER_ALLOCATION 31
 
 /*!
  * The minimum allocated size of a matrix.  Note that this does not
@@ -379,13 +368,13 @@
  * allocated with an estimated size of zero.  This number should not
  * be less than one.
  */
-#define  MINIMUM_ALLOCATED_SIZE         6
+#define MINIMUM_ALLOCATED_SIZE 6
 
 /*!
  * The amount the allocated size of the matrix is increased when it
  * is expanded.
  */
-#define  EXPANSION_FACTOR               1.5
+#define EXPANSION_FACTOR 1.5
 
 /*!
  * Some terminology should be defined.  The Markowitz row count is the number
@@ -412,7 +401,7 @@
  * 100 is recommended.
  * \see TIES_MULTIPLIER
  */
-#define  MAX_MARKOWITZ_TIES             100
+#define MAX_MARKOWITZ_TIES 100
 
 /*!
  * Specifies the number of Markowitz ties that are allowed to occur
@@ -429,7 +418,7 @@
  * diagonal pivoting breaks down. 5 is recommended.
  * \see MAX_MARKOWITZ_TIES
  */
-#define  TIES_MULTIPLIER                5
+#define TIES_MULTIPLIER 5
 
 /*!
  * Which partition mode is used by spPartition() as default.
@@ -441,77 +430,61 @@
  * overhead, but speeds up both dense and sparse matrices, best if there
  * is a large number of matrices that can use the same ordering.
  */
-#define  DEFAULT_PARTITION              spAUTO_PARTITION
+#define DEFAULT_PARTITION spAUTO_PARTITION
 
 /*!
  * The number of characters per page width.  Set to 80 for terminal,
  * 132 for line printer. Controls how many columns printed by
  * spPrint() per page width.
  */
-#define  PRINTER_WIDTH  80
+#define PRINTER_WIDTH 80
 
-
-
-
-
-
-
-
-
-
 #endif /* spINSIDE_SPARSE */
 /*
  * PORTABILITY MACROS
  */
 
 #ifdef __STDC__
-#   define spcCONCAT(prefix,suffix)        prefix ## suffix
-#   define spcQUOTE(x)                     # x
-#   define spcFUNC_NEEDS_FILE(func,file)   \
-        func ## _requires_ ## file ## _to_be_included_
+#define spcCONCAT(prefix, suffix) prefix##suffix
+#define spcQUOTE(x) #x
+#define spcFUNC_NEEDS_FILE(func, file) func##_requires_##file##_to_be_included_
 #else
-#   define spcCONCAT(prefix,suffix)        prefix/**/suffix
-#   define spcQUOTE(x)                     "x"
-#   define spcFUNC_NEEDS_FILE(func,file)   \
-        func/**/_requires_/**/file/**/_to_be_included_
+#define spcCONCAT(prefix, suffix) prefix /**/ suffix
+#define spcQUOTE(x) "x"
+#define spcFUNC_NEEDS_FILE(func, file)                                         \
+    func /**/ _requires_ /**/ file /**/ _to_be_included_
 #endif
 
 #if defined(__cplusplus) || defined(c_plusplus)
-    /*
-     * Definitions for C++
-     */
-#   define spcEXTERN        extern "C"
-#   define spcNO_ARGS
-#   define spcCONST     const
-    typedef void *spGenericPtr;
+/*
+ * Definitions for C++
+ */
+#define spcEXTERN extern "C"
+#define spcNO_ARGS
+#define spcCONST const
+typedef void *spGenericPtr;
 #else
 #ifdef __STDC__
-    /*
-     * Definitions for ANSI C
-     */
-#   define spcEXTERN        extern
-#   define spcNO_ARGS       void
-#   define spcCONST     const
-    typedef void *spGenericPtr;
-#   else
-    /*
-     * Definitions for K&R C -- ignore function prototypes
-     */
-#   define spcEXTERN        extern
-#   define spcNO_ARGS
-#   define spcCONST
-    typedef char *spGenericPtr;
+/*
+ * Definitions for ANSI C
+ */
+#define spcEXTERN extern
+#define spcNO_ARGS void
+#define spcCONST const
+typedef void *spGenericPtr;
+#else
+/*
+ * Definitions for K&R C -- ignore function prototypes
+ */
+#define spcEXTERN extern
+#define spcNO_ARGS
+#define spcCONST
+typedef char *spGenericPtr;
 #endif
 #endif
 
 #ifdef spINSIDE_SPARSE
 
-
-
-
-
-
-
 /*
  *  MACHINE CONSTANTS
  *
@@ -519,29 +492,24 @@
  */
 
 /* Begin machine constants. */
-#include <limits.h>
 #include <float.h>
+#include <limits.h>
 
 /*! The resolution of spREAL. */
-#define  MACHINE_RESOLUTION      DBL_EPSILON
+#define MACHINE_RESOLUTION DBL_EPSILON
 
 /*! The largest possible value of spREAL. */
-#define  LARGEST_REAL            DBL_MAX
+#define LARGEST_REAL DBL_MAX
 
 /*! The smalles possible positive value of spREAL. */
-#define  SMALLEST_REAL           DBL_MIN
+#define SMALLEST_REAL DBL_MIN
 
 /*! The largest possible value of shorts. */
-#define  LARGEST_SHORT_INTEGER   SHRT_MAX
+#define LARGEST_SHORT_INTEGER SHRT_MAX
 
 /*! The largest possible value of longs. */
-#define  LARGEST_LONG_INTEGER    LONG_MAX
+#define LARGEST_LONG_INTEGER LONG_MAX
 
-
-
-
-
-
 /* ANNOTATION */
 /*!
  * This macro changes the amount of annotation produced by the matrix
@@ -550,23 +518,23 @@
  * the program. Possible values include \a NONE, \a ON_STRANGE_BEHAVIOR, and
  * \a FULL. \a NONE is recommended.
  */
-#define  ANNOTATE               NONE
+#define ANNOTATE NONE
 
 /*!
  * A possible value for \a ANNOTATE. Disables all annotation.
  */
-#define  NONE                   0
+#define NONE 0
 
 /*!
  * A possible value for \a ANNOTATE. Causes annotation to be produce
  * upon unusual occurances only.
  */
-#define  ON_STRANGE_BEHAVIOR    1
+#define ON_STRANGE_BEHAVIOR 1
 
 /*!
  * A possible value for \a ANNOTATE. Enables full annotation.
  */
-#define  FULL                   2
+#define FULL 2
 
 #endif /* spINSIDE_SPARSE */
 #endif /* spCONFIG_DEFS */

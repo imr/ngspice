@@ -37,7 +37,6 @@
  *  ComplexCondition
  */
 
-
 /*
  *  Revision and copyright information.
  *
@@ -47,11 +46,9 @@
 #ifdef notdef
 static char copyright[] =
     "Sparse1.4: Copyright (c) 1985-2003 by Kenneth S. Kundert";
-static char RCSid[] =
-    "@(#)$Header: /cvsroot/sparse/src/spUtils.c,v 1.4 2003/06/30 19:40:52 kundert Exp $";
+static char RCSid[] = "@(#)$Header: /cvsroot/sparse/src/spUtils.c,v 1.4 "
+                      "2003/06/30 19:40:52 kundert Exp $";
 #endif
-
-
 
 /*
  *  IMPORTS
@@ -66,47 +63,36 @@ static char RCSid[] =
  */
 
 #define spINSIDE_SPARSE
-#include <stdio.h>
-#include "spConfig.h"
 #include "ngspice/spmatrix.h"
+#include "spConfig.h"
 #include "spDefs.h"
-
-
-
-
+#include <stdio.h>
 
 /*
  *  Function declarations
  */
 #if MODIFIED_NODAL
-static int CountTwins( MatrixPtr, int, ElementPtr*, ElementPtr* );
-static void SwapCols( MatrixPtr, ElementPtr, ElementPtr );
+static int CountTwins(MatrixPtr, int, ElementPtr *, ElementPtr *);
+static void SwapCols(MatrixPtr, ElementPtr, ElementPtr);
 #endif
 #if spCOMPLEX AND SCALING
-static void ScaleComplexMatrix( MatrixPtr, RealVector, RealVector );
+static void ScaleComplexMatrix(MatrixPtr, RealVector, RealVector);
 #endif
 #if spSEPARATED_COMPLEX_VECTORS
-static void ComplexMatrixMultiply( MatrixPtr,
-            RealVector, RealVector, RealVector, RealVector );
-static void ComplexTransposedMatrixMultiply( MatrixPtr,
-            RealVector, RealVector, RealVector, RealVector );
+static void ComplexMatrixMultiply(MatrixPtr, RealVector, RealVector, RealVector,
+                                  RealVector);
+static void ComplexTransposedMatrixMultiply(MatrixPtr, RealVector, RealVector,
+                                            RealVector, RealVector);
 #else
-static void ComplexMatrixMultiply( MatrixPtr,
-            RealVector, RealVector );
-static void ComplexTransposedMatrixMultiply( MatrixPtr,
-            RealVector, RealVector );
+static void ComplexMatrixMultiply(MatrixPtr, RealVector, RealVector);
+static void ComplexTransposedMatrixMultiply(MatrixPtr, RealVector, RealVector);
 #endif
 #if CONDITION
 #if spCOMPLEX
-static RealNumber ComplexCondition( MatrixPtr, RealNumber, int* );
+static RealNumber ComplexCondition(MatrixPtr, RealNumber, int *);
 #endif
 #endif
 
-
-
-
-
-
 #if MODIFIED_NODAL
 /*!
  *  This routine massages modified node admittance matrices to remove
@@ -200,48 +186,48 @@ static RealNumber ComplexCondition( MatrixPtr, RealNumber, int* );
  *      Number of symmetric twins corresponding to current zero diagonal.
  */
 
-void
-spMNA_Preorder( MatrixPtr Matrix )
-{
-int  J, Size;
-ElementPtr  pTwin1, pTwin2;
-int  Twins, StartAt = 1;
-BOOLEAN  Swapped, AnotherPassNeeded;
+void spMNA_Preorder(MatrixPtr Matrix) {
+    int J, Size;
+    ElementPtr pTwin1, pTwin2;
+    int Twins, StartAt = 1;
+    BOOLEAN Swapped, AnotherPassNeeded;
 
-/* Begin `spMNA_Preorder'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_NO_ERRORS( Matrix );
-    ASSERT_IS_NOT_FACTORED( Matrix );
+    /* Begin `spMNA_Preorder'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_NO_ERRORS(Matrix);
+    ASSERT_IS_NOT_FACTORED(Matrix);
 
-    if (Matrix->RowsLinked) return;
+    if (Matrix->RowsLinked)
+        return;
     Size = Matrix->Size;
     Matrix->Reordered = YES;
 
-    do
-    {   AnotherPassNeeded = Swapped = NO;
+    do {
+        AnotherPassNeeded = Swapped = NO;
 
-/* Search for zero diagonals with lone twins. */
-        for (J = StartAt; J <= Size; J++)
-        {   if (Matrix->Diag[J] == NULL)
-            {   Twins = CountTwins( Matrix, J, &pTwin1, &pTwin2 );
-                if (Twins == 1)
-                {   /* Lone twins found, swap rows. */
-                    SwapCols( Matrix, pTwin1, pTwin2 );
+        /* Search for zero diagonals with lone twins. */
+        for (J = StartAt; J <= Size; J++) {
+            if (Matrix->Diag[J] == NULL) {
+                Twins = CountTwins(Matrix, J, &pTwin1, &pTwin2);
+                if (Twins == 1) { /* Lone twins found, swap rows. */
+                    SwapCols(Matrix, pTwin1, pTwin2);
                     Swapped = YES;
-                }
-                else if ((Twins > 1) AND NOT AnotherPassNeeded)
-                {   AnotherPassNeeded = YES;
+                } else if ((Twins > 1) AND NOT AnotherPassNeeded) {
+                    AnotherPassNeeded = YES;
                     StartAt = J;
                 }
             }
         }
 
-/* All lone twins are gone, look for zero diagonals with multiple twins. */
-        if (AnotherPassNeeded)
-        {   for (J = StartAt; NOT Swapped AND (J <= Size); J++)
-            {   if (Matrix->Diag[J] == NULL)
-                {   Twins = CountTwins( Matrix, J, &pTwin1, &pTwin2 ); /* FIXME: Twins is never used */
-                    SwapCols( Matrix, pTwin1, pTwin2 );
+        /* All lone twins are gone, look for zero diagonals with multiple twins.
+         */
+        if (AnotherPassNeeded) {
+            for (J = StartAt; NOT Swapped AND(J <= Size); J++) {
+                if (Matrix->Diag[J] == NULL) {
+                    Twins =
+                        CountTwins(Matrix, J, &pTwin1,
+                                   &pTwin2); /* FIXME: Twins is never used */
+                    SwapCols(Matrix, pTwin1, pTwin2);
                     Swapped = YES;
                 }
             }
@@ -249,9 +235,6 @@ BOOLEAN  Swapped, AnotherPassNeeded;
     } while (AnotherPassNeeded);
     return;
 }
-
-
-
 
 /*
  *  COUNT TWINS
@@ -261,29 +244,24 @@ BOOLEAN  Swapped, AnotherPassNeeded;
  *  count is terminated early at two.
  */
 
-static int
-CountTwins(
-    MatrixPtr Matrix,
-    int Col,
-    ElementPtr *ppTwin1,
-    ElementPtr *ppTwin2
-)
-{
-int Row, Twins = 0;
-ElementPtr pTwin1, pTwin2;
+static int CountTwins(MatrixPtr Matrix, int Col, ElementPtr *ppTwin1,
+                      ElementPtr *ppTwin2) {
+    int Row, Twins = 0;
+    ElementPtr pTwin1, pTwin2;
 
-/* Begin `CountTwins'. */
+    /* Begin `CountTwins'. */
 
     pTwin1 = Matrix->FirstInCol[Col];
-    while (pTwin1 != NULL)
-    {   if (ABS(pTwin1->Real) == 1.0)
-        {   Row = pTwin1->Row;
+    while (pTwin1 != NULL) {
+        if (ABS(pTwin1->Real) == 1.0) {
+            Row = pTwin1->Row;
             pTwin2 = Matrix->FirstInCol[Row];
-            while ((pTwin2 != NULL) AND (pTwin2->Row != Col))
+            while ((pTwin2 != NULL) AND(pTwin2->Row != Col))
                 pTwin2 = pTwin2->NextInCol;
-            if ((pTwin2 != NULL) AND (ABS(pTwin2->Real) == 1.0))
-            {   /* Found symmetric twins. */
-                if (++Twins >= 2) return Twins;
+            if ((pTwin2 != NULL) AND(ABS(pTwin2->Real) ==
+                                     1.0)) { /* Found symmetric twins. */
+                if (++Twins >= 2)
+                    return Twins;
                 (*ppTwin1 = pTwin1)->Col = Col;
                 (*ppTwin2 = pTwin2)->Col = Row;
             }
@@ -293,9 +271,6 @@ ElementPtr pTwin1, pTwin2;
     return Twins;
 }
 
-
-
-
 /*
  *  SWAP COLUMNS
  *
@@ -303,22 +278,16 @@ ElementPtr pTwin1, pTwin2;
  *  linked.
  */
 
-static void
-SwapCols(
-    MatrixPtr Matrix,
-    ElementPtr pTwin1,
-    ElementPtr pTwin2
-)
-{
-int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
+static void SwapCols(MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2) {
+    int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
 
-/* Begin `SwapCols'. */
+    /* Begin `SwapCols'. */
 
-    SWAP (ElementPtr, Matrix->FirstInCol[Col1], Matrix->FirstInCol[Col2]);
-    SWAP (int, Matrix->IntToExtColMap[Col1], Matrix->IntToExtColMap[Col2]);
+    SWAP(ElementPtr, Matrix->FirstInCol[Col1], Matrix->FirstInCol[Col2]);
+    SWAP(int, Matrix->IntToExtColMap[Col1], Matrix->IntToExtColMap[Col2]);
 #if TRANSLATE
-    Matrix->ExtToIntColMap[Matrix->IntToExtColMap[Col2]]=Col2;
-    Matrix->ExtToIntColMap[Matrix->IntToExtColMap[Col1]]=Col1;
+    Matrix->ExtToIntColMap[Matrix->IntToExtColMap[Col2]] = Col2;
+    Matrix->ExtToIntColMap[Matrix->IntToExtColMap[Col1]] = Col1;
 #endif
 
     Matrix->Diag[Col1] = pTwin2;
@@ -328,14 +297,6 @@ int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
 }
 #endif /* MODIFIED_NODAL */
 
-
-
-
-
-
-
-
-
 #if SCALING
 /*!
  *  This function scales the matrix to enhance the possibility of
@@ -390,26 +351,22 @@ int Col1 = pTwin1->Col, Col2 = pTwin2->Col;
  *      The scale factor being used on the current row or column.
  */
 
-void
-spScale(
-    MatrixPtr Matrix,
-    spREAL RHS_ScaleFactors[],
-    spREAL SolutionScaleFactors[]
-)
-{
-ElementPtr  pElement;
-int  I, lSize, *pExtOrder;
-RealNumber  ScaleFactor;
+void spScale(MatrixPtr Matrix, spREAL RHS_ScaleFactors[],
+             spREAL SolutionScaleFactors[]) {
+    ElementPtr pElement;
+    int I, lSize, *pExtOrder;
+    RealNumber ScaleFactor;
 
-/* Begin `spScale'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_NO_ERRORS( Matrix );
-    ASSERT_IS_NOT_FACTORED( Matrix );
-    if (NOT Matrix->RowsLinked) spcLinkRows( Matrix );
+    /* Begin `spScale'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_NO_ERRORS(Matrix);
+    ASSERT_IS_NOT_FACTORED(Matrix);
+    if (NOT Matrix->RowsLinked)
+        spcLinkRows(Matrix);
 
 #if spCOMPLEX
-    if (Matrix->Complex)
-    {   ScaleComplexMatrix( Matrix, RHS_ScaleFactors, SolutionScaleFactors );
+    if (Matrix->Complex) {
+        ScaleComplexMatrix(Matrix, RHS_ScaleFactors, SolutionScaleFactors);
         return;
     }
 #endif
@@ -423,27 +380,27 @@ RealNumber  ScaleFactor;
     --SolutionScaleFactors;
 #endif
 
-/* Scale Rows */
+    /* Scale Rows */
     pExtOrder = &Matrix->IntToExtRowMap[1];
-    for (I = 1; I <= lSize; I++)
-    {   if ((ScaleFactor = RHS_ScaleFactors[*(pExtOrder++)]) != 1.0)
-        {   pElement = Matrix->FirstInRow[I];
+    for (I = 1; I <= lSize; I++) {
+        if ((ScaleFactor = RHS_ScaleFactors[*(pExtOrder++)]) != 1.0) {
+            pElement = Matrix->FirstInRow[I];
 
-            while (pElement != NULL)
-            {   pElement->Real *= ScaleFactor;
+            while (pElement != NULL) {
+                pElement->Real *= ScaleFactor;
                 pElement = pElement->NextInRow;
             }
         }
     }
 
-/* Scale Columns */
+    /* Scale Columns */
     pExtOrder = &Matrix->IntToExtColMap[1];
-    for (I = 1; I <= lSize; I++)
-    {   if ((ScaleFactor = SolutionScaleFactors[*(pExtOrder++)]) != 1.0)
-        {   pElement = Matrix->FirstInCol[I];
+    for (I = 1; I <= lSize; I++) {
+        if ((ScaleFactor = SolutionScaleFactors[*(pExtOrder++)]) != 1.0) {
+            pElement = Matrix->FirstInCol[I];
 
-            while (pElement != NULL)
-            {   pElement->Real *= ScaleFactor;
+            while (pElement != NULL) {
+                pElement->Real *= ScaleFactor;
                 pElement = pElement->NextInCol;
             }
         }
@@ -454,14 +411,6 @@ RealNumber  ScaleFactor;
 }
 #endif /* SCALING */
 
-
-
-
-
-
-
-
-
 #if spCOMPLEX AND SCALING
 /*
  *  SCALE COMPLEX MATRIX
@@ -519,18 +468,13 @@ RealNumber  ScaleFactor;
  *      The scale factor being used on the current row or column.
  */
 
-static void
-ScaleComplexMatrix(
-    MatrixPtr Matrix,
-    RealVector RHS_ScaleFactors,
-    RealVector SolutionScaleFactors
-)
-{
-ElementPtr  pElement;
-int  I, lSize, *pExtOrder;
-RealNumber  ScaleFactor;
+static void ScaleComplexMatrix(MatrixPtr Matrix, RealVector RHS_ScaleFactors,
+                               RealVector SolutionScaleFactors) {
+    ElementPtr pElement;
+    int I, lSize, *pExtOrder;
+    RealNumber ScaleFactor;
 
-/* Begin `ScaleComplexMatrix'. */
+    /* Begin `ScaleComplexMatrix'. */
     lSize = Matrix->Size;
 
 /* Correct pointers to arrays for ARRAY_OFFSET */
@@ -539,28 +483,28 @@ RealNumber  ScaleFactor;
     --SolutionScaleFactors;
 #endif
 
-/* Scale Rows */
+    /* Scale Rows */
     pExtOrder = &Matrix->IntToExtRowMap[1];
-    for (I = 1; I <= lSize; I++)
-    {   if ((ScaleFactor = RHS_ScaleFactors[*(pExtOrder++)]) != 1.0)
-        {   pElement = Matrix->FirstInRow[I];
+    for (I = 1; I <= lSize; I++) {
+        if ((ScaleFactor = RHS_ScaleFactors[*(pExtOrder++)]) != 1.0) {
+            pElement = Matrix->FirstInRow[I];
 
-            while (pElement != NULL)
-            {   pElement->Real *= ScaleFactor;
+            while (pElement != NULL) {
+                pElement->Real *= ScaleFactor;
                 pElement->Imag *= ScaleFactor;
                 pElement = pElement->NextInRow;
             }
         }
     }
 
-/* Scale Columns */
+    /* Scale Columns */
     pExtOrder = &Matrix->IntToExtColMap[1];
-    for (I = 1; I <= lSize; I++)
-    {   if ((ScaleFactor = SolutionScaleFactors[*(pExtOrder++)]) != 1.0)
-        {   pElement = Matrix->FirstInCol[I];
+    for (I = 1; I <= lSize; I++) {
+        if ((ScaleFactor = SolutionScaleFactors[*(pExtOrder++)]) != 1.0) {
+            pElement = Matrix->FirstInCol[I];
 
-            while (pElement != NULL)
-            {   pElement->Real *= ScaleFactor;
+            while (pElement != NULL) {
+                pElement->Real *= ScaleFactor;
                 pElement->Imag *= ScaleFactor;
                 pElement = pElement->NextInCol;
             }
@@ -570,13 +514,6 @@ RealNumber  ScaleFactor;
 }
 #endif /* SCALING AND spCOMPLEX */
 
-
-
-
-
-
-
-
 #if MULTIPLICATION
 /*!
  *  Multiplies matrix by solution vector to find source vector.
@@ -600,59 +537,54 @@ RealNumber  ScaleFactor;
  *      complex and \a spSEPARATED_COMPLEX_VECTORS is true.
  */
 
-void
-spMultiply(
-    MatrixPtr Matrix,
-    spREAL RHS[],
-    spREAL Solution[]
+void spMultiply(MatrixPtr Matrix, spREAL RHS[], spREAL Solution[]
 #if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
-    , spREAL iRHS[]
-    , spREAL iSolution[]
+                ,
+                spREAL iRHS[], spREAL iSolution[]
 #endif
-)
-{
+) {
 #if REAL
-ElementPtr  pElement;
-RealVector  Vector;
-RealNumber  Sum;
-int  I, *pExtOrder;
+    ElementPtr pElement;
+    RealVector Vector;
+    RealNumber Sum;
+    int I, *pExtOrder;
 #endif
 
-/* Begin `spMultiply'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_IS_NOT_FACTORED( Matrix );
+    /* Begin `spMultiply'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_IS_NOT_FACTORED(Matrix);
     if (NOT Matrix->RowsLinked)
-    spcLinkRows(Matrix);
+        spcLinkRows(Matrix);
     if (NOT Matrix->InternalVectorsAllocated)
-    spcCreateInternalVectors( Matrix );
+        spcCreateInternalVectors(Matrix);
 
 #if spCOMPLEX
-    if (Matrix->Complex)
-    {   ComplexMatrixMultiply( Matrix, RHS, Solution IMAG_VECTORS );
+    if (Matrix->Complex) {
+        ComplexMatrixMultiply(Matrix, RHS, Solution IMAG_VECTORS);
         return;
     }
 #endif
 
 #if REAL
 #if NOT ARRAY_OFFSET
-/* Correct array pointers for ARRAY_OFFSET. */
+    /* Correct array pointers for ARRAY_OFFSET. */
     --RHS;
     --Solution;
 #endif
 
-/* Initialize Intermediate vector with reordered Solution vector. */
+    /* Initialize Intermediate vector with reordered Solution vector. */
     Vector = Matrix->Intermediate;
     pExtOrder = &Matrix->IntToExtColMap[Matrix->Size];
     for (I = Matrix->Size; I > 0; I--)
         Vector[I] = Solution[*(pExtOrder--)];
 
     pExtOrder = &Matrix->IntToExtRowMap[Matrix->Size];
-    for (I = Matrix->Size; I > 0; I--)
-    {   pElement = Matrix->FirstInRow[I];
+    for (I = Matrix->Size; I > 0; I--) {
+        pElement = Matrix->FirstInRow[I];
         Sum = 0.0;
 
-        while (pElement != NULL)
-        {   Sum += pElement->Real * Vector[pElement->Col];
+        while (pElement != NULL) {
+            Sum += pElement->Real * Vector[pElement->Col];
             pElement = pElement->NextInRow;
         }
         RHS[*pExtOrder--] = Sum;
@@ -662,12 +594,6 @@ int  I, *pExtOrder;
 }
 #endif /* MULTIPLICATION */
 
-
-
-
-
-
-
 #if spCOMPLEX AND MULTIPLICATION
 /*
  *  COMPLEX MATRIX MULTIPLICATION
@@ -697,41 +623,40 @@ int  I, *pExtOrder;
  *      complex and spSEPARATED_COMPLEX_VECTORS is true.
  */
 
-static void
-ComplexMatrixMultiply(
-    MatrixPtr  Matrix,
-    RealVector RHS,
-    RealVector Solution
+static void ComplexMatrixMultiply(MatrixPtr Matrix, RealVector RHS,
+                                  RealVector Solution
 #if spSEPARATED_COMPLEX_VECTORS
-    , RealVector iRHS
-    , RealVector iSolution
+                                  ,
+                                  RealVector iRHS, RealVector iSolution
 #endif
-)
-{
-ElementPtr  pElement;
-ComplexVector  Vector;
-ComplexNumber  Sum;
-int  I, *pExtOrder;
+) {
+    ElementPtr pElement;
+    ComplexVector Vector;
+    ComplexNumber Sum;
+    int I, *pExtOrder;
 
 /* Begin `ComplexMatrixMultiply'. */
 
 /* Correct array pointers for ARRAY_OFFSET. */
 #if NOT ARRAY_OFFSET
 #if spSEPARATED_COMPLEX_VECTORS
-    --RHS;              --iRHS;
-    --Solution;         --iSolution;
+    --RHS;
+    --iRHS;
+    --Solution;
+    --iSolution;
 #else
-    RHS -= 2;           Solution -= 2;
+    RHS -= 2;
+    Solution -= 2;
 #endif
 #endif
 
-/* Initialize Intermediate vector with reordered Solution vector. */
+    /* Initialize Intermediate vector with reordered Solution vector. */
     Vector = (ComplexVector)Matrix->Intermediate;
     pExtOrder = &Matrix->IntToExtColMap[Matrix->Size];
 
 #if spSEPARATED_COMPLEX_VECTORS
-    for (I = Matrix->Size; I > 0; I--)
-    {   Vector[I].Real = Solution[*pExtOrder];
+    for (I = Matrix->Size; I > 0; I--) {
+        Vector[I].Real = Solution[*pExtOrder];
         Vector[I].Imag = iSolution[*(pExtOrder--)];
     }
 #else
@@ -740,13 +665,13 @@ int  I, *pExtOrder;
 #endif
 
     pExtOrder = &Matrix->IntToExtRowMap[Matrix->Size];
-    for (I = Matrix->Size; I > 0; I--)
-    {   pElement = Matrix->FirstInRow[I];
+    for (I = Matrix->Size; I > 0; I--) {
+        pElement = Matrix->FirstInRow[I];
         Sum.Real = Sum.Imag = 0.0;
 
-        while (pElement != NULL)
-        {   /* Cmplx expression : Sum += Element * Vector[Col] */
-            CMPLX_MULT_ADD_ASSIGN( Sum, *pElement, Vector[pElement->Col] );
+        while (pElement !=
+               NULL) { /* Cmplx expression : Sum += Element * Vector[Col] */
+            CMPLX_MULT_ADD_ASSIGN(Sum, *pElement, Vector[pElement->Col]);
             pElement = pElement->NextInRow;
         }
 
@@ -761,13 +686,6 @@ int  I, *pExtOrder;
 }
 #endif /* spCOMPLEX AND MULTIPLICATION */
 
-
-
-
-
-
-
-
 #if MULTIPLICATION AND TRANSPOSE
 /*!
  *  Multiplies transposed matrix by solution vector to find source vector.
@@ -791,57 +709,52 @@ int  I, *pExtOrder;
  *      complex and \a spSEPARATED_COMPLEX_VECTORS is true.
  */
 
-void
-spMultTransposed(
-    MatrixPtr Matrix,
-    spREAL RHS[],
-    spREAL Solution[]
+void spMultTransposed(MatrixPtr Matrix, spREAL RHS[], spREAL Solution[]
 #if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
-    , spREAL iRHS[]
-    , spREAL iSolution[]
+                      ,
+                      spREAL iRHS[], spREAL iSolution[]
 #endif
-)
-{
+) {
 #if REAL
-ElementPtr  pElement;
-RealVector  Vector;
-RealNumber  Sum;
-int  I, *pExtOrder;
+    ElementPtr pElement;
+    RealVector Vector;
+    RealNumber Sum;
+    int I, *pExtOrder;
 #endif
 
-/* Begin `spMultTransposed'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_IS_NOT_FACTORED( Matrix );
+    /* Begin `spMultTransposed'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_IS_NOT_FACTORED(Matrix);
     if (NOT Matrix->InternalVectorsAllocated)
-    spcCreateInternalVectors( Matrix );
+        spcCreateInternalVectors(Matrix);
 
 #if spCOMPLEX
-    if (Matrix->Complex)
-    {   ComplexTransposedMatrixMultiply( Matrix, RHS, Solution IMAG_VECTORS );
+    if (Matrix->Complex) {
+        ComplexTransposedMatrixMultiply(Matrix, RHS, Solution IMAG_VECTORS);
         return;
     }
 #endif
 
 #if REAL
 #if NOT ARRAY_OFFSET
-/* Correct array pointers for ARRAY_OFFSET. */
+    /* Correct array pointers for ARRAY_OFFSET. */
     --RHS;
     --Solution;
 #endif
 
-/* Initialize Intermediate vector with reordered Solution vector. */
+    /* Initialize Intermediate vector with reordered Solution vector. */
     Vector = Matrix->Intermediate;
     pExtOrder = &Matrix->IntToExtRowMap[Matrix->Size];
     for (I = Matrix->Size; I > 0; I--)
         Vector[I] = Solution[*(pExtOrder--)];
 
     pExtOrder = &Matrix->IntToExtColMap[Matrix->Size];
-    for (I = Matrix->Size; I > 0; I--)
-    {   pElement = Matrix->FirstInCol[I];
+    for (I = Matrix->Size; I > 0; I--) {
+        pElement = Matrix->FirstInCol[I];
         Sum = 0.0;
 
-        while (pElement != NULL)
-        {   Sum += pElement->Real * Vector[pElement->Row];
+        while (pElement != NULL) {
+            Sum += pElement->Real * Vector[pElement->Row];
             pElement = pElement->NextInCol;
         }
         RHS[*pExtOrder--] = Sum;
@@ -851,12 +764,6 @@ int  I, *pExtOrder;
 }
 #endif /* MULTIPLICATION AND TRANSPOSE */
 
-
-
-
-
-
-
 #if spCOMPLEX AND MULTIPLICATION AND TRANSPOSE
 /*
  *  COMPLEX TRANSPOSED MATRIX MULTIPLICATION
@@ -892,41 +799,41 @@ int  I, *pExtOrder;
  *      without a trace.
  */
 
-static void
-ComplexTransposedMatrixMultiply(
-    MatrixPtr  Matrix,
-    RealVector RHS,
-    RealVector Solution
+static void ComplexTransposedMatrixMultiply(MatrixPtr Matrix, RealVector RHS,
+                                            RealVector Solution
 #if spSEPARATED_COMPLEX_VECTORS
-    , RealVector iRHS
-    , RealVector iSolution
+                                            ,
+                                            RealVector iRHS,
+                                            RealVector iSolution
 #endif
-)
-{
-ElementPtr  pElement;
-ComplexVector  Vector;
-ComplexNumber  Sum;
-int  I, *pExtOrder;
+) {
+    ElementPtr pElement;
+    ComplexVector Vector;
+    ComplexNumber Sum;
+    int I, *pExtOrder;
 
 /* Begin `ComplexTransposedMatrixMultiply'. */
 
 /* Correct array pointers for ARRAY_OFFSET. */
 #if NOT ARRAY_OFFSET
 #if spSEPARATED_COMPLEX_VECTORS
-    --RHS;              --iRHS;
-    --Solution;         --iSolution;
+    --RHS;
+    --iRHS;
+    --Solution;
+    --iSolution;
 #else
-    RHS -= 2;           Solution -= 2;
+    RHS -= 2;
+    Solution -= 2;
 #endif
 #endif
 
-/* Initialize Intermediate vector with reordered Solution vector. */
+    /* Initialize Intermediate vector with reordered Solution vector. */
     Vector = (ComplexVector)Matrix->Intermediate;
     pExtOrder = &Matrix->IntToExtRowMap[Matrix->Size];
 
 #if spSEPARATED_COMPLEX_VECTORS
-    for (I = Matrix->Size; I > 0; I--)
-    {   Vector[I].Real = Solution[*pExtOrder];
+    for (I = Matrix->Size; I > 0; I--) {
+        Vector[I].Real = Solution[*pExtOrder];
         Vector[I].Imag = iSolution[*(pExtOrder--)];
     }
 #else
@@ -935,13 +842,13 @@ int  I, *pExtOrder;
 #endif
 
     pExtOrder = &Matrix->IntToExtColMap[Matrix->Size];
-    for (I = Matrix->Size; I > 0; I--)
-    {   pElement = Matrix->FirstInCol[I];
+    for (I = Matrix->Size; I > 0; I--) {
+        pElement = Matrix->FirstInCol[I];
         Sum.Real = Sum.Imag = 0.0;
 
-        while (pElement != NULL)
-        {   /* Cmplx expression : Sum += Element * Vector[Row] */
-            CMPLX_MULT_ADD_ASSIGN( Sum, *pElement, Vector[pElement->Row] );
+        while (pElement !=
+               NULL) { /* Cmplx expression : Sum += Element * Vector[Row] */
+            CMPLX_MULT_ADD_ASSIGN(Sum, *pElement, Vector[pElement->Row]);
             pElement = pElement->NextInCol;
         }
 
@@ -956,13 +863,6 @@ int  I, *pExtOrder;
 }
 #endif /* spCOMPLEX AND MULTIPLICATION AND TRANSPOSE */
 
-
-
-
-
-
-
-
 #if DETERMINANT
 /*!
  *  This routine in capable of calculating the determinant of the
@@ -1001,32 +901,29 @@ int  I, *pExtOrder;
  *      Temporary storage for real portion of determinant.
  */
 
-void
-spDeterminant(
-    MatrixPtr Matrix,
-    int *pExponent,
-    spREAL *pDeterminant
+void spDeterminant(MatrixPtr Matrix, int *pExponent, spREAL *pDeterminant
 #if spCOMPLEX
-    , spREAL *piDeterminant
+                   ,
+                   spREAL *piDeterminant
 #endif
-)
-{
-int I, Size;
-RealNumber Norm, nr, ni;
-ComplexNumber Pivot, cDeterminant;
+) {
+    int I, Size;
+    RealNumber Norm, nr, ni;
+    ComplexNumber Pivot, cDeterminant;
 
-#define  NORM(a)     (nr = ABS((a).Real), ni = ABS((a).Imag), MAX (nr,ni))
+#define NORM(a) (nr = ABS((a).Real), ni = ABS((a).Imag), MAX(nr, ni))
 
-/* Begin `spDeterminant'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_NO_ERRORS( Matrix );
-    ASSERT_IS_FACTORED( Matrix );
+    /* Begin `spDeterminant'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_NO_ERRORS(Matrix);
+    ASSERT_IS_FACTORED(Matrix);
     *pExponent = 0;
 
-    if (Matrix->Error == spSINGULAR)
-    {   *pDeterminant = 0.0;
+    if (Matrix->Error == spSINGULAR) {
+        *pDeterminant = 0.0;
 #if spCOMPLEX
-        if (Matrix->Complex) *piDeterminant = 0.0;
+        if (Matrix->Complex)
+            *piDeterminant = 0.0;
 #endif
         return;
     }
@@ -1035,50 +932,51 @@ ComplexNumber Pivot, cDeterminant;
     I = 0;
 
 #if spCOMPLEX
-    if (Matrix->Complex)        /* Complex Case. */
-    {   cDeterminant.Real = 1.0;
+    if (Matrix->Complex) /* Complex Case. */
+    {
+        cDeterminant.Real = 1.0;
         cDeterminant.Imag = 0.0;
 
-        while (++I <= Size)
-        {   CMPLX_RECIPROCAL( Pivot, *Matrix->Diag[I] );
-            CMPLX_MULT_ASSIGN( cDeterminant, Pivot );
+        while (++I <= Size) {
+            CMPLX_RECIPROCAL(Pivot, *Matrix->Diag[I]);
+            CMPLX_MULT_ASSIGN(cDeterminant, Pivot);
 
-/* Scale Determinant. */
-            Norm = NORM( cDeterminant );
-            if (Norm != 0.0)
-            {   while (Norm >= 1.0e12)
-                {   cDeterminant.Real *= 1.0e-12;
+            /* Scale Determinant. */
+            Norm = NORM(cDeterminant);
+            if (Norm != 0.0) {
+                while (Norm >= 1.0e12) {
+                    cDeterminant.Real *= 1.0e-12;
                     cDeterminant.Imag *= 1.0e-12;
                     *pExponent += 12;
-                    Norm = NORM( cDeterminant );
+                    Norm = NORM(cDeterminant);
                 }
-                while (Norm < 1.0e-12)
-                {   cDeterminant.Real *= 1.0e12;
+                while (Norm < 1.0e-12) {
+                    cDeterminant.Real *= 1.0e12;
                     cDeterminant.Imag *= 1.0e12;
                     *pExponent -= 12;
-                    Norm = NORM( cDeterminant );
+                    Norm = NORM(cDeterminant);
                 }
             }
         }
 
-/* Scale Determinant again, this time to be between 1.0 <= x < 10.0. */
-        Norm = NORM( cDeterminant );
-        if (Norm != 0.0)
-        {   while (Norm >= 10.0)
-            {   cDeterminant.Real *= 0.1;
+        /* Scale Determinant again, this time to be between 1.0 <= x < 10.0. */
+        Norm = NORM(cDeterminant);
+        if (Norm != 0.0) {
+            while (Norm >= 10.0) {
+                cDeterminant.Real *= 0.1;
                 cDeterminant.Imag *= 0.1;
                 (*pExponent)++;
-                Norm = NORM( cDeterminant );
+                Norm = NORM(cDeterminant);
             }
-            while (Norm < 1.0)
-            {   cDeterminant.Real *= 10.0;
+            while (Norm < 1.0) {
+                cDeterminant.Real *= 10.0;
                 cDeterminant.Imag *= 10.0;
                 (*pExponent)--;
-                Norm = NORM( cDeterminant );
+                Norm = NORM(cDeterminant);
             }
         }
         if (Matrix->NumberOfInterchangesIsOdd)
-            CMPLX_NEGATE( cDeterminant );
+            CMPLX_NEGATE(cDeterminant);
 
         *pDeterminant = cDeterminant.Real;
         *piDeterminant = cDeterminant.Imag;
@@ -1088,33 +986,33 @@ ComplexNumber Pivot, cDeterminant;
     else
 #endif
 #if REAL
-    {   /* Real Case. */
+    { /* Real Case. */
         *pDeterminant = 1.0;
 
-        while (++I <= Size)
-        {   *pDeterminant /= Matrix->Diag[I]->Real;
+        while (++I <= Size) {
+            *pDeterminant /= Matrix->Diag[I]->Real;
 
-/* Scale Determinant. */
-            if (*pDeterminant != 0.0)
-            {   while (ABS(*pDeterminant) >= 1.0e12)
-                {   *pDeterminant *= 1.0e-12;
+            /* Scale Determinant. */
+            if (*pDeterminant != 0.0) {
+                while (ABS(*pDeterminant) >= 1.0e12) {
+                    *pDeterminant *= 1.0e-12;
                     *pExponent += 12;
                 }
-                while (ABS(*pDeterminant) < 1.0e-12)
-                {   *pDeterminant *= 1.0e12;
+                while (ABS(*pDeterminant) < 1.0e-12) {
+                    *pDeterminant *= 1.0e12;
                     *pExponent -= 12;
                 }
             }
         }
 
-/* Scale Determinant again, this time to be between 1.0 <= x < 10.0. */
-        if (*pDeterminant != 0.0)
-        {   while (ABS(*pDeterminant) >= 10.0)
-            {   *pDeterminant *= 0.1;
+        /* Scale Determinant again, this time to be between 1.0 <= x < 10.0. */
+        if (*pDeterminant != 0.0) {
+            while (ABS(*pDeterminant) >= 10.0) {
+                *pDeterminant *= 0.1;
                 (*pExponent)++;
             }
-            while (ABS(*pDeterminant) < 1.0)
-            {   *pDeterminant *= 10.0;
+            while (ABS(*pDeterminant) < 1.0) {
+                *pDeterminant *= 10.0;
                 (*pExponent)--;
             }
         }
@@ -1125,15 +1023,8 @@ ComplexNumber Pivot, cDeterminant;
 }
 #endif /* DETERMINANT */
 
-
-
-
-
-
-
-
 #if STRIP
-
+
 /*!
  *  Strips the matrix of all fill-ins.
  *
@@ -1154,60 +1045,60 @@ ComplexNumber Pivot, cDeterminant;
  *      A pointer to a node in the FillinList linked-list.
  */
 
-void
-spStripFills( MatrixPtr Matrix )
-{
-struct FillinListNodeStruct  *pListNode;
+void spStripFills(MatrixPtr Matrix) {
+    struct FillinListNodeStruct *pListNode;
 
-/* Begin `spStripFills'. */
-    ASSERT_IS_SPARSE( Matrix );
-    if (Matrix->Fillins == 0) return;
+    /* Begin `spStripFills'. */
+    ASSERT_IS_SPARSE(Matrix);
+    if (Matrix->Fillins == 0)
+        return;
     Matrix->NeedsOrdering = YES;
     Matrix->Elements -= Matrix->Fillins;
     Matrix->Fillins = 0;
 
-/* Mark the fill-ins. */
-    {   ElementPtr  pFillin, pLastFillin;
+    /* Mark the fill-ins. */
+    {
+        ElementPtr pFillin, pLastFillin;
 
         pListNode = Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
         Matrix->FillinsRemaining = pListNode->NumberOfFillinsInList;
         Matrix->NextAvailFillin = pListNode->pFillinList;
 
-        while (pListNode != NULL)
-        {   pFillin = pListNode->pFillinList;
-            pLastFillin = &(pFillin[ pListNode->NumberOfFillinsInList - 1 ]);
+        while (pListNode != NULL) {
+            pFillin = pListNode->pFillinList;
+            pLastFillin = &(pFillin[pListNode->NumberOfFillinsInList - 1]);
             while (pFillin <= pLastFillin)
                 (pFillin++)->Row = 0;
             pListNode = pListNode->Next;
         }
     }
 
-/* Unlink fill-ins by searching for elements marked with Row = 0. */
-    {   ElementPtr pElement, *ppElement;
-        int  I, Size = Matrix->Size;
+    /* Unlink fill-ins by searching for elements marked with Row = 0. */
+    {
+        ElementPtr pElement, *ppElement;
+        int I, Size = Matrix->Size;
 
-/* Unlink fill-ins in all columns. */
-        for (I = 1; I <= Size; I++)
-        {   ppElement = &(Matrix->FirstInCol[I]);
-            while ((pElement = *ppElement) != NULL)
-            {   if (pElement->Row == 0)
-                {   *ppElement = pElement->NextInCol;  /* Unlink fill-in. */
+        /* Unlink fill-ins in all columns. */
+        for (I = 1; I <= Size; I++) {
+            ppElement = &(Matrix->FirstInCol[I]);
+            while ((pElement = *ppElement) != NULL) {
+                if (pElement->Row == 0) {
+                    *ppElement = pElement->NextInCol; /* Unlink fill-in. */
                     if (Matrix->Diag[pElement->Col] == pElement)
                         Matrix->Diag[pElement->Col] = NULL;
-                }
-                else
-                    ppElement = &pElement->NextInCol;  /* Skip element. */
+                } else
+                    ppElement = &pElement->NextInCol; /* Skip element. */
             }
         }
 
-/* Unlink fill-ins in all rows. */
-        for (I = 1; I <= Size; I++)
-        {   ppElement = &(Matrix->FirstInRow[I]);
-            while ((pElement = *ppElement) != NULL)
-            {   if (pElement->Row == 0)
-                    *ppElement = pElement->NextInRow;  /* Unlink fill-in. */
+        /* Unlink fill-ins in all rows. */
+        for (I = 1; I <= Size; I++) {
+            ppElement = &(Matrix->FirstInRow[I]);
+            while ((pElement = *ppElement) != NULL) {
+                if (pElement->Row == 0)
+                    *ppElement = pElement->NextInRow; /* Unlink fill-in. */
                 else
-                    ppElement = &pElement->NextInRow;  /* Skip element. */
+                    ppElement = &pElement->NextInRow; /* Skip element. */
             }
         }
     }
@@ -1215,12 +1106,6 @@ struct FillinListNodeStruct  *pListNode;
 }
 #endif
 
-
-
-
-
-
-
 #if TRANSLATE AND DELETE
 /*!
  *  Deletes a row and a column from a matrix.
@@ -1253,75 +1138,72 @@ struct FillinListNodeStruct  *pListNode;
  *      The local version Matrix->Size, the size of the matrix.
  */
 
-void
-spDeleteRowAndCol(
-    MatrixPtr Matrix,
-    int  Row,
-    int  Col
-)
-{
-ElementPtr  pElement, *ppElement, pLastElement;
-int  Size, ExtRow, ExtCol;
+void spDeleteRowAndCol(MatrixPtr Matrix, int Row, int Col) {
+    ElementPtr pElement, *ppElement, pLastElement;
+    int Size, ExtRow, ExtCol;
 
-/* Begin `spDeleteRowAndCol'. */
-    ASSERT_IS_SPARSE( Matrix );
-    vASSERT( (Row > 0) AND (Col > 0), "Nonpositive row or column number" );
-    vASSERT( (Row <= Matrix->ExtSize) AND (Col <= Matrix->ExtSize),
-         "Row or column number too large" );
+    /* Begin `spDeleteRowAndCol'. */
+    ASSERT_IS_SPARSE(Matrix);
+    vASSERT((Row > 0) AND(Col > 0), "Nonpositive row or column number");
+    vASSERT((Row <= Matrix->ExtSize) AND(Col <= Matrix->ExtSize),
+            "Row or column number too large");
 
     Size = Matrix->Size;
     ExtRow = Row;
     ExtCol = Col;
-    if (NOT Matrix->RowsLinked) spcLinkRows( Matrix );
+    if (NOT Matrix->RowsLinked)
+        spcLinkRows(Matrix);
 
     Row = Matrix->ExtToIntRowMap[Row];
     Col = Matrix->ExtToIntColMap[Col];
-    ASSERT( Row > 0 AND Col > 0 );
+    ASSERT(Row > 0 AND Col > 0);
 
-/* Move Row so that it is the last row in the matrix. */
-    if (Row != Size) spcRowExchange( Matrix, Row, Size );
+    /* Move Row so that it is the last row in the matrix. */
+    if (Row != Size)
+        spcRowExchange(Matrix, Row, Size);
 
-/* Move Col so that it is the last column in the matrix. */
-    if (Col != Size) spcColExchange( Matrix, Col, Size );
+    /* Move Col so that it is the last column in the matrix. */
+    if (Col != Size)
+        spcColExchange(Matrix, Col, Size);
 
-/* Correct Diag pointers. */
+    /* Correct Diag pointers. */
     if (Row == Col)
-        SWAP( ElementPtr, Matrix->Diag[Row], Matrix->Diag[Size] )
-    else
-    {   Matrix->Diag[Row] = spcFindDiag( Matrix, Row );
-    Matrix->Diag[Col] = spcFindDiag( Matrix, Col );
+        SWAP(ElementPtr, Matrix->Diag[Row], Matrix->Diag[Size])
+    else {
+        Matrix->Diag[Row] = spcFindDiag(Matrix, Row);
+        Matrix->Diag[Col] = spcFindDiag(Matrix, Col);
     }
 
-/*
- * Delete last row and column of the matrix.
- */
-/* Break the column links to every element in the last row. */
-    pLastElement = Matrix->FirstInRow[ Size ];
-    while (pLastElement != NULL)
-    {   ppElement = &(Matrix->FirstInCol[ pLastElement->Col ]);
-        while ((pElement = *ppElement) != NULL)
-        {   if (pElement == pLastElement)
-                *ppElement = NULL;  /* Unlink last element in column. */
+    /*
+     * Delete last row and column of the matrix.
+     */
+    /* Break the column links to every element in the last row. */
+    pLastElement = Matrix->FirstInRow[Size];
+    while (pLastElement != NULL) {
+        ppElement = &(Matrix->FirstInCol[pLastElement->Col]);
+        while ((pElement = *ppElement) != NULL) {
+            if (pElement == pLastElement)
+                *ppElement = NULL; /* Unlink last element in column. */
             else
-                ppElement = &pElement->NextInCol;  /* Skip element. */
+                ppElement = &pElement->NextInCol; /* Skip element. */
         }
         pLastElement = pLastElement->NextInRow;
     }
 
-/* Break the row links to every element in the last column. */
-    pLastElement = Matrix->FirstInCol[ Size ];
-    while (pLastElement != NULL)
-    {   ppElement = &(Matrix->FirstInRow[ pLastElement->Row ]);
-        while ((pElement = *ppElement) != NULL)
-        {   if (pElement == pLastElement)
-                *ppElement = NULL;  /* Unlink last element in row. */
+    /* Break the row links to every element in the last column. */
+    pLastElement = Matrix->FirstInCol[Size];
+    while (pLastElement != NULL) {
+        ppElement = &(Matrix->FirstInRow[pLastElement->Row]);
+        while ((pElement = *ppElement) != NULL) {
+            if (pElement == pLastElement)
+                *ppElement = NULL; /* Unlink last element in row. */
             else
-                ppElement = &pElement->NextInRow;  /* Skip element. */
+                ppElement = &pElement->NextInRow; /* Skip element. */
         }
         pLastElement = pLastElement->NextInCol;
     }
 
-/* Clean up some details. */
+    /* Clean up some details. */
     Matrix->Size = Size - 1;
     Matrix->Diag[Size] = NULL;
     Matrix->FirstInRow[Size] = NULL;
@@ -1335,13 +1217,6 @@ int  Size, ExtRow, ExtCol;
 }
 #endif
 
-
-
-
-
-
-
-
 #if PSEUDOCONDITION
 /*!
  *  Computes the magnitude of the ratio of the largest to the smallest
@@ -1364,41 +1239,32 @@ int  Size, ExtRow, ExtCol;
  *      Pointer to the matrix.
  */
 
-spREAL
-spPseudoCondition( MatrixPtr Matrix )
-{
+spREAL spPseudoCondition(MatrixPtr Matrix) {
     int I;
     ArrayOfElementPtrs Diag;
     RealNumber MaxPivot, MinPivot, Mag;
 
     /* Begin `spPseudoCondition'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_NO_ERRORS( Matrix );
-    ASSERT_IS_FACTORED( Matrix );
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_NO_ERRORS(Matrix);
+    ASSERT_IS_FACTORED(Matrix);
     if (Matrix->Error == spSINGULAR OR Matrix->Error == spZERO_DIAG)
-    return 0.0;
+        return 0.0;
 
     Diag = Matrix->Diag;
-    MaxPivot = MinPivot = ELEMENT_MAG( Diag[1] );
-    for (I = 2; I <= Matrix->Size; I++)
-    {   Mag = ELEMENT_MAG( Diag[I] );
-    if (Mag > MaxPivot)
-        MaxPivot = Mag;
-    else if (Mag < MinPivot)
-        MinPivot = Mag;
+    MaxPivot = MinPivot = ELEMENT_MAG(Diag[1]);
+    for (I = 2; I <= Matrix->Size; I++) {
+        Mag = ELEMENT_MAG(Diag[I]);
+        if (Mag > MaxPivot)
+            MaxPivot = Mag;
+        else if (Mag < MinPivot)
+            MinPivot = Mag;
     }
-    ASSERT( MaxPivot > 0.0 );
+    ASSERT(MaxPivot > 0.0);
     return MaxPivot / MinPivot;
 }
 #endif
 
-
-
-
-
-
-
-
 #if CONDITION
 /*!
  *  Computes an estimate of the condition number using a variation on
@@ -1448,36 +1314,31 @@ spPseudoCondition( MatrixPtr Matrix )
  *      or \a spNO_MEMORY.
  */
 
-spREAL
-spCondition(
-    MatrixPtr Matrix,
-    spREAL NormOfMatrix,
-    int *pError
-)
-{
-ElementPtr pElement;
-RealVector T, Tm;
-int I, K, Row;
-ElementPtr pPivot;
-int Size;
-RealNumber E, Em, Wp, Wm, ASp, ASm, ASw, ASy, ASv, ASz, MaxY, ScaleFactor;
-RealNumber Linpack, OLeary, InvNormOfInverse, ComplexCondition();
-#define SLACK   1e4
+spREAL spCondition(MatrixPtr Matrix, spREAL NormOfMatrix, int *pError) {
+    ElementPtr pElement;
+    RealVector T, Tm;
+    int I, K, Row;
+    ElementPtr pPivot;
+    int Size;
+    RealNumber E, Em, Wp, Wm, ASp, ASm, ASw, ASy, ASv, ASz, MaxY, ScaleFactor;
+    RealNumber Linpack, OLeary, InvNormOfInverse, ComplexCondition();
+#define SLACK 1e4
 
-/* Begin `spCondition'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_NO_ERRORS( Matrix );
-    ASSERT_IS_FACTORED( Matrix );
+    /* Begin `spCondition'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_NO_ERRORS(Matrix);
+    ASSERT_IS_FACTORED(Matrix);
     *pError = Matrix->Error;
-    if (Matrix->Error >= spFATAL) return 0.0;
-    if (NormOfMatrix == 0.0)
-    {   *pError = spSINGULAR;
+    if (Matrix->Error >= spFATAL)
+        return 0.0;
+    if (NormOfMatrix == 0.0) {
+        *pError = spSINGULAR;
         return 0.0;
     }
 
 #if spCOMPLEX
     if (Matrix->Complex)
-        return ComplexCondition( Matrix, NormOfMatrix, pError );
+        return ComplexCondition(Matrix, NormOfMatrix, pError);
 #endif
 
 #if REAL
@@ -1486,30 +1347,35 @@ RealNumber Linpack, OLeary, InvNormOfInverse, ComplexCondition();
 #if spCOMPLEX
     Tm = Matrix->Intermediate + Size;
 #else
-    Tm = ALLOC( RealNumber, Size+1 );
-    if (Tm == NULL)
-    {   *pError = spNO_MEMORY;
+    Tm = ALLOC(RealNumber, Size + 1);
+    if (Tm == NULL) {
+        *pError = spNO_MEMORY;
         return 0.0;
     }
 #endif
-    for (I = Size; I > 0; I--) T[I] = 0.0;
+    for (I = Size; I > 0; I--)
+        T[I] = 0.0;
 
-/*
- * Part 1.  Ay = e.
- * Solve Ay = LUy = e where e consists of +1 and -1 terms with the sign
- * chosen to maximize the size of w in Lw = e.  Since the terms in w can
- * get very large, scaling is used to avoid overflow.
- */
+    /*
+     * Part 1.  Ay = e.
+     * Solve Ay = LUy = e where e consists of +1 and -1 terms with the sign
+     * chosen to maximize the size of w in Lw = e.  Since the terms in w can
+     * get very large, scaling is used to avoid overflow.
+     */
 
-/* Forward elimination. Solves Lw = e while choosing e. */
+    /* Forward elimination. Solves Lw = e while choosing e. */
     E = 1.0;
-    for (I = 1; I <= Size; I++)
-    {   pPivot = Matrix->Diag[I];
-        if (T[I] < 0.0) Em = -E; else Em = E;
+    for (I = 1; I <= Size; I++) {
+        pPivot = Matrix->Diag[I];
+        if (T[I] < 0.0)
+            Em = -E;
+        else
+            Em = E;
         Wm = (Em + T[I]) * pPivot->Real;
-        if (ABS(Wm) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), ABS(Wm) );
-            for (K = Size; K > 0; K--) T[K] *= ScaleFactor;
+        if (ABS(Wm) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), ABS(Wm));
+            for (K = Size; K > 0; K--)
+                T[K] *= ScaleFactor;
             E *= ScaleFactor;
             Em *= ScaleFactor;
             Wm = (Em + T[I]) * pPivot->Real;
@@ -1518,10 +1384,10 @@ RealNumber Linpack, OLeary, InvNormOfInverse, ComplexCondition();
         ASp = ABS(T[I] - Em);
         ASm = ABS(Em + T[I]);
 
-/* Update T for both values of W, minus value is placed in Tm. */
+        /* Update T for both values of W, minus value is placed in Tm. */
         pElement = pPivot->NextInCol;
-        while (pElement != NULL)
-        {   Row = pElement->Row;
+        while (pElement != NULL) {
+            Row = pElement->Row;
             Tm[Row] = T[Row] - (Wm * pElement->Real);
             T[Row] -= (Wp * pElement->Real);
             ASp += ABS(T[Row]);
@@ -1529,113 +1395,120 @@ RealNumber Linpack, OLeary, InvNormOfInverse, ComplexCondition();
             pElement = pElement->NextInCol;
         }
 
-/* If minus value causes more growth, overwrite T with its values. */
-        if (ASm > ASp)
-        {   T[I] = Wm;
+        /* If minus value causes more growth, overwrite T with its values. */
+        if (ASm > ASp) {
+            T[I] = Wm;
             pElement = pPivot->NextInCol;
-            while (pElement != NULL)
-            {   T[pElement->Row] = Tm[pElement->Row];
+            while (pElement != NULL) {
+                T[pElement->Row] = Tm[pElement->Row];
                 pElement = pElement->NextInCol;
             }
-        }
-        else T[I] = Wp;
+        } else
+            T[I] = Wp;
     }
 
-/* Compute 1-norm of T, which now contains w, and scale ||T|| to 1/SLACK. */
-    for (ASw = 0.0, I = Size; I > 0; I--) ASw += ABS(T[I]);
+    /* Compute 1-norm of T, which now contains w, and scale ||T|| to 1/SLACK. */
+    for (ASw = 0.0, I = Size; I > 0; I--)
+        ASw += ABS(T[I]);
     ScaleFactor = 1.0 / (SLACK * ASw);
-    if (ScaleFactor < 0.5)
-    {   for (I = Size; I > 0; I--) T[I] *= ScaleFactor;
+    if (ScaleFactor < 0.5) {
+        for (I = Size; I > 0; I--)
+            T[I] *= ScaleFactor;
         E *= ScaleFactor;
     }
 
-/* Backward Substitution. Solves Uy = w.*/
-    for (I = Size; I >= 1; I--)
-    {   pElement = Matrix->Diag[I]->NextInRow;
-        while (pElement != NULL)
-        {   T[I] -= pElement->Real * T[pElement->Col];
+    /* Backward Substitution. Solves Uy = w.*/
+    for (I = Size; I >= 1; I--) {
+        pElement = Matrix->Diag[I]->NextInRow;
+        while (pElement != NULL) {
+            T[I] -= pElement->Real * T[pElement->Col];
             pElement = pElement->NextInRow;
         }
-        if (ABS(T[I]) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), ABS(T[I]) );
-            for (K = Size; K > 0; K--) T[K] *= ScaleFactor;
+        if (ABS(T[I]) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), ABS(T[I]));
+            for (K = Size; K > 0; K--)
+                T[K] *= ScaleFactor;
             E *= ScaleFactor;
         }
     }
 
-/* Compute 1-norm of T, which now contains y, and scale ||T|| to 1/SLACK. */
-    for (ASy = 0.0, I = Size; I > 0; I--) ASy += ABS(T[I]);
+    /* Compute 1-norm of T, which now contains y, and scale ||T|| to 1/SLACK. */
+    for (ASy = 0.0, I = Size; I > 0; I--)
+        ASy += ABS(T[I]);
     ScaleFactor = 1.0 / (SLACK * ASy);
-    if (ScaleFactor < 0.5)
-    {   for (I = Size; I > 0; I--) T[I] *= ScaleFactor;
+    if (ScaleFactor < 0.5) {
+        for (I = Size; I > 0; I--)
+            T[I] *= ScaleFactor;
         ASy = 1.0 / SLACK;
         E *= ScaleFactor;
     }
 
-/* Compute infinity-norm of T for O'Leary's estimate. */
+    /* Compute infinity-norm of T for O'Leary's estimate. */
     for (MaxY = 0.0, I = Size; I > 0; I--)
-        if (MaxY < ABS(T[I])) MaxY = ABS(T[I]);
+        if (MaxY < ABS(T[I]))
+            MaxY = ABS(T[I]);
 
-/*
- * Part 2.  A* z = y where the * represents the transpose.
- * Recall that A = LU implies A* = U* L*.
- */
+    /*
+     * Part 2.  A* z = y where the * represents the transpose.
+     * Recall that A = LU implies A* = U* L*.
+     */
 
-/* Forward elimination, U* v = y. */
-    for (I = 1; I <= Size; I++)
-    {   pElement = Matrix->Diag[I]->NextInRow;
-        while (pElement != NULL)
-        {   T[pElement->Col] -= T[I] * pElement->Real;
+    /* Forward elimination, U* v = y. */
+    for (I = 1; I <= Size; I++) {
+        pElement = Matrix->Diag[I]->NextInRow;
+        while (pElement != NULL) {
+            T[pElement->Col] -= T[I] * pElement->Real;
             pElement = pElement->NextInRow;
         }
-        if (ABS(T[I]) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), ABS(T[I]) );
-            for (K = Size; K > 0; K--) T[K] *= ScaleFactor;
+        if (ABS(T[I]) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), ABS(T[I]));
+            for (K = Size; K > 0; K--)
+                T[K] *= ScaleFactor;
             ASy *= ScaleFactor;
         }
     }
 
-/* Compute 1-norm of T, which now contains v, and scale ||T|| to 1/SLACK. */
-    for (ASv = 0.0, I = Size; I > 0; I--) ASv += ABS(T[I]);
+    /* Compute 1-norm of T, which now contains v, and scale ||T|| to 1/SLACK. */
+    for (ASv = 0.0, I = Size; I > 0; I--)
+        ASv += ABS(T[I]);
     ScaleFactor = 1.0 / (SLACK * ASv);
-    if (ScaleFactor < 0.5)
-    {   for (I = Size; I > 0; I--) T[I] *= ScaleFactor;
+    if (ScaleFactor < 0.5) {
+        for (I = Size; I > 0; I--)
+            T[I] *= ScaleFactor;
         ASy *= ScaleFactor;
     }
 
-/* Backward Substitution, L* z = v. */
-    for (I = Size; I >= 1; I--)
-    {   pPivot = Matrix->Diag[I];
+    /* Backward Substitution, L* z = v. */
+    for (I = Size; I >= 1; I--) {
+        pPivot = Matrix->Diag[I];
         pElement = pPivot->NextInCol;
-        while (pElement != NULL)
-        {   T[I] -= pElement->Real * T[pElement->Row];
+        while (pElement != NULL) {
+            T[I] -= pElement->Real * T[pElement->Row];
             pElement = pElement->NextInCol;
         }
         T[I] *= pPivot->Real;
-        if (ABS(T[I]) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), ABS(T[I]) );
-            for (K = Size; K > 0; K--) T[K] *= ScaleFactor;
+        if (ABS(T[I]) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), ABS(T[I]));
+            for (K = Size; K > 0; K--)
+                T[K] *= ScaleFactor;
             ASy *= ScaleFactor;
         }
     }
 
-/* Compute 1-norm of T, which now contains z. */
-    for (ASz = 0.0, I = Size; I > 0; I--) ASz += ABS(T[I]);
+    /* Compute 1-norm of T, which now contains z. */
+    for (ASz = 0.0, I = Size; I > 0; I--)
+        ASz += ABS(T[I]);
 
 #if NOT spCOMPLEX
-    SP_FREE( Tm );
+    SP_FREE(Tm);
 #endif
 
     Linpack = ASy / ASz;
     OLeary = E / MaxY;
-    InvNormOfInverse = MIN( Linpack, OLeary );
+    InvNormOfInverse = MIN(Linpack, OLeary);
     return InvNormOfInverse / NormOfMatrix;
 #endif /* REAL */
 }
-
-
-
-
 
 #if spCOMPLEX
 /*
@@ -1659,183 +1532,190 @@ RealNumber Linpack, OLeary, InvNormOfInverse, ComplexCondition();
  *  spNO_MEMORY
  */
 
-static RealNumber
-ComplexCondition(
-    MatrixPtr Matrix,
-    RealNumber NormOfMatrix,
-    int *pError
-)
-{
-ElementPtr pElement;
-ComplexVector T, Tm;
-int I, K, Row;
-ElementPtr pPivot;
-int Size;
-RealNumber E, Em, ASp, ASm, ASw, ASy, ASv, ASz, MaxY, ScaleFactor;
-RealNumber Linpack, OLeary, InvNormOfInverse;
-ComplexNumber Wp, Wm;
+static RealNumber ComplexCondition(MatrixPtr Matrix, RealNumber NormOfMatrix,
+                                   int *pError) {
+    ElementPtr pElement;
+    ComplexVector T, Tm;
+    int I, K, Row;
+    ElementPtr pPivot;
+    int Size;
+    RealNumber E, Em, ASp, ASm, ASw, ASy, ASv, ASz, MaxY, ScaleFactor;
+    RealNumber Linpack, OLeary, InvNormOfInverse;
+    ComplexNumber Wp, Wm;
 
-/* Begin `ComplexCondition'. */
+    /* Begin `ComplexCondition'. */
 
     Size = Matrix->Size;
     T = (ComplexVector)Matrix->Intermediate;
-    Tm = ALLOC( ComplexNumber, Size+1 );
-    if (Tm == NULL)
-    {   *pError = spNO_MEMORY;
+    Tm = ALLOC(ComplexNumber, Size + 1);
+    if (Tm == NULL) {
+        *pError = spNO_MEMORY;
         return 0.0;
     }
-    for (I = Size; I > 0; I--) T[I].Real = T[I].Imag = 0.0;
+    for (I = Size; I > 0; I--)
+        T[I].Real = T[I].Imag = 0.0;
 
-/*
- * Part 1.  Ay = e.
- * Solve Ay = LUy = e where e consists of +1 and -1 terms with the sign
- * chosen to maximize the size of w in Lw = e.  Since the terms in w can
- * get very large, scaling is used to avoid overflow.
- */
+    /*
+     * Part 1.  Ay = e.
+     * Solve Ay = LUy = e where e consists of +1 and -1 terms with the sign
+     * chosen to maximize the size of w in Lw = e.  Since the terms in w can
+     * get very large, scaling is used to avoid overflow.
+     */
 
-/* Forward elimination. Solves Lw = e while choosing e. */
+    /* Forward elimination. Solves Lw = e while choosing e. */
     E = 1.0;
-    for (I = 1; I <= Size; I++)
-    {   pPivot = Matrix->Diag[I];
-        if (T[I].Real < 0.0) Em = -E; else Em = E;
+    for (I = 1; I <= Size; I++) {
+        pPivot = Matrix->Diag[I];
+        if (T[I].Real < 0.0)
+            Em = -E;
+        else
+            Em = E;
         Wm = T[I];
         Wm.Real += Em;
-        ASm = CMPLX_1_NORM( Wm );
-        CMPLX_MULT_ASSIGN( Wm, *pPivot );
-        if (CMPLX_1_NORM(Wm) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), CMPLX_1_NORM(Wm) );
-            for (K = Size; K > 0; K--) SCLR_MULT_ASSIGN( T[K], ScaleFactor );
+        ASm = CMPLX_1_NORM(Wm);
+        CMPLX_MULT_ASSIGN(Wm, *pPivot);
+        if (CMPLX_1_NORM(Wm) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), CMPLX_1_NORM(Wm));
+            for (K = Size; K > 0; K--)
+                SCLR_MULT_ASSIGN(T[K], ScaleFactor);
             E *= ScaleFactor;
             Em *= ScaleFactor;
             ASm *= ScaleFactor;
-            SCLR_MULT_ASSIGN( Wm, ScaleFactor );
+            SCLR_MULT_ASSIGN(Wm, ScaleFactor);
         }
         Wp = T[I];
         Wp.Real -= Em;
-        ASp = CMPLX_1_NORM( Wp );
-        CMPLX_MULT_ASSIGN( Wp, *pPivot );
+        ASp = CMPLX_1_NORM(Wp);
+        CMPLX_MULT_ASSIGN(Wp, *pPivot);
 
-/* Update T for both values of W, minus value is placed in Tm. */
+        /* Update T for both values of W, minus value is placed in Tm. */
         pElement = pPivot->NextInCol;
-        while (pElement != NULL)
-        {   Row = pElement->Row;
+        while (pElement != NULL) {
+            Row = pElement->Row;
             /* Cmplx expr: Tm[Row] = T[Row] - (Wp * *pElement). */
-            CMPLX_MULT_SUBT( Tm[Row], Wm, *pElement, T[Row] );
+            CMPLX_MULT_SUBT(Tm[Row], Wm, *pElement, T[Row]);
             /* Cmplx expr: T[Row] -= Wp * *pElement. */
-            CMPLX_MULT_SUBT_ASSIGN( T[Row], Wm, *pElement );
+            CMPLX_MULT_SUBT_ASSIGN(T[Row], Wm, *pElement);
             ASp += CMPLX_1_NORM(T[Row]);
             ASm += CMPLX_1_NORM(Tm[Row]);
             pElement = pElement->NextInCol;
         }
 
-/* If minus value causes more growth, overwrite T with its values. */
-        if (ASm > ASp)
-        {   T[I] = Wm;
+        /* If minus value causes more growth, overwrite T with its values. */
+        if (ASm > ASp) {
+            T[I] = Wm;
             pElement = pPivot->NextInCol;
-            while (pElement != NULL)
-            {   T[pElement->Row] = Tm[pElement->Row];
+            while (pElement != NULL) {
+                T[pElement->Row] = Tm[pElement->Row];
                 pElement = pElement->NextInCol;
             }
-        }
-        else T[I] = Wp;
+        } else
+            T[I] = Wp;
     }
 
-/* Compute 1-norm of T, which now contains w, and scale ||T|| to 1/SLACK. */
-    for (ASw = 0.0, I = Size; I > 0; I--) ASw += CMPLX_1_NORM(T[I]);
+    /* Compute 1-norm of T, which now contains w, and scale ||T|| to 1/SLACK. */
+    for (ASw = 0.0, I = Size; I > 0; I--)
+        ASw += CMPLX_1_NORM(T[I]);
     ScaleFactor = 1.0 / (SLACK * ASw);
-    if (ScaleFactor < 0.5)
-    {   for (I = Size; I > 0; I--) SCLR_MULT_ASSIGN( T[I], ScaleFactor );
+    if (ScaleFactor < 0.5) {
+        for (I = Size; I > 0; I--)
+            SCLR_MULT_ASSIGN(T[I], ScaleFactor);
         E *= ScaleFactor;
     }
 
-/* Backward Substitution. Solves Uy = w.*/
-    for (I = Size; I >= 1; I--)
-    {   pElement = Matrix->Diag[I]->NextInRow;
-        while (pElement != NULL)
-        {   /* Cmplx expr: T[I] -= T[pElement->Col] * *pElement. */
-            CMPLX_MULT_SUBT_ASSIGN( T[I], T[pElement->Col], *pElement );
+    /* Backward Substitution. Solves Uy = w.*/
+    for (I = Size; I >= 1; I--) {
+        pElement = Matrix->Diag[I]->NextInRow;
+        while (pElement !=
+               NULL) { /* Cmplx expr: T[I] -= T[pElement->Col] * *pElement. */
+            CMPLX_MULT_SUBT_ASSIGN(T[I], T[pElement->Col], *pElement);
             pElement = pElement->NextInRow;
         }
-        if (CMPLX_1_NORM(T[I]) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), CMPLX_1_NORM(T[I]) );
-            for (K = Size; K > 0; K--) SCLR_MULT_ASSIGN( T[K], ScaleFactor );
+        if (CMPLX_1_NORM(T[I]) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), CMPLX_1_NORM(T[I]));
+            for (K = Size; K > 0; K--)
+                SCLR_MULT_ASSIGN(T[K], ScaleFactor);
             E *= ScaleFactor;
         }
     }
 
-/* Compute 1-norm of T, which now contains y, and scale ||T|| to 1/SLACK. */
-    for (ASy = 0.0, I = Size; I > 0; I--) ASy += CMPLX_1_NORM(T[I]);
+    /* Compute 1-norm of T, which now contains y, and scale ||T|| to 1/SLACK. */
+    for (ASy = 0.0, I = Size; I > 0; I--)
+        ASy += CMPLX_1_NORM(T[I]);
     ScaleFactor = 1.0 / (SLACK * ASy);
-    if (ScaleFactor < 0.5)
-    {   for (I = Size; I > 0; I--) SCLR_MULT_ASSIGN( T[I], ScaleFactor );
+    if (ScaleFactor < 0.5) {
+        for (I = Size; I > 0; I--)
+            SCLR_MULT_ASSIGN(T[I], ScaleFactor);
         ASy = 1.0 / SLACK;
         E *= ScaleFactor;
     }
 
-/* Compute infinity-norm of T for O'Leary's estimate. */
+    /* Compute infinity-norm of T for O'Leary's estimate. */
     for (MaxY = 0.0, I = Size; I > 0; I--)
-        if (MaxY < CMPLX_1_NORM(T[I])) MaxY = CMPLX_1_NORM(T[I]);
+        if (MaxY < CMPLX_1_NORM(T[I]))
+            MaxY = CMPLX_1_NORM(T[I]);
 
-/*
- * Part 2.  A* z = y where the * represents the transpose.
- * Recall that A = LU implies A* = U* L*.
- */
+    /*
+     * Part 2.  A* z = y where the * represents the transpose.
+     * Recall that A = LU implies A* = U* L*.
+     */
 
-/* Forward elimination, U* v = y. */
-    for (I = 1; I <= Size; I++)
-    {   pElement = Matrix->Diag[I]->NextInRow;
-        while (pElement != NULL)
-        {   /* Cmplx expr: T[pElement->Col] -= T[I] * *pElement. */
-            CMPLX_MULT_SUBT_ASSIGN( T[pElement->Col], T[I], *pElement );
+    /* Forward elimination, U* v = y. */
+    for (I = 1; I <= Size; I++) {
+        pElement = Matrix->Diag[I]->NextInRow;
+        while (pElement !=
+               NULL) { /* Cmplx expr: T[pElement->Col] -= T[I] * *pElement. */
+            CMPLX_MULT_SUBT_ASSIGN(T[pElement->Col], T[I], *pElement);
             pElement = pElement->NextInRow;
         }
-        if (CMPLX_1_NORM(T[I]) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), CMPLX_1_NORM(T[I]) );
-            for (K = Size; K > 0; K--) SCLR_MULT_ASSIGN( T[K], ScaleFactor );
+        if (CMPLX_1_NORM(T[I]) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), CMPLX_1_NORM(T[I]));
+            for (K = Size; K > 0; K--)
+                SCLR_MULT_ASSIGN(T[K], ScaleFactor);
             ASy *= ScaleFactor;
         }
     }
 
-/* Compute 1-norm of T, which now contains v, and scale ||T|| to 1/SLACK. */
-    for (ASv = 0.0, I = Size; I > 0; I--) ASv += CMPLX_1_NORM(T[I]);
+    /* Compute 1-norm of T, which now contains v, and scale ||T|| to 1/SLACK. */
+    for (ASv = 0.0, I = Size; I > 0; I--)
+        ASv += CMPLX_1_NORM(T[I]);
     ScaleFactor = 1.0 / (SLACK * ASv);
-    if (ScaleFactor < 0.5)
-    {   for (I = Size; I > 0; I--) SCLR_MULT_ASSIGN( T[I], ScaleFactor );
+    if (ScaleFactor < 0.5) {
+        for (I = Size; I > 0; I--)
+            SCLR_MULT_ASSIGN(T[I], ScaleFactor);
         ASy *= ScaleFactor;
     }
 
-/* Backward Substitution, L* z = v. */
-    for (I = Size; I >= 1; I--)
-    {   pPivot = Matrix->Diag[I];
+    /* Backward Substitution, L* z = v. */
+    for (I = Size; I >= 1; I--) {
+        pPivot = Matrix->Diag[I];
         pElement = pPivot->NextInCol;
-        while (pElement != NULL)
-        {   /* Cmplx expr: T[I] -= T[pElement->Row] * *pElement. */
-            CMPLX_MULT_SUBT_ASSIGN( T[I], T[pElement->Row], *pElement );
+        while (pElement !=
+               NULL) { /* Cmplx expr: T[I] -= T[pElement->Row] * *pElement. */
+            CMPLX_MULT_SUBT_ASSIGN(T[I], T[pElement->Row], *pElement);
             pElement = pElement->NextInCol;
         }
-        CMPLX_MULT_ASSIGN( T[I], *pPivot );
-        if (CMPLX_1_NORM(T[I]) > SLACK)
-        {   ScaleFactor = 1.0 / MAX( SQR( SLACK ), CMPLX_1_NORM(T[I]) );
-            for (K = Size; K > 0; K--) SCLR_MULT_ASSIGN( T[K], ScaleFactor );
+        CMPLX_MULT_ASSIGN(T[I], *pPivot);
+        if (CMPLX_1_NORM(T[I]) > SLACK) {
+            ScaleFactor = 1.0 / MAX(SQR(SLACK), CMPLX_1_NORM(T[I]));
+            for (K = Size; K > 0; K--)
+                SCLR_MULT_ASSIGN(T[K], ScaleFactor);
             ASy *= ScaleFactor;
         }
     }
 
-/* Compute 1-norm of T, which now contains z. */
-    for (ASz = 0.0, I = Size; I > 0; I--) ASz += CMPLX_1_NORM(T[I]);
+    /* Compute 1-norm of T, which now contains z. */
+    for (ASz = 0.0, I = Size; I > 0; I--)
+        ASz += CMPLX_1_NORM(T[I]);
 
-    SP_FREE( Tm );
+    SP_FREE(Tm);
 
     Linpack = ASy / ASz;
     OLeary = E / MaxY;
-    InvNormOfInverse = MIN( Linpack, OLeary );
+    InvNormOfInverse = MIN(Linpack, OLeary);
     return InvNormOfInverse / NormOfMatrix;
 }
 #endif /* spCOMPLEX */
-
-
-
-
 
 /*!
  *  Computes the L-infinity norm of an unfactored matrix.  It is a fatal
@@ -1848,43 +1728,44 @@ ComplexNumber Wp, Wm;
  *      Pointer to the matrix.
  */
 
-spREAL
-spNorm( MatrixPtr Matrix )
-{
-ElementPtr pElement;
-int I;
-RealNumber Max = 0.0, AbsRowSum;
+spREAL spNorm(MatrixPtr Matrix) {
+    ElementPtr pElement;
+    int I;
+    RealNumber Max = 0.0, AbsRowSum;
 
-/* Begin `spNorm'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_NO_ERRORS( Matrix );
-    ASSERT_IS_NOT_FACTORED( Matrix );
-    if (NOT Matrix->RowsLinked) spcLinkRows( Matrix );
+    /* Begin `spNorm'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_NO_ERRORS(Matrix);
+    ASSERT_IS_NOT_FACTORED(Matrix);
+    if (NOT Matrix->RowsLinked)
+        spcLinkRows(Matrix);
 
 /* Compute row sums. */
 #if REAL
-    if (NOT Matrix->Complex)
-    {   for (I = Matrix->Size; I > 0; I--)
-        {   pElement = Matrix->FirstInRow[I];
+    if (NOT Matrix->Complex) {
+        for (I = Matrix->Size; I > 0; I--) {
+            pElement = Matrix->FirstInRow[I];
             AbsRowSum = 0.0;
-            while (pElement != NULL)
-            {   AbsRowSum += ABS( pElement->Real );
+            while (pElement != NULL) {
+                AbsRowSum += ABS(pElement->Real);
                 pElement = pElement->NextInRow;
             }
-            if (Max < AbsRowSum) Max = AbsRowSum;
+            if (Max < AbsRowSum)
+                Max = AbsRowSum;
         }
     }
 #endif
 #if spCOMPLEX
-    if (Matrix->Complex)
-    {   for (I = Matrix->Size; I > 0; I--)
-        {   pElement = Matrix->FirstInRow[I];
+    if (Matrix->Complex) {
+        for (I = Matrix->Size; I > 0; I--) {
+            pElement = Matrix->FirstInRow[I];
             AbsRowSum = 0.0;
-            while (pElement != NULL)
-            {   AbsRowSum += CMPLX_1_NORM( *pElement );
+            while (pElement != NULL) {
+                AbsRowSum += CMPLX_1_NORM(*pElement);
                 pElement = pElement->NextInRow;
             }
-            if (Max < AbsRowSum) Max = AbsRowSum;
+            if (Max < AbsRowSum)
+                Max = AbsRowSum;
         }
     }
 #endif
@@ -1892,11 +1773,6 @@ RealNumber Max = 0.0, AbsRowSum;
 }
 #endif /* CONDITION */
 
-
-
-
-
-
 #if STABILITY
 /*!
  *  This routine, along with spRoundoff(), are used to gauge the stability of a
@@ -1962,53 +1838,56 @@ RealNumber Max = 0.0, AbsRowSum;
  *      Pointer to the matrix.
  */
 
-spREAL
-spLargestElement( MatrixPtr Matrix )
-{
-int I;
-RealNumber Mag, AbsColSum, Max = 0.0, MaxRow = 0.0, MaxCol = 0.0;
-RealNumber Pivot;
-ComplexNumber cPivot;
-ElementPtr pElement, pDiag;
+spREAL spLargestElement(MatrixPtr Matrix) {
+    int I;
+    RealNumber Mag, AbsColSum, Max = 0.0, MaxRow = 0.0, MaxCol = 0.0;
+    RealNumber Pivot;
+    ComplexNumber cPivot;
+    ElementPtr pElement, pDiag;
 
-/* Begin `spLargestElement'. */
-    ASSERT_IS_SPARSE( Matrix );
+    /* Begin `spLargestElement'. */
+    ASSERT_IS_SPARSE(Matrix);
 
 #if REAL
-    if (Matrix->Factored AND NOT Matrix->Complex)
-    {   if (Matrix->Error == spSINGULAR) return 0.0;
+    if (Matrix->Factored AND NOT Matrix->Complex) {
+        if (Matrix->Error == spSINGULAR)
+            return 0.0;
 
-/* Find the bound on the size of the largest element over all factorization. */
-        for (I = 1; I <= Matrix->Size; I++)
-        {   pDiag = Matrix->Diag[I];
+        /* Find the bound on the size of the largest element over all
+         * factorization. */
+        for (I = 1; I <= Matrix->Size; I++) {
+            pDiag = Matrix->Diag[I];
 
-/* Lower triangular matrix. */
+            /* Lower triangular matrix. */
             Pivot = 1.0 / pDiag->Real;
-            Mag = ABS( Pivot );
-            if (Mag > MaxRow) MaxRow = Mag;
+            Mag = ABS(Pivot);
+            if (Mag > MaxRow)
+                MaxRow = Mag;
             pElement = Matrix->FirstInRow[I];
-            while (pElement != pDiag)
-            {   Mag = ABS( pElement->Real );
-                if (Mag > MaxRow) MaxRow = Mag;
+            while (pElement != pDiag) {
+                Mag = ABS(pElement->Real);
+                if (Mag > MaxRow)
+                    MaxRow = Mag;
                 pElement = pElement->NextInRow;
             }
 
-/* Upper triangular matrix. */
+            /* Upper triangular matrix. */
             pElement = Matrix->FirstInCol[I];
-            AbsColSum = 1.0;  /* Diagonal of U is unity. */
-            while (pElement != pDiag)
-            {   AbsColSum += ABS( pElement->Real );
+            AbsColSum = 1.0; /* Diagonal of U is unity. */
+            while (pElement != pDiag) {
+                AbsColSum += ABS(pElement->Real);
                 pElement = pElement->NextInCol;
             }
-            if (AbsColSum > MaxCol) MaxCol = AbsColSum;
+            if (AbsColSum > MaxCol)
+                MaxCol = AbsColSum;
         }
-    }
-    else if (NOT Matrix->Complex)
-    {   for (I = 1; I <= Matrix->Size; I++)
-        {   pElement = Matrix->FirstInCol[I];
-            while (pElement != NULL)
-            {   Mag = ABS( pElement->Real );
-                if (Mag > Max) Max = Mag;
+    } else if (NOT Matrix->Complex) {
+        for (I = 1; I <= Matrix->Size; I++) {
+            pElement = Matrix->FirstInCol[I];
+            while (pElement != NULL) {
+                Mag = ABS(pElement->Real);
+                if (Mag > Max)
+                    Max = Mag;
                 pElement = pElement->NextInCol;
             }
         }
@@ -2016,40 +1895,45 @@ ElementPtr pElement, pDiag;
     }
 #endif
 #if spCOMPLEX
-    if (Matrix->Factored AND Matrix->Complex)
-    {   if (Matrix->Error == spSINGULAR) return 0.0;
+    if (Matrix->Factored AND Matrix->Complex) {
+        if (Matrix->Error == spSINGULAR)
+            return 0.0;
 
-/* Find the bound on the size of the largest element over all factorization. */
-        for (I = 1; I <= Matrix->Size; I++)
-        {   pDiag = Matrix->Diag[I];
+        /* Find the bound on the size of the largest element over all
+         * factorization. */
+        for (I = 1; I <= Matrix->Size; I++) {
+            pDiag = Matrix->Diag[I];
 
-/* Lower triangular matrix. */
-            CMPLX_RECIPROCAL( cPivot, *pDiag );
-            Mag = CMPLX_INF_NORM( cPivot );
-            if (Mag > MaxRow) MaxRow = Mag;
+            /* Lower triangular matrix. */
+            CMPLX_RECIPROCAL(cPivot, *pDiag);
+            Mag = CMPLX_INF_NORM(cPivot);
+            if (Mag > MaxRow)
+                MaxRow = Mag;
             pElement = Matrix->FirstInRow[I];
-            while (pElement != pDiag)
-            {   Mag = CMPLX_INF_NORM( *pElement );
-                if (Mag > MaxRow) MaxRow = Mag;
+            while (pElement != pDiag) {
+                Mag = CMPLX_INF_NORM(*pElement);
+                if (Mag > MaxRow)
+                    MaxRow = Mag;
                 pElement = pElement->NextInRow;
             }
 
-/* Upper triangular matrix. */
+            /* Upper triangular matrix. */
             pElement = Matrix->FirstInCol[I];
-            AbsColSum = 1.0;  /* Diagonal of U is unity. */
-            while (pElement != pDiag)
-            {   AbsColSum += CMPLX_INF_NORM( *pElement );
+            AbsColSum = 1.0; /* Diagonal of U is unity. */
+            while (pElement != pDiag) {
+                AbsColSum += CMPLX_INF_NORM(*pElement);
                 pElement = pElement->NextInCol;
             }
-            if (AbsColSum > MaxCol) MaxCol = AbsColSum;
+            if (AbsColSum > MaxCol)
+                MaxCol = AbsColSum;
         }
-    }
-    else if (Matrix->Complex)
-    {   for (I = 1; I <= Matrix->Size; I++)
-        {   pElement = Matrix->FirstInCol[I];
-            while (pElement != NULL)
-            {   Mag = CMPLX_INF_NORM( *pElement );
-                if (Mag > Max) Max = Mag;
+    } else if (Matrix->Complex) {
+        for (I = 1; I <= Matrix->Size; I++) {
+            pElement = Matrix->FirstInCol[I];
+            while (pElement != NULL) {
+                Mag = CMPLX_INF_NORM(*pElement);
+                if (Mag > Max)
+                    Max = Mag;
                 pElement = pElement->NextInCol;
             }
         }
@@ -2058,9 +1942,6 @@ ElementPtr pElement, pDiag;
 #endif
     return MaxRow * MaxCol;
 }
-
-
-
 
 /*!
  *  This routine, along with spLargestElement(), are used to gauge the
@@ -2080,41 +1961,39 @@ ElementPtr pElement, pDiag;
  *      negative, the bound will be computed automatically.
  */
 
-spREAL
-spRoundoff(
-    MatrixPtr Matrix,
-    spREAL Rho
-)
-{
-ElementPtr pElement;
-int Count, I, MaxCount = 0;
-RealNumber Reid, Gear;
+spREAL spRoundoff(MatrixPtr Matrix, spREAL Rho) {
+    ElementPtr pElement;
+    int Count, I, MaxCount = 0;
+    RealNumber Reid, Gear;
 
-/* Begin `spRoundoff'. */
-    ASSERT_IS_SPARSE( Matrix );
-    ASSERT_NO_ERRORS( Matrix );
-    ASSERT_IS_FACTORED( Matrix );
+    /* Begin `spRoundoff'. */
+    ASSERT_IS_SPARSE(Matrix);
+    ASSERT_NO_ERRORS(Matrix);
+    ASSERT_IS_FACTORED(Matrix);
 
-/* Compute Barlow's bound if it is not given. */
-    if (Rho < 0.0) Rho = spLargestElement( Matrix );
+    /* Compute Barlow's bound if it is not given. */
+    if (Rho < 0.0)
+        Rho = spLargestElement(Matrix);
 
-/* Find the maximum number of off-diagonals in L if not previously computed. */
-    if (Matrix->MaxRowCountInLowerTri < 0)
-    {   for (I = Matrix->Size; I > 0; I--)
-        {   pElement = Matrix->FirstInRow[I];
+    /* Find the maximum number of off-diagonals in L if not previously computed.
+     */
+    if (Matrix->MaxRowCountInLowerTri < 0) {
+        for (I = Matrix->Size; I > 0; I--) {
+            pElement = Matrix->FirstInRow[I];
             Count = 0;
-            while (pElement->Col < I)
-            {   Count++;
+            while (pElement->Col < I) {
+                Count++;
                 pElement = pElement->NextInRow;
             }
-            if (Count > MaxCount) MaxCount = Count;
+            if (Count > MaxCount)
+                MaxCount = Count;
         }
         Matrix->MaxRowCountInLowerTri = MaxCount;
-    }
-    else MaxCount = Matrix->MaxRowCountInLowerTri;
+    } else
+        MaxCount = Matrix->MaxRowCountInLowerTri;
 
-/* Compute error bound. */
-    Gear = 1.01*((MaxCount + 1) * Matrix->RelThreshold + 1.0) * SQR(MaxCount);
+    /* Compute error bound. */
+    Gear = 1.01 * ((MaxCount + 1) * Matrix->RelThreshold + 1.0) * SQR(MaxCount);
     Reid = 3.01 * Matrix->Size;
 
     if (Gear < Reid)
@@ -2124,12 +2003,6 @@ RealNumber Reid, Gear;
 }
 #endif
 
-
-
-
-
-
-
 #if DOCUMENTATION
 /*!
  *  This routine prints a short message describing the error error state
@@ -2145,56 +2018,53 @@ RealNumber Reid, Gear;
  *  If zero-length string, no originator is printed.
  */
 
-void
-spErrorMessage(
-    MatrixPtr Matrix,
-    FILE *Stream,
-    char *Originator
-)
-{
-int Row, Col, Error;
+void spErrorMessage(MatrixPtr Matrix, FILE *Stream, char *Originator) {
+    int Row, Col, Error;
 
-/* Begin `spErrorMessage'. */
+    /* Begin `spErrorMessage'. */
     if (Matrix == NULL)
-    Error = spNO_MEMORY;
-    else
-    {   ASSERT_IS_SPARSE( Matrix );
-    Error = Matrix->Error;
+        Error = spNO_MEMORY;
+    else {
+        ASSERT_IS_SPARSE(Matrix);
+        Error = Matrix->Error;
     }
 
-    if (Error == spOKAY) return;
-    if (Originator == NULL) Originator = "sparse";
-    if (Stream == NULL) Stream = stderr;
-    if (Originator[0] != '\0') fprintf( Stream, "%s: ", Originator );
+    if (Error == spOKAY)
+        return;
+    if (Originator == NULL)
+        Originator = "sparse";
+    if (Stream == NULL)
+        Stream = stderr;
+    if (Originator[0] != '\0')
+        fprintf(Stream, "%s: ", Originator);
     if (Error >= spFATAL)
-    fprintf( Stream, "fatal error: ");
+        fprintf(Stream, "fatal error: ");
     else
-    fprintf( Stream, "warning: ");
-/*
- * Print particular error message.
- * Do not use switch statement because error codes may not be unique.
- */
+        fprintf(Stream, "warning: ");
+    /*
+     * Print particular error message.
+     * Do not use switch statement because error codes may not be unique.
+     */
     if (Error == spPANIC)
-    fprintf( Stream, "Sparse called improperly.\n");
+        fprintf(Stream, "Sparse called improperly.\n");
     else if (Error == spNO_MEMORY)
-    fprintf( Stream, "insufficient memory available.\n");
+        fprintf(Stream, "insufficient memory available.\n");
     else if (Error == spMANGLED)
-    fprintf( Stream, "matrix is mangled.\n");
-    else if (Error == spSINGULAR)
-    {   spWhereSingular( Matrix, &Row, &Col );
-    fprintf( Stream, "singular matrix detected at row %d and column %d.\n",
-         Row, Col);
-    }
-    else if (Error == spZERO_DIAG)
-    {   spWhereSingular( Matrix, &Row, &Col );
-    fprintf( Stream, "zero diagonal detected at row %d and column %d.\n",
-         Row, Col);
-    }
-    else if (Error == spSMALL_PIVOT)
-    {   fprintf( Stream,
-        "unable to find a pivot that is larger than absolute threshold.\n");
-    }
-    else ABORT();
+        fprintf(Stream, "matrix is mangled.\n");
+    else if (Error == spSINGULAR) {
+        spWhereSingular(Matrix, &Row, &Col);
+        fprintf(Stream, "singular matrix detected at row %d and column %d.\n",
+                Row, Col);
+    } else if (Error == spZERO_DIAG) {
+        spWhereSingular(Matrix, &Row, &Col);
+        fprintf(Stream, "zero diagonal detected at row %d and column %d.\n",
+                Row, Col);
+    } else if (Error == spSMALL_PIVOT) {
+        fprintf(
+            Stream,
+            "unable to find a pivot that is larger than absolute threshold.\n");
+    } else
+        ABORT();
 
     if (Matrix != NULL)
         Matrix->Error = spOKAY;

@@ -9,7 +9,6 @@
  *  >>> Other functions contained in this file:
  */
 
-
 /*
  *  IMPORTS
  *
@@ -23,25 +22,21 @@
  */
 
 #define spINSIDE_SPARSE
-#include <stdio.h>
-#include "spConfig.h"
 #include "ngspice/spmatrix.h"
+#include "spConfig.h"
 #include "spDefs.h"
+#include <stdio.h>
 
-void
-spConstMult(
-    MatrixPtr Matrix,
-    double constant
-)
-{
-ElementPtr  pElement;
-int     I;
-int     size = Matrix->Size;
+void spConstMult(MatrixPtr Matrix, double constant) {
+    ElementPtr pElement;
+    int I;
+    int size = Matrix->Size;
 
-    ASSERT_IS_SPARSE( Matrix );
+    ASSERT_IS_SPARSE(Matrix);
 
     for (I = 1; I <= size; I++) {
-        for (pElement = Matrix->FirstInCol[I]; pElement; pElement = pElement->NextInCol) {
+        for (pElement = Matrix->FirstInCol[I]; pElement;
+             pElement = pElement->NextInCol) {
             pElement->Real *= constant;
 #if spCOMPLEX
             pElement->Imag *= constant;
