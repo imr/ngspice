@@ -2033,7 +2033,8 @@ ATTRIBUTE_NORETURN void shared_exit(int status)
         fl_exited = TRUE;
         bgtr(fl_exited, ng_ident, userptr);
         // set a flag that ngspice wants to be detached
-        ngexit(status, FALSE, coquit, ng_ident, userptr);
+        if(ngexit)
+            ngexit(status, FALSE, coquit, ng_ident, userptr);
         // finish and exit the worker thread
 #ifdef HAVE_LIBPTHREAD
         pthread_exit(NULL);
@@ -2042,7 +2043,8 @@ ATTRIBUTE_NORETURN void shared_exit(int status)
 #endif
     }
     // set a flag in caller to detach ngspice.dll
-    ngexit(status, immediate, coquit, ng_ident, userptr);
+    if(ngexit)
+        ngexit(status, immediate, coquit, ng_ident, userptr);
 
     // jump back to finish the calling function
     if (!intermj)
