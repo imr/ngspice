@@ -42,7 +42,9 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->ISRCname);
             }
             else if (here->ISRCdcGiven && here->ISRCfuncTGiven
-                && here->ISRCfunctionType != TRNOISE && here->ISRCfunctionType != TRRANDOM) {
+                    && here->ISRCfunctionType != TRNOISE
+                    && here->ISRCfunctionType != TRRANDOM
+                    && here->ISRCfunctionType != EXTERNAL) {
                 /* DC value and transient time 0 values given */
                 double time0value;
                 /* determine transient time 0 value */
