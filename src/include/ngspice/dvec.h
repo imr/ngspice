@@ -16,7 +16,8 @@ enum dvec_flags {
   VF_PRINT = (1 << 4),      /* writedata should print this vector. */
   VF_MINGIVEN = (1 << 5),   /* The v_minsignal value is valid. */
   VF_MAXGIVEN = (1 << 6),   /* The v_maxsignal value is valid. */
-  VF_PERMANENT = (1 << 7)   /* Don't garbage collect this vector. */
+  VF_PERMANENT = (1 << 7),  /* Don't garbage collect this vector. */
+  VF_EVENT_NODE = (1 << 8)  /* Derived from and XSPICE event node. */
 };
 
 
