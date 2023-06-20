@@ -193,6 +193,7 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   pDevice->dimEquil = poiEqn;
   pDevice->dimBias = numEqn;
 
+  FREE(nodeArray);
   /* 
    * ONEprnMesh( pDevice );
    */
