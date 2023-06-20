@@ -129,7 +129,7 @@ DISPDEVICE device[] = {
       (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, (disp_fn_Input_t *) NODEV,
       gen_DatatoScreen, },
 
-    { "PrinterOnly", 0, 0, 24, 80, 0, 0,
+    { "BatchMode/PrinterOnly", 0, 0, 24, 80, 0, 0,
       (disp_fn_Init_t *) NODEV, (disp_fn_NewViewport_t *)  NODEV,
       (disp_fn_Close_t *) NOP, (disp_fn_Clear_t *) NODEV,
       (disp_fn_DrawLine_t *) NODEV, (disp_fn_Arc_t *) NODEV, (disp_fn_Text_t *) NODEV,

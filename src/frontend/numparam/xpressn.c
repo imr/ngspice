@@ -1395,6 +1395,8 @@ nupa_assignment(dico_t *dico, const char *s, char mode)
    bug: we cannot rely on the transformed line, must re-parse everything!
 */
 {
+    if (!s || !*s)
+        return 1;
     /* s has the format: ident = expression; ident= expression ...  */
     const char * const s_end = s + strlen(s);
     const char *p = s;

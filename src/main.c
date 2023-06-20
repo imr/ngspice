@@ -19,6 +19,7 @@
 #ifdef HAVE_GNUREADLINE
 # include <readline/readline.h>
 # include <readline/history.h>
+# include "../misc/tilde.h"
 #endif
 
 /* editline development has added the following typdef to readline.h in 06/2018.
@@ -614,11 +615,15 @@ static void
 app_rl_init(void)
 {
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
+    char *home;
+
     /* ---  set up readline params --- */
-    strcpy(history_file, getenv("HOME"));
-    strcat(history_file, "/.");
-    strcat(history_file, application_name);
-    strcat(history_file, "_history");
+
+    if (get_local_home(0, &home) < 0)
+        return;
+    snprintf(history_file, sizeof history_file, "%s/.%s_history",
+             home, application_name);
+    tfree(home);
 
     using_history();
     read_history(history_file);
@@ -1403,6 +1408,8 @@ int main(int argc, char **argv)
 
     if (ft_batchmode) {
 
+        int error3 = 1;
+
         /* If we get back here in batch mode then something is wrong,
          * so exit.  */
 
@@ -1425,6 +1432,9 @@ int main(int argc, char **argv)
 
         cp_interactive = FALSE;
 
+        /* Check if a simulation has run from a .control section */
+        cp_getvar("sim_status", CP_NUM, &error3, 0);
+
         if (rflag) {
             /* If -r is specified, then dot cards (.width, .plot, .print, .op, .meas, .tf)
                are ignored, except .save, which has been handled by ft_dotsaves()
@@ -1442,6 +1452,10 @@ int main(int argc, char **argv)
             /* Execute the .whatever lines found in the deck, after we are done running. */
             if (ft_cktcoms(FALSE) || error2)
                 sp_shutdown(EXIT_BAD);
+        }
+        else if (error3 == 0) {
+            fprintf(stdout, "Note: Simulation executed from .control section \n");
+            sp_shutdown(EXIT_NORMAL);
         }
         else {
             fprintf(stderr,
