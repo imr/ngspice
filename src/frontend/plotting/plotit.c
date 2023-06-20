@@ -859,7 +859,11 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         int ii = 0, jj = 0;
 
         for (d = vecs; d; d = d->v_link2) {
-            if (d->v_scale && eq(d->v_scale->v_name, "step") && (d->v_scale->v_type == SV_TIME) && (d->v_type == SV_VOLTAGE) && (d->v_length > 1)) {
+            if ((d->v_flags & VF_EVENT_NODE) &&
+                !(d->v_flags & VF_PERMANENT) &&
+                d->v_scale && (d->v_scale->v_flags & VF_EVENT_NODE) &&
+                (d->v_scale->v_type == SV_TIME) && (d->v_type == SV_VOLTAGE) &&
+                (d->v_length > 1)) {
                 for (ii = 0; ii < d->v_length; ii++) {
                     d->v_realdata[ii] += nn;
                 }

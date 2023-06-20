@@ -206,14 +206,15 @@ struct dvec *EVTfindvec(
   /* Allocate dvec structures and assign the vectors into them. */
   /* See FTE/OUTinterface.c:plotInit() for initialization example. */
 
-  scale = dvec_alloc(MIFcopy("step"),
+  ptr = tprintf("%s_steps", name);
+  scale = dvec_alloc(ptr,
                      SV_TIME,
-                     VF_REAL & ~VF_PERMANENT,
+                     (VF_REAL | VF_EVENT_NODE) & ~VF_PERMANENT,
                      i, anal_point_vec);
 
   d = dvec_alloc(name,
                  SV_VOLTAGE,
-                 VF_REAL & ~VF_PERMANENT,
+                 (VF_REAL | VF_EVENT_NODE) & ~VF_PERMANENT,
                  i, value_vec);
 
   d->v_scale = scale;

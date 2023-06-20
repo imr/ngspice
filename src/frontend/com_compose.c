@@ -11,6 +11,7 @@
 #include "ngspice/fteext.h"
 #include "ngspice/cpextern.h"
 #include "ngspice/randnumb.h"
+#include "ngspice/evtproto.h"
 #include "com_compose.h"
 #include "completion.h"
 
@@ -225,9 +226,26 @@ com_compose(wordlist *wl)
         }
 
         length *= blocksize;
-    }
-    else {
+#ifdef XSPICE
+    } else if (eq(wl->wl_word, "xspice")) {
+        /* Make vectors from an event node. */
+
+        result = EVTfindvec(resname);
+        if (result == NULL) {
+            fprintf(cp_err, "There is no event node %s or it has no data\n",
+                    resname);
+            goto done;
+        }
+        result->v_flags |= VF_PERMANENT;
+        result->v_scale->v_flags |= VF_PERMANENT;
+        vec_new(result->v_scale);
+        cp_addkword(CT_VECTOR, result->v_scale->v_name);
+        txfree(resname); // It was copied
+        goto finished;
+#endif
+    } else {
         /* Parse the line... */
+
         while (wl) {
             char *s, *var, *val;
             if ((s = strchr(wl->wl_word, '=')) != NULL && s[1]) {
@@ -600,6 +618,7 @@ com_compose(wordlist *wl)
 
     /* The allocation for resname has been assigned to the result vector, so
      * set to NULL so that it is not freed */
+ finished:
     resname = NULL;
 
     /* Set dimension info */

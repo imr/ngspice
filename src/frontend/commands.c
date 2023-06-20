@@ -195,9 +195,10 @@ struct comm spcp_coms[] = {
       NULL,
       "[circuit name] : Change the current circuit." } ,
     { "setscale", com_setscale, FALSE, FALSE,
-      { 040000, 0, 0, 0 }, E_DEFHMASK, 0, 1,
+      { 040000, 0, 0, 0 }, E_DEFHMASK, 0, 2,
       NULL,
-      "[vecname] : Change default scale of current working plot." } ,
+      "[vecname [vecname]] : Change default scale of current working plot"
+      "\n  or set/clear the scale for a single vector." } ,
     { "setseed", com_sseed, FALSE, FALSE,
       { 04, 0, 0, 0 }, E_DEFHMASK, 0, 1,
       NULL,
