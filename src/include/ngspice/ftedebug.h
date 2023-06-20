@@ -34,6 +34,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define DBC_GTE  5   /* >= (ge) */
 #define DBC_LTE  6   /* <= (le) */
 
+/* Below, members db_op and db_value1 are re-purposed by iplot options. */
+
 struct dbcomm {
     int db_number;    /* The number of this debugging command. */
     char db_type;      /* One of the above. */
@@ -41,7 +43,7 @@ struct dbcomm {
     char *db_nodename2; /* What node. */
     char *db_analysis; /* for a specific analysis. */
     int db_iteration;   /* For the DB_STOPAFTER command. */
-    char db_op;  /* For DB_STOPWHEN. */
+    int db_op;  /* For DB_STOPWHEN. */
     double db_value1;   /* If this is DB_STOPWHEN. */
     double db_value2;   /* If this is DB_STOPWHEN. */
     int db_graphid; /* If iplot, id of graph. */

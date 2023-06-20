@@ -427,7 +427,7 @@ struct comm spcp_coms[] = {
     { "iplot", com_iplot, TRUE, TRUE,
       { 0200, 0200, 0200, 0200 }, E_DEFHMASK, 0, LOTS,
       NULL,
-      "[-w width] [all] [node ...] : Incrementally plot nodes." } ,
+      "[-w width] [-s initial_steps] [all] [node ...] : Incrementally plot nodes." } ,
     { "status", com_sttus, TRUE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
