@@ -855,7 +855,7 @@ static int iplot(struct plot *pl, struct dbcomm *db)
     /* Do simple check for exit first */
 
     window = db->db_value1;
-    if (len < 2 || (window == 0.0 && len < IPOINTMIN)) { /* Nothing yet */
+    if (len < 2 || db->db_op > len) { /* Nothing yet */
         return 0;
     }
 
