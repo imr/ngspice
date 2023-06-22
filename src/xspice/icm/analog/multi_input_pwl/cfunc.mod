@@ -174,33 +174,81 @@ get_output( ARGS, double x )
   return result;
 }
 
+static double
+get_reverse_output( ARGS, double x )
+{
+  int    size   = PARAM_SIZE(x);
+  double result = 0;
+  double slope  = 0;
+  int    i;
+
+  /* check if x beyond specified limits */
+  if ( x <= PARAM(x[0])      ) return PARAM(y[size-1]);
+  if ( x >= PARAM(x[size-1]) ) return PARAM(y[0]);
+
+  for ( i = 1; i < size; i++ )
+    if ( x > PARAM(x[i-1]) && x <= PARAM(x[i]) )
+      {
+        result = PARAM(y[size - i - 1]) + slope * (x - PARAM(x[i - 1]));
+	break;
+      }
+  return result;
+}
+
 void
 cm_multi_input_pwl(ARGS) 
 {
-  const char*  model = ( PARAM_NULL(model) == 1 ) ? "and" : PARAM(model);
+  const char*  model = PARAM(model);
   double output;
 
-  if ( ANALYSIS == TRANSIENT || ANALYSIS == DC )
-    {
-      if ( strcmp( model, "and"  ) != 0 && strcmp( model, "or"  ) != 0 &&
-	   strcmp( model, "nand" ) != 0 && strcmp( model, "nor" ) != 0 )
-	{
-	  fprintf( stderr, "ERROR(cm_multi_input_pwl): unknown gate model type '%s'; expecting 'and|or|nand|nor'.\n", model );
+  if (INIT) {
+      int type;
+
+      if (!strcmp(model, "and"))
+          type = 0;
+      else if (!strcmp(model, "nand"))
+          type = 1;
+      else if (!strcmp(model, "or"))
+          type = 2;
+      else if (!strcmp(model, "nor"))
+          type = 3;
+      else {
+	  fprintf(stderr, "ERROR(cm_multi_input_pwl): unknown gate model type "
+                  "'%s'; expecting 'and|or|nand|nor'.\n", model );
 	  exit(-1);
-	}
-      if ( PARAM_SIZE(x) != PARAM_SIZE(y) )
-	{
-	  fprintf( stderr, "ERROR(cm_multi_input_pwl): 'x' and 'y' input vectors are not the same size!\n" );
-	  exit(-1);
-	}
+      }
+      STATIC_VAR(type) = type;
+      if ( PARAM_SIZE(x) != PARAM_SIZE(y) ) {
+	  fprintf(stderr, "ERROR(cm_multi_input_pwl): 'x' and 'y' input vectors are not the same size!\n" );
+	  if (PARAM_SIZE(x) > PARAM_SIZE(y))
+              PARAM_SIZE(x) = PARAM_SIZE(y);
+      }
+  }
+
+  if ( ANALYSIS == TRANSIENT || ANALYSIS == DC ) {
       /*
 	Iterate through each input and find output value
 	  and/nand: controlling input is chosen on the basis of the smallest value
 	  or/nor:   controlling input is chosen on the basis of the largest value
       */
-      if (strstr(model, "and")) output = get_output(mif_private, get_smallest_input(mif_private));
-      else                      output = get_output(mif_private, get_largest_input(mif_private));
 
+      switch (STATIC_VAR(type)) {
+      case 0:
+      default:
+          output = get_output(mif_private, get_smallest_input(mif_private));
+          break;
+      case 1:
+          output = get_reverse_output(mif_private,
+                                      get_smallest_input(mif_private));
+          break;
+      case 2:
+          output = get_output(mif_private, get_largest_input(mif_private));
+          break;
+      case 3:
+          output = get_reverse_output(mif_private,
+                                      get_largest_input(mif_private));
+          break;
+      }
       OUTPUT(out) = output;
     }
 }

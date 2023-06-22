@@ -49,3 +49,11 @@ Limits:                -                  -               -
 Vector:                yes                yes             no
 Vector_Bounds:         [2 -]              [2 -]           -
 Null_Allowed:          no                 no              yes
+
+/* This is used internally to cache the model type. */
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    type
+Description:        "Internal copy of model type"
+Data_Type:          int

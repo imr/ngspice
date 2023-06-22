@@ -1,0 +1,16 @@
+  ADDER - 4 BIT BINARY ADDER USING E-SOURCE AND GATES
+  * behavioral gate description
+
+*** SUBCIRCUIT DEFINITION
+
+.SUBCKT 74HC00  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+E1 out20 0 nand(2) in1 0 in2 0 ({vcc / 3}, 0) ({2 * vcc / 3}, {vcc})
+Rout out20 out {Rout}
+.ends
+
+.param vcc=3 tripdt=6n
+
+.include ../adder_common.inc
+
+.END
