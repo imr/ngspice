@@ -629,6 +629,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stdout, " Reference value : % 12.5e\r",
                                 refValue->cValue.real);
+                        fflush(stdout);
                         lastclock = currclock;
                     }
                 }
@@ -642,6 +643,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stdout, " Reference value : % 12.5e\r",
                                 refValue->rValue);
+                        fflush(stdout);
                         lastclock = currclock;
                     }
                 }
@@ -741,6 +743,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     fprintf(stdout, " Reference value : % 12.5e\r",
                             refValue ? refValue->rValue : NAN);
                 }
+                fflush(stdout);
                 lastclock = currclock;
             }
         }
@@ -1508,6 +1511,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 fprintf(stdout, " Reference value : % 12.5e\r",
                         refValue->rValue);
+                fflush(stdout);
                 lastclock = currclock;
             }
         }
@@ -1672,6 +1676,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
         if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
             fprintf(stdout, " Reference value : % 12.5e\r",
                     refValue->rValue);
+            fflush(stdout);
             lastclock = currclock;
         }
     }
