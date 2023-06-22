@@ -1,4 +1,4 @@
-Compare four different 4-bit full adders,
+Compare five different 4-bit full adders,
 made of NAND gates
 Simulating for 6400ns
 
@@ -20,4 +20,10 @@ adder_Xspice
 Fully digital, event node based NAND gates
 digital plotting into vcd file, display with gtkwave
 Simulation time 0.27s
+
+adder_esource
+Uses the NAND variant of the E-type behavioral voltage source.
+
+There are further variations of adder_Xspice in directory
+examples/digital/auto_bridge.
 
