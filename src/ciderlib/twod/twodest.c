@@ -90,6 +90,16 @@ TWOdestroy(TWOdevice *pDevice)
       }
   }
 
+  if (pDevice->pStats) {
+    FREE(pDevice->pStats);
+  }
+  if (pDevice->xScale) {
+    FREE(pDevice->xScale);
+  }
+  if (pDevice->yScale) {
+    FREE(pDevice->yScale);
+  }
+
   /* destroy the channels */
   /* NOT IMPLEMENTED */
 
