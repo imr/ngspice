@@ -1201,27 +1201,48 @@ evaluate_expr(dico_t *dico, DSTRINGPTR qstr_p, const char *t, const char * const
 
 /********* interface functions for spice3f5 extension ***********/
 
-static char *
-insertnumber(dico_t *dico, char * const s, DSTRINGPTR ustr_p)
-/* insert u in string s in place of the next placeholder number */
+static bool
+insertnumber(dico_t *dico, char **lp, DSTRINGPTR ustr_p)
+/* insert *ustr_p in string *lp in place of the next placeholder number */
 {
     const char *u = ds_get_buf(ustr_p);
-
-    char buf[ACT_CHARACTS+1];
-
-    long id = 0;
-    int  n  = 0;
+    char       *s = *lp; // Point to line contents
+    long        id;
+    int         n;
 
     char *p = strstr(s, "numparm__________");
 
     if (p &&
         (1 == sscanf(p, "numparm__________%8lx%n", &id, &n)) &&
         (n == ACT_CHARACTS) &&
-        (id > 0) && (id < dynsubst + 1) &&
-        (snprintf(buf, sizeof(buf), "%-25s", u) == ACT_CHARACTS))
-    {
-        memcpy(p, buf, ACT_CHARACTS);
-        return p + ACT_CHARACTS;
+        (id > 0) && (id < dynsubst + 1)) {
+        /* Found a target for substitution. */
+
+        n = ds_get_length(ustr_p);
+        if (n <= ACT_CHARACTS) {
+            char buf[ACT_CHARACTS + 1];
+
+            /* Replace in place. */
+
+            snprintf(buf, sizeof buf, "%-*s", ACT_CHARACTS, u);
+            memcpy(p, buf, ACT_CHARACTS);
+        } else {
+            char *newline;
+
+            /* Requires reallocation. */
+
+            newline = malloc((p - s) + n + strlen(p + ACT_CHARACTS) + 1);
+            if (!newline) {
+                message(dico, "nupa_substitute failed: no memory\n");
+                return TRUE;
+            }
+            memcpy(newline, s, (p - s));
+            memcpy(newline + (p - s), u, n);
+            strcpy(newline + (p - s) + n, p + ACT_CHARACTS);
+            free(*lp);
+            *lp = newline;
+        }
+        return FALSE;
     }
 
     message
@@ -1229,18 +1250,15 @@ insertnumber(dico_t *dico, char * const s, DSTRINGPTR ustr_p)
          "insertnumber: fails.\n"
          "  s = \"%s\" u=\"%s\" id=%ld\n",
          s, u, id);
-
-    /* swallow everything on failure */
-    return s + strlen(s);
+    return TRUE;
 }
 
 
 bool
-nupa_substitute(dico_t *dico, const char *s, char *r)
+nupa_substitute(dico_t *dico, const char *s, char **lp)
 /* s: pointer to original source line.
-   r: pointer to result line, already heavily modified wrt s
-   anywhere we find a 10-char numstring in r, substitute it.
-   bug: wont flag overflow!
+   lp: pointer to result line pointer, line already heavily modified wrt s:
+   anywhere we find a 25-char numstring in *lp, substitute it.
 */
 {
     const char * const s_end = s + strlen(s);
@@ -1248,9 +1266,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
     DS_CREATE(qstr, 200); /* temp result dynamic string */
 
-
     while (s < s_end) {
-
         char c = *s++;
 
         if (c == '{') {
@@ -1289,14 +1305,14 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             }
 
             s = kptr + 1;
-            r = insertnumber(dico, r, &qstr);
-
+            err = insertnumber(dico, lp, &qstr);
+            if (err)
+                break;
         }
     }
 
  Lend:
     ds_free(&qstr);
-
     return err;
 }
 
