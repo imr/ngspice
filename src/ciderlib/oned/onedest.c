@@ -77,15 +77,6 @@ ONEdestroy(ONEdevice *pDevice)
       }
   }
 
-  if (pDevice->pFirstContact) {
-      struct sONEcontact* pFCtmp = pDevice->pFirstContact;
-      while (pFCtmp) {
-          struct sONEcontact* pFCtmpnext = pFCtmp->next;
-          FREE(pFCtmp);
-          pFCtmp = pFCtmpnext;
-      }
-  }
-
   if (pDevice->pStats) {
     FREE(pDevice->pStats);
   }
