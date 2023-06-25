@@ -60,7 +60,7 @@ int donedico(dico_t *);
 void dico_free_entry(entry_t *);
 bool defsubckt(dico_t *, const struct card *);
 int findsubckt(dico_t *, const char *s);
-bool nupa_substitute(dico_t *, const char *s, char *r);
+bool nupa_substitute(dico_t *, const char *s, char **lp);
 bool nupa_assignment(dico_t *, const char *s, char mode);
 bool nupa_subcktcall(dico_t *, const char *s, const char *x,
         char *inst_name);
