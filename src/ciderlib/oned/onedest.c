@@ -53,7 +53,7 @@ ONEdestroy(ONEdevice *pDevice)
 
   /* destroy the mesh */
   if (pDevice->elemArray) {
-    for (eIndex = 1; eIndex < pDevice->numNodes-1; eIndex++) {
+    for (eIndex = 1; eIndex < pDevice->numNodes; eIndex++) {
       pElem = pDevice->elemArray[eIndex];
       pEdge = pElem->pEdge;
       FREE(pEdge);
@@ -67,6 +67,29 @@ ONEdestroy(ONEdevice *pDevice)
     }
     FREE(pDevice->elemArray);
   }
+
+  if (pDevice->pMaterials) {
+      ONEmaterial* pMtmp = pDevice->pMaterials;
+      while (pMtmp) {
+          ONEmaterial* pMtmpnext = pMtmp->next;
+          FREE(pMtmp);
+          pMtmp = pMtmpnext;
+      }
+  }
+
+  if (pDevice->pFirstContact) {
+      struct sONEcontact* pFCtmp = pDevice->pFirstContact;
+      while (pFCtmp) {
+          struct sONEcontact* pFCtmpnext = pFCtmp->next;
+          FREE(pFCtmp);
+          pFCtmp = pFCtmpnext;
+      }
+  }
+
+  if (pDevice->pStats) {
+    FREE(pDevice->pStats);
+  }
+
   /* destroy any other lists */
   /* NOT IMPLEMENTED */
 
