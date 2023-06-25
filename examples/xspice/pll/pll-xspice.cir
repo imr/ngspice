@@ -64,7 +64,7 @@ abridge-w1 [d_divout d_ref d_Un d_D] [s1 s2 u1n d1] dac1 ; change to d_u or d_Un
 
 .control
 save cont s1 s2 u1n d1 v.xlf.vdd#branch; to save memory
-iplot cont
+iplot -d 4000 cont
 tran 0.1n $&simtime uic
 rusage
 plot cont s1 s2+1.2 u1n+2.4 d1+3.6 xlimit 4u 5u

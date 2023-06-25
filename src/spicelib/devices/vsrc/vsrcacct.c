@@ -172,7 +172,11 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                                     period = end -
                                         here->VSRCcoeffs[here->VSRCrBreakpt];
+                                    time -=
+                                        here->VSRCcoeffs[here->VSRCrBreakpt];
                                     time -= period * floor(time / period);
+                                    time +=
+                                        here->VSRCcoeffs[here->VSRCrBreakpt];
                                 } else {
                                      here->VSRCbreak_time = ckt->CKTfinalTime;
                                      break;

@@ -69,7 +69,7 @@ save cont s1 s2 u1 d1
 set xbrushwidth=2
 let isbmode = $?batchmode
 if isbmode = 0
-  iplot -w $&simtime cont
+  iplot -w $&simtime -d 4000 cont
 endif
 * calculate breakpoint for switching frequency
 let t1_3 = simtime/3

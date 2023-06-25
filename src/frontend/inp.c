@@ -1340,6 +1340,7 @@ inp_dodeck(
             g_ipc.syntax_error = IPC_TRUE;
 #endif
             p = dd->error;
+            fflush(stdout);
             do {
                 q = strchr(p, '\n');
                 if (q)
@@ -1348,7 +1349,7 @@ inp_dodeck(
                 if (p == dd->error) {
                     if (strstr(dd->line, ".model"))
                         fprintf(stderr, "Warning: Model issue on line %d :\n  %.*s ...\n%s\n",
-                                   dd->linenum_orig, 72, dd->line, dd->error);
+                            dd->linenum_orig, 72, dd->line, dd->error);
                     else if (dd->linenum_orig == 0) {
                         fprintf(stderr, "Error on line:\n  %s\n%s\n",
                                    dd->line, dd->error);
@@ -1364,13 +1365,13 @@ inp_dodeck(
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
                 } else {
-                    out_printf("%s\n", p);
+                    fprintf(stderr, "%s\n", p);
                 }
-
                 if (q)
                     *q++ = '\n';
                 p = q;
             } while (p && *p);
+            fprintf(stderr, "\n");
         }  /* end  if (dd->error) */
 
     }   /* for (dd = deck; dd; dd = dd->nextcard) */
