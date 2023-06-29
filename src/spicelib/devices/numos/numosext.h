@@ -10,6 +10,7 @@ Author: 1987 Karti Mayaram
 extern int NUMOSacLoad(GENmodel *, CKTcircuit *);
 extern int NUMOSask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int NUMOSdelete(GENinstance *);
+extern int NUMOSmodDelete(GENmodel *);
 extern int NUMOSgetic(GENmodel *, CKTcircuit *);
 extern int NUMOSload(GENmodel *, CKTcircuit *);
 extern int NUMOSmParam(int, IFvalue *, GENmodel *);
