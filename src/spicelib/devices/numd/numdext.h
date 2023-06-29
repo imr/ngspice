@@ -10,6 +10,7 @@ Author: 1987 Karti Mayaram
 extern int NUMDacLoad(GENmodel *, CKTcircuit *);
 extern int NUMDask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int NUMDdelete(GENinstance *);
+extern int NUMDmodDelete(GENmodel *);
 extern int NUMDgetic(GENmodel *, CKTcircuit *);
 extern int NUMDload(GENmodel *, CKTcircuit *);
 extern int NUMDmParam(int, IFvalue *, GENmodel *);
