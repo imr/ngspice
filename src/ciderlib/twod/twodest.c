@@ -85,6 +85,9 @@ TWOdestroy(TWOdevice *pDevice)
       struct sTWOcontact* pFCtmp = pDevice->pFirstContact;
       while (pFCtmp) {
           struct sTWOcontact* pFCtmpnext = pFCtmp->next;
+          if (pFCtmp->pNodes) {
+              FREE(pFCtmp->pNodes);
+          }
           FREE(pFCtmp);
           pFCtmp = pFCtmpnext;
       }
