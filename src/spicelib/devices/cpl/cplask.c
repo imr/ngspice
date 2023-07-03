@@ -24,12 +24,18 @@ CPLask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
     NG_IGNORE(select);
 
     switch(which) {
+        /* String tables are expected to be freed, but not the strings. */
+
         case CPL_POS_NODE:
-            value->v.vec.sVec = here->in_node_names;
+            value->v.vec.sVec = TMALLOC(char *, here->dimension);
+            memcpy(value->v.vec.sVec, here->in_node_names,
+                   here->dimension * sizeof (char *));
 	    value->v.numValue = here->dimension;
             return(OK);
         case CPL_NEG_NODE:
-            value->v.vec.sVec = here->out_node_names;
+            value->v.vec.sVec = TMALLOC(char *, here->dimension);
+            memcpy(value->v.vec.sVec, here->out_node_names,
+                   here->dimension * sizeof (char *));
 	    value->v.numValue = here->dimension;
             return(OK);
         case CPL_DIM:
