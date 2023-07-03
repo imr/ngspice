@@ -933,12 +933,16 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     printf("IFFT: Frequency span: %g Hz, input length: %d\n", 1/span*length, length);
     printf("IFFT: Time resolution: %g s, output length: %d\n", span/(tpts-1), tpts);
 
-    in = fftw_malloc(sizeof(fftw_complex) * (unsigned int) length);
+    in = fftw_malloc(sizeof(fftw_complex) * (unsigned int) tpts);
     out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) tpts);
 
     for (i = 0; i < length; i++) {
         in[i][0] = indata[i].cx_real;
         in[i][1] = indata[i].cx_imag;
+    }
+    for (i = length; i < tpts; i++) {
+        in[i][0] = 0.0;
+        in[i][1] = 0.0;
     }
 
     plan_backward = fftw_plan_dft_1d(tpts, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
