@@ -536,13 +536,16 @@ sp_shutdown(int exitval)
 #ifdef CIDER
     {
         extern int IsCiderLoaded(void);
-        char *cider_quit = getenv("CIDER_COM_QUIT");
+        char *cider_quit_s = NULL;
         bool cider_com_quit = TRUE;
-        if (cider_quit && eq(cider_quit, "OFF")) {
-            cider_com_quit = FALSE;
-        }
-        if (cider_com_quit && IsCiderLoaded() > 0) {
-            com_quit(NULL);
+        if (exitval != EXIT_BAD) {
+            cider_quit_s = getenv("CIDER_COM_QUIT");
+            if (cider_quit_s && *cider_quit_s && eq(cider_quit_s, "OFF")) {
+                cider_com_quit = FALSE;
+            }
+            if (cider_com_quit && IsCiderLoaded() > 0) {
+                com_quit(NULL);
+            }
         }
     }
 #endif
