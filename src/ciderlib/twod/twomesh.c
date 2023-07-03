@@ -458,6 +458,10 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   FREE(edgeArrayV);
   FREE(edgeArrayH);
 
+  {
+    extern void CiderLoaded(int);
+    CiderLoaded(1);
+  }
   /*
    * TWOprnMesh( pDevice );
    */

@@ -194,6 +194,11 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   pDevice->dimBias = numEqn;
 
   FREE(nodeArray);
+  {
+    extern void CiderLoaded(int);
+    CiderLoaded(1);
+  }
+
   /* 
    * ONEprnMesh( pDevice );
    */

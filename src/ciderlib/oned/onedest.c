@@ -85,4 +85,8 @@ ONEdestroy(ONEdevice *pDevice)
   /* NOT IMPLEMENTED */
 
   FREE(pDevice);
+  {
+    extern void CiderLoaded(int);
+    CiderLoaded(-1);
+  }
 }
