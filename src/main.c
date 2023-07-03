@@ -533,6 +533,19 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 static ATTRIBUTE_NORETURN void
 sp_shutdown(int exitval)
 {
+#ifdef CIDER
+    {
+        extern int IsCiderLoaded(void);
+        char *cider_quit = getenv("CIDER_COM_QUIT");
+        bool cider_com_quit = TRUE;
+        if (cider_quit && eq(cider_quit, "OFF")) {
+            cider_com_quit = FALSE;
+        }
+        if (cider_com_quit && IsCiderLoaded() > 0) {
+            com_quit(NULL);
+        }
+    }
+#endif
     destroy_ivars();
 #ifdef HAS_WINGUI
     if (exitval == EXIT_BAD)
