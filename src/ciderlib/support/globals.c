@@ -155,3 +155,14 @@ void GLOBprnGlobals(FILE *file, GLOBvalues *values)
 
   return;
 }
+
+static int cider_is_loaded = 0;
+void CiderLoaded(int val)
+{
+   cider_is_loaded += val;
+}
+
+int IsCiderLoaded(void)
+{
+  return cider_is_loaded;
+}
