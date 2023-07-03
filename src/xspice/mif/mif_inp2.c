@@ -579,10 +579,6 @@ MIF_INP2A (
                 tfree(emessage);
                 gc_end();
                 return;
-            } else if((param_info->is_array) && (! param_info->has_conn_ref)) {
-                LITERR("Defaulted array parameter must have associated array connection");
-                gc_end();
-                return;
             }
         }
         if((! mdfast->param[i]->is_null) && (param_info->is_array)) {
