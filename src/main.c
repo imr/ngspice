@@ -107,6 +107,8 @@ FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
 bool orflag = FALSE; /* global for -o option */
 #endif
 
+extern int IsCiderLoaded(void);
+
 FILE *slogp = NULL;          /* soa log file ('--soa-log file' command line option) */
 
 /* Frontend and circuit options */
@@ -535,7 +537,7 @@ sp_shutdown(int exitval)
 {
 #ifdef CIDER
     {
-        extern int IsCiderLoaded(void);
+
         char *cider_quit_s = NULL;
         bool cider_com_quit = TRUE;
         if (exitval != EXIT_BAD) {

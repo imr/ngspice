@@ -12,6 +12,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "onedext.h"
 #include "oneddefs.h"
 
+extern void CiderLoaded(int);
 
 /* Forward Declarations */
 /* static void ONEresetEvalFlag(ONEdevice *); sjb - not used */
@@ -195,7 +196,6 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
 
   FREE(nodeArray);
   {
-    extern void CiderLoaded(int);
     CiderLoaded(1);
   }
 
