@@ -12,6 +12,8 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "twoddefs.h"
 #include "twodext.h"
 
+extern void CiderLoaded(int);
+
 void
 TWOdestroy(TWOdevice *pDevice)
 {
@@ -108,7 +110,6 @@ TWOdestroy(TWOdevice *pDevice)
 
   FREE( pDevice );
   {
-    extern void CiderLoaded(int);
     CiderLoaded(-1);
   }
 }

@@ -12,6 +12,8 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "onedext.h"
 #include "oneddefs.h"
 
+extern void CiderLoaded(int);
+
 void
 ONEdestroy(ONEdevice *pDevice)
 {
@@ -86,7 +88,6 @@ ONEdestroy(ONEdevice *pDevice)
 
   FREE(pDevice);
   {
-    extern void CiderLoaded(int);
     CiderLoaded(-1);
   }
 }

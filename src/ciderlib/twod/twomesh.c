@@ -19,6 +19,7 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 static void doMobCoeffs(TWOelem *, int); 
 static void resetEvalFlag(TWOdevice *pDevice);
 
+extern void CiderLoaded(int);
 
 void
 TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain, 
@@ -459,7 +460,6 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   FREE(edgeArrayH);
 
   {
-    extern void CiderLoaded(int);
     CiderLoaded(1);
   }
   /*
