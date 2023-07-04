@@ -1167,11 +1167,19 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
     p->function = funcs[i].funcptr;
     p->data = NULL;
 
-    if(p->funcnum == PTF_PWL)
+    if (p->funcnum == PTF_PWL) {
         p = prepare_PTF_PWL(p);
+        if (p == NULL) {
+            fprintf(stderr, "Error while parsing function '%s'\n", buf);
+            if (ft_stricterror)
+                controlled_exit(EXIT_BAD);
+            return mkfirst(NULL, arg);
+        }
+    }
 
     if (p->funcnum == PTF_DDT)
         p = prepare_PTF_DDT(p);
+
 
     return (p);
 }
