@@ -74,6 +74,15 @@ TWOdestroy(TWOdevice *pDevice)
     FREE( pDevice->elemArray );
   }
 
+  if (pDevice->pChannel) {
+      TWOchannel* pCtmp = pDevice->pChannel;
+      while (pCtmp) {
+          TWOchannel* pCtmpnext = pCtmp->next;
+          FREE(pCtmp);
+          pCtmp = pCtmpnext;
+      }
+  }
+
   if (pDevice->pMaterials) {
       TWOmaterial* pMtmp = pDevice->pMaterials;
       while (pMtmp) {
@@ -104,9 +113,6 @@ TWOdestroy(TWOdevice *pDevice)
   if (pDevice->yScale) {
     FREE(pDevice->yScale);
   }
-
-  /* destroy the channels */
-  /* NOT IMPLEMENTED */
 
   FREE( pDevice );
   {
