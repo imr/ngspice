@@ -423,6 +423,7 @@ static BOOL lex_all_digits(char *str)
 typedef struct table_line *TLINE;
 struct table_line {
     char *line;
+    int depth;  /* expression nesting depth, outermost depth == 1 */
     TLINE next;
 };
 
@@ -480,6 +481,7 @@ static TLINE ptab_new_line(char *line)
     t->next = NULL;
     t->line = TMALLOC(char, (strlen(line) + 1));
     strcpy(t->line, line);
+    t->depth = 0;
     return t;
 }
 
@@ -516,10 +518,12 @@ static TLINE add_to_parse_table(PTABLE pt, char *line, BOOL ignore_blank)
     return t;
 }
 
-static TLINE ptab_add_line(char *line, BOOL ignore_blank)
+static TLINE ptab_add_line(char *line, BOOL ignore_blank, int depth)
 {
     TLINE t;
     t = add_to_parse_table(parse_tab, line, ignore_blank);
+    if (t)
+        t->depth = depth;
     return t;
 }
 
@@ -563,27 +567,6 @@ static char *find_temp_anywhere(char *line, DSTRING *pds)
     return get_temp_from_line(line, FALSE, pds);
 }
 
-static int get_temp_depth(char *line)
-{
-    char *p, *endp;
-    int depth = -1;
-    DS_CREATE(dstr, 128);
-    p = find_temp_anywhere(line, &dstr);
-    if (p) {
-        char *buf;
-        buf = TMALLOC(char, strlen(p) + 1);
-        strcpy(buf, p);
-        p = strstr(buf + strlen("tmp"), "__");
-        if (p) {
-            p = p + 2;
-            depth = (int) strtol(p, &endp, 10);
-        }
-        tfree(buf);
-    }
-    ds_free(&dstr);
-    return depth;
-}
-
 static TLINE tab_find(PTABLE pt, char *str, BOOL start_of_line)
 {
     TLINE t;
@@ -614,7 +597,16 @@ static void ptable_print(PTABLE pt)
     t = pt->first;
     printf("entry_count %u\n", pt->entry_count);
     while (t) {
-        printf("%s\n", t->line);
+        if (t->depth > 1) {
+            int i;
+            for (i = 1; i < t->depth; i++) {
+                printf("  ");
+            }
+        }
+        printf("%s", t->line);
+        if (t->depth > 0)
+            printf(" ...[%d]", t->depth);
+        printf("\n");
         t = t->next;
     }
 }
@@ -809,7 +801,7 @@ static BOOL bfactor(void)
             max_adepth = adepth;
 
         ds_cat_str(&tmpnam, get_temp_name());
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
+        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
         ds_clear(&d_curr_line);
         ds_cat_printf(&d_curr_line, "%s__%d <- ", ds_get_buf(&tmpnam), adepth);
 
@@ -818,7 +810,7 @@ static BOOL bfactor(void)
         } else {
             ds_cat_printf(&d_curr_line, "%c", lookahead);
         }
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
+        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
         ds_clear(&d_curr_line);
 
         lookahead = lex_scan();
@@ -827,12 +819,12 @@ static BOOL bfactor(void)
             return FALSE;
         }
 
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
+        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
         ds_clear(&d_curr_line);
 
         ds_cat_printf(&d_curr_line, "%c -> %s__%d", lookahead,
             ds_get_buf(&tmpnam), adepth);
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
+        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
         ds_clear(&d_curr_line);
 
         ds_free(&tmpnam);
@@ -907,14 +899,14 @@ static BOOL bstmt(void)
 
     ds_clear(&assign);
     ds_cat_printf(&assign, "%s =", entry->name);
-    (void) ptab_add_line(ds_get_buf(&assign), TRUE);
+    (void) ptab_add_line(ds_get_buf(&assign), TRUE, adepth);
 
     AMATCH_BSTMT('{');
 
     ds_clear(&tname);
     ds_cat_str(&tname, get_temp_name());
     ds_cat_printf(&d_curr_line, "%s__%d <- (", ds_get_buf(&tname), adepth);
-    (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
+    (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
     ds_clear(&d_curr_line);
 
     if (!bexpr()) {
@@ -925,11 +917,11 @@ static BOOL bstmt(void)
     }
 
     if (ds_get_length(&d_curr_line) > 0) {
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
+        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
     }
     ds_clear(&d_curr_line);
     ds_cat_printf(&d_curr_line, ") -> %s__%d", ds_get_buf(&tname), adepth);
-    (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
+    (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
     ds_clear(&d_curr_line);
 
     if (verbose) {
@@ -1405,8 +1397,8 @@ static void beval_order(void)
             int cmp = 0;
             cmp = strncmp(t->line, "tmp", slen);
             if (cmp == 0 && ((q = strstr(t->line, " <- ")) != NULL)) {
-                depth = get_temp_depth(t->line);
-                if (depth >= 0) {
+                depth = t->depth;
+                if (depth > 0) {
                     if (i == depth) {
                         bevaluate(t, i);
                     }
