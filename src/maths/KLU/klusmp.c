@@ -1131,6 +1131,8 @@ SMPnewMatrixKLUforCIDER (SMPmatrix *Matrix, int size, unsigned int KLUmatrixIsCo
         Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER = NULL ;
 
+        Matrix->SMPkluMatrix->KLUmatrixDiag = NULL ;
+
         /* Initialize the KLU Common Data Structure */
         klu_defaults (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
