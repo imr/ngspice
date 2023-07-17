@@ -975,6 +975,7 @@
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
+    <ClInclude Include="..\src\include\ngspice\osdiitf.h" />
     <ClInclude Include="..\src\include\ngspice\spardefs.h" />
     <ClInclude Include="..\src\include\ngspice\wincolornames.h" />
     <ClInclude Include="..\src\include\ngspice\compatmode.h" />
