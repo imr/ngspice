@@ -491,6 +491,9 @@ int TWOequilSolve(TWOdevice *pDevice)
 #else
             SMPdestroy (pDevice->matrix) ;
 #endif
+            if (pDevice->matrix) {
+                FREE(pDevice->matrix);
+            }
 
             /* FALLTHROUGH */
         case SLV_NONE: {
@@ -651,6 +654,9 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 #else
         SMPdestroy (pDevice->matrix) ;
 #endif
+        if (pDevice->matrix) {
+            FREE(pDevice->matrix);
+        }
 
         /* FALLTHROUGH */
   case SLV_NONE:

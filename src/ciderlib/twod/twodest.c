@@ -39,6 +39,9 @@ TWOdestroy(TWOdevice *pDevice)
 #else
     SMPdestroy (pDevice->matrix) ;
 #endif
+    if (pDevice->matrix) {
+        FREE(pDevice->matrix);
+    }
 
     break;
   case SLV_EQUIL:
@@ -53,6 +56,9 @@ TWOdestroy(TWOdevice *pDevice)
 #else
     SMPdestroy (pDevice->matrix) ;
 #endif
+    if (pDevice->matrix) {
+        FREE(pDevice->matrix);
+    }
 
     break;
   case SLV_NONE:
