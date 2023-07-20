@@ -186,7 +186,6 @@ com_version(wordlist *wl)
 
 #ifdef KLU
                     "** Compiled with KLU Direct Linear Solver\n"
-                    "** (NDEV model is not supported yet)\n"
 #else
                     "** Compiled with Sparse Direct Linear Solver\n"
 #endif
@@ -231,7 +230,6 @@ com_version(wordlist *wl)
 
 #ifdef KLU
                     "** Compiled with KLU Direct Linear Solver\n"
-                    "** (NDEV model is not supported yet)\n"
 #else
                     "** Compiled with Sparse Direct Linear Solver\n"
 #endif
