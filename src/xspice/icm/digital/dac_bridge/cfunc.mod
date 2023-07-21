@@ -63,20 +63,15 @@ NON-STANDARD FEATURES
 
 
 
-
 /*=== MACROS ===========================*/
 
 
 
-  
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
 
-    
            
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
-
-
 
 
                    
@@ -123,6 +118,13 @@ NON-STANDARD FEATURES
 ==============================================================================*/
 
 
+/* Instances of this structure track digital input changes. */
+
+struct d_data {
+    Digital_State_t i;         // Input value.
+    double          i_changed; // Time of input change.
+};
+
 /*=== CM_DAC_BRIDGE ROUTINE ===*/
 
 /************************************************
@@ -137,48 +139,41 @@ NON-STANDARD FEATURES
 void cm_dac_bridge(ARGS) 
 
 {
-    double  out_low,        /* analog output value corresponding to '0' 
+  double     out_low,       /* analog output value corresponding to '0'
                                digital input 	*/
-           out_high,        /* analog output value corresponding to '1' 
+            out_high,       /* analog output value corresponding to '1'
                                digital input 	*/
-          out_undef,        /* analog output value corresponding to 'U' 
-                               digital input 	*/
-             t_rise,        /* rise time...used to produce d(out)/d(time) 
-                               values for gradual change in analog output.	*/ 
-             t_fall,        /* fall time...used to produce d(out)/d(time) 
-                               values for gradual change in analog output.	*/ 
-               *out,        /* array holding all output values  */
-           *out_old,        /* array holding previous output values */            
-           fraction,        /* fraction of total rise or fall time to add to
-                               current time value for breakpoint calculation */
-          level_inc,        /* incremental level value out_high - out_low */
-         rise_slope,        /* level_inc divided by t_rise */
-         fall_slope,        /* level_inc divided by t_fall */
-           time_inc,        /* time increment since last analog call */
-               test;        /* testing variable */
+           out_undef,       /* analog output value corresponding to 'U'
+                              digital input 	*/
+              t_rise,       /* rise time...used to produce d(out)/d(time)
+                               values for gradual change in analog output. */
+              t_fall,       /* fall time...used to produce d(out)/d(time)
+                               values for gradual change in analog output. */
+                *out,       /* array holding all output values  */
+            *out_old,       /* array holding previous output values */
+           level_inc,       /* incremental level value out_high - out_low */
+          rise_slope,       /* level_inc divided by t_rise */
+          fall_slope,       /* level_inc divided by t_fall */
+            time_inc;       /* time increment since last analog call */
 
-    int           i,        /* generic loop counter index */
-	       size;        /* number of input & output ports */
-         
-                        
+   int             i,       /* generic loop counter index */
+	        size;       /* number of input & output ports */
 
-    Digital_State_t   *in,       /* base address of array holding all input 
-                                    values  */
-                  *in_old;       /* array holding previous input values */
+   struct d_data  *in,      /* base address of array holding all input
+                               values  */
+              *in_old;       /* array holding previous input values */
 
 
     /* determine "width" of the node bridge... */
 
     size = PORT_SIZE(in);               
 
-            
     /** Read in remaining model parameters **/
                               
     out_low = PARAM(out_low);
     out_high = PARAM(out_high);
     t_rise = PARAM(t_rise);
     t_fall = PARAM(t_fall);
-
 
     /* Test to see if out_low and out_high were specified, but */
     /* out_undef was not...                                    */
@@ -187,86 +182,64 @@ void cm_dac_bridge(ARGS)
     if (!PARAM_NULL(out_low) && !PARAM_NULL(out_high) && 
          PARAM_NULL(out_undef) ) {
        out_undef = out_low + (out_high - out_low) / 2.0;
-    }
-    else {
+    } else {
        out_undef = PARAM(out_undef);
     }                                 
 
-
-
     if (INIT) {  /*** Test for INIT == TRUE. If so, allocate storage, etc. ***/
-
-
         /* Allocate storage for inputs */
-        cm_event_alloc(0, size * (int) sizeof(Digital_State_t));
 
+        cm_event_alloc(0, size * (int) sizeof(struct d_data));
                       
         /* Allocate storage for outputs */
 
-        /* retrieve previously-allocated discrete input and */
-        /* allocate storage for analog output values.       */
-                                    
-        /* allocate output space and obtain adresses */
         cm_analog_alloc(0, size * (int) sizeof(double));
         
-        /* assign discrete addresses */
-        in = in_old = (Digital_State_t *) cm_event_get_ptr(0,0);
+        /* Retrieve allocated addresses. */
 
-        /* assign analog addresses */
-        out = out_old = (double *) cm_analog_get_ptr(0,0);
-
+        in = in_old = (struct d_data *) cm_event_get_ptr(0, 0);
+        out = (double *) cm_analog_get_ptr(0, 0);
 
         /* read current input values */
         for (i=0; i<size; i++) {
-            in[i] = INPUT_STATE(in[i]);
+            in[i].i = INPUT_STATE(in[i]);
         }
-                               
-
 
         /* Output initial analog levels based on input values */
 
         for (i=0; i<size; i++) { /* assign addresses */
-
-            switch (in[i]) {
-
-                case ZERO: out[i] = out_old[i] = out_low;
-                        OUTPUT(out[i]) = out_old[i];
+            switch (in[i].i) {
+                case ZERO: out[i] = out_low;
                         break;
 
-                case UNKNOWN: out[i] = out_old[i] = out_undef;
-                        OUTPUT(out[i]) = out_old[i];
+                case UNKNOWN: out[i] = out_undef;
                         break;
 
-                case ONE: out[i] = out_old[i] = out_high;
-                        OUTPUT(out[i]) = out_old[i];
+                case ONE: out[i] = out_high;
                         break;
-
             }
-
+            OUTPUT(out[i]) = out[i];
             LOAD(in[i]) = PARAM(input_load);
-
         }
-    }
-
-    else {    /*** This is not an initialization pass...read in parameters,
+        return;
+    } else {    /*** This is not an initialization pass...read in parameters,
                    retrieve storage addresses and calculate new outputs,
                    if required. ***/
-
-
 
         /** Retrieve previous values... **/
 
         /* assign discrete addresses */
-        in = (Digital_State_t *) cm_event_get_ptr(0,0);
-        in_old= (Digital_State_t *) cm_event_get_ptr(0,1);
+
+        in = (struct d_data *) cm_event_get_ptr(0, 0);
+        in_old= (struct d_data *) cm_event_get_ptr(0, 1);
 
         /* assign analog addresses */
-        out = (double *) cm_analog_get_ptr(0,0);
-        out_old = (double *) cm_analog_get_ptr(0,1);
+        out = (double *) cm_analog_get_ptr(0, 0);
+        out_old = (double *) cm_analog_get_ptr(0, 1);
 
         /* read current input values */
         for (i=0; i<size; i++) {
-            in[i] = INPUT_STATE(in[i]);
+            in[i].i = INPUT_STATE(in[i]);
         }
     }
     
@@ -274,40 +247,33 @@ void cm_dac_bridge(ARGS)
     switch (CALL_TYPE) {
 
     case EVENT:  /** discrete call... **/
-                  
         /* Test to see if any change has occurred in an input */
         /* since the last digital call...                     */ 
 
         for (i=0; i<size; i++) {
-			
-            if (in[i] != in_old[i]) { /* if there has been a change... */
+            if (in[i].i != in_old[i].i) { /* if there has been a change... */
+                in[i].i_changed = TIME;
 
                 /* post current time as a breakpoint */
 
                 cm_analog_set_perm_bkpt(TIME);
-
             }
         }
-
         break;
 
     case ANALOG:    /** analog call... **/
-                  
+
         level_inc = out_high - out_low;
         rise_slope = level_inc / t_rise;
         fall_slope = level_inc / t_fall;
-                                  
 
         time_inc = TIME - T(1);
 
-        for (i=0; i<size; i++) {  
-
-
+        for (i=0; i<size; i++) {
             if ( 0.0 == TIME ) {  /*** DC analysis ***/
-                                                      
-                switch (in[i]) {
-             
-                case ONE: 
+                switch (in[i].i) {
+
+                case ONE:
                     out[i] = out_high;
                     break;
 
@@ -318,180 +284,137 @@ void cm_dac_bridge(ARGS)
                 case UNKNOWN:
                     out[i] = out_undef;
                     break;
-
                 }
-            }
+            } else if ( in_old[i].i == in[i].i ) {
+                /*** Transient Analysis from here on. ***/
 
-            else          /*** Transient Analysis ***/
+                /* There has been no change in
+                   this digital input since the
+                   last analog call...           */
 
-            if ( in_old[i] == in[i] ) {    /* There has been no change in 
-                                              this digital input since the 
-                                              last analog call...           */
-
-                switch (in[i]) {
-                case ZERO: 
+                switch (in[i].i) {
+                case ZERO:
                     if (out_old[i] > out_low) { /* output still dropping */
-
-                        out[i] = out_old[i] - fall_slope*time_inc;
-                        if ( out_low > out[i]) out[i]=out_low; 
-
-                    }
-                    else { /* output at out_low */              
-
+                        out[i] = out_old[i] - fall_slope * time_inc;
+                        if ( out_low > out[i])
+                            out[i] = out_low;
+                    } else { /* output at out_low */
                         out[i] = out_low;
-
                     }
                     break;
 
                 case ONE:
                     if (out_old[i] < out_high) { /* output still rising */
-
-                        out[i] = out_old[i] + rise_slope*time_inc;
-                        if ( out_high < out[i]) out[i]=out_high; 
-
-                    }
-                    else { /* output at out_high */              
-
+                        out[i] = out_old[i] + rise_slope * time_inc;
+                        if ( out_high < out[i])
+                            out[i] = out_high;
+                    } else { /* output at out_high */
                         out[i] = out_high;
-
                     }
                     break;
-
 
                 case UNKNOWN:
                     if (out_old[i] < out_undef) {     /* output still rising */
-
-                        out[i] = out_old[i] + (rise_slope * time_inc);
-                        if ( out_undef < out[i]) out[i]=out_undef; 
-
-                    }
-                    else { 
-
-                        if (out_old[i] > out_undef) { /* output still falling */              
-    
-                            out[i] = out_old[i] - fall_slope*time_inc;
-                            if ( out_undef > out[i]) out[i]=out_undef; 
-                        }
-                        else {                        /* output at out_undef */
-                                                      
+                        out[i] = out_old[i] + rise_slope * time_inc;
+                        if ( out_undef < out[i])
+                            out[i] = out_undef;
+                    } else {
+                        if (out_old[i] > out_undef) { /* output still falling */
+                            out[i] = out_old[i] - fall_slope * time_inc;
+                            if ( out_undef > out[i])
+                                out[i] = out_undef;
+                        } else {                     /* output at out_undef */
                             out[i] = out_undef;
                         }
-
                     }
-
                     break;
-
                 }
-            }
-            else {     /* There HAS been a change in this digital input
-                          since the last analog access...need to use the
-                          old value of input to complete the breakpoint
-                          slope before changing directions... */
+            } else {
+                double          when, iota, vout, interval[2];
+                int             step, step_count;
 
+                /* There HAS been a change in this digital input
+                   since the last analog access. Determine when the change
+                   occurred and calculate the current output, then
+                   set a breakpoint for completion of the current transition.
+                */
 
-                switch (in_old[i]) {
+                iota = (T(0) - T(1)) * 1e-7; // Ignorable
+                if (T(0) - in[i].i_changed < iota) {
+                    /* Previous input value in force for whole step. */
 
-                case ZERO: 
-                    if (out_old[i] > out_low) { /* output still dropping */
+                    step_count = 1;
+                    step = 0;
+                    interval[0] = T(0) - T(1);
+                } else if (in[i].i_changed - T(1) < iota) {
+                    /* New input value in force for whole step.
+                     * Includes common no-change case where new == old.
+                     */
 
-                        out[i] = out_old[i] - fall_slope*time_inc;
-                        if ( out_low > out[i]) out[i]=out_low; 
+                    step_count = 2;
+                    step = 1;
+                    interval[1] = T(0) - T(1);
+                } else {
+                    /* Calculate both sides of change. */
 
-                    }
-                    else { /* output at out_low */              
-
-                        out[i] = out_low;
-
-                    }
-                    break;
-
-                case ONE:
-                    if (out_old[i] < out_high) { /* output still rising */
-
-                        out[i] = out_old[i] + rise_slope*time_inc;
-                        if ( out_high < out[i]) out[i]=out_high; 
-
-                    }
-                    else { /* output at out_high */              
-
-                        out[i] = out_high;
-
-                    }
-                    break;
-
-
-                case UNKNOWN:
-                    if (out_old[i] < out_undef) {     /* output still rising */
-
-                        out[i] = out_old[i] + (rise_slope * time_inc);
-                        if ( out_undef < out[i]) out[i]=out_undef; 
-
-                    }
-                    else { 
-
-                        if (out_old[i] > out_undef) { /* output still falling */              
-    
-                            out[i] = out_old[i] - fall_slope*time_inc;
-                            if ( out_undef > out[i]) out[i]=out_undef; 
-                        }
-                        else {                        /* output at out_undef */
-                                                      
-                            out[i] = out_undef;
-                        }
-
-                    }
-
-                    break;
-
-                }                                             
-
-                /* determine required new breakpoint for the end of
-                   the output analog transition & post              */
-
-                switch (in[i]) {     
-
-                case ONE:        /* rising for all outputs */
-                        fraction = (out_high - out[i]) / (out_high - out_low);
-                        test = TIME + (fraction * t_rise);
-                        cm_analog_set_perm_bkpt(test);
-                        break;
-                
-                case UNKNOWN:    /* may be rising or falling */
-
-                        if ( out_undef > out[i] ) { /* rising to U */
-                            fraction = (out_undef - out[i]) / (out_high - out_low);
-                            test = TIME + (fraction * t_rise);
-                            cm_analog_set_perm_bkpt(test);
-                        }
-                        else {                       /* falling to U */
-                            fraction = (out[i] - out_undef) / (out_high - out_low);
-                            test = TIME + (fraction * t_fall);
-                            cm_analog_set_perm_bkpt(test);
-                        }
-                        break;
-
-                case ZERO:    /* falling for all outputs */
-                        fraction = (out[i] - out_low) / (out_high - out_low);
-                        test = TIME + (fraction * t_fall);
-                        cm_analog_set_perm_bkpt(test);
-                        break;
+                    step_count = 2;
+                    step = 0;
+                    interval[0] = in[i].i_changed - T(1);
+                    interval[1] = T(0) - in[i].i_changed;
                 }
+
+                when = -1.0;
+                vout = out_old[i];
+                for (; step < step_count; ++step) {
+                    Digital_State_t drive;
+                    int             last_step = (step == step_count - 1);
+
+                    if (step == 0)
+                        drive = in_old[i].i;
+                    else
+                        drive = in[i].i;
+
+                    switch (drive) {
+                    case ZERO:
+                        if (vout <= out_low)
+                            break;
+                        vout -= fall_slope * interval[step];
+                        if (vout < out_low)
+                            vout = out_low;
+                        else if (last_step)
+                            when = (vout - out_low) / fall_slope;
+                        break;
+                    case ONE:
+                        if (vout >= out_high)
+                            break;
+                        vout += rise_slope * interval[step];
+                        if (vout > out_high)
+                            vout = out_high;
+                        else if (last_step)
+                            when = (out_high - vout) / rise_slope;
+                        break;
+                    case UNKNOWN:
+                        if (vout > out_undef) {
+                            vout -= fall_slope * interval[step];
+                            if (vout < out_undef)
+                                vout = out_undef;
+                            else if (last_step)
+                                when = (vout - out_undef) / fall_slope;
+                        } else {
+                            vout += rise_slope * interval[step];
+                            if (vout > out_undef)
+                                vout = out_undef;
+                            else if (last_step)
+                                when = (out_undef - vout) / rise_slope;
+                        }
+                        break;
+                    }
+                }
+                if (when > 0.0)
+                    cm_analog_set_perm_bkpt(when + TIME);
+                out[i] = vout;
             }
-        }
-
-        /* Output values... */
-               
-        for (i=0; i<size; i++) {
-
             OUTPUT(out[i]) = out[i];
-
         }
-
-        break;
-
     }
-
 }
-
-
-

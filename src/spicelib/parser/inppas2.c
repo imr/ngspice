@@ -82,7 +82,7 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 
 #ifdef HAS_PROGREP
    if (linecount > 0) {     
-        SetAnalyse( "Circuit2", (int) (1000.*actcount/linecount));
+        SetAnalyse( "Parse", (int) (1000.*actcount/linecount));
         actcount++;
    }
 #endif
