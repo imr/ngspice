@@ -204,7 +204,7 @@ static char *resolve_input_path(const char *name) {
 static size_t pad_to_align(size_t alignment, size_t size) {
   size_t padding = alignment - size % alignment;
   if (padding == alignment) {
-    return 0;
+    return size;
   }
   return padding + size;
 }
@@ -213,7 +213,7 @@ static size_t pad_to_align(size_t alignment, size_t size) {
  * the instance data allocated by ngspice. This offset is non trivial because
  * ngspice must store the terminal pointers before the remaining instance
  * data. As a result the offset is not constant and a variable amount of
- * padding must be inserted to ensure correct alginment.
+ * padding must be inserted to ensure correct alignment.
  */
 static size_t calc_osdi_instance_data_off(const OsdiDescriptor *descr) {
   size_t res = sizeof(GENinstance) /* generic data */
