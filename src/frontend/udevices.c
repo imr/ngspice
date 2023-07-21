@@ -438,9 +438,13 @@ static void add_all_port_names(char *subckt_line)
     }
     /* skip past .subckt and its name */
     tok = strtok(copy_line, " \t");
-    tok = strtok(NULL, " \t");
-    while ((tok = strtok(NULL, " \t")) != NULL) {
-        add_port_name(tok);
+    if (tok) {
+        tok = strtok(NULL, " \t");
+        if (tok) {
+            while ((tok = strtok(NULL, " \t")) != NULL) {
+                add_port_name(tok);
+            }
+        }
     }
     tfree(copy_line);
 }
@@ -1555,13 +1559,17 @@ static struct instance_hdr *create_instance_header(char *line)
     hdr = TMALLOC(struct instance_hdr, 1);
     hdr->num1 = -1;
     hdr->num2 = -1;
+    hdr->instance_name = NULL;
+    hdr->instance_type = NULL;
     /* instance name */
     tok = strtok(newline, " \t");
+    if (!tok) { delete_instance_hdr(hdr); tfree(newline); return NULL; }
     tmp = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(tmp, tok, strlen(tok) + 1);
     hdr->instance_name = tmp;
     /* instance type */
     tok = strtok(NULL, " \t");
+    if (!tok) { delete_instance_hdr(hdr); tfree(newline); return NULL; }
     p1 = strchr(tok, '(');
     if (p1) {
         /* ...(n1,n2) or ...(n1) */
@@ -1679,7 +1687,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip, int withinv)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    if (eq(preb, "$d_hi")) {
+    if (eq(preb, "$d_hi") || eq(preb, "$d_nc")) {
         preb = "NULL";
     } else {
         add_input_pin(preb);
@@ -1689,7 +1697,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip, int withinv)
         }
     }
 
-    if (eq(clrb, "$d_hi")) {
+    if (eq(clrb, "$d_hi") || eq(clrb, "$d_nc")) {
         clrb = "NULL";
     } else {
         add_input_pin(clrb);
@@ -1792,7 +1800,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip, int withinv)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    if (eq(preb, "$d_hi")) {
+    if (eq(preb, "$d_hi") || eq(preb, "$d_nc")) {
         preb = "NULL";
     } else {
         add_input_pin(preb);
@@ -1802,7 +1810,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip, int withinv)
         }
     }
 
-    if (eq(clrb, "$d_hi")) {
+    if (eq(clrb, "$d_hi") || eq(clrb, "$d_nc")) {
         clrb = "NULL";
     } else {
         add_input_pin(clrb);
@@ -1906,7 +1914,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip, int withinv)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    if (eq(preb, "$d_hi")) {
+    if (eq(preb, "$d_hi") || eq(preb, "$d_nc")) {
         preb = "NULL";
     } else {
         add_input_pin(preb);
@@ -1916,7 +1924,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip, int withinv)
         }
     }
 
-    if (eq(clrb, "$d_hi")) {
+    if (eq(clrb, "$d_hi") || eq(clrb, "$d_nc")) {
         clrb = "NULL";
     } else {
         add_input_pin(clrb);
@@ -2022,7 +2030,7 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp, int withinv)
     clrb = srffp->clrbar;
 
     xxp = create_xlator();
-    if (eq(preb, "$d_hi")) {
+    if (eq(preb, "$d_hi") || eq(preb, "$d_nc")) {
         preb = "NULL";
     } else {
         add_input_pin(preb);
@@ -2032,7 +2040,7 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp, int withinv)
         }
     }
 
-    if (eq(clrb, "$d_hi")) {
+    if (eq(clrb, "$d_hi") || eq(clrb, "$d_nc")) {
         clrb = "NULL";
     } else {
         add_input_pin(clrb);
@@ -3088,12 +3096,15 @@ static BOOL u_process_model(char *nline, char *original)
 
     /* .model */
     tok = strtok(nline, " \t");
+    if (!tok) { return FALSE; }
     /* model name */
     tok = strtok(NULL, " \t");
+    if (!tok) { return FALSE; }
     tmodel = TMALLOC(char, strlen(tok) + 1);
     memcpy(tmodel, tok, strlen(tok) + 1);
     /* model utype */
     tok = strtok(NULL, " \t(");
+    if (!tok) { tfree(tmodel); return FALSE; }
     utype = TMALLOC(char, strlen(tok) + 1);
     memcpy(utype, tok, strlen(tok) + 1);
 
@@ -3166,19 +3177,24 @@ static struct dff_instance *add_dff_inout_timing_model(
     char *name, **arrp;
     int i, num_gates = hdr->num1;
     struct dff_instance *dffip = NULL;
+    BOOL compat = TRUE;
 
+    if (num_gates < 1) { return NULL; }
     dffip = create_dff_instance(hdr);
     dffip->num_gates = num_gates;
     copyline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(copyline, start, strlen(start) + 1);
     /* prebar, clrbar, clk */
     tok = strtok(copyline, " \t");
+    if (!tok) { goto bail_out; }
     dffip->prebar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dffip->prebar, tok, strlen(tok) + 1);
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     dffip->clrbar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dffip->clrbar, tok, strlen(tok) + 1);
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     dffip->clk = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dffip->clk, tok, strlen(tok) + 1);
     /* d inputs */
@@ -3186,6 +3202,7 @@ static struct dff_instance *add_dff_inout_timing_model(
     arrp = dffip->d_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
@@ -3193,6 +3210,7 @@ static struct dff_instance *add_dff_inout_timing_model(
     arrp = dffip->q_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
@@ -3202,12 +3220,14 @@ static struct dff_instance *add_dff_inout_timing_model(
     arrp = dffip->qb_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
     }
     /* timing model */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     dffip->tmodel = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dffip->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
@@ -3216,20 +3236,27 @@ static struct dff_instance *add_dff_inout_timing_model(
     arrp = dffip->d_in;
     for (i = 0; i < num_gates; i++) {
         if (eq(arrp[i], "$d_nc")) {
-            delete_dff_instance(dffip);
-            return NULL;
+            fprintf(stderr, "ERROR incompatible dff d input $d_nc\n");
+            compat = FALSE;
+            break;
         }
     }
-    if (eq(dffip->prebar, "$d_lo") || eq(dffip->prebar, "$d_nc")) {
-        delete_dff_instance(dffip);
-        return NULL;
+    if (eq(dffip->clk, "$d_nc")) {
+        fprintf(stderr, "ERROR incompatible dff clk $d_nc\n");
+        compat = FALSE;
     }
-    if (eq(dffip->clrbar, "$d_lo") || eq(dffip->clrbar, "$d_nc")) {
+    if (compat) {
+        return dffip;
+    } else {
         delete_dff_instance(dffip);
         return NULL;
     }
 
-    return dffip;
+bail_out:
+    fprintf(stderr, "ERROR parsing dff\n");
+    delete_dff_instance(dffip);
+    tfree(copyline);
+    return NULL;
 }
 
 static struct dltch_instance *add_dltch_inout_timing_model(
@@ -3239,19 +3266,24 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     char *name, **arrp;
     int i, num_gates = hdr->num1;
     struct dltch_instance *dlp = NULL;
+    BOOL compat = TRUE;
 
+    if (num_gates < 1) { return NULL; }
     dlp = create_dltch_instance(hdr);
     dlp->num_gates = num_gates;
     copyline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(copyline, start, strlen(start) + 1);
     /* prebar, clrbar, clk(gate) */
     tok = strtok(copyline, " \t");
+    if (!tok) { goto bail_out; }
     dlp->prebar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dlp->prebar, tok, strlen(tok) + 1);
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     dlp->clrbar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dlp->clrbar, tok, strlen(tok) + 1);
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     dlp->gate = get_name_hilo(tok);
 
     /* d inputs */
@@ -3259,6 +3291,7 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     arrp = dlp->d_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
@@ -3266,6 +3299,7 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     arrp = dlp->q_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
@@ -3275,12 +3309,14 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     arrp = dlp->qb_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
     }
     /* timing model */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     dlp->tmodel = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dlp->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
@@ -3289,23 +3325,27 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     arrp = dlp->d_in;
     for (i = 0; i < num_gates; i++) {
         if (eq(arrp[i], "$d_nc")) {
-            delete_dltch_instance(dlp);
-            return NULL;
+            fprintf(stderr, "ERROR incompatible dltch d input $d_nc\n");
+            compat = FALSE;
+            break;
         }
     }
     if (eq(dlp->gate, "$d_nc")) {
+        fprintf(stderr, "ERROR incompatible dltch gate $d_nc\n");
+        compat = FALSE;
+    }
+    if (compat) {
+        return dlp;
+    } else {
         delete_dltch_instance(dlp);
         return NULL;
     }
-    if (eq(dlp->prebar, "$d_lo") || eq(dlp->prebar, "$d_nc")) {
-        delete_dltch_instance(dlp);
-        return NULL;
-    }
-    if (eq(dlp->clrbar, "$d_lo") || eq(dlp->clrbar, "$d_nc")) {
-        delete_dltch_instance(dlp);
-        return NULL;
-    }
-    return dlp;
+
+bail_out:
+    fprintf(stderr, "ERROR parsing dltch\n");
+    delete_dltch_instance(dlp);
+    tfree(copyline);
+    return NULL;
 }
 
 static struct jkff_instance *add_jkff_inout_timing_model(
@@ -3315,19 +3355,24 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     char *name, **arrp, **arrpk;
     int i, num_gates = hdr->num1;
     struct jkff_instance *jkffip = NULL;
+    BOOL compat = TRUE;
 
+    if (num_gates < 1) { return NULL; }
     jkffip = create_jkff_instance(hdr);
     jkffip->num_gates = num_gates;
     copyline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(copyline, start, strlen(start) + 1);
     /* prebar, clrbar, clkbar */
     tok = strtok(copyline, " \t");
+    if (!tok) { goto bail_out; }
     jkffip->prebar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(jkffip->prebar, tok, strlen(tok) + 1);
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     jkffip->clrbar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(jkffip->clrbar, tok, strlen(tok) + 1);
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     jkffip->clkbar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(jkffip->clkbar, tok, strlen(tok) + 1);
     /* j inputs */
@@ -3335,6 +3380,7 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     arrp = jkffip->j_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         arrp[i] = get_name_hilo(tok);
     }
     /* k inputs */
@@ -3342,6 +3388,7 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     arrp = jkffip->k_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
@@ -3349,6 +3396,7 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     arrp = jkffip->q_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
@@ -3358,12 +3406,14 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     arrp = jkffip->qb_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
     }
     /* timing model */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     jkffip->tmodel = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(jkffip->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
@@ -3373,19 +3423,27 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     arrpk = jkffip->k_in;
     for (i = 0; i < num_gates; i++) {
         if (eq(arrp[i], "$d_nc") || eq(arrpk[i], "$d_nc")) {
-            delete_jkff_instance(jkffip);
-            return NULL;
+            fprintf(stderr, "ERROR incompatible jkff j/k input $d_nc\n");
+            compat = FALSE;
+            break;
         }
     }
-    if (eq(jkffip->prebar, "$d_lo") || eq(jkffip->prebar, "$d_nc")) {
+    if (eq(jkffip->clkbar, "$d_nc")) {
+        fprintf(stderr, "ERROR incompatible jkff clkbar $d_nc\n");
+        compat = FALSE;
+    }
+    if (compat) {
+        return jkffip;
+    } else {
         delete_jkff_instance(jkffip);
         return NULL;
     }
-    if (eq(jkffip->clrbar, "$d_lo") || eq(jkffip->clrbar, "$d_nc")) {
-        delete_jkff_instance(jkffip);
-        return NULL;
-    }
-    return jkffip;
+
+bail_out:
+    fprintf(stderr, "ERROR parsing jkff\n");
+    delete_jkff_instance(jkffip);
+    tfree(copyline);
+    return NULL;
 }
 
 static struct srff_instance *add_srff_inout_timing_model(
@@ -3395,7 +3453,9 @@ static struct srff_instance *add_srff_inout_timing_model(
     char *name, **arrp, **arrpr;
     int i, num_gates = hdr->num1;
     struct srff_instance *srffp = NULL;
+    BOOL compat = TRUE;
 
+    if (num_gates < 1) { return NULL; }
     srffp = create_srff_instance(hdr);
     srffp->num_gates = num_gates;
     copyline = TMALLOC(char, strlen(start) + 1);
@@ -3403,14 +3463,17 @@ static struct srff_instance *add_srff_inout_timing_model(
 
     /* prebar, clrbar, gate */
     tok = strtok(copyline, " \t");
+    if (!tok) { goto bail_out; }
     srffp->prebar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(srffp->prebar, tok, strlen(tok) + 1);
 
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     srffp->clrbar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(srffp->clrbar, tok, strlen(tok) + 1);
 
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     srffp->gate = get_name_hilo(tok);
 
     /* s inputs */
@@ -3418,6 +3481,7 @@ static struct srff_instance *add_srff_inout_timing_model(
     arrp = srffp->s_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         arrp[i] = get_name_hilo(tok);
     }
     /* r inputs */
@@ -3425,6 +3489,7 @@ static struct srff_instance *add_srff_inout_timing_model(
     arrp = srffp->r_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
@@ -3432,6 +3497,7 @@ static struct srff_instance *add_srff_inout_timing_model(
     arrp = srffp->q_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
@@ -3441,12 +3507,14 @@ static struct srff_instance *add_srff_inout_timing_model(
     arrp = srffp->qb_out;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         arrp[i] = name;
     }
     /* timing model */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     srffp->tmodel = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(srffp->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
@@ -3456,23 +3524,27 @@ static struct srff_instance *add_srff_inout_timing_model(
     arrpr = srffp->r_in;
     for (i = 0; i < num_gates; i++) {
         if (eq(arrp[i], "$d_nc") || eq(arrpr[i], "$d_nc")) {
-            delete_srff_instance(srffp);
-            return NULL;
+            fprintf(stderr, "ERROR incompatible srff s/r input $d_nc\n");
+            compat = FALSE;
+            break;
         }
     }
-    if (eq(srffp->gate, "$d_nc")) {
+    if (eq(srffp->gate, "$d_nc")) { /* d_srff clk cannot be null */
+        fprintf(stderr, "ERROR incompatible srff gate $d_nc\n");
+        compat = FALSE;
+    }
+    if (compat) {
+        return srffp;
+    } else {
         delete_srff_instance(srffp);
         return NULL;
     }
-    if (eq(srffp->prebar, "$d_lo") || eq(srffp->prebar, "$d_nc")) {
-        delete_srff_instance(srffp);
-        return NULL;
-    }
-    if (eq(srffp->clrbar, "$d_lo") || eq(srffp->clrbar, "$d_nc")) {
-        delete_srff_instance(srffp);
-        return NULL;
-    }
-    return srffp;
+
+bail_out:
+    fprintf(stderr, "ERROR parsing srff\n");
+    delete_srff_instance(srffp);
+    tfree(copyline);
+    return NULL;
 }
 
 static struct compound_instance *add_compound_inout_timing_model(
@@ -3485,8 +3557,9 @@ static struct compound_instance *add_compound_inout_timing_model(
     BOOL first = TRUE;
 
     if (is_compound_gate(itype)) {
-         inwidth = n1;
-         numgates = n2;
+        inwidth = n1;
+        numgates = n2;
+        if (inwidth < 2 || numgates < 1) { return NULL; }
     } else {
         return NULL;
     }
@@ -3504,9 +3577,11 @@ static struct compound_instance *add_compound_inout_timing_model(
         for (j = 0; j < inwidth; j++) {
             if (first) {
                 tok = strtok(copyline, " \t");
+                if (!tok) { goto bail_out; }
                 first = FALSE;
             } else {
                 tok = strtok(NULL, " \t");
+                if (!tok) { goto bail_out; }
             }
             name = TMALLOC(char, strlen(tok) + 1);
             (void) memcpy(name, tok, strlen(tok) + 1);
@@ -3516,16 +3591,24 @@ static struct compound_instance *add_compound_inout_timing_model(
     }
     /* one output */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     compi->output = name;
     /* timing model */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     compi->tmodel = name;
     tfree(copyline);
     return compi;
+
+bail_out:
+    fprintf(stderr, "ERROR parsing compound instance\n");
+    delete_compound_instance(compi);
+    tfree(copyline);
+    return NULL;
 }
 
 static struct gate_instance *add_array_inout_timing_model(
@@ -3540,23 +3623,29 @@ static struct gate_instance *add_array_inout_timing_model(
     if (is_tristate_buf_array(itype)) {
         inwidth = 1;
         numgates = n1;
+        if (numgates < 1) { return NULL; }
         tristate = TRUE;
     } else if (is_buf_gate_array(itype)) {
         inwidth = 1;
         numgates = n1;
+        if (numgates < 1) { return NULL; }
     } else if (is_vector_gate_array(itype)) {
         inwidth = n1;
         numgates = n2;
+        if (inwidth < 2 || numgates < 1) { return NULL; }
     } else if (is_tristate_vector_array(itype)) {
         inwidth = n1;
         numgates = n2;
+        if (inwidth < 2 || numgates < 1) { return NULL; }
         tristate = TRUE;
     } else if (is_xor_gate_array(itype)) {
         inwidth = 2;
         numgates = n1;
+        if (numgates < 1) { return NULL; }
     } else if (is_tristate_xor_array(itype)) {
         inwidth = 2;
         numgates = n1;
+        if (numgates < 1) { return NULL; }
         tristate = TRUE;
     } else {
         return NULL;
@@ -3579,9 +3668,11 @@ static struct gate_instance *add_array_inout_timing_model(
         for (j = 0; j < inwidth; j++) {
             if (first) {
                 tok = strtok(copyline, " \t");
+                if (!tok) { goto bail_out; }
                 first = FALSE;
             } else {
                 tok = strtok(NULL, " \t");
+                if (!tok) { goto bail_out; }
             }
             name = TMALLOC(char, strlen(tok) + 1);
             (void) memcpy(name, tok, strlen(tok) + 1);
@@ -3592,6 +3683,7 @@ static struct gate_instance *add_array_inout_timing_model(
     /* enable for tristate */
     if (tristate) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         gip->enable = name;
@@ -3601,17 +3693,25 @@ static struct gate_instance *add_array_inout_timing_model(
     gip->outputs = outarr;
     for (i = 0; i < numgates; i++) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         outarr[i] = name;
     }
     /* timing model last */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     gip->tmodel = name;
     tfree(copyline);
     return gip;
+
+bail_out:
+    fprintf(stderr, "ERROR parsing array of gates\n");
+    delete_gate_instance(gip);
+    tfree(copyline);
+    return NULL;
 }
 
 static struct gate_instance *add_gate_inout_timing_model(
@@ -3625,8 +3725,10 @@ static struct gate_instance *add_gate_inout_timing_model(
 
     if (is_vector_gate(itype)) {
         inwidth = n1;
+        if (inwidth < 2) { return NULL; }
     } else if (is_vector_tristate(itype)) {
         inwidth = n1;
+        if (inwidth < 2) { return NULL; }
         tristate = TRUE;
     } else if (is_buf_gate(itype)) {
         inwidth = 1;
@@ -3654,9 +3756,11 @@ static struct gate_instance *add_gate_inout_timing_model(
     for (i = 0; i < inwidth; i++) {
         if (first) {
             tok = strtok(copyline, " \t");
+            if (!tok) { goto bail_out; }
             first = FALSE;
         } else {
             tok = strtok(NULL, " \t");
+            if (!tok) { goto bail_out; }
         }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
@@ -3665,6 +3769,7 @@ static struct gate_instance *add_gate_inout_timing_model(
     /* enable for tristate */
     if (tristate) {
         tok = strtok(NULL, " \t");
+        if (!tok) { goto bail_out; }
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         gip->enable = name;
@@ -3673,16 +3778,24 @@ static struct gate_instance *add_gate_inout_timing_model(
     outarr = TMALLOC(char *, gip->num_outs);
     gip->outputs = outarr;
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     outarr[0] = name;
     /* timing model last */
     tok = strtok(NULL, " \t");
+    if (!tok) { goto bail_out; }
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     gip->tmodel = name;
     tfree(copyline);
     return gip;
+
+bail_out:
+    fprintf(stderr, "ERROR parsing gate\n");
+    delete_gate_instance(gip);
+    tfree(copyline);
+    return NULL;
 }
 
 static char *skip_past_words(char *start, int count)
@@ -3703,7 +3816,7 @@ static char *skip_past_words(char *start, int count)
 static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
 {
     char *itype, *xspice, *iname, *newline = NULL, *tok;
-    char *model_name, *inst_stmt, *model_stmt;
+    char *model_name = NULL, *inst_stmt = NULL, *model_stmt = NULL;
     int i, numpulls;
     Xlatorp xp = NULL;
     Xlatep xdata = NULL;
@@ -3723,6 +3836,11 @@ static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
         } else {
             tok = strtok(NULL, " \t");
         }
+        if (!tok) {
+            delete_xlator(xp);
+            xp = NULL;
+            goto end_of_function;
+        }
         inst_stmt = tprintf("a%s_%d %s %s", iname, i, tok, model_name);
         xdata = create_xlate_translated(inst_stmt);
         xp = add_xlator(xp, xdata);
@@ -3731,9 +3849,10 @@ static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
     model_stmt = tprintf(".model %s %s(load = 1pf)", model_name, xspice);
     xdata = create_xlate_translated(model_stmt);
     xp = add_xlator(xp, xdata);
-    tfree(model_stmt);
-    tfree(model_name);
-    tfree(newline);
+end_of_function:
+    if (model_stmt) { tfree(model_stmt); }
+    if (model_name) { tfree(model_name); }
+    if (newline) { tfree(newline); }
     delete_instance_hdr(hdr);
     return xp;
 }
@@ -3829,6 +3948,9 @@ BOOL u_check_instance(char *line)
     char *xspice, *itype;
     struct instance_hdr *hdr = create_instance_header(line);
 
+    if (!hdr) {
+        return FALSE;
+    }
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
     if (!xspice) {
@@ -3870,6 +3992,9 @@ BOOL u_process_instance(char *nline)
     Xlatorp xp = NULL;
     BOOL behav_ret = TRUE;
 
+    if (!hdr) {
+        return FALSE;
+    }
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
     if (!xspice) {
@@ -3916,6 +4041,10 @@ BOOL u_process_instance(char *nline)
     }
     /* Skip past instance name, type, pwr, gnd */
     p1 = skip_past_words(nline, 4);
+    if (!p1 || strlen(p1) == 0) {
+        delete_instance_hdr(hdr);
+        return FALSE;
+    }
     if (is_gate(itype) || is_gate_array(itype)) {
         xp = translate_gate(hdr, p1);
     } else if (is_tristate(itype) || is_tristate_array(itype)) {
@@ -3944,11 +4073,12 @@ BOOL u_process_instance(char *nline)
         delete_xlator(xp);
         return TRUE;
     } else {
+        if (current_subckt) {
+            fprintf(stderr, "ERROR in %s\n", current_subckt);
+        }
+        fprintf(stderr, "ERROR U* device syntax error\n");
+        fprintf(stderr, "ERROR at line  \"%s\"\n", nline);
         if (ps_udevice_exit) {
-            if (current_subckt) {
-                fprintf(stderr, "ERROR in %s\n", current_subckt);
-            }
-            fprintf(stderr, "ERROR U* device syntax error\n");
             fflush(stdout);
             controlled_exit(EXIT_FAILURE);
         }
