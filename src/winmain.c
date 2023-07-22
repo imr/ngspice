@@ -131,6 +131,7 @@ static HFONT efont;                    /* Font for element windows */
 static HFONT tfont;                    /* Font for text window */
 static HFONT sfont;                    /* Font for string window */
 
+extern bool ft_nginfo; /* some additional info printed */
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
 extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
@@ -260,7 +261,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
         timebefore.timezone = timenow.timezone;
         /* info when previous analysis period has finished */
         if (strcmp(OldAn, Analyse)) {
-            if (ft_ngdebug && (strcmp(OldAn, "")))
+            if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
                 win_x_printf("%s finished after %4.2f seconds.\n", OldAn, seconds());
             strncpy(OldAn, Analyse, 127);
         }
