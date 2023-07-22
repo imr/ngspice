@@ -30,7 +30,8 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
     int converged;
 
 #ifdef HAS_PROGREP
-    SetAnalyse("op", 0);
+    if (!ckt->CKTnoOpIter || ckt->CKTnumGminSteps >= 1 || ckt->CKTnumSrcSteps >= 1)
+        SetAnalyse("op", 0);
 #endif
 
     ckt->CKTmode = firstmode;
