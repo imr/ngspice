@@ -266,6 +266,7 @@ extern char *ft_setkwords[];
 extern struct card *inp_getopts(struct card *deck);
 extern struct card *inp_getoptsc(char *line, struct card *options);
 extern bool ft_ngdebug;
+extern bool ft_nginfo;
 extern bool ft_stricterror;
 
 /* parse.c */

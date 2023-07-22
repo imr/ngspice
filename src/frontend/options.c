@@ -24,7 +24,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_norefprint = FALSE;
-bool ft_ngdebug = FALSE, ft_stricterror = FALSE;
+bool ft_ngdebug = FALSE, ft_nginfo = FALSE, ft_stricterror = FALSE;
 
 static void setdb(char *str);
 static struct variable *cp_enqvec_as_var(const char *vec_name,
@@ -305,6 +305,8 @@ cp_usrset(struct variable *var, bool isset)
         ft_noacctprint = isset;
     } else if (eq(var->va_name, "ngdebug")) {
         ft_ngdebug = isset;
+    } else if (eq(var->va_name, "nginfo")) {
+        ft_nginfo = isset;
     } else if (eq(var->va_name, "noinit")) {
         ft_noinitprint = isset;
     } else if (eq(var->va_name, "norefvalue")) {
