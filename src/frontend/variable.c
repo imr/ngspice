@@ -39,6 +39,7 @@ wordlist *cp_varwl(struct variable *var)
     wordlist *wl = NULL, *w, *wx = NULL;
     char *buf;
     struct variable *vt;
+    int csnump = 0;
 
     switch (var->va_type) {
     case CP_BOOL:
@@ -49,8 +50,10 @@ wordlist *cp_varwl(struct variable *var)
         buf = tprintf("%d", var->va_num);
         break;
     case CP_REAL:
-        /* This is a case where printnum isn't too good... */
-        buf = tprintf("%G", var->va_real);
+        if (cp_getvar("csnumprec", CP_NUM, &csnump, 0) && csnump > 0)
+            buf = tprintf("%.*g",csnump, var->va_real); /* csnumprec is set */
+        else
+            buf = tprintf("%G", var->va_real); /* standard behavior */
         break;
     case CP_STRING:
         buf = copy(var->va_string);
