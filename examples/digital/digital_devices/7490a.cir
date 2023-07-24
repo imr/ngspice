@@ -1,0 +1,199 @@
+Conversion of Pspice 7490a decade counters
+
+* ----------------------------------------------------------- 7490A ------
+*  Decade Counters
+*
+*  The TTL Logic Data Book, 1988, TI Pages 2-277 to 2-287
+*  bss    2/25/94
+*
+.SUBCKT 7490A R01 R02 R91 R92 CKA CKB QA QB QC QD
++     optional:  DPWR=$G_DPWR DGND=$G_DGND
++     params:  MNTYMXDLY=0 IO_LEVEL=0
+
+U1 JKFF(1) DPWR DGND
++     NAND9 NAND0 CKA $D_HI $D_HI QA_O $D_NC
++     D0_EFF IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U2 JKFF(1) DPWR DGND
++     $D_HI NANDC CKB QDBAR $D_HI QB_O $D_NC
++     D0_EFF IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U3 JKFF(1) DPWR DGND
++     $D_HI NANDC QB_O $D_HI $D_HI QC_O $D_NC
++     D0_EFF IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U4 JKFF(1) DPWR DGND
++     NAND9 NAND0 CKB ANDQ QD_O QD_O QDBAR
++     D0_EFF IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U5LOG LOGICEXP(6,4) DPWR DGND
++     R01 R02 R91 R92 QB_O QC_O
++     NAND9 NAND0 NANDC ANDQ
++     D0_GATE IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  LOGIC:
++     NAND0 = {~(R01 & R02)}
++     NAND9 = {~(R91 & R92)}
++     NANDC = {NAND0 & NAND9}
++     ANDQ = {QB_O & QC_O}
+
+U6DLY PINDLY(4,0,4) DPWR DGND
++     QA_O QB_O QC_O QD_O
++     CKA CKB NAND9 NAND0
++     QA QB QC QD
++     IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  BOOLEAN:
++     CHA = {CHANGED_HL(CKA,0)}
++     CHB = {CHANGED_HL(CKB,0)}
++     SETTO9 = {CHANGED_HL(NAND9,0)}
++     SETTO0 = {CHANGED_HL(NAND0,0)}
++     SET = {SETTO0 | SETTO9}
++
++  PINDLY:
++     QA = {
++       CASE(
++         SETTO0 & TRN_HL, DELAY(-1,26ns,40ns),
++         SETTO9 & TRN_LH, DELAY(-1,20ns,30ns),
++         CHA & TRN_LH, DELAY(-1,10ns,16ns),
++         CHA & TRN_HL, DELAY(-1,12ns,18ns),
++         DELAY(-1,27ns,41ns))}
++
++     QB = {
++       CASE(
++         SET & TRN_HL, DELAY(-1,26ns,40ns),
++         CHB & TRN_LH, DELAY(-1,10ns,16ns),
++         CHB & TRN_HL, DELAY(-1,14ns,21ns),
++         DELAY(-1,27ns,41ns))}
++
++     QC = {
++       CASE(
++         SET & TRN_HL, DELAY(-1,26ns,40ns),
++         CHB & TRN_LH, DELAY(-1,21ns,32ns),
++         CHB & TRN_HL, DELAY(-1,23ns,35ns),
++         DELAY(-1,27ns,41ns))}
++
++     QD = {
++       CASE(
++         SETTO0 & TRN_HL, DELAY(-1,26ns,40ns),
++         SETTO9 & TRN_LH, DELAY(-1,20ns,30ns),
++         CHB & TRN_LH, DELAY(-1,21ns,32ns),
++         CHB & TRN_HL, DELAY(-1,23ns,35ns),
++         CHA & TRN_LH, DELAY(-1,32ns,48ns),
++         CHA & TRN_HL, DELAY(-1,34ns,50ns),
++         DELAY(-1,35ns,51ns))}
+
+U7CON CONSTRAINT(8) DPWR DGND
++     R01 R02 R91 R92 CKA CKB NAND9 NAND0
++     IO_STD IO_LEVEL={IO_LEVEL}
++
++  FREQ:
++     NODE=CKA
++     MAXFREQ=32MEG
++
++  FREQ:
++     NODE=CKB
++     MAXFREQ=16MEG
++
++  WIDTH:
++     NODE=CKA
++     MIN_HI=15ns
++     MIN_LO=15ns
++
++  WIDTH:
++     NODE=CKB
++     MIN_HI=30ns
++     MIN_LO=30ns
++
++  WIDTH:
++     NODE=R01
++     MIN_HI=15ns
++     WHEN = {NAND9!='0}
++
++  WIDTH:
++     NODE=R02
++     MIN_HI=15ns
++     WHEN = {NAND9!='0}
++
++  WIDTH:
++     NODE=R91
++     MIN_HI=15ns
++     WHEN = {NAND0!='0}
++
++  WIDTH:
++     NODE=R92
++     MIN_HI=15ns
++     WHEN = {NAND0!='0}
++
++  SETUP_HOLD:
++  CLOCK HL = CKA
++  DATA(1) = NAND9
++  SETUPTIME_HI = 25ns
++  MESSAGE = "SETUP ERROR - R91 R92 SETUP < 25ns"
++
++  SETUP_HOLD:
++  CLOCK HL = CKB
++  DATA(1) = NAND9
++  SETUPTIME_HI = 25ns
++  MESSAGE = "SETUP ERROR - R91 R92 SETUP < 25ns"
++
++  SETUP_HOLD:
++  CLOCK HL = CKA
++  DATA(1) = NAND0
++  SETUPTIME_HI = 25ns
++  WHEN = {NAND9!='0}
++  MESSAGE = "SETUP ERROR - R01 R02 SETUP < 25ns"
++
++  SETUP_HOLD:
++  CLOCK HL = CKB
++  DATA(1) = NAND0
++  SETUPTIME_HI = 25ns
++  WHEN = {NAND9!='0}
++  MESSAGE = "SETUP ERROR - R01 R02 SETUP < 25ns"
+
+.ENDS 7490A
+
+* .SUBCKT 7490A R01 R02 R91 R92 CKA CKB QA QB QC QD
+* output qa is connected to ckb and clock is applied to cka
+* triggered on falling edge of clka
+x1 r01 r02 r91 r92 clka qa1 qa1 qb1 qc1 qd1 7490a
+
+* output qd is connected to cka and clock is applied to ckb
+* triggered on falling edge of clkb
+***x2 r01 r02 r91 r92 od2 clkb oa2 ob2 oc2 od2 7490a
+* the outputs are ordered to match the datasheet for the BCD mode
+x2 r01 r02 r91 r92 o2 clkb o1 o4 o3 o2 7490a
+ 
+a1 [clka] input_vec1
+.model input_vec1 d_source(input_file = "7490a.clk.stim")
+a2 [clkb] input_vec1
+a3 [r01 r02 r91 r92] input_vec2
+.model input_vec2 d_source(input_file = "7490a.control.stim")
+
+.save all
+.control
+tran 1ns 6us
+run
+listing r
+eprint r01 r02 r91 r92 clka clkb
+eprint qd1 qc1 qb1 qa1
+eprint o1 o2 o3 o4
+* save data to input directory
+cd $inputdir 
+eprvcd r01 r02 r91 r92 clka clkb qd1 qc1 qb1 qa1 o1 o2 o3 o4 > 7490a.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave 7490a.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave 7490a.vcd
+  else ; Linux and others
+    shell gtkwave 7490a.vcd --script nggtk.tcl &
+  end
+end
+
+*plot qd1 qc1 qb1 qa1 digitop
+*plot o1 o2 o3 o4 digitop
+quit
+.endc
+.end
