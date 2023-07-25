@@ -66,6 +66,8 @@ Author: 1985 Wayne A. Christopher
 #define NPARAMS 10000
 #define FCN_PARAMS 1000
 
+#define DEPENDSON 200
+
 #define VALIDCHARS "!$%_#?@.[]&"
 
 static struct library {
@@ -4745,7 +4747,7 @@ struct dependency {
     int skip;
     char *param_name;
     char *param_str;
-    char *depends_on[100];
+    char *depends_on[DEPENDSON];
     struct card *card;
 };
 
@@ -5055,6 +5057,11 @@ static void inp_sort_params(struct card *param_cards,
                     for (ind = 0; deps[j].depends_on[ind]; ind++)
                         ;
                     deps[j].depends_on[ind++] = param;
+                    if (ind == DEPENDSON) {
+                        fprintf(stderr, "Error in netlist: Too many parameter dependencies (> %d)\n", ind);
+                        fprintf(stderr, "    Please check your netlist.\n");
+                        controlled_exit(EXIT_BAD);
+                    }
                     deps[j].depends_on[ind] = NULL;
                 }
         }
