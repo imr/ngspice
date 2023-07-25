@@ -5,7 +5,6 @@
 #ifndef ngspice_COMPLEX_H
 #define ngspice_COMPLEX_H
 
-
 /* Complex numbers. */
 struct ngcomplex {
     double cx_real;
@@ -73,6 +72,15 @@ typedef struct {
 #define cmag(c)     (hypot(realpart(c), imagpart(c)))
 #define radtodeg(c) (cx_degrees ? ((c) * (180 / M_PI)) : (c))
 #define degtorad(c) (cx_degrees ? ((c) * (M_PI / 180)) : (c))
+#ifdef HAS_WINGUI
+#define rcheck(cond, name)\
+    if (!(cond)) {\
+        (void) win_x_fprintf(cp_err, "Error: argument out of range for %s\n",\
+                 name);\
+        xrc = -1;\
+        goto EXITPOINT;\
+    }
+#else
 #define rcheck(cond, name)\
     if (!(cond)) {\
         (void) fprintf(cp_err, "Error: argument out of range for %s\n",\
@@ -80,6 +88,7 @@ typedef struct {
         xrc = -1;\
         goto EXITPOINT;\
     }
+#endif
 
 #define cdiv(r1, i1, r2, i2, r3, i3)            \
 {                           \
