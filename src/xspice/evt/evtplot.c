@@ -142,7 +142,6 @@ keyword "all" is supplied to the plot_val routine for the member name.
 struct dvec *EVTfindvec(
     char *node)  /* The node name (and optional member name) */
 {
-  char              *name;
   struct node_parse  result;
   int                index, i;
   int                udn_index;
@@ -164,17 +163,16 @@ struct dvec *EVTfindvec(
   /* Exit immediately if event-driven stuff not allocated yet, */
   /* or if number of event nodes is zero. */
 
+  ckt = g_mif_info.ckt;
+  if (!ckt)
+    return NULL;
+  evt = ckt->evt;
+  if (!evt || !evt->data.node)
+    return NULL;
+
   index = Evt_Parse_Node(node, &result);
   if (index < 0)
       return NULL;
-  name = result.node;
-  ckt = g_mif_info.ckt;
-  evt = ckt->evt;
-
-  if (!evt->data.node) {
-    tfree(name);
-    return NULL;
-  }
 
   /* Get the UDN type index */
 
@@ -215,6 +213,7 @@ struct dvec *EVTfindvec(
     i++;
 
   }
+  txfree(result.node);
 
   /* Add one more point so that the line will extend to the end of the plot. */
 
@@ -224,18 +223,17 @@ struct dvec *EVTfindvec(
   /* Allocate dvec structures and assign the vectors into them. */
   /* See FTE/OUTinterface.c:plotInit() for initialization example. */
 
-  scale = dvec_alloc(tprintf("%s_steps", name),
+  scale = dvec_alloc(tprintf("%s_steps", node),
                      SV_TIME,
                      (VF_REAL | VF_EVENT_NODE) & ~VF_PERMANENT,
                      i, anal_point_vec);
 
-  d = dvec_alloc(name,
+  d = dvec_alloc(copy(node),
                  SV_VOLTAGE,
                  (VF_REAL | VF_EVENT_NODE) & ~VF_PERMANENT,
                  i, value_vec);
 
   d->v_scale = scale;
-
 
   /* Return the dvec */
   return(d);
