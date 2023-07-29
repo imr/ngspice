@@ -10,6 +10,7 @@ char *Spice_Path;
 char *News_File;
 char *Help_Path;
 char *Lib_Path;
+char *Module_Path;
 char *Inp_Path;
 char *Spice_Exec_Path;
 
@@ -49,23 +50,39 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
     is given, to ../lib, set by src/makefile.am. With Visual C, it is set manually by
     an entry to ngspice\visualc\src\include\ngspice\config.h.
     For Windows GUI and Console the path is set relative to the executable.*/
+
 void
 ivars(char *argv0)
 {
-    char *temp=NULL;
+    char *root, *temp=NULL;
 #if defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER)
     char *ngpath;
 #endif
 
+    root = getenv("SPICE_ROOT");
+    if (root) {
+        temp = tprintf("%s/share/ngspice", root);
+        mkvar(&Spice_Lib_Dir, root, "share/ngspice", "SPICE_LIB_DIR");
+        mkvar(&Module_Path, root, "lib/ngspice",  "SPICE_MODULE_DIR");
+    } else {
 #ifdef HAS_RELPATH
-    Spice_Lib_Dir = temp = copy("../share/ngspice");
-#elif !defined SHARED_MODULE && (defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER))
-    ngpath = ngdirname(argv0);
-    mkvar(&Spice_Lib_Dir, ngpath, "../share/ngspice", "SPICE_LIB_DIR");
-    tfree(ngpath);
+        Spice_Lib_Dir = temp = copy("../share/ngspice");
+#elif !defined SHARED_MODULE && \
+    (defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER))
+
+        ngpath = ngdirname(argv0);
+        mkvar(&Spice_Lib_Dir, ngpath, "../share/ngspice", "SPICE_LIB_DIR");
+        mkvar(&Module_Path, ngpath, "../lib/ngspice",  "SPICE_MODULE_DIR");
+        tfree(ngpath);
 #else
-    env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
+        /* Trim "/share/ngspice" from configured Spice_Lib_Dir. */
+
+        temp = tprintf("%.*s", strlen(Spice_Lib_Dir) - 14, Spice_Lib_Dir);
+        mkvar(&Module_Path, temp, "lib/ngspice",  "SPICE_MODULE_DIR");
+        env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
 #endif
+    }
+    tfree(temp);
 
     /* for printing a news file */
     mkvar(&News_File, Spice_Lib_Dir, "news", "SPICE_NEWS");
@@ -75,14 +92,16 @@ ivars(char *argv0)
     mkvar(&Lib_Path, Spice_Lib_Dir, "scripts", "SPICE_SCRIPTS");
     /* used to call ngspice with aspice command, not used in Windows mode */
     mkvar(&Spice_Path, Spice_Exec_Dir, "ngspice", "SPICE_PATH");
-    tfree(temp);
+
     /* may be used to store input files (*.lib, *.include, ...) */
     /* get directory where ngspice resides */
 #if defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER)
     {
         ngpath = ngdirname(argv0);
+
         /* set path either to <ngspice-bin-directory>/input or,
         if set, to environment variable NGSPICE_INPUT_DIR */
+
         mkvar(&Inp_Path, ngpath, "input", "NGSPICE_INPUT_DIR");
         tfree(ngpath);
     }
@@ -90,6 +109,7 @@ ivars(char *argv0)
     NG_IGNORE(argv0);
     /* set path either to environment variable NGSPICE_INPUT_DIR
     (if given) or to NULL */
+
     env_overr(&Inp_Path, "NGSPICE_INPUT_DIR");
     Inp_Path = copy(Inp_Path); /* allow tfree */
 #endif
@@ -100,6 +120,7 @@ ivars(char *argv0)
     /* Set raw file mode, 0 by default (binary) set in conf.c, 
     may be overridden by environmental
     variable, not sure if acknowledged everywhere in ngspice */
+
     env_overr(&temp, "SPICE_ASCIIRAWFILE");
     if(temp)
        AsciiRawFile = atoi(temp);
