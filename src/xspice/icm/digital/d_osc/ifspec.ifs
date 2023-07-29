@@ -62,6 +62,10 @@ Vector_Bounds:       -                       -
 Null_Allowed:       yes                     yes
 
 
+/* Rise and fall delay parameter are unused, but retained,
+ * to be compatible with an earlier version.
+ */
+
 PARAMETER_TABLE:
 
 Parameter_Name:     rise_delay              fall_delay
