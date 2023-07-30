@@ -610,16 +610,22 @@ EVTprintvcd(wordlist *wl)
     char        *value;
 
     /* Check for the "-a" option (output analog values at timesteps)
-     * and "-t nn": specifies the VCD timestep as a power of ten.
-     */
+     * and "-t nn": specifies the VCD timestep with range 1fs to 1s */
 
     while (wl && wl->wl_word[0] == '-') {
         if (wl->wl_word[1] == 'a' && !wl->wl_word[2]) {
             timesteps = 1;
         } else if (wl->wl_word[1] == 't' && !wl->wl_word[2]) {
             wl = wl->wl_next;
-            if (wl)
-                tspower = atoi(wl->wl_word);
+            if (wl) {
+                double input;
+                int error = 0;
+                char* inword = wl->wl_word;
+                input = INPevaluate(&inword, &error, 0);
+                tspower = (int)ceil(- 1. * log10(input));
+                if (tspower < 0)
+                    tspower = 0;
+            }
             else
                 break;
         } else {
