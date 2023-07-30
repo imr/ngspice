@@ -45,7 +45,7 @@ static double *read_file(const char *fn, int span, int offset,
     double  vals[9];
     char    buff[1024];
 
-    fp = fopen(fn, "r");
+    fp = fopen_with_path(fn, "r");
     if (fp == NULL) {
         cm_message_printf("Can not open file %s: %s", fn, strerror(errno));
         return NULL;
