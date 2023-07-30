@@ -791,6 +791,7 @@ EVTprintvcd(wordlist *wl)
        more data following it and if so, what the next step is. */
 
     ctx.time = NULL;
+    ctx.v_index = 0;
     ctx.last_i = EPRINT_MAXARGS;  // Indicate restart
     more = MIF_FALSE;
     next_step = 1e30;
