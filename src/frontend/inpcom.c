@@ -3199,7 +3199,7 @@ static void inp_stripcomments_line(char *s, bool cs)
     /* look for comments */
     while ((c = *d) != '\0') {
         d++;
-        if (!cs && *d == ';') {
+        if (*d == ';') {
             break;
         }
         /* outside of .control section, and not in PS mode */
