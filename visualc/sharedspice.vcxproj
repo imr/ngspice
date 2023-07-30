@@ -187,7 +187,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with actual date</Message>
+      <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -235,7 +235,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with actual date</Message>
+      <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -325,7 +325,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with actual date</Message>
+      <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
     </PreBuildEvent>
     <CustomBuildStep>
