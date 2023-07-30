@@ -736,29 +736,29 @@ EVTprintvcd(wordlist *wl)
         } else if (tspower < 4) {
             unit = "ms";
             tspower = 3 - tspower;
-            scale = 1e3 * exp10((double)-tspower);
+            scale = 1e3 * pow(10, (double)-tspower);
         } else if (tspower < 7) {
             unit = "us";
             tspower = 6 - tspower;
-            scale = 1e6 * exp10((double)-tspower);
+            scale = 1e6 * pow(10, (double)-tspower);
         } else if (tspower < 10) {
             unit = "ns";
             tspower = 9 - tspower;
-            scale = 1e9 * exp10((double)-tspower);
+            scale = 1e9 * pow(10, (double)-tspower);
         } else if (tspower < 13) {
             unit = "ps";
             tspower = 12 - tspower;
-            scale = 1e12 * exp10((double)-tspower);
+            scale = 1e12 * pow(10, (double)-tspower);
         } else if (tspower < 16) {
             unit = "fs";
             tspower = 15 - tspower;
-            scale = 1e15 * exp10((double)-tspower);
+            scale = 1e15 * pow(10, (double)-tspower);
         } else {  // 1 fS is the bottom.
             unit = "fs";
             tspower = 0;
             scale = 1e15;
         }
-        out_printf("$timescale %g %s $end\n", exp10((double)tspower), unit);
+        out_printf("$timescale %g %s $end\n", pow(10, (double)tspower), unit);
     } else {
         double tstep = ckt->CKTstep;
 
