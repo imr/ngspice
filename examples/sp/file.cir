@@ -44,6 +44,7 @@ wrs2p  new_137MHz_BPF.s2p
 
 alter vp2 ac = 0
 AC LIN 71 107MEG 167MEG
+set xbrushwidth=2
 plot group_delay(_net0) sp1.Group_Delay group_delay(sout)
 plot db(_net0) cph(_net0) db(sout) cph(sout)
 .endc
