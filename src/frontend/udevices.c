@@ -918,12 +918,18 @@ void initialize_udevice(char *subckt_line)
         "ugate", "", "d0_gate", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_gff ugff ()  */
-    xdata = create_xlate("", "", "ugff", "d_dlatch", "d0_gff", "");
+    xdata = create_xlate("",
+"(data_delay=1.0e-12 enable_delay=1.0e-12 set_delay=1.0e-12 reset_delay=1.0e-12 rise_delay=1.0e-12 fall_delay=1.0e-12)",
+        "ugff", "d_dlatch", "d0_gff", "");
     (void) add_xlator(default_models, xdata);
-    xdata = create_xlate("", "", "ugff", "d_srlatch", "d0_gff", "");
+    xdata = create_xlate("",
+"(sr_delay=1.0e-12 enable_delay=1.0e-12 set_delay=1.0e-12 reset_delay=1.0e-12 rise_delay=1.0e-12 fall_delay=1.0e-12)",
+        "ugff", "d_srlatch", "d0_gff", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_eff ueff ()  */
-    xdata = create_xlate("", "", "ueff", "", "d0_eff", "");
+    xdata = create_xlate("",
+"(clk_delay=1.0e-12 set_delay=1.0e-12 reset_delay=1.0e-12 rise_delay=1.0e-12 fall_delay=1.0e-12)",
+        "ueff", "", "d0_eff", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_tgate utgate ()  */
     xdata = create_xlate("", "(inertial_delay=true delay=1.0e-12)",
