@@ -293,10 +293,20 @@ ft_cpinit(void)
 
             if ((fp = fopen(buf, "r")) != NULL) {
 
+                /* Set a variable to identify the loadable module directory.
+                 * The standard spinit uses it to load XSPICE and OSDI files.
+                 */
+
+#define VARNAME "_module_path_"
+                cp_vset(VARNAME, CP_STRING, Module_Path);
+
+                /* Run spinit */
+
                 cp_interactive = FALSE;
                 inp_spsource(fp, TRUE, buf, FALSE);
                 cp_interactive = TRUE;
                 found = TRUE;
+                cp_remvar(VARNAME);
                 break;
 
 #if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)

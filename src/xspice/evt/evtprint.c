@@ -53,6 +53,8 @@ NON-STANDARD FEATURES
 
 #include "ngspice/evtproto.h"
 
+#include "ngspice/fteext.h"
+
 #include <time.h>
 #include <locale.h>
 
@@ -466,10 +468,11 @@ get_vcdval(char *xspiceval, char **newval)
         "0z", "1z", "Uz",
         "0u", "1u", "Uu"
     };
+
     static char *returnmap[] = {
         "0", "1", "x",
         "0", "1", "x",
-        "0", "1", "z",
+        "z", "z", "z",
         "0", "1", "x"
     };
 
@@ -482,7 +485,7 @@ get_vcdval(char *xspiceval, char **newval)
     /* is it a real number ? */
     retval = INPevaluate(&xspiceval, &err, 1);
     if (err) {
-        *newval = copy("unknown");
+        *newval = copy(xspiceval); // Assume the node type is coded for this.
         return 2;
     }
     *newval = tprintf("%.16g", retval);
@@ -494,6 +497,73 @@ get_vcdval(char *xspiceval, char **newval)
 #define time _time64
 #define localtime _localtime64
 #endif
+
+/* Function to return a real value to be written to a VCD file. */
+
+struct reals {
+    struct dvec *time;                          // Scale vector
+    int          v_index, last_i;
+    double       factor;
+    struct dvec *node_vector[EPRINT_MAXARGS];   // For analog nodes
+};
+
+static double get_real(int index, double when, struct reals *ctx)
+{
+    struct dvec *dv;
+
+    if (index < ctx->last_i) {
+        /* Starting a new pass. */
+
+        if (!ctx->time) {
+            ctx->v_index = 0;
+            ctx->time = vec_get("time");
+            if (!ctx->time) {
+                if (ctx->last_i == EPRINT_MAXARGS) { // First time
+                    fprintf(cp_err,
+                            "ERROR - No vector 'time' in current plot\n");
+                }
+                ctx->node_vector[index] = NULL; // No more calls
+                return NAN;
+            }
+        }
+
+        /* Advance the vector index. */
+
+        while (ctx->v_index < ctx->time->v_length &&
+               ctx->time->v_realdata[ctx->v_index++] < when) ;
+        ctx->v_index--;
+
+        /* Calculate interpolation factor. */
+
+        if (ctx->v_index + 1 < ctx->time->v_length) {
+            ctx->factor = (when - ctx->time->v_realdata[ctx->v_index]);
+            ctx->factor /= (ctx->time->v_realdata[ctx->v_index + 1] -
+                            ctx->time->v_realdata[ctx->v_index]);
+            if (ctx->factor < 0.0 || ctx->factor >= 1.0)
+                ctx->factor = 0.0; // Rounding
+        } else {
+            ctx->factor = 0.0;
+        }
+    }
+
+    /* Return interpolated value. */
+
+    ctx->last_i = index;
+    dv = ctx->node_vector[index];
+    if (ctx->v_index < dv->v_length) {
+        if (ctx->factor == 0.0) {
+            return dv->v_realdata[ctx->v_index];
+        } else {
+            return dv->v_realdata[ctx->v_index] +
+                       ctx->factor *
+                          (dv->v_realdata[ctx->v_index + 1] -
+                           dv->v_realdata[ctx->v_index]);
+        }
+    } else {
+        ctx->node_vector[index] = NULL; // No more calls
+        return dv->v_realdata[dv->v_length - 1];
+    }
+}
 
 /*
  * A simple vcd file printer.
@@ -510,16 +580,23 @@ EVTprintvcd(wordlist *wl)
 {
     int i;
     int nargs;
+    int timesteps = 0, tspower = -1;
 
     wordlist    *w;
 
+    struct reals ctx;
+
+    double out_time, last_out_time;
+
+
     char        *node_name[EPRINT_MAXARGS];
-    int         node_index[EPRINT_MAXARGS];
-    int         udn_index[EPRINT_MAXARGS];
+    int          node_index[EPRINT_MAXARGS];
+    int          udn_index[EPRINT_MAXARGS];
     Evt_Node_t  *node_data[EPRINT_MAXARGS];
     char        *node_value[EPRINT_MAXARGS];
     char        *old_node_value[EPRINT_MAXARGS];
-    char        node_ident[EPRINT_MAXARGS + 1];
+    char         node_ident[EPRINT_MAXARGS + 1];
+    char         vbuf[24][2][EPRINT_MAXARGS];   // Analog value strings
 
     CKTcircuit  *ckt;
 
@@ -527,11 +604,35 @@ EVTprintvcd(wordlist *wl)
 
     Mif_Boolean_t    more;
 
-    double      step = 0.0;
     double      next_step;
     double      this_step;
 
     char        *value;
+
+    /* Check for the "-a" option (output analog values at timesteps)
+     * and "-t nn": specifies the VCD timestep with range 1fs to 1s */
+
+    while (wl && wl->wl_word[0] == '-') {
+        if (wl->wl_word[1] == 'a' && !wl->wl_word[2]) {
+            timesteps = 1;
+        } else if (wl->wl_word[1] == 't' && !wl->wl_word[2]) {
+            wl = wl->wl_next;
+            if (wl) {
+                double input;
+                int error = 0;
+                char* inword = wl->wl_word;
+                input = INPevaluate(&inword, &error, 0);
+                tspower = (int)ceil(- 1. * log10(input));
+                if (tspower < 0)
+                    tspower = 0;
+            }
+            else
+                break;
+        } else {
+            break;
+        }
+        wl = wl->wl_next;
+    }
 
     /* Count the number of arguments to the command */
     nargs = 0;
@@ -539,7 +640,7 @@ EVTprintvcd(wordlist *wl)
         nargs++;
 
     if (nargs < 1) {
-        printf("Usage: eprvcd <node1> <node2> ...\n");
+        printf("Usage: eprvcd [-a] <node1> <node2> ...\n");
         return;
     }
     if (nargs > EPRINT_MAXARGS) {
@@ -560,17 +661,41 @@ EVTprintvcd(wordlist *wl)
     node_table = ckt->evt->info.node_table;
 
     /* Get data for each argument */
+
     w = wl;
     for (i = 0; i < nargs; i++) {
         node_name[i] = w->wl_word;
         node_index[i] = get_index(node_name[i]);
-        if (node_index[i] < 0) {
-            fprintf(cp_err, "ERROR - Node %s is not an event node.\n", node_name[i]);
-            return;
-        }
-        udn_index[i] = node_table[node_index[i]]->udn_index;
 
-        node_data[i] = ckt->evt->data.node->head[node_index[i]];
+        if (node_index[i] >= 0) {
+            udn_index[i] = node_table[node_index[i]]->udn_index;
+            node_data[i] = ckt->evt->data.node->head[node_index[i]];
+            ctx.node_vector[i] = NULL;
+        } else {
+            struct pnode *pn;
+            struct dvec  *dv;
+            wordlist     *save;
+
+            /* Is it an analog parameter/node expression?
+             * The whole expression must be a single word (no spaces).
+             */
+
+            save = w->wl_next;
+            w->wl_next = NULL;
+            pn = ft_getpnames_quotes(w, TRUE);
+            w->wl_next = save;
+            if (pn) {
+                dv = ft_evaluate(pn);
+                free_pnode(pn);
+            } else {
+                dv = NULL;
+            }
+            if (!dv) {
+                fprintf(cp_err, "ERROR - Node %s not parsed.\n", node_name[i]);
+                return;
+            }
+            ctx.node_vector[i] = dv;
+        }
         node_value[i] = "";
         w = w->wl_next;
     }
@@ -606,43 +731,96 @@ EVTprintvcd(wordlist *wl)
 
     /* get the sim time resolution based on tstep */
     char *unit;
-    double scale;
-    double tstep = ckt->CKTstep;
+    double scale, tick;
 
-    /* if selected time step is down to [ms] then report time at [us] etc., always with one level higher resolution */
-    if (tstep >= 1e-3) {
-        unit = "us";
-        scale = 1e6;
+    if (tspower >= 0) {
+        /* VCD timestep set by "-t" option. */
+
+        if (tspower == 0) {
+            unit = "s";
+            scale = 1.0;
+        } else if (tspower < 4) {
+            unit = "ms";
+            tspower = 3 - tspower;
+            scale = 1e3 * pow(10, (double)-tspower);
+        } else if (tspower < 7) {
+            unit = "us";
+            tspower = 6 - tspower;
+            scale = 1e6 * pow(10, (double)-tspower);
+        } else if (tspower < 10) {
+            unit = "ns";
+            tspower = 9 - tspower;
+            scale = 1e9 * pow(10, (double)-tspower);
+        } else if (tspower < 13) {
+            unit = "ps";
+            tspower = 12 - tspower;
+            scale = 1e12 * pow(10, (double)-tspower);
+        } else if (tspower < 16) {
+            unit = "fs";
+            tspower = 15 - tspower;
+            scale = 1e15 * pow(10, (double)-tspower);
+        } else {  // 1 fS is the bottom.
+            unit = "fs";
+            tspower = 0;
+            scale = 1e15;
+        }
+        out_printf("$timescale %g %s $end\n", pow(10, (double)tspower), unit);
+    } else {
+        double tstep = ckt->CKTstep;
+
+        /* Use the simulation time step. If the selected time step
+         * is down to [ms] then report time at [us] etc.,
+         * always with one level higher resolution.
+         */
+
+        if (tstep >= 1e-3) {
+            unit = "us";
+            scale = 1e6;
+        }
+        else if (tstep >= 1e-6) {
+            unit = "ns";
+            scale = 1e9;
+        }
+        else if (tstep >= 1e-9) {
+            unit = "ps";
+            scale = 1e12;
+        } else {
+            unit = "fs";
+            scale = 1e15;
+        }
+        out_printf("$timescale 1 %s $end\n", unit);
     }
-    else if (tstep >= 1e-6) {
-        unit = "ns";
-        scale = 1e9;
-    }
-    else if (tstep >= 1e-9) {
-        unit = "ps";
-        scale = 1e12;
-    }
-    else {
-        unit = "fs";
-        scale = 1e15;
-    }
-    out_printf("$timescale 1 %s $end\n", unit);
+    tick = 1.0 / scale;
 
     /* Scan the node data. Go for printing using $dumpvars
        for the initial values.  Also, determine if there is
        more data following it and if so, what the next step is. */
+
+    ctx.time = NULL;
+    ctx.v_index = 0;
+    ctx.last_i = EPRINT_MAXARGS;  // Indicate restart
     more = MIF_FALSE;
     next_step = 1e30;
     for (i = 0; i < nargs; i++) {
-        step = node_data[i]->step;
-        g_evt_udn_info[udn_index[i]]->print_val
-            (node_data[i]->node_value, "all", &value);
-        old_node_value[i] = node_value[i] = value;
-        node_data[i] = node_data[i]->next;
-        if (node_data[i]) {
-            more = MIF_TRUE;
-            if (next_step > node_data[i]->step)
-                next_step = node_data[i]->step;
+        if (ctx.node_vector[i]) {
+            /* Analog node or expression. */
+
+            sprintf(vbuf[0][i], "%.16g", get_real(i, 0.0, &ctx));
+            node_value[i] = vbuf[0][i];
+            old_node_value[i] = vbuf[1][i];
+            strcpy(vbuf[1][i], vbuf[0][i]);
+        } else {
+            /* This must return a pointer to a statically-allocated string. */
+
+            g_evt_udn_info[udn_index[i]]->print_val
+                (node_data[i]->node_value, "all", &value);
+            node_data[i] = node_data[i]->next;
+            old_node_value[i] = node_value[i] = value;
+            if (node_data[i]) {
+                more = MIF_TRUE;
+                if (next_step > node_data[i]->step)
+                    next_step = node_data[i]->step;
+            }
         }
     }
 
@@ -658,7 +836,6 @@ EVTprintvcd(wordlist *wl)
     }
 
     out_printf("$enddefinitions $end\n");
-    out_printf("#%lld\n", (unsigned long long)(step * scale));
 
     /* first set of data for initialization
        or if only op has been calculated */
@@ -676,38 +853,92 @@ EVTprintvcd(wordlist *wl)
     out_printf("$end\n");
 
     /* While there is more data, get the next values and print */
-    while (more) {
 
-        more = MIF_FALSE;
+    last_out_time = 0.0;
+    while (more ||
+           (timesteps && ctx.time && ctx.v_index + 1 < ctx.time->v_length)) {
+        int got_one;
+
         this_step = next_step;
-        next_step = 1e30;
 
-        for (i = 0; i < nargs; i++)
-            if (node_data[i]) {
-                if (node_data[i]->step == this_step) {
-                    g_evt_udn_info[udn_index[i]]->print_val
-                        (node_data[i]->node_value, "all", &value);
-                    node_value[i] = value;
-                    node_data[i] = node_data[i]->next;
-                }
-                if (node_data[i]) {
-                    more = MIF_TRUE;
-                    if (next_step > node_data[i]->step)
-                        next_step = node_data[i]->step;
-                }
+        if (timesteps && ctx.time && ctx.v_index + 1 < ctx.time->v_length &&
+            (ctx.time->v_realdata[ctx.v_index + 1] < this_step ||
+             (timesteps && !more))) {
+
+            /* Analogue output at each time step, skipping if they would
+             * appear simulataneous in the output.
+             */
+
+            out_time = ctx.time->v_realdata[ctx.v_index + 1];
+            if (out_time - last_out_time < tick) {
+                ++ctx.v_index;
+                continue;
             }
 
-        /* timestamp */
-        out_printf("#%lld\n", (unsigned long long)(this_step * scale));
+            for (i = 0; i < nargs; i++) {
+                if (ctx.node_vector[i])
+                    sprintf(node_value[i], "%.16g",
+                            get_real(i, out_time, &ctx));
+            }
+        } else {
+            /* Process next event. */
+
+            out_time = this_step;
+            more = MIF_FALSE;
+            next_step = 1e30;
+            for (i = 0; i < nargs; i++) {
+                if (ctx.node_vector[i]) {
+                    /* Analog node or expression. */
+
+                    sprintf(node_value[i], "%.16g",
+                            get_real(i, this_step, &ctx));
+                } else if (node_data[i]) {
+                    if (node_data[i]->step == this_step) {
+                        g_evt_udn_info[udn_index[i]]->print_val
+                            (node_data[i]->node_value, "all", &value);
+                        node_value[i] = value;
+                        node_data[i] = node_data[i]->next;
+                    }
+                    if (node_data[i]) {
+                        more = MIF_TRUE;
+                        if (next_step > node_data[i]->step)
+                            next_step = node_data[i]->step;
+                    }
+                }
+            }
+        }
+
         /* print only values that have changed */
-        for (i = 0; i < nargs; i++) {
+
+        for (i = 0, got_one = 0; i < nargs; i++) {
             if (!eq(old_node_value[i], node_value[i])) {
                 char *buf;
+
+                if (!got_one) {
+                    /* timestamp */
+
+                    out_printf("#%lld\n",
+                               (unsigned long long)(out_time * scale));
+                    last_out_time = out_time;;
+                    got_one = 1;
+                }
+
                 if (get_vcdval(node_value[i], &buf) == 1)
                     out_printf("r%s %c\n", buf, node_ident[i]);
                 else
                     out_printf("%s%c\n", buf, node_ident[i]);
-                old_node_value[i] = node_value[i];
+
+                if (ctx.node_vector[i]) {
+                    char *t;
+
+                    /* Swap buffers. */
+
+                    t = old_node_value[i];
+                    old_node_value[i] = node_value[i];
+                    node_value[i] = t;
+                } else {;
+                    old_node_value[i] = node_value[i];
+                }
                 tfree(buf);
             }
         }

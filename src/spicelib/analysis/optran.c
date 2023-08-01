@@ -319,9 +319,9 @@ OPtran(CKTcircuit *ckt, int oldconverged)
     NOISEAN *nojob = (NOISEAN *) ckt->CKTcurJob;
 */
     if(optime == 0) {
-
-//        int type = ckt->CKTcurJob->JOBtype;
-
+#ifdef HAS_PROGREP
+        SetAnalyse("optran init", 0);
+#endif
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op started");
         if (opramptime > 0) {
             CKTnode* n;
@@ -483,11 +483,10 @@ OPtran(CKTcircuit *ckt, int oldconverged)
 
 resume:
 #ifdef HAS_PROGREP
-    if (optime == 0.)
-        SetAnalyse( "optran init", 0);
-    else
+    if (optime > 0)
         SetAnalyse( "optran", (int)((optime * 1000.) / opfinaltime + 0.5));
 #endif
+
     ckt->CKTdelta =
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
 #ifdef XSPICE

@@ -23,11 +23,22 @@ PARAMETER_TABLE:
 Parameter_Name:     table
 Description:        "PWL table: frequency/magnitude/phase"
 Data_Type:          real
-Default_Value:      -
+Default_Value:      0
 Limits:             -
 Vector:             yes
 Vector_Bounds:      [3 -]
-Null_Allowed:       no
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     file
+Description:        "File in Touchstone format"
+Data_Type:          string
+Default_Value:      -
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 PARAMETER_TABLE:
 

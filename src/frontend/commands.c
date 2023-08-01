@@ -259,7 +259,7 @@ struct comm spcp_coms[] = {
     { "eprvcd", EVTprintvcd, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       arg_enodes,
-      "node node ... : Print event values into vcd file." },
+      "[-a] [-t timescale] node node ... : Print event values into VCD file." },
     { "edisplay", EVTdisplay, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 0, 0,
       NULL,

@@ -1207,7 +1207,7 @@ insertnumber(dico_t *dico, char **lp, DSTRINGPTR ustr_p)
 {
     const char *u = ds_get_buf(ustr_p);
     char       *s = *lp; // Point to line contents
-    long        id;
+    long        id = 0;
     int         n;
 
     char *p = strstr(s, "numparm__________");
@@ -1218,7 +1218,7 @@ insertnumber(dico_t *dico, char **lp, DSTRINGPTR ustr_p)
         (id > 0) && (id < dynsubst + 1)) {
         /* Found a target for substitution. */
 
-        n = ds_get_length(ustr_p);
+        n = (int)ds_get_length(ustr_p);
         if (n <= ACT_CHARACTS) {
             char buf[ACT_CHARACTS + 1];
 

@@ -277,6 +277,7 @@ extern char *News_File;
 extern char *Spice_Path;
 extern char *Help_Path;
 extern char *Lib_Path;
+extern char *Module_Path;
 extern char *Inp_Path;
 extern char *Infile_Path;
 extern char *Spice_Exec_Path;

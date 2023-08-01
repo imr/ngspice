@@ -1,4 +1,6 @@
 SOA check for bipolar
+* LTSPICE or PSPICE compatability must be enabled to correctly parse the
+* model below, for example with "set ngbehavior=psa" in .spiceinit.
 
 Vce c 0 -1
 Ib b 0 -1u
