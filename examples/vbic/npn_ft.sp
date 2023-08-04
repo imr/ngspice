@@ -21,7 +21,7 @@ set scratch=$curplot     $ store its name to 'scratch'
 setplot $scratch         $ make 'scratch' the active plot 
 let ft=unitvec(ft_runs)  $ create a vector in plot 'scratch' to store ft data 
 let ic=unitvec(ft_runs)  $ create a vector in plot 'scratch' to store ic data 
-foreach myic 1m 4m 7m 10m 20m 40m 60m 75m 90m 100m 110m 130m 180m
+foreach myic 2m 5m 9m 15m 22m 30m 50m 75m 90m 100m 110m 130m 180m
  alter ic = $myic
  ac dec 100 100k 50g
 *plot vdb(vgain#branch)
