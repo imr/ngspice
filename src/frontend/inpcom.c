@@ -1350,10 +1350,9 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
          */
         if (ciprefix(".lib", buffer))
             if (newcompat.lt || newcompat.ps) {
-                /* compatibility mode,
-                 *   this is neither a libray section definition nor a
-                 * reference interpret as old style .lib <file name> (no lib
-                 * name given)
+                /* In lt or ps there is no library section definition defined,
+                 * so .lib is interpreted as old style .lib <file name> (no lib
+                 * name given, .lib replaced by .include).
                  */
                 char *s = skip_non_ws(buffer); /* skip over .lib */
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
