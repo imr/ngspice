@@ -246,7 +246,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 Vrth = 0.0, Icth = 0.0, Icth_Vrth = 0.0;
             } else if((ckt->CKTmode & MODEINITJCT) && (here->VBICoff==0)) {
                 Vbe=Vbei=Vbex=model->VBICtype*here->VBICtVcrit;
-                Vbc=Vbci=Vbcx=Vbep=0.0;
+                Vbc=Vbcx=Vbep=0.0;
+                Vbci=-model->VBICtype*here->VBICtVcrit;
                 Vbcp=Vbc-Vbe;
                 Vrci=Vrbi=Vrbp=0.0;
                 Vrcx=Vrbx=Vre=Vrs=0.0;
