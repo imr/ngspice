@@ -9,7 +9,6 @@ XQ1 C B 0 S qnva
 
 .control
 dc vc 0.0 5.0 0.05 ib 1u 10u 1u
-run
 plot abs(i(vc))
 .endc
 
