@@ -1,0 +1,60 @@
+ngspice transformers
+* single primary, single secondary, no core saturation
+
+* sources
+V1 1 0 dc 0 ac 1 sin (0 1 1k)
+
+Xtr1 1 0 2 0 tr1
+
+Xtr2 1 0 12 0 tr2
+
+Xtr3 1 0 22 0 tr3
+
+.tran 1u 10m
+
+* transformer 1
+* ngspice manual 3.3.10
+.subckt tr1 p1 p2 s1 s2
+  Rp1 p1 pint1 1m ; primary series resistance
+  Rs1 s1 sint1 1m ; secondary series resistance
+  L1 pint1 p2 1m ; primary inductance
+  L2 sint1 s2 4m ; secondary inductance
+  K1 L1 L2 0.98 ; coupling constant
+.ends
+
+* transformer 2
+* ngspice manual 12.2.20 and 12.2.21
+* px primary nodes, sx secondary nodes of electric circuit
+* mcx nodes of magnetic circuit 
+.subckt tr2 p1 p2 s1 s2
+  Rp1 p1 pint1 1m ; primary series resistance
+  Rs1 s1 sint1 1m ; secondary series resistance
+  a1 (pint1 pint2) (mc1 0) primary1
+  .model primary1 lcouple(num_turns=120)
+  a2 (sint1 s2) (0 mc2) secondary1
+  .model secondary1 lcouple(num_turns=240)
+  Rreluctance mc1 mc2 1000
+  Lleak pint2 p2 1u ; (primary) leakage inductance
+.ends
+
+* transformer 3
+* C.P. Basso, Switched Mode Power Supplies, 2nd Ed., p. 406
+.subckt tr3 p1 p2 s1 s2 params: RATIO=2
+  Rp1 p1 pint1 1m ; primary series resistance
+  Rs1 sint1 s1 1m ; secondary series resistance
+  Lp pint1 pint2 1m ; primary inductance
+  Rp pint1 pint2 1Meg ; primary parallel resistance
+  E 5 s2 pint1 pint2 {RATIO}
+  F pint1 pint2 VM {RATIO}
+  VM 5 sint1 0
+  Lleak pint2 p2 1u ; (primary) leakage inductance
+.ends
+
+.control
+run
+set xbrushwidth=2
+plot V(1) v(2) V(1)+5 V(12)+5 V(1)+10 V(22)+10
+.endc
+
+.end
+
