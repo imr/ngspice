@@ -10,7 +10,7 @@
     using the previously stored delays.
 
     Some limitations are:
-        No support for DLYLINE, CONSTRAINT, RAM, ROM, STIM, PLAs.
+        No support for CONSTRAINT, RAM, ROM, STIM, PLAs.
         Approximations to the Pspice timing delays. Typical values for delays
         are estimated. Pspice has a rich set of timing simulation features,
         such as checks for setup/hold violations, minimum pulse width, and
@@ -22,7 +22,7 @@
 
    First pass through a subcircuit. Call initialize_udevice() and read the
    .model cards by calling u_process_model_line() (or similar) for each card,
-   The delays for the different types (ugate, utgate, ueff, ugff) are stored
+   The delays for the different types (ugate, utgate, ueff, ugff, udly) are stored
    by get_delays_...() and add_delays_to_model_xlator(). Also, during the
    first pass, check that each U* instance can be translated to Xspice.
    If there are any .model or U* instance cards that cannot be processed
@@ -85,7 +85,8 @@ extern struct card* insert_new_line(
 #define D_UP     16
 #define D_DOWN   17
 #define D_TRI    18
-#define XSPICESZ  19
+#define D_DLYLINE 19
+#define XSPICESZ  20
 
 /* structs for parsed gate U... instances */
 struct instance_hdr {
@@ -173,7 +174,7 @@ typedef struct s_xlate {
     Xlatep next;
     char *translated;  // the translated instance line
     char *delays;      // the delays from the pspice timing model
-    char *utype;       // pspice model type ugate, utgate, ueff, ugff
+    char *utype;       // pspice model type ugate, utgate, ueff, ugff, udly
     char *xspice;      // xspice device type such as d_and, d_dff, etc.
     char *tmodel;      // timing model name of pspice instance or model
     char *mname;       // name of the xspice timing model of the instance
@@ -472,6 +473,7 @@ static char *xspice_tab[XSPICESZ] = {
     "d_pullup",     // D_UP
     "d_pulldown",   // D_DOWN
     "d_tristate",   // D_TRI
+    "d_buffer",     // D_DLYLINE uses buffer with transport delay
 };
 
 static char *find_xspice_for_delay(char *itype)
@@ -502,6 +504,7 @@ static char *find_xspice_for_delay(char *itype)
     case 'd': {
         if (eq(itype, "dff"))   { return xspice_tab[D_DFF]; }
         if (eq(itype, "dltch")) { return xspice_tab[D_DLTCH]; }
+        if (eq(itype, "dlyline")) { return xspice_tab[D_DLYLINE]; }
         break;
     }
     case 'i': {
@@ -2793,7 +2796,7 @@ static char *larger_delay(char *delay1, char *delay2)
 
 /* NOTE
   The get_delays_...() functions calculate estimates of typical delays
-  from the Pspice ugate, utgate, ueff, and ugff timing models.
+  from the Pspice ugate, udly, utgate, ueff, and ugff timing models.
   These functions are called from u_process_model(), and the delay strings
   are added to the timing model Xlator by add_delays_to_model_xlator().
 */
@@ -2833,6 +2836,26 @@ static char *get_delays_ugate(char *rem)
     }
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
+    return delays;
+}
+
+static char *get_delays_udly(char *rem)
+{
+    char *udelay, *delays = NULL;
+    struct timing_data *tdp1;
+
+    tdp1 = create_min_typ_max("dly", rem);
+    estimate_typ(tdp1);
+    udelay = get_estimate(tdp1);
+    if (udelay) {
+        delays = tprintf(
+            "(inertial_delay=false rise_delay = %s fall_delay = %s)",
+            udelay, udelay);
+    } else {
+        delays = tprintf(
+           "(inertial_delay=false rise_delay = 1.0e-12 fall_delay = 1.0e-12)");
+    }
+    delete_timing_data(tdp1);
     return delays;
 }
 
@@ -3145,6 +3168,11 @@ static BOOL u_process_model(char *nline, char *original)
             /* skip uio models */
             retval = TRUE;
             delays = NULL;
+        } else if (eq(utype, "udly")) {
+            delays = get_delays_udly(remainder);
+            add_delays_to_model_xlator((delays ? delays : ""),
+                utype, "", tmodel);
+            if (delays) { tfree(delays); }
         } else {
             retval = FALSE;
             delays = NULL;
@@ -3835,7 +3863,7 @@ static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
     xspice = find_xspice_for_delay(itype);
     newline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(newline, start, strlen(start) + 1);
-    model_name = tprintf("d_%s_%s", iname, itype);
+    model_name = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < numpulls; i++) {
         if (i == 0) {
             tok = strtok(newline, " \t");
@@ -3860,6 +3888,62 @@ end_of_function:
     if (model_name) { tfree(model_name); }
     if (newline) { tfree(newline); }
     delete_instance_hdr(hdr);
+    return xp;
+}
+
+static Xlatorp translate_dlyline(struct instance_hdr *hdr, char *start)
+{
+    char *itype, *iname, *newline = NULL, *tok;
+    char *model_name = NULL, *tmodel = NULL;
+    Xlatorp xp = NULL;
+    Xlatep xdata = NULL;
+    DS_CREATE(statement, 128);
+
+    itype = hdr->instance_type;
+    iname = hdr->instance_name;
+    newline = TMALLOC(char, strlen(start) + 1);
+    (void) memcpy(newline, start, strlen(start) + 1);
+    model_name = tprintf("d_a%s_%s", iname, itype);
+    ds_clear(&statement);
+
+    /* input name */
+    tok = strtok(newline, " \t");
+    if (!tok) {
+        fprintf(stderr, "ERROR input missing from dlyline\n");
+        goto end_of_function;
+    }
+    ds_cat_printf(&statement, "a%s %s", iname, tok);
+
+    /* output name */
+    tok = strtok(NULL, " \t");
+    if (!tok) {
+        fprintf(stderr, "ERROR output missing from dlyline\n");
+        goto end_of_function;
+    }
+    ds_cat_printf(&statement, " %s %s", tok, model_name);
+
+    xp = create_xlator();
+    xdata = create_xlate_translated(ds_get_buf(&statement));
+    xp = add_xlator(xp, xdata);
+
+    /* tmodel */
+    tmodel = strtok(NULL, " \t");
+    if (!tmodel) {
+        fprintf(stderr, "ERROR timing model missing from dlyline\n");
+        delete_xlator(xp);
+        xp = NULL;
+        goto end_of_function;
+    }
+    if (!gen_timing_model(tmodel, "udly", "d_buffer", model_name, xp)) {
+        printf("WARNING unable to find tmodel %s for %s dlyline\n",
+            tmodel, model_name);
+    }
+
+end_of_function:
+    if (model_name) { tfree(model_name); }
+    if (newline) { tfree(newline); }
+    delete_instance_hdr(hdr);
+    ds_free(&statement);
     return xp;
 }
 
@@ -4062,6 +4146,8 @@ BOOL u_process_instance(char *nline)
         xp = translate_ff_latch(hdr, p1);
     } else if (eq(itype, "pullup") || eq(itype, "pulldn")) {
         xp = translate_pull(hdr, p1);
+    } else if (eq(itype, "dlyline")) {
+        xp = translate_dlyline(hdr, p1);
     } else {
         delete_instance_hdr(hdr);
         if (ps_udevice_exit) {
