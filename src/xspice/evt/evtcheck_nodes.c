@@ -512,7 +512,8 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     }
 
     if (!ok) {
-        vcc = nupa_get_param(vcc_parm, &ok);
+        if (vcc_parm)
+            vcc = nupa_get_param(vcc_parm, &ok);
         if (!ok) {
             if (event_node->udn_index == 0)
                 vcc = 3.3; // Fallback default for digital.
@@ -710,9 +711,13 @@ bool Evtcheck_nodes(
              if (strcmp(event_node->name, analog_node->name) == 0) {
                  if (show == AB_OFF) {
                      if (cp_getvar("probe_alli_given", CP_BOOL, NULL, 0))
-                         fprintf(stderr, "\nDot command '.probe alli' and digital nodes are not compatible.\n");
+                         fprintf(stderr,
+                                 "\nDot command '.probe alli' and "
+                                 "digital nodes are not compatible.\n");
                      FREE(errMsg);
-                     errMsg = copy("Auto bridging is switched off");
+                     errMsg = tprintf("Auto bridging is switched off "
+                                      "but node %s is mixed-type.\n",
+                                      event_node->name);
                      return FALSE;      // Auto-bridge disabled
                  }
                  bridge = find_bridge(event_node, ckt, &bridge_list);
