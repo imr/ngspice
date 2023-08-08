@@ -63,6 +63,7 @@ com_stop(wordlist *wl)
             d->db_also = TMALLOC(struct dbcomm, 1);
             d = d->db_also;
         }
+        d->db_also = NULL;
 
         /* Figure out what the first condition is. */
         d->db_analysis = NULL;
@@ -127,13 +128,24 @@ com_stop(wordlist *wl)
                 /* Now get the condition */
                 if (eq(wl->wl_word, "eq") || eq(wl->wl_word, "="))
                     d->db_op = DBC_EQU;
-                else if (eq(wl->wl_word, "ne") || eq(wl->wl_word, "<>"))
+                else if (eq(wl->wl_word, "ne"))
                     d->db_op = DBC_NEQ;
                 else if (eq(wl->wl_word, "gt") || eq(wl->wl_word, ">"))
                     d->db_op = DBC_GT;
-                else if (eq(wl->wl_word, "lt") || eq(wl->wl_word, "<"))
+                else if (eq(wl->wl_word, "lt"))
                     d->db_op = DBC_LT;
-                else if (eq(wl->wl_word, "ge") || eq(wl->wl_word, ">="))
+                else if (eq(wl->wl_word, "<")) {
+                    /* "<>" is parsed as two words. */
+
+                    if (eq(wl->wl_next->wl_word, ">")) {
+                        if (!wl->wl_next->wl_next)
+                            goto bad;
+                        d->db_op = DBC_NEQ;
+                        wl = wl->wl_next;
+                    } else {
+                        d->db_op = DBC_LT;
+                    }
+                } else if (eq(wl->wl_word, "ge") || eq(wl->wl_word, ">="))
                     d->db_op = DBC_GTE;
                 else if (eq(wl->wl_word, "le") || eq(wl->wl_word, "<="))
                     d->db_op = DBC_LTE;
@@ -150,15 +162,16 @@ com_stop(wordlist *wl)
                         d->db_value2 = val;
                     }
                     else {
-                    d->db_nodename2 = copy(wl->wl_word);
+                        d->db_nodename2 = copy(wl->wl_word);
                     }
                 }
                 wl = wl->wl_next;
-            }
-            else {
+            } else { // Neither "after" nor "when".
                 goto bad;
             }
-        } /* end of case of word "when" */
+        } else {
+            goto bad;
+        }
     } /* end of loop over wordlist */
 
     if (thisone) {
@@ -178,7 +191,12 @@ com_stop(wordlist *wl)
 
 bad:
     fprintf(cp_err, "Syntax error parsing breakpoint specification.\n");
-} /* end of funtion com_stop */
+    while (thisone) {
+        d = thisone->db_also;
+        txfree(thisone);
+        thisone = d;
+    }
+} /* end of function com_stop */
 
 
 
