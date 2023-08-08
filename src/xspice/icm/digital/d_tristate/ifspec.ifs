@@ -45,8 +45,8 @@ Description:        "delay"
 Data_Type:          real             
 Default_Value:      1.0e-9           
 Limits:             [1e-12 -]        
-Vector:              no               
-Vector_Bounds:       -                
+Vector:             no               
+Vector_bounds:      -                
 Null_Allowed:       yes              
 
 
@@ -61,9 +61,7 @@ Vector:             no                          no
 Vector_Bounds:      -				-
 Null_Allowed:       yes				yes
 
-
 PARAMETER_TABLE:
-
 
 Parameter_Name:     inertial_delay		family
 Description:        "swallow short pulses"	"Logic family for bridging"
