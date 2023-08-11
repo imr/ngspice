@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.9 (ngspice-40 release)
+  Ngspice F.A.Q.Version 2.9 (ngspice-41 release)
 
   Maintained by Holger Vogt
-  Last update: Mar 24 2023
+  Last update: Aug 11 2023
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -96,7 +96,7 @@
   from a tcl script and vector plotted or post processed using tcl. A small
   GUI may be built by the user to analyze a circuit or a set of circuits.
   Tclspice is obtained compiling ngspice activating an additional option.
-  This has not been used and tested for some time.
+  This has not been used and tested for recently.
 
 
  1.4 Why resurrecting Berkeley's Spice?
@@ -165,7 +165,7 @@
 
   Vivid discussion are going on in the ngspice discussion groups.
   They are found at https://sourceforge.net/p/ngspice/discussion/
-  A new group 'ngspice tips and examples' will present interesting
+  A special group 'ngspice tips and examples' will present interesting
   ngspice tips (your input is welcome!)
 
 
@@ -218,12 +218,14 @@
   https://sourceforge.net/projects/ngspice/files/ng-spice-rework/
   
   Nearly all distributions for MINGW, Cygwin, Linux, macOS and
-  others offer install-ready copies of ngspice.
+  others offer install-ready copies of ngspice. Please see
+  https://repology.org/project/ngspice/packages for packages
+  available.
 
 
  1.12  Where should I look on the World Wide Web for ngspice stuff?
 
-  Look at the official Ngpice Web Page:
+  Have a look at the official Ngpice Web Page:
 
   https://ngspice.sourceforge.io
 
@@ -235,6 +237,8 @@
 
   Others docs are assembled at:
   https://ngspice.sourceforge.io/literature.html
+  https://ngspice.sourceforge.io/tutorials.html
+  https://ngspice.sourceforge.io/books.html
 
 
  1.14  Are there some (official) tutorials available?
@@ -252,7 +256,7 @@
 
   The latest version released is:
 
-  * ngspice-40 (released on Mar 26 2023)
+  ngspice-41 (released on Aug 13 2023)
 
 
  2.2.  What are the latest features in the current release?
@@ -289,7 +293,9 @@
  2.6.  How can I join the development?
 
   To join the development just code the feature you want to add and send
-  your patch in the mailing list.  Before you start coding check the
+  your patch to the dev discussion group, open a ticket at the ngspice
+  Patches page or post a merge request
+  with Sourceforge.  Before you start coding check the
   latest development release of ngspice from our git repository.
   It might be that your feature has already been implemented.
 

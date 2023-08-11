@@ -1,3 +1,12 @@
+Ngspice-41, Aug 13th, 2023
+============
+- New features:
+
+- Bug fixes:
+    + Several crash bugs (double delete, access NULL pointer etc) removed
+      which have occurred mostly due to incomplete or faulty inputs.
+    + Memory leaks for CIDER removed
+    
 Ngspice-40, Mar 31st, 2023
 ============
 - New features:
