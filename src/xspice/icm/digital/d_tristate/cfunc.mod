@@ -184,7 +184,6 @@ void cm_d_tristate(ARGS)
 
             enum {Idle, Normal, Same, Revert, Both}
                           d_ctl, s_ctl, ctl1, ctl2;
-            struct idata *idp;
             double        first_time, second_time; /* Scheduled changes */
             double        delay_1;                 /* Delay to first output. */
             double        cancel_delay;            /* Delay to canclling. */
