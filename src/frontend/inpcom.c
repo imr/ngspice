@@ -5490,7 +5490,7 @@ static char* eval_tc(char* line, char *tline) {
             if (error == 0) {
                 tc1_str = tprintf("tc1=%15.8e", tc1);
             }
-            else if (error == 1 && *tc1_ptr == '{' && tc1_ptr + 1 && *(tc1_ptr + 1) != '}') {
+            else if (error == 1 && *tc1_ptr == '{' && *(tc1_ptr + 1) != '}') {
                 char* bra = gettok_char(&tc1_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     tc1_str = tprintf("tc1=%s", bra);
@@ -5522,7 +5522,7 @@ static char* eval_tc(char* line, char *tline) {
             if (error == 0) {
                 tc2_str = tprintf("tc2=%15.8e", tc2);
             }
-            else if (error == 1 && *tc2_ptr == '{' && tc2_ptr + 1  && *(tc2_ptr + 1) != '}') {
+            else if (error == 1 && *tc2_ptr == '{' && *(tc2_ptr + 1) != '}') {
                 char* bra = gettok_char(&tc2_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     tc2_str = tprintf("tc2=%s", bra);
