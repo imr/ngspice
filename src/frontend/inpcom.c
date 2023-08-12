@@ -5556,18 +5556,18 @@ static char* eval_m(char* line, char* tline) {
     double m;
     char* str_ptr, * m_ptr, * m_str = NULL;
     char* cut_line = line;
-    str_ptr = strstr(cut_line, "m=");
+    str_ptr = strstr(cut_line, " m=");
     if (str_ptr) {
         /* We need to have 'm=something */
-        if (str_ptr[2]) {
-            m_ptr = str_ptr + 2;
+        if (str_ptr[3]) {
+            m_ptr = str_ptr + 3;
             int error = 0;
             m = INPevaluate(&m_ptr, &error, 1);
             /*We have a value and create the m string */
             if (error == 0) {
                 m_str = tprintf("m=%15.8e", m);
             }
-            else if (error == 1 && *m_ptr == '{' && m_ptr + 1 && *(m_ptr + 1) != '}') {
+            else if (error == 1 && *m_ptr == '{' && *(m_ptr + 1) != '\0' && *(m_ptr + 1) != '}') {
                 char* bra = gettok_char(&m_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     m_str = tprintf("m=%s", bra);
@@ -5598,18 +5598,18 @@ static char* eval_mvalue(char* line, char* tline) {
     double m;
     char* str_ptr, * m_ptr, * m_str = NULL;
     char* cut_line = line;
-    str_ptr = strstr(cut_line, "m=");
+    str_ptr = strstr(cut_line, " m=");
     if (str_ptr) {
         /* We need to have 'm=something */
-        if (str_ptr[2]) {
-            m_ptr = str_ptr + 2;
+        if (str_ptr[3]) {
+            m_ptr = str_ptr + 3;
             int error = 0;
             m = INPevaluate(&m_ptr, &error, 1);
             /*We have a value and create the m string */
             if (error == 0) {
                 m_str = tprintf("%15.8e", m);
             }
-            else if (error == 1 && *m_ptr == '{' && m_ptr + 1 && *(m_ptr + 1) != '}') {
+            else if (error == 1 && *m_ptr == '{' && *(m_ptr + 1) != '\0' && *(m_ptr + 1) != '}') {
                 char* bra = gettok_char(&m_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     m_str = tprintf("%s", bra);
