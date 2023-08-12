@@ -1318,10 +1318,10 @@ static struct dvec *vec_scale(struct dvec *v)
  *      vec_scale for its scale vector (for x range of scale).
  * lims: Address of an array of 2 double values to receive the limits.
  **/
-static void find_axis_limits(double lim[2], bool oneval, bool f_real,
+static void find_axis_limits(double *lim, bool oneval, bool f_real,
         struct dvec *vecs,
         struct dvec *(*p_get_axis_dvec)(struct dvec *dvec),
-        double lims[2])
+        double *lims)
 {
     if (lim != (double *) NULL) {
         lims[0] = lim[0];
