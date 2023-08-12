@@ -15,7 +15,7 @@ struct pwl {
 
 /* Called at end to free memory. */
 
-static void callback(ARGS, Mif_Callback_Reason_t reason)
+static void cm_d_osc_callback(ARGS, Mif_Callback_Reason_t reason)
 {
     struct panel_instance *instance;
 
@@ -69,6 +69,8 @@ void cm_d_osc(ARGS)
     struct state *state;
     double        ctl, delta, when;
     int           csize, i;
+
+    CALLBACK = cm_d_osc_callback;
 
     csize = PARAM_SIZE(cntl_array);
     if (INIT) {
