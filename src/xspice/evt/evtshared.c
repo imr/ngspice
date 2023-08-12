@@ -73,12 +73,13 @@ static void
 delete_ret(void)
 {
     int i;
-    if (return_all)
+    if (return_all) {
         for (i = 0; i < return_all->num_steps; i++) {
             tfree(return_all->evt_dect[i]->node_value);
             tfree(return_all->evt_dect[i]);
         }
         tfree(return_all);
+    }
 }
 
 pevt_shared_data
