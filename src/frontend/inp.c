@@ -2411,7 +2411,6 @@ limit(double nominal_val, double abs_variation)
  * of agauss()
  * agauss  in .param lines has been treated already
  */
-
 static void
 eval_agauss(struct card *deck, char *fcn)
 {
@@ -2448,14 +2447,30 @@ eval_agauss(struct card *deck, char *fcn)
             begstr = copy_substring(curr_line, ap);
             lparen = strchr(ap, '(');
             tmp1str = midstr = gettok_char(&lparen, ')', FALSE, TRUE);
-            if (lparen + 1)
-                contstr = copy(lparen + 1);
+            if (!tmp1str) {
+                fprintf(cp_err, "ERROR: Incomplete function %s in line %s\n", fcn, curr_line);
+                tfree(begstr);
+                return;
+            }
+            contstr = copy(lparen + 1);
             tmp1str++; /* skip '(' */
             /* find the parameters, ignore ( ) , */
             delstr = tmp2str = gettok_np(&tmp1str);
+            if (!tmp2str) {
+                fprintf(cp_err, "ERROR: Incomplete function %s in line %s\n", fcn, curr_line);
+                tfree(begstr);
+                tfree(contstr);
+                return;
+            }
             x = INPevaluate(&tmp2str, &nerror, 1);
             tfree(delstr);
             delstr = tmp2str = gettok_np(&tmp1str);
+            if (!tmp2str) {
+                fprintf(cp_err, "ERROR: Incomplete function %s in line %s\n", fcn, curr_line);
+                tfree(begstr);
+                tfree(contstr);
+                return;
+            }
             y = INPevaluate(&tmp2str, &nerror, 1);
             tfree(delstr);
             if (cieq(fcn, "agauss")) {
