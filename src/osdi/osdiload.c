@@ -120,7 +120,6 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   GENinstance *gen_inst;
 
   bool is_init_smsig = ckt->CKTmode & MODEINITSMSIG;
-  bool is_sweep = ckt->CKTmode & MODEDCTRANCURVE;
   bool is_dc = ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE);
   bool is_ac = ckt->CKTmode & (MODEAC | MODEINITSMSIG);
   bool is_tran = ckt->CKTmode & (MODETRAN);
