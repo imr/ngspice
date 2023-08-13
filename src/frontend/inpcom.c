@@ -2177,8 +2177,8 @@ static int inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 static void replace_freq(struct card *c, int *line_number)
 {
 #ifdef XSPICE
-    char *line, *e, *e_e, *n1, *n1_e, *n2, *n2_e, *freq;
-    char *expr, *expr_e, *in, *in_e, *keywd, *cp, *list, *list_e;
+    char *line, *e, *e_e, *n1, *n1_e, *n2, *n2_e=NULL, *freq;
+    char *expr, *expr_e, *in, *in_e=NULL, *keywd, *cp, *list, *list_e;
     int   db, ri, rad, got_key, diff;
     char  pt, key[4];
 
