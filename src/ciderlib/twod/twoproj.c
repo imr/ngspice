@@ -153,7 +153,7 @@ void NBJT2project(TWOdevice *pDevice, double delVce, double delVbe)
 	      }
 	    }
 	    if ( pElem->elemType == SEMICON
-		&& (!OneCarrier | (OneCarrier == P_TYPE)) ) {
+		&& (!OneCarrier || (OneCarrier == P_TYPE)) ) {
 	      delP = incVce[ pNode->pEqn ] * delVce;
 	      newP = pNode->pConc + delP;
 	      if ( newP <= 0.0 ) {
