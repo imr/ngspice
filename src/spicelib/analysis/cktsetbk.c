@@ -27,6 +27,13 @@ CKTsetBreak(CKTcircuit *ckt, double time)
     printf("[t:%e] \t want breakpoint for t = %e\n", ckt->CKTtime, time);
 #endif
 
+    if (AlmostEqualUlps(time, ckt->CKTtime, 3)) {
+#ifdef TRACE_BREAKPOINT // #if (1)
+        fprintf(stderr, "Warning: Setting a new breakpoint at %e is ignored,\n    as current time is %e\n", time, ckt->CKTtime);
+#endif
+        return (OK);
+    }
+
     if(ckt->CKTtime > time) {
         SPfrontEnd->IFerrorf (ERR_PANIC, "breakpoint in the past - HELP!");
         return(E_INTERN);
