@@ -2177,8 +2177,8 @@ static int inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 static void replace_freq(struct card *c, int *line_number)
 {
 #ifdef XSPICE
-    char *line, *e, *e_e, *n1, *n1_e, *n2, *n2_e, *freq;
-    char *expr, *expr_e, *in, *in_e, *keywd, *cp, *list, *list_e;
+    char *line, *e, *e_e, *n1, *n1_e, *n2, *n2_e=NULL, *freq;
+    char *expr, *expr_e, *in, *in_e=NULL, *keywd, *cp, *list, *list_e;
     int   db, ri, rad, got_key, diff;
     char  pt, key[4];
 
@@ -5490,7 +5490,7 @@ static char* eval_tc(char* line, char *tline) {
             if (error == 0) {
                 tc1_str = tprintf("tc1=%15.8e", tc1);
             }
-            else if (error == 1 && *tc1_ptr == '{' && tc1_ptr + 1 && *(tc1_ptr + 1) != '}') {
+            else if (error == 1 && *tc1_ptr == '{' && *(tc1_ptr + 1) != '}') {
                 char* bra = gettok_char(&tc1_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     tc1_str = tprintf("tc1=%s", bra);
@@ -5522,7 +5522,7 @@ static char* eval_tc(char* line, char *tline) {
             if (error == 0) {
                 tc2_str = tprintf("tc2=%15.8e", tc2);
             }
-            else if (error == 1 && *tc2_ptr == '{' && tc2_ptr + 1  && *(tc2_ptr + 1) != '}') {
+            else if (error == 1 && *tc2_ptr == '{' && *(tc2_ptr + 1) != '}') {
                 char* bra = gettok_char(&tc2_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     tc2_str = tprintf("tc2=%s", bra);
@@ -5556,18 +5556,18 @@ static char* eval_m(char* line, char* tline) {
     double m;
     char* str_ptr, * m_ptr, * m_str = NULL;
     char* cut_line = line;
-    str_ptr = strstr(cut_line, "m=");
+    str_ptr = strstr(cut_line, " m=");
     if (str_ptr) {
         /* We need to have 'm=something */
-        if (str_ptr[2]) {
-            m_ptr = str_ptr + 2;
+        if (str_ptr[3]) {
+            m_ptr = str_ptr + 3;
             int error = 0;
             m = INPevaluate(&m_ptr, &error, 1);
             /*We have a value and create the m string */
             if (error == 0) {
                 m_str = tprintf("m=%15.8e", m);
             }
-            else if (error == 1 && *m_ptr == '{' && m_ptr + 1 && *(m_ptr + 1) != '}') {
+            else if (error == 1 && *m_ptr == '{' && *(m_ptr + 1) != '\0' && *(m_ptr + 1) != '}') {
                 char* bra = gettok_char(&m_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     m_str = tprintf("m=%s", bra);
@@ -5598,18 +5598,18 @@ static char* eval_mvalue(char* line, char* tline) {
     double m;
     char* str_ptr, * m_ptr, * m_str = NULL;
     char* cut_line = line;
-    str_ptr = strstr(cut_line, "m=");
+    str_ptr = strstr(cut_line, " m=");
     if (str_ptr) {
         /* We need to have 'm=something */
-        if (str_ptr[2]) {
-            m_ptr = str_ptr + 2;
+        if (str_ptr[3]) {
+            m_ptr = str_ptr + 3;
             int error = 0;
             m = INPevaluate(&m_ptr, &error, 1);
             /*We have a value and create the m string */
             if (error == 0) {
                 m_str = tprintf("%15.8e", m);
             }
-            else if (error == 1 && *m_ptr == '{' && m_ptr + 1 && *(m_ptr + 1) != '}') {
+            else if (error == 1 && *m_ptr == '{' && *(m_ptr + 1) != '\0' && *(m_ptr + 1) != '}') {
                 char* bra = gettok_char(&m_ptr, '}', TRUE, TRUE);
                 if (bra) {
                     m_str = tprintf("%s", bra);
@@ -7963,53 +7963,55 @@ static int inp_vdmos_model(struct card *deck)
 
     for (card = deck; card; card = card->nextcard) {
 
-        char* curr_line, * cut_line, * token, * new_line;
+        char* curr_line, * cut_line = NULL, * token, * new_line;
         wordlist* wl = NULL, * wlb;
 
-        curr_line = cut_line = card->line;
+        curr_line = card->line;
 
-        if (ciprefix(".model", curr_line) && strstr(curr_line, "vdmos")) {
-            cut_line = strstr(curr_line, "vdmos");
-            wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
-            wlb = wl;
-            if (strstr(cut_line, "pchan")) {
-                wl_append_word(NULL, &wl, copy("vdmosp ("));
-            }
-            else {
-                wl_append_word(NULL, &wl, copy("vdmosn ("));
-            }
-            cut_line = cut_line + 5;
+        if (ciprefix(".model", curr_line)) {
+            cut_line = search_plain_identifier(curr_line, "vdmos");
+            if (cut_line) {
+                wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
+                wlb = wl;
+                if (strstr(cut_line, "pchan")) {
+                    wl_append_word(NULL, &wl, copy("vdmosp ("));
+                }
+                else {
+                    wl_append_word(NULL, &wl, copy("vdmosn ("));
+                }
+                cut_line = cut_line + 5;
 
-            cut_line = skip_ws(cut_line);
-            if (*cut_line == '(')
-                cut_line = cut_line + 1;
-            new_line = NULL;
-            while (cut_line && *cut_line) {
-                token = gettok_model(&cut_line);
-                if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
-                    !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
-                    !ciprefix("mfg=", token) && !ciprefix("nchan", token))
-                    wl_append_word(NULL, &wl, token);
-                else
-                    tfree(token);
-                if (*cut_line == ')') {
-                    wl_append_word(NULL, &wl, copy(")"));
+                cut_line = skip_ws(cut_line);
+                if (*cut_line == '(')
+                    cut_line = cut_line + 1;
+                new_line = NULL;
+                while (cut_line && *cut_line) {
+                    token = gettok_model(&cut_line);
+                    if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
+                        !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
+                        !ciprefix("mfg=", token) && !ciprefix("nchan", token))
+                        wl_append_word(NULL, &wl, token);
+                    else
+                        tfree(token);
+                    if (*cut_line == ')') {
+                        wl_append_word(NULL, &wl, copy(")"));
+                        break;
+                    }
+                }
+                new_line = wl_flatten(wlb);
+                tfree(card->line);
+                card->line = new_line;
+                wl_free(wlb);
+
+                /* add model card pointer to list */
+                vmodels[j] = card;
+                j++;
+                if (j == MODNUMBERS) {
+                    vmodels[j - 1] = NULL;
                     break;
                 }
+                vmodels[j] = NULL;
             }
-            new_line = wl_flatten(wlb);
-            tfree(card->line);
-            card->line = new_line;
-            wl_free(wlb);
-
-            /* add model card pointer to list */
-            vmodels[j] = card;
-            j++;
-            if (j == MODNUMBERS) {
-                vmodels[j - 1] = NULL;
-                break;
-            }
-            vmodels[j] = NULL;
         }
     }
 

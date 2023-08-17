@@ -281,6 +281,8 @@
     <None Include="..\..\src\xspice\icm\analog\multi_input_pwl\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\oneshot\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\oneshot\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\pwlts\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\pwlts\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\pwl\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\pwl\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\sine\cfunc.mod" />
