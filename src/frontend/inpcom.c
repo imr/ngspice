@@ -7963,53 +7963,55 @@ static int inp_vdmos_model(struct card *deck)
 
     for (card = deck; card; card = card->nextcard) {
 
-        char* curr_line, * cut_line, * token, * new_line;
+        char* curr_line, * cut_line = NULL, * token, * new_line;
         wordlist* wl = NULL, * wlb;
 
-        curr_line = cut_line = card->line;
+        curr_line = card->line;
 
-        if (ciprefix(".model", curr_line) && strstr(curr_line, "vdmos")) {
-            cut_line = strstr(curr_line, "vdmos");
-            wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
-            wlb = wl;
-            if (strstr(cut_line, "pchan")) {
-                wl_append_word(NULL, &wl, copy("vdmosp ("));
-            }
-            else {
-                wl_append_word(NULL, &wl, copy("vdmosn ("));
-            }
-            cut_line = cut_line + 5;
+        if (ciprefix(".model", curr_line)) {
+            cut_line = search_plain_identifier(curr_line, "vdmos");
+            if (cut_line) {
+                wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
+                wlb = wl;
+                if (strstr(cut_line, "pchan")) {
+                    wl_append_word(NULL, &wl, copy("vdmosp ("));
+                }
+                else {
+                    wl_append_word(NULL, &wl, copy("vdmosn ("));
+                }
+                cut_line = cut_line + 5;
 
-            cut_line = skip_ws(cut_line);
-            if (*cut_line == '(')
-                cut_line = cut_line + 1;
-            new_line = NULL;
-            while (cut_line && *cut_line) {
-                token = gettok_model(&cut_line);
-                if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
-                    !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
-                    !ciprefix("mfg=", token) && !ciprefix("nchan", token))
-                    wl_append_word(NULL, &wl, token);
-                else
-                    tfree(token);
-                if (*cut_line == ')') {
-                    wl_append_word(NULL, &wl, copy(")"));
+                cut_line = skip_ws(cut_line);
+                if (*cut_line == '(')
+                    cut_line = cut_line + 1;
+                new_line = NULL;
+                while (cut_line && *cut_line) {
+                    token = gettok_model(&cut_line);
+                    if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
+                        !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
+                        !ciprefix("mfg=", token) && !ciprefix("nchan", token))
+                        wl_append_word(NULL, &wl, token);
+                    else
+                        tfree(token);
+                    if (*cut_line == ')') {
+                        wl_append_word(NULL, &wl, copy(")"));
+                        break;
+                    }
+                }
+                new_line = wl_flatten(wlb);
+                tfree(card->line);
+                card->line = new_line;
+                wl_free(wlb);
+
+                /* add model card pointer to list */
+                vmodels[j] = card;
+                j++;
+                if (j == MODNUMBERS) {
+                    vmodels[j - 1] = NULL;
                     break;
                 }
+                vmodels[j] = NULL;
             }
-            new_line = wl_flatten(wlb);
-            tfree(card->line);
-            card->line = new_line;
-            wl_free(wlb);
-
-            /* add model card pointer to list */
-            vmodels[j] = card;
-            j++;
-            if (j == MODNUMBERS) {
-                vmodels[j - 1] = NULL;
-                break;
-            }
-            vmodels[j] = NULL;
         }
     }
 
