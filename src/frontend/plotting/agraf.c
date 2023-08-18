@@ -230,6 +230,8 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
             return;
         }
         for (v = vecs; v; v = v->v_link2) {
+            if (v->v_flags & VF_EVENT_NODE)
+                continue;
             yy1 = (isreal(v) ? v->v_realdata[lower] :
                    realpart(v->v_compdata[lower]));
             y2 = (isreal(v) ? v->v_realdata[upper] :
