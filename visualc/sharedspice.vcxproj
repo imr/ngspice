@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -106,10 +106,6 @@
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message />
-      <Command />
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;..\src\spicelib\parser;src\include;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -148,10 +144,6 @@
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message />
-      <Command />
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>Full</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -190,12 +182,6 @@
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\osdi;..\src\frontend;..\src\spicelib\devices;tmp-bison;..\src\spicelib\parser;src\include;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -218,7 +204,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -231,6 +217,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <AdditionalLibraryDirectories>KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -238,12 +225,6 @@
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>Full</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -265,7 +246,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -278,6 +259,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <AdditionalLibraryDirectories>KLU\x64\Release</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
@@ -357,7 +339,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -370,6 +352,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
+      <AdditionalLibraryDirectories>KLU\x64\Release</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -622,6 +605,11 @@
     <ClInclude Include="..\src\maths\dense\denseinlines.h" />
     <ClInclude Include="..\src\maths\fft\fftlib.h" />
     <ClInclude Include="..\src\maths\fft\matlib.h" />
+    <ClInclude Include="..\src\maths\KLU\amd_internal.h" />
+    <ClInclude Include="..\src\maths\KLU\btf_internal.h" />
+    <ClInclude Include="..\src\maths\KLU\klu_internal.h" />
+    <ClInclude Include="..\src\maths\KLU\klu_proto.h" />
+    <ClInclude Include="..\src\maths\KLU\klu_version.h" />
     <ClInclude Include="..\src\maths\misc\accuracy.h" />
     <ClInclude Include="..\src\maths\misc\bernoull.h" />
     <ClInclude Include="..\src\maths\misc\norm.h" />
@@ -906,6 +894,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\sharedspice.map" />
+    <ClInclude Include="..\src\include\cppduals\duals\dual">
+      <FileType>Document</FileType>
+    </ClInclude>
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
@@ -1131,6 +1122,44 @@
     <ClCompile Include="..\src\maths\fft\fftext.c" />
     <ClCompile Include="..\src\maths\fft\fftlib.c" />
     <ClCompile Include="..\src\maths\fft\matlib.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_1.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_2.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_aat.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_control.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_defaults.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_dump.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_global.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_info.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_order.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_postorder.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_post_tree.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_preprocess.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_valid.c" />
+    <ClCompile Include="..\src\maths\KLU\btf_maxtrans.c" />
+    <ClCompile Include="..\src\maths\KLU\btf_order.c" />
+    <ClCompile Include="..\src\maths\KLU\btf_strongcomp.c" />
+    <ClCompile Include="..\src\maths\KLU\colamd.c" />
+    <ClCompile Include="..\src\maths\KLU\colamd_global.c" />
+    <ClCompile Include="..\src\maths\KLU\klu.c" />
+    <ClCompile Include="..\src\maths\KLU\klusmp.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_analyze.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_analyze_given.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_defaults.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_diagnostics.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_dump.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_extract.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_factor.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_free_numeric.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_free_symbolic.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_kernel.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_memory.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_multiply.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_refactor.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_scale.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_solve.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_sort.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_tsolve.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_utils.c" />
     <ClCompile Include="..\src\maths\misc\accuracy.c" />
     <ClCompile Include="..\src\maths\misc\bernoull.c" />
     <ClCompile Include="..\src\maths\misc\equality.c" />
@@ -1160,7 +1189,6 @@
     <ClCompile Include="..\src\maths\sparse\spextra.c" />
     <ClCompile Include="..\src\maths\sparse\spfactor.c" />
     <ClCompile Include="..\src\maths\sparse\spoutput.c" />
-    <ClCompile Include="..\src\maths\sparse\spsmp.c" />
     <ClCompile Include="..\src\maths\sparse\spsolve.c" />
     <ClCompile Include="..\src\maths\sparse\sputils.c" />
     <ClCompile Include="..\src\misc\alloc.c" />
@@ -1293,6 +1321,7 @@
     <ClCompile Include="..\src\spicelib\devices\asrc\asrc.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcacld.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcask.c" />
+    <ClCompile Include="..\src\spicelib\devices\asrc\asrcbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcconv.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcdel.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcdest.c" />
@@ -1306,6 +1335,7 @@
     <ClCompile Include="..\src\spicelib\devices\bjt\bjt.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjtacld.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjtask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bjt\bjtbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjtconv.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjtdel.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjtdisto.c" />
@@ -1330,6 +1360,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim1\b1bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1disto.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1dset.c" />
@@ -1349,6 +1380,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim2\b2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2eval.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2getic.c" />
@@ -1366,6 +1398,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soidd.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soiddacld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soiddask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soiddbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soiddcheck.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soiddcvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soiddgetic.c" />
@@ -1382,6 +1415,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifd.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifdacld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifdask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifdbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifdcheck.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifdcvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifdgetic.c" />
@@ -1398,6 +1432,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipd.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipdacld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipdask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipdbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipdcheck.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipdcvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipdgetic.c" />
@@ -1414,6 +1449,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0getic.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0ld.c" />
@@ -1429,6 +1465,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1getic.c" />
@@ -1445,6 +1482,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32getic.c" />
@@ -1463,6 +1501,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3\b3bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3getic.c" />
@@ -1481,6 +1520,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5geo.c" />
@@ -1500,6 +1540,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6geo.c" />
@@ -1519,6 +1560,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7geo.c" />
@@ -1538,6 +1580,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\b4bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4geo.c" />
@@ -1557,6 +1600,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soi.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soiacld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soiask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soibindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soicheck.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soicvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soigetic.c" />
@@ -1575,6 +1619,7 @@
     <ClCompile Include="..\src\spicelib\devices\cap\cap.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capacld.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capask.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\capbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capload.c" />
@@ -1593,6 +1638,7 @@
     <ClCompile Include="..\src\spicelib\devices\cap\captrunc.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccs.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsask.c" />
+    <ClCompile Include="..\src\spicelib\devices\cccs\cccsbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsload.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccspar.c" />
@@ -1604,6 +1650,7 @@
     <ClCompile Include="..\src\spicelib\devices\cccs\cccssset.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvs.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsask.c" />
+    <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsfbr.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsload.c" />
@@ -1625,6 +1672,7 @@
     <ClCompile Include="..\src\spicelib\devices\cpl\cplask.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cpldelete.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplhash.c" />
+    <ClCompile Include="..\src\spicelib\devices\cpl\cplbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplload.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplmask.c" />
@@ -1635,6 +1683,7 @@
     <ClCompile Include="..\src\spicelib\devices\csw\csw.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswacld.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswask.c" />
+    <ClCompile Include="..\src\spicelib\devices\csw\cswbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswinit.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswload.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswmask.c" />
@@ -1649,6 +1698,7 @@
     <ClCompile Include="..\src\spicelib\devices\dio\dio.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioacld.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioask.c" />
+    <ClCompile Include="..\src\spicelib\devices\dio\diobindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioconv.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diodisto.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diodset.c" />
@@ -1672,6 +1722,7 @@
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfet.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetacl.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetask.c" />
+    <ClCompile Include="..\src\spicelib\devices\hfet1\hfetbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetinit.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetload.c" />
@@ -1685,6 +1736,7 @@
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2acl.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2getic.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2init.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2load.c" />
@@ -1698,6 +1750,7 @@
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2conv.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2getic.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2init.c" />
@@ -1714,6 +1767,7 @@
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2eval.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2getic.c" />
@@ -1732,6 +1786,7 @@
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhv.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvacld.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvask.c" />
+    <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvcvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhveval.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvgetic.c" />
@@ -1749,6 +1804,7 @@
     <ClCompile Include="..\src\spicelib\devices\hisimhv2\hsmhv2.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv2\hsmhv2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv2\hsmhv2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\hisimhv2\hsmhv2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv2\hsmhv2cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv2\hsmhv2eval.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv2\hsmhv2eval_dio.c" />
@@ -1768,6 +1824,7 @@
     <ClCompile Include="..\src\spicelib\devices\ind\ind.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indacld.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indask.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\indbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indinit.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indload.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indmask.c" />
@@ -1784,6 +1841,7 @@
     <ClCompile Include="..\src\spicelib\devices\ind\indtrunc.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutacld.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutask.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\mutbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutparam.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutpzld.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutsetup.c" />
@@ -1802,6 +1860,7 @@
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2ic.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2init.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2load.c" />
@@ -1816,6 +1875,7 @@
     <ClCompile Include="..\src\spicelib\devices\jfet\jfet.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetacld.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetask.c" />
+    <ClCompile Include="..\src\spicelib\devices\jfet\jfetbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetdist.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetdset.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetic.c" />
@@ -1834,6 +1894,7 @@
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraacct.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraacld.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraask.c" />
+    <ClCompile Include="..\src\spicelib\devices\ltra\ltrabindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltrainit.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraload.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltramask.c" />
@@ -1846,6 +1907,7 @@
     <ClCompile Include="..\src\spicelib\devices\mesa\mesa.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesaacl.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesaask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mesa\mesabindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesagetic.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesainit.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesaload.c" />
@@ -1859,6 +1921,7 @@
     <ClCompile Include="..\src\spicelib\devices\mes\mes.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesacl.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mes\mesbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesdisto.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesdset.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesgetic.c" />
@@ -1875,6 +1938,7 @@
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1acld.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos1\mos1bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1conv.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1del.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1dist.c" />
@@ -1898,6 +1962,7 @@
     <ClCompile Include="..\src\spicelib\devices\mos2\mos2.c" />
     <ClCompile Include="..\src\spicelib\devices\mos2\mos2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\mos2\mos2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos2\mos2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mos2\mos2conv.c" />
     <ClCompile Include="..\src\spicelib\devices\mos2\mos2del.c" />
     <ClCompile Include="..\src\spicelib\devices\mos2\mos2dist.c" />
@@ -1921,6 +1986,7 @@
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3.c" />
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3acld.c" />
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos3\mos3bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3conv.c" />
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3del.c" />
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3dist.c" />
@@ -1943,6 +2009,7 @@
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3trun.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos6\mos6bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6conv.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6del.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6ic.c" />
@@ -1957,6 +2024,7 @@
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9acld.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos9\mos9bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9conv.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9del.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9dist.c" />
@@ -1977,6 +2045,7 @@
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9supd.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9temp.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9trun.c" />
+    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbjt2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2ask.c" />
@@ -1993,6 +2062,7 @@
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjt.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtacld.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtask.c" />
+    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtdel.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtdump.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtinit.c" />
@@ -2015,10 +2085,12 @@
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2set.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2temp.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2trun.c" />
+    <ClCompile Include="..\src\spicelib\devices\numd2\numd2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\numd2init.c" />
     <ClCompile Include="..\src\spicelib\devices\numd\numd.c" />
     <ClCompile Include="..\src\spicelib\devices\numd\numdacld.c" />
     <ClCompile Include="..\src\spicelib\devices\numd\numdask.c" />
+    <ClCompile Include="..\src\spicelib\devices\numd\numdbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\numd\numddel.c" />
     <ClCompile Include="..\src\spicelib\devices\numd\numddump.c" />
     <ClCompile Include="..\src\spicelib\devices\numd\numdinit.c" />
@@ -2041,9 +2113,11 @@
     <ClCompile Include="..\src\spicelib\devices\numos\nummset.c" />
     <ClCompile Include="..\src\spicelib\devices\numos\nummtemp.c" />
     <ClCompile Include="..\src\spicelib\devices\numos\nummtrun.c" />
+    <ClCompile Include="..\src\spicelib\devices\numos\numosbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\numos\numosinit.c" />
     <ClCompile Include="..\src\spicelib\devices\res\res.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resask.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\resbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resinit.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resload.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resmask.c" />
@@ -2061,6 +2135,7 @@
     <ClCompile Include="..\src\spicelib\devices\soi3\soi3.c" />
     <ClCompile Include="..\src\spicelib\devices\soi3\soi3acld.c" />
     <ClCompile Include="..\src\spicelib\devices\soi3\soi3ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\soi3\soi3bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\soi3\soi3cap.c" />
     <ClCompile Include="..\src\spicelib\devices\soi3\soi3conv.c" />
     <ClCompile Include="..\src\spicelib\devices\soi3\soi3ic.c" />
@@ -2076,6 +2151,7 @@
     <ClCompile Include="..\src\spicelib\devices\sw\sw.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swacload.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swask.c" />
+    <ClCompile Include="..\src\spicelib\devices\sw\swbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swinit.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swload.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swmask.c" />
@@ -2089,6 +2165,7 @@
     <ClCompile Include="..\src\spicelib\devices\tra\traacct.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\traacld.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\traask.c" />
+    <ClCompile Include="..\src\spicelib\devices\tra\trabindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\trainit.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\traload.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\traparam.c" />
@@ -2098,6 +2175,7 @@
     <ClCompile Include="..\src\spicelib\devices\txl\txl.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlacct.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlask.c" />
+    <ClCompile Include="..\src\spicelib\devices\txl\txlbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlfbr.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlinit.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlload.c" />
@@ -2115,6 +2193,7 @@
     <ClCompile Include="..\src\spicelib\devices\vbic\vbic.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicacld.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicask.c" />
+    <ClCompile Include="..\src\spicelib\devices\vbic\vbicbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicconv.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicinit.c" />
@@ -2130,6 +2209,7 @@
     <ClCompile Include="..\src\spicelib\devices\vbic\vbictrunc.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccs.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccsask.c" />
+    <ClCompile Include="..\src\spicelib\devices\vccs\vccsbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccsload.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccspar.c" />
@@ -2141,6 +2221,7 @@
     <ClCompile Include="..\src\spicelib\devices\vccs\vccssset.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvs.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsask.c" />
+    <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsfbr.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsload.c" />
@@ -2154,6 +2235,7 @@
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmos.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosacld.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosask.c" />
+    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosconv.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosdist.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosdset.c" />
@@ -2173,6 +2255,7 @@
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcacct.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcacld.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcask.c" />
+    <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcdel.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcfbr.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcinit.c" />
@@ -2274,6 +2357,7 @@
     <ClCompile Include="..\src\xspice\ipc\ipctiein.c" />
     <ClCompile Include="..\src\xspice\mif\mif.c" />
     <ClCompile Include="..\src\xspice\mif\mifask.c" />
+    <ClCompile Include="..\src\xspice\mif\mifbindCSC.c" />
     <ClCompile Include="..\src\xspice\mif\mifconvt.c" />
     <ClCompile Include="..\src\xspice\mif\mifdelete.c" />
     <ClCompile Include="..\src\xspice\mif\mifdestr.c" />
