@@ -150,7 +150,7 @@ CKTsetup(CKTcircuit *ckt)
 #ifdef KLU
     if (ckt->CKTmatrix->CKTkluMODE)
     {
-        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+        fprintf (stdout, "Using KLU as Direct Linear Solver\n") ;
 
         /* Convert the COO Storage to CSC for KLU and Fill the Binding Table */
         SMPconvertCOOtoCSC (matrix) ;
@@ -181,7 +181,7 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
     } else {
-        fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
+        fprintf (stdout, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
     }
 #endif
 
