@@ -655,7 +655,7 @@ void cp_remvar(char *varname)
 
     case US_SIMVAR:
         /* variables processed by if_option(ft_curckt->ci_ckt, ...) */
-        fprintf(stderr, "it's a US_SIMVAR!\n");
+        fprintf(stderr, "Warning: Unsetting '%s', a variable set by an 'option' command!\n", varname);
         if (ft_curckt) {
             for (p = &ft_curckt->ci_vars; *p; p = &(*p)->va_next)
                 if (eq(varname, (*p)->va_name))
@@ -663,7 +663,9 @@ void cp_remvar(char *varname)
             if (*p) {
                 struct variable *u = *p;
                 *p = u->va_next;
-                tfree(u);
+                u->va_next = NULL;
+                free_struct_variable(u);
+                return;
             }
         }
         break;
