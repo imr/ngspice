@@ -1,8 +1,10 @@
 OpAmp Test
+* with KLU coimpiled in: dc sim is wrong with both options
+* model tends to oscillate in this circuit
 
-vddp vp 0 15
+vddp vp 0 15 pulse 0 15 0 100u 100u 1 1
 vddn vn 0 0
-voff off 0 -1
+voff off 0 -1 pulse 0 -1 0 100u 100u 1 1
 
 *vin in 0 0
 
@@ -19,20 +21,31 @@ voff off 0 -1
 *                |  |  |  |  |  |  |  output
 *                |  |  |  |  |  |  |  |
 *SUBCKT AD22057N 1  2  99 50 30 31 40 49
-Xopmap in 0 vp vn a1 a1 off outo AD22057N
+Xopmap in 0 vp vn a1 a2 off outo AD22057N
 
-Rout outo a1 200k
-Ca1 a1 0 500p
+Ra1a2 a1 a2 1
+Rout outo a2 200k
+Ca1 a2 0 500p
  
-.dc vin 0.1 0.2 0.01
+.dc vin 0 0.2 0.01
 
-vin in 0 DC 0 PULSE(0.1 0.2 200uS 200uS 200uS 5m 10m)
+vin in 0 DC 0.1 PULSE(0.1 0.2 2m 200uS 200uS 5m 10m)
 .tran 10u 10m
 
+*.option rshunt=1e10
+
 .control
+option klu noinit
 run
-plot dc1.v(outo) vs dc1.v(in)
-plot v(in)  v(a1) v(outo)
+set xbrushwidth=2
+plot dc1.v(outo) vs dc1.v(in) ylabel KLU
+plot v(in)  v(a1) v(outo) ylabel KLU
+reset
+option sparse
+run
+set xbrushwidth=2
+plot dc1.v(outo) vs dc1.v(in) ylabel 'Sparse 1.3'
+plot v(in)  v(a1) v(outo) ylabel 'Sparse 1.3'
 .endc
 
 
