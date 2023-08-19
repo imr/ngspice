@@ -99,6 +99,8 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
         fprintf(cp_err, "Error: Transient op failed, timestep too small\n\n");
     else if (converged != 0 && converged != prevconverged)
         fprintf(cp_err, "Error: Transient op failed, cause unrecorded\n\n");
+    else if (converged == 0)
+            return converged;
 
 #ifdef XSPICE
     /* gtri - wbk - add convergence problem reporting flags */
