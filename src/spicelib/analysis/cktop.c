@@ -15,6 +15,7 @@ Modified: 2005 Paolo Nenzi - Restructured
 #include "ngspice/enh.h"
 #endif
 
+extern bool ft_ngdebug;
 
 static int dynamic_gmin(CKTcircuit *, long int, long int, int);
 static int spice3_gmin(CKTcircuit *, long int, long int, int);
@@ -104,6 +105,9 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
     ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
 #endif
 
+    fprintf(cp_err, "\nError: The operating point could not be simulated successfully.\n");
+    fprintf(cp_err, "    Any of the following steps may fail.!\n\n");
+
     return converged;
 }
 
@@ -183,7 +187,8 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
     gtarget = MAX (ckt->CKTgmin, ckt->CKTgshunt);
 
     for (;;) {
-        fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
+        if (ft_ngdebug)
+            fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
 
         ckt->CKTnoncon = 1;
         iters = ckt->CKTstat->STATnumIter;
@@ -192,7 +197,8 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
 
         if (converged == 0) {
             ckt->CKTmode = continuemode;
-            SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
+            if (ft_ngdebug)
+                SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
 
             if (ckt->CKTdiagGmin <= gtarget)
                 break;          /* successfull */
@@ -222,10 +228,12 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
             }
         } else {
             if (factor < 1.00005) {
-                SPfrontEnd->IFerrorf (ERR_WARNING, "Last gmin step failed");
+                if (ft_ngdebug)
+                    SPfrontEnd->IFerrorf (ERR_WARNING, "Last gmin step failed");
                 break;          /* failed */
             }
-            SPfrontEnd->IFerrorf (ERR_WARNING, "Further gmin increment");
+            if (ft_ngdebug)
+                SPfrontEnd->IFerrorf (ERR_WARNING, "Further gmin increment");
             factor = sqrt (sqrt (factor));
             ckt->CKTdiagGmin = OldGmin / factor;
 
@@ -290,21 +298,23 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
         ckt->CKTdiagGmin *= ckt->CKTgminFactor;
 
     for (i = 0; i <= ckt->CKTnumGminSteps; i++) {
-        fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
+        if (ft_ngdebug)
+            fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
 
         ckt->CKTnoncon = 1;
         converged = NIiter (ckt, ckt->CKTdcTrcvMaxIter);
 
         if (converged != 0) {
             ckt->CKTdiagGmin = ckt->CKTgshunt;
-            SPfrontEnd->IFerrorf (ERR_WARNING, "gmin step failed");
+            if (ft_ngdebug)
+                SPfrontEnd->IFerrorf (ERR_WARNING, "gmin step failed");
             break;
         }
 
         ckt->CKTdiagGmin /= ckt->CKTgminFactor;
         ckt->CKTmode = continuemode;
-
-        SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
+        if (ft_ngdebug)
+            SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
     }
 
     ckt->CKTdiagGmin = ckt->CKTgshunt;
@@ -366,7 +376,8 @@ new_gmin(CKTcircuit* ckt, long int firstmode,
     gtarget = MAX(startgmin, ckt->CKTgshunt);
 
     for (;;) {
-        fprintf(stderr, "Trying gmin = %12.4E ", ckt->CKTgmin);
+        if (ft_ngdebug)
+            fprintf(stderr, "Trying gmin = %12.4E ", ckt->CKTgmin);
 
         ckt->CKTnoncon = 1;
         iters = ckt->CKTstat->STATnumIter;
@@ -375,7 +386,8 @@ new_gmin(CKTcircuit* ckt, long int firstmode,
 
         if (converged == 0) {
             ckt->CKTmode = continuemode;
-            SPfrontEnd->IFerrorf(ERR_INFO, "One successful gmin step");
+            if (ft_ngdebug)
+                SPfrontEnd->IFerrorf(ERR_INFO, "One successful gmin step");
 
             if (ckt->CKTgmin <= gtarget)
                 break;          /* successfull */
@@ -407,10 +419,12 @@ new_gmin(CKTcircuit* ckt, long int firstmode,
         }
         else {
             if (factor < 1.00005) {
-                SPfrontEnd->IFerrorf(ERR_WARNING, "Last gmin step failed");
+                if (ft_ngdebug)
+                    SPfrontEnd->IFerrorf(ERR_WARNING, "Last gmin step failed");
                 break;          /* failed */
             }
-            SPfrontEnd->IFerrorf(ERR_WARNING, "Further gmin increment");
+            if (ft_ngdebug)
+                SPfrontEnd->IFerrorf(ERR_WARNING, "Further gmin increment");
             factor = sqrt(sqrt(factor));
             /*ckt->CKTdiagGmin = */ckt->CKTgmin = OldGmin / factor;
 
@@ -483,14 +497,15 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
         ckt->CKTstate0[i] = 0;
 
     /*  First, try a straight solution with all sources at zero */
-
-    fprintf (stderr, "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
+    if (ft_ngdebug)
+        fprintf (stderr, "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
     converged = NIiter (ckt, ckt->CKTdcTrcvMaxIter);
 
     /*  If this doesn't work, try gmin stepping as well for the first solution */
 
     if (converged != 0) {
-        fprintf (stderr, "\n");
+        if (ft_ngdebug)
+            fprintf (stderr, "\n");
 
         ckt->CKTdiagGmin =
             (ckt->CKTgshunt <= 0) ? ckt->CKTgmin : ckt->CKTgshunt;
@@ -499,7 +514,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
             ckt->CKTdiagGmin *= 10;
 
         for (i = 0; i <= 10; i++) {
-            fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
+            if (ft_ngdebug)
+                fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
 
 #ifdef XSPICE
             /* gtri - wbk - add convergence problem reporting flags */
@@ -511,7 +527,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
             if (converged != 0) {
                 ckt->CKTdiagGmin = ckt->CKTgshunt;
-                SPfrontEnd->IFerrorf (ERR_WARNING, "gmin step failed");
+                if (ft_ngdebug)
+                    SPfrontEnd->IFerrorf (ERR_WARNING, "gmin step failed");
 #ifdef XSPICE
                 /* gtri - wbk - add convergence problem reporting flags */
                 ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
@@ -521,7 +538,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
             ckt->CKTdiagGmin /= 10;
             ckt->CKTmode = continuemode;
-            SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
+            if (ft_ngdebug)
+                SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
         }
         ckt->CKTdiagGmin = ckt->CKTgshunt;
     }
@@ -545,12 +563,14 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
         memcpy(OldCKTstate0, ckt->CKTstate0,
                (size_t) ckt->CKTnumStates * sizeof(double));
 
-        SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
+        if (ft_ngdebug)
+            SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
         ckt->CKTsrcFact = ConvFact + raise;
 
         do {
-            fprintf (stderr,
-                     "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
+            if (ft_ngdebug)
+                fprintf (stderr,
+                         "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
 
 #ifdef XSPICE
             /* gtri - wbk - add convergence problem reporting flags */
@@ -571,8 +591,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
                 memcpy(OldCKTstate0, ckt->CKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
-
-                SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
+                if (ft_ngdebug)
+                    SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
 
                 ckt->CKTsrcFact = ConvFact + raise;
 
@@ -674,10 +694,12 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
 #endif
             return converged;
         }
-        SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
+        if (ft_ngdebug)
+            SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
     }
 
-    SPfrontEnd->IFerrorf (ERR_INFO, "Source stepping completed");
+    if (ft_ngdebug)
+        SPfrontEnd->IFerrorf (ERR_INFO, "Source stepping completed");
     ckt->CKTsrcFact = 1;
 
 #ifdef XSPICE
