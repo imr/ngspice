@@ -28,6 +28,12 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
     ,Irci_Vbci,Irci_Vbcx,Irbx_Vrbx,Irbi_Vrbi,Irbi_Vbei
     ,Irbi_Vbci,Ire_Vre,Irbp_Vrbp,Irbp_Vbep,Irbp_Vbci
     ,Ibcp_Vbcp,Iccp_Vbep,Irs_Vrs,Iccp_Vbci,Iccp_Vbcp;
+    double Ibe_Vrth, Ibex_Vrth, Itzf_Vrth, Itzr_Vrth, Ibc_Vrth
+    ,Ibep_Vrth, Ircx_Vrth, Irci_Vrth, Irbx_Vrth, Irbi_Vrth, Ire_Vrth
+    ,Irbp_Vrth, Ibcp_Vrth, Iccp_Vrth, Irs_Vrth, Irth_Vrth, Ith_Vrth, Ith_Vbei
+    ,Ith_Vbci, Ith_Vcei, Ith_Vbex, Ith_Vbep, Ith_Vbcp, Ith_Vcep, Ith_Vrci, Ith_Vbcx
+    ,Ith_Vrbi, Ith_Vrbp, Ith_Vrcx, Ith_Vrbx, Ith_Vre, Ith_Vrs;
+    double XQcth_Vrth, XQbe_Vrth, XQbex_Vrth, XQbc_Vrth, XQbcx_Vrth, XQbep_Vrth, XQbcp_Vrth;
     double XQbe_Vbei, XQbe_Vbci, XQbex_Vbex, XQbc_Vbci,
            XQbcx_Vbcx, XQbep_Vbep, XQbep_Vbci,
            XQbcp_Vbcp, XQbeo_Vbe, XQbco_Vbc;
@@ -65,6 +71,39 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Irbx_Vrbx = *(ckt->CKTstate0 + here->VBICirbx_Vrbx);
             Irs_Vrs   = *(ckt->CKTstate0 + here->VBICirs_Vrs);
             Ire_Vre   = *(ckt->CKTstate0 + here->VBICire_Vre);
+            // new self-heating related entries
+            Ibe_Vrth  = *(ckt->CKTstate0 + here->VBICibe_Vrth);
+            Ibex_Vrth = *(ckt->CKTstate0 + here->VBICibex_Vrth);
+            Itzf_Vrth = *(ckt->CKTstate0 + here->VBICitzf_Vrth);
+            Itzr_Vrth = *(ckt->CKTstate0 + here->VBICitzr_Vrth);
+            Ibc_Vrth  = *(ckt->CKTstate0 + here->VBICibc_Vrth);
+            Ibep_Vrth = *(ckt->CKTstate0 + here->VBICibep_Vrth);
+            Ircx_Vrth = *(ckt->CKTstate0 + here->VBICircx_Vrth);
+            Irci_Vrth = *(ckt->CKTstate0 + here->VBICirci_Vrth);
+            Irbx_Vrth = *(ckt->CKTstate0 + here->VBICirbx_Vrth);
+            Irbi_Vrth = *(ckt->CKTstate0 + here->VBICirbi_Vrth);
+            Ire_Vrth  = *(ckt->CKTstate0 + here->VBICire_Vrth);
+            Irbp_Vrth = *(ckt->CKTstate0 + here->VBICirbp_Vrth);
+            Ibcp_Vrth = *(ckt->CKTstate0 + here->VBICibcp_Vrth);
+            Iccp_Vrth = *(ckt->CKTstate0 + here->VBICiccp_Vrth);
+            Irs_Vrth  = *(ckt->CKTstate0 + here->VBICirs_Vrth);
+            Irth_Vrth = *(ckt->CKTstate0 + here->VBICirth_Vrth);
+            Ith_Vrth  = *(ckt->CKTstate0 + here->VBICith_Vrth);
+            Ith_Vbei  = *(ckt->CKTstate0 + here->VBICith_Vbei);
+            Ith_Vbci  = *(ckt->CKTstate0 + here->VBICith_Vbci);
+            Ith_Vcei  = *(ckt->CKTstate0 + here->VBICith_Vcei);
+            Ith_Vbex  = *(ckt->CKTstate0 + here->VBICith_Vbex);
+            Ith_Vbep  = *(ckt->CKTstate0 + here->VBICith_Vbep);
+            Ith_Vbcp  = *(ckt->CKTstate0 + here->VBICith_Vbcp);
+            Ith_Vcep  = *(ckt->CKTstate0 + here->VBICith_Vcep);
+            Ith_Vrci  = *(ckt->CKTstate0 + here->VBICith_Vrci);
+            Ith_Vbcx  = *(ckt->CKTstate0 + here->VBICith_Vbcx);
+            Ith_Vrbi  = *(ckt->CKTstate0 + here->VBICith_Vrbi);
+            Ith_Vrbp  = *(ckt->CKTstate0 + here->VBICith_Vrbp);
+            Ith_Vrcx  = *(ckt->CKTstate0 + here->VBICith_Vrcx);
+            Ith_Vrbx  = *(ckt->CKTstate0 + here->VBICith_Vrbx);
+            Ith_Vre   = *(ckt->CKTstate0 + here->VBICith_Vre);
+            Ith_Vrs   = *(ckt->CKTstate0 + here->VBICith_Vrs);
 
 /*
 c           The real part
@@ -231,6 +270,15 @@ c           The complex part
             XQbcp_Vbcp = *(ckt->CKTstate0 + here->VBICcqbcp) * ckt->CKTomega;
             XQbeo_Vbe  = *(ckt->CKTstate0 + here->VBICcqbeo) * ckt->CKTomega;
             XQbco_Vbc  = *(ckt->CKTstate0 + here->VBICcqbco) * ckt->CKTomega;
+
+            // self heating related charge changes
+            XQcth_Vrth = *(ckt->CKTstate0 + here->VBICcqcth)   * ckt->CKTomega;
+            XQbe_Vrth  = *(ckt->CKTstate0 + here->VBICcqbeth)  * ckt->CKTomega;
+            XQbex_Vrth = *(ckt->CKTstate0 + here->VBICcqbexth) * ckt->CKTomega;
+            XQbc_Vrth  = *(ckt->CKTstate0 + here->VBICcqbcth)  * ckt->CKTomega;
+            XQbcx_Vrth = *(ckt->CKTstate0 + here->VBICcqbcxth) * ckt->CKTomega;
+            XQbep_Vrth = *(ckt->CKTstate0 + here->VBICcqbepth) * ckt->CKTomega;
+            XQbcp_Vrth = *(ckt->CKTstate0 + here->VBICcqbcpth) * ckt->CKTomega;
 /*
 c   Stamp element: Qbe
 */
@@ -296,6 +344,145 @@ c   Stamp element: Qbco
             *(here->VBICbaseCollPtr + 1) += -XQbco_Vbc;
             *(here->VBICcollBasePtr + 1) += -XQbco_Vbc;
 
+
+            if (here->VBIC_selfheat) {
+/*
+c               Stamp element: Ibe
+*/
+                *(here->VBICbaseBItempPtr) +=  Ibe_Vrth;
+                *(here->VBICemitEItempPtr) += -Ibe_Vrth;
+/*
+c               Stamp element: Ibex
+*/
+                *(here->VBICbaseBXtempPtr) +=  Ibex_Vrth;
+                *(here->VBICemitEItempPtr) += -Ibex_Vrth;
+/*
+c               Stamp element: Itzf
+*/
+                *(here->VBICcollCItempPtr) +=  Itzf_Vrth;
+                *(here->VBICemitEItempPtr) += -Itzf_Vrth;
+/*
+c               Stamp element: Itzr
+*/
+                *(here->VBICemitEItempPtr) +=  Itzr_Vrth;
+                *(here->VBICcollCItempPtr) += -Itzr_Vrth;
+/*
+c               Stamp element: Ibc
+*/
+                *(here->VBICbaseBItempPtr) +=  Ibc_Vrth;
+                *(here->VBICcollCItempPtr) += -Ibc_Vrth;
+/*
+c               Stamp element: Ibep
+*/
+                *(here->VBICbaseBXtempPtr) +=  Ibep_Vrth;
+                *(here->VBICbaseBPtempPtr) += -Ibep_Vrth;
+/*
+c               Stamp element: Rcx
+*/
+                *(here->VBICcollTempPtr)   +=  Ircx_Vrth;
+                *(here->VBICcollCXtempPtr) += -Ircx_Vrth;
+/*
+c               Stamp element: Irci
+*/
+                *(here->VBICcollCXtempPtr) +=  Irci_Vrth;
+                *(here->VBICcollCItempPtr) += -Irci_Vrth;
+/*
+c               Stamp element: Rbx
+*/
+                *(here->VBICbaseTempPtr)   +=  Irbx_Vrth;
+                *(here->VBICbaseBXtempPtr) += -Irbx_Vrth;
+/*
+c               Stamp element: Irbi
+*/
+                *(here->VBICbaseBXtempPtr) +=  Irbi_Vrth;
+                *(here->VBICbaseBItempPtr) += -Irbi_Vrth;
+/*
+c               Stamp element: Re
+*/
+                *(here->VBICemitTempPtr)   +=  Ire_Vrth;
+                *(here->VBICemitEItempPtr) += -Ire_Vrth;
+/*
+c               Stamp element: Irbp
+*/
+                *(here->VBICbaseBPtempPtr) +=  Irbp_Vrth;
+                *(here->VBICcollCXtempPtr) += -Irbp_Vrth;
+/*
+c               Stamp element: Ibcp
+*/
+                *(here->VBICsubsSItempPtr) +=  Ibcp_Vrth;
+                *(here->VBICbaseBPtempPtr) += -Ibcp_Vrth;
+/*
+c               Stamp element: Iccp
+*/
+                *(here->VBICbaseBXtempPtr) +=  Iccp_Vrth;
+                *(here->VBICsubsSItempPtr) += -Iccp_Vrth;
+/*
+c               Stamp element: Rs
+*/
+                *(here->VBICsubsTempPtr)   +=  Irs_Vrth;
+                *(here->VBICsubsSItempPtr) += -Irs_Vrth;
+/*
+c               Stamp element: Rth
+*/
+                *(here->VBICtempTempPtr) +=  Irth_Vrth;
+/*
+c               Stamp element: Ith
+*/
+                *(here->VBICtempTempPtr)   += -Ith_Vrth;
+
+                *(here->VBICtempBaseBIPtr) += -Ith_Vbei;
+                *(here->VBICtempEmitEIPtr) += +Ith_Vbei;
+                *(here->VBICtempBaseBIPtr) += -Ith_Vbci;
+                *(here->VBICtempCollCIPtr) += +Ith_Vbci;
+                *(here->VBICtempCollCIPtr) += -Ith_Vcei;
+                *(here->VBICtempEmitEIPtr) += +Ith_Vcei;
+                *(here->VBICtempBaseBXPtr) += -Ith_Vbex;
+                *(here->VBICtempEmitEIPtr) += +Ith_Vbex;
+                *(here->VBICtempBaseBXPtr) += -Ith_Vbep;
+                *(here->VBICtempBaseBPPtr) += +Ith_Vbep;
+                *(here->VBICtempSubsPtr)   += -Ith_Vbcp;
+                *(here->VBICtempBaseBPPtr) += +Ith_Vbcp;
+                *(here->VBICtempBaseBXPtr) += -Ith_Vcep;
+                *(here->VBICtempSubsPtr)   += +Ith_Vcep;
+                *(here->VBICtempCollCXPtr) += -Ith_Vrci;
+                *(here->VBICtempCollCIPtr) += +Ith_Vrci;
+                *(here->VBICtempBaseBIPtr) += -Ith_Vbcx;
+                *(here->VBICtempCollCXPtr) += +Ith_Vbcx;
+                *(here->VBICtempBaseBXPtr) += -Ith_Vrbi;
+                *(here->VBICtempBaseBIPtr) += +Ith_Vrbi;
+                *(here->VBICtempBaseBPPtr) += -Ith_Vrbp;
+                *(here->VBICtempCollCXPtr) += +Ith_Vrbp;
+                *(here->VBICtempCollPtr)   += -Ith_Vrcx;
+                *(here->VBICtempCollCXPtr) += +Ith_Vrcx;
+                *(here->VBICtempBasePtr)   += -Ith_Vrbx;
+                *(here->VBICtempBaseBXPtr) += +Ith_Vrbx;
+                *(here->VBICtempEmitPtr)   += -Ith_Vre;
+                *(here->VBICtempEmitEIPtr) += +Ith_Vre;
+                *(here->VBICtempSubsPtr)   += -Ith_Vrs;
+                *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
+
+                // //the charges
+                *(here->VBICbaseBItempPtr + 1) += +XQbe_Vrth;
+                *(here->VBICemitEItempPtr + 1) += -XQbe_Vrth;
+
+                *(here->VBICbaseBXtempPtr + 1) += +XQbex_Vrth;
+                *(here->VBICemitEItempPtr + 1) += -XQbex_Vrth;
+
+                *(here->VBICbaseBItempPtr + 1) += +XQbc_Vrth;
+                *(here->VBICcollCItempPtr + 1) += -XQbc_Vrth;
+
+                *(here->VBICbaseBItempPtr + 1) += +XQbcx_Vrth;
+                *(here->VBICcollCXtempPtr + 1) += -XQbcx_Vrth;
+
+                *(here->VBICbaseBXtempPtr + 1) += +XQbep_Vrth;
+                *(here->VBICbaseBPtempPtr + 1) += -XQbep_Vrth;
+
+                *(here->VBICsubsSItempPtr + 1) += +XQbcp_Vrth;
+                *(here->VBICbaseBPtempPtr + 1) += -XQbcp_Vrth;
+
+                *(here->VBICtempTempPtr + 1)   += -XQcth_Vrth;
+
+            } 
 
         }
     }
