@@ -340,6 +340,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -398,6 +399,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -542,6 +544,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -598,6 +601,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -709,6 +713,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -818,6 +823,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
