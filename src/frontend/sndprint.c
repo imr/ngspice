@@ -1,11 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 #include <sndfile.h>
 #include <string.h>
 #include <math.h>
 #include <inttypes.h>
-#include <config.h>
 #include "sndprint.h"
 #include "ngspice/ngspice.h"
 
