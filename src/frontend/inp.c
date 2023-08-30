@@ -720,6 +720,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         eq(s, ".plot") ||
                         eq(s, ".print") ||
 /*                        eq(s, ".save") || add .save only after subcircuit expansion */
+                        eq(s, ".sndprint") ||
+                        eq(s, ".sndparam") ||
                         eq(s, ".op") ||
                         ciprefix(".meas", s) ||
                         eq(s, ".tf")) {
