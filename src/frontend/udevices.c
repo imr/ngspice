@@ -307,6 +307,10 @@ static int ps_udevice_exit = 0;
 static int ps_tpz_delays = 0;  // For tristate delays
 static int ps_with_inverters = 0;  // For ff/latch control inputs
 static int ps_with_tri_inverters = 0;  // For inv3/inv3a data inputs
+
+static int ps_use_mntymx = 0;
+static struct udevices_info mntymx_shorter = {0, FALSE};
+
 static NAME_ENTRY new_names_list = NULL;
 static NAME_ENTRY input_names_list = NULL;
 static NAME_ENTRY output_names_list = NULL;
@@ -318,6 +322,46 @@ static BOOL add_zero_delay_inverter_model = FALSE;
 static BOOL add_drive_hilo = FALSE;
 static char *current_subckt = NULL;
 static unsigned int subckt_msg_count = 0;
+
+static void set_u_devices_info(int mntymx_duration)
+{
+    switch (mntymx_duration) {
+    case 0: // typ + longer delays
+        mntymx_shorter.mntymx = 0;
+        mntymx_shorter.shorter_delays = FALSE;
+        break;
+    case 1: // min + longer delays
+        mntymx_shorter.mntymx = 1;
+        mntymx_shorter.shorter_delays = FALSE;
+        break;
+    case 2: // max + longer delays
+        mntymx_shorter.mntymx = 2;
+        mntymx_shorter.shorter_delays = FALSE;
+        break;
+    case 4: // typ + shorter delays
+        mntymx_shorter.mntymx = 0;
+        mntymx_shorter.shorter_delays = TRUE;
+        break;
+    case 5: // min + shorter delays
+        mntymx_shorter.mntymx = 1;
+        mntymx_shorter.shorter_delays = TRUE;
+        break;
+    case 6: // max + shorter delays
+        mntymx_shorter.mntymx = 2;
+        mntymx_shorter.shorter_delays = TRUE;
+        break;
+    default:
+        mntymx_shorter.mntymx = 0;
+        mntymx_shorter.shorter_delays = FALSE;
+        break;
+    }
+    return;
+}
+
+struct udevices_info u_get_udevices_info(void)
+{
+    return mntymx_shorter;
+}
 
 static void check_name_unused(char *name)
 {
@@ -897,7 +941,7 @@ void initialize_udevice(char *subckt_line)
       if they are the only delays.
     */
     if (!cp_getvar("ps_tpz_delays", CP_NUM, &ps_tpz_delays, 0)) {
-        ps_tpz_delays = 0;
+        ps_tpz_delays = 1; // default: use tpz... delays if necessary
     }
     /* If non-zero use inverters with ff/latch control inputs */
     if (!cp_getvar("ps_with_inverters", CP_NUM, &ps_with_inverters, 0)) {
@@ -907,6 +951,11 @@ void initialize_udevice(char *subckt_line)
     if (!cp_getvar("ps_with_tri_inverters", CP_NUM, &ps_with_tri_inverters, 0)) {
         ps_with_tri_inverters = 0;
     }
+    if (!cp_getvar("ps_use_mntymx", CP_NUM, &ps_use_mntymx, 0)) {
+        ps_use_mntymx = 4; // default: typ + shorter delays
+    }
+    set_u_devices_info(ps_use_mntymx);
+
     if (subckt_line && strncmp(subckt_line, ".subckt", 7) == 0) {
         add_all_port_names(subckt_line);
         current_subckt = TMALLOC(char, strlen(subckt_line) + 1);
@@ -2759,10 +2808,32 @@ static void estimate_typ(struct timing_data *tdp)
     return;
 }
 
+static void estimate_delay(struct timing_data *tdp)
+{
+    char *del = NULL;
+    if (!tdp) { return; }
+    if (mntymx_shorter.mntymx == 1) { // use min delay
+        del = tdp->min;
+        if (del && strlen(del) > 0 && del[0] != '-') {
+            tdp->estimate = EST_MIN;
+            return;
+        }
+    } else if (mntymx_shorter.mntymx == 2) { // use max delay
+        del = tdp->max;
+        if (del && strlen(del) > 0 && del[0] != '-') {
+            tdp->estimate = EST_MAX;
+            return;
+        }
+    }
+    // use typ delay
+    estimate_typ(tdp);
+    return;
+}
+
 static char *get_estimate(struct timing_data *tdp)
 {
     /*
-      Call after estimate_typ.
+      Call after estimate_delay.
       Don't call delete_timing_data until you have copied
       or finished with this return value.
     */
@@ -2777,8 +2848,11 @@ static char *get_estimate(struct timing_data *tdp)
     return NULL;
 }
 
-static char *larger_delay(char *delay1, char *delay2)
+static char *select_delay(char *delay1, char *delay2)
 {
+    /* Return the shorter or longer delay
+       depending on the mntymx_shorter.shorter_delays setting
+    */
     float val1, val2;
     char *units1, *units2;
 
@@ -2787,11 +2861,16 @@ static char *larger_delay(char *delay1, char *delay2)
     if (!eq(units1, units2)) {
         printf("WARNING units do not match\n");
     }
-    if (val1 >= val2) {
-        return delay1;
+    if (mntymx_shorter.shorter_delays) {
+        if (val1 <= val2) {
+            return delay1;
+        }
     } else {
-        return delay2;
+        if (val1 >= val2) {
+            return delay1;
+        }
     }
+    return delay2;
 }
 
 /* NOTE
@@ -2813,10 +2892,10 @@ static char *get_delays_ugate(char *rem)
     BOOL has_rising = FALSE, has_falling = FALSE;
 
     tdp1 = create_min_typ_max("tplh", rem);
-    estimate_typ(tdp1);
+    estimate_delay(tdp1);
     rising = get_estimate(tdp1);
     tdp2 = create_min_typ_max("tphl", rem);
-    estimate_typ(tdp2);
+    estimate_delay(tdp2);
     falling = get_estimate(tdp2);
     has_rising = (rising && strlen(rising) > 0);
     has_falling = (falling && strlen(falling) > 0);
@@ -2845,7 +2924,7 @@ static char *get_delays_udly(char *rem)
     struct timing_data *tdp1;
 
     tdp1 = create_min_typ_max("dly", rem);
-    estimate_typ(tdp1);
+    estimate_delay(tdp1);
     udelay = get_estimate(tdp1);
     if (udelay) {
         delays = tprintf(
@@ -2865,22 +2944,22 @@ static char *get_delays_utgate(char *rem)
     char *rising, *falling, *delays = NULL;
     struct timing_data *tdp1, *tdp2;
     struct timing_data *tdp3, *tdp4, *tdp5, *tdp6;
-    char *tplz, *tphz, *tpzl, *tpzh, *larger, *larger1, *larger2, *larger3;
+    char *tplz, *tphz, *tpzl, *tpzh, *select0, *select1, *select2, *select3;
     BOOL use_zdelays = FALSE;
     BOOL has_rising = FALSE, has_falling = FALSE;
 
     tdp1 = create_min_typ_max("tplh", rem);
-    estimate_typ(tdp1);
+    estimate_delay(tdp1);
     rising = get_estimate(tdp1);
     tdp2 = create_min_typ_max("tphl", rem);
-    estimate_typ(tdp2);
+    estimate_delay(tdp2);
     falling = get_estimate(tdp2);
     has_rising = (rising && strlen(rising) > 0);
     has_falling = (falling && strlen(falling) > 0);
     if (has_rising) {
         if (has_falling) {
-            larger = larger_delay(rising, falling);
-            delays = tprintf("(inertial_delay=true delay = %s)", larger);
+            select0 = select_delay(rising, falling);
+            delays = tprintf("(inertial_delay=true delay = %s)", select0);
         } else {
             delays = tprintf("(inertial_delay=true delay = %s)", rising);
         }
@@ -2889,49 +2968,49 @@ static char *get_delays_utgate(char *rem)
     } else if (use_zdelays || (ps_tpz_delays & 1)) {
         /* No lh/hl delays, so try the largest lz/hz/zl/zh delay */
         tdp3 = create_min_typ_max("tplz", rem);
-        estimate_typ(tdp3);
+        estimate_delay(tdp3);
         tplz = get_estimate(tdp3);
         tdp4 = create_min_typ_max("tphz", rem);
-        estimate_typ(tdp4);
+        estimate_delay(tdp4);
         tphz = get_estimate(tdp4);
-        larger1 = NULL;
+        select1 = NULL;
         if (tplz && strlen(tplz) > 0) {
             if (tphz && strlen(tphz) > 0) {
-                larger1 = larger_delay(tplz, tphz);
+                select1 = select_delay(tplz, tphz);
             } else {
-                larger1 = tplz;
+                select1 = tplz;
             }
         } else if (tphz && strlen(tphz) > 0) {
-            larger1 = tphz;
+            select1 = tphz;
         }
         tdp5 = create_min_typ_max("tpzl", rem);
-        estimate_typ(tdp5);
+        estimate_delay(tdp5);
         tpzl = get_estimate(tdp5);
         tdp6 = create_min_typ_max("tpzh", rem);
-        estimate_typ(tdp6);
+        estimate_delay(tdp6);
         tpzh = get_estimate(tdp6);
-        larger2 = NULL;
+        select2 = NULL;
         if (tpzl && strlen(tpzl) > 0) {
             if (tpzh && strlen(tpzh) > 0) {
-                larger2 = larger_delay(tpzl, tpzh);
+                select2 = select_delay(tpzl, tpzh);
             } else {
-                larger2 = tpzl;
+                select2 = tpzl;
             }
         } else if (tpzh && strlen(tpzh) > 0) {
-            larger2 = tpzh;
+            select2 = tpzh;
         }
-        larger3 = NULL;
-        if (larger1) {
-            if (larger2) {
-                larger3 = larger_delay(larger1, larger2);
+        select3 = NULL;
+        if (select1) {
+            if (select2) {
+                select3 = select_delay(select1, select2);
             } else {
-                larger3 = larger1;
+                select3 = select1;
             }
-        } else if (larger2) {
-            larger3 = larger2;
+        } else if (select2) {
+            select3 = select2;
         }
-        if (larger3) {
-            delays = tprintf("(inertial_delay=true delay = %s)", larger3);
+        if (select3) {
+            delays = tprintf("(inertial_delay=true delay = %s)", select3);
         } else {
             delays = tprintf("(inertial_delay=true delay=1.0e-12)");
         }
@@ -2951,26 +3030,26 @@ static char *get_delays_ueff(char *rem)
 {
     char *delays = NULL;
     char *clkqrise, *clkqfall, *pcqrise, *pcqfall;
-    char *clkd, *setd, *resetd, *larger;
+    char *clkd, *setd, *resetd, *select;
     struct timing_data *tdp1, *tdp2, *tdp3, *tdp4;
 
     tdp1 = create_min_typ_max("tpclkqlh", rem);
-    estimate_typ(tdp1);
+    estimate_delay(tdp1);
     clkqrise = get_estimate(tdp1);
     tdp2 = create_min_typ_max("tpclkqhl", rem);
-    estimate_typ(tdp2);
+    estimate_delay(tdp2);
     clkqfall = get_estimate(tdp2);
     tdp3 = create_min_typ_max("tppcqlh", rem);
-    estimate_typ(tdp3);
+    estimate_delay(tdp3);
     pcqrise = get_estimate(tdp3);
     tdp4 = create_min_typ_max("tppcqhl", rem);
-    estimate_typ(tdp4);
+    estimate_delay(tdp4);
     pcqfall = get_estimate(tdp4);
     clkd = NULL;
     if (clkqrise && strlen(clkqrise) > 0) {
         if (clkqfall && strlen(clkqfall) > 0) {
-            larger = larger_delay(clkqrise, clkqfall);
-            clkd = larger;
+            select = select_delay(clkqrise, clkqfall);
+            clkd = select;
         } else {
             clkd = clkqrise;
         }
@@ -3018,7 +3097,7 @@ static char *get_delays_ugff(char *rem, char *d_name)
     char *delays = NULL, *dname;
     char *tpdqlh, *tpdqhl, *tpgqlh, *tpgqhl, *tppcqlh, *tppcqhl;
     char *d_delay, *enab, *setd, *resetd;
-    char *s1, *s2, *larger;
+    char *s1, *s2, *select;
     struct timing_data *tdp1, *tdp2, *tdp3, *tdp4, *tdp5, *tdp6;
 
     if (eq(d_name, "d_dlatch")) {
@@ -3029,28 +3108,28 @@ static char *get_delays_ugff(char *rem, char *d_name)
         return NULL;
     }
     tdp1 = create_min_typ_max("tpdqlh", rem);
-    estimate_typ(tdp1);
+    estimate_delay(tdp1);
     tpdqlh = get_estimate(tdp1);
     tdp2 = create_min_typ_max("tpdqhl", rem);
-    estimate_typ(tdp2);
+    estimate_delay(tdp2);
     tpdqhl = get_estimate(tdp2);
     tdp3 = create_min_typ_max("tpgqlh", rem);
-    estimate_typ(tdp3);
+    estimate_delay(tdp3);
     tpgqlh = get_estimate(tdp3);
     tdp4 = create_min_typ_max("tpgqhl", rem);
-    estimate_typ(tdp4);
+    estimate_delay(tdp4);
     tpgqhl = get_estimate(tdp4);
     tdp5 = create_min_typ_max("tppcqlh", rem);
-    estimate_typ(tdp5);
+    estimate_delay(tdp5);
     tppcqlh = get_estimate(tdp5);
     tdp6 = create_min_typ_max("tppcqhl", rem);
-    estimate_typ(tdp6);
+    estimate_delay(tdp6);
     tppcqhl = get_estimate(tdp6);
     d_delay = NULL;
     if (tpdqlh && strlen(tpdqlh) > 0) {
         if (tpdqhl && strlen(tpdqhl) > 0) {
-            larger = larger_delay(tpdqlh, tpdqhl);
-            d_delay = larger;
+            select = select_delay(tpdqlh, tpdqhl);
+            d_delay = select;
         } else {
             d_delay = tpdqlh;
         }
@@ -3060,8 +3139,8 @@ static char *get_delays_ugff(char *rem, char *d_name)
     enab = NULL;
     if (tpgqlh && strlen(tpgqlh) > 0) {
         if (tpgqhl && strlen(tpgqhl) > 0) {
-            larger = larger_delay(tpgqlh, tpgqhl);
-            enab = larger;
+            select = select_delay(tpgqlh, tpgqhl);
+            enab = select;
         } else {
             enab = tpgqlh;
         }
