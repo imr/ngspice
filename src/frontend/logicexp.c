@@ -1912,7 +1912,38 @@ static char *get_typ_estimate(char *min, char *typ, char *max, DSTRING *pds)
     return NULL;
 }
 
-static char *typical_estimate(char *delay_str, DSTRING *pds)
+static char *get_one_estimate(char *s, DSTRING *pds)
+{
+    ds_clear(pds);
+    if (s && strlen(s) > 0 && s[0] != '-') {
+        ds_cat_str(pds, s);
+        return ds_get_buf(pds);
+    } else {
+        return NULL;
+    }
+}
+
+static char *get_delay_estimate(char *min, char *typ, char *max, DSTRING *pds)
+{
+    char *one = NULL;
+    struct udevices_info info = u_get_udevices_info();
+    int delay_type = info.mntymx;
+    if (delay_type == 1) { // min
+        one = get_one_estimate(min, pds);
+        if (one) {
+            return one;
+        }
+    } else if (delay_type == 2) { // max
+        one = get_one_estimate(max, pds);
+        if (one) {
+            return one;
+        }
+    }
+    // typ
+    return get_typ_estimate(min, typ, max, pds);
+}
+
+static char *mntymx_estimate(char *delay_str, DSTRING *pds)
 {
     /* Input string (t1,t2,t2) */
     int which = 0;
@@ -1945,7 +1976,7 @@ static char *typical_estimate(char *delay_str, DSTRING *pds)
             break;
         }
     }
-    s = get_typ_estimate(ds_get_buf(&dmin), ds_get_buf(&dtyp),
+    s = get_delay_estimate(ds_get_buf(&dmin), ds_get_buf(&dtyp),
         ds_get_buf(&dmax), pds);
     ds_free(&dmin);
     ds_free(&dtyp);
@@ -1967,22 +1998,25 @@ static BOOL extract_delay(
     BOOL in_delay = FALSE, ret_val = TRUE;
     int i;
     BOOL prit = PRINT_ALL;
-    float typ_max_val = 0.0, typ_val = 0.0;
+    BOOL shorter = FALSE, update_val = FALSE;
+    struct udevices_info info = u_get_udevices_info();
+    float del_max_val = 0.0, del_val = 0.0, del_min_val = FLT_MAX;
     char *units;
+    shorter = info.shorter_delays;
     DS_CREATE(dly, 64);
-    DS_CREATE(dtyp_max_str, 16);
+    DS_CREATE(ddel_str, 16);
     DS_CREATE(tmp_ds, 128);
 
     if (val != '=') {
         ds_free(&dly);
-        ds_free(&dtyp_max_str);
+        ds_free(&ddel_str);
         ds_free(&tmp_ds);
         return FALSE;
     }
     val = lexer_scan(lx);
     if (val != '{') {
         ds_free(&dly);
-        ds_free(&dtyp_max_str);
+        ds_free(&ddel_str);
         ds_free(&tmp_ds);
         return FALSE;
     }
@@ -2005,7 +2039,7 @@ static BOOL extract_delay(
                     char *tmps;
                     ds_clear(&tmp_ds);
                     in_delay = FALSE;
-                    tmps = typical_estimate(ds_get_buf(&dly), &tmp_ds);
+                    tmps = mntymx_estimate(ds_get_buf(&dly), &tmp_ds);
                     if (!tmps) {
                         ret_val = FALSE;
                         ds_clear(&tmp_ds);
@@ -2015,22 +2049,34 @@ static BOOL extract_delay(
                         printf("%s\n", ds_get_buf(&dly));
                         printf("estimate \"%s\"\n", tmps);
                     }
-                    typ_val = strtof(tmps, &units);
-                    if (typ_val > typ_max_val) {
+                    del_val = strtof(tmps, &units);
+                    update_val = FALSE;
+                    if (shorter) {
+                        if (del_val < del_min_val) {
+                            update_val = TRUE;
+                        }
+                    } else if (del_val > del_max_val) {
+                        update_val = TRUE;
+                    }
+                    if (update_val) {
                         ds_clear(&delay_string);
-                        ds_clear(&dtyp_max_str);
-                        ds_cat_str(&dtyp_max_str, tmps);
-                        typ_max_val = typ_val;
-                        if (ds_get_length(&dtyp_max_str) > 0) {
+                        ds_clear(&ddel_str);
+                        ds_cat_str(&ddel_str, tmps);
+                        if (shorter) {
+                           del_min_val = del_val;
+                        } else {
+                            del_max_val = del_val;
+                        }
+                        if (ds_get_length(&ddel_str) > 0) {
                             if (tri) {
                                 ds_cat_printf(&delay_string,
                                     "(inertial_delay=true delay=%s)",
-                                    ds_get_buf(&dtyp_max_str));
+                                    ds_get_buf(&ddel_str));
                             } else {
                                 ds_cat_printf(&delay_string,
                                     "(inertial_delay=true rise_delay=%s fall_delay=%s)",
-                                    ds_get_buf(&dtyp_max_str),
-                                    ds_get_buf(&dtyp_max_str));
+                                    ds_get_buf(&ddel_str),
+                                    ds_get_buf(&ddel_str));
                             }
                         } else {
                             printf("WARNING pindly DELAY not found\n");
@@ -2055,7 +2101,7 @@ static BOOL extract_delay(
         val = lexer_scan(lx);
     } // end while != '}'
     ds_free(&dly);
-    ds_free(&dtyp_max_str);
+    ds_free(&ddel_str);
     ds_free(&tmp_ds);
     return ret_val;
 }
