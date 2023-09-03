@@ -16,31 +16,29 @@ set x11lineararcs
 * comment out if central osdi management is set up
 unset osdi_enabled
 
-* XSPICE and OSDI are loaded from a path provided in a variable.
-
 * Load the codemodels
 if $?xspice_enabled
 
-@XSPICEINIT@ codemodel $_module_path_/spice2poly.cm
-@XSPICEINIT@ codemodel $_module_path_/analog.cm
-@XSPICEINIT@ codemodel $_module_path_/digital.cm
-@XSPICEINIT@ codemodel $_module_path_/xtradev.cm
-@XSPICEINIT@ codemodel $_module_path_/xtraevt.cm
-@XSPICEINIT@ codemodel $_module_path_/table.cm
+@XSPICEINIT@ codemodel @pkglibdir@/spice2poly.cm
+@XSPICEINIT@ codemodel @pkglibdir@/analog.cm
+@XSPICEINIT@ codemodel @pkglibdir@/digital.cm
+@XSPICEINIT@ codemodel @pkglibdir@/xtradev.cm
+@XSPICEINIT@ codemodel @pkglibdir@/xtraevt.cm
+@XSPICEINIT@ codemodel @pkglibdir@/table.cm
 
 end
 
 * Load the OpenVAF/OSDI models
 if $?osdi_enabled
 
- osdi $_module_path_/asmhemt.osdi
- osdi $_module_path_/bjt504t.osdi
- osdi $_module_path_/BSIMBULK107.osdi
- osdi $_module_path_/BSIMCMG.osdi
- osdi $_module_path_/HICUMl0-2.0.osdi
- osdi $_module_path_/psp103.osdi
- osdi $_module_path_/r2_cmc.osdi
- osdi $_module_path_/vbic_4T_et_cf.osdi
+ osdi @pkglibdir@/asmhemt.osdi
+ osdi @pkglibdir@/bjt504t.osdi
+ osdi @pkglibdir@/BSIMBULK107.osdi
+ osdi @pkglibdir@/BSIMCMG.osdi
+ osdi @pkglibdir@/HICUMl0-2.0.osdi
+ osdi @pkglibdir@/psp103.osdi
+ osdi @pkglibdir@/r2_cmc.osdi
+ osdi @pkglibdir@/vbic_4T_et_cf.osdi
  
 end
 
