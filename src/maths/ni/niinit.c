@@ -16,6 +16,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/smpdefs.h"
 
+#ifdef KLU
+#include "ngspice/klu.h"
+#endif
 
 int
 NIinit(CKTcircuit *ckt)
@@ -24,6 +27,16 @@ NIinit(CKTcircuit *ckt)
 /* a concession to Ken Kundert's sparse matrix package - SMP doesn't need this*/
     int Error;
 #endif /* SPARSE */
+
+/* Allocation of the new SMPmatrix structure - Francesco Lannutti (2012-02) */
+    ckt->CKTmatrix = TMALLOC (SMPmatrix, 1) ;
+
+#ifdef KLU
+    ckt->CKTmatrix->CKTkluMODE = ckt->CKTkluMODE ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
+    ckt->CKTmatrix->CKTkluMemGrowFactor = ckt->CKTkluMemGrowFactor ;
+#endif
+
     ckt->CKTniState = NIUNINITIALIZED;
-    return SMPnewMatrix(&(ckt->CKTmatrix), 0);
+    return SMPnewMatrix(ckt->CKTmatrix, 0);
 }
+

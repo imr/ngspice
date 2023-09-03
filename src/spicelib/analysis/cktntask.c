@@ -76,6 +76,12 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKrelDv           = def->TSKrelDv;
         tsk->TSKnoopac          = def->TSKnoopac;
         tsk->TSKepsmin          = def->TSKepsmin;
+
+#ifdef KLU
+        tsk->TSKkluMODE         = def->TSKkluMODE;
+        tsk->TSKkluMemGrowFactor = def->TSKkluMemGrowFactor ;
+#endif
+
 #ifdef NEWTRUNC
         tsk->TSKlteReltol       = def->TSKlteReltol;
         tsk->TSKlteAbstol       = def->TSKlteAbstol;
@@ -133,6 +139,11 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKabsDv           = 0.5;
         tsk->TSKrelDv           = 2.0;
         tsk->TSKepsmin          = 1e-28;
+
+#ifdef KLU
+        tsk->TSKkluMODE         = CKTkluON;
+        tsk->TSKkluMemGrowFactor = 1.2 ;
+#endif
 
 #if (1) /*CDHW*/
     }

@@ -43,10 +43,9 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 
-#include  "ngspice/mifcmdat.h"
-#include  "ngspice/gendefs.h"
+#include "ngspice/mifcmdat.h"
+#include "ngspice/gendefs.h"
 #include "ngspice/ifsim.h"
-
 
 /* The per-instance data structure */
 
@@ -84,7 +83,6 @@ struct MIFinstance {
 
     int                 inst_index;       /* Index into inst_table in evt struct in ckt */
     Mif_Callback_t      callback;         /* instance callback function */
-
 };
 
 

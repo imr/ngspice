@@ -62,6 +62,15 @@ static double inc_freq(double freq, int type, double step_size);
 static int	error;
 int sens_sens(CKTcircuit *ckt, int restart)
 {
+/*
+#ifdef KLU
+    if (ckt->CKTkluMODE)
+    {
+        fprintf (stderr, "\n\n\tThe Sensitivity Analysis is not supported in KLU environment\n\tPlease add '.options sparse' in you netlist\n\n\n") ;
+        return OK ;
+    } else {
+#endif
+*/
 	SENS_AN	*job = (SENS_AN *) ckt->CKTcurJob;
 
 	static int	size;
@@ -90,6 +99,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	double		*saved_rhs = NULL,
 			*saved_irhs = NULL;
 	SMPmatrix	*saved_matrix = NULL;
+
+#ifdef KLU
+	int size_CSC ;
+#endif
 
 #ifndef notdef
 #ifdef notdef
@@ -142,10 +155,17 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		size = SMPmatSize(ckt->CKTmatrix);
 
 		/* Create the perturbation matrix */
-		error = SMPnewMatrix(&delta_Y, size);
+		delta_Y = TMALLOC(SMPmatrix, 1);
+
+		error = SMPnewMatrix(delta_Y, size);
 		if (error)
 			return error;
 
+#ifdef KLU
+		delta_Y->SMPkluMatrix->KLUmatrixDiag = NULL ;
+#endif
+
+//		SMPprint(delta_Y, NULL);
 		size += 1;
 
 		/* Create an extra rhs */
@@ -181,7 +201,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					sg->ptable[sg->param].keyword);
 			}
 
-			SPfrontEnd->IFnewUid (ckt, output_names + k, NULL, namebuf, UID_OTHER, NULL);
+			SPfrontEnd->IFnewUid (ckt,
+				output_names + k, NULL,
+				namebuf, UID_OTHER, NULL);
 			k += 1;
 		}
 
@@ -190,14 +212,16 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			freq_name = NULL;
 		} else {
 			type = IF_COMPLEX;
-			SPfrontEnd->IFnewUid (ckt, &freq_name, NULL, "frequency", UID_OTHER, NULL);
+			SPfrontEnd->IFnewUid (ckt,
+				&freq_name, NULL,
+				"frequency", UID_OTHER, NULL);
 		}
 
-                error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-                                                   ckt->CKTcurJob->JOBname,
-                                                   freq_name, IF_REAL,
-                                                   num_vars, output_names, type,
-                                                   &sen_data);
+                error = SPfrontEnd->OUTpBeginPlot (
+                    ckt, ckt->CKTcurJob,
+                    ckt->CKTcurJob->JOBname,
+                    freq_name, IF_REAL,
+                    num_vars, output_names, type, &sen_data);
 		if (error)
 			return error;
 
@@ -231,12 +255,27 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	bypass = ckt->CKTbypass;
 	ckt->CKTbypass = 0;
 
-	/* CKTop solves into CKTrhs and CKTmatrix,
+	/* CKTop solves into CKTrhs and CKTmatrix->SPmatrix,
 	 *	 CKTirhs is hopefully zero (fresh allocated ?) */
 
 	E = ckt->CKTrhs;
 	iE = ckt->CKTirhs;
 	Y = ckt->CKTmatrix;
+
+#ifdef KLU
+	if (ckt->CKTkluMODE) {
+
+	    /* Convert the KLU Circuit Matrix to Complex */
+	    for (i = 0 ; i < (int)Y->SMPkluMatrix->KLUmatrixNZ ; i++) {
+		Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i] = Y->SMPkluMatrix->KLUmatrixAx [i] ;
+		Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i + 1] = 0.0 ;
+	    }
+
+	    Y->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
+
+	    SMPcReorder (Y, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, &size_CSC) ; // size_CSC is just a placeholder here
+	}
+#endif
 
 #ifdef ASDEBUG
 	DEBUG(1) {
@@ -279,7 +318,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			if (error)
 				return error;
 
-			/* XXX ckt->CKTmatrix = Y; */
+			/* XXX ckt->CKTmatrix->SPmatrix = Y; */
 
 			error = CKTsetup(ckt);
 			if (error)
@@ -297,6 +336,25 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			error = CKTload(ckt); /* INITSMSIGS */
 			if (error)
 				return error;
+
+#ifdef KLU
+                        if (ckt->CKTmatrix->CKTkluMODE)
+                        {
+                            /* ReOrder */
+                            error = SMPpreOrder (ckt->CKTmatrix) ;
+
+                            /* Conversion from Real Circuit Matrix to Complex Circuit Matrix */
+                            if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
+                            {
+                                for (i = 0 ; i < DEVmaxnum ; i++)
+                                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                                        DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+                                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
+                            }
+                        }
+#endif
+
 			error = NIacIter(ckt);
 			if (error)
 				return error;
@@ -308,7 +366,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			}
 #endif
 
-			/* NIacIter solves into CKTrhsOld, CKTirhsOld and CKTmatrix */
+			/* NIacIter solves into CKTrhsOld, CKTirhsOld and CKTmatrix->SPmatrix */
 			E = ckt->CKTrhsOld;
 			iE = ckt->CKTirhsOld;
 			Y = ckt->CKTmatrix;
@@ -374,6 +432,30 @@ int sens_sens(CKTcircuit *ckt, int restart)
                 }
             }
 
+#ifdef KLU
+			if (ckt->CKTmatrix->CKTkluMODE)
+			{
+                            /* Populate the delta_Y KLU Matrix */
+
+                            /* Convert the COO Storage to CSC for KLU and Fill the Binding Table */
+                            SMPconvertCOOtoCSC (delta_Y) ;
+
+			    /* KLU Pointers Assignment */
+			    if (DEVices [sg->dev]->DEVbindCSC)
+				DEVices [sg->dev]->DEVbindCSC (sg->model, ckt) ;
+
+			    delta_Y->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
+
+			    /* Clear KLU Vectors */
+			    for (i = 0 ; i < (int)delta_Y->SMPkluMatrix->KLUmatrixNZ ; i++)
+			    {
+				delta_Y->SMPkluMatrix->KLUmatrixAx [i] = 0 ;
+				delta_Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i] = 0 ;
+				delta_Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i + 1] = 0 ;
+			    }
+			}
+#endif
+
 			/* ? CKTsetup would call NIreinit instead */
 			ckt->CKTniState = NISHOULDREORDER | NIACSHOULDREORDER;
 
@@ -384,6 +466,18 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			/* XXX Leave original E until here!! so that temp reads
 			 * the right node voltages */
 
+#ifdef KLU
+			if (ckt->CKTkluMODE)
+			{
+			    if (!is_dc)
+			    {
+				if (DEVices [sg->dev]->DEVbindCSCComplex)
+				    DEVices [sg->dev]->DEVbindCSCComplex (sg->model, ckt) ;
+
+				delta_Y->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
+			    }
+			}
+#endif
 			if (sens_load(sg, ckt, is_dc)) {
 				if (error && error != E_BADPARM)
 					return error;	/* XXX */
@@ -424,6 +518,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 				return error;
 
 			SMPconstMult(delta_Y, -1.0);
+
 			for (j = 0; j < size; j++) {
 				delta_I[j] *= -1.0;
 				delta_iI[j] *= -1.0;
@@ -482,8 +577,12 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #endif
 
 			/* delta_Y E */
+//			fprintf(stderr, "\n\nPRIMA\n");
+//			SMPprint(delta_Y, NULL);
 			SMPmultiply(delta_Y, delta_I_delta_Y, E,
 				    delta_iI_delta_Y, iE);
+//			fprintf(stderr, "\n\nDOPO\n");
+//			SMPprint(delta_Y, NULL);
 
 #ifdef ASDEBUG
 			DEBUG(2)
@@ -492,11 +591,23 @@ int sens_sens(CKTcircuit *ckt, int restart)
 						j, delta_I_delta_Y[j]);
 #endif
 
+//                        fprintf (stderr, "\n\nPRIMA 1\n") ;
+//                        for (j = 0 ; j < size ; j++)
+//                        {
+//                            fprintf (stderr, "RHS [%d]: %-.9g j%-.9g\n", j, delta_I [j], delta_iI [j]) ;
+//                        }
+
 			/* delta_I - delta_Y E */
 			for (j = 0; j < size; j++) {
 				delta_I[j] -= delta_I_delta_Y[j];
 				delta_iI[j] -= delta_iI_delta_Y[j];
 			}
+
+//                        fprintf (stderr, "\n\nDOPO 1\n") ;
+//                        for (j = 0 ; j < size ; j++)
+//                        {
+//                            fprintf (stderr, "RHS [%d]: %-.9g j%-.9g\n", j, delta_I [j], delta_iI [j]) ;
+//                        }
 
 #ifdef ASDEBUG
 			DEBUG(2) {
@@ -507,8 +618,21 @@ int sens_sens(CKTcircuit *ckt, int restart)
 						delta_I[j], delta_iI[j]);
 			}
 #endif
+
+//                        fprintf (stderr, "\n\nPRIMA\n") ;
+//                        for (j = 0 ; j < size ; j++)
+//                        {
+//                            fprintf (stderr, "RHS [%d]: %-.14g j%-.14g\n", j, delta_I [j], delta_iI [j]) ;
+//                        }
+
 			/* Solve; Y already factored */
 			SMPcSolve(Y, delta_I, delta_iI, NULL, NULL);
+
+//                        fprintf (stderr, "\n\nDOPO\n") ;
+//                        for (j = 0 ; j < size ; j++)
+//                        {
+//                            fprintf (stderr, "RHS [%d]: %-.14g j%-.14g\n", j, delta_I [j], delta_iI [j]) ;
+//                        }
 
                         /* the special `0' node
                         *    the matrix indizes are [1..n]
@@ -542,14 +666,18 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			/* delta_I is now equal to delta_E */
 
 			if (is_dc) {
-				if (job->output_volt)
+				if (job->output_volt) {
 					output_values[n] =
 					    delta_I [job->output_pos->number]
 					    - delta_I [job->output_neg->number];
+//                                    fprintf (stderr, "Pos: %d\tNeg: %d\n", job->output_pos->number, job->output_neg->number) ;
+				}
 				else {
 					output_values[n] = delta_I[branch_eq];
 				}
+//                                fprintf (stderr, "output_values real PRIMA: %-.14g\n", output_values [n]) ;
 				output_values[n] /= delta_var;
+//				fprintf(stderr, "output_values real DOPO: %-.14g - delta_var: %-.9g\n", output_values [n], delta_var);
 			} else {
 				if (job->output_volt) {
 					output_cvalues[n].real =
@@ -564,6 +692,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					output_cvalues[n].imag =
 						delta_iI[branch_eq];
 				}
+//                                fprintf (stderr, "output_values complex: %-.9g j%-.9g\n", output_cvalues [n].real, output_cvalues [n].imag) ;
 				output_cvalues[n].real /= delta_var;
 				output_cvalues[n].imag /= delta_var;
 			}
@@ -574,6 +703,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 		release_context(ckt->CKTrhs, saved_rhs);
 		release_context(ckt->CKTirhs, saved_irhs);
+
 		release_context(ckt->CKTmatrix, saved_matrix);
 
 		if (is_dc)
@@ -599,6 +729,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 	release_context(ckt->CKTrhs, saved_rhs);
 	release_context(ckt->CKTirhs, saved_irhs);
+
 	release_context(ckt->CKTmatrix, saved_matrix);
 
 	SMPdestroy(delta_Y);
@@ -620,12 +751,17 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #endif
 
 	return OK;
+/*
+#ifdef KLU
+    }
+#endif
+*/
 }
 
 double
 inc_freq(double freq, int type, double step_size)
 {
-	if (type != SENS_LINEAR)
+	if (type != LINEAR)
 		freq *= step_size;
 	else
 		freq += step_size;
@@ -704,7 +840,7 @@ count_steps(int type, double low, double high, int steps, double *stepsize)
 
 static int
 sens_load(sgen *sg, CKTcircuit *ckt, int is_dc)
-{
+{//fprintf (stderr, "LOAD - is_dc: %d\n", is_dc) ;
  	int	(*fn) (GENmodel *, CKTcircuit *);
 
 	error = 0;

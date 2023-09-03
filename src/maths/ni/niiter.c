@@ -112,6 +112,13 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
             if (ckt->CKTniState & NISHOULDREORDER) {
                 startTime = SPfrontEnd->IFseconds();
+
+#ifdef KLU
+                if (ckt->CKTkluMODE) {
+                    ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+                }
+#endif
+
                 error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
                                    ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
                 ckt->CKTstat->STATreorderTime +=
@@ -139,12 +146,54 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 ckt->CKTniState &= ~NISHOULDREORDER;
             } else {
                 startTime = SPfrontEnd->IFseconds();
+
+#ifdef KLU
+                if (ckt->CKTkluMODE) {
+                    ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+                }
+#endif
+
                 error = SMPluFac(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
                                  ckt->CKTdiagGmin);
                 ckt->CKTstat->STATdecompTime +=
                     SPfrontEnd->IFseconds() - startTime;
-                if (error) {
-                    if (error == E_SINGULAR) {
+
+#ifdef KLU
+                if ((ckt->CKTkluMODE) && (error == E_SINGULAR)) {
+
+                    /* Francesco Lannutti - 25 Aug 2020
+                     * If the matrix is numerically singular during ReFactorization, take the same matrix and factor it from scratch in the same iteration.
+                     * This is my mod with KLU. It saves run-time, but also the system at the next iteration may be different.
+                     * How do we guarantee that the system is the same at the next iteration? So, the original SPARSE version below sounds like a bug.
+                     */
+
+                    fprintf (stderr, "Warning: KLU ReFactor failed. Factoring again...\n") ;
+                    ckt->CKTniState |= NISHOULDREORDER;
+                    ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 0 ;
+                    error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
+                    ckt->CKTstat->STATreorderTime += SPfrontEnd->IFseconds() - startTime;
+                    if (error) {
+                        SMPgetError(ckt->CKTmatrix, &i, &j);
+                        SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+
+                        /* CKTload(ckt); */
+                        /* SMPprint(ckt->CKTmatrix, stdout); */
+                        /* seems to be singular - pass the bad news up */
+                        ckt->CKTstat->STATnumIter += iterno;
+#ifdef STEPDEBUG
+                        printf("lufac returned error \n");
+#endif
+                        FREE(OldCKTstate0);
+                        return(error);
+                    }
+                } else if (error) {
+                    if (!(ckt->CKTkluMODE) && (error == E_SINGULAR)) {
+
+                        /* Francesco Lannutti - 25 Aug 2020
+                         * If the matrix is numerically singular during ReFactorization, factor it from scratch at the next iteration.
+                         * This is the original SPICE3F5 code and uses SPARSE.
+                         */
+
                         ckt->CKTniState |= NISHOULDREORDER;
                         DEBUGMSG(" forced reordering....\n");
                         continue;
@@ -159,6 +208,31 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     FREE(OldCKTstate0);
                     return(error);
                 }
+#else
+                if (error) {
+                    if (error == E_SINGULAR) {
+
+                        /* Francesco Lannutti - 25 Aug 2020
+                         * If the matrix is numerically singular during ReFactorization, factor it from scratch at the next iteration.
+                         * This is the original SPICE3F5 code and uses SPARSE.
+                         */
+
+                        ckt->CKTniState |= NISHOULDREORDER;
+                        DEBUGMSG(" forced reordering....\n");
+                        continue;
+                    }
+                    /* CKTload(ckt); */
+                    /* SMPprint(ckt->CKTmatrix, stdout); */
+                    /* seems to be singular - pass the bad news up */
+                    ckt->CKTstat->STATnumIter += iterno;
+#ifdef STEPDEBUG
+                    printf("lufac returned error \n");
+#endif
+                    FREE(OldCKTstate0);
+                    return(error);
+                }
+#endif
+
             }
 
             /* moved it to here as if xspice is included then CKTload changes

@@ -16,6 +16,10 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 #include "ngspice/material.h"
 
+#ifdef KLU
+#include "ngspice/klu.h"
+#endif
+
 typedef struct sTWOelem
 {
     struct sTWOelem *pElems[4];     /* array to store the element neighbors */
@@ -44,6 +48,19 @@ typedef struct sTWOelem
     int direction;		    /* direction of flow for channels */
     int evalNodes[4];               /* nodes to be evaluated in elem */
     int evalEdges[4];               /* edges to be evaluated in elem */
+
+#ifdef KLU
+    double *KLUleftLeftNode ;
+    double *KLUleftRightNode ;
+    double *KLUrightLeftNode ;
+    double *KLUrightRightNode ;
+
+    BindElementKLUforCIDER *KLUleftLeftNodeBinding ;
+    BindElementKLUforCIDER *KLUleftRightNodeBinding ;
+    BindElementKLUforCIDER *KLUrightLeftNodeBinding ;
+    BindElementKLUforCIDER *KLUrightRightNodeBinding ;
+#endif
+
 } TWOelem;
 
 #define pTopElem   pElems[0]
@@ -193,6 +210,67 @@ typedef struct sTWOnode {
     double *fPPsiOxM1;
     double *fPPsiOx;
     double *fPPsiOxP1;
+
+#ifdef KLU
+    BindElementKLUforCIDER *fPsiPsiBinding ;
+    BindElementKLUforCIDER *fPsiNBinding ;
+    BindElementKLUforCIDER *fPsiPBinding ;
+    BindElementKLUforCIDER *fNPsiBinding ;
+    BindElementKLUforCIDER *fNNBinding ;
+    BindElementKLUforCIDER *fNPBinding ;
+    BindElementKLUforCIDER *fPPsiBinding ;
+    BindElementKLUforCIDER *fPNBinding ;
+    BindElementKLUforCIDER *fPPBinding ;
+    BindElementKLUforCIDER *fPsiPsiiP1Binding ;
+    BindElementKLUforCIDER *fPsiPsijP1Binding ;
+    BindElementKLUforCIDER *fNPsiiP1Binding ;
+    BindElementKLUforCIDER *fNNiP1Binding ;
+    BindElementKLUforCIDER *fNPsijP1Binding ;
+    BindElementKLUforCIDER *fNNjP1Binding ;
+    BindElementKLUforCIDER *fPPsiiP1Binding ;
+    BindElementKLUforCIDER *fPPiP1Binding ;
+    BindElementKLUforCIDER *fPPsijP1Binding ;
+    BindElementKLUforCIDER *fPPjP1Binding ;
+    BindElementKLUforCIDER *fNPsiiP1jP1Binding ;
+    BindElementKLUforCIDER *fNNiP1jP1Binding ;
+    BindElementKLUforCIDER *fPPsiiP1jP1Binding ;
+    BindElementKLUforCIDER *fPPiP1jP1Binding ;
+    BindElementKLUforCIDER *fPsiPsiiM1Binding ;
+    BindElementKLUforCIDER *fNPsiiM1Binding ;
+    BindElementKLUforCIDER *fNNiM1Binding ;
+    BindElementKLUforCIDER *fPPsiiM1Binding ;
+    BindElementKLUforCIDER *fPPiM1Binding ;
+    BindElementKLUforCIDER *fNPsiiM1jP1Binding ;
+    BindElementKLUforCIDER *fNNiM1jP1Binding ;
+    BindElementKLUforCIDER *fPPsiiM1jP1Binding ;
+    BindElementKLUforCIDER *fPPiM1jP1Binding ;
+    BindElementKLUforCIDER *fPsiPsijM1Binding ;
+    BindElementKLUforCIDER *fNPsijM1Binding ;
+    BindElementKLUforCIDER *fNNjM1Binding ;
+    BindElementKLUforCIDER *fPPsijM1Binding ;
+    BindElementKLUforCIDER *fPPjM1Binding ;
+    BindElementKLUforCIDER *fNPsiiM1jM1Binding ;
+    BindElementKLUforCIDER *fNNiM1jM1Binding ;
+    BindElementKLUforCIDER *fPPsiiM1jM1Binding ;
+    BindElementKLUforCIDER *fPPiM1jM1Binding ;
+    BindElementKLUforCIDER *fNPsiiP1jM1Binding ;
+    BindElementKLUforCIDER *fNNiP1jM1Binding ;
+    BindElementKLUforCIDER *fPPsiiP1jM1Binding ;
+    BindElementKLUforCIDER *fPPiP1jM1Binding ;
+    BindElementKLUforCIDER *fNPsiInBinding ;
+    BindElementKLUforCIDER *fNPsiInP1Binding ;
+    BindElementKLUforCIDER *fNPsiOxBinding ;
+    BindElementKLUforCIDER *fNPsiOxP1Binding ;
+    BindElementKLUforCIDER *fPPsiInBinding ;
+    BindElementKLUforCIDER *fPPsiInP1Binding ;
+    BindElementKLUforCIDER *fPPsiOxBinding ;
+    BindElementKLUforCIDER *fPPsiOxP1Binding ;
+    BindElementKLUforCIDER *fNPsiInM1Binding ;
+    BindElementKLUforCIDER *fNPsiOxM1Binding ;
+    BindElementKLUforCIDER *fPPsiInM1Binding ;
+    BindElementKLUforCIDER *fPPsiOxM1Binding ;
+#endif
+
 } TWOnode;
 
 #define pTLElem pElems[0]

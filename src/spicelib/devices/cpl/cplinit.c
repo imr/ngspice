@@ -66,6 +66,12 @@ SPICEdev CPLinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = CPLbindCSC,
+    .DEVbindCSCComplex = CPLbindCSCComplex,
+    .DEVbindCSCComplexToReal = CPLbindCSCComplexToReal,
+#endif
 };
 
 

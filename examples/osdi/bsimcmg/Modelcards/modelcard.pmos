@@ -1,13 +1,13 @@
 ******** BSIM-MG 105 Sample Modelcard for PMOS ********
-
+** source BSIMCMG110.0.0_20160101.tar.gz
+** http://bsim.berkeley.edu/models/bsimcmg/
 ** The BSIM-MG sample modelcard below was not extracted/obtained
 ** from/based on any real technologies. It should not be used for any
 ** other purposes except for benchmarking the implementation of BSIM-MG
 ** against BSIM Team's standard results
 
-*.model pmos1 PMOS level=17
 .model BSIMCMG_osdi_P BSIMCMG_va
-+BULKMOD = 1
++ BULKMOD = 1
 + CGEOMOD = 0
 + TYPE = 0
 + GEOMOD = 0
@@ -77,12 +77,14 @@
 + ETAMOB = 4
 + ETAQM  = 0.54
 + EU = 0.05
++ FPITCH  = 4.00E-08
 + HFIN  = 3.00E-08
 + IGT  = 3.5
 + K1RSCE = 0
 + KSATIV = 1.592
 + KT1 = 0.08387
 + KT1L = 0
++ L  = 2.50E-08
 + LINT  = -2.5E-09
 + LPE0 = 0
 + LCDSCD = 0
@@ -118,6 +120,7 @@
 + RTH0  = 0.15
 + TBGASUB = 0.000473
 + TBGBSUB = 636
++ TFIN  = 1.40E-08
 + TGIDL  = -0.01
 + TMEXP  = 0
 + TNOM = 25

@@ -1,3 +1,36 @@
+Ngspice-41, Aug 13th, 2023
+============
+- New features:
+    + Add support for PSpice DLYLINE
+    + eprvcd [-a] [-t timescale] node node ..., new options
+    + Completely renew XSPICE d_osc code model
+    + Read Touchstone file for S parameter simulation
+    + Analog node changes in VCD file output
+    + Add variable "csnumprec" to allow setting the precision of vectors
+      and variables
+    + option nginfo to enable a status report during simulation (MS Windows GUI)
+    + Returned status of the "shell" command available as interpreter
+      variable "shellstatus"
+    + New default colors for Linux, macOS plot windows.
+    + Update to commands setscale and compose
+    + New function cvector for creating complex vectors
+    + Add an option FREQ to the E- and G-sources
+    + Improve error messages: More verbose, better user information
+    + iplot: new option -w to set width for the window, and -d to set
+      starting of the plot
+    + New dot command .libsave to save a parsed PDK for speeding up
+      later usage.
+    + Speed up parsing of large PDKs (e.g. Skywater)
+    + Update VBIC device model
+    + Prepare noise capability of XSPICE code models
+    + Command 'listing': new extension 'listing r' writes parsed netlist
+      without further formatting, ready to be be loaded and run again.
+
+- Bug fixes:
+    + Several crash bugs (double delete, access NULL pointer etc) removed
+      which have occurred mostly due to incomplete or faulty inputs.
+    + Memory leaks for CIDER removed
+    
 Ngspice-40, Mar 31st, 2023
 ============
 - New features:

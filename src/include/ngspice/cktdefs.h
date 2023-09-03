@@ -325,6 +325,11 @@ struct CKTcircuit {
     NGHASHPTR MODnameHash;
 
     GENinstance *noise_input;   /* identify the input vsrc/isrc during noise analysis */
+
+#ifdef KLU
+    unsigned int CKTkluMODE:1;
+    double CKTkluMemGrowFactor ;
+#endif
 };
 
 

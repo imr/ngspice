@@ -116,7 +116,9 @@ Table of Contents
 
 11 S-parameter analysis
 
-    Evaluate s-parameters on any port of a multiport circuit, store the resulting
+    Evaluate S parameters on any port of a multiport circuit, store the resulting
  data in a Touchstone file
+    Load S parameters from s2p file into code model, and do ac simulation on an
+ automatically generated lumped element circuit.
 
 

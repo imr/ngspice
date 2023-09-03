@@ -14,7 +14,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
-
 int
 CKTpzSetup(CKTcircuit *ckt, int type)
 {
@@ -89,9 +88,72 @@ CKTpzSetup(CKTcircuit *ckt, int type)
 
     job->PZnumswaps = 1;
 
+#ifdef KLU
+    if (matrix->CKTkluMODE)
+    {
+        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+
+        /* Convert the COO Storage to CSC for KLU and Fill the Binding Table */
+        SMPconvertCOOtoCSC (matrix) ;
+
+        /* KLU Pointers Assignment */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
+                DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
+
+        /* ReOrder */
+        error = SMPpreOrder (matrix) ;
+        if (error) {
+            fprintf (stderr, "Error during ReOrdering\n") ;
+        }
+
+        /* Conversion from Real Circuit Matrix to Complex Circuit Matrix */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+        matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
+
+        /* Input Pos */
+        if ((input_pos > 0) && (solution_col > 0))
+        {
+            BindElement j, *matched ;
+
+            j.COO = job->PZdrive_pptr ;
+            j.CSC = NULL ;
+            j.CSC_Complex = NULL ;
+            matched = (BindElement *) bsearch (&j, matrix->SMPkluMatrix->KLUmatrixBindStructCOO,
+                      matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, sizeof (BindElement), BindCompare) ;
+            if (matched == NULL) {
+                printf ("Ptr %p not found in BindStruct Table\n", job->PZdrive_pptr) ;
+            }
+            job->PZdrive_pptr = matched->CSC_Complex ;
+        }
+
+        /* Input Neg */
+        if ((input_neg > 0) && (solution_col > 0))
+        {
+            BindElement j, *matched ;
+
+            j.COO = job->PZdrive_nptr ;
+            j.CSC = NULL ;
+            j.CSC_Complex = NULL ;
+            matched = (BindElement *) bsearch (&j, matrix->SMPkluMatrix->KLUmatrixBindStructCOO,
+                      matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, sizeof (BindElement), BindCompare) ;
+            if (matched == NULL) {
+                printf ("Ptr %p not found in BindStruct Table\n", job->PZdrive_nptr) ;
+            }
+            job->PZdrive_nptr = matched->CSC_Complex ;
+        }
+    } else {
+        fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
+    }
+#endif
+
     error = NIreinit(ckt);
     if (error)
 	return(error);
 
     return OK;
 }
+

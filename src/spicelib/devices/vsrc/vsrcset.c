@@ -91,6 +91,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(VSRCibrPosPtr, VSRCbranch, VSRCposNode);
 #endif
 
+#ifdef KLU
+            here->VSRCibrIbrPtr = NULL ;
+#endif
+
         }
     }
     return(OK);

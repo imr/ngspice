@@ -16,6 +16,10 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 #include "ngspice/material.h"
 
+#ifdef KLU
+#include "ngspice/klu.h"
+#endif
+
 typedef struct sONEelem {
     struct sONEelem *pElems[2];     /* array to store neighbor elements */
     struct sONEnode *pNodes[2];     /* array to store the element nodes */
@@ -27,6 +31,20 @@ typedef struct sONEelem {
     ONEmaterial *matlInfo;          /* material information */
     double epsRel;                  /* epsilon of material rel to Semicon */
     int evalNodes[2];               /* nodes to be evaluated in elem */
+
+#ifdef KLU
+    double *KLUleftLeftNode ;
+    double *KLUleftRightNode ;
+    double *KLUrightLeftNode ;
+    double *KLUrightRightNode ;
+
+    BindElementKLUforCIDER *KLUleftLeftNodeBinding ;
+    BindElementKLUforCIDER *KLUleftRightNodeBinding ;
+    BindElementKLUforCIDER *KLUrightLeftNodeBinding ;
+    BindElementKLUforCIDER *KLUrightRightNodeBinding ;
+
+#endif
+
 } ONEelem;
 
 #define pLeftElem pElems[0]
@@ -112,6 +130,33 @@ typedef struct sONEnode {
     double *fPNiM1;
     double *fPN;
     double *fPNiP1;
+
+#ifdef KLU
+    BindElementKLUforCIDER *fPsiPsiiM1Binding ;
+    BindElementKLUforCIDER *fPsiPsiBinding ;
+    BindElementKLUforCIDER *fPsiPsiiP1Binding ;
+    BindElementKLUforCIDER *fPsiNBinding ;
+    BindElementKLUforCIDER *fPsiPBinding ;
+    BindElementKLUforCIDER *fNPsiiM1Binding ;
+    BindElementKLUforCIDER *fNPsiBinding ;
+    BindElementKLUforCIDER *fNPsiiP1Binding ;
+    BindElementKLUforCIDER *fNNiM1Binding ;
+    BindElementKLUforCIDER *fNNBinding ;
+    BindElementKLUforCIDER *fNNiP1Binding ;
+    BindElementKLUforCIDER *fNPiM1Binding ;
+    BindElementKLUforCIDER *fNPBinding ;
+    BindElementKLUforCIDER *fNPiP1Binding ;
+    BindElementKLUforCIDER *fPPsiiM1Binding ;
+    BindElementKLUforCIDER *fPPsiBinding ;
+    BindElementKLUforCIDER *fPPsiiP1Binding ;
+    BindElementKLUforCIDER *fPPiM1Binding ;
+    BindElementKLUforCIDER *fPPBinding ;
+    BindElementKLUforCIDER *fPPiP1Binding ;
+    BindElementKLUforCIDER *fPNiM1Binding ;
+    BindElementKLUforCIDER *fPNBinding ;
+    BindElementKLUforCIDER *fPNiP1Binding ;
+#endif
+
 } ONEnode;
 
 

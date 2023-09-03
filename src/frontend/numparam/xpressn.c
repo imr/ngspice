@@ -47,6 +47,8 @@ static double
 agauss(double nominal_val, double abs_variation, double sigma)
 {
     double stdvar;
+    if (abs_variation <= 0 || sigma <= 0)
+        return nominal_val;
     stdvar = abs_variation / sigma;
     return (nominal_val + stdvar * gauss1());
 }
@@ -56,6 +58,8 @@ static double
 gauss(double nominal_val, double rel_variation, double sigma)
 {
     double stdvar;
+    if (rel_variation <= 0 || sigma <= 0)
+        return nominal_val;
     stdvar = nominal_val * rel_variation / sigma;
     return (nominal_val + stdvar * gauss1());
 }

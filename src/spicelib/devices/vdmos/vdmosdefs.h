@@ -246,6 +246,56 @@ typedef struct sVDMOSinstance {
     double *VDMOSCktTtpPtr;
     double *VDMOSTpcktTPtr;
 
+#ifdef KLU
+    BindElement *VDMOSDdBinding ;
+    BindElement *VDMOSGgBinding ;
+    BindElement *VDMOSSsBinding ;
+    BindElement *VDMOSDPdpBinding ;
+    BindElement *VDMOSSPspBinding ;
+    BindElement *VDMOSGPgpBinding ;
+    BindElement *VDMOSDdpBinding ;
+    BindElement *VDMOSGPdpBinding ;
+    BindElement *VDMOSGPspBinding ;
+    BindElement *VDMOSSspBinding ;
+    BindElement *VDMOSDPspBinding ;
+    BindElement *VDMOSDPdBinding ;
+    BindElement *VDMOSDPgpBinding ;
+    BindElement *VDMOSSPgpBinding ;
+    BindElement *VDMOSSPsBinding ;
+    BindElement *VDMOSSPdpBinding ;
+    BindElement *VDMOSGgpBinding ;
+    BindElement *VDMOSGPgBinding ;
+    BindElement *VDMOSDsBinding ;
+    BindElement *VDMOSSdBinding ;
+    BindElement *VDIORPdBinding ;
+    BindElement *VDIODrpBinding ;
+    BindElement *VDIOSrpBinding ;
+    BindElement *VDIORPsBinding ;
+    BindElement *VDIORPrpBinding ;
+    BindElement *VDMOSTemptempBinding ;
+    BindElement *VDMOSTempdpBinding ;
+    BindElement *VDMOSTempspBinding ;
+    BindElement *VDMOSTempgpBinding ;
+    BindElement *VDMOSGPtempBinding ;
+    BindElement *VDMOSDPtempBinding ;
+    BindElement *VDMOSSPtempBinding ;
+    BindElement *VDIOTempposPrimeBinding ;
+    BindElement *VDMOSTempdBinding ;
+    BindElement *VDIOPosPrimetempBinding ;
+    BindElement *VDMOSDtempBinding ;
+    BindElement *VDMOStempSBinding ;
+    BindElement *VDMOSSTempBinding ;
+    BindElement *VDMOSTcasetcaseBinding ;
+    BindElement *VDMOSTcasetempBinding ;
+    BindElement *VDMOSTemptcaseBinding ;
+    BindElement *VDMOSTptpBinding ;
+    BindElement *VDMOSTptcaseBinding ;
+    BindElement *VDMOSTcasetpBinding ;
+    BindElement *VDMOSCktTcktTBinding ;
+    BindElement *VDMOSCktTtpBinding ;
+    BindElement *VDMOSTpcktTBinding ;
+#endif
+
 } VDMOSinstance ;
 
 #define VDMOSvgs VDMOSstates+ 0   /* gate-source voltage */

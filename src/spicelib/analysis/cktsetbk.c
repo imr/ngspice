@@ -27,6 +27,8 @@ CKTsetBreak(CKTcircuit *ckt, double time)
     printf("[t:%e] \t want breakpoint for t = %e\n", ckt->CKTtime, time);
 #endif
 
+    /* If time equals ckt->CKTtime, but differences due to
+       limtations of double precision exist */
     if (AlmostEqualUlps(time, ckt->CKTtime, 3)) {
 #ifdef TRACE_BREAKPOINT // #if (1)
         fprintf(stderr, "Warning: Setting a new breakpoint at %e is ignored,\n    as current time is %e\n", time, ckt->CKTtime);

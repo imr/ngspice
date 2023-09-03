@@ -31,18 +31,24 @@ int nthreads;
             return(E_NOMEM);\
 }
 
-
 int
 CKTsetup(CKTcircuit *ckt)
 {
     int i;
     int error;
+
 #ifdef XSPICE
  /* gtri - begin - Setup for adding rshunt option resistors */
     CKTnode *node;
     int     num_nodes;
  /* gtri - end - Setup for adding rshunt option resistors */
+
+#ifdef KLU
+    BindElement BindNode, *matched, *BindStruct ;
+    size_t nz ;
 #endif
+#endif
+
     SMPmatrix *matrix;
 
     if (!ckt->CKThead) {
@@ -108,22 +114,7 @@ CKTsetup(CKTcircuit *ckt)
             if(error) return(error);
         }
     }
-    for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
-        CKALLOC(ckt->CKTstates[i],ckt->CKTnumStates,double);
-    }
-#ifdef WANT_SENSE2
-    if(ckt->CKTsenInfo){
-        /* to allocate memory to sensitivity structures if
-         * it is not done before */
 
-        error = NIsenReinit(ckt);
-        if(error) return(error);
-    }
-#endif
-    if(ckt->CKTniState & NIUNINITIALIZED) {
-        error = NIreinit(ckt);
-        if(error) return(error);
-    }
 #ifdef XSPICE
   /* gtri - begin - Setup for adding rshunt option resistors */
 
@@ -151,11 +142,66 @@ CKTsetup(CKTcircuit *ckt)
                 i++;
             }
         }
-
     }
 
     /* gtri - end - Setup for adding rshunt option resistors */
 #endif
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+
+        /* Convert the COO Storage to CSC for KLU and Fill the Binding Table */
+        SMPconvertCOOtoCSC (matrix) ;
+
+        /* Assign the KLU Pointers */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
+                DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
+
+#ifdef XSPICE
+        if (ckt->enh->rshunt_data.num_nodes > 0) {
+            BindStruct = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+            nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ ;
+            for(i = 0, node = ckt->CKTnodes; node; node = node->next) {
+                if((node->type == SP_VOLTAGE) && (node->number != 0)) {
+                    BindNode.COO = ckt->enh->rshunt_data.diag [i] ;
+                    BindNode.CSC = NULL ;
+                    BindNode.CSC_Complex = NULL ;
+                    matched = (BindElement *) bsearch (&BindNode, BindStruct, nz, sizeof (BindElement), BindCompare) ;
+                    if (matched == NULL) {
+                        printf ("Ptr %p not found in BindStruct Table\n", ckt->enh->rshunt_data.diag [i]) ;
+                    }
+                    ckt->enh->rshunt_data.diag [i] = matched->CSC ; 
+                    i++;
+                }
+            }
+        }
+#endif
+
+    } else {
+        fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
+    }
+#endif
+
+    for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
+        CKALLOC(ckt->CKTstates[i],ckt->CKTnumStates,double);
+    }
+#ifdef WANT_SENSE2
+    if(ckt->CKTsenInfo){
+        /* to allocate memory to sensitivity structures if
+         * it is not done before */
+
+        error = NIsenReinit(ckt);
+        if(error) return(error);
+    }
+#endif
+    if(ckt->CKTniState & NIUNINITIALIZED) {
+        error = NIreinit(ckt);
+        if(error) return(error);
+    }
+
     return(OK);
 }
 

@@ -35,6 +35,8 @@
  */
 
 
+/* Francesco Lannutti 2012-09 - NGSPICE Configuration File Inclusion */
+#include "ngspice/config.h"
 
 
 #ifndef  spOKAY
@@ -294,4 +296,7 @@ extern  void     spMultTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 extern  void     spSolve( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
 extern  void     spSolveTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 
+/* ------------------------------------------------------ */
+
 #endif  /* spOKAY */
+

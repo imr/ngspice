@@ -115,5 +115,9 @@ extern void ONEjacCheck(ONEdevice *, BOOLEAN, ONEtranInfo *);
 extern void ONEpredict(ONEdevice *, ONEtranInfo *);
 extern BOOLEAN ONEdeviceConverged(ONEdevice *);
 
+#ifdef KLU
+void ONEbindCSC (ONEdevice *) ;
+void ONEQbindCSC (ONEdevice *) ;
+#endif
 
 #endif

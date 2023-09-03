@@ -46,6 +46,7 @@ typedef struct {
 
 #ifdef _MSC_VER
 #define MAX_ALIGN 8
+#define alignof sizeof
 #else
 #define MAX_ALIGN alignof(max_align_t)
 #endif
@@ -72,9 +73,15 @@ typedef struct OsdiModelData {
 } OsdiModelData;
 
 extern size_t osdi_instance_data_off(const OsdiRegistryEntry *entry);
-extern void *osdi_instance_data(const OsdiRegistryEntry *entry, GENinstance *inst);
-extern OsdiExtraInstData *osdi_extra_instance_data(const OsdiRegistryEntry *entry,
-                                            GENinstance *inst);
+extern void *osdi_instance_data(const OsdiRegistryEntry *entry,
+                                GENinstance *inst);
+#ifdef KLU
+extern size_t osdi_instance_matrix_ptr_off(const OsdiRegistryEntry *entry);
+extern double **osdi_instance_matrix_ptr(const OsdiRegistryEntry *entry,
+                                         GENinstance *inst);
+#endif
+extern OsdiExtraInstData *
+osdi_extra_instance_data(const OsdiRegistryEntry *entry, GENinstance *inst);
 extern size_t osdi_model_data_off(void);
 extern void *osdi_model_data(GENmodel *model);
 extern void *osdi_model_data_from_inst(GENinstance *inst);

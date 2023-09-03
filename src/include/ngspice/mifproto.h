@@ -154,6 +154,11 @@ extern Mif_Cntl_Src_Type_t MIFget_cntl_src_type(
 
 extern char *MIFcopy(char *);
 
+#ifdef KLU
+extern int MIFbindCSC (GENmodel*, CKTcircuit*) ;
+extern int MIFbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int MIFbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
 
 #ifndef CM_IGNORE
 #define CM_IGNORE(x) (void) (x)

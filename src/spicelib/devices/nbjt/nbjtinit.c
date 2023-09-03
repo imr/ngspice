@@ -66,6 +66,12 @@ SPICEdev NBJTinfo = {
     .DEVdump = NBJTdump,
     .DEVacct = NBJTacct,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = NBJTbindCSC,
+    .DEVbindCSCComplex = NBJTbindCSCComplex,
+    .DEVbindCSCComplexToReal = NBJTbindCSCComplexToReal,
+#endif
 };
 
 

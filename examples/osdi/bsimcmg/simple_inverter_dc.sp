@@ -21,7 +21,8 @@ NN1 vout vin 0 0 BSIMCMG_osdi_N
 * pre_osdi ../osdi_libs/bsimcmg.osdi
 set xbrushwidth=3
 run
-plot v(vout) v(vin)
+let gain:10 = deriv(-V(vout))/10
+plot v(vout) gain:10
 .endc
 
 .end
