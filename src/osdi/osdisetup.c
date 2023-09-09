@@ -478,8 +478,10 @@ int OSDIbindCSC(GENmodel *inModel, CKTcircuit *ckt) {
   GENmodel *gen_model;
   GENinstance *gen_inst;
 
-  /* setup a temporary buffer */
-  uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
+  NG_IGNORE(ckt);
+
+  /* setup a temporary buffer 
+  uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);*/
 
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
     void *model = osdi_model_data(gen_model);
@@ -503,8 +505,10 @@ int OSDIupdateCSC(GENmodel *inModel, CKTcircuit *ckt, bool complex) {
   GENmodel *gen_model;
   GENinstance *gen_inst;
 
-  /* setup a temporary buffer */
-  uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
+  NG_IGNORE(ckt);
+
+  /* setup a temporary buffer 
+  uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);*/
 
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
     void *model = osdi_model_data(gen_model);
@@ -522,10 +526,10 @@ int OSDIupdateCSC(GENmodel *inModel, CKTcircuit *ckt, bool complex) {
   return (OK);
 }
 int OSDIbindCSCComplexToReal(GENmodel *inModel, CKTcircuit *ckt) {
-  OSDIupdateCSC(inModel, ckt, false);
+  return OSDIupdateCSC(inModel, ckt, false);
 }
 
 int OSDIbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt) {
-  OSDIupdateCSC(inModel, ckt, true);
+  return OSDIupdateCSC(inModel, ckt, true);
 }
 #endif
