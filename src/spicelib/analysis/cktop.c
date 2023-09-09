@@ -10,6 +10,7 @@ Modified: 2005 Paolo Nenzi - Restructured
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/cpextern.h"
+#include "ngspice/fteext.h"
 
 #ifdef XSPICE
 #include "ngspice/enh.h"
@@ -108,6 +109,8 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
 #endif
 
     fprintf(cp_err, "\nError: The operating point could not be simulated successfully.\n");
+    if (ft_stricterror)
+        controlled_exit(1);
     fprintf(cp_err, "    Any of the following steps may fail.!\n\n");
 
     return converged;
