@@ -491,7 +491,7 @@ DCtran(CKTcircuit *ckt,
         }
 #endif
         if (flag_autostop)
-            fprintf(stdout, "\nNote: Autostop after %e s, all measurement conditions are fulfilled\n", ckt->CKTtime);
+            fprintf(stdout, "\nNote: Autostop after %e s, all measurement conditions are fulfilled.\n", ckt->CKTtime);
 
         /* Final return from tran*/
         return(OK);
