@@ -94,6 +94,8 @@ DCtran(CKTcircuit *ckt,
     int numNames;
     double maxstepsize = 0.0;
 
+    bool have_autostop = FALSE, flag_autostop = FALSE;
+
     int ltra_num;
     CKTnode *node;
 #ifdef XSPICE
@@ -183,6 +185,8 @@ DCtran(CKTcircuit *ckt,
         firsttime = 1;
         save_mode = (ckt->CKTmode&MODEUIC) | MODETRANOP | MODEINITJCT;
         save_order = ckt->CKTorder;
+
+        have_autostop = cp_getvar("autostop", CP_BOOL, NULL, 0);
 
 /* Add breakpoints here which have been requested by the user setting the
    stop command as 'stop when time = xx'.
@@ -466,8 +470,14 @@ DCtran(CKTcircuit *ckt,
 /* gtri - end - wbk - Update event queues/data for accepted timepoint */
 #endif
     ckt->CKTstat->STAToldIter = ckt->CKTstat->STATnumIter;
-    if (check_autostop("tran") ||
-        ckt->CKTfinalTime - ckt->CKTtime < ckt->CKTminBreak) {
+    /* check for the end of the tran simulation, either by< stop time given,
+       or final time has been reached. */
+    if (have_autostop)
+    /* time consuming autostop check only, when variable 'autostop' has been set
+       before tran is started.*/
+        flag_autostop = check_autostop("tran");
+    /* If CKTtime and CKTfinalTime are almost equal, then finish */
+    if (flag_autostop || AlmostEqualUlps(ckt->CKTtime, ckt->CKTfinalTime, 100)) {
 #ifdef STEPDEBUG
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
@@ -480,6 +490,10 @@ DCtran(CKTcircuit *ckt,
             ckt->CKTsenInfo->SENmode = save;
         }
 #endif
+        if (flag_autostop)
+            fprintf(stdout, "\nNote: Autostop after %e s, all measurement conditions are fulfilled\n", ckt->CKTtime);
+
+        /* Final return from tran*/
         return(OK);
     }
     if(SPfrontEnd->IFpauseTest()) {
