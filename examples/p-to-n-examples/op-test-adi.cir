@@ -30,6 +30,7 @@ vin in 0 DC 0 PULSE(0.1 0.2 200uS 200uS 200uS 5m 10m)
 .tran 10u 10m
 
 .control
+option sparse ; KLU will fail
 run
 plot dc1.v(outo) vs dc1.v(in)
 plot v(in)  v(a1) v(outo)
