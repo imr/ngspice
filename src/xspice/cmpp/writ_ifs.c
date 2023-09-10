@@ -719,7 +719,7 @@ static int write_param_info(
             p_param_cur->default_value_cnt = 0;
             continue;
         }
-        rc |= fprintf(fp, "static struct Mif_Parse_Value %s_default[] = {\n",
+        rc |= fprintf(fp, "static union Mif_Parse_Value %s_default[] = {\n",
                       p_param_cur->name);
 
         do {            // Write the default values for this parameter.
@@ -1270,20 +1270,20 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
 
         case CMPP_BOOLEAN:
             bool_str = boolean_to_str(value.bvalue);
-            sprintf(str, "{%s, 0, 0.0, {0.0, 0.0}, NULL}", bool_str);
+            sprintf(str, "{ .bvalue=%s }", bool_str);
             break;
 
         case CMPP_INTEGER:
-            sprintf(str, "{MIF_FALSE, %d, 0.0, {0.0, 0.0}, NULL}", value.ivalue);
+            sprintf(str, "{ .ivalue=%d }", value.ivalue);
             break;
 
         case CMPP_REAL:
-            sprintf(str, "{MIF_FALSE, 0, %e, {0.0, 0.0}, NULL}", value.rvalue);
+            sprintf(str, "{ .rvalue=%e }", value.rvalue);
             break;
 
         case CMPP_COMPLEX:
-            sprintf(str, "{MIF_FALSE, 0, 0.0, {%e, %e}, NULL}",
-                                      value.cvalue.real, value.cvalue.imag);
+            sprintf(str, "{ .cvalue={%e, %e} }",
+                    value.cvalue.real, value.cvalue.imag);
             break;
 
         case CMPP_STRING:
@@ -1303,7 +1303,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
                 max_len += str_len;
             } /* end of resize */
 
-            sprintf(str, "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, \"%s\"}", value.svalue);
+            sprintf(str, "{ .svalue=\"%s\" }", value.svalue);
             break;
 
         default:
@@ -1338,8 +1338,5 @@ static char  *integer_to_str(int value)
 
 static const char *no_value_to_str(void)
 {
-    return "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, NULL}";
+    return "{ .bvalue=MIF_FALSE }";
 }
-
-
-
