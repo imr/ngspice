@@ -166,8 +166,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
                      * This is my mod with KLU. It saves run-time, but also the system at the next iteration may be different.
                      * How do we guarantee that the system is the same at the next iteration? So, the original SPARSE version below sounds like a bug.
                      */
-
-                    fprintf (stderr, "Warning: KLU ReFactor failed. Factoring again...\n") ;
+                    if (ft_ngdebug)
+                        fprintf (stderr, "Warning: KLU ReFactor failed. Factoring again...\n") ;
                     ckt->CKTniState |= NISHOULDREORDER;
                     ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 0 ;
                     error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
