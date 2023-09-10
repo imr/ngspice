@@ -101,8 +101,8 @@ struct Mif_Param_Info {
     char                *name;            /* Name of this parameter */
     char                *description;     /* Description of this parameter */
     Mif_Data_Type_t     type;             /* Is this a real, boolean, string, ... */
-    Mif_Boolean_t       has_default;      /* True if there is a default value */
-    Mif_Parse_Value_t   default_value;    /* The default value */
+    int                 default_value_siz;/* Size of default_values array. */
+    Mif_Parse_Value_t  *default_values;   /* The default values (array). */
     Mif_Boolean_t       has_lower_limit;  /* True if there is a lower limit */
     Mif_Parse_Value_t   lower_limit;      /* The lower limit for this parameter */
     Mif_Boolean_t       has_upper_limit;  /* True if there is a upper limit */

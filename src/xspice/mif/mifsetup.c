@@ -135,7 +135,6 @@ MIFsetup(
 
     for( ; model != NULL; model = MIFnextModel(model)) {
 
-
         /* For each parameter not given explicitly on the .model */
         /* card, default it                                      */
 
@@ -151,42 +150,66 @@ MIFsetup(
                     model->param[i]->size = 1;
                     model->param[i]->element = TMALLOC(Mif_Value_t, 1);
                 } else { /* parameter is an array */
-                    /* MIF_INP2A() parser assures that there is an associated array connection */
-                    /* Since several instances may share this model, we have to create an array    */
-                    /* big enough for the instance with the biggest connection array               */
-                    max_size = 0;
-                    for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
-                        size = here->conn[param_info->conn_ref]->size;
-                        if(size > max_size)
-                            max_size = size;
+                    /* If there is an associated array connection, take the
+                     * size from there.  Since several instances may share
+                     * this model, create an array big enough for the
+                     * instance with the biggest connection array.
+                     * Otherwise, use the size of the default.
+                     */
+
+                    if (param_info->has_conn_ref) {
+                        for (here = MIFinstances(model), max_size = 0;
+                         here != NULL;
+                         here = MIFnextInstance(here)) {
+                            size = here->conn[param_info->conn_ref]->size;
+                            if (size > max_size)
+                                max_size = size;
+                        }
+                    } else {
+                        max_size = param_info->default_value_siz;
+                        if (param_info->has_lower_bound &&
+                            param_info->lower_bound > max_size) {
+                            max_size = param_info->lower_bound;
+                        }
                     }
                     model->param[i]->size = max_size;
                     model->param[i]->element = TMALLOC(Mif_Value_t, max_size);
                 }  /* end if parameter is an array */
 
-                /* set the parameter element(s) to default value */
-                for(j = 0; j < model->param[i]->size; j++) {
+                if (param_info->default_value_siz == 0)
+                    continue;
 
+                /* Set the parameter element(s) to default value(s). */
+
+                for(j = 0; j < model->param[i]->size; j++) {
+                    Mif_Parse_Value_t *dvp;
+
+                    if (j >= param_info->default_value_siz) {
+                        dvp = param_info->default_values +
+                                  param_info->default_value_siz - 1;
+                    } else {
+                        dvp = param_info->default_values + j;
+                    }
                     switch(param_info->type) {
 
                     case MIF_BOOLEAN:
-                        model->param[i]->element[j].bvalue = param_info->default_value.bvalue;
+                        model->param[i]->element[j].bvalue = dvp->bvalue;
                         break;
 
                     case MIF_INTEGER:
-                        model->param[i]->element[j].ivalue = param_info->default_value.ivalue;
+                        model->param[i]->element[j].ivalue = dvp->ivalue;
                         break;
 
                     case MIF_REAL:
-                        model->param[i]->element[j].rvalue = param_info->default_value.rvalue;
+                        model->param[i]->element[j].rvalue = dvp->rvalue;
                         break;
 
                     case MIF_COMPLEX:
-                        model->param[i]->element[j].cvalue = param_info->default_value.cvalue;
+                        model->param[i]->element[j].cvalue = dvp->cvalue;
                         break;
 
                     case MIF_STRING:
-                        model->param[i]->element[j].svalue = param_info->default_value.svalue;
+                        model->param[i]->element[j].svalue = dvp->svalue;
                         break;
 
                     default:

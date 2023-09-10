@@ -208,8 +208,8 @@ typedef struct {
     char            *name;            /* Name of this parameter */
     char            *description;     /* Description of this parameter */
     Data_Type_t     type;             /* Data type, e.g. REAL, INTEGER, ... */
-    bool            has_default;      /* True if there is a default value */
-    Value_t         default_value;    /* The default value */
+    int             default_value_idx;/* Start of default_values.. */
+    int             default_value_cnt;/* Number of default_values.. */
     bool            has_lower_limit;  /* True if there is a lower limit */
     Value_t         lower_limit;      /* The lower limit for this parameter */
     bool            has_upper_limit;  /* True if there is a upper limit */
@@ -239,7 +239,14 @@ typedef struct {
 
 } Inst_Var_Info_t;
 
+/* Structure used when parsing default values from the IFS file, used below. */
 
+typedef struct {
+    bool        has_value;
+    bool        advance; // Used for vector default values.
+    Data_Type_t kind;
+    Value_t     u; // Union holding the value.
+} My_Value_t;
 
 /*
  * The all encompassing structure for the ifs table information
@@ -254,7 +261,8 @@ typedef struct {
     Param_Info_t    *param;           /* Array of parameter info structs */
     int             num_inst_var;     /* Number of entries in the instance var table(s) */
     Inst_Var_Info_t *inst_var;        /* Array of instance variable info structs */
-
+    int             num_default_values;
+    My_Value_t      *defaults_var;    /* Array of annotated values. */
 } Ifs_Table_t;
 
 

@@ -115,16 +115,14 @@ Ifs_Table_t *parser_ifs_table;
 
 int ifs_num_errors;
 
-static size_t alloced_size [4];
+/* Allocated and initial sizes of tables for parse results. */
 
-/*
- * !!!!! Make sure these are large enough so that they never get realloced
- * !!!!! since that will cause garbage uninitialized data...
- * !!!!! (FIX THIS!)
- */
-#define DEFAULT_SIZE_CONN   100
-#define DEFAULT_SIZE_PARAM  100
-#define DEFAULT_SIZE_INST_VAR   100
+static size_t alloced_size [5];
+
+#define DEFAULT_SIZE_CONN   10
+#define DEFAULT_SIZE_PARAM  10
+#define DEFAULT_SIZE_INST_VAR   10
+#define DEFAULT_SIZE_DEFAULTS   100
 #define GROW_SIZE       10
 
 typedef enum {
@@ -132,6 +130,7 @@ typedef enum {
    TBL_PORT,
    TBL_PARAMETER,
    TBL_STATIC_VAR,
+   TBL_DEFAULTS,
 } Table_t;
 
 typedef struct {
@@ -368,15 +367,19 @@ assign_limits (Data_Type_t type, Param_Info_t *param, Range_t range)
 }
 
 /*---------------------------------------------------------------------------*/
+/* Advance the item variable, checking for table overflow. */
+
 static void
 check_item_num (void)
 {
+   item++;
    if (item-item_offset >= ITEM_BUFFER_SIZE) {
-      fatal ("Too many items in table - split into sub-tables");
+      fatal("Too many items in table - split into sub-tables");
    }
-   if (item > (int) alloced_size [context.table] ) {
+   if (item >= (int) alloced_size [context.table] ) {
       switch (context.table) {
-      case TBL_NAME:
+      case TBL_NAME:     // Fixed size.
+      case TBL_DEFAULTS: // Handled in store_default_value().
          break;
       case TBL_PORT:
          alloced_size[context.table] += GROW_SIZE;
@@ -407,7 +410,6 @@ check_item_num (void)
         break;
       }
    }
-   item++;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -429,6 +431,7 @@ check_end_item_num (void)
       num_items_fixed = true;
       switch (context.table) {
       case TBL_NAME:
+      case TBL_DEFAULTS:
          break;
       case TBL_PORT:
          TBL->num_conn = num_items;
@@ -445,10 +448,37 @@ check_end_item_num (void)
 }
 
 #define INIT(n) item = (n); item_offset = (n); num_items = (n); num_items_fixed = false
-#define ITEM check_item_num()
-#define END  check_end_item_num()
+#define ITEM check_item_num()     // Advances the item_buffer index.
+#define END  check_end_item_num() // Check for excessive values in later row.
    
+/* Store a default value for a parameter. */
+
+static void store_default_value(My_Value_t *vp)
+{
+    if (TBL->num_default_values >= alloced_size[TBL_DEFAULTS]) {
+        /* Expand table. */
+
+        alloced_size [TBL_DEFAULTS] += GROW_SIZE * 5;
+        TBL->defaults_var = (My_Value_t *) realloc(TBL->defaults_var,
+               alloced_size[TBL_DEFAULTS] * sizeof (My_Value_t));
+        if (!TBL->defaults_var) {
+           fatal ("Error allocating memory for default parameter values");
+        }
+    }
+    TBL->defaults_var[TBL->num_default_values++] = *vp;
+    if (vp->advance)
+        ITEM;   // Count another parameter sub-table.
+}
+
 %}
+
+/* The parser perfoms a double scan for each row (labelled line), with the
+ * row spanning multiple sub-tables (individual connection definitions etc.).
+ * Values and other information are copied into the item_buffer[]
+ * array as they are recognised and then moved to their destination stucture
+ * TBL->xxxx[index] when the whole row has been parsed.  Default parameter
+ * values are hndled differently and copied directly to TBL->defaults_var.
+ */
 
 %token TOK_ALLOWED_TYPES
 %token TOK_ARRAY
@@ -501,6 +531,10 @@ check_end_item_num (void)
 %token TOK_SPICE_MODEL_NAME
 %token TOK_STRING_LITERAL
 
+ /* This declares the type of Bison's "semantic values" (the value associated
+  * with an instance of a symbol of the grammer, $$), defining YYSTYPE.
+  */
+
 %union {
    Ctype_List_t     *ctype_list;
    Dir_t        dir;
@@ -549,6 +583,7 @@ YYSTYPE item_buffer [ITEM_BUFFER_SIZE];
 ifs_file : {TBL->num_conn = 0;
                TBL->num_param = 0;
                TBL->num_inst_var = 0;
+               TBL->num_default_values = 0;
 
                saw_function_name = false;
                saw_model_name = false;
@@ -556,14 +591,18 @@ ifs_file : {TBL->num_conn = 0;
                alloced_size [TBL_PORT] = DEFAULT_SIZE_CONN;
                alloced_size [TBL_PARAMETER] = DEFAULT_SIZE_PARAM;
                alloced_size [TBL_STATIC_VAR] = DEFAULT_SIZE_INST_VAR;
+               alloced_size [TBL_DEFAULTS] = DEFAULT_SIZE_DEFAULTS;
 
                TBL->conn = (Conn_Info_t*)
                      calloc(DEFAULT_SIZE_CONN, sizeof (Conn_Info_t));
                TBL->param = (Param_Info_t*)
-                    calloc (DEFAULT_SIZE_PARAM, sizeof (Param_Info_t));
+                     calloc (DEFAULT_SIZE_PARAM, sizeof (Param_Info_t));
                TBL->inst_var = (Inst_Var_Info_t*)
-                  calloc (DEFAULT_SIZE_INST_VAR, sizeof (Inst_Var_Info_t));
-               if (! (TBL->conn && TBL->param && TBL->inst_var) ) {
+                     calloc (DEFAULT_SIZE_INST_VAR, sizeof (Inst_Var_Info_t));
+               TBL->defaults_var = (My_Value_t *)
+                     calloc(DEFAULT_SIZE_DEFAULTS, sizeof (My_Value_t));
+               if (! (TBL->conn && TBL->param &&
+                      TBL->inst_var && TBL->defaults_var) ) {
                   fatal ("Could not allocate enough memory");
                } 
             }
@@ -701,18 +740,8 @@ parameter_table_item    : TOK_PARAMETER_NAME list_of_ids
                   check_dtype_not_pointer (ITEM_BUF(i).dtype);
                   TBL->param[i].type = ITEM_BUF(i).dtype;
                }}
-            | TOK_DEFAULT_VALUE list_of_values 
-              {int i;
-               END;
-               FOR_ITEM (i) {
-                  TBL->param[i].has_default = 
-                 ITEM_BUF(i).value.has_value;
-                  if (TBL->param[i].has_default) {
-                     assign_value (TBL->param[i].type,
-                           &TBL->param[i].default_value,
-                           ITEM_BUF(i).value);
-                  }
-               }}
+            | TOK_DEFAULT_VALUE list_of_default_values
+              {END; } // Check against current sub-table count.
             | TOK_LIMITS list_of_ranges 
               {int i;
                END;
@@ -870,15 +899,22 @@ number_or_dash      : TOK_DASH {$$.has_bound = false;}
                   $$.bound = $1;}
             ;
 
-list_of_values      : /* empty */
-            | list_of_values value_or_dash {ITEM; BUF.value = $2;}
+list_of_pure_values      : value { $1.advance = 1; store_default_value(&$1); }
+            | list_of_pure_values value
+		{ $2.advance = 0; store_default_value(&$2); }
             ;
+
+list_of_default_values : /* empty */
+	    | list_of_default_values value_or_dash
+		{ $2.advance = 1; store_default_value(&$2); }
+            | list_of_default_values
+              TOK_LBRACKET list_of_pure_values TOK_RBRACKET
 
 value_or_dash       : TOK_DASH {$$.has_value = false;}
             | value
             ;
 
-value           : string    {$$.has_value = true;
+value       : string    {$$.has_value = true;
                      $$.kind = CMPP_STRING;
                      $$.u.svalue = $1;}
             | btype     {$$.has_value = true;

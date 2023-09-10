@@ -570,7 +570,7 @@ MIF_INP2A (
         if(mdfast->param[i]->is_null) {
             char* emessage;
 
-            if(! param_info->has_default) {
+            if(param_info->default_value_siz == 0) {
                 if (param_info->type == MIF_STRING)
                     continue;   // Allow NULL
                 emessage = tprintf("Parameter %s on model %s has no default",
