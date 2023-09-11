@@ -877,7 +877,9 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CK
         rtn = 0;
         goto quit;
     }
-    LITERR(" unimplemented control card - error \n");
+    char *token2 = tprintf(" unimplemented dot command '%s'\n", token);
+    LITERR(token2);
+    tfree(token2);
 quit:
     tfree(token);
     return rtn;
