@@ -179,6 +179,8 @@ com_listing(wordlist *wl)
         } else {
             if (type != LS_DECK && type != LS_RUNNABLE)
                 fprintf(cp_out, "\t%s\n\n", ft_curckt->ci_name);
+            else if (type == LS_RUNNABLE)
+                fprintf(cp_out, "* expanded deck of %s\n", ft_curckt->ci_name);
             inp_list(cp_out,
                      expand ? ft_curckt->ci_deck : ft_curckt->ci_origdeck,
                      ft_curckt->ci_options, type);

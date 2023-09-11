@@ -532,7 +532,7 @@ check_autostop(char* what)
 {
     bool flag = FALSE;
 
-    if (cp_getvar("autostop", CP_BOOL, NULL, 0))
+//    if (cp_getvar("autostop", CP_BOOL, NULL, 0))
         flag = do_measure(what, TRUE);
 
     return flag;

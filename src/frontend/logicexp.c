@@ -614,6 +614,7 @@ static void ptable_print(PTABLE pt)
 
 /* Start of logicexp parser */
 static char *get_inst_name(void);
+static char *get_temp_name(void);
 static void aerror(char *s);
 static BOOL amatch(int t);
 static BOOL bexpr(void);
