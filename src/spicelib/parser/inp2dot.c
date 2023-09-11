@@ -215,7 +215,7 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
         pdef = TRUE;
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
     startval = parm->rValue;
-    if (startval <= 0) {
+    if (startval < 0) {
         pdef = TRUE;
         startval = parm->rValue = 1.;
     }
