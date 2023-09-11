@@ -770,7 +770,9 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CK
     } else if ((strcmp(token, ".width") == 0) ||
                strcmp(token, ".print") == 0 || strcmp(token, ".plot") == 0) {
         /* obsolete - ignore */
-        LITERR(" Warning: obsolete control card - ignored \n");
+        char* token2 = tprintf(" obsolete dot command '%s' - ignored \n", token);
+        LITERR(token2);
+        tfree(token2);
         goto quit;
     } else if ((strcmp(token, ".temp") == 0)) {
         /* .temp temp1 temp2 temp3 temp4 ..... */
