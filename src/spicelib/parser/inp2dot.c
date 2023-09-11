@@ -183,6 +183,8 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     int which;			/* which analysis we are performing */
     char *steptype;		/* ac analysis, type of stepping function */
     bool pdef = FALSE;  /* issue a warning if default parameters are used */
+    char* mline = line; /* for debug printout */
+    double startval, stopval;
 
     NG_IGNORE(gnode);
 
@@ -195,7 +197,7 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     IFC(newAnalysis, (ckt, which, "AC Analysis", &foo, task));
     INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
     if (!*steptype || (!ciprefix("dec", steptype) && !ciprefix("oct", steptype) && !ciprefix("lin", steptype))) {
-        current->error = "Missing DEC, OCT, or LIN\n";
+        LITERR("Missing DEC, OCT, or LIN.\n");
         return (0);
     }
     ptemp.iValue = 1;
@@ -203,23 +205,35 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     tfree(steptype);
 
     parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
-    if (parm->iValue == 0)
+    if (parm->iValue < 1) {
         pdef = TRUE;
+        parm->iValue = 10;
+    }
     GCA(INPapName, (ckt, which, foo, "numsteps", parm));
 
-    if(!isdigit(*line))
+    if((*line != '.' && !isdigit(*line)) || (*line == '.' && !isdigit(*(line+1))))
         pdef = TRUE;
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
+    startval = parm->rValue;
+    if (startval <= 0) {
+        pdef = TRUE;
+        startval = parm->rValue = 1.;
+    }
     GCA(INPapName, (ckt, which, foo, "start", parm));
 
-    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
-    if (parm->rValue == 0)
+    if((*line != '.' && !isdigit(*line)) || (*line == '.' && !isdigit(*(line+1))))
         pdef = TRUE;
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
+    stopval = parm->rValue;
+    if (stopval < startval) {
+        pdef = TRUE;
+        parm->rValue = 1000. * startval;
+    }
     GCA(INPapName, (ckt, which, foo, "stop", parm));
 
     if (pdef) {
         fprintf(stderr, "Warning, ngspice assumes default parameter(s) for ac simulation\n");
-        fprintf(stderr, "    Check your ac or .ac line\n\n");
+        fprintf(stderr, "    Check your input line '.ac %s'\n\n", mline);
     }
     return (0);
 }
