@@ -16,8 +16,6 @@ Modified: 2005 Paolo Nenzi - Restructured
 #include "ngspice/enh.h"
 #endif
 
-extern bool ft_ngdebug;
-
 static int dynamic_gmin(CKTcircuit *, long int, long int, int);
 static int spice3_gmin(CKTcircuit *, long int, long int, int);
 static int new_gmin(CKTcircuit*, long int, long int, int);
