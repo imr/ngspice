@@ -25,10 +25,10 @@ SUMMARY
 
     This file contains the definition of a memristor code model
     with threshold according to
-	Y. V. Pershin, M. Di Ventra: "SPICE model of memristive devices with threshold", 
-    arXiv:1204.2600v1 [physics.comp-ph] 12 Apr 2012, 
+	Y. V. Pershin, M. Di Ventra: "SPICE model of memristive devices with threshold",
+    arXiv:1204.2600v1 [physics.comp-ph] 12 Apr 2012,
     http://arxiv.org/pdf/1204.2600.pdf.
-	
+
 	** Experimental, still to be tested in circuits !! **
 
 INTERFACES
@@ -59,8 +59,8 @@ Description:           "memristor terminals"
 Direction:             inout
 Default_Type:          gd
 Allowed_Types:         [gd]
-Vector:                 no
-Vector_Bounds:          -
+Vector:                no
+Vector_Bounds:         -
 Null_Allowed:          no
 
 
@@ -71,9 +71,9 @@ Description:           "minimum resistance"      "maximum resistance"   "initial
 Data_Type:             real                      real                   real
 Default_Value:         10.0                      10000.0                7000.0
 Limits:                -                         -                      -
-Vector:                 no                       no                     no
-Vector_Bounds:          -                        -                      -
-Null_Allowed:          no                        no                     no
+Vector:                no                        no                     no
+Vector_Bounds:         -                         -                      -
+Null_Allowed:          yes                       yes                    yes
 
 PARAMETER_TABLE:
 
@@ -84,6 +84,6 @@ Default_Value:         0.0                       1.0                    0.0
 Limits:                -                         -                      -
 Vector:                no                        no                     no
 Vector_Bounds:         -                         -                      -
-Null_Allowed:          no                        no                     no
+Null_Allowed:          yes                       yes                    yes
 
 

@@ -719,7 +719,17 @@ static int write_param_info(
             p_param_cur->default_value_cnt = 0;
             continue;
         }
-        rc |= fprintf(fp, "static union Mif_Parse_Value %s_default[] = {\n",
+
+        if (!p_param_cur->null_allowed) {
+             fprintf(stderr,
+                     "Default value given for parameter %s but "
+                     "the user must set instance value (Null_Allowed: no).",
+                        p_param_cur->name);
+                    return 1;
+        }
+
+        rc |= fprintf(fp,
+                      "static union Mif_Parse_Value %s_default[] = {\n",
                       p_param_cur->name);
 
         do {            // Write the default values for this parameter.
