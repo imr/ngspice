@@ -95,10 +95,14 @@ cm-descr := \
 
 .SECONDARY : $(cm-gens)
 
+# When recursively making clean, cm-objs and cm-gens do not contain
+# the files generated for individual code models, as cmpp has already gone
+# and modlist and udnlist are empty.  Those files are explicitly removed.
 
 cm-clean :
 	-rm -f $(cm)/$(cm).cm
 	-rm -f $(cm-descr) $(cm-objs) $(cm-gens)
+	-rm -f $(cm)/*/*.o $(cm)/*/*.c $(cm)/*/.deps/*
 	-rm -f $(cm-deps)
 
 cm-distclean :
