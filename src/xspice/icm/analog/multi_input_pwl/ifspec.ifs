@@ -15,7 +15,7 @@ AUTHORS
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     analog multi-input gate pwl code model.
 
 ===============================================================================*/
@@ -44,7 +44,7 @@ PARAMETER_TABLE:
 Parameter_Name:        x                  y               model
 Description:           "x array"          "y array"       "model type"
 Data_Type:             real               real            string
-Default_Value:         0.0                0.0             "and"
+Default_Value:         -                  -               "and"
 Limits:                -                  -               -
 Vector:                yes                yes             no
 Vector_Bounds:         [2 -]              [2 -]           -

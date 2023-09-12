@@ -32,8 +32,8 @@ Description:         "control input"    "output"
 Direction:           in                 out
 Default_Type:        v                  d
 Allowed_Types:       [v,vd,i,id]        [d]
-Vector:               no                 no
-Vector_Bounds:        -                  -
+Vector:              no                 no
+Vector_Bounds:       -                  -
 Null_Allowed:        no                 no
 
 
@@ -43,11 +43,11 @@ PARAMETER_TABLE:
 Parameter_Name:     cntl_array          freq_array
 Description:        "control array"     "frequency array"
 Data_Type:          real                real
-Default_Value:      0.0                 1.0e6
+Default_Value:      [0.0 1.0]           [1.0e6 2.0e6]
 Limits:             -                   [0 -]
-Vector:              yes                 yes
-Vector_Bounds:       [2 -]               [2 -]
-Null_Allowed:       no                  no
+Vector:             yes                 yes
+Vector_Bounds:      [2 -]               [2 -]
+Null_Allowed:       yes                 yes
 
 
 PARAMETER_TABLE:

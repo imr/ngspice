@@ -64,7 +64,7 @@ PARAMETER_TABLE:
 Parameter_Name:     table_values
 Description:        "lookup table values"
 Data_Type:          string
-Default_Value:      "0"
+Default_Value:      -
 Limits:             -
 Vector:             no
 Vector_Bounds:      -

@@ -51,8 +51,8 @@ Description:           "capacitor terminals"
 Direction:             inout
 Default_Type:          hd
 Allowed_Types:         [hd]
-Vector:                 no
-Vector_Bounds:          -
+Vector:                no
+Vector_Bounds:         -
 Null_Allowed:          no
 
 
@@ -63,9 +63,6 @@ Description:           "capacitance"    "voltage initial condition"
 Data_Type:             real             real
 Default_Value:         -                0.0
 Limits:                -                -
-Vector:                 no               no
-Vector_Bounds:          -                -
-Null_Allowed:          no               no
-
-
-
+Vector:                no               no
+Vector_Bounds:         -                -
+Null_Allowed:          no               yes

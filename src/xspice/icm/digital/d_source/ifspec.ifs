@@ -14,7 +14,7 @@ AUTHORS
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     digital d_source code model.
 
 ===============================================================================*/
@@ -33,8 +33,8 @@ Description:         "output"
 Direction:           out
 Default_Type:        d
 Allowed_Types:       [d]
-Vector:               yes
-Vector_Bounds:        -     
+Vector:              yes
+Vector_Bounds:       -
 Null_Allowed:        no 
 
 
@@ -42,25 +42,25 @@ Null_Allowed:        no
 PARAMETER_TABLE:
 
 Parameter_Name:     input_file
-Description:        "digital input vector filename"  
-Data_Type:          string 
-Default_Value:      "source.txt"                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "digital input vector filename"
+Data_Type:          string
+Default_Value:      "source.txt"
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 
 PARAMETER_TABLE:
 
 Parameter_Name:     input_load
-Description:        "input loading capacitance (F)"  
-Data_Type:          real 
-Default_Value:      1.0e-12                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no
+Description:        "input loading capacitance (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 
 STATIC_VAR_TABLE:

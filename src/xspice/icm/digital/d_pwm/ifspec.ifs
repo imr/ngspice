@@ -34,8 +34,8 @@ Description:         "control input"    "output"
 Direction:           in                 out
 Default_Type:        v                  d
 Allowed_Types:       [v,vd,i,id]        [d]
-Vector:               no                 no
-Vector_Bounds:        -                  -
+Vector:              no                 no
+Vector_Bounds:       -                  -
 Null_Allowed:        no                 no
 
 
@@ -45,11 +45,11 @@ PARAMETER_TABLE:
 Parameter_Name:     cntl_array          dc_array    
 Description:        "control array"     "duty cycle array"
 Data_Type:          real                real
-Default_Value:      0.0                 0.5                
-Limits:             -                   [0 1]                    
-Vector:              yes                 yes
-Vector_Bounds:       [2 -]               [2 -]                
-Null_Allowed:       no                  no       
+Default_Value:      [-1 1]              [0 1]
+Limits:             -                   [0 1]
+Vector:             yes                 yes
+Vector_Bounds:      [2 -]               [2 -]
+Null_Allowed:       yes                 yes
 
 
 PARAMETER_TABLE:
@@ -59,9 +59,9 @@ Description:        "oscillator frequency"  "initial phase of output"
 Data_Type:          real                    real
 Default_Value:      1e6                     0
 Limits:             [1e-6 -]                [-180.0 +360.0]
-Vector:              no                      no
-Vector_Bounds:       -                       -
-Null_Allowed:       yes                     yes 
+Vector:             no                      no
+Vector_Bounds:      -                       -
+Null_Allowed:       yes                     yes
 
 
 PARAMETER_TABLE:
@@ -71,9 +71,9 @@ Description:        "rise delay"            "fall delay"
 Data_Type:          real                    real
 Default_Value:      1e-9                    1e-9
 Limits:             [0 -]                   [0 -]
-Vector:              no                      no
-Vector_Bounds:       -                       -
-Null_Allowed:       yes                     yes 
+Vector:             no                      no
+Vector_Bounds:      -                       -
+Null_Allowed:       yes                     yes
 
 
 STATIC_VAR_TABLE:

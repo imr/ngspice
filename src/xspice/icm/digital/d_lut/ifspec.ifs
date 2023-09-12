@@ -55,8 +55,8 @@ Description:        "input load value (F)"
 Data_Type:          real
 Default_Value:      1.0e-12
 Limits:             -
-Vector:              no
-Vector_Bounds:       -
+Vector:             no
+Vector_Bounds:      -
 Null_Allowed:       yes
 
 PARAMETER_TABLE:
@@ -64,10 +64,10 @@ PARAMETER_TABLE:
 Parameter_Name:     table_values
 Description:        "lookup table values"
 Data_Type:          string
-Default_Value:      "0"
+Default_Value:      -
 Limits:             -
-Vector:              no
-Vector_Bounds:       -
+Vector:             no
+Vector_Bounds:      -
 Null_Allowed:       no
 
 STATIC_VAR_TABLE:
