@@ -89,6 +89,8 @@ Z	[0-9A-Za-z_]
 			 } while (ch != '\n');
 		        }
 
+\"(\\.|[^"\\])*\"	{return TOK_IDENTIFIER;} /* Literal string. */
+
 ARGS			{return TOK_ARGS;}
 INIT			{return TOK_INIT;}
 CALLBACK		{return TOK_CALLBACK;}
