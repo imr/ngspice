@@ -751,12 +751,12 @@ void ft_writesimple(double *xlims, double *ylims,
                 struct dvec* scale = v->v_scale;
                 /* If wr_singlescale is set, print scale name only in first column */
                 if (prscale)
-                    fprintf(file_data, " %s", scale->v_name);
+                    fprintf(file_data, "%s ", scale->v_name);
 
                 if (isreal(v))
-                    fprintf(file_data, " %s", v->v_name);
+                    fprintf(file_data, "%s ", v->v_name);
                 else
-                    fprintf(file_data, " %s %s", v->v_name, v->v_name);
+                    fprintf(file_data, "%s %s ", v->v_name, v->v_name);
                 if (singlescale)
                     /* the following names are printed without scale vector names */
                     prscale = FALSE;
