@@ -688,7 +688,7 @@ void ft_writesimple(double *xlims, double *ylims,
     FILE *file_data;
     struct dvec *v;
     int i, numVecs, maxlen, preci;
-    bool appendwrite, singlescale, vecnames;
+    bool appendwrite, singlescale, vecnames, onespace;
 
     NG_IGNORE(xlims);
     NG_IGNORE(ylims);
@@ -701,6 +701,7 @@ void ft_writesimple(double *xlims, double *ylims,
     appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL, 0);
     singlescale = cp_getvar("wr_singlescale", CP_BOOL, NULL, 0);
     vecnames = cp_getvar("wr_vecnames", CP_BOOL, NULL, 0);
+    onespace = cp_getvar("wr_onespace", CP_BOOL, NULL, 0);
 
     /* Sanity checking. */
     for (v = vecs, numVecs = 0; v; v = v->v_link2)
@@ -745,19 +746,37 @@ void ft_writesimple(double *xlims, double *ylims,
     /* Print names of vectors to first line */
     if (vecnames) {
         bool prscale = TRUE;
-        for (v = vecs; v; v = v->v_link2) {
-            struct dvec *scale = v->v_scale;
-            /* If wr_singlescale is set, print scale name only in first column */
-            if (prscale)
-                fprintf(file_data, " %-*s", preci + 7, scale->v_name);
+        if (onespace) { /* a single space between names */
+            for (v = vecs; v; v = v->v_link2) {
+                struct dvec* scale = v->v_scale;
+                /* If wr_singlescale is set, print scale name only in first column */
+                if (prscale)
+                    fprintf(file_data, " %s", scale->v_name);
 
-            if (isreal(v))
-                fprintf(file_data, " %-*s", preci + 7, v->v_name);
-            else
-                fprintf(file_data, " %-*s %-*s", preci + 7, v->v_name, preci + 7, v->v_name);
-            if (singlescale)
-                /* the following names are printed without scale vector names */
-                prscale = FALSE;
+                if (isreal(v))
+                    fprintf(file_data, " %s", v->v_name);
+                else
+                    fprintf(file_data, " %s %s", v->v_name, v->v_name);
+                if (singlescale)
+                    /* the following names are printed without scale vector names */
+                    prscale = FALSE;
+            }
+        }
+        else { /* names formatted according to number width */
+            for (v = vecs; v; v = v->v_link2) {
+                struct dvec* scale = v->v_scale;
+                /* If wr_singlescale is set, print scale name only in first column */
+                if (prscale)
+                    fprintf(file_data, " %-*s", preci + 7, scale->v_name);
+
+                if (isreal(v))
+                    fprintf(file_data, " %-*s", preci + 7, v->v_name);
+                else
+                    fprintf(file_data, " %-*s %-*s", preci + 7, v->v_name, preci + 7, v->v_name);
+                if (singlescale)
+                    /* the following names are printed without scale vector names */
+                    prscale = FALSE;
+            }
         }
         fprintf(file_data, "\n");
     }
