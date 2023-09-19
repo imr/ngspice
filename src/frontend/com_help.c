@@ -81,7 +81,7 @@ void com_help(wordlist *wl)
     else {
         while (wl != NULL) {
             struct comm *c;
-            for (c = &cp_coms[0]; c->co_func != NULL; c++)
+            for (c = &cp_coms[0]; c->co_comname != NULL; c++) {
                 if (eq(wl->wl_word, c->co_comname)) {
                     out_printf("%s ", c->co_comname);
                     out_printf(c->co_help, cp_program);
@@ -90,7 +90,8 @@ void com_help(wordlist *wl)
                     out_send("\n");
                     break;
                 }
-            if (c->co_func == NULL) {
+            }
+            if (c->co_comname == NULL) {
                 /* See if this is aliased. */
                 struct alias *al;
 
