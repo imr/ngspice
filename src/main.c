@@ -681,10 +681,32 @@ app_rl_readlines(void)
         history_set_pos(history_length);
 
         if (SETJMP(jbuf, 1)) { /* Set location to jump to after handling SIGINT (ctrl-C)  */
-            ft_sigintr_cleanup();
+            if (!cp_background)
+                ft_sigintr_cleanup();
         }
 
-        line = readline(prompt());
+#if defined(SIGTTIN) && !defined(X_DISPLAY_MISSING)
+        if (cp_background) {
+            /* This process is running in the background, so reading from
+             * the terminal will fail.  Instead, call the X11 input loop
+             * directly.  It will process X11 events until terminal input
+             * is available, then return. If the process is still in background
+             * readline() will then cause another SIGTTIN and this loop
+             * will restart at SETJMP().  Such polling sees to be the only way
+             * to detect a return to the foreground.
+             *
+             * Global cp_cwait is set early so that SIGTTOU from output
+             * caused by clicking in a plot window will not stop the program.
+             */
+
+            cp_cwait = TRUE;
+            app_event_func(); // Direct call to process X11 input.
+        }
+#endif
+        cp_cwait = TRUE;
+        line = readline(cp_background ? NULL : prompt());
+        cp_cwait = FALSE;
+        cp_background = FALSE;
 
         if (!line) {
             cp_evloop("quit");
@@ -706,7 +728,6 @@ app_rl_readlines(void)
             }
             tfree(expanded_line);
         }
-
         tfree(line);
     }
     /* History gets written in ../fte/misccoms.c com_quit */
@@ -1189,6 +1210,10 @@ int main(int argc, char **argv)
 
 #ifdef SIGTSTP
         signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
+#endif
+#ifdef SIGTTIN
+        signal(SIGTTIN, (SIGNAL_FUNCTION) sigttio);
+        signal(SIGTTOU, (SIGNAL_FUNCTION) sigttio);
 #endif
     }
 

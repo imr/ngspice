@@ -67,7 +67,8 @@ extern wordlist *cp_parse(char *string);
 
 /* control.c */
 
-extern bool cp_cwait;
+extern bool cp_cwait;        // Interactive and awaiting command input.
+extern bool cp_background;   // Running in background.
 extern bool cp_dounixcom;
 extern char *cp_csep;
 extern char * get_alt_prompt(void);
