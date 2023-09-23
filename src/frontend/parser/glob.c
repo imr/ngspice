@@ -86,6 +86,9 @@ static void tilde_expand_word(wordlist *wl_node);
  * name of a "HOME" directory are supported. ?*[] are not */
 wordlist *cp_doglob(wordlist *wlist)
 {
+    if (cp_noglob)
+        return wlist;
+
     /* Expand {a,b,c} */
     {
         wordlist *wl = wlist;
