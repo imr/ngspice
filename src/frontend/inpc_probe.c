@@ -1053,7 +1053,7 @@ static char *get_terminal_name(char* element, char *numberstr, NGHASHPTR instanc
             char* instline = xcard->line;
             char* inst = gettok(&instline);
             fprintf(stderr, "Instance '%s' does not have an corresponding subcircuit '%s'!\n", inst, subcktname);
-            fprintf(stderr, "    Is the model missing? .probe cannot determine subcircuit pin names.\n", inst);
+            fprintf(stderr, "    Is the model missing? .probe cannot determine subcircuit pin names.\n");
             tfree(subcktname);
             tfree(inst);
             return tprintf("n%s", numberstr);
