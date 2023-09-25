@@ -1,7 +1,7 @@
 
 Circuit: test for regression of already fixed bugs
 
-TEST: >{}< should be >{}<
+TEST: >< should be ><
 TEST: >1< should be >1<
 TEST: >2< should be >2<
 TEST: 1 2 3 baz bar

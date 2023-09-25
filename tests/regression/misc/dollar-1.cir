@@ -5,7 +5,7 @@ v1 1 0 dc = 0
 .control
 
 set foo = ""
-echo "TEST:" ">{$foo}< should be >{}<"
+echo "TEST:" ">{$foo}< should be ><"
 
 set foo = ( 1 2 3 )
 set bar = 2
