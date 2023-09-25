@@ -180,7 +180,6 @@ ft_cpinit(void)
     }
 
     cp_vset("prompt", CP_STRING, buf);
-    cp_vset("noglob", CP_BOOL, &t);
     cp_vset("brief", CP_BOOL, &t);
 
     /* Make vectors from values in predefs[] for the current plot.

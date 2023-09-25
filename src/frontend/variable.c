@@ -19,7 +19,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 
 
-bool cp_noglob = TRUE;
+bool cp_noglob = FALSE;
 bool cp_nonomatch = FALSE;
 bool cp_noclobber = FALSE;
 bool cp_ignoreeof = FALSE;
