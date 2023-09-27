@@ -1009,6 +1009,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
     rv = inp_read(fp, 0, dir_name, comfile, intfile);
     cc = rv.cc;
 
+    /* skip all pre-processing for expanded input files created by 'listing r' */
+    if (ciprefix("* expanded deck of", cc->line))
+        return cc;
+
     /* files starting with *ng_script are user supplied command files */
     if (cc && ciprefix("*ng_script", cc->line))
         comfile = TRUE;
