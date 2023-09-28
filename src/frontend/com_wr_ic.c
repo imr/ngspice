@@ -18,6 +18,8 @@ void com_wric(wordlist* wl);
 
  /* Print the current node status to a file with format
     .ic V(node) = value 
+    during a transient simulation which has been stopped,
+    by command 'stop' and which may continue by 'resume'.
  */
 void
 com_wric(wordlist* wl) {
@@ -32,11 +34,6 @@ com_wric(wordlist* wl) {
     else
         file = "dot_ic_out.txt";
 
-    if ((fp = fopen(file, "w")) == NULL) {
-        perror(file);
-        return;
-    }
-
     if (!ft_curckt) {
         fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
         return;
@@ -47,6 +44,17 @@ com_wric(wordlist* wl) {
     }
 
     ckt = ft_curckt->ci_ckt;
+
+    if (!ckt->CKTrhsOld) {
+        fprintf(stderr, "\nWarning: Command wrnodev is ignored!\n");
+        fprintf(stderr, "    You need to execute stop ... tran ... resume\n\n");
+        return;
+    }
+
+    if ((fp = fopen(file, "w")) == NULL) {
+        perror(file);
+        return;
+    }
 
     fprintf(fp, "* Intermediate Transient Solution\n");
     fprintf(fp, "* Circuit: %s\n", ft_curckt->ci_name);
