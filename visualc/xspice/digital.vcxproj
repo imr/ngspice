@@ -270,6 +270,10 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_osc\d_osc-ifspec.c" />
+    <ClCompile Include="icm\digital\d_process\d_process-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\digital\d_process\d_process-ifspec.c" />
     <ClCompile Include="icm\digital\d_pulldown\d_pulldown-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -357,6 +361,8 @@
     <None Include="..\..\src\xspice\icm\digital\d_or\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_osc\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_osc\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\digital\d_process\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\digital\d_process\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_pulldown\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_pulldown\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_pullup\cfunc.mod" />
