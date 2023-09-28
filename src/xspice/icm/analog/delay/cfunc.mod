@@ -298,13 +298,17 @@ void cm_delay(ARGS)
         delmin = loc->tdelmin;
         delmax = loc->tdelmax;
 
-        lcntrl =  INPUT(cntrl);
-        if (lcntrl < 0)
-            lcntrl = 0.;
-        else if (lcntrl > 1.)
-            lcntrl = 1.;
-
         if (PARAM(has_delay_cnt) == MIF_TRUE) {
+            if (!PORT_NULL(cntrl)) {
+                lcntrl =  INPUT(cntrl);
+                if (lcntrl < 0)
+                    lcntrl = 0.;
+                else if (lcntrl > 1.)
+                    lcntrl = 1.;
+            }
+            else {
+                lcntrl = 0;
+            }
             delay = (delmax - delmin) * lcntrl + delmin;
         }
 

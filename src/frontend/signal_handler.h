@@ -8,6 +8,7 @@
 
 void ft_sigintr(void);
 void sigfloat(int code);
+void sigttio(void);
 void sigstop(void);
 void sigcont(void);
 void sigill(void);

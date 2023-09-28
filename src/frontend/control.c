@@ -615,9 +615,10 @@ getcommand(char *string)
 #if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
     /* set cp_altprompt for use by the lexer - see parser/lexical.c */
     cp_altprompt = get_alt_prompt();
+#else
+    cp_cwait = TRUE;
 #endif /* !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE) */
 
-    cp_cwait = TRUE;
     wlist = cp_parse(string);
     cp_cwait = FALSE;
     if (cp_debug) {

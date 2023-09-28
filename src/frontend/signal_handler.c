@@ -91,6 +91,7 @@ ft_sigintr(void)
 
     if (interrupt_counter >= 3) {
         fprintf(cp_err, "\nKilling, since %d interrupts have been requested\n\n", interrupt_counter);
+        cp_ccon(FALSE);
         controlled_exit(1);
     }
 
@@ -99,6 +100,7 @@ ft_sigintr(void)
     }
 
     /* here we jump to the start of command processing in main() after resetting everything.  */
+    cp_background = FALSE;
     LONGJMP(jbuf, 1);
 }
 
@@ -112,6 +114,32 @@ sigfloat(int code)
     LONGJMP(jbuf, 1);
 }
 
+/* Shared handler for SIGTTIN and SIGTTOU.  Restart event handling if caught
+ * attempting terminal IO as a background process.
+ */
+
+bool cp_background = FALSE;
+
+#ifdef SIGTTIN
+void
+sigttio(void)
+{
+    if (cp_cwait) {
+        /* Attempted command input/output on the terminal while in background.
+         * Set background flag and restart event loop.
+         */
+        cp_background = TRUE;
+        LONGJMP(jbuf, 1);
+    } else {
+        /* Non-command terminal IO in background. That should never happen.
+         * Stop.
+         */
+
+        (void) signal(SIGTSTP, SIG_DFL);
+        (void) kill(getpid(), SIGTSTP); /* This should stop us */
+    }
+}
+#endif
 
 /* This should give a new prompt if cshpar is waiting for input.  */
 
@@ -122,8 +150,10 @@ sigstop(void)
 {
     gr_clean();
     cp_ccon(FALSE);
-    (void) signal(SIGTSTP, SIG_DFL);
-    (void) kill(getpid(), SIGTSTP); /* This should stop us */
+    if (!cp_background) {
+        (void) signal(SIGTSTP, SIG_DFL);
+        (void) kill(getpid(), SIGTSTP); /* This should stop us */
+    }
 }
 
 

@@ -1052,8 +1052,8 @@ static char *get_terminal_name(char* element, char *numberstr, NGHASHPTR instanc
         if (!allsubs) {
             char* instline = xcard->line;
             char* inst = gettok(&instline);
-            fprintf(stderr, "Warning: No .subckt line found during evaluating command .probe (...)!\n");
-            fprintf(stderr, "    failing instance: %s\n", inst);
+            fprintf(stderr, "Instance '%s' does not have an corresponding subcircuit '%s'!\n", inst, subcktname);
+            fprintf(stderr, "    Is the model missing? .probe cannot determine subcircuit pin names.\n");
             tfree(subcktname);
             tfree(inst);
             return tprintf("n%s", numberstr);
