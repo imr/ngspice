@@ -10,10 +10,7 @@
 # './compile_min.sh' for release or './compile_min.sh d' for debug version.
 
 # Options:
-# --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
-# adms interface.
-# Please see http://ngspice.sourceforge.net/admshowto.html for more info on adms.
-# CIDER, XSPICE, and OpenMP may be selected at will.
+# CIDER, XSPICE, OpenMP, OSDI, and KLU may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 # --enable-oldapps will make ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx in addition to ngspice
 
@@ -40,31 +37,19 @@ fi
 ./autogen.sh
 if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
-# Alternatively, if compiling sources from git, and want to add adms created devices,
-# you may need to uncomment the following two lines (and don't forget to add adms option
-# to the ../configure statement):
-#./autogen.sh --adms
-#if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
-
 echo
 if test "$1" = "d"; then
    cd debug
    if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
   ../configure --with-wingui --enable-xspice --enable-cider  --enable-klu --enable-openmp --enable-osdi --enable-predictor prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-g -m64"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-<<<<<<< HEAD
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-predictor --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
-=======
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-klu --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
->>>>>>> compile_min.sh, add KLU dependency for MINGW compilation
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-klu --enable-openmp --enable-osdi --enable-predictor --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
