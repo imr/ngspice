@@ -102,7 +102,7 @@ typedef struct {
     Digital_State_t dout_old[256];  // max possible storage to track output changes
 } Process_t;
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
 #include <io.h>
 static void w_start(char *system_command, char * c_argv[], Process_t * process);
 #endif
@@ -126,7 +126,7 @@ static void sendheader(Process_t * process, int N_din, int N_dout)
         exit(1);        
     }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
     if (_write(process->pipe_to_child, &header, sizeof(header)) == -1) {
 #else
     if (write(process->pipe_to_child, &header, sizeof(header)) == -1) {
@@ -136,7 +136,7 @@ static void sendheader(Process_t * process, int N_din, int N_dout)
     }
     
     // Wait for echo which must return the same header to ack transfer
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
     if (_read(process->pipe_from_child, &header, sizeof(header)) != sizeof(header)) {
 #else
     if (read(process->pipe_from_child, &header, sizeof(header)) != sizeof(header)) {
@@ -181,7 +181,7 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
     packet.time = time;
     memcpy(packet.din, din, process->N_din);
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
     wlen = _write(process->pipe_to_child, &packet, sizeof(double) + process->N_din);
 #else
     wlen = write(process->pipe_to_child, &packet, sizeof(double) + process->N_din);
@@ -191,7 +191,7 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
         exit(1);
     }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
     dlen = _read(process->pipe_from_child, dout, process->N_dout);
 #else
     dlen = read(process->pipe_from_child, dout, process->N_dout);
@@ -205,7 +205,7 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
 }
 
 
-#if !defined(_MSC_VER)
+#if !defined(_MSC_VER) && !defined(__MINGW64__)
 static void start(char *system_command, char * c_argv[], Process_t * process)
 {
     int pipe_to_child[2];
@@ -292,7 +292,7 @@ void cm_d_process(ARGS)
         c_argv[0]      = PARAM(process_file);
         c_argv[c_argc] = NULL;
             
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
         w_start(c_argv[0], c_argv, local_process);
 #else
         start(c_argv[0], c_argv, local_process);
@@ -348,7 +348,7 @@ void cm_d_process(ARGS)
                 switch(INPUT_STATE(in[i])) {
                     case ZERO: b = 0; break;
                     case ONE:  b = 1; break;
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
                     default:   b = rand() & 1; break;
 #else
                     default:   b = random() & 1; break;
@@ -383,7 +383,7 @@ void cm_d_process(ARGS)
     }
 }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(__MINGW64__)
 
 #include <process.h>
 #include <io.h>
