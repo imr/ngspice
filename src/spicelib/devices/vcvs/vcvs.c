@@ -18,7 +18,6 @@ IFparm VCVSpTable[] = { /* parameters */
 					"Positive node of contr. source"),
  OPU("cont_n_node",VCVS_CONT_N_NODE,IF_INTEGER,
 					"Negative node of contr. source"),
- IP("ic", VCVS_IC, IF_REAL, "Initial condition of controlling source"),
  OP("i",        VCVS_CURRENT,       IF_REAL,        "Output current"),
  OP("v",        VCVS_VOLTS,         IF_REAL,        "Output voltage"),
  OP("p",        VCVS_POWER,         IF_REAL,        "Power"),

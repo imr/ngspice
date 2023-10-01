@@ -33,7 +33,6 @@ typedef struct sVCVSinstance {
     const int VCVScontNegNode;    /* number of negative node of controlling source */
     int VCVSbranch; /* equation number of branch equation added for v source */
 
-    double VCVSinitCond;    /* initial condition (of controlling source) */
     double VCVScoeff;   /* coefficient */
 
     double *VCVSposIbrPtr;  /* pointer to sparse matrix element at 

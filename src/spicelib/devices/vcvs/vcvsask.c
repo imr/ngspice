@@ -40,9 +40,6 @@ VCVSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case VCVS_CONT_N_NODE:
             value->iValue = here->VCVScontNegNode;
             return (OK);
-        case VCVS_IC:
-            value->rValue = here->VCVSinitCond;
-            return (OK);
         case VCVS_GAIN:
             value->rValue = here->VCVScoeff;
             return (OK);

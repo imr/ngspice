@@ -31,7 +31,6 @@ typedef struct sVCCSinstance {
     const int VCCScontPosNode;    /* number of positive node of controlling source */
     const int VCCScontNegNode;    /* number of negative node of controlling source */
 
-    double VCCSinitCond;    /* initial condition (of controlling source) */
     double VCCScoeff;       /* coefficient */
     double VCCSmValue;      /* Parallel multiplier */
 
