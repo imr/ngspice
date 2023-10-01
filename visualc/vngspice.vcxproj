@@ -885,6 +885,7 @@
     <ClInclude Include="..\src\frontend\com_shift.h" />
     <ClInclude Include="..\src\frontend\com_state.h" />
     <ClInclude Include="..\src\frontend\com_strcmp.h" />
+    <ClInclude Include="..\src\frontend\com_fileio.h" />
     <ClInclude Include="..\src\frontend\com_unset.h" />
     <ClInclude Include="..\src\frontend\com_wr_ic.h" />
     <ClInclude Include="..\src\frontend\control.h" />
@@ -1498,6 +1499,7 @@
     <ClCompile Include="..\src\frontend\com_shift.c" />
     <ClCompile Include="..\src\frontend\com_state.c" />
     <ClCompile Include="..\src\frontend\com_strcmp.c" />
+    <ClCompile Include="..\src\frontend\com_fileio.c" />
     <ClCompile Include="..\src\frontend\com_sysinfo.c" />
     <ClCompile Include="..\src\frontend\com_unset.c" />
     <ClCompile Include="..\src\frontend\com_wr_ic.c" />

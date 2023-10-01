@@ -82,6 +82,7 @@
 #include "resource.h"
 #include "diff.h"
 #include "com_strcmp.h"
+#include "com_fileio.h"
 #include "ngspice/randnumb.h"
 #include "../spicelib/analysis/com_optran.h"
 #include "com_wr_ic.h"
@@ -613,6 +614,30 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 3, 3,
       NULL,
       "varname s1 s2 : Set $varname to strcmp(s1, s2)." } ,
+    { "strstr", com_strstr, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 3, 3,
+      NULL,
+      "varname s1 s2 : Set $varname to strstr(s1, s2)." } ,
+    { "strslice", com_strslice, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 4, 4,
+      NULL,
+      "varname s1 offset length : "
+      "Set $varname to s1[offset ... offset+length]" } ,
+    { "fopen", com_fopen, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 2, 3,
+      NULL,
+      "handle file_name [mode] : "
+      "Open file_name with mode, return handle in $handle" } ,
+    { "fread", com_fread, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 2, 3,
+      NULL,
+      "handle result [length] : "
+      "Read a line from open file handle, "
+      "data in $result, status in $length" } ,
+    { "fclose", com_fclose, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 1, 1,
+      NULL,
+      "handle : Close open file" } ,
     { "linearize", com_linearize, FALSE, FALSE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -1033,6 +1058,30 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 3, 3,
       NULL,
       "varname s1 s2 : Set $varname to strcmp(s1, s2)." } ,
+    { "strstr", com_strstr, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 3, 3,
+      NULL,
+      "varname s1 s2 : Set $varname to strstr(s1, s2)." } ,
+    { "strslice", com_strslice, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 4, 4,
+      NULL,
+      "varname s1 offset length : "
+      "Set $varname to s1[offset ... offset+length]" } ,
+    { "fopen", com_fopen, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 2, 3,
+      NULL,
+      "handle file_name [mode] : "
+      "Open file_name with mode, return handle in $handle" } ,
+    { "fread", com_fread, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 2, 3,
+      NULL,
+      "handle result [length] : "
+      "Read a line from open file handle, "
+      "data in $result, status in $length" } ,
+    { "fclose", com_fclose, FALSE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 1, 1,
+      NULL,
+      "handle : Close open file" } ,
     { "linearize", com_linearize, TRUE, FALSE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 0, LOTS,
       NULL,
