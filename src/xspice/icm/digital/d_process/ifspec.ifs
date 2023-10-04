@@ -2,20 +2,20 @@
 ================================================================================
 Copyright 2017-2018 Isotel d.o.o. http://www.isotel.eu
 
-AUTHORS                      
+AUTHORS
 
     5 November 2017 Uros Platse <uros@isotel.eu>
-    
+
 
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     digital d_process (extends to a system process) code model.
 
 ===============================================================================*/
 
- 
+
 NAME_TABLE:
 
 
@@ -32,8 +32,8 @@ Description:         "input"        "clock"
 Direction:           in             in
 Default_Type:        d              d
 Allowed_Types:       [d]            [d]
-Vector:               yes            no
-Vector_Bounds:        -              -
+Vector:              yes            no
+Vector_Bounds:       -              -
 Null_Allowed:        yes            no
 
 
@@ -45,8 +45,8 @@ Description:         "reset"        "output"
 Direction:           in             out
 Default_Type:        d              d
 Allowed_Types:       [d]            [d]
-Vector:               no             yes
-Vector_Bounds:        -              [1 -]
+Vector:              no             yes
+Vector_Bounds:       -              [1 -]
 Null_Allowed:        yes            yes
 
 
@@ -58,35 +58,35 @@ Parameter_Name:     clk_delay           reset_delay
 Description:        "delay from CLK"    "delay from reset"
 Data_Type:          real                real
 Default_Value:      1.0e-9              1.0e-9
-Limits:             -                   -          
-Vector:              no                  no
-Vector_Bounds:       -                   -           
-Null_Allowed:       yes                 yes       
+Limits:             -                   -
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     process_file
-Description:        "file name of the executable process"  
-Data_Type:          string 
-Default_Value:      "process"                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "file name of the executable process"
+Data_Type:          string
+Default_Value:      "process"
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     process_params
-Description:        "parameters to be passed to an executable process"  
-Data_Type:          string 
+Description:        "parameters to be passed to an executable process"
+Data_Type:          string
 Default_Value:      -
-Limits:             -                                  
-Vector:              yes
-Vector_Bounds:       -                                
+Limits:             -
+Vector:             yes
+Vector_Bounds:      -
 Null_Allowed:       yes
 
 
@@ -94,50 +94,50 @@ PARAMETER_TABLE:
 
 
 Parameter_Name:     reset_state
-Description:        "default state on RESET & at DC"  
-Data_Type:          int 
-Default_Value:      0                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "default state on RESET & at DC"
+Data_Type:          int
+Default_Value:      0
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     input_load
-Description:        "input loading capacitance (F)"  
-Data_Type:          real 
-Default_Value:      1.0e-12                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "input loading capacitance (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     clk_load
-Description:        "clock loading capacitance (F)"  
-Data_Type:          real 
-Default_Value:      1.0e-12                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "clock loading capacitance (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
 PARAMETER_TABLE:
 
 
 Parameter_Name:     reset_load
-Description:        "reset loading capacitance (F)"  
-Data_Type:          real 
-Default_Value:      1.0e-12                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "reset loading capacitance (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
 
 
 STATIC_VAR_TABLE:
