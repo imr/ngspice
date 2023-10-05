@@ -1010,7 +1010,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
     cc = rv.cc;
 
     /* skip all pre-processing for expanded input files created by 'listing r' */
-    if (ciprefix("* expanded deck of", cc->line))
+    if (cc && ciprefix("* expanded deck of", cc->line))
         return cc;
 
     /* files starting with *ng_script are user supplied command files */
