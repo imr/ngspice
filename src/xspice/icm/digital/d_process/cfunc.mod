@@ -85,7 +85,7 @@ REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
 
-===============================================================================*/
+==============================================================================*/
 
 #include <stdio.h>
 #include <ctype.h>
@@ -275,6 +275,21 @@ static void start(char *system_command, char * c_argv[], Process_t * process)
 #endif
 
 
+static void cm_d_process_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Process_t *proc = STATIC_VAR(process);
+            if (proc) {
+                free(proc);
+                STATIC_VAR(process) = NULL;
+            }
+            break;
+        }
+    }
+}
+
+
 void cm_d_process(ARGS)
 {
     int                        i;   /* generic loop counter index */
@@ -299,6 +314,7 @@ void cm_d_process(ARGS)
 
         STATIC_VAR(process) = malloc(sizeof(Process_t));
         local_process       = STATIC_VAR(process);
+        CALLBACK = cm_d_process_callback;
 
         if (!PARAM_NULL(process_params)) {
             for (i=0; i<PARAM_SIZE(process_params); i++) {
