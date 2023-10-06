@@ -114,7 +114,7 @@ typedef struct {
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
 #include <io.h>
-static void w_start(char *system_command, char * c_argv[], Process_t * process);
+static void w_start(char *system_command, const char *const *argv, Process_t * process);
 #endif
 
 static void sendheader(Process_t * process, int N_din, int N_dout)
@@ -185,7 +185,6 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
     } __attribute__((packed)) packet_t;
 #endif
 
-    size_t dlen = 0;
     int wlen = 0;
     packet_t packet;
     packet.time = time;
@@ -202,14 +201,13 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
     }
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
-    dlen = _read(process->pipe_from_child, dout, process->N_dout);
+    if (_read(process->pipe_from_child, dout, process->N_dout) != process->N_dout) {
 #else
-    dlen = read(process->pipe_from_child, dout, process->N_dout);
+    if (read(process->pipe_from_child, dout, process->N_dout) != process->N_dout) {
 #endif
-    if (dlen != (size_t)process->N_dout) {
         fprintf(stderr,
-        "Error: d_process received invalid dout count, read %lu expected %d\n",
-        dlen, process->N_dout);
+        "Error: d_process received invalid dout count, expected %d\n",
+        process->N_dout);
         exit(1);
     }
 }
@@ -325,7 +323,7 @@ void cm_d_process(ARGS)
         c_argv[c_argc] = NULL;
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
-        w_start(c_argv[0], c_argv, local_process);
+        w_start(c_argv[0], (const char *const *)c_argv, local_process);
 #else
         start(c_argv[0], c_argv, local_process);
 #endif
@@ -420,11 +418,11 @@ void cm_d_process(ARGS)
 #include <process.h>
 #include <io.h>
 
-static void w_start(char *system_command, char * c_argv[], Process_t * process)
+static void w_start(char *system_command, const char *const *argv, Process_t * process)
 {
     int pipe_to_child[2];
     int pipe_from_child[2];
-    int pid = 0;
+    intptr_t pid = 0;
     int mode = _O_BINARY;
     size_t syscmd_len = strlen(system_command);
 
@@ -453,7 +451,7 @@ static void w_start(char *system_command, char * c_argv[], Process_t * process)
     _close(pipe_from_child[1]);
 
     _flushall();
-    pid = _spawnvp(_P_NOWAIT, system_command, c_argv);
+    pid = _spawnvp(_P_NOWAIT, system_command, argv);
     if (pid == -1) {
         perror("spawn from d_process");
         fprintf(stderr, "Failed to spawn %s\n", system_command);
