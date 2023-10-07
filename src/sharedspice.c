@@ -2306,7 +2306,7 @@ getisrcval(double time, char *iname)
     delmin    minimum delta CKTdelmin
     redostep  if 0, converged,
               if 1, either no convergence, need to redo with new ckt->CKTdelta
-              or ckt->CKTdelta has been reduced by tuncation errors too large.
+              or ckt->CKTdelta has been reduced by truncation errors too large.
     rejected  pointer to ckt->CKTstat->STATrejected, counts rejected time points.
     loc       location of function call in dctran.c: 0: after breakpoint handling, 1: at end of for loop
 */
