@@ -51,7 +51,7 @@ SUMMARY
 
         double (8-byte): positive value of TIME if reset is low otherwise -TIME
         [inputs array ]: input bytes, each byte packs up to 8 inputs
-        ooutputs are defined by returning process
+        outputs are defined by returning process
 
     and process must return:
 
@@ -292,8 +292,8 @@ void cm_d_process(ARGS)
 {
     int                        i;   /* generic loop counter index */
 
-    Digital_State_t       *reset,   /* storage for clock value  */
-                      *reset_old;   /* previous clock value     */
+    Digital_State_t       *reset,   /* storage for reset value  */
+                      *reset_old;   /* previous reset value     */
 
     Digital_State_t         *clk,   /* storage for clock value  */
                         *clk_old;   /* previous clock value     */
@@ -302,7 +302,8 @@ void cm_d_process(ARGS)
 
 
     if (INIT) {
-        char * c_argv[1024];
+#define C_ARGV_SIZE 1024
+        char * c_argv[C_ARGV_SIZE];
         int c_argc = 1;
         cm_event_alloc(0,sizeof(Digital_State_t));
         cm_event_alloc(1,sizeof(Digital_State_t));
@@ -315,12 +316,17 @@ void cm_d_process(ARGS)
         CALLBACK = cm_d_process_callback;
 
         if (!PARAM_NULL(process_params)) {
+            if (PARAM_SIZE(process_params) > (C_ARGV_SIZE - 2)) {
+                fprintf(stderr, "Error: too many process_parameters\n");
+                exit(1);
+            }
             for (i=0; i<PARAM_SIZE(process_params); i++) {
                 c_argv[c_argc++] = PARAM(process_params[i]);
             }
         }
         c_argv[0]      = PARAM(process_file);
         c_argv[c_argc] = NULL;
+#undef C_ARGV_SIZE
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
         w_start(c_argv[0], (const char *const *)c_argv, local_process);
