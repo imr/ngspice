@@ -1353,8 +1353,14 @@ inp_dodeck(
 
                 if (p == dd->error) {
                     if (strstr(dd->line, ".model"))
-                        fprintf(stderr, "Warning: Model issue on line %d :\n  %.*s ...\n%s\n",
-                            dd->linenum_orig, 72, dd->line, dd->error);
+                        if (dd->linenum_orig == 0) { /* new line, e.g. in subcircuit */
+                            fprintf(stderr, "Warning: Model issue on line:\n  %.*s ...\n%s\n",
+                                72, dd->line, dd->error);
+                        }
+                        else {
+                            fprintf(stderr, "Warning: Model issue on line %d :\n  %.*s ...\n%s\n",
+                                dd->linenum_orig, 72, dd->line, dd->error);
+                        }
                     else if (dd->linenum_orig == 0) {
                         fprintf(stderr, "Error on line:\n  %s\n%s\n",
                                    dd->line, dd->error);
