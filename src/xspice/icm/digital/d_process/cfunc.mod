@@ -80,6 +80,9 @@ MODIFICATIONS
         For Windows VisualC and Mingw the pipes use binary mode, and
         named pipes or fifos are not supported.
 
+     8 October 2023 Brian Taylor
+        Remove reset_delay param from ifspec.ifs since the clk_delay
+        is used with synchronous reset.
 
 REFERENCED FILES
 
