@@ -34,7 +34,7 @@ Default_Type:        d              d
 Allowed_Types:       [d]            [d]
 Vector:              yes            no
 Vector_Bounds:       -              -
-Null_Allowed:        no             no
+Null_Allowed:        yes            no
 
 
 PORT_TABLE:
@@ -47,21 +47,21 @@ Default_Type:        d              d
 Allowed_Types:       [d]            [d]
 Vector:              no             yes
 Vector_Bounds:       -              [1 -]
-Null_Allowed:        yes            no
+Null_Allowed:        yes            yes
 
 
 
 PARAMETER_TABLE:
 
 
-Parameter_Name:     clk_delay
-Description:        "delay from CLK"
-Data_Type:          real
-Default_Value:      1.0e-9
-Limits:             -
-Vector:             no
-Vector_Bounds:      -
-Null_Allowed:       yes
+Parameter_Name:     clk_delay           reset_delay
+Description:        "delay from CLK"    "delay from reset"
+Data_Type:          real                real
+Default_Value:      1.0e-9              1.0e-9
+Limits:             -                   -
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
 
 
 PARAMETER_TABLE:
@@ -88,6 +88,19 @@ Limits:             -
 Vector:             yes
 Vector_Bounds:      -
 Null_Allowed:       yes
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     reset_state
+Description:        "default state on RESET & at DC"
+Data_Type:          int
+Default_Value:      0
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
 
 
 PARAMETER_TABLE:
