@@ -49,6 +49,7 @@ NON-STANDARD FEATURES
 #include  <stdio.h>
 #include "ngspice/cmtypes.h"
 #include "ngspice/cktdefs.h"
+#include "ngspice/cpextern.h"
 
 
 void cm_climit_fcn(double in, double in_offset, double cntl_upper, 

@@ -80,9 +80,6 @@ MODIFICATIONS
         For Windows VisualC and Mingw the pipes use binary mode, and
         named pipes or fifos are not supported.
 
-     8 October 2023 Brian Taylor
-        Remove reset_delay param from ifspec.ifs since the clk_delay
-        is used with synchronous reset.
 
 REFERENCED FILES
 
@@ -191,7 +188,11 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
     int wlen = 0;
     packet_t packet;
     packet.time = time;
-    memcpy(packet.din, din, process->N_din);
+    if (process->N_din > 0) {
+        memcpy(packet.din, din, process->N_din);
+    } else {
+        packet.din[0] = 0;
+    }
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
     wlen = _write(process->pipe_to_child, &packet, sizeof(double) + process->N_din);
@@ -338,6 +339,12 @@ void cm_d_process(ARGS)
 #endif
         sendheader(local_process, PORT_SIZE(in), PORT_SIZE(out));
 
+        if (PORT_SIZE(in) == 0) {
+            if (local_process->N_din != 0) {
+                fprintf(stderr, "Error: in port size mismatch\n");
+                exit(1);
+            }
+        }
         for (i=0; i<PORT_SIZE(in); i++) {
             LOAD(in[i]) = PARAM(input_load);
         }
@@ -377,11 +384,13 @@ void cm_d_process(ARGS)
         }
 
         if (*clk != *clk_old && ONE == *clk) {
-            uint8_t *dout, *din;
+            uint8_t *dout = NULL, *din = NULL;
             uint8_t b;
-            dout = (uint8_t *) malloc(local_process->N_dout * sizeof(uint8_t));
-            din = (uint8_t *) malloc(local_process->N_din * sizeof(uint8_t));
-            memset(din, 0, local_process->N_din);
+            dout = (uint8_t *)malloc(local_process->N_dout * sizeof(uint8_t));
+            if (local_process->N_din > 0) {
+                din = (uint8_t *)malloc(local_process->N_din * sizeof(uint8_t));
+                memset(din, 0, local_process->N_din);
+            }
 
             for (i=0; i<PORT_SIZE(in); i++) {
                 switch(INPUT_STATE(in[i])) {
@@ -411,8 +420,8 @@ void cm_d_process(ARGS)
                     OUTPUT_CHANGED(out[i]) = FALSE;
                 }
             }
-            free(din);
-            free(dout);
+            if (din) free(din);
+            if (dout) free(dout);
         }
         else {
             for (i=0; i<PORT_SIZE(out); i++) {
