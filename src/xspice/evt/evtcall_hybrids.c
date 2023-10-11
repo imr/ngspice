@@ -60,18 +60,17 @@ void EVTcall_hybrids(
     CKTcircuit  *ckt)    /* the main circuit structure */
 {
 
-    int     i;
-    int     num_hybrids;
-
-    int     *hybrid_index;
+    int           i;
+    int           num_hybrids;
+    MIFinstance **hybrids;
 
 
     /* Get needed data for fast access */
+
     num_hybrids = ckt->evt->counts.num_hybrids;
-    hybrid_index = ckt->evt->info.hybrid_index;
+    hybrids = ckt->evt->info.hybrids;
 
     /* Call EVTload for all hybrids */
     for(i = 0; i < num_hybrids; i++)
-        EVTload(ckt, hybrid_index[i]);
-
+        EVTload(ckt, hybrids[i]);
 }

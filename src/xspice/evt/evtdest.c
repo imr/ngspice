@@ -330,5 +330,5 @@ Evt_Info_destroy(Evt_Info_t *info)
     }
     tfree(info->output_table);
 
-    tfree(info->hybrid_index);
+    tfree(info->hybrids);
 }

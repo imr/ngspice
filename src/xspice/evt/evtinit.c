@@ -207,7 +207,7 @@ static int EVTinit_info(
     Evt_Port_Info_t     **port_table = NULL;
     Evt_Output_Info_t   **output_table = NULL;
 
-    int                 *hybrid_index = NULL;
+    MIFinstance         **hybrids = NULL;
 
     int num_hybrids;
 
@@ -253,15 +253,14 @@ static int EVTinit_info(
     ckt->evt->info.output_table = output_table;
 
 
-    /* Allocate and create table of indexes into inst_table for hybrids */
+    /* Allocate and create table of hybrids */
     num_hybrids = ckt->evt->counts.num_hybrids;
-    CKALLOC(hybrid_index, num_hybrids, int)
+    CKALLOC(hybrids, num_hybrids, MIFinstance *)
     for(i = 0, j = 0; i < num_insts; i++) {
         if(inst_table[i]->inst_ptr->analog)
-            hybrid_index[j++] = i;
+            hybrids[j++] = inst_table[i]->inst_ptr;
     }
-    ckt->evt->info.hybrid_index = hybrid_index;
-
+    ckt->evt->info.hybrids = hybrids;
 
     /* Return */
     return(OK);

@@ -91,34 +91,26 @@ struct Evt_Node_Info {
 };
 
 struct Evt_Inst_Info {
-    Evt_Inst_Info_t         *next;      /* the next in the linked list of node info */
+    Evt_Inst_Info_t         *next;      /* the next in the linked list */
     MIFinstance             *inst_ptr;  /* Pointer to MIFinstance struct for this instance */
 };
 
 struct Evt_Info {
-    Evt_Inst_Info_t    *inst_list;         /* static info about event/hybrid instances */
-    Evt_Node_Info_t    *node_list;         /* static info about event nodes */
-    Evt_Port_Info_t    *port_list;         /* static info about event ports */
-    Evt_Output_Info_t  *output_list;       /* static info about event outputs */
-    int                *hybrid_index;      /* vector of inst indexs for hybrids */
-    Evt_Inst_Info_t    **inst_table;       /* vector of pointers to elements in inst_list */
-    Evt_Node_Info_t    **node_table;       /* vector of pointers to elements in node_list */
-    Evt_Port_Info_t    **port_table;       /* vector of pointers to elements in port_list */
-    Evt_Output_Info_t  **output_table;     /* vector of pointers to elements in output_list */
+    Evt_Inst_Info_t    *inst_list;      /* static info about event instances */
+    Evt_Node_Info_t    *node_list;      /* static info about event nodes */
+    Evt_Port_Info_t    *port_list;      /* static info about event ports */
+    Evt_Output_Info_t  *output_list;    /* static info about event outputs */
+    MIFinstance        **hybrids;       /* vector of inst pointers for hybrids */
+    Evt_Inst_Info_t    **inst_table;    /* vector of pointers to elements in inst_list */
+    Evt_Node_Info_t    **node_table;    /* vector of pointers to elements in node_list */
+    Evt_Port_Info_t    **port_table;    /* vector of pointers to elements in port_list */
+    Evt_Output_Info_t  **output_table;  /* vector of pointers to elements in output_list */
 };
-
-
-
-
-
-
 
 
 /* *************** */
 /* Queue structure */
 /* *************** */
-
-
 
 struct Evt_Inst_Event {
     Evt_Inst_Event_t  *next;        /* the next in the linked list */

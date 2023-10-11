@@ -82,8 +82,8 @@ ignored.
 */
 
 int EVTload(
-    CKTcircuit *ckt,        /* The circuit structure */
-    int        inst_index)  /* The instance to call code model for */
+    CKTcircuit   *ckt,        /* The circuit structure */
+    MIFinstance  *inst)       /* The instance to call */
 {
 
     int                 i;
@@ -96,10 +96,9 @@ int EVTload(
     Mif_Conn_Data_t     *conn;
     Mif_Port_Data_t     *port;
     Evt_Node_Data_t     *node_data;
-    MIFinstance         *inst;
 
     Mif_Private_t       cm_data;
-
+    void                *value_ptr;
 
     /* ***************************** */
     /* Prepare the code model inputs */
@@ -107,7 +106,7 @@ int EVTload(
 
     /* Get pointer to instance data structure and other data */
     /* needed for fast access */
-    inst = ckt->evt->info.inst_table[inst_index]->inst_ptr;
+
     node_data = ckt->evt->data.node;
 
     /* Setup circuit data in struct to be passed to code model function */
@@ -145,8 +144,7 @@ int EVTload(
     /* create a new state for the instance */
 
     if((g_mif_info.circuit.anal_type == MIF_TRAN) && inst->initialized)
-        EVTcreate_state(ckt, inst_index);
-
+        EVTcreate_state(ckt, inst->inst_index);
 
     /* Loop through all connections on the instance and setup */
     /* load, total_load, and msg on all ports, and changed flag */
