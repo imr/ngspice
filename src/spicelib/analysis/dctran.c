@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000  AlansFixes
+Modified: 2023 XSPICE breakpoint fix for shared ngspice by Vyacheslav Shevchuk
 **********/
 
 /* subroutine to do DC TRANSIENT analysis
@@ -106,6 +107,25 @@ DCtran(CKTcircuit *ckt,
     double         ipc_last_time = 0.0;
     double         ipc_last_delta = 0.0;
 /* gtri - end - wbk - 12/19/90 - Add IPC stuff */
+
+    // Fix for sharedsync olddelta: When DCTran processes
+    // either analog or XSPICE breakpoint, then it subtracts delta from
+    // ckt->CKTtime. It sends 0 as olddelta after analog breakpoint
+    // processing. Still, for XSPICE breakpoints it subtracts delta (see code
+    // 'else if(g_mif_info.breakpoint.current < ckt->CKTtime)' branch) and
+    // then sends non zero olddelta to sharedsync at the end of the function
+    // (see chkStep: label). Thus olddelta is subtracted twice. Then
+    // ckt->CKTtime becomes less than last_accepted_time.
+    // xspice_breakpoints_processed 0:
+    // XSPICE models didn't have breakpoints in [last_accepted_time, CKTtime].
+    // xspice_breakpoints_processed 1:
+    // convergence criteria are satisfied but XSPICE breakpoint(s) is in the
+    // time interval [last_accepted_time, CKTtime].
+    int xspice_breakpoints_processed = 0;
+
+#ifdef SHARED_MODULE
+    double olddelta_for_shared_sync = 0.0;
+#endif // SHARED_MODULE
 #endif
 #if defined CLUSTER || defined SHARED_MODULE
     int redostep;
@@ -680,7 +700,7 @@ resume:
     } /* end if there are event instances */
 
 /* gtri - end - wbk - Do event solution */
-#else
+#else /* no XSPICE */
 
 #ifdef CLUSTER
     if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
@@ -697,7 +717,7 @@ resume:
         ckt->CKTdelmin, 0, &ckt->CKTstat->STATrejected, 0);
 #endif
 
-#endif
+#endif  /* no XSPICE */
     for(i=5; i>=0; i--)
         ckt->CKTdeltaOld[i+1] = ckt->CKTdeltaOld[i];
     ckt->CKTdeltaOld[0] = ckt->CKTdelta;
@@ -722,6 +742,7 @@ resume:
         ckt->CKTcurrentAnalysis = DOING_TRAN;
 
 /* gtri - end - wbk - 4/17/91 - Fix Berkeley bug */
+        xspice_breakpoints_processed = 0;
 #endif
         olddelta=ckt->CKTdelta;
         /* time abort? */
@@ -815,6 +836,7 @@ resume:
             ckt->CKTtime -= ckt->CKTdelta;
             ckt->CKTdelta = g_mif_info.breakpoint.current - ckt->CKTtime;
             g_mif_info.breakpoint.last = ckt->CKTtime + ckt->CKTdelta;
+            xspice_breakpoints_processed = 1;
 
             if(firsttime) {
                 ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
@@ -945,8 +967,24 @@ resume:
 #ifdef XSPICE
 /* gtri - begin - wbk - Do event backup */
 
-        if(ckt->evt->counts.num_insts > 0)
+        if(ckt->evt->counts.num_insts > 0) {
+#ifdef SHARED_MODULE
+            double discard_start_time = ckt->CKTtime + ckt->CKTdelta;
+            // ngspice in executable mode subtracts olddelta from the time
+            // before new delta calculation, but it keeps delta in CKTtime and
+            // postpones subtraction in library mode. Delayed subtraction leads
+            // to incorrect points dropping because ckt->CKTdelta is almost always
+            // less than olddelta if there are convergence issues, and EVTbackup
+            // may drop valid events that need to be processed within
+            // [last_accepted_time, last_accepted_time + ckt->CKTdelta] range
+            // after delta adjustment.
+            if (redostep && xspice_breakpoints_processed == 0)
+                discard_start_time -= olddelta;
+            EVTbackup(ckt, discard_start_time);
+#else
             EVTbackup(ckt, ckt->CKTtime + ckt->CKTdelta);
+#endif
+        }
 
 /* gtri - end - wbk - Do event backup */
 #endif
@@ -973,10 +1011,25 @@ resume:
            function.
         */
 chkStep:
+#ifdef XSPICE
+       // There is no need to subtract olddelta from ckt->CKTtime one more time
+       // if it has been subtracted during XSPICE breakpoint processing.
+       // olddelta will be reinitialized on
+       // the new iteration, so it reassigning here should be safe. It can't be
+       // zeroed during breakpoint processing because it takes part in the
+       // "timestep too small" check.
+        olddelta_for_shared_sync = olddelta;
+        if (xspice_breakpoints_processed)
+                 olddelta_for_shared_sync = 0.0;
+        if(sharedsync(&ckt->CKTtime, &ckt->CKTdelta, olddelta_for_shared_sync, ckt->CKTfinalTime,
+                 ckt->CKTdelmin, redostep, &ckt->CKTstat->STATrejected, 1) == 0)
+            goto nextTime;
+#else
         if(sharedsync(&ckt->CKTtime, &ckt->CKTdelta, olddelta, ckt->CKTfinalTime,
                  ckt->CKTdelmin, redostep, &ckt->CKTstat->STATrejected, 1) == 0)
             goto nextTime;
-#endif
+#endif // XSPICE
+#endif // SHARED_MODULE
 
     }
     /* NOTREACHED */

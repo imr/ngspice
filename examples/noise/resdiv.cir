@@ -17,7 +17,7 @@ R22 22 0 10k
 C22 22 0 1u
 
 .control
-noise v(2) V1 dec 10 1 100k
+noise v(2) V1 dec 10 1 100k 1
 echo **resistive divider**
 print onoise_total inoise_total
 setplot noise1
