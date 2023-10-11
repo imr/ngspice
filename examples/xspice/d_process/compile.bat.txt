@@ -1,0 +1,4 @@
+# Add /Zi for debug info
+cl /Fe: prog1in4out.exe prog1in4out.c
+cl /Fe: prog4in1out.exe prog4in1out.c
+cl /Fe: graycode.exe graycode.c
