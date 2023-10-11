@@ -1,0 +1,55 @@
+The d_process Xspice model was created by Uros Platise.
+
+A complete, non-trivial example is located at:
+  https://www.isotel.eu/mixedsim/embedded/motorforce/index.html
+
+This directory contains a simple test of the d_process model.
+
+Compile the programs that are called from within d_process:
+
+  ./compile.sh   (on Linux or Cygwin on Windows)
+
+In a Windows Powershell using VisualC, copy compile.bat.txt to compile.bat,
+then use it. In a Mingw Msys shell, you can use the VisualC compiled programs,
+or use compile.sh. In both these environments the programs need to be compiled
+this way to use binary mode pipes.
+
+Run the test case (comment out the gtkwave lines or use plot if you like):
+
+  ngspice prog1-4.cir
+
+To clean up:
+
+  ./clean.sh
+
+NOTE that the prog-pipes.cir test needs fifos created on Linux or Cygwin
+on Windows. This is not available on Windows VisualC or Mingw builds.
+
+  mkfifo graycode_in
+  mkfifo graycode_out
+
+before ngspice prog-pipes.cir, and in another shell:
+
+  ./graycode --pipe
+
+needs to be started.
+
+NOTE on debugging. On Linux or Cygwin on Windows, gdb can be attached to
+the running d_process programs, or in --pipe mode with fifos, the graycode
+example can be run when invoked from gdb.
+
+From a Windows Powershell, WinDbg can be attached to a running d_process
+program.
+
+Each program prints (to stderr) its process id when started. This makes
+it easier to know the process when attaching a debugger.
+
+All the programs (graycode.c, prog1in4out.c, prog4in1out.c) contain a call
+to sleep to give you time to attach a debugger. This is enabled by:
+
+  export GO_TO_SLEEP=1   (on Linux, Cygwin)
+  $env:go_to_sleep = '1' (on Windows Powershell)
+
+Don't forget to remove the environment variables after use, or the
+prog1-4.cir will sleep (for up to 1 minute) each time you rerun it.
+
