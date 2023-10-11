@@ -1,0 +1,33 @@
+A simple bipolar circuit
+* Tadej Tuma, Árpád Burmen "Circuit Simulation with SPICE OPUS: Theory and Practice"
+* Boston 2009
+
+v1 1 0 dc=5
+r1 1 2 r=1k
+q1 2 3 0 t2n2222
+r2 3 4 r=1k
+vin 4 0 dc=0.68 ac 1
+
+.model t2n2222 npn
++ is=19f bf=150 vaf=100 ikf=0.18 ise=50p
++ ne=2.5 br=7.5 var=6.4 ikr=12m isc=8.7p
++ nc=1.2 rb=50 re=0.4 rc=0.3 cje=26p tf=0.5n
++ cjc=11p tr=7n xtb=1.5 kf=0.032f af=1
+
+.control
+noise v(2) vin dec 10 0.5 100meg 1
+setplot noise1
+set xbrushwidth=3
+plot loglog
++ onoise_q1_1overf
++ onoise_q1_ib onoise_q1_ic
++ onoise_q1_rb onoise_q1_rc onoise_q1_re
++ onoise_q1
+
+plot loglog onoise_q1 onoise_r1 onoise_r2 onoise_spectrum
+
+plot loglog onoise_spectrum inoise_spectrum
+
+.endc
+
+.end
