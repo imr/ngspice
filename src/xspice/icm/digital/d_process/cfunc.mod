@@ -80,6 +80,9 @@ MODIFICATIONS
         For Windows VisualC and Mingw the pipes use binary mode, and
         named pipes or fifos are not supported.
 
+    13 October 2023 Brian Taylor
+        Avoid calling exit(1) after reporting an error to stderr. Use
+        cm_message_send.
 
 REFERENCED FILES
 
