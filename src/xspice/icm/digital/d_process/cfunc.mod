@@ -96,6 +96,7 @@ REFERENCED FILES
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <signal.h>
 #endif
 #include <fcntl.h>
 
@@ -108,16 +109,53 @@ typedef unsigned char uint8_t;
 typedef struct {
     int pipe_to_child;
     int pipe_from_child;
+    int start_failed;
+    int header_failed;
+    int exchange_failed;
     uint8_t N_din, N_dout;          // number of inputs/outputs bytes
     Digital_State_t dout_old[256];  // max possible storage to track output changes
 } Process_t;
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
 #include <io.h>
-static void w_start(char *system_command, const char *const *argv, Process_t * process);
+static unsigned int w_start(char *system_command, const char *const *argv, Process_t * process);
 #endif
 
-static void sendheader(Process_t * process, int N_din, int N_dout)
+static void report_sendheader_message(unsigned int msg_num)
+{
+    static char *messages[] = {
+        "",
+        "ERROR: d_process supports max 255 input and max 255 output signals",
+        "ERROR: d_process when sending header",
+        "ERROR: d_process didn't respond to the header",
+        "ERROR: d_process returned invalid header version",
+        "ERROR: d_process header I/O mismatch N_din and N_dout counts"
+    };
+    cm_message_send(messages[msg_num]);
+}
+
+static void report_exchangedata_message(unsigned int msg_num)
+{
+    static char *messages[] = {
+        "",
+        "ERROR: d_process when writing exchange data",
+        "ERROR: d_process received invalid dout count when reading exchange data"
+    };
+    cm_message_send(messages[msg_num]);
+}
+
+static void report_start_message(unsigned int msg_num)
+{
+    static char *messages[] = {
+        "",
+        "ERROR: d_process process_file argument is invalid or not given",
+        "ERROR: d_process failed to open pipe",
+        "ERROR: d_process failed to fork or start process"
+    };
+    cm_message_send(messages[msg_num]);
+}
+
+static unsigned int sendheader(Process_t * process, int N_din, int N_dout)
 {
 #if defined(_MSC_VER)
 #pragma pack(push, 1)
@@ -132,8 +170,7 @@ static void sendheader(Process_t * process, int N_din, int N_dout)
 #endif
 
     if (N_din > 255 || N_dout > 255) {
-        fprintf(stderr, "Error: d_process supports max 255 input and output and 255 output signals\n");
-        exit(1);
+        return 1;
     }
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
@@ -141,8 +178,7 @@ static void sendheader(Process_t * process, int N_din, int N_dout)
 #else
     if (write(process->pipe_to_child, &header, sizeof(header)) == -1) {
 #endif
-        fprintf(stderr, "Error: d_process when sending header\n");
-        exit(1);
+        return 2;
     }
 
     // Wait for echo which must return the same header to ack transfer
@@ -151,25 +187,22 @@ static void sendheader(Process_t * process, int N_din, int N_dout)
 #else
     if (read(process->pipe_from_child, &header, sizeof(header)) != sizeof(header)) {
 #endif
-        fprintf(stderr, "Error: d_process didn't respond to the header\n");
-        exit(1);
+        return 3;
     }
     if (header.version != D_PROCESS_FORMAT_VERSION) {
-        fprintf(stderr, "Error: d_process returned invalid version: %d\n", header.version);
-        exit(1);
+        return 4;
     }
     if (header.N_din != N_din || header.N_dout != N_dout) {
-        fprintf(stderr, "Error: d_process I/O mismatch: in %d vs. returned %d, out %d vs. returned %d\n",
-            N_din, header.N_din, N_dout, header.N_dout);
-        exit(1);
+        return 5;
     }
 
     process->N_din  = (uint8_t)DLEN(N_din);
     process->N_dout = (uint8_t)DLEN(N_dout);
+    return 0;
 }
 
 
-static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[], uint8_t dout[])
+static unsigned int dprocess_exchangedata(Process_t * process, double time, uint8_t din[], uint8_t dout[])
 {
 #if defined(_MSC_VER)
 #pragma pack(push, 1)
@@ -200,8 +233,7 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
     wlen = write(process->pipe_to_child, &packet, sizeof(double) + process->N_din);
 #endif
     if (wlen == -1) {
-        fprintf(stderr, "Error: d_process when writing exchange data\n");
-        exit(1);
+        return 1;
     }
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
@@ -209,16 +241,14 @@ static void dprocess_exchangedata(Process_t * process, double time, uint8_t din[
 #else
     if (read(process->pipe_from_child, dout, process->N_dout) != process->N_dout) {
 #endif
-        fprintf(stderr,
-        "Error: d_process received invalid dout count, expected %d\n",
-        process->N_dout);
-        exit(1);
+        return 2;
     }
+    return 0;
 }
 
 
 #if !defined(_MSC_VER) && !defined(__MINGW64__)
-static void start(char *system_command, char * c_argv[], Process_t * process)
+static unsigned int start(char *system_command, char * c_argv[], Process_t * process)
 {
     int pipe_to_child[2];
     int pipe_from_child[2];
@@ -226,8 +256,7 @@ static void start(char *system_command, char * c_argv[], Process_t * process)
     size_t syscmd_len = strlen(system_command);
 
     if (syscmd_len == 0) {
-        fprintf(stderr, "Error: d_process process_file argument is not given");
-        exit(1);
+        return 1;
     }
     if (system_command[syscmd_len-1] == '|') {
         char *filename_in = NULL, *filename_out = NULL;
@@ -240,20 +269,20 @@ static void start(char *system_command, char * c_argv[], Process_t * process)
         strncpy(filename_out, system_command, syscmd_len-1);
         strcpy(&filename_out[syscmd_len-1], "_out");
         if ((process->pipe_to_child = open(filename_in, O_WRONLY)) == -1) {
-            perror("open in file");
-            exit(1);
+            return 2;
         }
         if ((process->pipe_from_child = open(filename_out, O_RDONLY)) == -1) {
-            perror("open out file");
-            exit(1);
+            return 2;
         }
         if (filename_in) free(filename_in);
         if (filename_out) free(filename_out);
     }
     else {
-        if (pipe(pipe_to_child) || pipe(pipe_from_child) || (pid=fork()) ==-1) {
-            perror("Error: d_process cannot create pipes and fork");
-            exit(1);
+        if (pipe(pipe_to_child) || pipe(pipe_from_child)) {
+            return 2;
+        }
+        if ((pid=fork()) ==-1) {
+            return 3;
         }
         if (pid == 0) {
             dup2(pipe_to_child[0],0);
@@ -262,17 +291,19 @@ static void start(char *system_command, char * c_argv[], Process_t * process)
             close(pipe_from_child[0]);
 
             if (execv(system_command, c_argv) == -1) {
-                perror(system_command);
-                exit(1);
+                fprintf(stderr,
+                    "ERROR: d_process failed to fork or start process %s\n",
+                    system_command);
+                return 3;
             }
-        }
-        else {
+        } else {
             process->pipe_to_child = pipe_to_child[1];
             process->pipe_from_child = pipe_from_child[0];
             close(pipe_to_child[0]);
             close(pipe_from_child[1]);
         }
     }
+    return 0;
 }
 #endif
 
@@ -291,10 +322,19 @@ static void cm_d_process_callback(ARGS, Mif_Callback_Reason_t reason)
     }
 }
 
+static int any_failed(Process_t *p)
+{
+    if (p->start_failed || p->header_failed || p->exchange_failed) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 void cm_d_process(ARGS)
 {
     int                        i;   /* generic loop counter index */
+    unsigned int          errnum;
 
     Digital_State_t       *reset,   /* storage for reset value  */
                       *reset_old;   /* previous reset value     */
@@ -315,16 +355,18 @@ void cm_d_process(ARGS)
         clk   = clk_old   = (Digital_State_t *) cm_event_get_ptr(0,0);
         reset = reset_old = (Digital_State_t *) cm_event_get_ptr(1,0);
 
-        STATIC_VAR(process) = malloc(sizeof(Process_t));
+        STATIC_VAR(process) = calloc(1, sizeof(Process_t));
         local_process       = STATIC_VAR(process);
         CALLBACK = cm_d_process_callback;
 
         if (!PARAM_NULL(process_params)) {
+            int upper_limit;
             if (PARAM_SIZE(process_params) > (C_ARGV_SIZE - 2)) {
-                fprintf(stderr, "Error: too many process_parameters\n");
-                exit(1);
+                upper_limit = C_ARGV_SIZE - 2;
+            } else {
+                upper_limit = PARAM_SIZE(process_params);
             }
-            for (i=0; i<PARAM_SIZE(process_params); i++) {
+            for (i=0; i<upper_limit; i++) {
                 c_argv[c_argc++] = PARAM(process_params[i]);
             }
         }
@@ -333,18 +375,24 @@ void cm_d_process(ARGS)
 #undef C_ARGV_SIZE
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
-        w_start(c_argv[0], (const char *const *)c_argv, local_process);
+        errnum = w_start(c_argv[0], (const char *const *)c_argv, local_process);
 #else
-        start(c_argv[0], c_argv, local_process);
+        errnum = start(c_argv[0], c_argv, local_process);
 #endif
-        sendheader(local_process, PORT_SIZE(in), PORT_SIZE(out));
-
-        if (PORT_SIZE(in) == 0) {
-            if (local_process->N_din != 0) {
-                fprintf(stderr, "Error: in port size mismatch\n");
-                exit(1);
-            }
+        if (errnum) {
+            report_start_message(errnum);
+            local_process->start_failed = 1;
+            return;
         }
+        if (any_failed(local_process)) return;
+        errnum = sendheader(local_process, PORT_SIZE(in), PORT_SIZE(out));
+        if (errnum) {
+            report_sendheader_message(errnum);
+            local_process->header_failed = 1;
+            return;
+        }
+        if (any_failed(local_process)) return;
+
         for (i=0; i<PORT_SIZE(in); i++) {
             LOAD(in[i]) = PARAM(input_load);
         }
@@ -357,7 +405,9 @@ void cm_d_process(ARGS)
     }
     else {
         local_process = STATIC_VAR(process);
-
+        if (any_failed(local_process)) {
+            raise(SIGINT);
+        }
         clk = (Digital_State_t *) cm_event_get_ptr(0,0);
         clk_old = (Digital_State_t *) cm_event_get_ptr(0,1);
 
@@ -405,7 +455,12 @@ void cm_d_process(ARGS)
                 din[i >> 3] |= (uint8_t)(b << (i & 7));
             }
 
-            dprocess_exchangedata(local_process, (ONE != *reset) ? TIME : -TIME, din, dout);
+            errnum = dprocess_exchangedata(local_process, (ONE != *reset) ? TIME : -TIME, din, dout);
+            if (errnum) {
+                report_exchangedata_message(errnum);
+                local_process->exchange_failed = 1;
+                return;
+            }
 
             for (i=0; i<PORT_SIZE(out); i++) {
                 Digital_State_t new_state = ((dout[i >> 3] >> (i & 7)) & 0x01) ? ONE : ZERO;
@@ -436,7 +491,7 @@ void cm_d_process(ARGS)
 #include <process.h>
 #include <io.h>
 
-static void w_start(char *system_command, const char *const *argv, Process_t * process)
+static unsigned int w_start(char *system_command, const char *const *argv, Process_t * process)
 {
     int pipe_to_child[2];
     int pipe_from_child[2];
@@ -444,23 +499,14 @@ static void w_start(char *system_command, const char *const *argv, Process_t * p
     int mode = _O_BINARY;
     size_t syscmd_len = strlen(system_command);
 
-    if (syscmd_len == 0) {
-        fprintf(stderr, "Error: d_process process_file argument is not given");
-        exit(1);
-    }
-    if (system_command[syscmd_len-1] == '|') {
-        fprintf(stderr, "Error: d_process named pipe/fifo not supported\n");
-        exit(1);
+    if (syscmd_len == 0 || system_command[syscmd_len-1] == '|') {
+        return 1;
     }
     if (_pipe(pipe_to_child, 1024, mode) == -1) {
-        perror("pipe_to_child");
-        fprintf(stderr, "Failed to open pipe_to_child\n");
-        exit(1);
+        return 2;
     }
     if (_pipe(pipe_from_child, 1024, mode) == -1) {
-        perror("pipe_from_child");
-        fprintf(stderr, "Failed to open pipe_from_child\n");
-        exit(1);
+        return 2;
     }
 
     _dup2(pipe_to_child[0],0);
@@ -471,12 +517,11 @@ static void w_start(char *system_command, const char *const *argv, Process_t * p
     _flushall();
     pid = _spawnvp(_P_NOWAIT, system_command, argv);
     if (pid == -1) {
-        perror("spawn from d_process");
-        fprintf(stderr, "Failed to spawn %s\n", system_command);
-        exit(1);
+        return 3;
     }
 
     process->pipe_to_child = pipe_to_child[1];
     process->pipe_from_child = pipe_from_child[0];
+    return 0;
 }
 #endif

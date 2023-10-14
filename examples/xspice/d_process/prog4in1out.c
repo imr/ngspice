@@ -22,13 +22,15 @@ static int compute(
     uint8_t *datain, int insz, uint8_t *dataout, int outsz, double time
 );
 
+//#define ENABLE_DEBUGGING 1
+#ifdef ENABLE_DEBUGGING
 static int known_bp(int iargc)
 {
     return iargc;
 }
+#endif
 
 int main(int argc, char *argv[]) {    
-    int i;
     int inlen = D_PROCESS_DLEN(DIGITAL_IN);
     int outlen = D_PROCESS_DLEN(DIGITAL_OUT);
 
@@ -61,6 +63,7 @@ int main(int argc, char *argv[]) {
     _setmode(1, _O_BINARY);
 #endif
 
+#ifdef ENABLE_DEBUGGING
 #if defined(_MSC_VER) || defined(__MINGW64__)
     fprintf(stderr, "%s pid %d\n", argv[0], _getpid());
 #else
@@ -85,9 +88,10 @@ int main(int argc, char *argv[]) {
 
     (void)known_bp(argc);
 
-    for (i=0; i<argc; i++) {
+    for (int i=0; i<argc; i++) {
         fprintf(stderr, "[%d] %s\n", i, argv[i]);
     }
+#endif
     
     if (d_process_init(pipein, pipeout, DIGITAL_IN, DIGITAL_OUT) ) {
 #if defined(_MSC_VER) || defined(__MINGW64__)
@@ -96,9 +100,9 @@ int main(int argc, char *argv[]) {
         while(read(pipein, &in, sizeof(in)) == sizeof(in)) {
 #endif
 
-        if (!compute(in.din, inlen, out.dout, outlen, in.time)) {
-            return 1;
-        }
+            if (!compute(in.din, inlen, out.dout, outlen, in.time)) {
+                return 1;
+            }
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
             _write(pipeout, &out, sizeof(out));
