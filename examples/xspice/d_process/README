@@ -41,6 +41,9 @@ example can be run when invoked from gdb.
 From a Windows Powershell, WinDbg can be attached to a running d_process
 program.
 
+To enable the debugging hooks in the programs (graycode.c, prog1in4out.c,
+prog4in1out.c), edit them to #define ENABLE_DEBUGGING.
+
 Each program prints (to stderr) its process id when started. This makes
 it easier to know the process when attaching a debugger.
 
