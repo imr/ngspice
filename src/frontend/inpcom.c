@@ -3184,8 +3184,6 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
  If there is only white space before the end-of-line comment the
  the whole line is converted to a normal comment line (i.e. one that
  begins with a '*').
- BUG: comment characters in side of string literals are not ignored
- ('$' outside of .control section is o.k. however).
 
  If the comaptibility mode is PS, LTPS or LTPSA, '$' is treated as a valid
  character, not as end-of-line comment delimiter, except for that it is
@@ -3202,6 +3200,24 @@ static void inp_stripcomments_line(char *s, bool cs)
     /* look for comments */
     while ((c = *d) != '\0') {
         d++;
+
+        /* Skip over single or double-quoted strings. */
+
+        if (c == '"') {
+            while ((c = *d) && (c != '"' || d[-1] == '\\'))
+                ++d;
+            if (c)
+                ++d;
+            continue;
+        }
+        if (c == '\'') {
+            while ((c = *d) && (c != '\'' || d[-1] == '\\'))
+                ++d;
+            if (c)
+                ++d;
+            continue;
+        }
+
         if (*d == ';') {
             break;
         }
