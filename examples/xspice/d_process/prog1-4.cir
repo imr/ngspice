@@ -34,7 +34,11 @@ ap1_4a [clk2] clk1 reseto [b1 b2 b3 b4] proc4
 run
 edisplay
 eprvcd clk1 clk2  o1 o2 o3 o4 q1 q2 q3 q4 b1 b2 b3 b4 zeros qzeros reseto > prog1-4.vcd
-shell gtkwave prog1-4.vcd --script nggtk.tcl &
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave prog1-4.vcd --script nggtk.tcl
+else
+  shell gtkwave prog1-4.vcd --script nggtk.tcl &
+end
 quit
 .endc
 .end
