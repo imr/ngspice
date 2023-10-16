@@ -12,6 +12,7 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpptree.h"
+#include "ngspice/randnumb.h"
 #include "inpxx.h"
 
 #include "inpptree-parser.h"
@@ -35,6 +36,8 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
 
 static void free_tree(INPparseNode *);
 static void printTree(INPparseNode *);
+
+static double gauss(double nominal_val, double rel_variation, double sigma);
 
 
 /*
@@ -1145,6 +1148,30 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
         return mkfirst(NULL, arg);
     }
 
+    /* This is used only to evaluate fcn gauss(a1, a2, a3) in .model files, where 
+       temper is used also. a1, a2, and a3 have to be constant double values. */
+    if (!strcmp("gauss", buf)) {
+        if (arg->type == PT_COMMA && arg->left->type == PT_COMMA) {
+
+            INPparseNode* arg1 = arg->left->left;
+            INPparseNode* arg2 = arg->left->right;
+            INPparseNode* arg3 = arg->right;
+            double a1 = arg1->constant;
+            double a2 = arg2->constant;
+            double a3 = arg3->constant;
+
+            if (a2 == 0.0 || a3 == 0.0) {
+                fprintf(stderr, "Error: bogus gauss form\n");
+                return mkfirst(NULL, arg); //return mkcon(a1);
+            }
+
+            return mkcon(gauss(a1, a2, a3));
+        }
+
+        fprintf(stderr, "Error: bogus gauss form\n");
+        return mkfirst(NULL, arg);
+    }
+
     for (i = 0; i < NUM_FUNCS; i++)
         if (!strcmp(funcs[i].name, buf))
             break;
@@ -1624,6 +1651,16 @@ void free_tree(INPparseNode *pt)
     }
 
     txfree(pt);
+}
+
+static double
+gauss(double nominal_val, double rel_variation, double sigma)
+{
+    double stdvar;
+    if (rel_variation <= 0 || sigma <= 0)
+        return nominal_val;
+    stdvar = nominal_val * rel_variation / sigma;
+    return (nominal_val + stdvar * gauss1());
 }
 
 
