@@ -54,6 +54,7 @@ CDHW*/
 #include "ngspice/inpdefs.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/ifsim.h"
+#include "ngspice/hash.h"
 
 #include "circuits.h"
 #include "spiceif.h"
@@ -75,6 +76,7 @@ CDHW*/
 #endif
 
 extern INPmodel *modtab;
+extern NGHASHPTR modtabhash;
 extern bool ft_batchmode;
 
 static struct variable *parmtovar(IFvalue *pv, IFparm *opt);
@@ -160,9 +162,11 @@ if_inpdeck(struct card *deck, INPtables **tab)
 
     /* Parse the .model lines. Enter the model into the global model table modtab. */
     modtab = NULL;
+    modtabhash = NULL;
     INPpas1(ckt, deck->nextcard, *tab);
     /* store the new model table in the current circuit */
     ft_curckt->ci_modtab = modtab;
+    ft_curckt->ci_modtabhash = modtabhash;
 
     /* Scan through the instance lines and parse the circuit. */
     INPpas2(ckt, deck->nextcard, *tab, ft_curckt->ci_defTask);

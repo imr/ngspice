@@ -126,4 +126,6 @@ FILE *fopen_with_path(const char *path, const char *mode);
 
 #define CM_IGNORE(x) (void) (x)
 
+void cm_cexit(const int);
+
 #endif /* include guard */

@@ -14,6 +14,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/ftedev.h"
 #include "ngspice/ftedebug.h"
 #include "ngspice/dvec.h"
+#include "ngspice/hash.h"
 
 #include "numparam/numpaif.h"
 
@@ -33,6 +34,7 @@ Modified: 2000 AlansFixes
 
 static int dosim(char *what, wordlist *wl);
 extern struct INPmodel *modtab;
+extern NGHASHPTR modtabhash;
 extern struct dbcomm *dbs;
 extern void NIresetwarnmsg(void);
 
@@ -107,6 +109,7 @@ com_scirc(wordlist *wl)
     ft_curckt = p;
     /* get the model table for the current circuit, store it in the global variable modtab */
     modtab = ft_curckt->ci_modtab;
+    modtabhash = ft_curckt->ci_modtabhash;
     /* get the database for save, iplot, stop */
     dbs = ft_curckt->ci_dbs;
     /* set the numparam dicos structure for use with measure */

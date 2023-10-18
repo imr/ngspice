@@ -17,6 +17,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/fteparse.h"
 #include "ngspice/fteinp.h"
 #include "ngspice/fteoptdefs.h"
+#include "ngspice/hash.h"
 
 struct ccom;
 
@@ -34,6 +35,7 @@ struct circ {
     CKTcircuit *ci_ckt;       /* The CKTcircuit structure. */
     INPtables  *ci_symtab;    /* The INP symbol table. */
     INPmodel   *ci_modtab;    /* The INP model table. */
+    NGHASHPTR  ci_modtabhash; /* The INP model hash table. */
     struct dbcomm *ci_dbs;    /* The database storing save, iplot, stop data */
     struct card *ci_deck;     /* The input deck. */
     struct card *ci_origdeck; /* The input deck, before subckt expansion. */
