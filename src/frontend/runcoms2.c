@@ -14,6 +14,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ftedebug.h"
 #include "ngspice/dvec.h"
 #include "ngspice/trandefs.h"
+#include "ngspice/hash.h"
 
 #include "circuits.h"
 #include "runcoms2.h"
@@ -33,6 +34,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 extern void line_free_x(struct card *deck, bool recurse);
 extern INPmodel *modtab;
+extern NGHASHPTR modtabhash;
 
 #ifdef SHARED_MODULE
 extern void exec_controls(wordlist *newcontrols);
@@ -273,10 +275,11 @@ com_remcirc(wordlist *wl)
         prev = p;
     }
 
-    /* make first entry in ft_circuits the actual circuit (or NULL) */
+    /* make first entry in ft_circuits the current circuit (or NULL) */
     ft_curckt = ft_circuits;
     if (ft_curckt) {
         modtab = ft_curckt->ci_modtab;
+        modtabhash = ft_curckt->ci_modtabhash;
         dbs = ft_curckt->ci_dbs;
         nupa_set_dicoslist(ft_curckt->ci_dicos);
     }

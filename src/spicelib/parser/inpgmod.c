@@ -39,6 +39,7 @@ static int INPfindParm(char *name, IFparm *table, int numParms);
 #endif
 
 extern INPmodel *modtab;
+extern NGHASHPTR modtabhash;
 
 
 static IFparm *
@@ -342,6 +343,33 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab)
     printf("In INPgetMod, examining model %s ...\n", name);
 #endif
 
+    modtmp = nghash_find(modtabhash, name);
+    if (modtmp) {
+        /* found the model in question - now instantiate if necessary */
+        /* and return an appropriate pointer to it */
+
+/* if illegal device type */
+        if (modtmp->INPmodType < 0) {
+#ifdef TRACE
+            printf("In INPgetMod, illegal device type for model %s ...\n", name);
+#endif
+            * model = NULL;
+            return tprintf("Unknown device type for model %s\n", name);
+        }
+
+        /* create unless model is already defined */
+        if (!modtmp->INPmodfast) {
+            int error = create_model(ckt, modtmp, tab);
+            if (error) {
+                *model = NULL;
+                return INPerror(error);
+            }
+        }
+
+        *model = modtmp;
+        return NULL;
+    }
+#if (0)
     for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
 #ifdef TRACE
@@ -374,7 +402,7 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab)
             return NULL;
         }
     }
-
+#endif
 #ifdef TRACE
     printf("In INPgetMod, didn't find model for %s, using default ...\n", name);
 #endif
