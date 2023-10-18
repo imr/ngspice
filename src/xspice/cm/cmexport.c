@@ -58,6 +58,7 @@ struct coreInfo_t  coreInfo =
   cm_message_send,
   cm_netlist_get_c,
   cm_netlist_get_l,
+  cm_irreversible,
   cm_get_node_name,
   cm_probe_node,
   cm_schedule_output,

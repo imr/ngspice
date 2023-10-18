@@ -20,10 +20,12 @@ MODIFICATIONS
 SUMMARY
 
     This file contains function EVTcall_hybrids which calls all models
-    which have both analog and event-driven ports.  It is called following
+    which have both analog and event-driven ports or have declared
+    themselves to be irreversible (no back-out).  It is called following
     successful evaluation of an analog iteration attempt to allow
     events to be scheduled by the hybrid models.  The 'CALL_TYPE' is set
-    to 'EVENT_DRIVEN' when the model is called from this function.
+    to 'EVENT_DRIVEN' or 'STEP_PENDING' when the model is called
+    from this function.
 
 INTERFACES
 
@@ -71,6 +73,7 @@ void EVTcall_hybrids(
     hybrids = ckt->evt->info.hybrids;
 
     /* Call EVTload for all hybrids */
+
     for(i = 0; i < num_hybrids; i++)
-        EVTload(ckt, hybrids[i]);
+        EVTload_with_event(ckt, hybrids[i], MIF_STEP_PENDING);
 }

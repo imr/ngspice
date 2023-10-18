@@ -80,6 +80,7 @@ struct MIFinstance {
 
     Mif_Boolean_t       analog;           /* true if this inst is analog or hybrid type */
     Mif_Boolean_t       event_driven;     /* true if this inst is event-driven or hybrid type */
+    unsigned int        irreversible;     /* non-zero for special treatment */
 
     int                 inst_index;       /* Index into inst_table in evt struct in ckt */
     Mif_Callback_t      callback;         /* instance callback function */

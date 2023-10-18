@@ -85,6 +85,16 @@ int EVTload(
     CKTcircuit   *ckt,        /* The circuit structure */
     MIFinstance  *inst)       /* The instance to call */
 {
+    return EVTload_with_event(ckt, inst, MIF_EVENT_DRIVEN);
+}
+
+/* "Internal" version, also used by EVTcall_hybrids(). */
+
+int EVTload_with_event(
+    CKTcircuit      *ckt,     /* The circuit structure */
+    MIFinstance     *inst,    /* The instance to call */
+    Mif_Call_Type_t type)     /* Type of call (EVENT or STEP_PENDING). */
+{
 
     int                 i;
     int                 j;
@@ -104,8 +114,7 @@ int EVTload(
     /* Prepare the code model inputs */
     /* ***************************** */
 
-    /* Get pointer to instance data structure and other data */
-    /* needed for fast access */
+    /* Get pointer to data structure needed for fast access */
 
     node_data = ckt->evt->data.node;
 
@@ -124,7 +133,14 @@ int EVTload(
     else
         cm_data.circuit.time = 0.0;
 
-    cm_data.circuit.call_type = MIF_EVENT_DRIVEN;
+    /* Instances that have declared themselves as irreversible
+     * are expected to distinguish STEP_PENDING from ordinary events.
+     */
+
+    if (type == MIF_STEP_PENDING && inst->irreversible)
+        cm_data.circuit.call_type = MIF_STEP_PENDING;
+    else
+        cm_data.circuit.call_type = MIF_EVENT_DRIVEN;
     cm_data.circuit.temperature = ckt->CKTtemp - 273.15;
 
     /* Setup data needed by cm_... functions */
@@ -141,9 +157,11 @@ int EVTload(
 
 
     /* If after initialization and in transient analysis mode */
-    /* create a new state for the instance */
+    /* create a new state for the instance, */
+    /* except analog-only irreversibles. */
 
-    if((g_mif_info.circuit.anal_type == MIF_TRAN) && inst->initialized)
+    if((g_mif_info.circuit.anal_type == MIF_TRAN) && inst->initialized &&
+       inst->inst_index >= 0)
         EVTcreate_state(ckt, inst->inst_index);
 
     /* Loop through all connections on the instance and setup */

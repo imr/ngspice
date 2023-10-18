@@ -75,6 +75,7 @@ typedef enum {
 typedef enum {
     MIF_ANALOG,         /* Analog call */
     MIF_EVENT_DRIVEN,   /* Event-driven call */
+    MIF_STEP_PENDING,   /* Special event call for irreversible Code Models */
 } Mif_Call_Type_t;
 
 
