@@ -126,6 +126,7 @@ typedef struct {
     int pipe_to_child;
     int pipe_from_child;
     unsigned int error_count;
+    int pid_of_child;
     uint8_t N_din, N_dout;          // number of inputs/outputs bytes
     Digital_State_t dout_old[256];  // max possible storage to track output changes
 } Process_t;
@@ -133,6 +134,7 @@ typedef struct {
 #if defined(_MSC_VER) || defined(__MINGW64__)
 #include <io.h>
 static int w_start(char *system_command, const char *const *argv, Process_t * process);
+static void w_cleanup_child_process(Process_t *process);
 #endif
 
 static int sendheader(Process_t * process, int N_din, int N_dout)
@@ -292,6 +294,7 @@ static int start(char *system_command, char * c_argv[], Process_t * process)
             }
         }
         else {
+            process->pid_of_child = pid;
             process->pipe_to_child = pipe_to_child[1];
             process->pipe_from_child = pipe_from_child[0];
             close(pipe_to_child[0]);
@@ -302,13 +305,15 @@ static int start(char *system_command, char * c_argv[], Process_t * process)
 }
 #endif
 
-
 static void cm_d_process_callback(ARGS, Mif_Callback_Reason_t reason)
 {
     switch (reason) {
         case MIF_CB_DESTROY: {
             Process_t *proc = STATIC_VAR(process);
             if (proc) {
+#if defined(_MSC_VER) || defined(__MINGW64__)
+                w_cleanup_child_process(proc);
+#endif
                 free(proc);
                 STATIC_VAR(process) = NULL;
             }
@@ -467,6 +472,9 @@ void cm_d_process(ARGS)
 
 #if defined(_MSC_VER) || defined(__MINGW64__)
 
+#undef BYTE
+#undef BOOLEAN
+#include <windows.h>
 #include <process.h>
 #include <io.h>
 
@@ -474,7 +482,8 @@ static int w_start(char *system_command, const char *const *argv, Process_t * pr
 {
     int pipe_to_child[2];
     int pipe_from_child[2];
-    intptr_t pid = 0;
+    int pid;
+    intptr_t sp_result;
     int mode = _O_BINARY;
     size_t syscmd_len = 0;
     if (system_command) {
@@ -504,14 +513,31 @@ static int w_start(char *system_command, const char *const *argv, Process_t * pr
     _close(pipe_from_child[1]);
 
     _flushall();
-    pid = _spawnvp(_P_NOWAIT, system_command, argv);
-    if (pid == -1) {
+    sp_result = _spawnvp(_P_NOWAIT, system_command, argv);
+    if (sp_result == -1) {
         cm_message_printf("ERROR: d_process failed to spawn %s", system_command);
         return 1;
     }
 
+    pid = GetProcessId((HANDLE)sp_result);
+    process->pid_of_child = pid;
+    cm_message_printf("Note: Process %s has pid %u", system_command, pid);
     process->pipe_to_child = pipe_to_child[1];
     process->pipe_from_child = pipe_from_child[0];
     return 0;
 }
+
+static void w_cleanup_child_process(Process_t *process)
+{
+    HANDLE phand;
+    if (process && process->pid_of_child) {
+        phand = OpenProcess(PROCESS_ALL_ACCESS, FALSE, process->pid_of_child);
+        if (phand != NULL) {
+            (void) TerminateProcess(phand, 0);
+            CloseHandle(phand);
+        }
+        process->pid_of_child = 0;
+    }
+}
+
 #endif
