@@ -960,8 +960,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                So again try to remove unused MOS models.
                All binning models are still here when w or l have been
                determined by an expression. */
-           if (newcompat.hs || newcompat.spe)
-              rem_unused_mos_models(deck->nextcard);
+//           if (newcompat.hs || newcompat.spe)
+//              rem_unused_mos_models(deck->nextcard);
 
             /* now load deck into ft_curckt -- the current circuit. */
             if(inp_dodeck(deck, tt, wl_first, FALSE, options, filename) != 0)
