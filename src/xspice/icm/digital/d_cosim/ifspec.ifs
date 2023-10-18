@@ -1,0 +1,102 @@
+/* Copyright 2023 Giles Atkinson
+SUMMARY
+
+    This file contains the interface specification file for the 
+    d_cosim code model for general digital co-simulation.
+
+=============================================================================*/
+
+NAME_TABLE:
+
+Spice_Model_Name:      d_cosim
+C_Function_Name:       ucm_d_cosim
+Description:           "Bridge to an irreversible digital model"
+
+PORT_TABLE:
+
+Port_Name:           d_in
+Description:         "digital input"
+Direction:           in
+Default_Type:        d
+Allowed_Types:       [d]
+Vector:              yes
+Vector_Bounds:       [0 -]
+Null_Allowed:        yes
+
+PORT_TABLE:
+
+Port_Name:           d_out
+Description:         "digital output"
+Direction:           out
+Default_Type:        d
+Allowed_Types:       [d]
+Vector:              yes
+Vector_Bounds:       [0 -]
+Null_Allowed:        yes
+
+PORT_TABLE:
+
+Port_Name:           d_inout
+Description:         "digital bidirectional port"
+Direction:           inout
+Default_Type:        d
+Allowed_Types:       [d]
+Vector:              yes
+Vector_Bounds:       [0 -]
+Null_Allowed:        yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     delay
+Description:        "output delay time"
+Data_Type:          real
+Default_Value:      1.0e-9
+Limits:             [1e-12 -]
+Vector:             no
+Vector_bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     simulation
+Description:        "A shared library containing a digital model"
+Data_Type:          string
+Default_Value:      -
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
+
+/* Instances maintain an internal input event queue that should be at least
+ * as large as the number of inputs.  Performance with clocked logic may
+ * be improved by making it larger than (2 * F) / MTS, where F is
+ * the clock frequency and MTS is the maximum timestep for .tran.
+ */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     queue_size
+Description:        "input queue size"
+Data_Type:          int
+Default_Value:      128
+Limits:             [1 -]
+Vector:             no
+Vector_bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     irreversible
+Description:        "Parameter passed to library function cm_irreversible()"
+Data_Type:          int
+Default_Value:      1
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    cosim_instance
+Data_Type:	    pointer
+Description:        "Per-instance structure"

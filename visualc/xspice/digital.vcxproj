@@ -322,6 +322,10 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_xor\d_xor-ifspec.c" />
+    <ClCompile Include="icm\digital\d_cosim\d_cosim-ifspec.c" />
+    <ClCompile Include="icm\digital\d_cosim\d_cosim-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
