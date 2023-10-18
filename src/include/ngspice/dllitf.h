@@ -83,6 +83,7 @@ struct coreInfo_t {
 	void *    ((*dllitf_tmalloc)(size_t));
 	void *    ((*dllitf_trealloc)(const void *, size_t));
 	void      ((*dllitf_txfree)(const void *));
+	void      ((*dllitf_cexit)(const int));
 
 #ifdef KLU
         int ((*dllitf_MIFbindCSC) (GENmodel *, CKTcircuit *)) ;

@@ -430,6 +430,10 @@ void txfree(const void *ptr) {
 	(coreitf->dllitf_txfree)(ptr);
 }
 
+void cm_cexit(const int exitcode) {
+	(coreitf->dllitf_cexit)(exitcode);
+}
+
 #ifdef KLU
 int MIFbindCSC (GENmodel *inModel, CKTcircuit *ckt) {
     return (coreitf->dllitf_MIFbindCSC) (inModel, ckt) ;

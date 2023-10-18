@@ -81,7 +81,8 @@ struct coreInfo_t  coreInfo =
   txfree,
   tmalloc,
   trealloc,
-  txfree
+  txfree,
+  cm_cexit
 #else
   GC_malloc,
   tcalloc,
