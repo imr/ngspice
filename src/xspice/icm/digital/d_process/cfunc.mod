@@ -83,6 +83,10 @@ MODIFICATIONS
     14 October 2023 Brian Taylor
         Use cm_message_send() to report errors, avoid exit(1) calls.
 
+    18 October 2023 Brian Taylor
+        Use cm_cexit() to halt simulation after fatal errors.
+        Cleanup (terminate) Windows child processes.
+
 
 REFERENCED FILES
 
@@ -380,6 +384,7 @@ void cm_d_process(ARGS)
     else {
         local_process = STATIC_VAR(process);
         if (local_process->error_count > 0) {
+            cm_cexit(1);
             return;
         }
         clk = (Digital_State_t *) cm_event_get_ptr(0,0);
