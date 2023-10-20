@@ -1,0 +1,44 @@
+checks.cir test error handling.
+ 
+*** analysis type ***
+.tran .01us 10us
+v1 1 0 DC 1.0
+v2 2 0 DC 0.0
+
+.model d_osc1 d_osc (cntl_array=[-1.0 0.0 1.0 2.0] 
++                    freq_array=[1.0e6 1.0e6 4.0e6 4.0e6]
++                    rise_delay=1.0e-6 fall_delay=2.0e-6)
+
+a1 1 clk1 d_osc1 
+a2 2 clk2 d_osc1 
+
+** Too few outputs, 4 required
+ap0 null clk1 null [q2 q3 q4] proc0
+.model proc0 d_process (process_file="graycode" process_params=["none"])
+
+ap1 [clk2] clk1 null [o1 o2 o3 o4] proc1
+.model proc1 d_process (process_file="prog1in4out" process_params=["opt1", "qwerty"])
+
+ap2 [o1 o2 o3 o4] clk1 null [zeros] proc2
+** Non existent process_file or missing fifos
+** Unsupported fifo on Windows VisualC
+.model proc2 d_process (process_file="badprog4in1out|" process_params=["abc", "99"])
+
+ap3 [q1 q2 q3 q4] clk1 null [qzeros] proc3
+** Non existent process_file
+.model proc3 d_process (process_file="prog4in1outxxx")
+
+an1 [o1 ~o2 o3] reseto dand1
+.model dand1 d_and(inertial_delay=true rise_delay=1ns fall_delay=50ns)
+
+ap4 [clk2] clk1 reseto [b1 b2 b3 b4] proc4
+** Empty process_file name
+.model proc4 d_process (process_file="")
+
+.control
+run
+edisplay
+quit
+.endc
+.end
+

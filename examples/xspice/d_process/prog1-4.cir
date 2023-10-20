@@ -37,14 +37,13 @@ eprvcd clk1 clk2  o1 o2 o3 o4 q1 q2 q3 q4 b1 b2 b3 b4 zeros qzeros reseto > prog
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave prog1-4.vcd --script nggtk.tcl
 else
-  shell gtkwave prog1-4.vcd --script nggtk.tcl &
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave prog1-4.vcd
+  else ; Linux and others
+    shell gtkwave prog1-4.vcd --script nggtk.tcl &
+  end
 end
 quit
 .endc
 .end
-
-
-
-
-
 

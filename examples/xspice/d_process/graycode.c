@@ -22,10 +22,7 @@ static int compute(uint8_t *dataout, int outsz, double time);
 
 //#define ENABLE_DEBUGGING 1
 #ifdef ENABLE_DEBUGGING
-static int known_bp(int iargc)
-{
-    return iargc;
-}
+#include "debugging.h"
 #endif
 
 int main(int argc, char *argv[]) {    
@@ -60,33 +57,10 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef ENABLE_DEBUGGING
-#if defined(_MSC_VER) || defined(__MINGW64__)
-    fprintf(stderr, "%s pid %d\n", argv[0], _getpid());
-#else
-    fprintf(stderr, "%s pid %d\n", argv[0], getpid());
+    debug_info(argc, argv);
 #endif
 
-#if !defined(_MSC_VER) && !defined(__MINGW64__)
-    if (getenv("GO_TO_SLEEP")) {
-        sleep(40);
-    }
-#endif
-#if defined(__MINGW64__)
-    if (getenv("GO_TO_SLEEP")) {
-        sleep(40);
-    }
-#endif
-#if defined(_MSC_VER)
-    if (getenv("GO_TO_SLEEP")) {
-        Sleep(60000);
-    }
-#endif
-
-    (void)known_bp(argc);
-#endif
-
-    for (i=0; i<argc; i++) {
-        //fprintf(stderr, "[%d] %s\n", i, argv[i]);
+    for (i = 0; i <argc; i++) {
         if (strcmp(argv[i],"--pipe")==0) {
 #if defined(_MSC_VER) || defined(__MINGW64__)
             if ((pipein = _open("graycode_in",  O_RDONLY)) < 0 || (pipeout = _open("graycode_out",  O_WRONLY)) < 0)
