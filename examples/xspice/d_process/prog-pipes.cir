@@ -33,8 +33,3 @@ shell gtkwave prog1-4.vcd --script nggtk.tcl &
 .endc
 .end
 
-
-
-
-
-
