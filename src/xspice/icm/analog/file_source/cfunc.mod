@@ -233,6 +233,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             if (!loc->state->fp) {
                 cm_message_printf("cannot open file %s", PARAM(file));
                 loc->state->atend = 1;
+                cm_cexit(1);
             }
         }
         /* read, preprocess and store the data */

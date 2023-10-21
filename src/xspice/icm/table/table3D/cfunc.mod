@@ -802,6 +802,7 @@ EXITPOINT:
             free_local_data(loc);
             loc = (Table3_Data_t *) NULL;
         }
+        cm_cexit(1);
     }
     return loc;
 } /* end of function init_local_data */
