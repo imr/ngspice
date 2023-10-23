@@ -47,7 +47,7 @@ Default_Type:        d              d
 Allowed_Types:       [d]            [d]
 Vector:              no             yes
 Vector_Bounds:       -              [1 -]
-Null_Allowed:        yes            yes
+Null_Allowed:        yes            no
 
 
 
