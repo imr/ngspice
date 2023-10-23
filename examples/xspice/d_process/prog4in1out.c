@@ -91,21 +91,23 @@ static int compute(
 )
 {
     uint8_t i0 = 0, zeros = 0;
-    uint8_t inbyte = datain[0];
+    uint8_t inbyte = datain[0] & 0x0F;
     dataout[0] = 0;
-    i0 = inbyte ^ 0x01;
-    if (i0) zeros++;
-    i0 = inbyte ^ 0x02;
-    if (i0) zeros++;
-    i0 = inbyte ^ 0x04;
-    if (i0) zeros++;
-    i0 = inbyte ^ 0x08;
-    if (i0) zeros++;
+    i0 = inbyte & 0x01;
+    if (i0 == 0) zeros++;
+    i0 = inbyte & 0x02;
+    if (i0 == 0) zeros++;
+    i0 = inbyte & 0x04;
+    if (i0 == 0) zeros++;
+    i0 = inbyte & 0x08;
+    if (i0 == 0) zeros++;
     if (zeros == 2 || zeros == 4) {
         dataout[0] = 0x01;
     } else {
         dataout[0] = 0x00;
     }
+    fprintf(stderr, "datain %X zeros %d dataout %X time %g\n",
+        datain[0], zeros, dataout[0], time);
     return 1;
 }
 
