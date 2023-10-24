@@ -1,6 +1,6 @@
-The d_process Xspice model was created by Uros Platise.
 
-A complete, non-trivial example is located at:
+The d_process XSPICE model was developed by Uros Platise and he has
+provided a non-trivial example and detailed descriptions at:
   https://www.isotel.eu/mixedsim/embedded/motorforce/index.html
 
 This directory contains a simple test of the d_process model.
@@ -17,6 +17,12 @@ this way to use binary mode pipes.
 Run the test case (comment out the gtkwave lines or use plot if you like):
 
   ngspice prog1-4.cir
+
+A typical instance/.model pair Looks like:
+
+  ap1 [clk2] clk1 null [o1 o2 o3 o4] proc1
+  .model proc1 d_process (process_file="prog1in4out"
+  + process_params=["opt1", "qwerty"])
 
 To clean up:
 
@@ -35,6 +41,43 @@ before ngspice prog-pipes.cir, and in another shell:
 needs to be started.
 
 The file checks.cir can be run to test the error handling in d_process.
+
+==============================================================================
+
+NOTES ON THE PROGRAM STRUCTURE.
+
+In the d_process .model statement the process_file parameter specifies
+the name of the external program which is started by fork/exec or spawn,
+and connections are established using pipes. The external program is written
+in C, and first of all, in main() the argc, argv parameters can be read.
+These command line parameters are those specified in the process_params field
+of the d_process .model statement.
+
+Notice that the input pipe defaults to stdin and the output pipe defaults
+to stdout. On Windows VisualC and Mingw the _setmode(.., _O_BINARY) function
+must be called to ensure binary data transfer on the pipes. The fifo pipes
+are not used on those Windows builds. Since stdin and stdout are generally
+used, if you need to write any messages, use stderr or write to some other
+file.
+
+A header is sent from ngspice to the external program which acknowledges
+that the number of inputs and outputs match the instance statement in the
+SPICE circuit file. Header d_process.h defines the call to d_process_init()
+for the header response.
+
+Thereafter, the external program executes a loop:
+    while (read data from the input pipe and if it is OK) {
+        compute output data for that input
+        write the output data to the output pipe
+    }
+Data is passed in packets of struct in_s {..} and struct out_s {..}. The
+input struct contains the execution time in ngspice, and if it is negative,
+it signifies a reset has occurred. The compute(..) function can decide how
+to handle the reset.
+
+In the meantime the cm_d_process code in ngspice is writing data to its
+output pipe at each clock change to ONE, then reading on its input pipe
+the response from the external program.
 
 ==============================================================================
 
