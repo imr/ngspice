@@ -190,8 +190,7 @@ typedef struct OsdiDescriptor {
                                      OsdiSimParas *sim_params, OsdiInitInfo *res);
 
   uint32_t (*eval)(void *handle, void *inst, const void *model, const OsdiSimInfo *info);
-  void (*load_noise)(void *inst, void *model, double freq, double *noise_dens,
-                  double *ln_noise_dens);
+  void (*load_noise)(void *inst, void *model, double freq, double *noise_dens);
   void (*load_residual_resist)(void *inst, void* model, double *dst);
   void (*load_residual_react)(void *inst, void* model, double *dst);
   void (*load_limit_rhs_resist)(void *inst, void* model, double *dst);

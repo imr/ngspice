@@ -79,6 +79,9 @@ extern void *osdi_instance_data(const OsdiRegistryEntry *entry,
 extern size_t osdi_instance_matrix_ptr_off(const OsdiRegistryEntry *entry);
 extern double **osdi_instance_matrix_ptr(const OsdiRegistryEntry *entry,
                                          GENinstance *inst);
+extern size_t osdi_noise_data_off(const OsdiRegistryEntry *entry);
+extern double *osdi_noise_data(const OsdiRegistryEntry *entry,
+                                GENinstance *inst);
 #endif
 extern OsdiExtraInstData *
 osdi_extra_instance_data(const OsdiRegistryEntry *entry, GENinstance *inst);
