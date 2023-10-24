@@ -27,6 +27,7 @@ extern int OSDItemp(GENmodel *, CKTcircuit *);
 extern int OSDIacLoad(GENmodel *, CKTcircuit *);
 extern int OSDItrunc(GENmodel *, CKTcircuit *, double *);
 extern int OSDIpzLoad(GENmodel *, CKTcircuit *, SPcomplex *);
+extern int OSDInoise(int, int, GENmodel *, CKTcircuit *, Ndata *, double *);
 
 #ifdef KLU
 extern int OSDIbindCSC(GENmodel *inModel, CKTcircuit *ckt);

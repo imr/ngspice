@@ -1,6 +1,7 @@
 /* 
  * This file is part of the OSDI component of NGSPICE.
  * Copyright© 2022 SemiMod GmbH.
+ * Copyright© 2023 Pascal Kuthe.
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -218,10 +219,14 @@ static size_t pad_to_align(size_t alignment, size_t size) {
 static size_t calc_osdi_instance_data_off(const OsdiDescriptor *descr) {
   size_t res = sizeof(GENinstance) /* generic data */
                + descr->num_terminals * sizeof(int);
+  // KLU pointers
 #ifdef KLU
   res = pad_to_align(alignof(double *), res);
   res += ((size_t)descr->num_jacobian_entries) * 2 * sizeof(double *);
 #endif
+  // noise values
+  res = pad_to_align(alignof(double), res);
+  res += NSTATVARS * (descr->num_noise_src + 1) * sizeof(double);
   return pad_to_align(alignof(max_align_t), res);
 }
 
@@ -232,6 +237,19 @@ static size_t calc_osdi_instance_matrix_off(const OsdiDescriptor *descr) {
   return pad_to_align(alignof(double *), res);
 }
 #endif
+
+static size_t calc_osdi_noise_off(const OsdiDescriptor *descr) {
+  size_t res = sizeof(GENinstance) /* generic data */
+               + descr->num_terminals * sizeof(int);
+  // KLU pointers
+#ifdef KLU
+  res = pad_to_align(alignof(double *), res);
+  res += ((size_t)descr->num_jacobian_entries) * 2 * sizeof(double *);
+#endif
+  // noise values
+  res = pad_to_align(alignof(double), res);
+  return res;
+}
 
 #define INVALID_OBJECT                                                         \
   (OsdiObjectFile) { .num_entries = -1 }
@@ -397,9 +415,11 @@ extern OsdiObjectFile load_object_file(const char *input) {
     }
 
     size_t inst_off = calc_osdi_instance_data_off(descr);
+    size_t noise_off = calc_osdi_noise_off(descr);
     dst[i] = (OsdiRegistryEntry){
         .descriptor = descr,
         .inst_offset = (uint32_t)inst_off,
+        .noise_offset = (uint32_t)noise_off,
         .dt = dt,
         .temp = temp,
         .has_m = has_m,
@@ -418,9 +438,6 @@ extern OsdiObjectFile load_object_file(const char *input) {
   };
 }
 
-inline size_t osdi_instance_data_off(const OsdiRegistryEntry *entry) {
-  return entry->inst_offset;
-}
 #ifdef KLU
 inline size_t osdi_instance_matrix_ptr_off(const OsdiRegistryEntry *entry) {
   return entry->matrix_ptr_offset;
@@ -430,6 +447,15 @@ inline double **osdi_instance_matrix_ptr(const OsdiRegistryEntry *entry,
   return (double **)(((char *)inst) + osdi_instance_matrix_ptr_off(entry));
 }
 #endif
+
+inline double *osdi_noise_data(const OsdiRegistryEntry *entry,
+                                         GENinstance *inst) {
+  return (double *)(((char *)inst) + entry->noise_offset);
+}
+
+inline size_t osdi_instance_data_off(const OsdiRegistryEntry *entry) {
+  return entry->inst_offset;
+}
 
 inline void *osdi_instance_data(const OsdiRegistryEntry *entry,
                                 GENinstance *inst) {
