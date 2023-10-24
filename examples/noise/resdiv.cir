@@ -9,7 +9,7 @@ R2 2 0 10k
 
 V11 11 0 dc 0 ac 1
 R11 11 12 10k
-R12 12 0 10k noiseless
+R12 12 0 10k noisy=0
 
 V21 21 0 dc 0 ac 1
 R21 21 22 10k

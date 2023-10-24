@@ -18,6 +18,7 @@
 typedef struct OsdiRegistryEntry {
   const void *descriptor;
   uint32_t inst_offset;
+  uint32_t noise_offset;
   uint32_t dt;
   uint32_t temp;
 
