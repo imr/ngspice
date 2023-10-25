@@ -1,0 +1,44 @@
+* noise of a resistive divider
+* noise of a resistive divider, lower resistor noiseless
+* noise of a resistive divider with filter
+* 'set behavior = lta' is required
+
+.model res1 resistorva has_noise=1 R=10K
+.model noiseless resistorva has_noise=0 R=10K
+V1 1 0 dc 0 ac 1
+n1 1 2 res1
+R2 2 0
+
+V11 11 0 dc 0 ac 1
+n11 11 12 res1 
+n12 12 0 noiseless
+
+V21 21 0 dc 0 ac 1
+n21 21 22 res1 
+n22 22 0 res1 
+C22 22 0 1u
+
+.control
+pre_osdi resistor.osdi
+noise v(2) V1 dec 10 1 100k 1
+echo **resistive divider**
+print onoise_total inoise_total
+setplot noise1
+print onoise_spectrum[0] inoise_spectrum[0]
+noise v(12) V11 dec 10 1 100k
+echo **resistive divider, lower resistor noiseless**
+print onoise_total inoise_total
+setplot noise3
+print onoise_spectrum[0] inoise_spectrum[0]
+noise v(22) V21 dec 10 1 100k
+echo **resistive divider with filter**
+print onoise_total inoise_total
+setplot noise5
+print onoise_spectrum[0] inoise_spectrum[0]
+set xbrushwidth=2
+plot onoise_spectrum inoise_spectrum xlimit 1 1e5
+.endc
+
+.end
+
+
