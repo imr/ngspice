@@ -1,0 +1,19 @@
+`include "discipline.h"
+
+`define P_KB        1.38064852e-23  // copied from const.h to exactly jmatch builtin
+`define MPRoz(nam,def,uni,        des) (*units=uni,                  desc=des*) parameter real    nam=def from(0.0:inf);
+
+module resistorva(p,n);
+    electrical p,n;
+    inout p,n;
+
+    `MPRoz(R, 1.0, "Ohm", "Resistance")
+    parameter integer has_noise=1;
+    
+    analog
+        begin
+            I(p,n) <+ V(p,n)/R;
+            if (has_noise)
+                I(p,n) <+ white_noise(4*`P_KB*$temperature/R, "thermal");
+        end
+endmodule
