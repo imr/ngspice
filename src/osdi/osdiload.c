@@ -168,8 +168,9 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   }
 
   if (ckt->CKTmode & MODEACNOISE) {
-    sim_info.flags |= CALC_NOISE | ANALYSIS_NOISE;
+    sim_info.flags |= ANALYSIS_NOISE;
   }
+  sim_info.flags |= CALC_NOISE;
 
   OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
   const OsdiDescriptor *descr = entry->descriptor;
