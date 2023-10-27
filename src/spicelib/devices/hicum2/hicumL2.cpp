@@ -14,6 +14,7 @@ Model Author         : 1990 Michael Schröter TU Dresden
  */
 
 #include <cmath>
+#include <cstdio>
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
@@ -2279,6 +2280,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibpei_Vrth  += model->HICUMtype*irep_dT;
 
             Ibiei        = model->HICUMtype*ibei;
+            *(ckt->CKTstate0 + here->HICUMibiei)       = Ibiei;
+            *(ckt->CKTstate0 + here->HICUMibpei)       = Ibpei;
             Ibiei_Vbiei  = model->HICUMtype*ibei_Vbiei;
             Ibiei_Vrth   = model->HICUMtype*ibei_dT;
             Ibiei       += model->HICUMtype*irei;
@@ -2794,13 +2797,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMvxf2)        = Vxf2;
             *(ckt->CKTstate0 + here->HICUMvxf)         = Vxf;
 
-            *(ckt->CKTstate0 + here->HICUMibiei)       = Ibiei;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) = Ibiei_Vbiei;
             *(ckt->CKTstate0 + here->HICUMibiei_Vxf)   = Ibiei_Vxf;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbici) = Ibiei_Vbici;
             *(ckt->CKTstate0 + here->HICUMibiei_Vrth)  = Ibiei_Vrth;
 
-            *(ckt->CKTstate0 + here->HICUMibpei)       = Ibpei;
             *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) = Ibpei_Vbpei;
             *(ckt->CKTstate0 + here->HICUMibpei_Vrth)  = Ibpei_Vrth;
 
