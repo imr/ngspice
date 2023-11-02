@@ -8351,6 +8351,7 @@ static void inp_check_syntax(struct card *deck)
     bool mwarn = FALSE;
     char* subs[10];  /* store subckt lines */
     int ends = 0;  /* store .ends line numbers */
+    static bool nesting_once = TRUE;
 
     /* prevent crash in inp.c, fcn inp_spsource: */
     if (ciprefix(".param", deck->line) || ciprefix(".meas", deck->line)) {
@@ -8423,10 +8424,12 @@ static void inp_check_syntax(struct card *deck)
                 }
             }
             // nesting may be critical if params are involved
-            if (check_subs > 0 && strchr(cut_line, '='))
+            if (nesting_once && check_subs > 0 && strchr(cut_line, '=')) {
                 fprintf(cp_err,
-                        "\nWarning: Nesting of subcircuits with parameters "
-                        "is only marginally supported!\n\n");
+                    "\nWarning: Nesting of subcircuits with parameters "
+                    "is only marginally supported!\n\n");
+                nesting_once = FALSE;
+            }
             if (check_subs < 10)
                 subs[check_subs] = cut_line;
             else
