@@ -1,5 +1,50 @@
+
+
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#include <windows.h>
+#endif
+
 #include "ngspice/ngspice.h"
 #include "ngspice/dvec.h"
+
+/*Use Windows threads if on W32 without pthreads*/
+#ifndef HAVE_LIBPTHREAD
+
+#if defined(__MINGW32__) || defined(_MSC_VER)
+//#if defined(_MSC_VER)
+#ifdef SRW
+#define mutex_lock(a) AcquireSRWLockExclusive(a)
+#define mutex_unlock(a) ReleaseSRWLockExclusive(a)
+typedef SRWLOCK mutexType;
+#else
+#define mutex_lock(a) EnterCriticalSection(a)
+#define mutex_unlock(a) LeaveCriticalSection(a)
+typedef CRITICAL_SECTION mutexType;
+#endif
+#define thread_self() GetCurrentThread()
+#define threadid_self() GetCurrentThreadId()
+typedef HANDLE threadId_t;
+#define WIN_THREADS
+#define THREADS
+
+#endif
+
+#else
+
+#include <pthread.h>
+#define mutex_lock(a) pthread_mutex_lock(a)
+#define mutex_unlock(a) pthread_mutex_unlock(a)
+#define thread_self() pthread_self()
+#define threadid_self() 0  //FIXME t.b.d.
+typedef pthread_mutex_t mutexType;
+typedef pthread_t threadId_t;
+#define THREADS
+static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+static bool cont_condition;
+
+#endif
+
+extern mutexType vecreallocMutex;
 
 
 struct dvec *dvec_alloc(/* NOT const -- assigned to char */ char *name,
@@ -86,17 +131,24 @@ void dvec_realloc(struct dvec *v, int length, void *storage)
     v->v_alloc_length = length;
 } /* end of function dvec_realloc */
 
-
+/* called from plotAddReal(Complex)Value, to increase
+   storage for result vectors. Locking and unlocking 
+   is done by API functions ng_veclock(), ng_vecunlock(). */
 void dvec_extend(struct dvec *v, int length)
 {
+#if defined SHARED_MODULE
+    mutex_lock(&vecreallocMutex);
+#endif
     if (isreal(v)) {
         v->v_realdata = TREALLOC(double, v->v_realdata, length);
     }
     else {
         v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
     }
-
     v->v_alloc_length = length;
+#if defined SHARED_MODULE
+    mutex_unlock(&vecreallocMutex);
+#endif
 } /* end of function dvec_extend */
 
 

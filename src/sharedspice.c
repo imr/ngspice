@@ -396,6 +396,7 @@ unsigned int main_id, ng_id, command_id;
 mutexType triggerMutex;
 mutexType allocMutex;
 mutexType fputsMutex;
+mutexType vecreallocMutex;
 #endif
 
 /* initialization status */
