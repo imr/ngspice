@@ -484,7 +484,7 @@ int OSDIbindCSC(GENmodel *inModel, CKTcircuit *ckt) {
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);*/
 
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
-    void *model = osdi_model_data(gen_model);
+    /* void *model = osdi_model_data(gen_model); unused */
     for (gen_inst = gen_model->GENinstances; gen_inst;
          gen_inst = gen_inst->GENnextInstance) {
       void *inst = osdi_instance_data(entry, gen_inst);
@@ -511,7 +511,7 @@ int OSDIupdateCSC(GENmodel *inModel, CKTcircuit *ckt, bool complex) {
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);*/
 
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
-    void *model = osdi_model_data(gen_model);
+    /* void *model = osdi_model_data(gen_model); unused */
     for (gen_inst = gen_model->GENinstances; gen_inst;
          gen_inst = gen_inst->GENnextInstance) {
       void *inst = osdi_instance_data(entry, gen_inst);
