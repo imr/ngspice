@@ -1692,6 +1692,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\osdi\osdicallbacks.c" />
     <ClCompile Include="..\src\osdi\osdiinit.c" />
     <ClCompile Include="..\src\osdi\osdiload.c" />
+    <ClCompile Include="..\src\osdi\osdinoise.c" />
     <ClCompile Include="..\src\osdi\osdiparam.c" />
     <ClCompile Include="..\src\osdi\osdipzld.c" />
     <ClCompile Include="..\src\osdi\osdiregistry.c" />

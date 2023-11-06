@@ -20,6 +20,8 @@
 /vngspice-fftw/
 /sharedspice/
 
+/KLU/x64/
+
 /.vs/
 *.vc.db
 spinit
