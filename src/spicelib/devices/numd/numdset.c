@@ -45,6 +45,7 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   DOPtable *dopTableList = NULL;
   double startTime;
 
+  klu_support_for_cider
 
   /* loop through all the models */
   for (; model != NULL; model = NUMDnextModel(model)) {
