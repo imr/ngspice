@@ -77,6 +77,14 @@ NOISEan(CKTcircuit* ckt, int restart)
     /* gtri - end - wbk */
 #endif
 
+#ifdef KLU
+    if (ckt->CKTkluMODE) {
+        fprintf(stderr, "Error: Noise simulation is not (yet) supported with 'option KLU'.\n");
+        fprintf(stderr, "    Use 'option sparse' instead.\n");
+        return(E_UNSUPP);
+    }
+#endif
+
     NOISEAN* job = (NOISEAN*)ckt->CKTcurJob;
     GENinstance* inst = CKTfndDev(ckt, job->input);
     bool frequequal = AlmostEqualUlps(job->NstartFreq, job->NstopFreq, 3);
