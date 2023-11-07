@@ -44,7 +44,13 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   ONEmaterial *pM, *pMaterial = NULL, *materialList = NULL;
   double startTime;
 
-  klu_support_for_cider
+#ifdef KLU
+    if (ckt->CKTkluMODE) {
+        fprintf(stderr, "Error: CIDER simulation is not (yet) supported with 'option klu'.\n");
+        fprintf(stderr, "    Use 'option sparse' instead.\n");
+        controlled_exit(1);
+    }
+#endif
 
   /* loop through all the diode models */
   for (; model != NULL; model = NBJTnextModel(model)) {

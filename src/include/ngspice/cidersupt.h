@@ -89,15 +89,4 @@ extern BOOLEAN hasSORConverged(double *, double *, int);
 extern BOOLEAN foundError(int );
 extern BOOLEAN compareFiletypeVar(char *);
 
-#ifdef KLU
-#define klu_support_for_cider \
-    if (ckt->CKTkluMODE) { \
-        fprintf(stderr, "Error: CIDER simulation is not (yet) supported with 'option klu'.\n"); \
-        fprintf(stderr, "    Use 'option sparse' instead.\n"); \
-        controlled_exit(1); \
-    }
-#else
-#define klu_support_for_cider
-#endif
-
 #endif
