@@ -174,7 +174,14 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     ckt->CKTstat->STATreorderTime += SPfrontEnd->IFseconds() - startTime;
                     if (error) {
                         SMPgetError(ckt->CKTmatrix, &i, &j);
-                        SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+                        if (ft_ngdebug || msgcount < 6) {
+                            SMPgetError(ckt->CKTmatrix, &i, &j);
+                            if (eq(NODENAME(ckt, i), NODENAME(ckt, j)))
+                                SPfrontEnd->IFerrorf(ERR_WARNING, "singular matrix:  check node %s\n", NODENAME(ckt, i));
+                            else
+                                SPfrontEnd->IFerrorf(ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+                            msgcount += 1;
+                        }
 
                         /* CKTload(ckt); */
                         /* SMPprint(ckt->CKTmatrix, stdout); */
