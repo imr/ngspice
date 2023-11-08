@@ -57,11 +57,18 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
     case OPT_FILLNZ:
 	if ( ckt->CKTmatrix != NULL ) {
 #ifdef KLU
-	    if (ckt->CKTmatrix->CKTkluMODE)
-		val->iValue = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->lnz + ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                            - (int)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNZ ;
-	    else
+	    if (ckt->CKTmatrix->CKTkluMODE) {
+                if (!ckt->CKTmatrix->SMPkluMatrix ||
+                    !ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric) {
+                    return -1;
+                }
+		val->iValue =
+                    ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->lnz +
+                    ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->unz -
+                    (int)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNZ ;
+	    } else {
 		val->iValue = spFillinCount(ckt->CKTmatrix->SPmatrix);
+            }
 #else
 	    val->iValue = spFillinCount(ckt->CKTmatrix->SPmatrix);
 #endif
@@ -72,10 +79,14 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
     case OPT_TOTALNZ:
 	if ( ckt->CKTmatrix != NULL ) {
 #ifdef KLU
-	    if (ckt->CKTmatrix->CKTkluMODE)
-		val->iValue = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->lnz + ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->unz ;
-	    else
-		val->iValue = spElementCount(ckt->CKTmatrix->SPmatrix);
+	    if (ckt->CKTmatrix->CKTkluMODE && ckt->CKTmatrix->SMPkluMatrix &&
+                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric) {
+		val->iValue =
+                    ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->lnz +
+                    ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->unz ;
+            } else {
+		val->iValue = 0;
+            }
 #else
 	    val->iValue = spElementCount(ckt->CKTmatrix->SPmatrix);
 #endif

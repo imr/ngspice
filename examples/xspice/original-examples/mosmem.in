@@ -21,7 +21,7 @@ m11 8 4 0 0 mod w=250u l=5u
 m12 9 9 8 0 mod w=5u   l=5u
 .model mod nmos(vto=0.5 phi=0.7 kp=1.0e-6 gamma=1.83 lambda=0.115
 +   level=1 cgso=1u cgdo=1u cbd=50p cbs=50p)
-.print dc v(5) v(6)
-.plot dc v(6)
+*.print dc v(5) v(6)
+*.plot dc v(6)
 .plot tran v(6) v(5) v(7) v(1) v(2)
 .end
