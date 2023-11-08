@@ -102,7 +102,7 @@ cm-descr := \
 cm-clean :
 	-rm -f $(cm)/$(cm).cm
 	-rm -f $(cm-descr) $(cm-objs) $(cm-gens)
-	-rm -f $(cm)/*/*.o $(cm)/*/*.c $(cm)/*/.deps/*
+	-rm -f $(cm)/*/*.o $(cm)/*/.deps/*
 	-rm -f $(cm-deps)
 
 cm-distclean :
