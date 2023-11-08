@@ -70,7 +70,7 @@ PARAMETER_TABLE:
 Parameter_Name:     process_file
 Description:        "file name of the executable process"
 Data_Type:          string
-Default_Value:      "process"
+Default_Value:      -
 Limits:             -
 Vector:             no
 Vector_Bounds:      -
@@ -100,7 +100,7 @@ Default_Value:      0
 Limits:             -
 Vector:             no
 Vector_Bounds:      -
-Null_Allowed:       no
+Null_Allowed:       yes
 
 
 PARAMETER_TABLE:
@@ -113,7 +113,7 @@ Default_Value:      1.0e-12
 Limits:             -
 Vector:             no
 Vector_Bounds:      -
-Null_Allowed:       no
+Null_Allowed:       yes
 
 
 PARAMETER_TABLE:
@@ -126,7 +126,7 @@ Default_Value:      1.0e-12
 Limits:             -
 Vector:             no
 Vector_Bounds:      -
-Null_Allowed:       no
+Null_Allowed:       yes
 
 PARAMETER_TABLE:
 
@@ -138,7 +138,7 @@ Default_Value:      1.0e-12
 Limits:             -
 Vector:             no
 Vector_Bounds:      -
-Null_Allowed:       no
+Null_Allowed:       yes
 
 
 STATIC_VAR_TABLE:
