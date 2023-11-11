@@ -789,9 +789,7 @@ cp_getvar(char *name, enum cp_types type, void *retval, size_t rsize)
  * isset is TRUE if the variable is being set, FALSE if unset.  Also
  * required is a routine cp_enqvar(name) which returns a struct
  * variable *, which allows the host program to provide values for
- * non-cshpar variables.  */
-
-char cp_dol = '$';
+ * non-cshpar variables. See line 855 */
 
 /* Non-alphanumeric characters that may appear in variable names. < is very
  * special...
@@ -852,7 +850,7 @@ wordlist *cp_variablesubst(wordlist *wlist)
         char *s_dollar;
         int i = 0;
 
-        while ((s_dollar = strchr(wl->wl_word + i, cp_dol)) != NULL) {
+        while ((s_dollar = strchr(wl->wl_word + i, '$')) != NULL) {
 
             int prefix_len = (int) (s_dollar - wl->wl_word);
 

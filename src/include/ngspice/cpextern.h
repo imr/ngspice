@@ -156,7 +156,6 @@ extern bool cp_ignoreeof;
 extern bool cp_noclobber;
 extern bool cp_noglob;
 extern bool cp_nonomatch;
-extern char cp_dol;
 extern void cp_remvar(char *varname);
 void cp_vset(const char *varname, enum cp_types type, const void *value);
 extern struct variable *cp_setparse(wordlist *wl);
