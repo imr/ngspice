@@ -141,7 +141,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKepsmin          = 1e-28;
 
 #ifdef KLU
-        tsk->TSKkluMODE         = CKTkluON;
+        tsk->TSKkluMODE         = CKTkluOFF;
         tsk->TSKkluMemGrowFactor = 1.2 ;
 #endif
 
