@@ -57,7 +57,7 @@ static wordlist *inp_savecurrents(struct card *deck, struct card *options,
         wordlist *wl, wordlist *controls);
 static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
-static void rem_unused_mos_models(struct card* deck);
+//static void rem_unused_mos_models(struct card* deck);
 
 extern void com_optran(wordlist * wl);
 extern void tprint(struct card *deck);
@@ -2540,7 +2540,7 @@ struct mlist {
     bool used;
     bool checked;
 };
-
+#ifdef NONE
 /* Finally get rid of unused MOS models */
 static void rem_unused_mos_models(struct card* deck) {
     struct card *tmpc, *tmppc = NULL;
@@ -2744,3 +2744,4 @@ static void rem_unused_mos_models(struct card* deck) {
         modellist = tlist;
     }
 }
+#endif

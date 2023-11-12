@@ -23,6 +23,7 @@ void * cx_mean(void *data, short int type, int length, int *newlength, short int
 void * cx_stddev(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_length(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_vector(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_cvector(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_unitvec(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_plus(void *data1, void *data2, short int datatype1, short int datatype2, int length);
 void * cx_minus(void *data1, void *data2, short int datatype1, short int datatype2, int length);

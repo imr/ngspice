@@ -3,8 +3,6 @@
 #include "ngspice/cm.h"
 #include "ngspice/dllitf.h"
 
-extern bool cp_getvar(char *, enum cp_types, void *, size_t);
-
 /*how annoying!, needed for structure below*/
 static void *tcalloc(size_t a, size_t b) {
   return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
