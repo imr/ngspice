@@ -16,7 +16,8 @@
 # external OpenVAF Verilig-A compiler, will allow access to advanced compact
 # device models writen in Verilog-A.
 # Please see the ngspice manual, chapt. 13, for more info on using OSDI/OpenVAF.
-# CIDER, XSPICE, and OpenMP may be selected at will.
+# --enable-klu will add the new matrix solver in addition to Sparse 1.3.
+# CIDER, XSPICE, KLU, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 
 # ngspice as shared library:
@@ -48,13 +49,13 @@ if test "$1" = "d"; then
    if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-  ../configure --with-x --enable-xspice --enable-cider --enable-predictor --enable-osdi --with-readline=yes --enable-openmp CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-m64 -g"
+  ../configure --with-x --enable-xspice --enable-cider --enable-predictor --enable-osdi --enable-klu --with-readline=yes --enable-openmp --prefix="/usr/local" --libdir="/usr/local/lib" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-m64 -g"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-  ../configure --with-x --enable-xspice --enable-cider --enable-predictor --enable-osdi --with-readline=yes --enable-openmp --disable-debug CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-x --enable-xspice --enable-cider --enable-predictor --enable-osdi --enable-klu --with-readline=yes --enable-openmp --disable-debug --prefix="/usr/local" --libdir="/usr/local/lib" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
