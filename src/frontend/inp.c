@@ -57,8 +57,9 @@ static wordlist *inp_savecurrents(struct card *deck, struct card *options,
         wordlist *wl, wordlist *controls);
 static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
-//static void rem_unused_mos_models(struct card* deck);
-
+#ifdef REM_UNUSED
+static void rem_unused_mos_models(struct card* deck);
+#endif
 extern void com_optran(wordlist * wl);
 extern void tprint(struct card *deck);
 
@@ -955,14 +956,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* If user wants all currents saved (.options savecurrents), add .save 
             to wl_first with all terminal currents available on selected devices */
             wl_first = inp_savecurrents(deck, options, wl_first, controls);
-
+#ifdef REM_UNUSED
             /* Circuit is flat, all numbers expanded.
                So again try to remove unused MOS models.
                All binning models are still here when w or l have been
                determined by an expression. */
-//           if (newcompat.hs || newcompat.spe)
-//              rem_unused_mos_models(deck->nextcard);
-
+           if (newcompat.hs || newcompat.spe)
+              rem_unused_mos_models(deck->nextcard);
+#endif
             /* now load deck into ft_curckt -- the current circuit. */
             if(inp_dodeck(deck, tt, wl_first, FALSE, options, filename) != 0)
                 return 1;
@@ -2540,7 +2541,8 @@ struct mlist {
     bool used;
     bool checked;
 };
-#ifdef NONE
+
+#ifdef REM_UNUSED
 /* Finally get rid of unused MOS models */
 static void rem_unused_mos_models(struct card* deck) {
     struct card *tmpc, *tmppc = NULL;
