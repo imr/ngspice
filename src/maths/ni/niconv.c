@@ -26,6 +26,7 @@ NIconvTest(CKTcircuit *ckt)
     double old;
     double new;
     double tol;
+    static int nancount = 0;
 
     node = ckt->CKTnodes;
     size = SMPmatSize(ckt->CKTmatrix);
@@ -41,8 +42,13 @@ NIconvTest(CKTcircuit *ckt)
         new =  ckt->CKTrhs [i] ;
         old =  ckt->CKTrhsOld [i] ;
         if (isnan(new)) {
-            if (ft_ngdebug)
+            if (ft_ngdebug && nancount < 10) {
                 fprintf(stderr, "Warning: non-convergence, node %s is nan\n", CKTnodName(ckt, i));
+                nancount++;
+            }
+            else if (ft_ngdebug && nancount == 10) {
+                fprintf(stderr, "    non-convergence warnings (nan) limited to 10\n", CKTnodName(ckt, i));
+            }
             return 1;
         }
         if(node->type == SP_VOLTAGE) {
