@@ -48,6 +48,7 @@ NIconvTest(CKTcircuit *ckt)
             }
             else if (ft_ngdebug && nancount == 10) {
                 fprintf(stderr, "    non-convergence warnings (nan) limited to 10\n", CKTnodName(ckt, i));
+                nancount++;
             }
             return 1;
         }
