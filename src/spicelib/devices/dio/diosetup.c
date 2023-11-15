@@ -199,7 +199,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (newcompat.ps || newcompat.lt) {
                 model->DIOconductance = 1e4; /* improved convergence */
                 if (ft_ngdebug)
-                    fprintf(stderr, "Diode series resistance in model %s set to 100 µOhm\n", model->gen.GENmodName);
+                    fprintf(stderr, "Diode series resistance in model %s set to 100 microOhm\n", model->gen.GENmodName);
             }
             else
                 model->DIOconductance = 0.0;
