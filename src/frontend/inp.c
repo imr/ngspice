@@ -89,6 +89,16 @@ extern void exec_controls(wordlist *controls);
 extern void SetSource(char *Name);
 #endif
 
+#if defined (_MSC_VER) || defined (__MINGW32__)
+typedef struct timeval {
+    long tv_sec;
+    long tv_usec;
+} timeval;
+
+extern int gettimeofday(struct timeval* tp, void* unused);
+#endif
+
+
 /* structure used to save expression parse trees for .model and
  * device instance lines
  */
@@ -100,6 +110,7 @@ struct pt_temper {
     INPparseTree *pt;
     struct pt_temper *next;
 };
+
 
 static int inp_parse_temper(struct card *deck,
                             struct pt_temper **motdlist_p,
@@ -439,9 +450,10 @@ eval_opt(struct card* deck)
             char* token = gettok(&begtok);
             /* option seed=random [seed='random'] */
             if (eq(token, "random") || eq(token, "{random}")) {
-                time_t acttime = time(NULL);
-                /* get random value from time in seconds since 1.1.1970 */
-                int rseed = (int)(acttime - 1600000000);
+                struct timeval tv;
+                gettimeofday(&tv, NULL);
+                /* get random value from current timestamp microseconds */
+                int rseed = (int)(tv.tv_usec);
                 cp_vset("rndseed", CP_NUM, &rseed);
                 com_sseed(NULL);
                 has_seed = TRUE;

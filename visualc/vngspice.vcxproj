@@ -1700,6 +1700,7 @@
     <ClCompile Include="..\src\misc\string.c" />
     <ClCompile Include="..\src\misc\tilde.c" />
     <ClCompile Include="..\src\misc\util.c" />
+    <ClCompile Include="..\src\misc\win_time.c" />
     <ClCompile Include="..\src\misc\wlist.c" />
     <ClCompile Include="..\src\ngspice.c" />
     <ClCompile Include="..\src\osdi\osdiacld.c" />
