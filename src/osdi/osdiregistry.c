@@ -335,7 +335,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
    * multiple times. We use the handle as a key because the same SO will always
    * return the SAME pointer as long as dlclose is not called.
    * nghash_insert returns NULL if the key (handle) was not already in the table
-   * and the data (DUMMYDATA) that was previously insered (!= NULL) otherwise*/
+   * and the data (DUMMYDATA) that was previously inserted (!= NULL) otherwise*/
   if (nghash_insert(known_object_files, handle, DUMMYDATA)) {
     txfree(path);
     return EMPTY_OBJECT;
