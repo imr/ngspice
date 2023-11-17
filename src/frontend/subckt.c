@@ -165,6 +165,7 @@ collect_global_nodes(struct card *c)
                 if (gnode && *gnode != '\0' && nghash_find(glonodes, gnode) == NULL) {
                     nghash_insert(glonodes, gnode, DUMMYDATA);
                 }
+                tfree(gnode);
                 s = skip_ws(t);
             }
             c->line[0] = '*'; /* comment it out */
@@ -1643,6 +1644,8 @@ gettrans(const char *name, const char *name_end, bool *isglobal)
         *isglobal = TRUE;
         return newgl;
     }
+    else
+        tfree(newgl);
 
     for (i = 0; table[i].t_old; i++)
         if (eq_substr(name, name_end, table[i].t_old)) {
