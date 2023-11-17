@@ -96,14 +96,12 @@ static int translate(struct card *deck, char *formal, int flen, char *actual,
 struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, int flen, char *actual, const char *subname);
-static char *gettrans(const char *name, const char *name_end);
+static char *gettrans(const char *name, const char *name_end, bool *isglobal);
 static int numnodes(const char *line, struct subs *subs, wordlist const *modnames);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
 static int inp_numnodes(char c);
-
-#define N_GLOBAL_NODES 1005
 
 /* hash table to store the global nodes
  * For now its use is limited to avoid double entries in global_nodes[] */
@@ -143,47 +141,35 @@ static bool use_numparams = FALSE;
 
 static char start[32], sbend[32], invoke[32], model[32];
 
-static char *global_nodes[N_GLOBAL_NODES];
-static int num_global_nodes;
-
-
 static void
 collect_global_nodes(struct card *c)
 {
+    /* hash table for global nodes */
     glonodes = nghash_init(NGHASH_MIN_SIZE);
 
-    num_global_nodes = 0;
-
-    global_nodes[num_global_nodes++] = copy("0");
-    nghash_insert(glonodes, global_nodes[num_global_nodes - 1], DUMMYDATA);
-
+    /* add 0 and null as global nodes */
+    nghash_insert(glonodes, "0", DUMMYDATA);
 #ifdef XSPICE
-    global_nodes[num_global_nodes++] = copy("null");
-    nghash_insert(glonodes, global_nodes[num_global_nodes - 1], DUMMYDATA);
+    nghash_insert(glonodes, "null", DUMMYDATA);
 #endif
-
-
 
     for (; c; c = c->nextcard)
         if (ciprefix(".global", c->line)) {
             char *s = c->line;
             s = nexttok(s);
             while (*s) {
-                if (num_global_nodes == N_GLOBAL_NODES) {
-                    fprintf(stderr, "ERROR, the number of global nodes is limited to %d\n", N_GLOBAL_NODES);
-                    controlled_exit(EXIT_FAILURE);
-                }
                 char *t = skip_non_ws(s);
+                /* global node name */
                 char *gnode =  copy_substring(s, t);
-                if (nghash_find(glonodes, gnode) == NULL) {
-                    global_nodes[num_global_nodes++] = gnode;
+                /* insert only if not yet found in table */
+                if (gnode && *gnode != '\0' && nghash_find(glonodes, gnode) == NULL) {
                     nghash_insert(glonodes, gnode, DUMMYDATA);
                 }
                 s = skip_ws(t);
             }
             c->line[0] = '*'; /* comment it out */
         }
-    nghash_free(glonodes, NULL, NULL);
+
 
 #ifdef TRACE
     {
@@ -201,10 +187,7 @@ collect_global_nodes(struct card *c)
 static void
 free_global_nodes(void)
 {
-    int i;
-    for (i = 0; i < num_global_nodes; i++)
-        tfree(global_nodes[i]);
-    num_global_nodes = 0;
+    nghash_free(glonodes, NULL, NULL);
 }
 
 
@@ -1124,14 +1107,19 @@ bxx_buffer(struct bxx_buffer *t)
 static void
 translate_node_name(struct bxx_buffer *buffer, const char *scname, const char *name, const char *name_e)
 {
-
     const char *t;
+    bool isglobal;
+
     if (!name_e)
         name_e = strchr(name, '\0');
 
-    t = gettrans(name, name_e);
+    t = gettrans(name, name_e, &isglobal);
+
     if (t) {
         bxx_put_cstring(buffer, t);
+        /* free only if t is global node, nodes from table[].t_new are freed elsewhere */
+        if(isglobal)
+            tfree(t);
     } else {
         bxx_put_cstring(buffer, scname);
         bxx_putc(buffer, '.');
@@ -1641,21 +1629,26 @@ eq_substr(const char *str, const char *end, const char *cstring)
  * otherwise it returns NULL.
  *------------------------------------------------------------------------------*/
 static char *
-gettrans(const char *name, const char *name_end)
+gettrans(const char *name, const char *name_end, bool *isglobal)
 {
     int i;
+    *isglobal = FALSE;
 
     if (!name_end)
         name_end = strchr(name, '\0');
 
     /* Added by H.Tanaka to translate global nodes */
-    for (i = 0; i<num_global_nodes; i++)
-        if (eq_substr(name, name_end, global_nodes[i]))
-            return (global_nodes[i]);
+    char* newgl = copy_substring(name, name_end);
+    if (nghash_find(glonodes, newgl)) {
+        *isglobal = TRUE;
+        return newgl;
+    }
 
     for (i = 0; table[i].t_old; i++)
-        if (eq_substr(name, name_end, table[i].t_old))
-            return (table[i].t_new);
+        if (eq_substr(name, name_end, table[i].t_old)) {
+            *isglobal = FALSE;
+            return table[i].t_new;
+        }
 
     return (NULL);
 }
