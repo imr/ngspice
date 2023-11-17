@@ -61,6 +61,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/fteinp.h"
 #include "ngspice/stringskip.h"
 #include "ngspice/compatmode.h"
+#include "ngspice/hash.h"
 
 #include <stdarg.h>
 
@@ -104,6 +105,11 @@ static int inp_numnodes(char c);
 
 #define N_GLOBAL_NODES 1005
 
+/* hash table to store the global nodes
+ * For now its use is limited to avoid double entries in global_nodes[] */
+static NGHASHPTR glonodes = NULL;
+#define DUMMYDATA ((void *)42)
+
 /*---------------------------------------------------------------------
  * table is used in settrans and gettrans -- it holds the netnames used
  * in the .subckt definition (t_old), and in the subcircuit invocation
@@ -144,13 +150,19 @@ static int num_global_nodes;
 static void
 collect_global_nodes(struct card *c)
 {
+    glonodes = nghash_init(NGHASH_MIN_SIZE);
+
     num_global_nodes = 0;
 
     global_nodes[num_global_nodes++] = copy("0");
+    nghash_insert(glonodes, global_nodes[num_global_nodes - 1], DUMMYDATA);
 
 #ifdef XSPICE
     global_nodes[num_global_nodes++] = copy("null");
+    nghash_insert(glonodes, global_nodes[num_global_nodes - 1], DUMMYDATA);
 #endif
+
+
 
     for (; c; c = c->nextcard)
         if (ciprefix(".global", c->line)) {
@@ -158,15 +170,20 @@ collect_global_nodes(struct card *c)
             s = nexttok(s);
             while (*s) {
                 if (num_global_nodes == N_GLOBAL_NODES) {
-                    fprintf(stderr, "ERROR, N_GLOBAL_NODES overflow\n");
+                    fprintf(stderr, "ERROR, the number of global nodes is limited to %d\n", N_GLOBAL_NODES);
                     controlled_exit(EXIT_FAILURE);
                 }
                 char *t = skip_non_ws(s);
-                global_nodes[num_global_nodes++] = copy_substring(s, t);
+                char *gnode =  copy_substring(s, t);
+                if (nghash_find(glonodes, gnode) == NULL) {
+                    global_nodes[num_global_nodes++] = gnode;
+                    nghash_insert(glonodes, gnode, DUMMYDATA);
+                }
                 s = skip_ws(t);
             }
             c->line[0] = '*'; /* comment it out */
         }
+    nghash_free(glonodes, NULL, NULL);
 
 #ifdef TRACE
     {
