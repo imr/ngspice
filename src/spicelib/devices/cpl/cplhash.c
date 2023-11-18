@@ -126,6 +126,8 @@ void my_key_free(void * key)
 void mem_delete(void) {
 #ifdef DB
     char buf[128];
+    if (!memory_table)
+        return;
     printf("CPL GC memory allocated %d times, freed %d times\n", mem_in, mem_out);
     printf("CPL GC size of hash table to be freed: %d entries.\n", nghash_get_size(memory_table));
 #ifdef DB_FULL
@@ -142,6 +144,7 @@ void mem_delete(void) {
 #endif
     gc_is_on = 0;
     nghash_free(memory_table, NULL, my_key_free);
+    memory_table = NULL;
 #ifdef DB
     /* printf via sh_printf will need some info from variables that have
     been deleted already, therefore we use fputs */
