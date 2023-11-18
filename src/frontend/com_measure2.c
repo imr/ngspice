@@ -400,6 +400,11 @@ com_measure_when(
         return MEASUREMENT_FAILURE;
     }
 
+    if (dScale->v_realdata ==NULL && dScale->v_compdata == NULL) {
+        fprintf(cp_err, "Error: scale vector time, frequency or dc has no data.\n");
+        return MEASUREMENT_FAILURE;
+    }
+
     prevValue = 0.;
     prevValue2 = 0.;
     prevScaleValue = 0.;
@@ -658,6 +663,11 @@ measure_at(
         return MEASUREMENT_FAILURE;
     }
 
+    if (dScale->v_realdata == NULL && dScale->v_compdata == NULL) {
+        fprintf(cp_err, "Error: scale vector time, frequency or dc has no data.\n");
+        return MEASUREMENT_FAILURE;
+    }
+
     /* -----------------------------------------------------------------
      * Take the string tests outside of the loop for speed.
      * ----------------------------------------------------------------- */
@@ -768,7 +778,12 @@ measure_minMaxAvg(
     }
 
     if (dScale == NULL) {
-        fprintf(cp_err, "Error: no such vector as time, frquency or v-sweep.\n");
+        fprintf(cp_err, "Error: no such vector as time, frequency or v-sweep.\n");
+        return MEASUREMENT_FAILURE;
+    }
+
+    if (dScale->v_realdata == NULL && dScale->v_compdata == NULL) {
+        fprintf(cp_err, "Error: scale vector time, frequency or v-sweep has no data.\n");
         return MEASUREMENT_FAILURE;
     }
 
@@ -944,7 +959,12 @@ measure_rms_integral(
     }
 
     if (xScale == NULL) {
-        fprintf(cp_err, "Error: no such vector as time.\n");
+        fprintf(cp_err, "Error: no such vector as time, frequency or v-sweep.\n");
+        return MEASUREMENT_FAILURE;
+    }
+
+    if (xScale->v_realdata == NULL && xScale->v_compdata == NULL) {
+        fprintf(cp_err, "Error: scale vector time, frequency or v-sweep has no data.\n");
         return MEASUREMENT_FAILURE;
     }
 
