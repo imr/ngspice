@@ -89,12 +89,13 @@ extern void exec_controls(wordlist *controls);
 extern void SetSource(char *Name);
 #endif
 
-#if defined (_MSC_VER) || defined (__MINGW32__)
+#if defined (_MSC_VER)
 typedef struct timeval {
     long tv_sec;
     long tv_usec;
 } timeval;
-
+#endif
+#if defined (_MSC_VER) || defined (__MINGW32__)
 extern int gettimeofday(struct timeval* tp, void* unused);
 #endif
 
