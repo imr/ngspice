@@ -184,7 +184,7 @@ typedef struct linked_lists_of_Bpoint{
 } BPOINT, *BPOINTPTR;
 
 typedef struct linked_lists_of_nodeName{
-   char      id[24]; 
+   char      id[256];
    struct    linked_lists_of_nodeName  *left, *right;
    NODE      *nd;
 }  NDname, *NDnamePt;
