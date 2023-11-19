@@ -775,6 +775,8 @@ read_initialisation_file(const char *dir, const char *name)
 /* The functions exported explicitely from shared ngspice */
 /**********************************************************/
 
+
+
 #ifdef THREADS
 
 /* Checks if ngspice is running in the background */
@@ -1337,6 +1339,20 @@ char** ngSpice_AllEvtNodes(void)
 }
 #endif
 
+/* Lock/unlock realloc of result vectors during plotting */
+IMPEXP
+int ngSpice_LockRealloc(void)
+{
+    mutex_lock(&vecreallocMutex);
+    return 1;
+}
+
+IMPEXP
+int ngSpice_UnlockRealloc(void)
+{
+    mutex_unlock(&vecreallocMutex);
+    return 1;
+}
 
 /* add the preliminary breakpoints to the list.
    called from dctran.c */
