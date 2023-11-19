@@ -7,6 +7,8 @@
 #include "ngspice/ngspice.h"
 #include "ngspice/dvec.h"
 
+#if defined SHARED_MODULE
+
 /*Use Windows threads if on W32 without pthreads*/
 #ifndef HAVE_LIBPTHREAD
 
@@ -46,6 +48,7 @@ static bool cont_condition;
 
 extern mutexType vecreallocMutex;
 
+#endif
 
 struct dvec *dvec_alloc(/* NOT const -- assigned to char */ char *name,
         int type, short flags, int length, void *storage)
@@ -103,7 +106,7 @@ struct dvec *dvec_alloc(/* NOT const -- assigned to char */ char *name,
 } /* end of function dvec_alloc */
 
 
-/* Resize dvec to length if storage is NULL orr replace
+/* Resize dvec to length if storage is NULL or replace
  * its existing allocation with storage if not
  */
 void dvec_realloc(struct dvec *v, int length, void *storage)
@@ -132,8 +135,10 @@ void dvec_realloc(struct dvec *v, int length, void *storage)
 } /* end of function dvec_realloc */
 
 /* called from plotAddReal(Complex)Value, to increase
-   storage for result vectors. Locking and unlocking 
-   is done by API functions ng_veclock(), ng_vecunlock(). */
+   storage for result vectors.
+   In shared ngspice this may be locked, e.g. during plotting in the primary
+   thread, while the simulation is running in the background thread. Locking and unlocking 
+   is done by API functions ngSpice_LockRealloc(), ngSpice_UnlockRealloc(). */
 void dvec_extend(struct dvec *v, int length)
 {
 #if defined SHARED_MODULE
