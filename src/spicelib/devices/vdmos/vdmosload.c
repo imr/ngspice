@@ -86,9 +86,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             /* FIXME:
                this is not a fix, but a hack:
-               with selfheat, op and op for ac don't work, NaN in self heating evalution of
-               first interation in CKTop(). Calling CKTop() from acan uses flag MODEDCOP,
-               changing this to MODETRANOP, as used by CKTop() called from dctran, op is o.k.
+               with selfheat, op and op for ac don't work, NaN in self heating evaluation of
+               first iteration in CKTop(). Calling CKTop() from acan uses flag MODEDCOP,
+               changing this to MODETRANOP, as used by CKTop() called from dctran, then op is o.k.
             */
             if (selfheat)
                 if(ckt->CKTmode == 528) /* includes MODEDCOP */
