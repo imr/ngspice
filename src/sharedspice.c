@@ -860,16 +860,19 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     pthread_mutex_init(&triggerMutex, NULL);
     pthread_mutex_init(&allocMutex, NULL);
     pthread_mutex_init(&fputsMutex, NULL);
+    pthread_mutex_init(&vecreallocMutex, NULL);
     cont_condition = FALSE;
 #else
 #ifdef SRW
     InitializeSRWLock(&triggerMutex);
     InitializeSRWLock(&allocMutex);
     InitializeSRWLock(&fputsMutex);
+    InitializeSRWLock(&vecreallocMutex);
 #else
     InitializeCriticalSection(&triggerMutex);
     InitializeCriticalSection(&allocMutex);
     InitializeCriticalSection(&fputsMutex);
+    InitializeCriticalSection(&vecreallocMutex);
 #endif
 #endif
     // Id of primary thread
