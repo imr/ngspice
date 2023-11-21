@@ -1406,10 +1406,16 @@ int main(int argc, char **argv)
                         tp = fopen(p, "r");
                         tfree(p);
                     }
+
                     if (!tp) {
-                        perror(arg);
-                        err = 1;
-                        break;
+                        /* Try and find it in a directory in $sourcepath. */
+
+                        tp = inp_pathopen(arg, "r");
+                        if (!tp) {
+                            perror(arg);
+                            err = 1;
+                            break;
+                        }
                     }
                 }
 
