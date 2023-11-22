@@ -1591,8 +1591,11 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
 
             /* add Inp_Path to buffer while keeping the sourcepath variable contents */
             if (ciprefix("set", buffer)) {
-                char *p = strstr(buffer, "sourcepath");
-                if (p) {
+                char *p;
+
+                p = skip_ws(buffer + 3); // Next word
+                if (strncmp(p, "sourcepath", 10) == 0 &&
+                    skip_non_ws(p) == p + 10) {
                     p = strchr(buffer, ')');
                     if (p) {
                         *p = 0; // clear ) and insert Inp_Path in between
@@ -3110,7 +3113,8 @@ void inp_casefix(char *string)
         /* Special treatment of code model file input. */
 
         if (ciprefix(".model", string))
-            tmpstr = strstr(string, "file=");
+            tmpstr = strstr(string, "file=\"");
+
 #endif
         keepquotes = ciprefix(".param", string); // Allow string params
 
@@ -3328,7 +3332,8 @@ static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str;
 
     equal = strchr(s, '=');
-    if (equal && !strstr(s, "params:")) {
+    if (equal &&
+        (!strstr(s, "params:") || !isspace_c(s[-1]))) {
         /* get subckt name (ptr1 will point to name) */
         ptr1 = skip_non_ws(s);
         ptr1 = skip_ws(ptr1);
@@ -3499,7 +3504,7 @@ static void inp_fix_for_numparam(
             if (ciprefix(".subckt", c->line) || ciprefix("x", c->line)) {
                 /* remove params: */
                 char *str_ptr = strstr(c->line, "params:");
-                if (str_ptr)
+                if (str_ptr && isspace_c(str_ptr[-1]))
                     memcpy(str_ptr, "       ", 7);
             }
 
@@ -3800,13 +3805,14 @@ static int inp_fix_subckt_multiplier(struct names *subckt_w_params,
         char *subckt_param_names[], char *subckt_param_values[])
 {
     struct card *card;
-    char *new_str;
+    char *new_str, *s;
 
     subckt_param_names[num_subckt_params] = copy("m");
     subckt_param_values[num_subckt_params] = copy("1");
     num_subckt_params++;
 
-    if (!strstr(subckt_card->line, "params:")) {
+    s = strstr(subckt_card->line, "params:");
+    if (!s || !isspace_c(s[-1])) {
         new_str = tprintf("%s params: m=1", subckt_card->line);
         add_name(subckt_w_params, get_subckt_model_name(subckt_card->line));
     }
