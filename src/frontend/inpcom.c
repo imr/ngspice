@@ -7860,6 +7860,9 @@ static void inp_quote_params(struct card *c, struct card *end_c,
 {
     bool in_control = FALSE;
 
+    if (ft_skywaterpdk)
+        return;
+
     for (; c && c != end_c; c = c->nextcard) {
 
         int i, j, num_terminals;

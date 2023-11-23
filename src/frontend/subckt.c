@@ -1695,6 +1695,9 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
             return (nodes);
         }
     }
+    /* if we use option skywaterpdk, MOS has four nodes. Required if number of devices is large */
+    if (ft_skywaterpdk && c == 'm')
+        return 4;
 
     n = inp_numnodes(c);
 
