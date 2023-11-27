@@ -1,0 +1,1 @@
+CL /O2 /LD /EHsc /Fe..\adc.DLL /I. /IC:\mingw64\share\verilator\include\vltstd /IC:\mingw64\share\verilator\include Vlng__ALL.cpp verilator_shim.cpp C:\mingw64\share\verilator\include\verilated.cpp C:\mingw64\share\verilator\include\verilated_threads.cpp /link /DLL /EXPORT:Cosim_setup
