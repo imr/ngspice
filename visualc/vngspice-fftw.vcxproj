@@ -854,6 +854,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\frontend\com_dump.h" />
     <ClInclude Include="..\src\frontend\com_echo.h" />
     <ClInclude Include="..\src\frontend\com_fft.h" />
+    <ClInclude Include="..\src\frontend\com_fileio.h" />
     <ClInclude Include="..\src\frontend\com_ghelp.h" />
     <ClInclude Include="..\src\frontend\com_gnuplot.h" />
     <ClInclude Include="..\src\frontend\com_hardcopy.h" />
@@ -1467,6 +1468,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\frontend\com_dump.c" />
     <ClCompile Include="..\src\frontend\com_echo.c" />
     <ClCompile Include="..\src\frontend\com_fft.c" />
+    <ClCompile Include="..\src\frontend\com_fileio.c" />
     <ClCompile Include="..\src\frontend\com_ghelp.c" />
     <ClCompile Include="..\src\frontend\com_gnuplot.c" />
     <ClCompile Include="..\src\frontend\com_hardcopy.c" />
