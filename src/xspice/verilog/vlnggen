@@ -1,0 +1,316 @@
+*ng_script_with_params
+// This Ngspice interpreter script accepts arbitrary argiments to
+// the Verilator compiler (Verilog to C++) and builds a shared library
+// or DLL that can be loaded by the d_cosim XSPICE code model.
+// Instances of the model are then digital circuit elements whose
+// behaviour is controlled by the Verilog source.
+
+set bad=0
+if $?argc = 0
+   set bad=1
+end
+
+if $argc <= 0
+   set bad=1
+end
+
+if $bad
+   echo Arguments acceptable to Verilator are required.
+   quit
+end
+
+// Disable special processing of '{'.
+
+set noglob
+
+// Set parameters for Windows or Unix-like OS.
+// For setting CFLAGS (passed to Verilator) it is somewhat arbitrarily
+// assumed that if Ngspice was compiled with VisualC++, then that is
+// the compiler to be used with Verilator.  Edit to change.
+
+// Compilation option for C/C++: -fpic is required by GCC for a shared library
+
+if $oscompiled = 8 // VisualC++ - Verilator is a Perl script
+   setcs cflags="--CFLAGS -fpic --compiler msvc"
+else
+   setcs cflags="--CFLAGS -fpic" // For g++
+end
+
+if $oscompiled = 2 | $oscompiled = 3 | $oscompiled = 8 // Windows
+   set windows=1
+   set dirsep1="\\"
+   set dirsep2="/"
+   set vloc="C:/mingw64/bin/verilator" // Expected location on Windows
+   set run_verilator="perl $vloc"
+else
+   set windows=0
+   set dirsep1="/"
+   set run_verilator=verilator
+end
+
+if $oscompiled = 7 // MacOS
+   set macos=1
+   setcs cflags="$cflags --compiler clang"
+else
+   set macos=0
+end
+
+// Loop through the arguments to find Verilog source: some_path/xxxx.v
+// The output file will have the same base name.
+
+let index=1
+set off=1                        // Avoid error in dowhile
+repeat $argc
+    set base="$argv[$&index]"
+    let index = index + 1
+    strstr l "$base" ""
+    if $l > 2                    // Look for xxxx.v
+        strslice tail "$base" -2 2
+	strcmp bad "$tail" ".v"
+	if $bad <> 0
+	    set base=""
+	    continue
+	end
+	let l = $l - 2
+	strslice base "$base" 0 $&l
+    else
+        set base=""
+        continue
+    end
+
+    dowhile $off >= 0            // Strip leading directories
+        strstr off "$base" "$dirsep1"
+	if $windows
+	   if $off < 0
+	      strstr off "$base" "$dirsep2"
+	   end
+	end
+        if $off >= 0
+        let off=$off+1
+            strslice base "$base" $&off $l
+        end
+    end
+
+    strstr l "$base" ""          // Check for zero-length string
+    if $l > 0
+        break
+    end
+end
+
+if index - 1 > $argc
+    set base=verilated           // Default name
+end
+
+// Define working directory for Verilator
+
+set tail="_obj_dir"
+setcs objdir="$base$tail"
+
+// Default base name of output file.
+
+if $windows
+   setcs tail=".DLL"
+else
+   setcs tail=".so"
+end
+setcs soname="$base$tail"
+
+// First convert to C++, PREFIX determines the file names.
+
+setcs prefix="Vlng"
+
+// Run Verilator on the given input files.
+
+shell $run_verilator --Mdir $objdir --prefix $prefix $cflags --cc $argv
+
+// Parse the primary interface Class definition for members representing
+// the ports of the top-level Verilog module.
+// Example conversion:  VL_IN8(&Clk,0,0); ==> VL_DATA(8,Clk,0,0)
+
+cd $objdir
+echo "/* Generated code: do not edit. */" > inouts.h
+echo "/* Generated code: do not edit. */" > inputs.h
+echo "/* Generated code: do not edit. */" > outputs.h
+
+// This loop is intended to have the same effect as:
+// sed --quiet -e 's/VL_IN\([0-9]*\)(&\(.*\);/VL_DATA(\1,\2/p' \
+//    obj_dir/${PREFIX}.h >> inputs.h
+
+set htail=".h"
+setcs inout="VL_INOUT"
+setcs in="VL_IN"
+setcs out="VL_OUT"
+
+set fn="$prefix$htail" // Like foo-obj_dir/Vlng.h
+fopen fh $fn
+if $fh < 0
+   quit
+end
+
+while 1
+    fread line $fh l
+    if $l < 0
+       break
+    end
+
+    // Does it contain a closing parenthesis?
+
+    strstr off "$line" ")"
+    if $off < 0
+       continue                               // No ")", ignore.
+    end
+    let off = $off + 1
+    strslice line "$line" 0 $&off             // Slice off tail.
+
+    // Is it an inout port definition?
+
+    strstr off "$line" $inout
+    if $off >= 0                              // Match found
+       let off = $off + 8                     // strlen("VL_INOUT") == 8
+       strslice line "$line" $&off $l
+       strstr off "$line" "("
+       strslice size "$line" 0 $off
+       let off = $off + 2                     // strlen("(&") == 2
+       strslice line "$line" $&off $l
+       echo VL_DATA($size,$line >> inouts.h   // New macro invocation
+       continue
+    end
+
+    // Input port?
+
+    strstr off "$line" $in
+    if $off >= 0                              // Match found
+       let off = $off + 5                     // strlen("VL_IN") == 5
+       strslice line "$line" $&off $l
+       strstr off "$line" "("
+       strslice size "$line" 0 $off
+       let off = $off + 2                     // strlen("(&") == 2
+       strslice line "$line" $&off $l
+       echo VL_DATA($size,$line >> inputs.h   // New macro invocation
+       continue
+    end
+
+    // Output port?
+
+    strstr off "$line" $out
+    if $off >= 0                              // Match found
+       let off = $off + 6                     // strlen("VL_OUT") == 6
+       strslice line "$line" $&off $l
+       strstr off "$line" "("
+       strslice size "$line" 0 $off
+       let off = $off + 2                     // strlen("(&") == 2
+       strslice line "$line" $&off $l
+       echo VL_DATA($size,$line >> outputs.h  // New macro invocation
+       continue
+    end
+end
+fclose $fh
+cd ..
+
+// The shared library/DLL contains some ngspice source code as
+// well as that created by Verilator.  Find it by scanning $sourcepath.
+
+set shimfile=verilator_shim.cpp
+set shimobj=verilator_shim.o
+set mainfile=verilator_main.cpp
+set srcdir=src
+set silent_fileio // Silences fopen complaints
+
+let i=1
+repeat $#sourcepath
+  set stem="$sourcepath[$&i]"
+  let i = i + 1
+  set fn="$stem$dirsep1$shimfile"
+  fopen fh $fn
+  if $fh > 0
+     break
+  end
+  set stem="$stem$dirsep1$srcdir"
+  set fn="$stem$dirsep1$shimfile"
+  fopen fh $fn
+  if $fh > 0
+     break
+  end
+end
+
+if $fh > 0
+   fclose $fh
+   set fn_main="$stem$dirsep1$mainfile"
+else
+   echo Can not find C++ source file $shimfile
+   quit
+end
+
+if $windows
+   // Verilator makes a mess of absolute include paths passed by --CFLAGS.
+   // Copy the files instead.
+
+   set incdir=ngspice
+   shell xcopy /i "$stem$dirsep1$incdir" "$objdir$dirsep1$incdir"
+   setcs include="--CFLAGS -I."
+
+   // Copy verilator_shim.cpp for MSVC.CMD.
+
+   shell copy "$fn" "$objdir"
+else
+   // Some header files are with the source.
+
+   strstr off "$stem" "."
+   if $off <> 0
+      setcs include="--CFLAGS -I$stem"
+   else
+      setcs include="--CFLAGS -I..$dirsep1$stem" // Relative path
+   end
+end
+
+
+// Compile the code. Verilator only does that when building an executable,
+// so include verilator_main.cpp.
+
+shell $run_verilator --Mdir $objdir --prefix $prefix $include $cflags
++ --cc --build --exe
++ $fn_main $fn $argv
+
+strcmp bad "$shellstatus" "0"
+
+if $bad = 0
+   // g++ must be available: make a shared library/DLL.
+
+   set   v_objs="$objdir$dirsep1$shimobj $objdir/verilated.o $objdir/verilated_threads.o"
+   setcs tail="__ALL.a"
+   setcs v_lib="$objdir/$prefix$tail"          // Like Vlng__ALL.a
+
+   shell g++ --shared $v_objs $v_lib -pthread -lpthread -o $soname
+else
+   // Assume we have CL.EXE and use that.  A script avoids multiple \escapes.
+
+   if $windows = 0
+      quit
+   end
+
+   // Look for MSVC.CMD
+
+   set msvcfile=MSVC.CMD
+   let i=1
+   repeat $#sourcepath
+     set stem="$sourcepath[$&i]"
+     let i = i + 1
+     set fn="$stem$dirsep1$msvcfile"
+     fopen fh $fn
+     if $fh > 0
+        break
+     end
+   end
+   if $fh > 0
+     fclose $fh
+   else
+      echo Can not find bulid file $msvcfile
+      quit
+   end
+
+   echo Building with MSVC compiler, CL.EXE.
+   cd $objdir
+   shell $fn
+   cd ..
+end
+quit

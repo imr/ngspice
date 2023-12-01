@@ -164,6 +164,8 @@ double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
 /* end cider globals */
 #endif /* CIDER */
 
+char **Copy_of_argv; // Used to recover args for *ng_script_with_params files
+
 struct variable *(*if_getparam)(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
 
 /* static functions */
@@ -1382,13 +1384,16 @@ int main(int argc, char **argv)
             while (optind < argc) {
                 char *arg = argv[optind++];
                 FILE *tp;
+
                 /* Copy the the path of the first filename only */
                 if (!Infile_Path) {
                     Infile_Path = ngdirname(arg);
                 }
 
-             /* unquote the input string, needed if it results from double clicking the filename */
 #if defined(HAS_WINGUI)
+             /* Unquote the input string, needed if it results
+              * from double clicking the filename.
+              */
                 arg = cp_unquote(arg);
 #endif
                 /* Copy all the arguments into the temporary file */
@@ -1401,15 +1406,22 @@ int main(int argc, char **argv)
                         tp = fopen(p, "r");
                         tfree(p);
                     }
+
                     if (!tp) {
-                        perror(arg);
-                        err = 1;
-                        break;
+                        /* Try and find it in a directory in $sourcepath. */
+
+                        tp = inp_pathopen(arg, "r");
+                        if (!tp) {
+                            perror(arg);
+                            err = 1;
+                            break;
+                        }
                     }
                 }
 
-                /* Copy the input file name which otherwise will be lost due to the
-                   temporary file */
+                /* Copy the input file name which otherwise will be lost
+                 * due to the temporary file.
+                 */
                 dname = copy(arg);
 #if defined(HAS_WINGUI)
                 /* write source file name into source window */
@@ -1418,11 +1430,32 @@ int main(int argc, char **argv)
                 tfree(arg);
 #endif
 
+                if (!gotone) {
+                    char line[256];
+
+                    /* Check for "*ng_script_with_params" as first line. */
+
+                    if (fgets(line, sizeof line, tp) &&
+                        ciprefix("*ng_script_with_params", line)) {
+                        /* Special script file: remaining arguments are
+                         * script parameters.
+                         */
+
+                        fclose(tempfile);
+                        tempfile = tp;
+                        Copy_of_argv = argv;
+                        break;
+                    } else {
+                        fseek(tp, 0L, SEEK_SET);
+                        gotone = TRUE;
+                    }
+                }
                 append_to_stream(tempfile, tp);
                 fclose(tp);
             }
 
             fseek(tempfile, 0L, SEEK_SET);
+            gotone = FALSE; // Re-use
 
             if (tempfile && (!err || !ft_batchmode)) {
                 /* Copy the input file name for becoming another file search path */
@@ -1450,7 +1483,6 @@ int main(int argc, char **argv)
     }
 
     if (ft_batchmode) {
-
         int error3 = 1;
 
         /* If we get back here in batch mode then something is wrong,

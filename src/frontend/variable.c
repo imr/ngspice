@@ -791,8 +791,6 @@ cp_getvar(char *name, enum cp_types type, void *retval, size_t rsize)
  * variable *, which allows the host program to provide values for
  * non-cshpar variables.  */
 
-char cp_dol = '$';
-
 /* Non-alphanumeric characters that may appear in variable names. < is very
  * special...
  */
@@ -808,10 +806,11 @@ char cp_dol = '$';
  * Return value
  * Address of the first character after the variable name.
  */
-char *span_var_expr(char *t)
+char *span_var_expr(char *s)
 {
-    int parenthesis = 0;
-    int brackets = 0;
+    char *t = s;
+    int   parenthesis = 0;
+    int   brackets = 0;
 
     while (*t && (isalnum_c(*t) || strchr(VALIDCHARS, *t)))
         switch (*t++)
@@ -834,6 +833,14 @@ char *span_var_expr(char *t)
             if (--parenthesis <= 0)
                 return t;
             break;
+        case '$':
+            if (brackets <= 0 && parenthesis <= 0) {
+                if (t == s + 1) // Special case: "$$".
+                    return t;
+                else
+                    return t-1;
+            }
+            break;
         default:
             break;
         }
@@ -852,7 +859,7 @@ wordlist *cp_variablesubst(wordlist *wlist)
         char *s_dollar;
         int i = 0;
 
-        while ((s_dollar = strchr(wl->wl_word + i, cp_dol)) != NULL) {
+        while ((s_dollar = strchr(wl->wl_word + i, '$')) != NULL) {
 
             int prefix_len = (int) (s_dollar - wl->wl_word);
 
@@ -1002,6 +1009,8 @@ wordlist *vareval(/* NOT const */ char *string)
         if (eq(v->va_name, string))
             break;
     if (!v && isdigit_c(*string)) {
+        /* Treat $i for some integer i as argv[i] - positional parameters. */
+
         for (v = variables; v; v = v->va_next) {
             if (eq(v->va_name, "argv")) {
                 break;

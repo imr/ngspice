@@ -52,8 +52,6 @@ NON-STANDARD FEATURES
 #include <math.h>
 #include "ngspice/cm.h"
 
-extern void controlled_exit(const int);
- 
 /* Corner Smoothing Function ************************************
 *                                                               *
 * The following function smooths the transition between two     *

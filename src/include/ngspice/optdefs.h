@@ -124,6 +124,7 @@ enum {
 
 #ifdef KLU
     OPT_SPARSE,
+    OPT_KLU,
     OPT_KLU_MEMGROW_FACTOR,
 #endif
 

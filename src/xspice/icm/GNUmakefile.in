@@ -97,12 +97,12 @@ cm-descr := \
 
 # When recursively making clean, cm-objs and cm-gens do not contain
 # the files generated for individual code models, as cmpp has already gone
-# and modlist and udnlist are empty.  Those files are explicitly removed.
+# and modlist and udnlist are empty.  The files are explicitly removed.
 
 cm-clean :
 	-rm -f $(cm)/$(cm).cm
 	-rm -f $(cm-descr) $(cm-objs) $(cm-gens)
-	-rm -f $(cm)/*/*.o $(cm)/*/*.c $(cm)/*/.deps/*
+	-rm -f $(cm)/*/ifspec.c $(cm)/*/cfunc.c $(cm)/*/*.o $(cm)/*/.deps/*
 	-rm -f $(cm-deps)
 
 cm-distclean :
@@ -135,10 +135,10 @@ $(cm-dirs) $(cm-dep-dirs) :
 %/cmextrn.h %/cminfo.h %/udnextrn.h %/udninfo.h %/objects.inc : $(srcdir)/%/modpath.lst $(srcdir)/%/udnpath.lst
 	CMPP_IDIR=$(srcdir)/$(@D) CMPP_ODIR=$(@D) $(CMPP) -lst
 
-%/ifspec.c : $(srcdir)/%/ifspec.ifs
+%/ifspec.c : $(srcdir)/%/ifspec.ifs $(cmpp)
 	CMPP_IDIR=$(srcdir)/$(@D) CMPP_ODIR=$(@D) $(CMPP) -ifs
 
-%/cfunc.c : $(srcdir)/%/cfunc.mod
+%/cfunc.c : $(srcdir)/%/cfunc.mod $(cmpp)
 	CMPP_IDIR=$(srcdir)/$(@D) CMPP_ODIR=$(@D) $(CMPP) -mod
 
 

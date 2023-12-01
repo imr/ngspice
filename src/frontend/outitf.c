@@ -1542,6 +1542,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 fileAddRealValue(run->fp, run->binary, newval);
                 valueold[i] = valuenew[i];
+                timeold = refValue->rValue;
             }
             else if (nodata)
                 /* Just keep the transient output value corresponding to timeold, 
@@ -1573,6 +1574,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 fileAddRealValue(run->fp, run->binary, newval);
                 valueold[i] = valuenew[i];
+                timeold = refValue->rValue;
             }
             else if (nodata)
                 /* Just keep the transient output value corresponding to timeold, 
@@ -1705,6 +1707,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 plotAddRealValue(&run->data[i], newval);
                 valueold[i] = valuenew[i];
+                timeold = refValue->rValue;
             }
             else if (nodata)
                 /* Just keep the transient output value corresponding to timeold, 
@@ -1727,6 +1730,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
                 plotAddRealValue(&run->data[i], newval);
                 valueold[i] = valuenew[i];
+                timeold = refValue->rValue;
             }
             else if (nodata)
                 /* Just keep the transient output value corresponding to timeold, 

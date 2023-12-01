@@ -256,7 +256,7 @@ int EVTiter(
         for(i = 0; i < num_to_call; i++) {
             inst_index = inst_queue->to_call_index[i];
             inst_queue->to_call[inst_index] = MIF_FALSE;
-            EVTload(ckt, inst_index);
+            EVTload(ckt, ckt->evt->info.inst_table[inst_index]->inst_ptr);
         }
         inst_queue->num_to_call = 0;
 

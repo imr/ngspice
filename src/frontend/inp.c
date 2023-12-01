@@ -32,6 +32,7 @@ Author: 1985 Wayne A. Christopher
 #include "subckt.h"
 #include "spiceif.h"
 #include "com_let.h"
+#include "com_set.h"
 #include "com_commands.h"
 
 #ifdef XSPICE
@@ -57,8 +58,9 @@ static wordlist *inp_savecurrents(struct card *deck, struct card *options,
         wordlist *wl, wordlist *controls);
 static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
+#ifdef REM_UNUSED
 static void rem_unused_mos_models(struct card* deck);
-
+#endif
 extern void com_optran(wordlist * wl);
 extern void tprint(struct card *deck);
 
@@ -88,6 +90,17 @@ extern void exec_controls(wordlist *controls);
 extern void SetSource(char *Name);
 #endif
 
+#if defined (_MSC_VER)
+typedef struct timeval {
+    long tv_sec;
+    long tv_usec;
+} timeval;
+#endif
+#if defined (_MSC_VER) || defined (__MINGW32__)
+extern int gettimeofday(struct timeval* tp, void* unused);
+#endif
+
+
 /* structure used to save expression parse trees for .model and
  * device instance lines
  */
@@ -99,6 +112,7 @@ struct pt_temper {
     INPparseTree *pt;
     struct pt_temper *next;
 };
+
 
 static int inp_parse_temper(struct card *deck,
                             struct pt_temper **motdlist_p,
@@ -438,9 +452,10 @@ eval_opt(struct card* deck)
             char* token = gettok(&begtok);
             /* option seed=random [seed='random'] */
             if (eq(token, "random") || eq(token, "{random}")) {
-                time_t acttime = time(NULL);
-                /* get random value from time in seconds since 1.1.1970 */
-                int rseed = (int)(acttime - 1600000000);
+                struct timeval tv;
+                gettimeofday(&tv, NULL);
+                /* get random value from current timestamp microseconds */
+                int rseed = (int)(tv.tv_usec);
                 cp_vset("rndseed", CP_NUM, &rseed);
                 com_sseed(NULL);
                 has_seed = TRUE;
@@ -623,10 +638,71 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
      * the cards .control and .endc, unless comfile is TRUE, in which
      * case every line must be a front-end command.  There are too
      * many problems with matching the first word on the line.  */
+
     ld = deck;
     if (comfile) {
+        bool with_params = FALSE;
+
+#ifndef SHARED_MODULE
+        if (ciprefix("*ng_script_with_params", deck->line)) {
+            extern char       **Copy_of_argv; // main.c
+            extern int          optind;       // Library function getopt()
+            static const char   header[] = "argc = %u argv = ( ";
+            wordlist           *setarg;
+            unsigned int        argc, size;
+            char               *p_buf_active; /* buffer in use */
+            char                buf[BSIZE_SP];
+
+            /* Not just a command script, but one requesting arguments
+             * from the program's command line.
+             * This is similar to cp_oddcomm() (cpitf.c),
+             * but arguments are taken from the original program command.
+             */
+
+            with_params = TRUE;
+            size = sizeof header + 10;  // Allow for %u and close.
+            for (argc = 0; Copy_of_argv[optind + argc]; ++argc)
+                size += strlen(Copy_of_argv[optind + argc]);
+            size += 3 * argc; // Spaces and quotes.
+            if (size <= sizeof buf)
+                p_buf_active = buf;
+            else 
+                p_buf_active = TMALLOC(char, size);
+
+            /* Fill the buffer. */
+
+            size = sprintf(p_buf_active, header, argc);
+            while (Copy_of_argv[optind]) {
+                char c, *fmt;
+
+                c = Copy_of_argv[optind][0];
+                if ((c >= '0' && c <= '9') || c == '+' || c == '-' || !c) {
+                    /* Looks like a number or empty string - quote it. */
+
+                    fmt = " \"%s\"";
+                } else {
+                    fmt = " %s";
+                }
+                size += sprintf(p_buf_active + size, fmt,
+                                Copy_of_argv[optind++]);
+            }
+            strcpy(p_buf_active + size, " )");
+
+            /* Treat the buffer as a "set" command to create argv and argc. */
+
+            setarg = cp_lexer(p_buf_active);
+            com_set(setarg);
+            wl_free(setarg);
+
+            /* Free buffer allocation if made */
+
+            if (p_buf_active != buf)
+                txfree(p_buf_active);
+        }
+#endif
         /* Process each command, except 'option' which is assembled
            in a list and ingnored here */
+
         for (dd = deck; dd; dd = ld) {
             ld = dd->nextcard;
             if ((dd->line[0] == '*') && (dd->line[1] != '#'))
@@ -641,6 +717,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     cp_evloop(dd->line);
             }
         }
+
+        if (with_params) {
+            cp_remvar("argc");
+            cp_remvar("argv");
+        }
+
         /* free the control deck */
         line_free(deck, TRUE);
         /* set to NULL to allow generation of a new dbs */
@@ -929,10 +1011,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             }
 
             /* merge the two option line structs
-               com_options (comfile == TRUE, filled in from spinit, .spiceinit, and *ng_sript), and
-               options (comfile == FALSE, filled in from circuit with .OPTIONS)
+               com_options (comfile == TRUE, filled in from spinit,
+               .spiceinit, and *ng_script), and options
+               (comfile == FALSE, filled in from circuit with .OPTIONS)
                into options, thus keeping com_options,
-               options is loaded into circuit and freed when circuit is removed */
+               options is loaded into circuit and freed when circuit is removed             */
             options = line_reverse(line_nconc(options, inp_deckcopy(com_options)));
 
             /* List of all expressions found in instance and .model lines */
@@ -955,14 +1038,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* If user wants all currents saved (.options savecurrents), add .save 
             to wl_first with all terminal currents available on selected devices */
             wl_first = inp_savecurrents(deck, options, wl_first, controls);
-
+#ifdef REM_UNUSED
             /* Circuit is flat, all numbers expanded.
                So again try to remove unused MOS models.
                All binning models are still here when w or l have been
                determined by an expression. */
-//           if (newcompat.hs || newcompat.spe)
-//              rem_unused_mos_models(deck->nextcard);
-
+           if (newcompat.hs || newcompat.spe)
+              rem_unused_mos_models(deck->nextcard);
+#endif
             /* now load deck into ft_curckt -- the current circuit. */
             if(inp_dodeck(deck, tt, wl_first, FALSE, options, filename) != 0)
                 return 1;
@@ -2541,6 +2624,7 @@ struct mlist {
     bool checked;
 };
 
+#ifdef REM_UNUSED
 /* Finally get rid of unused MOS models */
 static void rem_unused_mos_models(struct card* deck) {
     struct card *tmpc, *tmppc = NULL;
@@ -2744,3 +2828,4 @@ static void rem_unused_mos_models(struct card* deck) {
         modellist = tlist;
     }
 }
+#endif

@@ -396,6 +396,7 @@ unsigned int main_id, ng_id, command_id;
 mutexType triggerMutex;
 mutexType allocMutex;
 mutexType fputsMutex;
+mutexType vecreallocMutex;
 #endif
 
 /* initialization status */
@@ -774,6 +775,8 @@ read_initialisation_file(const char *dir, const char *name)
 /* The functions exported explicitely from shared ngspice */
 /**********************************************************/
 
+
+
 #ifdef THREADS
 
 /* Checks if ngspice is running in the background */
@@ -857,16 +860,19 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     pthread_mutex_init(&triggerMutex, NULL);
     pthread_mutex_init(&allocMutex, NULL);
     pthread_mutex_init(&fputsMutex, NULL);
+    pthread_mutex_init(&vecreallocMutex, NULL);
     cont_condition = FALSE;
 #else
 #ifdef SRW
     InitializeSRWLock(&triggerMutex);
     InitializeSRWLock(&allocMutex);
     InitializeSRWLock(&fputsMutex);
+    InitializeSRWLock(&vecreallocMutex);
 #else
     InitializeCriticalSection(&triggerMutex);
     InitializeCriticalSection(&allocMutex);
     InitializeCriticalSection(&fputsMutex);
+    InitializeCriticalSection(&vecreallocMutex);
 #endif
 #endif
     // Id of primary thread
@@ -1336,6 +1342,20 @@ char** ngSpice_AllEvtNodes(void)
 }
 #endif
 
+/* Lock/unlock realloc of result vectors during plotting */
+IMPEXP
+int ngSpice_LockRealloc(void)
+{
+    mutex_lock(&vecreallocMutex);
+    return 1;
+}
+
+IMPEXP
+int ngSpice_UnlockRealloc(void)
+{
+    mutex_unlock(&vecreallocMutex);
+    return 1;
+}
 
 /* add the preliminary breakpoints to the list.
    called from dctran.c */

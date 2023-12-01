@@ -1934,7 +1934,8 @@ insert_ND(char* name, NDnamePt* ndn)
 		memsaved(p);
 		p->nd = NULL;
 		p->right = p->left = NULL;
-		strcpy(p->id, name);
+		strncpy(p->id, name, 255);
+		p->id[255] = '\0';
 		return(p);
 	}
 	cmp = strcmp((*ndn)->id, name);

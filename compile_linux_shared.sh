@@ -11,7 +11,7 @@
 # --enable-osdi will add the osdi interface which allows to dynamically load compiled Verilog-A 
 # compact models. Compiling the VA code of the models is done by the OpenVAF compiler.
 # Please see the ngspice manual, chapt. 13, for more info on OSDI/OpenVAF.
-# CIDER, XSPICE, and OpenMP may be selected at will.
+# CIDER, XSPICE, KLU, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
@@ -44,7 +44,7 @@ if test "$1" = "d"; then
   echo
 # The --prefix (and perhaps --libdir) may be used to determine a different install location
 # (depending on the Linux distribution, and on the calling programs search path).
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --prefix=/usr CFLAGS="-g -m64 -O0 -Wall" LDFLAGS="-m64 -g"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-klu --prefix=/usr CFLAGS="-g -m64 -O0 -Wall" LDFLAGS="-m64 -g"
 else
    cd releasesh
    if [ $? -ne 0 ]; then  echo "cd releasesh failed"; exit 1 ; fi
@@ -52,7 +52,7 @@ else
   echo
 # The --prefix (and perhaps --libdir) may be used to determine a different install location
 # (depending on the Linux distribution, and on the calling programs search path).
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug --enable-osdi --prefix=/usr CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-klu --disable-debug --prefix=/usr CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 

@@ -16,6 +16,7 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 #include "ngspice/fteext.h"
+#include "ngspice/compatmode.h"
 
 int
 DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -195,7 +196,13 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         if((!model->DIOresistGiven) || (model->DIOresist==0)) {
-            model->DIOconductance = 0.0;
+            if (newcompat.ps || newcompat.lt) {
+                model->DIOconductance = 1e4; /* improved convergence */
+                if (ft_ngdebug)
+                    fprintf(stderr, "Diode series resistance in model %s set to 100 microOhm\n", model->gen.GENmodName);
+            }
+            else
+                model->DIOconductance = 0.0;
         } else {
             model->DIOconductance = 1/model->DIOresist;
         }

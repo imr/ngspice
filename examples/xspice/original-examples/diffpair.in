@@ -19,10 +19,10 @@ q4 7 7 9 qnl
 rbias 7 8 20k
 .model qnl npn(bf=80 rb=100 ccs=2pf tf=0.3ns tr=6ns cje=3pf cjc=2pf
 +   va=50)
-.print dc v(4) v(5)
-.plot dc v(5)
-.print ac vm(5) vp(5)
-.plot ac vm(5) vp(5)
+*.print dc v(4) v(5)
+*.plot dc v(5)
+*.print ac vm(5) vp(5)
+*.plot ac vm(5) vp(5)
 .print tran v(4) v(5)
 .plot tran v(5)
 .end

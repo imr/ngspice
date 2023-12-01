@@ -340,6 +340,11 @@ double cm_netlist_get_l(void) {
 	return (coreitf->dllitf_cm_netlist_get_l)();
 }
 
+void  cm_irreversible(unsigned int place)
+{
+	(coreitf->dllitf_cm_irreversible)(place);
+}
+
 const char *cm_get_node_name(const char *port, unsigned int index) {
     return coreitf->dllitf_cm_get_node_name(port, index);
 }

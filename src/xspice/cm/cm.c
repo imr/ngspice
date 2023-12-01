@@ -38,6 +38,7 @@ INTERFACES
     cm_get_path()
     cm_get_circuit()
 
+    cm_irreversible()
     cm_get_node_name()
     cm_probe_node()
 
@@ -57,6 +58,7 @@ NON-STANDARD FEATURES
 #include "ngspice/enh.h"
 #include "ngspice/mif.h"
 #include "ngspice/cktdefs.h"
+#include "ngspice/cpextern.h"
 //#include "util.h"
 
 
@@ -728,6 +730,100 @@ access to the (fundamental) ckt pointer.
 CKTcircuit *cm_get_circuit(void)
 {
     return(g_mif_info.ckt);
+}
+
+/* Set the "irreversible" flag on the current instance and shuffle it to the
+ * requested position among any other irreversibles in the hybrid_index array.
+ * Array entries are sorted so that non-zero values of instance->irreversible
+ * are decreasing: an instance with instance->irreversible == 1 is fully
+ * protected.
+ */
+
+static void duplicate(MIFinstance *instance)
+{
+    fprintf(cp_err,
+            "Warning: Duplicate value %d in cm_irreversible() "
+            "for instance %s.\n",
+            instance->irreversible, instance->gen.GENname);
+}
+
+void cm_irreversible(unsigned int place)
+{
+    MIFinstance      *instance;
+    Evt_Ckt_Data_t   *evt;
+    int               num_hybrids;
+    MIFinstance     **hybrids;
+    int               old_index, i;
+    unsigned int      value;
+
+    instance = g_mif_info.instance;
+    if (!g_mif_info.circuit.init) {
+        fprintf(cp_err,
+                "%s: Ignoring call to cm_irreversible(): not in INIT\n",
+                instance->gen.GENname);
+        return;
+    }
+    if (instance->irreversible || place == 0) {
+        if (instance->irreversible != place) {
+            fprintf(cp_err, "%s: Ignoring new value %d in cm_irreversible()\n",
+                   instance->gen.GENname, place);
+        }
+        return;
+    }
+    instance->irreversible = place;
+
+    evt = g_mif_info.ckt->evt;
+    num_hybrids = evt->counts.num_hybrids;
+    hybrids = evt->info.hybrids;
+
+    /* Already a hybrid? */
+
+    for (old_index = 0; old_index < num_hybrids; ++old_index) {
+        if (hybrids[old_index] == instance)
+            break;
+    }
+
+    if (old_index < num_hybrids) {
+        /* Existing hybrid, move down, shuffling other entries up. */
+
+        for (i = old_index + 1; i < num_hybrids; ++i) {
+            value = hybrids[i]->irreversible;
+            if (value == 0 || value > place) {
+                hybrids[i - 1] = hybrids[i];
+            } else if (value == place) {
+                duplicate(instance);
+                break;
+            } else {
+                break;
+            }
+        }
+        hybrids[i - 1] = instance;
+    } else {
+        /* Instance is not hybrid, add an entry. */
+
+        num_hybrids++;
+        hybrids = TREALLOC(MIFinstance *, hybrids, num_hybrids);
+        evt->counts.num_hybrids = num_hybrids;
+        evt->info.hybrids = hybrids;
+        if (hybrids == NULL) {
+            fprintf(cp_err, "Allocation failed in cm_irreversible()\n");
+            abort();
+        }
+
+        /* Shuffle entries down. */
+
+        for (i = num_hybrids - 2; i >= 0; --i) {
+            value = hybrids[i]->irreversible;
+            if (value != 0 && value < place) {
+                hybrids[i + 1] = hybrids[i];
+            } else if (value == place) {
+                duplicate(instance);
+            } else {
+                break;
+            }
+        }
+        hybrids[i + 1] = instance;
+    }
 }
 
 /* Get the name of a circuit node connected to a port. */

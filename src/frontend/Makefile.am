@@ -34,6 +34,8 @@ libfte_la_SOURCES = \
     com_dump.h  \
     com_echo.c  \
     com_echo.h  \
+    com_fileio.c \
+    com_fileio.h \
     com_ghelp.c \
     com_ghelp.h \
     com_gnuplot.h   \

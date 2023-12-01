@@ -10,10 +10,8 @@
 # for debug version of shared ngspice
 
 # Options:
-# --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
-# adms interface.
 # Please see http://ngspice.sourceforge.net/admshowto.html for more info on adms.
-# CIDER, XSPICE, and OpenMP may be selected at will.
+# CIDER, XSPICE, KLU, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 # To obtain a 32 bit executable, replace -m64 by -m32 ./configure lines.
 
@@ -38,27 +36,19 @@ fi
 ./autogen.sh
 if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
-# Alternatively, if compiling sources from git, and want to add adms created devices,
-# you may need to uncomment the following two lines (and don't forget to add adms option
-# to the ../configure statement):
-#./autogen.sh --adms
-#if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
-
 echo
 if test "$1" = "d"; then
    cd debug-sh
    if [ $? -ne 0 ]; then  echo "cd debug-sh failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-relpath --disable-debug prefix="C:/Spice64d" CFLAGS="-m64 -g -O0 -Wall" LDFLAGS="-m64"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-klu --enable-relpath prefix="C:/Spice64d" CFLAGS="-m64 -g -O0 -Wall" LDFLAGS="-m64"
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-klu --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 

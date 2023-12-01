@@ -92,7 +92,9 @@ void EVTqueue_inst(
 
 void EVTdequeue(CKTcircuit *ckt, double time);
 
-int EVTload(CKTcircuit *ckt, int inst_index);
+int EVTload(CKTcircuit *ckt, MIFinstance *inst);
+
+int EVTload_with_event(CKTcircuit *ckt, MIFinstance *inst, Mif_Call_Type_t type);
 
 void EVTprint(wordlist *wl);
 void EVTprintvcd(wordlist *wl);

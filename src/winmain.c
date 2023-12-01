@@ -850,7 +850,6 @@ ElementWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 static int
 MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 {
-    char  *pC1;                     /* a temporary character pointer */
     char  *pWorkString = NULL;      /* a working copy of cmdline */
     int    i;                       /* a loop counter */
     int    quoteflag = 0;           /* for the finite state machine parsing cmdline */
@@ -899,13 +898,13 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 #endif
         /*  If we still have a string left, parse it for all
             the arguments. */
-        if (strlen(pWorkString))
+        if (pWorkString[0])
         {
             /*  This could probably be done with strtok as well
                 but strtok is destructive if I wanted to look for " \""
                 and I couldn't tell what delimiter that I had bumped
                 against */
-            for (i = 0; i < (signed)strlen(pWorkString); i++)
+            for (i = 0; pWorkString[i]; i++)
                 switch (pWorkString[i])
                 {
                 case SPACE:
@@ -935,7 +934,7 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
         }
     }
     /* malloc an argv */
-    tmpargv = (char**) malloc((unsigned)numargs * sizeof(char *));
+    tmpargv = (char**) malloc((unsigned)(numargs + 1) * sizeof(char *));
     if (NULL == tmpargv)
     {
         status = -1;
@@ -949,18 +948,15 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
     deli[0] = DELIMITER;
     deli[1] = '\0'; /* delimiter for strtok */
 
-    pC1 = NULL;
     /*  Now actually strdup all the arguments out of the string
         and store them in the argv */
     for (i = 1; i < numargs; i++) {
-        if (NULL == pC1)
-            pC1 = pWorkString;
-
         if (i == 1)
-            tmpargv[i] = copy(strtok(pC1, deli));
+            tmpargv[i] = copy(strtok(pWorkString, deli));
         else
             tmpargv[i] = copy(strtok(NULL, deli));
     }
+    tmpargv[i] = NULL;
 
     /*  copy the working values over to the arguments */
     *argc = numargs;

@@ -787,14 +787,6 @@ resume:
 
         converged = NIiter(ckt,ckt->CKTtranMaxIter);
 
-#ifdef XSPICE
-        if(ckt->evt->counts.num_insts > 0) {
-            g_mif_info.circuit.evt_step = ckt->CKTtime;
-            EVTcall_hybrids(ckt);
-        }
-/* gtri - end - wbk - Call all hybrids */
-
-#endif
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
         if(firsttime) {
@@ -830,8 +822,10 @@ resume:
 #ifdef XSPICE
 /* gtri - begin - wbk - Add Breakpoint stuff */
 
-        /* Force backup if temporary breakpoint is < current time */
         } else if(g_mif_info.breakpoint.current < ckt->CKTtime) {
+            /* Force backup if temporary breakpoint is < current time */
+
+        past_breakpoint:
             ckt->CKTsaveDelta = ckt->CKTdelta;
             ckt->CKTtime -= ckt->CKTdelta;
             ckt->CKTdelta = g_mif_info.breakpoint.current - ckt->CKTtime;
@@ -879,6 +873,27 @@ resume:
                 return(error);
             }
             if (newdelta > .9 * ckt->CKTdelta) {
+#if defined(XSPICE)
+                /* The timestep has succeeded.  XSPICE instances with
+                 * both analog and event ports ("hybrids") and others
+                 * that have called cm_irreversible() receive an EVENT
+                 * call here that allows them to capture their final
+                 * port values and advance co-simulations.  As this is an EVENT
+                 * call, they are not expected to do any integrations,
+                 * so there is no need for a further convergence test.
+                 */
+
+                if (ckt->evt->counts.num_hybrids > 0) {
+                    g_mif_info.circuit.evt_step = ckt->CKTtime;
+                    EVTcall_hybrids(ckt);
+                    if (g_mif_info.breakpoint.current < ckt->CKTtime) {
+                        /* A hybrid requested a breakpoint in the past. */
+
+                        goto past_breakpoint;
+                    }
+                }
+#endif
+
                 if ((ckt->CKTorder == 1) && (ckt->CKTmaxOrder > 1)) { /* don't rise the order for backward Euler */
                     newdelta = ckt->CKTdelta;
                     ckt->CKTorder = 2;
@@ -893,6 +908,7 @@ resume:
                 }
                 /* time point OK  - 630 */
                 ckt->CKTdelta = newdelta;
+
 #ifdef NDEV
                 if (!ft_norefprint) {
                     /* show a time process indicator, by Gong Ding, gdiso@ustc.edu */

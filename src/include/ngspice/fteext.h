@@ -268,6 +268,7 @@ extern struct card *inp_getoptsc(char *line, struct card *options);
 extern bool ft_ngdebug;
 extern bool ft_nginfo;
 extern bool ft_stricterror;
+extern bool ft_skywaterpdk;
 
 /* parse.c */
 
