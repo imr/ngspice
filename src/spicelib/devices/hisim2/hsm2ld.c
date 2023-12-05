@@ -853,7 +853,6 @@ tm0 = gtodsecld() ;
 	      isConv = 0;
 	    }
 	  }
-	}
 #endif /* NEWCONV */
       }
     }
