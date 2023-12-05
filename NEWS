@@ -1,3 +1,29 @@
+Ngspice-42, Dec 24th, 2023
+============
+- New features:
+    + New optional matrix solver KLU (select by 'option klu')
+    + improve error messages (more verbose, user centric)
+    + Add variable wr_onspace to allow printing the vetor name with
+      one space delimiter
+    + Re-write of the code model PWM generator
+    + Linked list modtab has been enhanced by a hash table
+      modtabhash
+    + Add a code model function cm_cexit(const int exitcode).
+    + PSP103 model pspnqs103va is now standard
+    + Add Isotel d_process xspice digital model (enable C models).
+    + OSDI interface allows small signal noise simulation in Verilog-A
+      compact models compiled by current OpenVAF.
+    + Add series resistance 1e-4 Ohms to diode model, if RS is not given
+    + Generate seed numbers from a microseconds clock, not a seconds clock
+    + Add functions ngSpice_LockRealloc and ngSpice_UnlockRealloc
+    + Add new code model function cm_irreversible().
+    + Add XSPICE code model d_cosim, a generic adaptor for digital cosimulation.
+    + New interpreter commands strstr, strslice, fopen, fread and fclose.
+    + Recognise *ng_script_with_params"
+    + Add scripts for running the paranoia tests in parallel on Linux with valgrind.
+
+
+
 Ngspice-41, Aug 13th, 2023
 ============
 - New features:
