@@ -432,7 +432,10 @@ com_measure_when(
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
             else
                 value = d->v_realdata[i];
-            scaleValue = dScale->v_compdata[i].cx_real;
+            if (dScale->v_compdata)
+                scaleValue = dScale->v_compdata[i].cx_real;
+            else
+                scaleValue = dScale->v_realdata[i];
         } else if (sp_check) {
             if (d->v_compdata)
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
@@ -768,17 +771,35 @@ measure_minMaxAvg(
 
     if (ac_check || sp_check) {
         dScale = vec_get("frequency");
+        if (dScale == NULL) {
+            fprintf(cp_err, "Error: meas %s ...\n", meas->m_analysis);
+            fprintf(cp_err, " no such scale vector as frequency.\n");
+            return MEASUREMENT_FAILURE;
+        }
     } else if (tran_check) {
         dScale = vec_get("time");
+        if (dScale == NULL) {
+            fprintf(cp_err, "Error: meas %s ...\n", meas->m_analysis);
+            fprintf(cp_err, " no such scale vector as time.\n");
+            return MEASUREMENT_FAILURE;
+        }
     } else if (dc_check) {
         dScale = vec_get("v-sweep");
+        if (!dScale) {
+            dScale = vec_get("i-sweep");
+            if (!dScale) {
+                dScale = vec_get("temp-sweep");
+                if (!dScale)
+                    dScale = vec_get("res-sweep");
+            }
+        }
+        if (dScale == NULL) {
+            fprintf(cp_err, "Error: meas %s ...\n", meas->m_analysis);
+            fprintf(cp_err, " no such scale vector as v-sweep, i-sweep, temp-sweep, or res-sweep.\n");
+            return MEASUREMENT_FAILURE;
+        }
     } else {                    /* error */
         fprintf(cp_err, "Error: no such analysis type as %s.\n", meas->m_analysis);
-        return MEASUREMENT_FAILURE;
-    }
-
-    if (dScale == NULL) {
-        fprintf(cp_err, "Error: no such vector as time, frequency or v-sweep.\n");
         return MEASUREMENT_FAILURE;
     }
 
@@ -949,22 +970,40 @@ measure_rms_integral(
 
     if (ac_check || sp_check) {
         xScale = vec_get("frequency");
+        if (xScale == NULL) {
+            fprintf(cp_err, "Error: meas %s ...\n", meas->m_analysis);
+            fprintf(cp_err, " no such scale vector as frequency.\n");
+            return MEASUREMENT_FAILURE;
+        }
     } else if (tran_check) {
         xScale = vec_get("time");
+        if (xScale == NULL) {
+            fprintf(cp_err, "Error: meas %s ...\n", meas->m_analysis);
+            fprintf(cp_err, " no such scale vector as time.\n");
+            return MEASUREMENT_FAILURE;
+        }
     } else if (dc_check) {
         xScale = vec_get("v-sweep");
+        if (!xScale) {
+            xScale = vec_get("i-sweep");
+            if (!xScale) {
+                xScale = vec_get("temp-sweep");
+                if (!xScale)
+                    xScale = vec_get("res-sweep");
+            }
+        }
+        if (xScale == NULL) {
+            fprintf(cp_err, "Error: meas %s ...\n", meas->m_analysis);
+            fprintf(cp_err, " no such scale vector as v-sweep, i-sweep, temp-sweep, or res-sweep.\n");
+            return MEASUREMENT_FAILURE;
+        }
     } else {                      /* error */
         fprintf(cp_err, "Error: no such analysis type as %s.\n", meas->m_analysis);
         return MEASUREMENT_FAILURE;
     }
 
-    if (xScale == NULL) {
-        fprintf(cp_err, "Error: no such vector as time, frequency or v-sweep.\n");
-        return MEASUREMENT_FAILURE;
-    }
-
     if (xScale->v_realdata == NULL && xScale->v_compdata == NULL) {
-        fprintf(cp_err, "Error: scale vector time, frequency or v-sweep has no data.\n");
+        fprintf(cp_err, "Error: scale vector time, frequency or ?-sweep has no data.\n");
         return MEASUREMENT_FAILURE;
     }
 

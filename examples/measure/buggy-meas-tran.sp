@@ -91,5 +91,7 @@ meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG VAL=0.5 RISE=2
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) RISE=2
 meas tran tdiff TRIG v(1) VAL= RISE=1 TARG v(1) VAL=0.5 RISE=2
 meas tran tdiff TRIG v(1) VAL=0.5 RISE= TARG v(1) VAL=0.5 RISE=2
+meas sp tmax MAX v(2) from=2m to=3m
+meas dc ymax MAX v(2) from=2m to=3m
 .endc
 .end
