@@ -691,7 +691,10 @@ measure_at(
                 value = d->v_realdata[i];
                 // fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
             }
-            svalue = dScale->v_compdata[i].cx_real;
+            if (dScale->v_compdata)
+                svalue = dScale->v_compdata[i].cx_real;
+            else
+                svalue = dScale->v_realdata[i]; //prevent crash in case if buggy input
         } else if (sp_check) {
             if (d->v_compdata)
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
@@ -804,7 +807,7 @@ measure_minMaxAvg(
     }
 
     if (dScale->v_realdata == NULL && dScale->v_compdata == NULL) {
-        fprintf(cp_err, "Error: scale vector time, frequency or v-sweep has no data.\n");
+        fprintf(cp_err, "Error: scale vector time, frequency or ?-sweep has no data.\n");
         return MEASUREMENT_FAILURE;
     }
 
