@@ -20,6 +20,8 @@ Ngspice-42, Dec 24th, 2023
     + Add XSPICE code model d_cosim, a generic adaptor for digital cosimulation.
     + New interpreter commands strstr, strslice, fopen, fread and fclose.
     + Recognise *ng_script_with_params"
+    + Add a predifined variable 'skywaterpdk' to speed up circuit
+      loading and parsing.
     + Add scripts for running the paranoia tests in parallel on Linux with valgrind.
 
 
