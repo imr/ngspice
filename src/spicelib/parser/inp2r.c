@@ -39,7 +39,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
     int error1;			/* secondary error code temporary */
     INPmodel *thismodel;	/* pointer to model structure describing our model */
     GENmodel *mdfast = NULL;	/* pointer to the actual model */
-    GENinstance *fast;		/* pointer to the actual instance */
+    GENinstance *fast = NULL;		/* pointer to the actual instance */
     IFvalue ptemp;		/* a value structure to package resistance into */
     int waslead;		/* flag to indicate that funny unlabeled number was found */
     double leadval;		/* actual value of unlabeled number */
@@ -59,10 +59,23 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
     }
     line = current->line;
     INPgetNetTok(&line, &name, 1);			/* Rname */
-    INPinsert(&name, tab);
+    if (*line == '\0') {
+        fprintf(stderr, "\nWarning: '%s' is not a valid resistor instance line, ignored!\n\n", current->line);
+        return;
+    }
     INPgetNetTok(&line, &nname1, 1);		/* <node> */
-    INPtermInsert(ckt, &nname1, tab, &node1);
+    if (*line == '\0') {
+        fprintf(stderr, "\nWarning: '%s' is not a valid resistor instance line, ignored!\n\n", current->line);
+        return;
+    }
     INPgetNetTok(&line, &nname2, 1);		/* <node> */
+    if (*line == '\0') {
+        fprintf(stderr, "\nWarning: '%s' is not a valid resistor instance line, ignored!\n\n", current->line);
+        return;
+    }
+
+    INPinsert(&name, tab);
+    INPtermInsert(ckt, &nname1, tab, &node1);
     INPtermInsert(ckt, &nname2, tab, &node2);
 
     /* enable reading values like 4k7 */
@@ -195,6 +208,11 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
         printf ("In INP2R, R=val construction: val=%g\n", val);
 #endif
       }
+    }
+
+    if (!fast || !fast->GENmodPtr) {
+        fprintf(stderr, "\nWarning: Instance for resistor '%s' could not be set up properly, ignored!\n\n", current->line);
+        return;
     }
 
     if (error1 == 0) {		/* got a resistance above */
