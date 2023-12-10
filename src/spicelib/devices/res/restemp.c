@@ -69,7 +69,7 @@ RESupdate_conduct(RESinstance *here, bool spill_warnings)
         } else {
             if (spill_warnings)
                 SPfrontEnd->IFerrorf (ERR_WARNING,
-                                      "%s: resistance to low, set to 1 mOhm", here->RESname);
+                                      "%s: resistance too low or not given, set to 1 mOhm", here->RESname);
             here->RESresist = 1e-03;
         }
     }
