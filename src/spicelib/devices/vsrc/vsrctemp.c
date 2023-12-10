@@ -76,7 +76,7 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if (!here->VSRCportZ0Given)
                     here->VSRCportZ0 = 50.0;
 
-                here->VSRCisPort = here->VSRCportZ0 > 0.0;
+                here->VSRCisPort = here->VSRCportZ0 > 0.0 && here->VSRCportNum > 0;
             }
             else
                 here->VSRCisPort = FALSE;
