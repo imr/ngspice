@@ -83,6 +83,13 @@ returns to the caller a pointer to an array of vector names in the plot
 named by the string in the argument.
 
 **
+int ngSpice_LockRealloc(void)
+int ngSpice_UnlockRealloc(void)
+Locking and unlocking the realloc of output vectors during simulation. May be set
+during reading output vectors in the primaty thread, while the simulation in the
+background thread is moving on.
+
+**
 Additional basics:
 No memory mallocing and freeing across the interface:
 Memory allocated in ngspice.dll has to be freed in ngspice.dll.
