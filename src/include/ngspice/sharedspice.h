@@ -86,7 +86,7 @@ named by the string in the argument.
 int ngSpice_LockRealloc(void)
 int ngSpice_UnlockRealloc(void)
 Locking and unlocking the realloc of output vectors during simulation. May be set
-during reading output vectors in the primaty thread, while the simulation in the
+during reading output vectors in the primary thread, while the simulation in the
 background thread is moving on.
 
 **
