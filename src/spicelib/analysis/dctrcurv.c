@@ -297,15 +297,15 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         if (ckt->evt->counts.num_insts == 0) {
             /* If no event-driven instances, do what SPICE normally does */
 #endif
-            converged = NIiter(ckt, ckt->CKTdcTrcvMaxIter);
-            if (converged != 0) {
+//            converged = NIiter(ckt, ckt->CKTdcTrcvMaxIter);
+//            if (converged != 0) {
                 converged = CKTop(ckt,
                                   (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
                                   (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
                                   ckt->CKTdcMaxIter);
                 if (converged != 0)
                     return(converged);
-            }
+//            }
 #ifdef XSPICE
         }
         else {
