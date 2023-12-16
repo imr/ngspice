@@ -29,11 +29,6 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
 {
     int converged;
 
-#ifdef HAS_PROGREP
-    if (!ckt->CKTnoOpIter || ckt->CKTnumGminSteps >= 1 || ckt->CKTnumSrcSteps >= 1)
-        SetAnalyse("op", 0);
-#endif
-
     ckt->CKTmode = firstmode;
 
     if (!ckt->CKTnoOpIter) {
@@ -49,6 +44,10 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
         converged = 1;          /* the 'go directly to gmin stepping' option */
     }
 
+#ifdef HAS_PROGREP
+    if (!ckt->CKTnoOpIter || ckt->CKTnumGminSteps >= 1 || ckt->CKTnumSrcSteps >= 1)
+        SetAnalyse("op", 0);
+#endif
 
     /* no convergence on the first try, so we do something else */
     /* first, check if we should try gmin stepping */
