@@ -121,7 +121,10 @@ double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVd, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
 
 double m = 1.0;
-   
+#ifndef NEWCONV
+double tol;
+#endif
+
 struct bsim3v1SizeDependParam *pParam;
 int ByPass, Check, ChargeComputationNeeded = 0, error;
 

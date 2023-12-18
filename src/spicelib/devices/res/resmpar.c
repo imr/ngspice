@@ -79,7 +79,7 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
         model->RESefGiven = TRUE;
         break;
     case RES_MOD_R:
-        if ( value->rValue > 1e-03 ) {
+        if ( value->rValue > 0 ) {
             model->RESres = value->rValue;
             model->RESresGiven = TRUE;
         }

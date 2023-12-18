@@ -133,7 +133,7 @@ ft_interpolate(double *data, double *ndata, double *oscale, int olen,
     /* Now plot the rest, piece by piece. l is the 
      * last element under consideration.
      */
-    for (++l; l < olen; l++) {
+    for (++l; l < olen && lastone < nlen - 1; l++) {
         double out;
 
         /* Shift the old stuff by one and get another value. */

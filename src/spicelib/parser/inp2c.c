@@ -32,7 +32,7 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, struct card *current)
     int error1;          /* secondary error code temporary */
     INPmodel *thismodel; /* pointer to model structure describing our model */
     GENmodel *mdfast = NULL; /* pointer to the actual model */
-    GENinstance *fast;   /* pointer to the actual instance */
+    GENinstance *fast = NULL;/* pointer to the actual instance */
     IFvalue ptemp;       /* a value structure to package resistance into */
     int waslead;         /* flag to indicate that funny unlabeled number was found */
     double leadval;      /* actual value of unlabeled number */
@@ -49,11 +49,25 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, struct card *current)
         }
     }
     line = current->line;
-    INPgetNetTok(&line, &name, 1);
+
+    INPgetNetTok(&line, &name, 1);			/* Cname */
+    if (*line == '\0') {
+        fprintf(stderr, "\nWarning: '%s' is not a valid capacitor instance line, ignored!\n\n", current->line);
+        return;
+    }
+    INPgetNetTok(&line, &nname1, 1);		/* <node> */
+    if (*line == '\0') {
+        fprintf(stderr, "\nWarning: '%s' is not a valid capacitor instance line, ignored!\n\n", current->line);
+        return;
+    }
+    INPgetNetTok(&line, &nname2, 1);		/* <node> */
+    if (*line == '\0') {
+        fprintf(stderr, "\nWarning: '%s' is not a valid capacitor instance line, ignored!\n\n", current->line);
+        return;
+    }
+
     INPinsert(&name, tab);
-    INPgetNetTok(&line, &nname1, 1);
     INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
 
     /* enable reading values like 4u7 */
@@ -109,7 +123,12 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, struct card *current)
 #endif
       }
     }
-    
+
+    if (!fast || !fast->GENmodPtr) {
+        fprintf(stderr, "\nWarning: Instance for capacitor '%s' could not be set up properly, ignored!\n\n", current->line);
+        return;
+    }
+
     if (error1 == 0) {        /* Looks like a number */
       ptemp.rValue = val;
       GCA(INPpName, ("capacitance", &ptemp, ckt, type, fast));
