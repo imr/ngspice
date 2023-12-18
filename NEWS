@@ -3,7 +3,7 @@ Ngspice-42, Dec 24th, 2023
 - New features:
     + New optional matrix solver KLU (select by 'option klu')
     + improve error messages (more verbose, user centric)
-    + Add variable wr_onspace to allow printing the vetor name with
+    + Add variable wr_onspace to allow printing the vector name with
       one space delimiter
     + Re-write of the code model PWM generator
     + Linked list modtab has been enhanced by a hash table
@@ -19,8 +19,8 @@ Ngspice-42, Dec 24th, 2023
     + Add new code model function cm_irreversible().
     + Add XSPICE code model d_cosim, a generic adaptor for digital cosimulation.
     + New interpreter commands strstr, strslice, fopen, fread and fclose.
-    + Recognise *ng_script_with_params"
-    + Add a predifined variable 'skywaterpdk' to speed up circuit
+    + Recognise *ng_script_with_params
+    + Add a predefined variable 'skywaterpdk' to speed up circuit
       loading and parsing.
     + Add scripts for running the paranoia tests in parallel on Linux with valgrind.
 

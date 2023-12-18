@@ -4,7 +4,7 @@ To run the paranoia test suite in parallel on Linux with valgrind:
 1. Download the paranoia tests (paranoia.7z) from the ngspice Quality web page.
 
 2. p7zip -d paranoia.7z
-Rename the the unzipped directory to a name without spaces which would
+Rename the unzipped directory to a name without spaces which would
 otherwise confuse valgrind.
 
 3. cd into the renamed unzipped directory.
