@@ -2341,7 +2341,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     char **inarr, **outarr, *itype, *iname, *enable, *tmodel;
     char *xspice = NULL, *connector = NULL;
     BOOL vector = FALSE, tristate_gate = FALSE, simple_gate = FALSE;
-    BOOL tristate_array = FALSE, simple_array = FALSE;
+    BOOL tristate_array = FALSE;
     BOOL add_tristate = FALSE;
     char *modelnm = NULL, *startvec = NULL, *endvec = NULL;
     char *instance_name = NULL;
@@ -2519,7 +2519,6 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         char *primary_model = NULL, *s1 = NULL, *s2 = NULL, *s3 = NULL;
         DS_CREATE(input_dstr, 128);
         /* arrays of gates */
-        simple_array = is_gate_array(itype);
         tristate_array = is_tristate_array(itype);
 
         inv3a_to_buf3a = (!withinv && eq(itype, "inv3a"));
