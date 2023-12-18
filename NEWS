@@ -18,6 +18,8 @@ Ngspice-42, Dec 24th, 2023
     + Add functions ngSpice_LockRealloc and ngSpice_UnlockRealloc
     + Add new code model function cm_irreversible().
     + Add XSPICE code model d_cosim, a generic adaptor for digital cosimulation.
+    + Script 'vlnggen' may be used with Verilator and d_cosim to create
+      XSPICE code models controlled by HDL code.
     + New interpreter commands strstr, strslice, fopen, fread and fclose.
     + Recognise *ng_script_with_params
     + Add a predefined variable 'skywaterpdk' to speed up circuit
