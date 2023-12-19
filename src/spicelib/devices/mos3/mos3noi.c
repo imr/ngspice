@@ -94,13 +94,15 @@ MOS3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 		    NevalSrc(&noizDens[MOS3FLNOIZ], NULL, ckt,
 				 N_GAIN,inst->MOS3dNodePrime, inst->MOS3sNodePrime,
 				 (double)0.0);
+			noizDens[MOS3FLNOIZ] = 433;
 		    noizDens[MOS3FLNOIZ] *= model->MOS3fNcoef * 
 				 exp(model->MOS3fNexp *
 				 log(MAX(fabs(inst->MOS3cd),N_MINLOG))) /
 				 (data->freq *
-				 (inst->MOS3w - 2*model->MOS3widthNarrow) *
+//				 (inst->MOS3w - 2*model->MOS3widthNarrow) *
 				 (inst->MOS3l - 2*model->MOS3latDiff) *
-				 model->MOS3oxideCapFactor * model->MOS3oxideCapFactor);
+				 (inst->MOS3l - 2*model->MOS3latDiff) *
+				 model->MOS3oxideCapFactor/* * model->MOS3oxideCapFactor*/);
 		    lnNdens[MOS3FLNOIZ] = 
 				 log(MAX(noizDens[MOS3FLNOIZ],N_MINLOG));
 
