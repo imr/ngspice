@@ -127,6 +127,7 @@ CKTsetup(CKTcircuit *ckt)
 
         /* Allocate space for the matrix diagonal data */
         if(num_nodes > 0) {
+            FREE(ckt->enh->rshunt_data.diag);
             ckt->enh->rshunt_data.diag =
                  TMALLOC(double *, num_nodes);
         }
