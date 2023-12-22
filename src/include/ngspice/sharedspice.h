@@ -47,7 +47,10 @@ not modify them).
 ***************** If XSPICE is enabled *************************************
 **
 ngCM_Input_Path(const char*)
-sets the input path for files loaded by code models.
+Set the input path for files loaded by code models
+like d_state, file_source, d_source.
+Useful when netlist is sent by ngSpice_Circ and therefore
+Infile_Path cannot be retrieved automatically.
 If NULL is sent, return the current Infile_Path.
 
 **
