@@ -162,7 +162,9 @@ int sens_sens(CKTcircuit* ckt, int restart)
             return error;
 
 #ifdef KLU
-        delta_Y->SMPkluMatrix->KLUmatrixDiag = NULL;
+        /* FIXME: needs better understanding what makes SMPkluMatrix NULL */
+        if(delta_Y->SMPkluMatrix)
+            delta_Y->SMPkluMatrix->KLUmatrixDiag = NULL;
 #endif
 
         // SMPprint(delta_Y, NULL);
