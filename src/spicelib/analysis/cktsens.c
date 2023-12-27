@@ -931,7 +931,7 @@ sens_getp(sgen* sg, CKTcircuit* ckt, IFvalue* val)
     return error;
 }
 
-/* Get parameter value */
+/* Set parameter value */
 int
 sens_setp(sgen* sg, CKTcircuit* ckt, IFvalue* val)
 {
@@ -954,7 +954,11 @@ sens_setp(sgen* sg, CKTcircuit* ckt, IFvalue* val)
         int (*fn) (int, IFvalue*, GENmodel*);
         fn = DEVices[sg->dev]->DEVmodParam;
         pid = DEVices[sg->dev]->DEVpublic.modelParms[sg->param].id;
-        if (fn)
+
+        /* FIXME: just a preliminary hack.
+         * Exclude bipolar parameter RCO, as it crashes ngspice
+         * during sensitivity analysis due to missing node allocations */
+        if (fn && !(sg->dev == 2 && pid == 147))
             error = fn(pid, val, sg->model);
         else
             return 1;
