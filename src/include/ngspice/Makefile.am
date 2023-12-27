@@ -63,7 +63,9 @@ noinst_HEADERS = \
 	ipcproto.h	\
 	ipctiein.h	\
 	jobdefs.h	\
-	logicexp.h      \
+	klu.h		\
+	klu-binding.h   \
+	logicexp.h  \
 	lsort.h		\
 	macros.h	\
 	material.h	\
