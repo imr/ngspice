@@ -9,7 +9,8 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "ngspice/ifsim.h"
 #include "ngspice/sensgen.h"
 
-	/* XXX */
+/* Used by sensitivity code in cktsens.c  */
+
 extern char	*Sfilter;
 
 int set_model(sgen *);
