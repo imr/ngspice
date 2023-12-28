@@ -47,7 +47,10 @@ not modify them).
 ***************** If XSPICE is enabled *************************************
 **
 ngCM_Input_Path(const char*)
-sets the input path for files loaded by code models.
+Set the input path for files loaded by code models
+like d_state, file_source, d_source.
+Useful when netlist is sent by ngSpice_Circ and therefore
+Infile_Path cannot be retrieved automatically.
 If NULL is sent, return the current Infile_Path.
 
 **
@@ -83,6 +86,13 @@ returns to the caller a pointer to an array of vector names in the plot
 named by the string in the argument.
 
 **
+int ngSpice_LockRealloc(void)
+int ngSpice_UnlockRealloc(void)
+Locking and unlocking the realloc of output vectors during simulation. May be set
+during reading output vectors in the primary thread, while the simulation in the
+background thread is moving on.
+
+**
 Additional basics:
 No memory mallocing and freeing across the interface:
 Memory allocated in ngspice.dll has to be freed in ngspice.dll.
@@ -97,7 +107,7 @@ are of type bool if sharedspice.h is used externally.
 */
 
 #ifndef NGSPICE_PACKAGE_VERSION
-#define NGSPICE_PACKAGE_VERSION "41+"
+#define NGSPICE_PACKAGE_VERSION "42"
 #endif
 /* we have NG_BOOL instead of BOOL */
 #ifndef HAS_NG_BOOL

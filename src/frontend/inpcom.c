@@ -8165,6 +8165,9 @@ static void inp_meas_current(struct card *deck)
             else if (ciprefix(".ends", curr_line)) {
                 subs--;
                 subc_start = subc_prev;
+                /* FIXME: just a hack, needs proper levelling */
+                if (subs == 0)
+                    subc_start = NULL;
             }
             else
                 continue;

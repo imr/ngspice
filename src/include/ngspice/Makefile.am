@@ -3,8 +3,10 @@
 noinst_HEADERS = \
 	tclspice.h	\
 	acdefs.h	\
+    amd.h \
 	bdrydefs.h	\
 	bool.h		\
+    btf.h \
 	carddefs.h	\
 	ciderinp.h	\
 	cidersupt.h	\
@@ -14,10 +16,12 @@ noinst_HEADERS = \
 	cm.h		\
 	cmproto.h	\
 	cmtypes.h	\
+    colamd.h \
 	compatmode.h	\
 	complex.h	\
 	const.h		\
 	contdefs.h	\
+    cosim.h \
 	cpdefs.h	\
 	cpextern.h	\
 	cpstd.h		\
@@ -63,7 +67,9 @@ noinst_HEADERS = \
 	ipcproto.h	\
 	ipctiein.h	\
 	jobdefs.h	\
-	logicexp.h      \
+	klu.h		\
+	klu-binding.h   \
+	logicexp.h  \
 	lsort.h		\
 	macros.h	\
 	material.h	\
@@ -123,6 +129,7 @@ noinst_HEADERS = \
 	twomesh.h	\
 	typedefs.h	\
 	udevices.h      \
+    UFconfig.h \
 	wordlist.h	\
 	1-f-code.h	\
 	FastNorm3.h	\

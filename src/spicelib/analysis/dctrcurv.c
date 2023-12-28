@@ -14,6 +14,7 @@ Modified: 1999 Paolo Nenzi
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/fteext.h"
+#include "ngspice/compatmode.h"
 
 #ifdef XSPICE
 #include "ngspice/evt.h"
@@ -297,14 +298,25 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         if (ckt->evt->counts.num_insts == 0) {
             /* If no event-driven instances, do what SPICE normally does */
 #endif
-            converged = NIiter(ckt, ckt->CKTdcTrcvMaxIter);
-            if (converged != 0) {
+
+            if (newcompat.hs) {
                 converged = CKTop(ckt,
                                   (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
                                   (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
                                   ckt->CKTdcMaxIter);
                 if (converged != 0)
                     return(converged);
+            }
+            else {
+                converged = NIiter(ckt, ckt->CKTdcTrcvMaxIter);
+                if (converged != 0) {
+                    converged = CKTop(ckt,
+                        (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT,
+                        (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITFLOAT,
+                        ckt->CKTdcMaxIter);
+                    if (converged != 0)
+                        return(converged);
+                }
             }
 #ifdef XSPICE
         }

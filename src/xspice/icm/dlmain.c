@@ -467,7 +467,7 @@ FILE *fopen_with_path(const char *path, const char *mode)
 {
     FILE *fp;
 
-    if((path[0] != '/') && (path[1] != ':')) { /* path absolue (probably) */
+    if((path[0] != '/') && (path[1] != ':')) { /* path is (probably) not absolute */
 //        const char *x = getenv("ngspice_vpath");
         const char *x = cm_get_path();
         if (x) {

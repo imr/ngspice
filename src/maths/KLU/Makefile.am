@@ -1,6 +1,15 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = SuiteSparse.org
+
 noinst_LTLIBRARIES = libKLU_real.la libKLU_complex.la libKLU.la
+
+noinst_HEADERS = \
+    amd_internal.h \
+    btf_internal.h \
+    klu_internal.h \
+    klu_version.h
+
 
 libKLU_real_la_SOURCES = 	\
 	klu.c			\

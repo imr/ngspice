@@ -30,7 +30,8 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
     int converged;
 
 #ifdef HAS_PROGREP
-    if (!ckt->CKTnoOpIter || ckt->CKTnumGminSteps >= 1 || ckt->CKTnumSrcSteps >= 1)
+    /* If this is called from dc simulation, don't set "op" */
+    if (ckt->CKTcurJob->JOBtype != 2 && (!ckt->CKTnoOpIter || ckt->CKTnumGminSteps >= 1 || ckt->CKTnumSrcSteps >= 1))
         SetAnalyse("op", 0);
 #endif
 

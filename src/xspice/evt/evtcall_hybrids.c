@@ -45,6 +45,7 @@ NON-STANDARD FEATURES
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 
+#include "ngspice/mif.h"
 #include "ngspice/evt.h"
 
 #include "ngspice/evtproto.h"
@@ -74,6 +75,12 @@ void EVTcall_hybrids(
 
     /* Call EVTload for all hybrids */
 
-    for(i = 0; i < num_hybrids; i++)
+    for(i = 0; i < num_hybrids; i++) {
         EVTload_with_event(ckt, hybrids[i], MIF_STEP_PENDING);
+        if (g_mif_info.breakpoint.current < ckt->CKTtime) {
+            /* An XSPICE instance rejected the time-step. */
+
+            break;
+        }
+    }
 }
