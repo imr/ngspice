@@ -51,8 +51,7 @@ SUBDIRS = \
 	vccs	\
 	vcvs	\
 	vdmos	\
-	vsrc	\
-	@VLADEVDIR@
+	vsrc	
 
 if NDEV_WANTED
 SUBDIRS += ndev
