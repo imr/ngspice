@@ -71,5 +71,5 @@ void OUTerrorf(int, const char *fmt, ...)  __attribute__ ((format (__printf__, 2
 void OUTerrorf(int, const char *fmt, ...);
 #endif
 
-
+void AddRealValueToVector(struct dvec *v, double value);
 #endif
