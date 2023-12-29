@@ -210,7 +210,7 @@ static void idn_digital_plot_val(void *evt_struct, char *member, double *val)
 
 
     /* Output a value for the requested member of the digital struct */
-    if(strcmp(member,"strength") == 0) {
+    if (member && strcmp(member,"strength") == 0) {
 
         /* Choose values that will not make plots lie on state plots */
         switch(dig_struct->strength) {

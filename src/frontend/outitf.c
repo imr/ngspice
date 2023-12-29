@@ -623,6 +623,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif
     /* interpolated batch mode output to file/plot in transient analysis */
     if (interpolated && run->circuit->CKTcurJob->JOBtype == 4) {
+        /* JOBtype == 4 means Transient Analysis.  FIX ME */
+
         if (run->writeOut) { /* To file */
             InterpFileAdd(run, refValue, valuePtr);
         }
@@ -630,10 +632,9 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             InterpPlotAdd(run, refValue, valuePtr);
         }
         return OK;
-    }
+    } else if (run->writeOut) {
+        /* standard batch mode output to file */
 
-    /* standard batch mode output to file */
-    else if (run->writeOut) {
         if (run->pointCount == 1) {
             fileInit_pass2(run);
         }
@@ -737,7 +738,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #ifdef TCL_MODULE
             blt_add(i, valuePtr->v.vec.rVec [run->data[i].outIndex]);
 #endif
-
         }
 
         fileEndPoint(run->fp, run->binary);
@@ -1231,12 +1231,9 @@ vlength2delta(int len)
         return 1024;
 }
 
-
-static void
-plotAddRealValue(dataDesc *desc, double value)
+void
+AddRealValueToVector(struct dvec *v, double value)
 {
-    struct dvec *v = desc->vec;
-
 #ifdef SHARED_MODULE
     if (savenone)
         /* always save new data to same location */
@@ -1258,6 +1255,11 @@ plotAddRealValue(dataDesc *desc, double value)
     v->v_dims[0] = v->v_length; /* va, must be updated */
 }
 
+static void
+plotAddRealValue(dataDesc *desc, double value)
+{
+    AddRealValueToVector(desc->vec, value);
+}
 
 static void
 plotAddComplexValue(dataDesc *desc, IFcomplex value)

@@ -23,16 +23,19 @@ Author: 1988 Jeffrey M. Hsu
 #include "ngspice/grid.h"
 #include "ngspice/sim.h"
 #include "ngspice/stringskip.h"
+#include "ngspice/evtproto.h"
 #include "breakp2.h"
 #include "display.h"
 #include "graf.h"
 #include "graphdb.h"
 #include "runcoms.h"
 #include "terminal.h"
+#include "outitf.h"
 
 
 static void gr_start_internal(struct dvec *dv, bool copyvec);
-static void set(struct plot *plot, struct dbcomm *db, bool value, short mode);
+static void setflag(struct plot *plot, struct dbcomm *db,
+                    bool value, short mode);
 static char *getitright(char *buf, double num);
 
 /* for legends, set in gr_start, reset in gr_iplot and gr_init */
@@ -81,7 +84,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         const char *commandline, /* For xi_zoomdata() */
         int prevgraph)                /* plot id, if started from a previous plot*/
 {
-    GRAPH *graph, *pgraph;
+    GRAPH    *graph, *pgraph;
     wordlist *wl;
 
     NG_IGNORE(nplots);
@@ -159,6 +162,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
 
     /* restore background color from previous graph, e.g. for zooming,
        it will be used in NewViewport(graph) */
+
     if (prevgraph > 0) {
         pgraph = FindGraph(prevgraph);
         if (pgraph)
@@ -309,7 +313,8 @@ static void drawLine(int x1, int y1, int x2, int y2, struct dvec *dv)
 {
     if (LC.dv) {
         if (LC.dv != dv) {
-            fprintf(cp_err, "LC: DV changed!\n");
+            fprintf(cp_err, "LC: DV changed from %s to %s!\n",
+                    LC.dv->v_name, dv->v_name);
             LC_flush();
             LC.dv = dv;
         }
@@ -540,11 +545,11 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
 
     /* Do something special with poles and zeros.  Poles are 'x's, and
      * zeros are 'o's.  */
+
     if (dv->v_type == SV_POLE) {
         dv->v_linestyle = 'x';
         return;
-    }
-    else if (dv->v_type == SV_ZERO) {
+    } else if (dv->v_type == SV_ZERO) {
         dv->v_linestyle = 'o';
         return;
     }
@@ -553,35 +558,34 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
     if (currentgraph->plottype == PLOT_POINT) {
         if (pointchars[cur.linestyle - 1]) {
             cur.linestyle++;
-        }
-        else {
+        } else {
             cur.linestyle = 2;
         }
-    }
-    else if ((cur.linestyle > 0) &&
-            (++cur.linestyle == dispdev->numlinestyles)) {
+    } else if ((cur.linestyle > 0) &&
+               (++cur.linestyle == dispdev->numlinestyles)) {
         cur.linestyle = 2;
     }
 
     if ((cur.color > 0) && (++cur.color == dispdev->numcolors))
         cur.color = (((currentgraph->grid.gridtype == GRID_SMITH ||
-                currentgraph->grid.gridtype == GRID_SMITHGRID) &&
-                (dispdev->numcolors > 3)) ? 4 : 2);
+                       currentgraph->grid.gridtype == GRID_SMITHGRID) &&
+                      (dispdev->numcolors > 3)) ? 4 : 2);
 
     if (currentgraph->plottype == PLOT_POINT) {
         dv->v_linestyle = pointchars[cur.linestyle - 2];
-    }
-    else {
+    } else {
         dv->v_linestyle = cur.linestyle;
     }
 
     dv->v_color = cur.color;
 
     /* Save the data so we can refresh */
+
     link = TMALLOC(struct dveclist, 1);
     link->next = currentgraph->plotdata;
 
     /* Either reuse input vector or copy depnding on copyvec */
+
     if (copyvec) {
         link->vector = vec_copy(dv);
         /* vec_copy doesn't set v_color or v_linestyle */
@@ -589,8 +593,7 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
         link->vector->v_linestyle = dv->v_linestyle;
         link->vector->v_flags |= VF_PERMANENT;
         link->f_own_vector = TRUE;
-    }
-    else {
+    } else {
         link->vector = dv;
         link->f_own_vector = FALSE;
     }
@@ -610,6 +613,7 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
     }
 
     /* Put the legend entry on the screen. */
+
     if (!currentgraph->nolegend)
         drawlegend(currentgraph, cur.plotno++, dv);
 }
@@ -846,6 +850,7 @@ void gr_restoretext(GRAPH *graph)
  * XXX Or maybe even something more drastic ??
  * It would be better to associate a color with an instance using a
  * vector than the vector itself, for which color is something artificial. */
+
 static int iplot(struct plot *pl, struct dbcomm *db)
 {
     double window;
@@ -890,7 +895,9 @@ static int iplot(struct plot *pl, struct dbcomm *db)
         strcpy(commandline, "plot ");
         index = 5;
         resumption = FALSE;
+
         /* Draw the grid for the first time, and plot everything. */
+
         lims = ft_minmax(xs, TRUE);
         xlims[0] = lims[0];
         xlims[1] = lims[1];
@@ -955,7 +962,6 @@ static int iplot(struct plot *pl, struct dbcomm *db)
             }
         }
         inited = 1;
-
     } else {
         if (!currentgraph)        /* Window was closed? */
             return 0;
@@ -1034,11 +1040,14 @@ static int iplot(struct plot *pl, struct dbcomm *db)
         /* checking for all y values */
 
         for (v = pl->pl_dvecs; v; v = v->v_next) {
+            int l;
+
             if (!(v->v_flags & VF_PLOT)) {
                 continue;
             }
-            dy = (isreal(v) ? v->v_realdata[len - 1] :
-                  realpart(v->v_compdata[len - 1]));
+            l = v->v_length - 1;
+            dy = (isreal(v) ? v->v_realdata[l] :
+                  realpart(v->v_compdata[l]));
             if (ft_grdb) {
                 fprintf(cp_err, "y = %G\n", dy);
             }
@@ -1094,12 +1103,65 @@ static int iplot(struct plot *pl, struct dbcomm *db)
 #ifndef X_DISPLAY_MISSING
             gr_redraw(currentgraph);
 #endif
+        } else {
+            /* Draw latest point for each vector. */
+
+            for (v = pl->pl_dvecs; v; v = v->v_next) {
+                if (v->v_flags & VF_PLOT) {
+                    if (v->v_flags & VF_EVENT_NODE) {
+                        int last;
+
+                        if (xs->v_type != SV_TIME) {
+                            /* There will be only one value, ignore. */
+
+                            continue;
+                        }
+                        last = v->v_length - 1;
+
+                        if (len > 2 &&
+                            v->v_scale->v_realdata[last] <
+                                xs->v_realdata[len - 1]) {
+                            /* No recent additions to this vector:
+                             * draw/extend horizontal line showing last value.
+                             * The rest is drawn in callback new_event().
+                             */
+
+                            gr_point(v,
+                                     xs->v_realdata[len - 1],
+                                     v->v_realdata[last],
+                                     v->v_scale->v_realdata[last],
+                                     v->v_realdata[last],
+                                     len - 1);
+                        }
+                    } else {
+                        /* Just connect the last two points.
+                         * This won't be done with curve interpolation,
+                         * so it might look funny.  */
+
+                        gr_point(v,
+                                 (isreal(xs) ? xs->v_realdata[len - 1] :
+                                  realpart(xs->v_compdata[len - 1])),
+                                 (isreal(v) ? v->v_realdata[len - 1] :
+                                  realpart(v->v_compdata[len - 1])),
+                                 (isreal(xs) ? xs->v_realdata[len - 2] :
+                                  realpart(xs->v_compdata[len - 2])),
+                                 (isreal(v) ? v->v_realdata[len - 2] :
+                                  realpart(v->v_compdata[len - 2])),
+                                 len - 1);
+                    }
+                    LC_flush();    // Disable line compression here ..
+#ifdef LINE_COMPRESSION_CHECKS
+                    LC.dv = NULL;  // ... and suppress warnings.
+#endif
+                }
+            }
+#if BAD
         }
         else {
             /* Just connect the last two points. This won't be done
              * with curve interpolation, so it might look funny.  */
             for (v = pl->pl_dvecs; v; v = v->v_next) {
-                if (v->v_flags & VF_PLOT) {
+                if ((v->v_flags & VF_PLOT) && !(v->v_flags & VF_EVENT_NODE)) {
                     gr_point(v,
                              (isreal(xs) ? xs->v_realdata[len - 1] :
                               realpart(xs->v_compdata[len - 1])),
@@ -1116,6 +1178,7 @@ static int iplot(struct plot *pl, struct dbcomm *db)
 #endif
                 }
             }
+#endif // BAD
         }
     }
     DevUpdate();
@@ -1123,7 +1186,8 @@ static int iplot(struct plot *pl, struct dbcomm *db)
 }
 
 
-static void set(struct plot *plot, struct dbcomm *db, bool value, short mode)
+static void setflag(struct plot *plot, struct dbcomm *db,
+                    bool value, short mode)
 {
     struct dvec *v;
     struct dbcomm *dc;
@@ -1176,9 +1240,7 @@ static char *getitright(char *buf, double num)
     }
 }
 
-
 static int hit, hit2;
-
 
 void reset_trace(void)
 {
@@ -1186,6 +1248,64 @@ void reset_trace(void)
     hit2 = -1;
 }
 
+/* This function is called from XSPICE whan an event node that is
+ * being i-plotted has a confirmed new value.
+ */
+
+#ifdef XSPICE
+static Mif_Boolean_t new_event(double when, Mif_Value_t *val,
+                               void *ctx, int is_last)
+{
+    struct dbcomm *db = (struct dbcomm *)ctx;
+    struct dvec   *v;
+    int            last;
+
+    if (db->db_type == DB_DEADIPLOT)
+        return MIF_TRUE;
+    v = vec_fromplot(db->db_nodename1, plot_cur);
+    if (!v || !v->v_scale)
+        return MIF_TRUE;
+
+    /* Extend vectors. */
+
+    last = v->v_length - 1;
+    AddRealValueToVector(v->v_scale, when);
+    AddRealValueToVector(v->v_scale, when);
+    AddRealValueToVector(v, v->v_realdata[last]);
+    AddRealValueToVector(v, val->rvalue);
+
+    if (db->db_graphid) {
+        GRAPH *gr;
+
+        gr = FindGraph(db->db_graphid);
+        if (gr) {
+            PushGraphContext(gr);
+
+            /* Draw horizontal and vertical lines. */
+
+            gr_point(v, when, v->v_realdata[last],
+                     v->v_scale->v_realdata[last], v->v_realdata[last],
+                     last > 0);
+            gr_point(v, when, val->rvalue, when, v->v_realdata[last], 1);
+            if (is_last) {
+                struct dvec *xs;
+
+                /* Extend horizontally to the end of the time-step. */
+
+                xs = v->v_plot->pl_scale;
+                gr_point(v, xs->v_realdata[xs->v_length - 1], val->rvalue,
+                         when, val->rvalue, 1);
+            }
+            LC_flush();
+#ifdef LINE_COMPRESSION_CHECKS
+            LC.dv = NULL;  // ... and suppress warnings.
+#endif
+            PopGraphContext();
+        }
+    }
+    return MIF_FALSE;
+}
+#endif
 
 void gr_iplot(struct plot *plot)
 {
@@ -1203,6 +1323,57 @@ void gr_iplot(struct plot *plot)
     hit = 0;
     for (db = dbs; db; db = db->db_next) {
         if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
+#ifdef XSPICE
+            if (db->db_iteration == 0) {
+                struct dvec   *v;
+
+                /* First call: find any XSPICE event nodes in the node
+                 * list and set up plotting.  There is a parallel path
+                 * for pushing new event values into their corresponding
+                 * vectors and plotting them.
+                 */
+
+                for (dc = db; dc; dc = dc->db_also) {
+                    struct dbcomm *dd;
+                    int            dup = 0;
+
+                    if (dc->db_nodename1 == NULL)
+                        continue;
+
+                    /* Duplicated names will corrupt the plot. */
+
+                    for (dd = db; dd != dc; dd = dd->db_also) {
+                        if (!strcmp(dc->db_nodename1, dd->db_nodename1)) {
+                            dup = 1;
+                            break;
+                        }
+                    }
+                    if (dup)
+                        continue;
+
+                    v = vec_fromplot(dc->db_nodename1, plot);
+                    if (!v) {
+                        fprintf(cp_err,
+                                "Warning: node %s non-existent in %s.\n",
+                                dc->db_nodename1, plot->pl_name);
+                    }
+
+                    if (v && (v->v_flags & VF_EVENT_NODE)) {
+                        if ((v->v_flags & VF_PERMANENT) == 0) {
+                            vec_new(v);
+                            v->v_flags |= VF_PERMANENT; // Make it findable.
+                            if (v->v_scale) {
+                                v->v_scale->v_flags |= VF_PERMANENT;
+                                vec_new(v->v_scale);
+                            }
+                        }
+                        EVTnew_value_call(dc->db_nodename1, new_event,
+                                          Evt_Cbt_Plot, dc);
+                    }
+                }
+                db->db_iteration = 1;
+            }
+#endif
             if (db->db_graphid) {
                 GRAPH *gr;
 
@@ -1214,16 +1385,20 @@ void gr_iplot(struct plot *plot)
 
             /* Temporarily set plot flag on matching vector. */
 
-            set(plot, db, TRUE, VF_PLOT);
+            setflag(plot, db, TRUE, VF_PLOT);
 
             dontpop = 0;
             if (iplot(plot, db)) {
-                /* graph just assigned */
-                db->db_graphid = currentgraph->graphid;
+                /* Graph just assigned, place id into every struct dbcomm
+                 * as event nodes need that.
+                 */
+
+                for (dc = db; dc; dc = dc->db_also)
+                    dc->db_graphid = currentgraph->graphid;
                 dontpop = 1;
             }
 
-            set(plot, db, FALSE, VF_PLOT);
+            setflag(plot, db, FALSE, VF_PLOT);
 
             if (!dontpop && db->db_graphid)
                 PopGraphContext();
@@ -1233,7 +1408,7 @@ void gr_iplot(struct plot *plot)
             struct dvec *v, *u;
             int len;
 
-            set(plot, db, TRUE, VF_PRINT);
+            setflag(plot, db, TRUE, VF_PRINT);
 
             len = plot->pl_scale->v_length;
 
@@ -1289,7 +1464,7 @@ void gr_iplot(struct plot *plot)
                     printf("\n");
                 }
             }
-            set(plot, db, FALSE, VF_PRINT);
+            setflag(plot, db, FALSE, VF_PRINT);
         }
     }
 }
@@ -1323,11 +1498,12 @@ void gr_end_iplot(void)
             }
         }
         else if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
+            db->db_iteration = 0; // Reset XSPICE event plotting
             if (db->db_graphid) {
 
                 /* get private copy of dvecs */
-                graph = FindGraph(db->db_graphid);
 
+                graph = FindGraph(db->db_graphid);
                 link = graph->plotdata;
 
                 while (link) {
