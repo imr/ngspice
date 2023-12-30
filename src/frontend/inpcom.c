@@ -8004,13 +8004,19 @@ static int inp_vdmos_model(struct card *deck)
             if (cut_line) {
                 wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
                 wlb = wl;
-                if (strstr(cut_line, "pchan")) {
+                if (search_plain_identifier(cut_line, "pchan")) {
                     wl_append_word(NULL, &wl, copy("vdmosp ("));
+                }
+                else if (search_plain_identifier(cut_line, "nchan")) {
+                    wl_append_word(NULL, &wl, copy("vdmosn ("));
                 }
                 else {
                     wl_append_word(NULL, &wl, copy("vdmosn ("));
                 }
-                cut_line = cut_line + 5;
+                cut_line = cut_line + 6; /* skip VDMOS */
+
+                if (ciprefix("nchan", cut_line) || ciprefix("pchan", cut_line))
+                    cut_line = cut_line + 5; /* old VDMOS model, skip nchan, pchan */
 
                 cut_line = skip_ws(cut_line);
                 if (*cut_line == '(')
@@ -8018,13 +8024,16 @@ static int inp_vdmos_model(struct card *deck)
                 new_line = NULL;
                 while (cut_line && *cut_line) {
                     token = gettok_model(&cut_line);
-                    if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
+                    if (token && *token != '\0' &&
+                        !ciprefix("pchan", token) && !ciprefix("ron=", token) &&
                         !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
                         !ciprefix("mfg=", token) && !ciprefix("nchan", token))
                         wl_append_word(NULL, &wl, token);
-                    else
+                    else {
                         tfree(token);
-                    if (*cut_line == ')') {
+                        break;
+                    }
+                    if (*cut_line == ')' || *cut_line == '\0') {
                         wl_append_word(NULL, &wl, copy(")"));
                         break;
                     }
