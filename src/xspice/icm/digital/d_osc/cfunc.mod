@@ -99,7 +99,7 @@ void cm_d_osc(ARGS)
             table[i].ctl = PARAM(cntl_array[i]);
             table[i].freq = PARAM(freq_array[i]);
             if (table[i].freq <= 0) {
-                cm_message_printf("Error: frequency %g is not positve, "
+                cm_message_printf("Error: frequency %g is not positive, "
                                   "value replaced by 1e-16.",
                                   table[i].freq);
                 table[i].freq = 1.0e-16;
