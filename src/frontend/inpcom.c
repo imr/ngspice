@@ -4853,6 +4853,10 @@ int get_number_terminals(char *c)
             return 2;
             break;
         case 'd':
+            /* PS:  D<name> <(+) node> <(-) node> <model name> [area value],
+               but still allow self heating diode with ngspice syntax. */
+            if (newcompat.ps && !search_plain_identifier(c, "thermal"))
+                return 2;
             i = 0;
             /* find the first token with "off" or "=" in the line*/
             while ((i < 10) && (*c != '\0')) {
