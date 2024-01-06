@@ -261,38 +261,45 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                     case AM: {
 
-                        double VA, FC, MF, VO, TD;
-                        double PHASEC, PHASES;
+                        double VO, VA, FM, MD, FC, TD, PHASEM, PHASEC;
                         double phasec;
-                        double phases;
+                        double phasem;
 
-                        PHASEC = here->VSRCfunctionOrder > 5
-                            ? here->VSRCcoeffs[5] : 0.0;
-                        PHASES = here->VSRCfunctionOrder > 6
+                        PHASEM = here->VSRCfunctionOrder > 6
                             ? here->VSRCcoeffs[6] : 0.0;
+                        PHASEC = here->VSRCfunctionOrder > 7
+                            ? here->VSRCcoeffs[7] : 0.0;
 
                         /* compute phases in radians */
                         phasec = PHASEC * M_PI / 180.0;
-                        phases = PHASES * M_PI / 180.0;
+                        phasem = PHASEM * M_PI / 180.0;
 
-                        VA = here->VSRCcoeffs[0];
-                        VO = here->VSRCcoeffs[1];
-                        MF = here->VSRCfunctionOrder > 2
+                        VO = here->VSRCcoeffs[0];
+                        VA = here->VSRCcoeffs[1];
+                        FM = here->VSRCfunctionOrder > 2
                            && here->VSRCcoeffs[2]
                            ? here->VSRCcoeffs[2] : (1/ckt->CKTfinalTime);
-                        FC = here->VSRCfunctionOrder > 3
-                           ? here->VSRCcoeffs[3] : 0.0;
-                        TD  = here->VSRCfunctionOrder > 4
-                           && here->VSRCcoeffs[4]
+                        MD = here->VSRCfunctionOrder > 3
+                           ? here->VSRCcoeffs[3] : 0.5;
+                        FC = here->VSRCfunctionOrder > 4
                            ? here->VSRCcoeffs[4] : 0.0;
+                        TD  = here->VSRCfunctionOrder > 5
+                           && here->VSRCcoeffs[5]
+                           ? here->VSRCcoeffs[5] : 0.0;
+
+                        /* limit the modulation depth */
+                        if (MD > 1)
+                            MD = 1;
+                        else if (MD < 0)
+                            MD = 0;
 
                         time -= TD;
                         if (time <= 0) {
                             value = 0;
                         } else {
                             /* compute waveform value */
-                            value = VA * (VO + sin(2.0 * M_PI * MF * time + phases )) *
-                                sin(2.0 * M_PI * FC * time + phases);
+                            value = VO + VA * (1 + MD * sin(2.0 * M_PI * FM * time + phasem)) *
+                                sin(2.0 * M_PI * FC * time + phasec);
                         }
                     }
                     break;
