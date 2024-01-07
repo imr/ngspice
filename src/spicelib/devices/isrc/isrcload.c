@@ -240,9 +240,20 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                     case AM: {
 
                         double VO, VA, FM, MD, FC, TD, PHASEM, PHASEC;
-                        double phasec;
-                        double phasem;
+                        double phasec, phasem;
 
+                        VO = here->ISRCcoeffs[0];
+                        VA = here->ISRCcoeffs[1];
+                        FM = here->ISRCfunctionOrder > 2
+                           && here->ISRCcoeffs[2]
+                           ? here->ISRCcoeffs[2] : (5. / ckt->CKTfinalTime);
+                        MD = here->ISRCfunctionOrder > 3
+                            ? here->ISRCcoeffs[3] : 0.5;
+                        FC = here->ISRCfunctionOrder > 4
+                           ? here->ISRCcoeffs[4] : (500. / ckt->CKTfinalTime);
+                        TD  = here->ISRCfunctionOrder > 5
+                           && here->ISRCcoeffs[5]
+                           ? here->ISRCcoeffs[5] : 0.0;
                         PHASEC = here->ISRCfunctionOrder > 6
                             ? here->ISRCcoeffs[6] : 0.0;
                         PHASEM = here->ISRCfunctionOrder > 7
@@ -251,19 +262,6 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                         /* compute phases in radians */
                         phasec = PHASEC * M_PI / 180.0;
                         phasem = PHASEM * M_PI / 180.0;
-
-                        VO = here->ISRCcoeffs[0];
-                        VA = here->ISRCcoeffs[1];
-                        FM = here->ISRCfunctionOrder > 2
-                           && here->ISRCcoeffs[2]
-                           ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
-                        MD = here->ISRCfunctionOrder > 3
-                            ? here->ISRCcoeffs[3] : 0.5;
-                        FC = here->ISRCfunctionOrder > 4
-                           ? here->ISRCcoeffs[4] : 0.0;
-                        TD  = here->ISRCfunctionOrder > 5
-                           && here->ISRCcoeffs[5]
-                           ? here->ISRCcoeffs[5] : 0.0;
 
                         /* limit the modulation depth */
                         if (MD > 1)

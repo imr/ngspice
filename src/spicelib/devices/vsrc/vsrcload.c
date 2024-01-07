@@ -265,6 +265,18 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         double phasec;
                         double phasem;
 
+                        VO = here->VSRCcoeffs[0];
+                        VA = here->VSRCcoeffs[1];
+                        FM = here->VSRCfunctionOrder > 2
+                           && here->VSRCcoeffs[2]
+                           ? here->VSRCcoeffs[2] : (5. / ckt->CKTfinalTime);
+                        MD = here->VSRCfunctionOrder > 3
+                           ? here->VSRCcoeffs[3] : 0.5;
+                        FC = here->VSRCfunctionOrder > 4
+                           ? here->VSRCcoeffs[4] : (500. / ckt->CKTfinalTime);
+                        TD  = here->VSRCfunctionOrder > 5
+                           && here->VSRCcoeffs[5]
+                           ? here->VSRCcoeffs[5] : 0.0;
                         PHASEM = here->VSRCfunctionOrder > 6
                             ? here->VSRCcoeffs[6] : 0.0;
                         PHASEC = here->VSRCfunctionOrder > 7
@@ -273,19 +285,6 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         /* compute phases in radians */
                         phasec = PHASEC * M_PI / 180.0;
                         phasem = PHASEM * M_PI / 180.0;
-
-                        VO = here->VSRCcoeffs[0];
-                        VA = here->VSRCcoeffs[1];
-                        FM = here->VSRCfunctionOrder > 2
-                           && here->VSRCcoeffs[2]
-                           ? here->VSRCcoeffs[2] : (1/ckt->CKTfinalTime);
-                        MD = here->VSRCfunctionOrder > 3
-                           ? here->VSRCcoeffs[3] : 0.5;
-                        FC = here->VSRCfunctionOrder > 4
-                           ? here->VSRCcoeffs[4] : 0.0;
-                        TD  = here->VSRCfunctionOrder > 5
-                           && here->VSRCcoeffs[5]
-                           ? here->VSRCcoeffs[5] : 0.0;
 
                         /* limit the modulation depth */
                         if (MD > 1)
