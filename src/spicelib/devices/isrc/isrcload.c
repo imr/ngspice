@@ -205,76 +205,84 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                     case SFFM: {
 
-                        double VO, VA, FC, MDI, FS;
-                        double PHASEC, PHASES;
+                        double VO, VA, FM, MDI, FC, TD, PHASEM, PHASEC;
                         double phasec;
-                        double phases;
-
-                        PHASEC = here->ISRCfunctionOrder > 5
-                            ? here->ISRCcoeffs[5] : 0.0;
-                        PHASES = here->ISRCfunctionOrder > 6
-                            ? here->ISRCcoeffs[6] : 0.0;
-
-                        /* compute phases in radians */
-                        phasec = PHASEC * M_PI / 180.0;
-                        phases = PHASES * M_PI / 180.0;
+                        double phasem;
+                        static bool warn1 = FALSE, warn2 = FALSE;
 
                         VO = here->ISRCcoeffs[0];
                         VA = here->ISRCcoeffs[1];
-                        FC = here->ISRCfunctionOrder > 2
-                           && here->ISRCcoeffs[2]
-                           ? here->ISRCcoeffs[2] : (1/ckt->CKTfinalTime);
+                        FM = here->ISRCfunctionOrder > 2
+                           ? here->ISRCcoeffs[2] : (5./ckt->CKTfinalTime);
                         MDI = here->ISRCfunctionOrder > 3
-                           ? here->ISRCcoeffs[3] : 0.0;
-                        FS  = here->ISRCfunctionOrder > 4
+                           ? here->ISRCcoeffs[3] : 90.0;
+                        FC  = here->ISRCfunctionOrder > 4
                            && here->ISRCcoeffs[4]
-                           ? here->ISRCcoeffs[4] : (1/ckt->CKTfinalTime);
+                           ? here->ISRCcoeffs[4] : (500./ckt->CKTfinalTime);
+                        TD = here->ISRCfunctionOrder > 5
+                            ? here->ISRCcoeffs[5] : 0;
+                        PHASEM = here->ISRCfunctionOrder > 5
+                            ? here->ISRCcoeffs[5] : 0.0;
+                        PHASEC = here->ISRCfunctionOrder > 6
+                            ? here->ISRCcoeffs[6] : 0.0;
+
+                        /* limit the modulation index */
+                        if (MDI > FC / FM) {
+                            MDI = FC / FM;
+                            if (!warn1){
+                                fprintf(stderr, "Warning: MDI in %s limited to FC/FM\n", here->gen.GENname);
+                                warn1 = TRUE;
+                            }
+                        }
+                        else if (MDI < 0) {
+                            MDI = 0;
+                            if (!warn2) {
+                                fprintf(stderr, "Warning: MDI in %s set to 0\n", here->gen.GENname);
+                                warn2 = TRUE;
+                            }
+                        }
+
+                        /* compute phases in radians */
+                        phasec = PHASEC * M_PI / 180.0;
+                        phasem = PHASEM * M_PI / 180.0;
 
                         /* compute waveform value */
                         value = VO + VA *
                             sin((2.0 * M_PI * FC * time + phasec) +
-                            MDI * sin(2.0 * M_PI * FS * time + phases));
+                            MDI * sin(2.0 * M_PI * FM * time + phasem));
                     }
                     break;
 
                     case AM: {
 
-                        double VO, VA, FM, MD, FC, TD, PHASEM, PHASEC;
+                        double VO, VMO, VMA, FM, FC, TD, PHASEM, PHASEC;
                         double phasec, phasem;
 
                         VO = here->ISRCcoeffs[0];
-                        VA = here->ISRCcoeffs[1];
-                        FM = here->ISRCfunctionOrder > 2
-                           && here->ISRCcoeffs[2]
-                           ? here->ISRCcoeffs[2] : (5. / ckt->CKTfinalTime);
-                        MD = here->ISRCfunctionOrder > 3
-                            ? here->ISRCcoeffs[3] : 0.5;
+                        VMO = here->ISRCcoeffs[1];
+                        VMA = here->ISRCfunctionOrder > 2
+                            ? here->ISRCcoeffs[2] : 1.;
+                        FM = here->ISRCfunctionOrder > 3
+                            ? here->ISRCcoeffs[3] : (5. / ckt->CKTfinalTime);
                         FC = here->ISRCfunctionOrder > 4
-                           ? here->ISRCcoeffs[4] : (500. / ckt->CKTfinalTime);
-                        TD  = here->ISRCfunctionOrder > 5
-                           && here->ISRCcoeffs[5]
-                           ? here->ISRCcoeffs[5] : 0.0;
-                        PHASEC = here->ISRCfunctionOrder > 6
+                            ? here->ISRCcoeffs[4] : (500. / ckt->CKTfinalTime);
+                        TD = here->ISRCfunctionOrder > 5
+                            ? here->ISRCcoeffs[5] : 0.0;
+                        PHASEM = here->ISRCfunctionOrder > 6
                             ? here->ISRCcoeffs[6] : 0.0;
-                        PHASEM = here->ISRCfunctionOrder > 7
+                        PHASEC = here->ISRCfunctionOrder > 7
                             ? here->ISRCcoeffs[7] : 0.0;
 
                         /* compute phases in radians */
                         phasec = PHASEC * M_PI / 180.0;
                         phasem = PHASEM * M_PI / 180.0;
 
-                        /* limit the modulation depth */
-                        if (MD > 1)
-                            MD = 1;
-                        else if (MD < 0)
-                            MD = 0;
-
                         time -= TD;
                         if (time <= 0) {
                             value = 0;
                         } else {
                             /* compute waveform value */
-                            value = VO + VA * (1 + MD * sin(2.0 * M_PI * FM * time + phasem)) *
+                            value = VO + (VMO + VMA * sin(2.0 * M_PI * FM * time + phasem)) *
                                 sin(2.0 * M_PI * FC * time + phasec);
                         }
                     }
