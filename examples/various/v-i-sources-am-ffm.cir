@@ -1,0 +1,65 @@
+* FFM and AM, independen voltage or current source
+
+* select 1 for current source, or 0 for voltage source
+.param is = 0
+
+* AM(VO, VMO, VMA, FM, FC, TD, PHASEM, PHASEC)
+
+* am modulation, modulation depth 0.9 (MD=VMA/VMO)
+.if (is)
+I1 0 1 AM 0.5 2 1.8 1k 100k 1m 0 0
+RI 1 0 1
+.else
+V1 1 0 AM 0.5 2 1.8 1k 100k 1m 0 0
+.endif
+
+*Double side band suppressed carrier
+.if (is)
+I3 0 20 AM 0 0 1 1k 100k 1m 0 0
+RI3 20 0 1
+.else
+V3 20 0 AM 0 0 1 1k 100k 1m 0 0
+.endif
+
+* SFFM(VO, VA, FM, MDI, FC, TD, PHASEM, PHASEC)
+.if (is)
+I2 0 10 SFFM  0.1 2 200 45 10k 1m 0 0
+RI2 0 10 1
+.else
+V2 10 0 SFFM  0.1 2 200 45 10k 1m 0 0 ; MDI=FC/FM*0.9
+.endif
+
+*** diode detector for AM
+D1 1 2 DMOD
+.model DMOD D
+
+C1 2 0 5n
+R1 2 0 10k
+C2 2 3 2n
+R2 3 0 1Meg
+***
+
+* Do we know a simple detector for FM ?
+
+.tran 500n 64m
+
+.control
+run
+rusage
+set xbrushwidth=2
+plot v(1) title 'AM modulation 1kHz in 100kHz, mdepth=0.9'
+plot v(1) xlimit 45m 50m title 'AM modulation 1kHz in 100kHz, mdepth=0.9'
+plot v(2) v(3) title 'AM modulation, output of diode detector'
+plot v(2) v(3) xlimit 45m 50m title 'AM modulation, output of diode detector'
+plot v(10) title 'Frequency modulation'
+plot v(10) xlimit 36m 41m title 'Frequency modulation'
+plot v(20) xlimit 36m 41m title 'Double side band suppressed carrier modulation'
+linearize
+fft v(1) v(3) v(10) v(20)
+plot mag(v(1)) xlimit 90k 110k title 'AM modulation 1kHz in 100kHz, mdepth=0.9'
+plot mag(v(3)) xlimit 0k 5k title 'AM modulation, output of diode detector'
+plot mag(v(10)) xlimit 0k 25k title 'Frequency modulation'
+plot mag(v(20)) xlimit 90k 110k title 'Double side band suppressed carrier modulation'
+.endc
+
+.end
