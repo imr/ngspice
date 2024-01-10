@@ -97,8 +97,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/vccs/libvccs.la		\
 	spicelib/devices/vcvs/libvcvs.la		\
 	spicelib/devices/vdmos/libvdmos.la		\
-	spicelib/devices/vsrc/libvsrc.la		\
-	@VLADEV@
+	spicelib/devices/vsrc/libvsrc.la
 
 
 

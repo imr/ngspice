@@ -92,7 +92,7 @@ c  but avoids most of the well-known defects of this type of generator
 c  by, in effect, generating x[n+k] from x[n] as defined by the
 c  sequence above, where k is chosen randomly in 1 ... 128 with the
 c  help of a subsidiary Tauseworth-type generator.
-c          For the positve integer generator irandm, the less
+c          For the positive integer generator irandm, the less
 c  significant digits are more random than is usual for a Lehmer
 c  generator. The last n<31 digits do not repeat with a period of 2^n.
 c  This is also true of the unsigned integer generator urandm, but less

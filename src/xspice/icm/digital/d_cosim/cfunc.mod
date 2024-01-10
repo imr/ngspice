@@ -39,7 +39,7 @@ char *dlerror(void) // Lifted from dev.c.
     if (rc == 0) { /* FormatMessage failed */
         (void) sprintf(errstr, errstr_fmt, (unsigned long) GetLastError());
     } else {
-        snprintf(errstr, sizeof errstr, lpMsgBuf);
+        snprintf(errstr, sizeof errstr, errstr_fmt, lpMsgBuf);
         LocalFree(lpMsgBuf);
     }
     return errstr;

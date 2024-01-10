@@ -861,6 +861,10 @@ wordlist *cp_variablesubst(wordlist *wlist)
 
         while ((s_dollar = strchr(wl->wl_word + i, '$')) != NULL) {
 
+            /* Prevent vectors carrying the E POLY source current from being disaggregated */
+            if (ciprefix("a$poly$", wl->wl_word))
+                break;
+
             int prefix_len = (int) (s_dollar - wl->wl_word);
 
             char *tail = span_var_expr(s_dollar + 1);

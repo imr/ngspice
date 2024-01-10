@@ -54,7 +54,7 @@ static int write_param_info(IFparm **dst, const OsdiDescriptor *descr,
       break;
     default:
       errRtn = "get_osdi_info";
-      errMsg = tprintf("Unkown OSDI type %d for parameter %s!",
+      errMsg = tprintf("Unknown OSDI type %d for parameter %s!",
                        para->flags & PARA_TY_MASK, para->name[0]);
       return -1;
     }

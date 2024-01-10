@@ -339,6 +339,8 @@
     <None Include="..\..\src\xspice\icm\digital\d_and\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_buffer\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_buffer\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\digital\d_cosim\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\digital\d_cosim\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_dff\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_dff\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_dlatch\cfunc.mod" />

@@ -227,72 +227,90 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
 
                     case SFFM: {
 
-                        double VO, VA, FC, MDI, FS;
-                        double PHASEC, PHASES;
+                        double VO, VA, FM, MDI, FC, TD, PHASEM, PHASEC;
                         double phasec;
-                        double phases;
-
-                        PHASEC = here->VSRCfunctionOrder > 5
-                            ? here->VSRCcoeffs[5] : 0.0;
-                        PHASES = here->VSRCfunctionOrder > 6
-                            ? here->VSRCcoeffs[6] : 0.0;
-
-                        /* compute phases in radians */
-                        phasec = PHASEC * M_PI / 180.0;
-                        phases = PHASES * M_PI / 180.0;
+                        double phasem;
+                        static bool warn1 = FALSE, warn2 = FALSE;
 
                         VO = here->VSRCcoeffs[0];
                         VA = here->VSRCcoeffs[1];
-                        FC = here->VSRCfunctionOrder > 2
-                           && here->VSRCcoeffs[2]
-                           ? here->VSRCcoeffs[2] : (1/ckt->CKTfinalTime);
+                        FM = here->VSRCfunctionOrder > 2
+                           ? here->VSRCcoeffs[2] : (5./ckt->CKTfinalTime);
                         MDI = here->VSRCfunctionOrder > 3
-                           ? here->VSRCcoeffs[3] : 0.0;
-                        FS  = here->VSRCfunctionOrder > 4
-                           && here->VSRCcoeffs[4]
-                           ? here->VSRCcoeffs[4] : (1/ckt->CKTfinalTime);
-
-                        /* compute waveform value */
-                        value = VO + VA *
-                            sin((2.0 * M_PI * FC * time + phasec) +
-                            MDI * sin(2.0 * M_PI * FS * time + phases));
-                    }
-                    break;
-
-                    case AM: {
-
-                        double VA, FC, MF, VO, TD;
-                        double PHASEC, PHASES;
-                        double phasec;
-                        double phases;
-
-                        PHASEC = here->VSRCfunctionOrder > 5
-                            ? here->VSRCcoeffs[5] : 0.0;
-                        PHASES = here->VSRCfunctionOrder > 6
+                           ? here->VSRCcoeffs[3] : 90.0; /* 0.9 * FC / FM */
+                        FC  = here->VSRCfunctionOrder > 4
+                           && here->VSRCcoeffs[4] /* test if not 0 */
+                           ? here->VSRCcoeffs[4] : (500./ckt->CKTfinalTime);
+                        TD  = here->VSRCfunctionOrder > 5
+                           ? here->VSRCcoeffs[5] : 0;
+                        PHASEM = here->VSRCfunctionOrder > 6
                             ? here->VSRCcoeffs[6] : 0.0;
+                        PHASEC = here->VSRCfunctionOrder > 7
+                            ? here->VSRCcoeffs[7] : 0.0;
 
                         /* compute phases in radians */
                         phasec = PHASEC * M_PI / 180.0;
-                        phases = PHASES * M_PI / 180.0;
+                        phasem = PHASEM * M_PI / 180.0;
 
-                        VA = here->VSRCcoeffs[0];
-                        VO = here->VSRCcoeffs[1];
-                        MF = here->VSRCfunctionOrder > 2
-                           && here->VSRCcoeffs[2]
-                           ? here->VSRCcoeffs[2] : (1/ckt->CKTfinalTime);
-                        FC = here->VSRCfunctionOrder > 3
-                           ? here->VSRCcoeffs[3] : 0.0;
-                        TD  = here->VSRCfunctionOrder > 4
-                           && here->VSRCcoeffs[4]
-                           ? here->VSRCcoeffs[4] : 0.0;
+                        /* limit the modulation index */
+                        if (MDI > FC / FM) {
+                            MDI = FC / FM;
+                            if (!warn1){
+                                fprintf(stderr, "Warning: MDI in %s limited to FC/FM\n", here->gen.GENname);
+                                warn1 = TRUE;
+                            }
+                        }
+                        else if (MDI < 0) {
+                            MDI = 0;
+                            if (!warn2) {
+                                fprintf(stderr, "Warning: MDI in %s set to 0\n", here->gen.GENname);
+                                warn2 = TRUE;
+                            }
+                        }
+
+                        time -= TD;
+                        if (time <= 0) {
+                            value = 0;
+                        }
+                        else {
+                            /* compute waveform value */
+                            value = VO + VA *
+                                sin((2.0 * M_PI * FC * time + phasec) +
+                                    MDI * sin(2.0 * M_PI * FM * time + phasem));
+                        }
+                    }
+                    break;
+                    case AM: {
+
+                        double VO, VMO, VMA, FM, FC, TD, PHASEM, PHASEC;
+                        double phasem, phasec;
+
+                        VO = here->VSRCcoeffs[0];
+                        VMO = here->VSRCcoeffs[1];
+                        VMA = here->VSRCfunctionOrder > 2
+                           ? here->VSRCcoeffs[2] : 1.;
+                        FM = here->VSRCfunctionOrder > 3
+                           ? here->VSRCcoeffs[3] : (5. / ckt->CKTfinalTime);
+                        FC = here->VSRCfunctionOrder > 4
+                           ? here->VSRCcoeffs[4] : (500. / ckt->CKTfinalTime);
+                        TD  = here->VSRCfunctionOrder > 5
+                           ? here->VSRCcoeffs[5] : 0.0;
+                        PHASEM = here->VSRCfunctionOrder > 6
+                            ? here->VSRCcoeffs[6] : 0.0;
+                        PHASEC = here->VSRCfunctionOrder > 7
+                            ? here->VSRCcoeffs[7] : 0.0;
+
+                        /* compute phases in radians */
+                        phasec = PHASEC * M_PI / 180.0;
+                        phasem = PHASEM * M_PI / 180.0;
 
                         time -= TD;
                         if (time <= 0) {
                             value = 0;
                         } else {
                             /* compute waveform value */
-                            value = VA * (VO + sin(2.0 * M_PI * MF * time + phases )) *
-                                sin(2.0 * M_PI * FC * time + phases);
+                            value = VO + (VMO + VMA * sin(2.0 * M_PI * FM * time + phasem)) *
+                                sin(2.0 * M_PI * FC * time + phasec);
                         }
                     }
                     break;

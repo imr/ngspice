@@ -42,7 +42,7 @@ const char *SPerror(int type)
 	msg = "no such terminal on this device";
 	break;
     case E_BADPARM:
-	msg = "no such parameter on this device";
+	msg = "no such parameter on this device or parameter is missing";
 	break;
     case E_NOMEM:
 	msg = "out of memory";

@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.59])
 
-m4_define([ngspice_major_version], [42])
+m4_define([ngspice_major_version], [42+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
@@ -154,9 +154,9 @@ AC_ARG_ENABLE([osdi],
 AC_ARG_ENABLE([cider],
     [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements])])
 
-# --enable-adms: define ADMS in the code. This is for the adms Verilog-A compiler support
+# --enable-adms: ADMS is no longer supported
 AC_ARG_ENABLE([adms],
-    [AS_HELP_STRING([--enable-adms], [Enable ADMS code models, (experimental)])])
+    [AS_HELP_STRING([--enable-adms], [ADMS is no longer supported])])
 
 # --enable-pss: enable PSS Analysis
 AC_ARG_ENABLE([pss],
@@ -1227,58 +1227,6 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
 AM_CONDITIONAL([SENSE2_WANTED], [test "x$enable_sense2" = xyes])
 
-# adms option
-if test "x$enable_adms" = xyes ; then
-    AC_MSG_RESULT([**********************************
-* ADMS  support is  experimental *
-**********************************])
-    AC_CHECK_PROGS([ADMSXML], [admsXml admsXml.exe])
-
-    if test "x$ADMSXML" = x; then
-        AC_MSG_ERROR([If you want Verilog-A models you should install admsXml])
-    fi
-    AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
-
-    VLADEVDIR=" adms/bsimbulk \
-                adms/bsimcmg \
-                adms/ekv \
-                adms/hicum0 \
-                adms/mextram \
-                adms/psp102 \
-                adms/psp103 \
-                adms/r2_cmc "
-
-# The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
-#VLAMKF    src/spicelib/devices/adms/bsimbulk/Makefile
-#VLAMKF    src/spicelib/devices/adms/bsimcmg/Makefile
-#VLAMKF    src/spicelib/devices/adms/ekv/Makefile
-#VLAMKF    src/spicelib/devices/adms/hicum0/Makefile
-#VLAMKF    src/spicelib/devices/adms/mextram/Makefile
-#VLAMKF    src/spicelib/devices/adms/psp102/Makefile
-#VLAMKF    src/spicelib/devices/adms/psp103/Makefile
-#VLAMKF    src/spicelib/devices/adms/r2_cmc/Makefile
-
-    NOTVLADEVDIR=""
-
-    VLADEV=" spicelib/devices/adms/bsimbulk/libbsimbulk.la \
-             spicelib/devices/adms/bsimcmg/libbsimcmg.la \
-             spicelib/devices/adms/ekv/libekv.la \
-             spicelib/devices/adms/hicum0/libhicum0.la \
-             spicelib/devices/adms/mextram/libbjt504t.la \
-             spicelib/devices/adms/psp102/libpsp102.la \
-             spicelib/devices/adms/psp103/libpsp103.la \
-             spicelib/devices/adms/r2_cmc/libr2_cmc.la "
-
-else
-
-    VLADEVDIR=""
-    NOTVLADEVDIR="adms/admst"
-
-fi
-
-AC_SUBST([VLADEVDIR])
-AC_SUBST([VLADEV])
-AC_SUBST([NOTVLADEVDIR])
 
 # NDEV option
 if test "x$enable_ndev" = xyes; then

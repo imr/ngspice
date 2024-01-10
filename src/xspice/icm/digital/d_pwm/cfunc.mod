@@ -106,7 +106,7 @@ void cm_d_pwm(ARGS)
             table[i].ctl = PARAM(cntl_array[i]);
             table[i].dc = PARAM(dc_array[i]);
             if (table[i].dc <= 0) {
-                cm_message_printf("Error: duty cycle %g is not positve, "
+                cm_message_printf("Error: duty cycle %g is not positive, "
                                   "value replaced by 0.01.",
                                   table[i].dc);
                 table[i].dc = 0.01;
