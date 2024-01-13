@@ -92,7 +92,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         }
 
                         if (ckt->CKTtime >= here->VSRCbreak_time) {
-                            double wait;
+                            double wait, atime;
 
                             if (time >= PER) {
                                 /* Repeating signal: where in period are we? */
@@ -101,26 +101,35 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                                 time -= basetime;
                             }
 
+                            /* A request for a breakpoint very close
+                             * to the current time will be ignored.
+                             * Adjust so the next corner will be
+                             * selected.
+                             */
+
+                            atime = time + ckt->CKTminBreak;
+
                             /* Set next breakpoint. */
 
-                            if (time < 0.0) {
+                            if (atime < 0.0) {
                                 /* Await first pulse */
 
                                 wait = -time;
-                            } else if (time < TR) {
+                            } else if (atime < TR) {
                                 /* Wait for end of rise. */
 
                                 wait = TR - time;
-                            } else if (time < TR + PW) {
+                            } else if (atime < TR + PW) {
                                 /* Wait for fall. */
 
                                 wait = TR + PW - time;
-                            } else if (time < TR + PW + TF) {
+                            } else if (atime < TR + PW + TF) {
                                 /* Wait for end of fall. */
 
                                 wait = TR + PW + TF - time;
                             } else {
                                 /* Wait for next pulse. */
+
                                 wait = PER - time;
                             }
                             here->VSRCbreak_time = ckt->CKTtime + wait;
@@ -160,7 +169,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                     case PWL:
                         if (ckt->CKTtime >= here->VSRCbreak_time) {
-                            double time, end, period;
+                            double time, atime, end, period;
                             int    i;
 
                             time = ckt->CKTtime - here->VSRCrdelay;
@@ -183,10 +192,18 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                                 }
                             }
 
+                            /* A request for a breakpoint very close
+                             * to the current time will be ignored.
+                             * Adjust so the next corner will be
+                             * selected.
+                             */
+
+                            atime = time + ckt->CKTminBreak;
+
                             for (i = 0;
                                  i < here->VSRCfunctionOrder;
                                  i += 2) {
-                                if (here->VSRCcoeffs[i] > time) {
+                                if (here->VSRCcoeffs[i] > atime) {
                                     here->VSRCbreak_time =
                                         ckt->CKTtime +
                                             here->VSRCcoeffs[i] - time;
@@ -257,7 +274,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         if (ckt->CKTtime >=
                                 state->RTScapTime - ckt->CKTminBreak &&
                             ckt->CKTtime <=
-                            state->RTScapTime + ckt->CKTminBreak) {
+                                state->RTScapTime + ckt->CKTminBreak) {
                             error = CKTsetBreak(ckt, state->RTSemTime);
                             if(error)
                                 return(error);
