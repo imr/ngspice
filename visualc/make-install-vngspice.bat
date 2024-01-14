@@ -34,7 +34,7 @@ goto end
 
 :b64
 
-set dst=c:\Spice64_KLU
+set dst=c:\Spice64
 set cmsrc=.\codemodels\x64\Release
 
 mkdir %dst%\bin
