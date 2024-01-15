@@ -409,7 +409,7 @@ new_gmin(CKTcircuit* ckt, long int firstmode,
             }
 
             if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4))
-                factor = MAX(sqrt(factor), 1.00005);
+                factor = MAX(sqrt(factor), 3);
 
             OldGmin = ckt->CKTgmin;
 

@@ -197,9 +197,14 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         if((!model->DIOresistGiven) || (model->DIOresist==0)) {
             if (newcompat.ps || newcompat.lt) {
-                model->DIOconductance = 1e4; /* improved convergence */
-                if (ft_ngdebug)
-                    fprintf(stderr, "Diode series resistance in model %s set to 100 microOhm\n", model->gen.GENmodName);
+                double rsdiode = 0.;
+                if (cp_getvar("rsdiode", CP_REAL, &rsdiode, 0) && rsdiode > 0) {
+                    model->DIOconductance = 1./rsdiode; /* sometimes improves convergence */
+                    if (ft_ngdebug)
+                        fprintf(stderr, "Diode series resistance in model %s set to 100 microOhm\n", model->gen.GENmodName);
+                }
+                else
+                    model->DIOconductance = 0.0;
             }
             else
                 model->DIOconductance = 0.0;

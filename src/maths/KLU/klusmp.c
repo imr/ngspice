@@ -535,6 +535,10 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
 
         if (ret == 0)
         {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
+                fprintf(stderr, "Error (ReFactor Complex): KLUcommon object is NULL. A problem occurred\n");
+                return 0 ;
+            }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 if (ft_ngdebug) {
                     fprintf(stderr, "Warning (ReFactor Complex): KLU Matrix is SINGULAR\n");
@@ -542,9 +546,6 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
                     fprintf(stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1);
                 }
                 return E_SINGULAR ;
-            }
-            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
-                fprintf (stderr, "Error (ReFactor Complex): KLUcommon object is NULL. A problem occurred\n") ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {

@@ -8035,7 +8035,6 @@ static int inp_vdmos_model(struct card *deck)
                         wl_append_word(NULL, &wl, token);
                     else {
                         tfree(token);
-                        break;
                     }
                     if (*cut_line == ')' || *cut_line == '\0') {
                         wl_append_word(NULL, &wl, copy(")"));

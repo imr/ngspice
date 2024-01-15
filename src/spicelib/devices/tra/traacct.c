@@ -107,19 +107,16 @@ TRAaccept(CKTcircuit *ckt, GENmodel *inModel)
                         here->TRAabstol) ||
                         (fabs(d3-d4) >= here->TRAreltol*MAX(fabs(d3),fabs(d4))+
                         here->TRAabstol) ) {
-                    /* derivitive changing - need to schedule after delay */
-                    /*printf("%s:  at %g set for %g\n",here->TRAname,
-                        ckt->CKTtime,
-                        *(here->TRAdelays+3*here->TRAsizeDelay-3)+here->TRAtd
-                        );*/
-                    /*printf("%g, %g, %g -> %g, %g \n",v1,v2,v3,d1,d2);*/
-                    /*printf("%g, %g, %g -> %g, %g \n",v4,v5,v6,d3,d4);*/
-                    /* also set for break after PREVIOUS point */
-                    /*printf("setting break\n");*/
-                    error = CKTsetBreak(ckt,
-                            *(here->TRAdelays+3*here->TRAsizeDelay -3) +
-                            here->TRAtd);
-                    if(error) return(error);
+                    double when;
+
+                    /* Derivative changed - need to schedule after delay */
+
+                    when = *(here->TRAdelays + 3 * here->TRAsizeDelay - 3) +
+                               here->TRAtd;
+                    if (when > ckt->CKTtime) {
+                        error = CKTsetBreak(ckt, when);
+                        if(error) return(error);
+                    }
                 }
 #endif /*NOTDEF*/
             }
