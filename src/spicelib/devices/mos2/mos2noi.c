@@ -98,7 +98,6 @@ MOS2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 				 exp(model->MOS2fNexp *
 				 log(MAX(fabs(inst->MOS2cd),N_MINLOG))) /
 				 (data->freq * inst->MOS2w *
-				 inst->MOS2m * 
 				 (inst->MOS2l - 2*model->MOS2latDiff) *
 				 model->MOS2oxideCapFactor * model->MOS2oxideCapFactor);
 		    lnNdens[MOS2FLNOIZ] = 
