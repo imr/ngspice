@@ -59,11 +59,10 @@
 #include "ngspice/udevices.h"
 #include "ngspice/logicexp.h"
 #include "ngspice/dstring.h"
+#include "ngspice/hash.h"
 
 extern struct card* insert_new_line(
     struct card* card, char* line, int linenum, int linenum_orig);
-
-//#define TRACE
 
 /* device types */
 #define D_AND    0
@@ -169,22 +168,22 @@ struct dltch_instance {
 };
 
 /* structs for instances and timing models which have been translated */
-typedef struct s_xlate *Xlatep;
+typedef struct s_xlate *Xlate_datap;
 typedef struct s_xlate {
-    Xlatep next;
+    Xlate_datap next;
     char *translated;  // the translated instance line
     char *delays;      // the delays from the pspice timing model
     char *utype;       // pspice model type ugate, utgate, ueff, ugff, udly
     char *xspice;      // xspice device type such as d_and, d_dff, etc.
     char *tmodel;      // timing model name of pspice instance or model
     char *mname;       // name of the xspice timing model of the instance
-} Xlate;
+} Xlate_data;
 
 typedef struct s_xlator *Xlatorp;
 typedef struct s_xlator {
-    Xlatep head;
-    Xlatep tail;
-    Xlatep iter;
+    Xlate_datap head;
+    Xlate_datap tail;
+    Xlate_datap iter;
 } Xlator;
 
 /* For timing model extraction */
@@ -211,10 +210,7 @@ struct name_entry {
 
 static char *get_zero_rise_fall(void);
 static char *get_name_hilo(char *tok_str);
-
-#ifdef TRACE
-static void print_name_list(NAME_ENTRY nelist);
-#endif
+static char *get_current_tmodel(void);
 
 static NAME_ENTRY new_name_entry(char *name)
 {
@@ -261,18 +257,10 @@ static NAME_ENTRY find_name_entry(char *name, NAME_ENTRY nelist)
     return NULL;
 }
 
-static void clear_name_list(NAME_ENTRY nelist, char *msg)
+static void clear_name_list(NAME_ENTRY nelist)
 {
-    NG_IGNORE(msg);
-
     NAME_ENTRY x = NULL, next = NULL;
     if (!nelist) { return; }
-#ifdef TRACE
-    printf("%s\n", msg);
-    print_name_list(nelist);
-#else
-    (void)msg;
-#endif
     for (x = nelist; x; x = next) {
         next = x->next;
         if (x->name) { tfree(x->name); }
@@ -280,25 +268,13 @@ static void clear_name_list(NAME_ENTRY nelist, char *msg)
     }
 }
 
-#ifdef TRACE
-static void print_name_list(NAME_ENTRY nelist)
-{
-    NAME_ENTRY x = NULL;
-    int count = 0;
-    if (!nelist) { return; }
-    for (x = nelist; x; x = x->next) {
-        printf("%s\n", x->name);
-        count++;
-    }
-    printf("NAME_COUNT %d\n", count);
-}
-#endif
-
 /*
   static data cleared and reset by initialize_udevice(),
   cleared by cleanup_udevice().
 */
-static int ps_port_directions = 0;  // If non-zero list subckt port directions
+static int ps_global_tmodels = 0;  // If non-zero collect global tmodels
+static int ps_global_hash_table = 1; // Use hash table for global tmodel names
+static int ps_ports_and_pins = 0;  // If non-zero list subckt port directions
 static int ps_udevice_msgs = 0;  // Controls the verbosity of U* warnings
 /*
   If ps_udevice_exit is non-zero then exit when u_process_instance fails
@@ -461,9 +437,9 @@ static void add_all_port_names(char *subckt_line)
     if (!subckt_line) {
         return;
     }
-    if (ps_port_directions & 4) {
+    if (ps_ports_and_pins & 4) {
         printf("TRANS_IN  %s\n", subckt_line);
-    } else if (ps_port_directions & 1) {
+    } else if (ps_ports_and_pins & 1) {
         printf("%s\n", subckt_line);
     }
     copy_line = tprintf("%s", subckt_line);
@@ -618,15 +594,15 @@ static char *find_xspice_for_delay(char *itype)
 }
 
 /* NOTE
-  Xlator and Xlate
-  Xlate struct data is stored in an Xlator list struct.
+  Xlator and Xlate_data
+  Xlate_data struct is stored in an Xlator list struct.
   Used to save translated instance and model statements.
-  After an Xlator has been created, Xlate data is generated via
+  After an Xlator has been created, Xlate_data is generated via
   create_xlate() and entered into the Xlator by add_xlator().
   A first_xlator() ... next_xlator() iteration loop will retrieve
-  the Xlate data entries in an Xlator.
+  the Xlate_data entries in an Xlator.
 */
-static void delete_xlate(Xlatep p)
+static void delete_xlate(Xlate_datap p)
 {
     if (p) {
         if (p->translated) { tfree(p->translated); }
@@ -640,13 +616,13 @@ static void delete_xlate(Xlatep p)
     return;
 }
 
-static Xlatep create_xlate(char *translated, char *delays, char *utype,
+static Xlate_datap create_xlate(char *translated, char *delays, char *utype,
     char *xspice, char *tmodel, char *mname)
 {
     /* Any unused parameter is called with an empty string "" */
-    Xlatep xlp;
+    Xlate_datap xlp;
 
-    xlp = TMALLOC(Xlate, 1);
+    xlp = TMALLOC(Xlate_data, 1);
     xlp->next = NULL;
     xlp->translated = TMALLOC(char, strlen(translated) + 1);
     strcpy(xlp->translated, translated);
@@ -663,12 +639,12 @@ static Xlatep create_xlate(char *translated, char *delays, char *utype,
     return xlp;
 }
 
-static Xlatep create_xlate_translated(char *translated)
+static Xlate_datap create_xlate_translated(char *translated)
 {
     return create_xlate(translated, "", "", "", "", "");
 }
 
-static Xlatep create_xlate_instance(
+static Xlate_datap create_xlate_instance(
     char *translated, char *xspice, char *tmodel, char *mname)
 {
     return create_xlate(translated, "", "", xspice, tmodel, mname);
@@ -687,7 +663,7 @@ static Xlatorp create_xlator(void)
 
 static void delete_xlator(Xlatorp xp)
 {
-    Xlatep x, next;
+    Xlate_datap x, next;
 
     if (xp) {
         if (xp->head) {
@@ -705,9 +681,9 @@ static void delete_xlator(Xlatorp xp)
     return;
 }
 
-static Xlatorp add_xlator(Xlatorp xp, Xlatep x)
+static Xlatorp add_xlator(Xlatorp xp, Xlate_datap x)
 {
-    Xlatep prev;
+    Xlate_datap prev;
 
     if (!xp || !x) { return NULL; }
     if (!xp->head) {
@@ -724,9 +700,9 @@ static Xlatorp add_xlator(Xlatorp xp, Xlatep x)
     return xp;
 }
 
-static Xlatep first_xlator(Xlatorp xp)
+static Xlate_datap first_xlator(Xlatorp xp)
 {
-    Xlatep xret;
+    Xlate_datap xret;
 
     if (!xp) { return NULL; }
     xp->iter = xp->head;
@@ -739,9 +715,9 @@ static Xlatep first_xlator(Xlatorp xp)
     }
 }
 
-static Xlatep next_xlator(Xlatorp xp)
+static Xlate_datap next_xlator(Xlatorp xp)
 {
-    Xlatep ret;
+    Xlate_datap ret;
 
     if (!xp) { return NULL; }
     ret = xp->iter;
@@ -754,7 +730,7 @@ static Xlatep next_xlator(Xlatorp xp)
 
 static Xlatorp append_xlator(Xlatorp dest, Xlatorp src)
 {
-    Xlatep x1, copy;
+    Xlate_datap x1, copy;
 
     if (!dest || !src) { return NULL; }
     for (x1 = first_xlator(src); x1; x1 = next_xlator(src)) {
@@ -765,8 +741,13 @@ static Xlatorp append_xlator(Xlatorp dest, Xlatorp src)
     return dest;
 }
 
-/* static Xlatorp for collecting timing model delays */
+/* static Xlatorp for collecting subckt timing model delays */
 static Xlatorp model_xlatorp = NULL;
+
+/* static Xlatorp for collecting global timing model delays */
+static Xlatorp global_model_xlatorp = NULL;
+/* global model hash table */
+static NGHASHPTR global_model_hash_table = NULL;
 
 /* static Xlatorp for default zero delay models */
 static Xlatorp default_models = NULL;
@@ -794,7 +775,7 @@ struct card *replacement_udevice_cards(void)
 {
     struct card *newcard = NULL, *nextcard = NULL;
     char *new_str = NULL;
-    Xlatep x;
+    Xlate_datap x;
     int count = 0;
 
     if (!translated_p) { return NULL; }
@@ -831,25 +812,33 @@ struct card *replacement_udevice_cards(void)
         translated_p = add_xlator(translated_p, x);
 
     }
-    if (current_subckt && (ps_port_directions & 2)) {
+    if (current_subckt && (ps_ports_and_pins & 2)) {
+        DS_CREATE(ds_tmp, 128);
         char *tmp = NULL, *pos = NULL, *posp = NULL;
         tmp = TMALLOC(char, strlen(current_subckt) + 1);
         (void) memcpy(tmp, current_subckt, strlen(current_subckt) + 1);
         pos = strstr(tmp, "optional:");
         posp = strstr(tmp, "params:");
+        ds_clear(&ds_tmp);
         /* If there is an optional: and a param: then posp > pos */
         if (pos) {
             /* Remove the optional: section if present */
             *pos = '\0';
             if (posp) {
-                strcat(tmp, posp);
+                ds_cat_str(&ds_tmp, tmp);
+                ds_cat_str(&ds_tmp, posp);
+                printf("\nTRANS_OUT  %s\n", ds_get_buf(&ds_tmp));
+            } else {
+                printf("\nTRANS_OUT  %s\n", tmp);
             }
+        } else {
+            printf("\nTRANS_OUT  %s\n", tmp);
         }
-        printf("\nTRANS_OUT  %s\n", tmp);
         tfree(tmp);
+        ds_free(&ds_tmp);
     }
     for (x = first_xlator(translated_p); x; x = next_xlator(translated_p)) {
-        if (ps_port_directions & 2) {
+        if (ps_ports_and_pins & 2) {
             printf("TRANS_OUT  %s\n", x->translated);
         }
         new_str = copy(x->translated);
@@ -864,7 +853,7 @@ struct card *replacement_udevice_cards(void)
             nextcard = insert_new_line(nextcard, new_str, 0, 0);
         }
     }
-    if (current_subckt && (ps_port_directions & 2)) {
+    if (current_subckt && (ps_ports_and_pins & 2)) {
         char *p1 = NULL, *p2 = NULL;
         DS_CREATE(tmpds, 64);
         p1 = strstr(current_subckt, ".subckt");
@@ -881,7 +870,7 @@ struct card *replacement_udevice_cards(void)
 
 void u_add_instance(char *str)
 {
-    Xlatep x;
+    Xlate_datap x;
 
     if (str && strlen(str) > 0) {
         x = create_xlate_translated(str);
@@ -904,8 +893,48 @@ void u_add_logicexp_model(char *tmodel, char *xspice_gate, char *model_name)
 
 void initialize_udevice(char *subckt_line)
 {
-    Xlatep xdata;
+    /* If this has been called before, make sure you have called
+     * the corresponding cleanup_udevice.
+     * After call with NULL subckt_line, cleanup_udevice(TRUE).
+     * After call with non-NULL subckt_line, cleanup_udevice(FALSE).
+     */
+    Xlate_datap xdata;
 
+    if (!cp_getvar("ps_global_tmodels", CP_NUM, &ps_global_tmodels, 0)) {
+        ps_global_tmodels = 0;
+    }
+    if (!cp_getvar("ps_global_hash_table", CP_NUM, &ps_global_hash_table, 0)) {
+        ps_global_hash_table = 1;
+    }
+    /*
+      Use tpzh.., tpzl.., tphz.., tplz.. for tristates
+      if they are the only delays.
+    */
+    if (!cp_getvar("ps_tpz_delays", CP_NUM, &ps_tpz_delays, 0)) {
+        ps_tpz_delays = 1; // default: use tpz... delays if necessary
+    }
+    if (!cp_getvar("ps_use_mntymx", CP_NUM, &ps_use_mntymx, 0)) {
+        ps_use_mntymx = 4; // default: typ + shorter delays
+    }
+    set_u_devices_info(ps_use_mntymx);
+
+    /* if subckt_line is NULL only create the global model xlator */
+    if (!subckt_line) {
+        global_model_xlatorp = NULL;
+        global_model_hash_table = NULL;
+        if (!ps_global_tmodels) return;
+
+        global_model_xlatorp = create_xlator();
+        if (ps_global_hash_table) {
+            global_model_hash_table = nghash_init(nghash_table_size(101));
+        }
+        if (ps_global_hash_table) {
+            printf("NOTE using global models hash table search\n");
+        } else {
+            printf("NOTE using global models linear list search\n");
+        }
+        return;
+    }
     new_names_list = NULL;
     input_names_list = NULL;
     output_names_list = NULL;
@@ -913,14 +942,14 @@ void initialize_udevice(char *subckt_line)
     port_names_list = NULL;
     num_name_collisions = 0;
     /*
-      Variable ps_port_directions != 0 to turn on pins and ports.
-      If (ps_port_directions & 4) also print the Pspice input lines with
+      Variable ps_ports_and_pins != 0 to turn on pins and ports.
+      If (ps_ports_and_pins & 4) also print the Pspice input lines with
       prefix TRANS_IN.
-      If (ps_port_directions & 2) print translated Xspice equivalent lines
+      If (ps_ports_and_pins & 2) print translated Xspice equivalent lines
       with prefix TRANS_OUT.
     */
-    if (!cp_getvar("ps_port_directions", CP_NUM, &ps_port_directions, 0)) {
-        ps_port_directions = 0;
+    if (!cp_getvar("ps_ports_and_pins", CP_NUM, &ps_ports_and_pins, 0)) {
+        ps_ports_and_pins = 0;
     }
     /*
       Set ps_udevice_msgs to print warnings about PSpice device types.
@@ -936,13 +965,6 @@ void initialize_udevice(char *subckt_line)
     if (!cp_getvar("ps_udevice_exit", CP_NUM, &ps_udevice_exit, 0)) {
         ps_udevice_exit = 0;
     }
-    /*
-      Use tpzh.., tpzl.., tphz.., tplz.. for tristates
-      if they are the only delays.
-    */
-    if (!cp_getvar("ps_tpz_delays", CP_NUM, &ps_tpz_delays, 0)) {
-        ps_tpz_delays = 1; // default: use tpz... delays if necessary
-    }
     /* If non-zero use inverters with ff/latch control inputs */
     if (!cp_getvar("ps_with_inverters", CP_NUM, &ps_with_inverters, 0)) {
         ps_with_inverters = 0;
@@ -951,10 +973,6 @@ void initialize_udevice(char *subckt_line)
     if (!cp_getvar("ps_with_tri_inverters", CP_NUM, &ps_with_tri_inverters, 0)) {
         ps_with_tri_inverters = 0;
     }
-    if (!cp_getvar("ps_use_mntymx", CP_NUM, &ps_use_mntymx, 0)) {
-        ps_use_mntymx = 4; // default: typ + shorter delays
-    }
-    set_u_devices_info(ps_use_mntymx);
 
     if (subckt_line && strncmp(subckt_line, ".subckt", 7) == 0) {
         add_all_port_names(subckt_line);
@@ -992,41 +1010,19 @@ void initialize_udevice(char *subckt_line)
     add_drive_hilo = FALSE;
 }
 
-static void determine_port_type(void)
+void cleanup_udevice(BOOL global)
 {
-    BOOL inp = FALSE, outp = FALSE, tri = FALSE;
-    char *port_type = NULL;
-    NAME_ENTRY x = NULL;
-
-    for (x = port_names_list; x; x = x->next) {
-        inp = (find_name_entry(x->name, input_names_list) ? TRUE : FALSE);
-        outp = (find_name_entry(x->name, output_names_list) ? TRUE : FALSE);
-        tri = (find_name_entry(x->name, tristate_names_list) ? TRUE : FALSE);
-        port_type = "UNKNOWN";
-        if (tri) {
-            if (outp && inp) {
-                port_type = "INOUT";
-            } else if (outp) {
-                port_type = "OUT";
-            }
-        } else {
-            if (outp && inp) {
-                port_type = "OUT";
-            } else if (outp) {
-                port_type = "OUT";
-            } else if (inp) {
-                port_type = "IN";
-            }
+    if (global) {
+        if (global_model_xlatorp) {
+            delete_xlator(global_model_xlatorp);
         }
-        if (ps_port_directions & 1) {
-            printf("port: %s %s\n", x->name, port_type);
+        global_model_xlatorp = NULL;
+        if (global_model_hash_table) {
+            nghash_free(global_model_hash_table, NULL, NULL);
         }
+        global_model_hash_table = NULL;
+        return;
     }
-}
-
-void cleanup_udevice(void)
-{
-    determine_port_type();
     cleanup_translated_xlator();
     delete_xlator(model_xlatorp);
     model_xlatorp = NULL;
@@ -1034,15 +1030,15 @@ void cleanup_udevice(void)
     default_models = NULL;
     add_zero_delay_inverter_model = FALSE;
     add_drive_hilo = FALSE;
-    clear_name_list(input_names_list, "INPUT_PINS");
+    clear_name_list(input_names_list);
     input_names_list = NULL;
-    clear_name_list(output_names_list, "OUTPUT_PINS");
+    clear_name_list(output_names_list);
     output_names_list = NULL;
-    clear_name_list(tristate_names_list, "TRISTATE_PINS");
+    clear_name_list(tristate_names_list);
     tristate_names_list = NULL;
-    clear_name_list(port_names_list, "PORT_NAMES");
+    clear_name_list(port_names_list);
     port_names_list = NULL;
-    clear_name_list(new_names_list, "NEW_NAMES");
+    clear_name_list(new_names_list);
     new_names_list = NULL;
     if (current_subckt) {
         tfree(current_subckt);
@@ -1051,16 +1047,16 @@ void cleanup_udevice(void)
     subckt_msg_count = 0;
 }
 
-static Xlatep create_xlate_model(char *delays,
+static Xlate_datap create_xlate_model(char *delays,
     char *utype, char *xspice, char *tmodel)
 {
     return create_xlate("", delays, utype, xspice, tmodel, "");
 }
 
-static Xlatep find_tmodel_in_xlator(Xlatep x, Xlatorp xlp)
+static Xlate_datap find_tmodel_in_xlator(Xlate_datap x, Xlatorp xlp)
 {
     /* Only for timing model xlators */
-    Xlatep x1;
+    Xlate_datap x1;
 
     if (!x) { return NULL; }
     if (!xlp) { return NULL; }
@@ -1074,37 +1070,109 @@ static Xlatep find_tmodel_in_xlator(Xlatep x, Xlatorp xlp)
     return NULL;
 }
 
-static Xlatep find_in_model_xlator(Xlatep x)
+static Xlate_datap find_global_model_from_table(Xlate_datap x)
 {
-    Xlatep x1;
+    Xlate_datap xglobal = NULL;
 
-    x1 = find_tmodel_in_xlator(x, model_xlatorp);
-    if (x1) { return x1; }
+    if (global_model_hash_table) {
+        DS_CREATE(ds_key, 32);
+
+        ds_cat_printf(&ds_key, "%s", x->tmodel);
+        if (x->xspice && strlen(x->xspice) > 0) {
+            ds_cat_printf(&ds_key, "___%s", x->xspice);
+        }
+        xglobal = (Xlate_datap) nghash_find(global_model_hash_table,
+            ds_get_buf(&ds_key));
+        ds_free(&ds_key);
+    }
+    return xglobal;
+}
+
+static void *insert_global_model_in_table(Xlate_datap x)
+{
+    void *inserted = NULL;
+
+    if (global_model_hash_table) {
+        Xlate_datap xglobal = NULL;
+        DS_CREATE(ds_key, 32);
+
+        ds_clear(&ds_key);
+        ds_cat_printf(&ds_key, "%s", x->tmodel);
+        if (x->xspice && strlen(x->xspice) > 0) {
+            ds_cat_printf(&ds_key, "___%s", x->xspice);
+        }
+        xglobal = (Xlate_datap) nghash_find(global_model_hash_table,
+            ds_get_buf(&ds_key));
+        if (!xglobal) {
+            inserted = nghash_insert(global_model_hash_table,
+                ds_get_buf(&ds_key), x);
+        } else {
+            inserted = NULL;
+        }
+        ds_free(&ds_key);
+    }
+    return inserted;
+}
+
+static Xlate_datap find_in_model_xlator(Xlate_datap x, BOOL global)
+{
+    Xlate_datap x1 = NULL;
+
+    /* for global timing models do not search the default models */
+    if (global) {
+        if (!ps_global_tmodels) return NULL;
+
+        if (ps_global_hash_table) {
+            if (global_model_hash_table) {
+                x1 = find_global_model_from_table(x);
+                return x1;
+            }
+        } else {
+            if (global_model_xlatorp) {
+                x1 = find_tmodel_in_xlator(x, global_model_xlatorp);
+                return x1;
+            }
+        }
+        return NULL;
+    } else {
+        if (model_xlatorp) {
+            x1 = find_tmodel_in_xlator(x, model_xlatorp);
+            if (x1) { return x1; }
+        }
+    }
+    /* If the timing model is not found local to the subckt,
+     * search for a default model
+     */
     x1 = find_tmodel_in_xlator(x, default_models);
     return x1;
 }
 
 static void add_delays_to_model_xlator(char *delays,
-    char *utype, char *xspice, char *tmodel)
+    char *utype, char *xspice, char *tmodel, BOOL global)
 {
     /*
       Specify xspice as "d_dlatch" or "d_srlatch" for ugff
       otherwise xspice == ""
     */
-    Xlatep x = NULL, x1 = NULL;
+    Xlate_datap x = NULL, x1 = NULL;
+    Xlatorp xlp = NULL;
 
-    if (!model_xlatorp) { return; }
+    if (global) {
+        xlp = global_model_xlatorp;
+    } else {
+        xlp = model_xlatorp;
+    }
+    if (!xlp) { return; }
     x = create_xlate_model(delays, utype, xspice, tmodel);
-    x1 = find_in_model_xlator(x);
+    x1 = find_in_model_xlator(x, global);
     if (x1) {
-/*
-        printf("Already found timing model %s utype %s\n",
-             x1->tmodel, x1->utype);
-*/
         delete_xlate(x);
         return;
     }
-    (void) add_xlator(model_xlatorp, x);
+    (void) add_xlator(xlp, x);
+    if (global && ps_global_hash_table) {
+        (void) insert_global_model_in_table(x);
+    }
 }
 
 /* classify gate variants */
@@ -1661,7 +1729,7 @@ static char *new_inverter(char *iname, char *node, Xlatorp xlp)
     /* Return the name of the output of the new inverter */
     /* tfree the returned string after it has been used by the caller */
     char *tmp = NULL, *instance_name = NULL, *not_node = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
 
     instance_name = tprintf("a%s_%s", iname, node);
     not_node = tprintf("not_%s", instance_name);
@@ -1691,7 +1759,7 @@ static BOOL gen_timing_model(
       The new .model statement is added to the Xlatorp of the translated
       xspice instance and model lines (not to be confused with model_xlatorp.
     */
-    Xlatep xin = NULL, xout = NULL, newdata;
+    Xlate_datap xin = NULL, xout = NULL, newdata;
     char *s1;
     BOOL retval;
 
@@ -1700,7 +1768,10 @@ static BOOL gen_timing_model(
     } else {
         xin = create_xlate_model("", utype, "", tmodel);
     }
-    xout = find_in_model_xlator(xin);
+    xout = find_in_model_xlator(xin, FALSE); // local timing model
+    if (!xout) {
+        xout = find_in_model_xlator(xin, TRUE); // global timing model
+    }
     if (xout) {
         /* Don't delete xout or the model_xlatorp will be corrupted */
         if (xout->delays && strlen(xout->delays) > 0) {
@@ -1727,7 +1798,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip, int withinv)
     int i, num_gates;
     char *modelnm, *s1;
     Xlatorp xxp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
     DS_CREATE(tmpdstr, 128);
 
@@ -1839,7 +1910,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip, int withinv)
     int i, num_gates;
     char *modelnm, *s1;
     Xlatorp xxp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
     DS_CREATE(tmpdstr, 128);
 
@@ -1958,7 +2029,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip, int withinv)
     int i, num_gates;
     char *modelnm, *s1, *s2, *s3;
     Xlatorp xxp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
 
     if (!ip) { return NULL; }
@@ -2073,7 +2144,7 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp, int withinv)
     int i, num_gates;
     char *modelnm, *s1, *s2, *s3;
     Xlatorp xxp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
 
     if (!srffp) { return NULL; }
@@ -2196,7 +2267,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     char *high_name = NULL, *low_name = NULL;
     char *zero_delay_str = NULL;
     Xlatorp xxp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
     DS_CREATE(tmp_dstr, 128);
 
     if (!compi) {
@@ -2347,7 +2418,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     char *instance_name = NULL;
     int i, j, k, width, num_gates, num_ins, num_outs;
     Xlatorp xxp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
     int withinv = ps_with_tri_inverters;
     BOOL inv3_to_buf3 = FALSE;
     BOOL inv3a_to_buf3a = FALSE;
@@ -2551,9 +2622,9 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
          to the model of a trailing tristate buffer.
         */
         if (inv3a_to_buf3a) {
-            primary_model = tprintf("d_a%s_%s", iname, "buf3a"); 
+            primary_model = tprintf("d_a%s_%s", iname, "buf3a");
         } else {
-            primary_model = tprintf("d_a%s_%s", iname, itype); 
+            primary_model = tprintf("d_a%s_%s", iname, itype);
         }
         for (i = 0; i < num_gates; i++) {  // start of for each gate
             /* inputs */
@@ -2764,7 +2835,7 @@ static void estimate_typ(struct timing_data *tdp)
     char *tmpmax = NULL, *tmpmin = NULL;
     char *min, *typ, *max;
     float valmin, valmax, average;
-    char *units1, *units2;
+    char *unitsmin, *unitsmax, *tmodel = NULL;
 
     if (!tdp) { return; }
     min = tdp->min;
@@ -2783,12 +2854,32 @@ static void estimate_typ(struct timing_data *tdp)
     }
     if (tmpmin && tmpmax) {
         if (strlen(tmpmin) > 0 && strlen(tmpmax) > 0) {
-            valmin = strtof(tmpmin, &units1);
-            valmax = strtof(tmpmax, &units2);
-            average = (float)((valmin + valmax) / 2.0);
-            tdp->ave = tprintf("%.2f%s", average, units2);
-            if (!eq(units1, units2)) {
-                printf("WARNING units do not match\n");
+            valmin = strtof(tmpmin, &unitsmin);
+            valmax = strtof(tmpmax, &unitsmax);
+            if (!eq(unitsmin, unitsmax)) {
+                printf("WARNING estimate_typ units do not match"
+                       " min %s max %s", tmpmin, tmpmax);
+                if (unitsmin[0] == unitsmax[0]) {
+                    average = (valmin + valmax) / (float)2.0;
+                    tdp->ave = tprintf("%.2f%cs", average, unitsmin[0]);
+                } else if (unitsmin[0] == 'p' && unitsmax[0] == 'n') {
+                    valmax = (float)1000.0 * valmax;
+                    average = (valmin + valmax) / (float)2.0;
+                    tdp->ave = tprintf("%.2fps", average);
+                } else if (unitsmin[0] == 'n' && unitsmax[0] == 'p') {
+                    tdp->ave = tprintf("%.2fns", valmin);
+                } else {
+                    tdp->ave = tprintf("%.2f%s", valmin, unitsmin);
+                }
+                tmodel = get_current_tmodel();
+                if (tmodel) {
+                    printf(" using delay %s tmodel %s\n", tdp->ave, tmodel);
+                } else {
+                    printf(" using delay %s\n", tdp->ave);
+                }
+            } else {
+                average = (float)((valmin + valmax) / 2.0);
+                tdp->ave = tprintf("%.2f%s", average, unitsmax);
             }
             tdp->estimate = EST_AVE;
             return;
@@ -2854,20 +2945,37 @@ static char *select_delay(char *delay1, char *delay2)
     */
     float val1, val2;
     char *units1, *units2;
+    char *tmodel = NULL;
+    BOOL warns = FALSE;
 
     val1 = strtof(delay1, &units1);
     val2 = strtof(delay2, &units2);
     if (!eq(units1, units2)) {
-        printf("WARNING units do not match\n");
+        printf("WARNING select_delay units do not match"
+               " min %s max %s", delay1, delay2);
+        warns = TRUE;
+        tmodel = get_current_tmodel();
+        if (tmodel) {
+            printf(" tmodel %s", tmodel);
+        }
     }
     if (mntymx_shorter.shorter_delays) {
         if (val1 <= val2) {
+            if (warns) {
+                printf(" using delay %s\n", delay1);
+            }
             return delay1;
         }
     } else {
         if (val1 >= val2) {
+            if (warns) {
+                printf(" using delay %s\n", delay1);
+            }
             return delay1;
         }
+    }
+    if (warns) {
+        printf(" using delay %s\n", delay2);
     }
     return delay2;
 }
@@ -3196,7 +3304,25 @@ static char *get_delays_ugff(char *rem, char *d_name)
     return delays;
 }
 
-static BOOL u_process_model(char *nline, char *original)
+static char *current_tmodel = NULL;
+static void set_current_tmodel(char *tmodel)
+{
+    if (current_tmodel) {
+        tfree(current_tmodel);
+        current_tmodel = NULL;
+    }
+    if (tmodel) {
+        current_tmodel = (char *)TMALLOC(char, strlen(tmodel) + 1);
+        strcpy(current_tmodel,tmodel);
+    }
+}
+
+static char *get_current_tmodel(void)
+{
+    return current_tmodel;
+}
+
+static BOOL u_process_model(char *nline, char *original, BOOL global)
 {
     char *tok, *remainder, *delays = NULL, *utype, *tmodel;
     BOOL retval = TRUE;
@@ -3209,6 +3335,7 @@ static BOOL u_process_model(char *nline, char *original)
     if (!tok) { return FALSE; }
     tmodel = TMALLOC(char, strlen(tok) + 1);
     memcpy(tmodel, tok, strlen(tok) + 1);
+    set_current_tmodel(tmodel);
     /* model utype */
     tok = strtok(NULL, " \t(");
     if (!tok) { tfree(tmodel); return FALSE; }
@@ -3221,26 +3348,26 @@ static BOOL u_process_model(char *nline, char *original)
         if (eq(utype, "ugate")) {
             delays = get_delays_ugate(remainder);
             add_delays_to_model_xlator((delays ? delays : ""),
-                utype, "", tmodel);
+                utype, "", tmodel, global);
             if (delays) { tfree(delays); }
         } else if (eq(utype, "utgate")) {
             delays = get_delays_utgate(remainder);
             add_delays_to_model_xlator((delays ? delays : ""),
-                utype, "", tmodel);
+                utype, "", tmodel, global);
             if (delays) { tfree(delays); }
         } else if (eq(utype, "ueff")) {
             delays = get_delays_ueff(remainder);
             add_delays_to_model_xlator((delays ? delays : ""),
-                utype, "", tmodel);
+                utype, "", tmodel, global);
             if (delays) { tfree(delays); }
         } else if (eq(utype, "ugff")) {
             delays = get_delays_ugff(remainder, "d_dlatch");
             add_delays_to_model_xlator((delays ? delays : ""),
-                utype, "d_dlatch", tmodel);
+                utype, "d_dlatch", tmodel, global);
             if (delays) { tfree(delays); }
             delays = get_delays_ugff(remainder, "d_srlatch");
             add_delays_to_model_xlator((delays ? delays : ""),
-                utype, "d_srlatch", tmodel);
+                utype, "d_srlatch", tmodel, global);
             if (delays) { tfree(delays); }
         } else if (eq(utype, "uio")) {
             /* skip uio models */
@@ -3249,7 +3376,7 @@ static BOOL u_process_model(char *nline, char *original)
         } else if (eq(utype, "udly")) {
             delays = get_delays_udly(remainder);
             add_delays_to_model_xlator((delays ? delays : ""),
-                utype, "", tmodel);
+                utype, "", tmodel, global);
             if (delays) { tfree(delays); }
         } else {
             retval = FALSE;
@@ -3258,6 +3385,7 @@ static BOOL u_process_model(char *nline, char *original)
     } else {
             retval = FALSE;
     }
+    set_current_tmodel(NULL);
     tfree(tmodel);
     tfree(utype);
     return retval;
@@ -3931,7 +4059,7 @@ static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
     char *model_name = NULL, *inst_stmt = NULL, *model_stmt = NULL;
     int i, numpulls;
     Xlatorp xp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
 
     itype = hdr->instance_type;
     iname = hdr->instance_name;
@@ -3974,7 +4102,7 @@ static Xlatorp translate_dlyline(struct instance_hdr *hdr, char *start)
     char *itype, *iname, *newline = NULL, *tok;
     char *model_name = NULL, *tmodel = NULL;
     Xlatorp xp = NULL;
-    Xlatep xdata = NULL;
+    Xlate_datap xdata = NULL;
     DS_CREATE(statement, 128);
 
     itype = hdr->instance_type;
@@ -4168,7 +4296,7 @@ BOOL u_process_instance(char *nline)
     if (!xspice) {
         if (eq(itype, "logicexp")) {
             delete_instance_hdr(hdr);
-            if (ps_port_directions & 4) {
+            if (ps_ports_and_pins & 4) {
                 printf("TRANS_IN  %s\n", nline);
             }
             behav_ret = f_logicexp(nline);
@@ -4183,7 +4311,7 @@ BOOL u_process_instance(char *nline)
             return behav_ret;
         } else if (eq(itype, "pindly")) {
             delete_instance_hdr(hdr);
-            if (ps_port_directions & 4) {
+            if (ps_ports_and_pins & 4) {
                 printf("TRANS_IN  %s\n", nline);
             }
             behav_ret = f_pindly(nline);
@@ -4204,7 +4332,7 @@ BOOL u_process_instance(char *nline)
             return FALSE;
         }
     }
-    if (ps_port_directions & 4) {
+    if (ps_ports_and_pins & 4) {
         printf("TRANS_IN  %s\n", nline);
     }
     /* Skip past instance name, type, pwr, gnd */
@@ -4261,7 +4389,7 @@ BOOL u_process_instance(char *nline)
   a Pspice .model timing model statement with all the '+' continuations
   added minus the '+'.
 */
-BOOL u_process_model_line(char *line)
+BOOL u_process_model_line(char *line, BOOL global)
 {
     /* Translate a .model line to find the delays */
     /* Return TRUE if ok */
@@ -4271,12 +4399,12 @@ BOOL u_process_model_line(char *line)
 
     if (n > 0 && line[n] == '\n') line[n] = '\0';
     if (strncmp(line, ".model ", strlen(".model ")) == 0) {
-        if (ps_port_directions & 4) {
+        if (ps_ports_and_pins & 4) {
             printf("TRANS_IN  %s\n", line);
         }
         newline = TMALLOC(char, strlen(line) + 1);
         (void) memcpy(newline, line, strlen(line) + 1);
-        retval = u_process_model(newline, line);
+        retval = u_process_model(newline, line, global);
         tfree(newline);
         return retval;
     } else {
