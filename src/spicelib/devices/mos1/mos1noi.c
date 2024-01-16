@@ -109,7 +109,6 @@ MOS1noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 				 exp(model->MOS1fNexp *
 				 log(MAX(fabs(inst->MOS1cd),N_MINLOG))) /
 				 (data->freq * inst->MOS1w * 
-				 inst->MOS1m *
 				 (inst->MOS1l - 2*model->MOS1latDiff) * coxSquared);
 		    lnNdens[MOS1FLNOIZ] = 
 				 log(MAX(noizDens[MOS1FLNOIZ],N_MINLOG));
