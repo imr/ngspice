@@ -25,6 +25,7 @@
 /* Turn off/on debug tracing */
 #define PRINT_ALL    FALSE
 //#define PRINT_ALL    TRUE
+static char *get_pindly_instance_name(void);
 
 /* Start of btree symbol table */
 #define SYM_INPUT       1
@@ -1222,7 +1223,18 @@ static BOOL gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 if (tok_count != 2) goto gen_error;
             } else if (lex_gate_op(val)) {
                 if (gate_op != 0) {
-                   if (val != gate_op) goto gen_error;
+                    if (val != gate_op) {
+                        fprintf(stderr,
+                        "\nERROR operator precedence parsing is not implemented\n"
+                        " at expression %s\n"
+                        " Please modify the LOGICEXP by inserting parentheses.\n"
+                        " For example change   a & b | c & d & e | f\n"
+                        " to (a & b) | (c & d & e) | f\n"
+                        " to get the desired PSPice precedence rules\n",
+                        t->line
+                        );
+                        goto gen_error;
+                    }
                 }
                 gate_op = val;
             } else {
@@ -1570,6 +1582,7 @@ BOOL f_logicexp(char *line)
     int t, num_ins = 0, num_outs = 0, i;
     char *endp;
     BOOL ret_val = TRUE;
+    char *uname = NULL;
 
     lex_init(line);
     current_lexer = parse_lexer;
@@ -1577,6 +1590,8 @@ BOOL f_logicexp(char *line)
         &parse_lexer->lexer_sym_tab);
     t = lex_scan(); // U*
     if (!expect_token(t, LEX_ID, NULL, TRUE, 1)) goto error_return;
+    uname = (char *)TMALLOC(char, strlen(parse_lexer->lexer_buf) + 1);
+    strcpy(uname, parse_lexer->lexer_buf);
     /* logicexp ( int , int ) */
     t = lex_scan();
     if (!expect_token(t, LEX_ID, "logicexp", TRUE, 2)) goto error_return;
@@ -1653,14 +1668,16 @@ BOOL f_logicexp(char *line)
     current_lexer = NULL;
     if (!ret_val) {
         fprintf(stderr, "ERROR parsing logicexp\n");
-        fprintf(stderr, "ERROR in \"%s\"\n", line);
+        fprintf(stderr, "ERROR in instance %s\n", uname);
         cleanup_parser();
     }
+    if (uname) tfree(uname);
     return ret_val;
 
 error_return:
     delete_lexer(parse_lexer);
     current_lexer = NULL;
+    if (uname) tfree(uname);
     return FALSE;
 }
 
@@ -1877,7 +1894,8 @@ static char *get_typ_estimate(char *min, char *typ, char *max, DSTRING *pds)
 {
     char *tmpmax = NULL, *tmpmin = NULL;
     float valmin, valmax, average;
-    char *units1, *units2;
+    char *unitsmin, *unitsmax;
+    char *instance = NULL;
 
     ds_clear(pds);
     if (typ && strlen(typ) > 0 && typ[0] != '-') {
@@ -1892,12 +1910,33 @@ static char *get_typ_estimate(char *min, char *typ, char *max, DSTRING *pds)
     }
     if (tmpmin && tmpmax) {
         if (strlen(tmpmin) > 0 && strlen(tmpmax) > 0) {
-            valmin = strtof(tmpmin, &units1);
-            valmax = strtof(tmpmax, &units2);
-            average = (valmin + valmax) / (float)2.0;
-            ds_cat_printf(pds, "%.2f%s", average, units2);
-            if (!eq(units1, units2)) {
-                printf("WARNING units do not match\n");
+            valmin = strtof(tmpmin, &unitsmin);
+            valmax = strtof(tmpmax, &unitsmax);
+            if (!eq(unitsmin, unitsmax)) {
+                printf("WARNING typ_estimate units do not match"
+                       " min %s max %s", tmpmin, tmpmax);
+                if (unitsmin[0] == unitsmax[0]) {
+                    average = (valmin + valmax) / (float)2.0;
+                    ds_cat_printf(pds, "%.2f%cs", average, unitsmin[0]);
+                } else if (unitsmin[0] == 'p' && unitsmax[0] == 'n') {
+                    valmax = (float)1000.0 * valmax;
+                    average = (valmin + valmax) / (float)2.0;
+                    ds_cat_printf(pds, "%.2fps", average);
+                } else if (unitsmin[0] == 'n' && unitsmax[0] == 'p') {
+                    ds_cat_printf(pds, "%.2fns", valmin);
+                } else {
+                    ds_cat_printf(pds, "%.2f%s", valmin, unitsmin);
+                }
+                instance = get_pindly_instance_name();
+                printf(" using delay %s", ds_get_buf(pds));
+                if (instance) {
+                    printf(" pindly %s\n", instance);
+                } else {
+                    printf("\n");
+                }
+            } else {
+                average = (valmin + valmax) / (float)2.0;
+                ds_cat_printf(pds, "%.2f%s", average, unitsmax);
             }
             return ds_get_buf(pds);
         }
@@ -2145,6 +2184,7 @@ static BOOL new_gen_output_models(LEXER lx)
             } else if (eq(lx->lexer_buf, "setup_hold")
                 || eq(lx->lexer_buf, "width")
                 || eq(lx->lexer_buf, "freq")
+                || eq(lx->lexer_buf, "boolean")
                 || eq(lx->lexer_buf, "general")) {
                 in_pindly = FALSE;
                 in_tristate = FALSE;
@@ -2160,6 +2200,9 @@ static BOOL new_gen_output_models(LEXER lx)
                     goto err_return;
                 }
                 val = lexer_scan(lx);
+                if (val == ',') {
+                    val = lexer_scan(lx);
+                }
             }
             if (!extract_delay(lx, val, pline_arr, idx, FALSE)) goto err_return;
             for (i = 0; i < arrlen; i++) {
@@ -2178,11 +2221,15 @@ static BOOL new_gen_output_models(LEXER lx)
                     if (prit) { printf("tristate enable %s ", lx->lexer_buf); }
                     val = lexer_scan(lx);
                     if (val != '=') {
-                        goto err_return;
-                    }
-                    val = lexer_scan(lx);
-                    if (val != LEX_ID) {
-                        goto err_return;
+                        // if there is no '=' it must be an enable id
+                        if (val != LEX_ID) {
+                            goto err_return;
+                        }
+                    } else { // enable id follows '='
+                        val = lexer_scan(lx);
+                        if (val != LEX_ID) {
+                            goto err_return;
+                        }
                     }
                     if (prit) { printf("ena \"%s\"\n", lx->lexer_buf); }
                     ds_clear(&enable_name);
@@ -2215,6 +2262,9 @@ static BOOL new_gen_output_models(LEXER lx)
                     goto err_return;
                 }
                 val = lexer_scan(lx);
+                if (val == ',') {
+                    val = lexer_scan(lx);
+                }
             }
             if (!extract_delay(lx, val, pline_arr, idx, TRUE)) goto err_return;
             for (i = 0; i < arrlen; i++) {
@@ -2236,6 +2286,24 @@ err_return:
     return FALSE;
 }
 
+static char *pindly_instance_name = NULL;
+static void set_pindly_instance_name(char *name)
+{
+    if (pindly_instance_name) {
+        tfree(pindly_instance_name);
+        pindly_instance_name = NULL;
+    }
+    if (name) {
+        pindly_instance_name = (char *)TMALLOC(char, strlen(name) + 1);
+        strcpy(pindly_instance_name, name);
+    }
+}
+
+static char *get_pindly_instance_name(void)
+{
+    return pindly_instance_name;
+}
+
 BOOL f_pindly(char *line)
 {
     int t, num_ios = 0, num_ena = 0, num_refs = 0, i;
@@ -2249,6 +2317,7 @@ BOOL f_pindly(char *line)
     current_lexer = lxr;
     t = lexer_scan(lxr); // U*
     if (!expect_token(t, LEX_ID, NULL, TRUE, 50)) goto error_return;
+    set_pindly_instance_name(lxr->lexer_buf);
 
     /* pindly ( int , int, int ) */
     t = lexer_scan(lxr);
@@ -2330,20 +2399,25 @@ BOOL f_pindly(char *line)
     }
 
     if (!new_gen_output_models(lxr)) {
+        char *i_name = get_pindly_instance_name();
         fprintf(stderr, "ERROR generating models for pindly\n");
-        fprintf(stderr, "ERROR in \"%s\"\n", line);
+        if (i_name) {
+            fprintf(stderr, "ERROR in instance %s\n", i_name);
+        }
         goto error_return;;
     }
     gen_pindly_buffers();
     delete_lexer(lxr);
     cleanup_pindly_tab();
     current_lexer = NULL;
+    set_pindly_instance_name(NULL);
     return TRUE;
 
 error_return:
     delete_lexer(lxr);
     cleanup_pindly_tab();
     current_lexer = NULL;
+    set_pindly_instance_name(NULL);
     return FALSE;
 }
 

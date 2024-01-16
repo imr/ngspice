@@ -7,7 +7,7 @@ Author: 2023 Holger Vogt
 /*
   For dealing with compatibility transformations
 
-  PSICE, LTSPICE and others
+  PSPICE, LTSPICE and others
 */
 
 #include "ngspice/ngspice.h"
@@ -459,7 +459,31 @@ static struct card *u_instances(struct card *startcard)
     int udev_ok = 0, udev_not_ok = 0;
     BOOL create_called = FALSE, repeat_pass = FALSE;
     BOOL skip_next = FALSE;
+    struct card *c = startcard;
+    BOOL insub = FALSE;
+    int ps_global_tmodels = 0;
 
+    if (!cp_getvar("ps_global_tmodels", CP_NUM, &ps_global_tmodels, 0)) {
+        ps_global_tmodels = 0;
+    }
+    if (ps_global_tmodels) {
+        initialize_udevice(NULL);
+        /* First scan for global timing models */
+        while (c) {
+            char *line = c->line;
+            if (ciprefix(".subckt", line)) {
+                insub = TRUE;
+            } else if (ciprefix(".ends", line)) {
+                insub = FALSE;
+            }
+            if (!insub && ciprefix(".model", line)) {
+                (void) u_process_model_line(line, TRUE);
+            }
+            c = c->nextcard;
+        }
+    }
+
+    /* Now scan for subckts containing U* instances and local timing models */
     card = startcard;
     while (card) {
         char *cut_line = card->line;
@@ -471,7 +495,7 @@ static struct card *u_instances(struct card *startcard)
             subcktcard = card;
             if (!repeat_pass) {
                 if (create_called) {
-                    cleanup_udevice();
+                    cleanup_udevice(FALSE);
                 }
                 initialize_udevice(subcktcard->line);
                 create_called = TRUE;
@@ -481,6 +505,7 @@ static struct card *u_instances(struct card *startcard)
                 newcard = replacement_udevice_cards();
                 if (newcard) {
                     char *tmp = NULL, *pos, *posp, *new_str = NULL, *cl;
+                    DS_CREATE(ds_tmp, 128);
                     /* Pspice definition of .subckt card:
                        .SUBCKT <name> [node]*
                        + [OPTIONAL: < <interface node> = <default value> >*]
@@ -494,15 +519,22 @@ static struct card *u_instances(struct card *startcard)
                     (void) memcpy(tmp, cl, strlen(cl) + 1);
                     pos = strstr(tmp, "optional:");
                     posp = strstr(tmp, "params:");
+                    ds_clear(&ds_tmp);
                     /* If there is an optional: and a param: then posp > pos */
                     if (pos) {
                         /* Remove the optional: section if present */
                         *pos = '\0';
                         if (posp) {
-                            strcat(tmp, posp);
+                            ds_cat_str(&ds_tmp, tmp);
+                            ds_cat_str(&ds_tmp, posp);
+                            new_str = copy(ds_get_buf(&ds_tmp));
+                        } else {
+                            new_str = copy(tmp);
                         }
+                    } else {
+                        new_str = copy(tmp);
                     }
-                    new_str = copy(tmp);
+                    ds_free(&ds_tmp);
                     tfree(tmp);
                     remove_old_cards(subcktcard->nextcard, card);
                     subcktcard->nextcard = newcard;
@@ -523,7 +555,7 @@ static struct card *u_instances(struct card *startcard)
             }
             if (models_not_ok > 0 || udev_not_ok > 0) {
                 repeat_pass = FALSE;
-                cleanup_udevice();
+                cleanup_udevice(FALSE);
                 create_called = FALSE;
             } else if (udev_ok > 0) {
                 repeat_pass = TRUE;
@@ -531,13 +563,14 @@ static struct card *u_instances(struct card *startcard)
                 skip_next = TRUE;
             } else {
                 repeat_pass = FALSE;
-                cleanup_udevice();
+                cleanup_udevice(FALSE);
                 create_called = FALSE;
             }
             subcktcard = NULL;
         } else if (ciprefix(".model", cut_line)) {
             if (subcktcard && !repeat_pass) {
-                if (!u_process_model_line(cut_line)) {
+                // Add .model local to subckt
+                if (!u_process_model_line(cut_line, FALSE)) {
                     models_not_ok++;
                 } else {
                     models_ok++;
@@ -548,7 +581,7 @@ static struct card *u_instances(struct card *startcard)
                 if (repeat_pass) {
                     if (!u_process_instance(cut_line)) {
                         repeat_pass = FALSE;
-                        cleanup_udevice();
+                        cleanup_udevice(FALSE);
                         create_called = FALSE;
                         subcktcard = NULL;
                         models_ok = models_not_ok = 0;
@@ -574,8 +607,9 @@ static struct card *u_instances(struct card *startcard)
         }
     }
     if (create_called) {
-        cleanup_udevice();
+        cleanup_udevice(FALSE);
     }
+    cleanup_udevice(TRUE);
     return returncard;
 }
 #endif
