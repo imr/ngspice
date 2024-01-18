@@ -77,6 +77,7 @@ struct instance {
     unsigned int    inout_ports; // Number of XSPICE inout ports.
     unsigned int    op_pending;  // Output is pending.
     Digital_t      *out_vals;    // The new output values.
+    double          last_step;   // Time of previous accepted step.
     double          extra;       // Margin to extend timestep.
     void           *so_handle;   // dlopen() handle to the simulation binary.
 };
@@ -147,7 +148,7 @@ static void output(struct instance *ip, ARGS)
     delay = PARAM(delay) - (TIME - ip->info.vtime);
     if (delay <= 0) {
         cm_message_printf("WARNING: output scheduled with impossible "
-                          "delay (%g) at %g.", delay, TIME);
+                          "delay (%g) at %g/%g.", delay, TIME, ip->info.vtime);
         delay = 1e-12;
     }
     out_vals = (Digital_t *)cm_event_get_ptr(1, 0);
@@ -213,6 +214,7 @@ static int advance(struct instance *ip, ARGS)
             cm_event_queue((TIME + ip->info.vtime + PARAM(delay)) / 2.0);
 #endif
         } else {
+            double when, delta;
 
             /* Something changed that may alter the future of the
              * SPICE simulation.  Truncate the current timestep so that
@@ -220,8 +222,31 @@ static int advance(struct instance *ip, ARGS)
              * in the past.
              */
 
-            DBG("Truncating timestep to %.16g", ip->info.vtime + ip->extra);
-            cm_analog_set_temp_bkpt(ip->info.vtime + ip->extra);
+            when = ip->info.vtime + ip->extra;
+            DBG("Truncating timestep from %.16g to %.16g", TIME, when);
+	    if (cm_analog_set_temp_bkpt(when)) {
+                /* Failed to set breakpoint, as it was probably too early.
+                 * This could happen if a "Normal" simulation behaves like
+                 * an "After_input" simulation is expected to do, and produces
+                 * output immediately on input, and uses its own time.
+		 * Try and recover: this may lead to a warning on output.
+                 */
+
+                DBG("Attempting recovey from failed timestep lop %.16g->%.16g",
+                    TIME, when);
+                delta = (TIME - ip->info.vtime) / 1000;
+                when = ip->info.vtime;
+		if (when < ip->last_step) {
+                    cm_message_printf("WARNING: client simulator requested "
+                                      "output in the past: %.16g < %.16g",
+                                      when, ip->last_step);
+                    when = ip->last_step - delta;
+                }
+
+		do {
+                    when += delta;
+                } while (cm_analog_set_temp_bkpt(when));
+            }
 
             /* Any remaining input events are in an alternate future. */
 
@@ -243,10 +268,11 @@ static void run(struct instance *ip, ARGS)
     if (ip->q_index < 0) {
         /* No queued input, advance to current TIME. */
 
-        DBG("Advancing vtime without input %.16g -> %.16g",
-            ip->info.vtime , TIME);
+        DBG("Advancing vtime by %g without input %.16g -> %.16g",
+            TIME - ip->info.vtime, ip->info.vtime, TIME);
         ip->info.vtime = TIME;
-        advance(ip, XSPICE_ARG);
+        if (!advance(ip, XSPICE_ARG))
+	   ip->last_step = ip->info.vtime;
         return;
     }
 
@@ -301,8 +327,10 @@ static void run(struct instance *ip, ARGS)
     ip->q_index = -1;
     if (ip->info.method == Normal && TIME > ip->info.vtime) {
         ip->info.vtime = TIME;
-        advance(ip, XSPICE_ARG);
+        if (advance(ip, XSPICE_ARG))
+	   return;
     }
+    ip->last_step = ip->info.vtime;
 }
 
 /* Check whether an input value has changed.
@@ -374,7 +402,7 @@ void ucm_d_cosim(ARGS)
         /* Load the shared library containing the co-simulator. */
 
         fn = PARAM(simulation);
-        handle = dlopen(fn, RTLD_LAZY | RTLD_LOCAL);
+        handle = dlopen(fn, RTLD_GLOBAL | RTLD_NOW);
         if (!handle) {
             cm_message_send("Failed to load simulation binary. "
                             "Try setting LD_LIBRARY_PATH.");
