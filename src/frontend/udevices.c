@@ -4239,11 +4239,16 @@ BOOL u_check_instance(char *line)
 {
     /*
      Check to see if the U* instance is a type which can be translated.
+     An X* instance of a subckt is allowed.
      Return TRUE if it can be translated
     */
     char *xspice, *itype;
-    struct instance_hdr *hdr = create_instance_header(line);
+    struct instance_hdr *hdr = NULL;
 
+    if (ciprefix("x", line)) {
+        return TRUE;
+    }
+    hdr = create_instance_header(line);
     if (!hdr) {
         return FALSE;
     }
@@ -4284,10 +4289,24 @@ BOOL u_process_instance(char *nline)
 {
     /* Return TRUE if ok */
     char *p1, *itype, *xspice;
-    struct instance_hdr *hdr = create_instance_header(nline);
+    struct instance_hdr *hdr = NULL;
     Xlatorp xp = NULL;
     BOOL behav_ret = TRUE;
 
+
+    if (ciprefix("x", nline)) {
+        /* An X* instance of a subckt is translated unchanged */
+        Xlate_datap xdp = create_xlate_translated(nline);
+        Xlatorp xlp = create_xlator();
+        (void) add_xlator(xlp, xdp);
+        append_xlator(translated_p, xlp);
+        if (ps_ports_and_pins & 4) {
+            printf("TRANS_IN  %s\n", nline);
+        }
+        delete_xlator(xlp);
+        return TRUE;
+    }
+    hdr = create_instance_header(nline);
     if (!hdr) {
         return FALSE;
     }
