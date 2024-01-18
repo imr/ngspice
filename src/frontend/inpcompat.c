@@ -576,7 +576,8 @@ static struct card *u_instances(struct card *startcard)
                     models_ok++;
                 }
             }
-        } else if (ciprefix("u", cut_line)) {
+        } else if (ciprefix("u", cut_line) || ciprefix("x", cut_line)) {
+            /* U* device instance or X* instance of a subckt */
             if (subcktcard) {
                 if (repeat_pass) {
                     if (!u_process_instance(cut_line)) {
