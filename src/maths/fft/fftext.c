@@ -115,7 +115,7 @@ fft_windows(char *window, double *win, double *time, int length, double maxt, do
             if (maxt-time[i] > span)
                 win[i] = 0.0;
             else
-                win[i] = 2.0 - fabs(2+4*(time[i]-maxt)/span);
+                win[i] = 1.0 - 2.0 * fabs((time[i]-maxt)-span/2) / span;
         }
     else if (eq(window, "hann") || eq(window, "hanning") || eq(window, "cosine"))
         for (i = 0; i < length; i++) {
