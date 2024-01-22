@@ -114,31 +114,33 @@ fft_windows(char *window, double *win, double *time, int length, double maxt, do
         for (i = 0; i < length; i++) {
             if (maxt-time[i] > span)
                 win[i] = 0.0;
+            else if (maxt-time[i] < span/2)
+                win[i] = 2 * (maxt-time[i]) / span;
             else
-                win[i] = 1.0 - 2.0 * fabs((time[i]-maxt)-span/2) / span;
+                win[i] = 2.0 - 2 * (maxt-time[i]) / span;
         }
     else if (eq(window, "hann") || eq(window, "hanning") || eq(window, "cosine"))
         for (i = 0; i < length; i++) {
             if (maxt-time[i] > span)
                 win[i] = 0.0;
             else
-                win[i] = 1.0 - cos(2*M_PI*(time[i]-maxt)/span);
+                win[i] = 0.5 - 0.5*cos(2*M_PI*(time[i]-maxt)/span);
         }
     else if (eq(window, "hamming"))
         for (i = 0; i < length; i++) {
             if (maxt-time[i] > span)
                 win[i] = 0.0;
             else
-                win[i] = 1.0 - 0.46/0.54*cos(2*M_PI*(time[i]-maxt)/span);
+                win[i] = 0.54 - 0.46*cos(2*M_PI*(time[i]-maxt)/span);
         }
     else if (eq(window, "blackman"))
         for (i = 0; i < length; i++) {
             if (maxt-time[i] > span) {
                 win[i] = 0;
             } else {
-                win[i]  = 1.0;
-                win[i] -= 0.50/0.42*cos(2*M_PI*(time[i]-maxt)/span);
-                win[i] += 0.08/0.42*cos(4*M_PI*(time[i]-maxt)/span);
+                win[i]  = 0.42;
+                win[i] -= 0.50*cos(2*M_PI*(time[i]-maxt)/span);
+                win[i] += 0.08*cos(4*M_PI*(time[i]-maxt)/span);
             }
         }
     else if (eq(window, "flattop"))
@@ -146,16 +148,16 @@ fft_windows(char *window, double *win, double *time, int length, double maxt, do
             if (maxt-time[i] > span) {
                 win[i] = 0;
             } else {
-                win[i]  = 1.0;
-                win[i] -= 1.93*cos(2*M_PI*(time[i]-maxt)/span);
-                win[i] += 1.29*cos(4*M_PI*(time[i]-maxt)/span);
-                win[i] -= 0.388*cos(6*M_PI*(time[i]-maxt)/span);
-                win[i] += 0.032*cos(8*M_PI*(time[i]-maxt)/span);
+                win[i]  = 0.21557895;
+                win[i] -= 0.41663158*cos(2*M_PI*(time[i]-maxt)/span);
+                win[i] += 0.277263158*cos(4*M_PI*(time[i]-maxt)/span);
+                win[i] -= 0.083578947*cos(6*M_PI*(time[i]-maxt)/span);
+                win[i] += 0.006947368*cos(8*M_PI*(time[i]-maxt)/span);
             }
         }
     else if (eq(window, "gaussian")) {
         sigma = 1.0/order;
-        scale = 0.83/sigma;
+        scale = 0.5/sigma;
         for (i = 0; i < length; i++) {
             if (maxt-time[i] > span)
                 win[i] = 0;
