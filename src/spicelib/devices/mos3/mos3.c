@@ -156,7 +156,8 @@ IFparm MOS3mPTable[] = { /* model parameters */
  IOP("kappa", MOS3_MOD_KAPPA, IF_REAL ,"Kappa"),
  IOPU("tnom",  MOS3_MOD_TNOM,  IF_REAL ,"Parameter measurement temperature"),
  IOP("kf",     MOS3_MOD_KF,    IF_REAL ,"Flicker noise coefficient"),
- IOP("af",     MOS3_MOD_AF,    IF_REAL ,"Flicker noise exponent")
+ IOP("af",     MOS3_MOD_AF,    IF_REAL ,"Flicker noise exponent"),
+ IOP("nlev",   MOS3_MOD_NLEV,  IF_INTEGER  ,"Noise model selection")
 };
 
 char *MOS3names[] = {

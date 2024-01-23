@@ -383,6 +383,7 @@ typedef struct sMOS1model {       /* model structure for a resistor */
     double MOS1surfaceMobility; /* input - use tSurfMob */
     double MOS1fNcoef;
     double MOS1fNexp;
+    int MOS1nlev;
 
     unsigned MOS1typeGiven  :1;
     unsigned MOS1latDiffGiven   :1;
@@ -415,6 +416,7 @@ typedef struct sMOS1model {       /* model structure for a resistor */
     unsigned MOS1tnomGiven  :1;
     unsigned MOS1fNcoefGiven  :1;
     unsigned MOS1fNexpGiven   :1;
+    unsigned MOS1nlevGiven   :1;
 
 } MOS1model;
 
@@ -483,6 +485,7 @@ enum {
     MOS1_MOD_TNOM,
     MOS1_MOD_KF,
     MOS1_MOD_AF,
+    MOS1_MOD_NLEV,
     MOS1_MOD_TYPE,
 };
 

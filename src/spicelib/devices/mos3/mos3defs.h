@@ -400,6 +400,7 @@ typedef struct sMOS3model {       /* model structure for a resistor */
     double MOS3kappa;   /* kappa */
     double MOS3fNcoef;
     double MOS3fNexp;
+    int MOS3nlev;
 
     unsigned MOS3typeGiven  :1;
     unsigned MOS3latDiffGiven   :1;
@@ -442,6 +443,7 @@ typedef struct sMOS3model {       /* model structure for a resistor */
     unsigned MOS3tnomGiven :1;  /* Tnom was given? */
     unsigned MOS3fNcoefGiven :1;
     unsigned MOS3fNexpGiven :1;
+    unsigned MOS3nlevGiven :1;
 
 } MOS3model;
 
@@ -580,6 +582,7 @@ enum {
     MOS3_MOD_TNOM,
     MOS3_MOD_KF,
     MOS3_MOD_AF,
+    MOS3_MOD_NLEV,
     MOS3_MOD_TYPE,
     MOS3_MOD_XL,
     MOS3_MOD_WD,

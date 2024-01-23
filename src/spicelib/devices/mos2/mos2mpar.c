@@ -178,6 +178,10 @@ MOS2mParam(int param, IFvalue *value, GENmodel *inModel)
 	    model->MOS2fNexp = value->rValue;
 	    model->MOS2fNexpGiven = TRUE;
 	    break;
+	case MOS2_MOD_NLEV:
+	    model->MOS2nlev = value->iValue;
+	    model->MOS2nlevGiven = TRUE;
+	    break;
         default:
             return(E_BADPARM);
     }

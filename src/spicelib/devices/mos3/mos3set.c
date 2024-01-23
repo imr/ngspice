@@ -139,6 +139,9 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	if(!model->MOS3fNexpGiven) {
 	    model->MOS3fNexp = 1;
 	}
+	if(!model->MOS3nlevGiven) {
+	    model->MOS3nlev = 2;
+	}
 
         /* loop through all the instances of the model */
         for (here = MOS3instances(model); here != NULL ;
