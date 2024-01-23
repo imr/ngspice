@@ -10,6 +10,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/iferrmsg.h"
 #include "ngspice/noisedef.h"
 #include "ngspice/suffix.h"
+#include "ngspice/compatmode.h"
 
 /*
  * MOS1noise (mode, operation, firstModel, ckt, data, OnDens)
@@ -108,13 +109,44 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                     NevalSrc( & noizDens[MOS1FLNOIZ], NULL, ckt,
                         N_GAIN, inst -> MOS1dNodePrime, inst -> MOS1sNodePrime,
                         (double) 0.0);
-                    noizDens[MOS1FLNOIZ] *= model -> MOS1fNcoef *
-                        exp(model -> MOS1fNexp *
-                            log(MAX(fabs(inst -> MOS1cd), N_MINLOG))) /
-                        (data -> freq *
-                            inst -> MOS1w *
-                            (inst -> MOS1l - 2 * model -> MOS1latDiff) *
-                            coxSquared);
+                    if (newcompat.s3) {
+                        noizDens[MOS1FLNOIZ] *= model -> MOS1fNcoef *
+                            exp(model -> MOS1fNexp *
+                                log(MAX(fabs(inst -> MOS1cd), N_MINLOG))) /
+                            (data -> freq *
+                                inst -> MOS1w *
+                                (inst -> MOS1l - 2 * model -> MOS1latDiff) *
+                                coxSquared);
+                    } else {
+                        switch (model -> MOS1nlev) {
+                        case 0:
+                            noizDens[MOS1FLNOIZ] *= model -> MOS1fNcoef *
+                                exp(model -> MOS1fNexp *
+                                    log(MAX(fabs(inst -> MOS1cd), N_MINLOG))) /
+                                (data -> freq *
+                                    (inst -> MOS1l - 2 * model -> MOS1latDiff) *
+                                    (inst -> MOS1l - 2 * model -> MOS1latDiff) *
+                                    sqrt(coxSquared));
+                            break;
+                        case 1:
+                            noizDens[MOS1FLNOIZ] *= model -> MOS1fNcoef *
+                                exp(model -> MOS1fNexp *
+                                    log(MAX(fabs(inst -> MOS1cd), N_MINLOG))) /
+                                (data -> freq *
+                                    inst -> MOS1w *
+                                    (inst -> MOS1l - 2 * model -> MOS1latDiff) *
+                                    sqrt(coxSquared));
+                            break;
+                        case 2: case 3:
+                            noizDens[MOS1FLNOIZ] *= model -> MOS1fNcoef *
+                                inst -> MOS1gm * inst -> MOS1gm /
+                                (pow(data -> freq, model -> MOS1fNexp) *
+                                    inst -> MOS1w *
+                                    (inst -> MOS1l - 2 * model -> MOS1latDiff) *
+                                    sqrt(coxSquared));
+                            break;
+                        }
+                    }
                     lnNdens[MOS1FLNOIZ] =
                         log(MAX(noizDens[MOS1FLNOIZ], N_MINLOG));
 

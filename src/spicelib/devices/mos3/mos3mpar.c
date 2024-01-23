@@ -191,6 +191,10 @@ MOS3mParam(int param, IFvalue *value, GENmodel *inModel)
 	    model->MOS3fNexp = value->rValue;
 	    model->MOS3fNexpGiven = TRUE;
 	    break;
+	case MOS3_MOD_NLEV:
+	    model->MOS3nlev = value->iValue;
+	    model->MOS3nlevGiven = TRUE;
+	    break;
         default:
             return(E_BADPARM);
     }
