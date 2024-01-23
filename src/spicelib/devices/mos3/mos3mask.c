@@ -99,7 +99,7 @@ MOS3mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case MOS3_MOD_DELVTO:
             value->rValue = here->MOS3delvt0;
-            return(OK);    
+            return(OK);
         case MOS3_MOD_RSH:
             value->rValue = here->MOS3sheetResistance;
             return(OK);
@@ -147,22 +147,22 @@ MOS3mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case MOS3_MOD_KAPPA:
             value->rValue = here->MOS3kappa;
-            return(OK);      
+            return(OK);
         case MOS3_MOD_KF:
             value->rValue = here->MOS3fNcoef;
             return(OK);
         case MOS3_MOD_AF:
             value->rValue = here->MOS3fNexp;
-            return(OK);    
+            return(OK);
         case MOS3_MOD_NLEV:
             value->iValue = here->MOS3nlev;
-            return(OK);    
-	case MOS3_MOD_TYPE:
-	    if (here->MOS3type > 0)
-	        value->sValue = "nmos";
-	    else
-	        value->sValue = "pmos";
-	    return(OK);
+            return(OK);
+        case MOS3_MOD_TYPE:
+            if (here->MOS3type > 0)
+                value->sValue = "nmos";
+            else
+                value->sValue = "pmos";
+            return(OK);
         default:
             return(E_BADPARM);
     }

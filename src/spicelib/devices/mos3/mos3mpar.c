@@ -118,7 +118,7 @@ MOS3mParam(int param, IFvalue *value, GENmodel *inModel)
         case MOS3_MOD_DELVTO:
             model->MOS3delvt0 = value->rValue;
             model->MOS3delvt0Given = TRUE;
-            break;    
+            break;
         case MOS3_MOD_U0:
             model->MOS3surfaceMobility = value->rValue;
             model->MOS3surfaceMobilityGiven = TRUE;
@@ -183,18 +183,18 @@ MOS3mParam(int param, IFvalue *value, GENmodel *inModel)
             model->MOS3tnom = value->rValue+CONSTCtoK;
             model->MOS3tnomGiven = TRUE;
             break;
-	case MOS3_MOD_KF:
-	    model->MOS3fNcoef = value->rValue;
-	    model->MOS3fNcoefGiven = TRUE;
-	    break;
-	case MOS3_MOD_AF:
-	    model->MOS3fNexp = value->rValue;
-	    model->MOS3fNexpGiven = TRUE;
-	    break;
-	case MOS3_MOD_NLEV:
-	    model->MOS3nlev = value->iValue;
-	    model->MOS3nlevGiven = TRUE;
-	    break;
+        case MOS3_MOD_KF:
+            model->MOS3fNcoef = value->rValue;
+            model->MOS3fNcoefGiven = TRUE;
+            break;
+        case MOS3_MOD_AF:
+            model->MOS3fNexp = value->rValue;
+            model->MOS3fNexpGiven = TRUE;
+            break;
+        case MOS3_MOD_NLEV:
+            model->MOS3nlev = value->iValue;
+            model->MOS3nlevGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }
