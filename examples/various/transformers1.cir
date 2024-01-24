@@ -6,6 +6,8 @@ V1 1 0 dc 0 ac 1 sin (0 1 1k)
 
 Xtr1 1 0 2 0 tr1
 
+Xtr1a 1 0 32 0 tr1a  psr=1m ssr=1m lp=1m ls=4m kt=0.98
+
 Xtr2 1 0 12 0 tr2
 
 Xtr3 1 0 22 0 tr3
@@ -20,6 +22,16 @@ Xtr3 1 0 22 0 tr3
   L1 pint1 p2 1m ; primary inductance
   L2 sint1 s2 4m ; secondary inductance
   K1 L1 L2 0.98 ; coupling constant
+.ends
+
+* transformer 1a
+* ngspice manual 3.3.10, with parameters replacing fixed values
+.subckt tr1a p1 p2 s1 s2 psr=1m ssr=1m lp=100u ls=100u kt=1
+  Rp1 p1 pint1 {psr} ; primary series resistance
+  Rs1 s1 sint1 {ssr} ; secondary series resistance
+  L1 pint1 p2 {lp} ; primary inductance
+  L2 sint1 s2 {ls} ; secondary inductance
+  K1 L1 L2 {kt} ; coupling constant
 .ends
 
 * transformer 2
@@ -53,7 +65,7 @@ Xtr3 1 0 22 0 tr3
 .control
 run
 set xbrushwidth=2
-plot V(1) v(2) V(1)+5 V(12)+5 V(1)+10 V(22)+10
+plot V(1) v(2) V(1)+5 V(12)+5 V(1)+10 V(22)+10 V(1)+15 V(32)+15
 .endc
 
 .end
