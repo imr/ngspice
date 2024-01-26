@@ -122,7 +122,7 @@ com_spec(wordlist *wl)
                 if (maxt-time[i] > span) {
                     win[i] = 0;
                 } else {
-                    win[i] = 1 - 2 * fabs((time[i]-maxt)-span/2) / span;
+                    win[i] = 2 - fabs(2+4*(time[i]-maxt)/span);
                 }
             }
         else if (eq(window, "blackman")) {
