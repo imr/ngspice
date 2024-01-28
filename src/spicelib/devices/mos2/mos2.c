@@ -157,7 +157,8 @@ IFparm MOS2mPTable[] = { /* model parameters */
  IOPU("tnom",  MOS2_MOD_TNOM,  IF_REAL   ,"Parameter measurement temperature"),
  IOP("kf",     MOS2_MOD_KF,    IF_REAL   ,"Flicker noise coefficient"),
  IOP("af",     MOS2_MOD_AF,    IF_REAL   ,"Flicker noise exponent"),
- IOP("nlev",   MOS2_MOD_NLEV,  IF_INTEGER  ,"Noise model selection")
+ IOP("nlev",   MOS2_MOD_NLEV,  IF_INTEGER  ,"Noise model selection"),
+ IOP("gdsnoi", MOS2_MOD_GDSNOI, IF_REAL   ,"Channel shot noise coefficient")
 };
 
 char *MOS2names[] = {

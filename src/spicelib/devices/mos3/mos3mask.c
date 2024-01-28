@@ -157,6 +157,9 @@ MOS3mAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case MOS3_MOD_NLEV:
             value->iValue = model->MOS3nlev;
             return(OK);
+        case MOS3_MOD_GDSNOI:
+            value->rValue = model->MOS3gdsnoi;
+            return(OK);
         case MOS3_MOD_TYPE:
             if (model->MOS3type > 0)
                 value->sValue = "nmos";

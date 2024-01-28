@@ -151,6 +151,10 @@ MOS1mParam(int param, IFvalue *value, GENmodel *inModel)
             model->MOS1nlev = value->iValue;
             model->MOS1nlevGiven = TRUE;
             break;
+        case MOS1_MOD_GDSNOI:
+            model->MOS1gdsnoi = value->rValue;
+            model->MOS1gdsnoiGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }
