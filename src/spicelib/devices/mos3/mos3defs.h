@@ -401,6 +401,7 @@ typedef struct sMOS3model {       /* model structure for a resistor */
     double MOS3fNcoef;
     double MOS3fNexp;
     int MOS3nlev;
+    double MOS3gdsnoi;
 
     unsigned MOS3typeGiven  :1;
     unsigned MOS3latDiffGiven   :1;
@@ -444,6 +445,7 @@ typedef struct sMOS3model {       /* model structure for a resistor */
     unsigned MOS3fNcoefGiven :1;
     unsigned MOS3fNexpGiven :1;
     unsigned MOS3nlevGiven :1;
+    unsigned MOS3gdsnoiGiven   :1;
 
 } MOS3model;
 
@@ -583,6 +585,7 @@ enum {
     MOS3_MOD_KF,
     MOS3_MOD_AF,
     MOS3_MOD_NLEV,
+    MOS3_MOD_GDSNOI,
     MOS3_MOD_TYPE,
     MOS3_MOD_XL,
     MOS3_MOD_WD,

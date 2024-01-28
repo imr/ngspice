@@ -133,6 +133,9 @@ MOS2mAsk(CKTcircuit *ckt, GENmodel *inModel, int param,
         case MOS2_MOD_NLEV:
             value->iValue = model->MOS2nlev;
             break;
+        case MOS2_MOD_GDSNOI:
+            value->rValue = model->MOS2gdsnoi;
+            return(OK);
         case MOS2_MOD_TYPE:
             if (model->MOS2type > 0)
                 value->sValue = "nmos";

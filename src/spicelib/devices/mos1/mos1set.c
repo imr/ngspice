@@ -90,6 +90,9 @@ MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if(!model->MOS1nlevGiven) {
             model->MOS1nlev = 2;
         }
+        if(!model->MOS1gdsnoiGiven) {
+            model->MOS1gdsnoi = 1;
+        }
 
         /* loop through all the instances of the model */
         for (here = MOS1instances(model); here != NULL ;

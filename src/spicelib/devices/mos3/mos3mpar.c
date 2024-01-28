@@ -195,6 +195,10 @@ MOS3mParam(int param, IFvalue *value, GENmodel *inModel)
             model->MOS3nlev = value->iValue;
             model->MOS3nlevGiven = TRUE;
             break;
+        case MOS3_MOD_GDSNOI:
+            model->MOS3gdsnoi = value->rValue;
+            model->MOS3gdsnoiGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

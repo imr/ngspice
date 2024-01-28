@@ -34,6 +34,7 @@ MOS3noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
     double noizDens[MOS3NSRCS];
     double lnNdens[MOS3NSRCS];
     int i;
+    double vgs, vds, vgd, vgst, alpha, beta, Sid;
 
     /* define the names of the noise sources */
 
@@ -91,9 +92,34 @@ MOS3noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                         ckt, THERMNOISE, inst->MOS3sNodePrime, inst->MOS3sNode,
                         inst->MOS3sourceConductance);
 
+                    if (model->MOS3nlev < 3) {
+
+                        Sid = 2.0 / 3.0 * fabs(inst->MOS3gm);
+
+                    } else {
+                        vds = *(ckt->CKTstate0 + inst->MOS3vds);
+                        vgs = *(ckt->CKTstate0 + inst->MOS3vgs);
+                        vgd = vgs - vds;
+                        beta = inst->MOS3tTransconductance * inst->MOS3m *
+                                   inst->MOS3w/(inst->MOS3l - 2 * model->MOS3latDiff);
+
+                        vgst=(inst->MOS3mode==1?vgs:vgd) - model->MOS3type*inst->MOS3von;
+                        if (vgst > 0) {
+                            if (vgst <= (vds*inst->MOS3mode)) {
+                                /* saturation region */
+                                alpha = 0.0;
+                            } else {
+                                /* linear region */
+                                alpha = 1.0 - (vds*inst->MOS3mode/(model->MOS3type*inst->MOS3vdsat));
+                            }
+                        }
+                        double betap = beta;
+                        Sid = 2.0 / 3.0 * betap * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS3gdsnoi;
+                    }
+
                     NevalSrc( & noizDens[MOS3IDNOIZ], & lnNdens[MOS3IDNOIZ],
                         ckt, THERMNOISE, inst->MOS3dNodePrime, inst->MOS3sNodePrime,
-                        (2.0 / 3.0 * fabs(inst->MOS3gm)));
+                        Sid);
 
                     NevalSrc( & noizDens[MOS3FLNOIZ], NULL, ckt,
                         N_GAIN, inst->MOS3dNodePrime, inst->MOS3sNodePrime,

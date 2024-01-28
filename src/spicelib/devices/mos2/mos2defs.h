@@ -391,6 +391,7 @@ typedef struct sMOS2model {       /* model structure for a resistor */
     double MOS2fNcoef;
     double MOS2fNexp;
     int MOS2nlev;
+    double MOS2gdsnoi;
 
     double MOS2narrowFactor;    /* delta */
     double MOS2critFieldExp;    /* uexp */
@@ -439,6 +440,7 @@ typedef struct sMOS2model {       /* model structure for a resistor */
     unsigned MOS2fNcoefGiven :1;
     unsigned MOS2fNexpGiven :1;
     unsigned MOS2nlevGiven :1;
+    unsigned MOS2gdsnoiGiven   :1;
 
 } MOS2model;
 
@@ -577,6 +579,7 @@ enum {
     MOS2_MOD_KF = 139,
     MOS2_MOD_AF,
     MOS2_MOD_NLEV,
+    MOS2_MOD_GDSNOI,
     MOS2_MOD_TYPE,
 };
 

@@ -119,6 +119,9 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->MOS2nlevGiven) {
             model->MOS2nlev = 2;
         }
+        if(!model->MOS2gdsnoiGiven) {
+            model->MOS2gdsnoi = 1;
+        }
 
         /* loop through all the instances of the model */
         for (here = MOS2instances(model); here != NULL ;
