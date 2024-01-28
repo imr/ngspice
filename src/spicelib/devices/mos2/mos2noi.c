@@ -100,8 +100,6 @@ MOS2noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                         vds = *(ckt->CKTstate0 + inst->MOS2vds);
                         vgs = *(ckt->CKTstate0 + inst->MOS2vgs);
                         vgd = vgs - vds;
-                        beta = inst->MOS2tTransconductance * inst->MOS2m *
-                                   inst->MOS2w/(inst->MOS2l - 2 * model->MOS2latDiff);
 
                         vgst=(inst->MOS2mode==1?vgs:vgd) - model->MOS2type*inst->MOS2von;
                         if (vgst > 0) {
@@ -113,8 +111,9 @@ MOS2noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                                 alpha = 1.0 - (vds*inst->MOS2mode/(model->MOS2type*inst->MOS2vdsat));
                             }
                         }
-                        double betap = beta*(1.0+model->MOS2lambda*(vds*inst->MOS2mode));
-                        Sid = 2.0 / 3.0 * betap * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS2gdsnoi;
+                        beta = inst->MOS2tTransconductance * inst->MOS2m *
+                                   inst->MOS2w/(inst->MOS2l - 2 * model->MOS2latDiff);
+                        Sid = 2.0 / 3.0 * beta * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS2gdsnoi;
                     }
 
                     NevalSrc( & noizDens[MOS2IDNOIZ], & lnNdens[MOS2IDNOIZ],
