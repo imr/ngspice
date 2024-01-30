@@ -630,11 +630,13 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
         if (!eq(plot_cur->pl_typename, buf2)) {
             (void) sprintf(buf,
-//       "setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
-                           "setplot %s; %s xlimit %e %e ylimit %e %e sgraphid %d\n",
-                           buf2, gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
+                           "setplot %s; %s xlimit %.20e %.20e ylimit %.20e "
+                           "%.20e sgraphid %d ; setplot $curplot\n",
+                           buf2, gr->commandline, fx0, fxe, fy0, fye,
+                           gr->graphid);
         } else {
-            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e sgraphid %d\n",
+            (void) sprintf(buf, "%s xlimit %.20e %.20e ylimit %.20e %.20e "
+                           "sgraphid %d\n",
                            gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
         }
 
