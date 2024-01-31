@@ -495,7 +495,6 @@ void out_init(void) { }
 void cp_doquit(void) { exit(0); }
 struct variable *cp_usrvars(void) { return NULL; }
 int cp_evloop(char *s) { NG_IGNORE(s); return (0); }
-void cp_ccon(bool o) { NG_IGNORE(o); }
 char*if_errstring(int c) { NG_IGNORE(c); return strdup("error"); }
 void out_printf(char *fmt, ...) { NG_IGNORE(fmt); }
 void out_send(char *string) { NG_IGNORE(string); }

@@ -60,18 +60,6 @@
 #include <fcntl.h>
 #endif
 
-#ifdef HAVE_TERMIOS_H
-#include <termios.h>
-#else
-#  ifdef HAVE_SGTTY_H
-#  include <sgtty.h>
-#    else
-#    ifdef HAVE_TERMIO_H
-#      include <termio.h>
-#    endif
-#  endif
-#endif
-
 #ifdef HAVE_PWD_H
 #include <pwd.h>
 #endif
