@@ -29,8 +29,6 @@ com_shell(wordlist *wl)
         shell = SHELL;
     }
 
-    cp_ccon(FALSE);
-
 #ifdef HAVE_VFORK_H
     /* XXX Needs to switch process groups.  Also, worry about suspend */
     /* Only bother for efficiency */

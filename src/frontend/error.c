@@ -65,8 +65,6 @@ ft_sperror(int code, char *mess)
 void
 fatal(void)
 {
-    cp_ccon(FALSE);
-
 #if defined(FTEDEBUG) && defined(SIGQUIT)
     (void) signal(SIGQUIT, SIG_DFL);
     (void) kill(getpid(), SIGQUIT);

@@ -40,22 +40,6 @@ Modified: 1999 Paolo Nenzi
 #include <sys/ioctl.h>
 #endif
 
-/* Be sure the ioctls get included in the following */
-#ifdef HAVE_SGTTY_H
-#include <sgtty.h>
-#else
-#ifdef HAVE_TERMIO_H
-#include <termio.h>
-#else
-#ifdef HAVE_TERMIOS_H
-#include <termios.h>
-#endif
-#endif
-#endif
-
-
-#define CNTRL_D '\004'
-#define ESCAPE  '\033'
 #define NCLASSES 32
 
 bool cp_nocc;               /* Don't do command completion. */
@@ -346,96 +330,6 @@ wordlist *
 cp_cctowl(struct ccom *stuff)
 {
     return (cctowl(stuff, TRUE));
-}
-
-
-/* Turn on and off the escape break character and cooked mode. */
-
-void
-cp_ccon(bool on)
-{
-#ifdef TIOCSTI
-#ifdef HAVE_SGTTY_H
-    static bool ison = FALSE;
-    struct tchars tbuf;
-    struct sgttyb sbuf;
-
-    if (cp_nocc || !cp_interactive || (ison == on))
-        return;
-    ison = on;
-
-    /* Set the terminal up -- make escape the break character, and
-     * make sure we aren't in raw or cbreak mode.  Hope the (void)
-     * ioctl's won't fail.
-     */
-    (void) ioctl(fileno(cp_in), TIOCGETC, &tbuf);
-    if (on)
-        tbuf.t_brkc = ESCAPE;
-    else
-        tbuf.t_brkc = '\0';
-    (void) ioctl(fileno(cp_in), TIOCSETC, &tbuf);
-
-    (void) ioctl(fileno(cp_in), TIOCGETP, &sbuf);
-    sbuf.sg_flags &= ~(RAW|CBREAK);
-    (void) ioctl(fileno(cp_in), TIOCSETP, &sbuf);
-#else
-
-#  ifdef HAVE_TERMIO_H
-
-#      define TERM_GET TCGETA
-#      define TERM_SET TCSETA
-    static struct termio sbuf;
-    static struct termio OS_Buf;
-
-#  else
-#    ifdef HAVE_TERMIOS_H
-
-
-#      define TERM_GET TCGETS
-#      define TERM_SET TCSETS
-    static struct termios sbuf;
-    static struct termios OS_Buf;
-
-#    endif
-#  endif
-
-#ifdef TERM_GET
-    static bool ison = FALSE;
-
-    if (cp_nocc || !cp_interactive || (ison == on))
-        return;
-    ison = on;
-
-    if (ison == TRUE) {
-#if HAVE_TCGETATTR
-        tcgetattr(fileno(cp_in), &OS_Buf);
-#else
-        (void) ioctl(fileno(cp_in), TERM_GET, &OS_Buf);
-#endif
-        sbuf = OS_Buf;
-        sbuf.c_cc[VEOF] = '\0';
-        sbuf.c_cc[VEOL] = ESCAPE;
-        sbuf.c_cc[VEOL2] = CNTRL_D;
-#if HAVE_TCSETATTR
-        tcsetattr(fileno(cp_in), TCSANOW, &sbuf);
-#else
-        (void) ioctl(fileno(cp_in), TERM_SET, &sbuf);
-#endif
-    } else {
-#ifdef HAVE_TCSETATTR
-        tcsetattr(fileno(cp_in), TCSANOW, &OS_Buf);
-#else
-        (void) ioctl(fileno(cp_in), TERM_SET, &OS_Buf);
-#endif
-    }
-
-#  endif
-#endif
-
-#else
-    NG_IGNORE(on);
-#endif
-
 }
 
 

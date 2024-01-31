@@ -91,7 +91,6 @@ ft_sigintr(void)
 
     if (interrupt_counter >= 3) {
         fprintf(cp_err, "\nKilling, since %d interrupts have been requested\n\n", interrupt_counter);
-        cp_ccon(FALSE);
         controlled_exit(1);
     }
 
@@ -149,7 +148,6 @@ void
 sigstop(void)
 {
     gr_clean();
-    cp_ccon(FALSE);
     if (!cp_background) {
         (void) signal(SIGTSTP, SIG_DFL);
         (void) kill(getpid(), SIGTSTP); /* This should stop us */

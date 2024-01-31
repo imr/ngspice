@@ -22,7 +22,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 bool cp_noglob = FALSE;
 bool cp_nonomatch = FALSE;
 bool cp_noclobber = FALSE;
-bool cp_ignoreeof = FALSE;
 bool cp_echo = FALSE;   /* CDHW */
 
 struct variable *variables = NULL;
@@ -245,7 +244,7 @@ void cp_vset(const char *varname, enum cp_types type,
 
 
 /* Process special variables: noglob, nonomatch, history,
- * noclobber, echo, prompt, ignoreeof, cpdebug, and no_histsubst
+ * noclobber, echo, prompt, cpdebug, and no_histsubst
  * by setting the values of associated option variables.
  *
  * Parmeters
@@ -260,8 +259,7 @@ static void update_option_variables(const char *sz_var_name,
         ['h' - 'a'] = 2, /* history */
         ['e' - 'a'] = 3, /* echo */
         ['p' - 'a'] = 4, /* prompt, program */
-        ['i' - 'a'] = 5, /* ignoreeof */
-        ['c' - 'a'] = 6 /* cpdebug */
+        ['c' - 'a'] = 5  /* cpdebug */
     };
 
     unsigned int index0 = (unsigned int) sz_var_name[0] - 'a';
@@ -365,11 +363,6 @@ static void update_option_variables(const char *sz_var_name,
         }
         return; /* not of interest */
     case 5:
-        if (eq(sz_var_name + 1, "gnoreeof")) { /* ignoreeof */
-            cp_ignoreeof = f_set;
-        }
-        return;
-    case 6:
         if (eq(sz_var_name + 1, "pdebug")) { /* cpdebug */
             cp_debug = f_set;
 #ifndef CPDEBUG

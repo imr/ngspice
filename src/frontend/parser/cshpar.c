@@ -13,18 +13,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <signal.h>
 #include "cshpar.h"
 
-#ifdef HAVE_SGTTY_H
-#include <sgtty.h>
-#else
-#ifdef HAVE_TERMIO_H
-#include <termio.h>
-#else
-#ifdef HAVE_TERMIOS_H
-#include <termios.h>
-#endif
-#endif
-#endif
-
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
