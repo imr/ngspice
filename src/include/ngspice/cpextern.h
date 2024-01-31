@@ -40,7 +40,6 @@ extern struct ccom *cp_kwswitch(int kw_class, struct ccom *tree);
 extern void cp_addcomm(char *word, long int bits0, long int bits1, long int bits2, long int bits3);
 extern void cp_addkword(int kw_class, char *word);
 extern void cp_ccom(wordlist *wlist, char *buf, bool esc);
-extern void cp_ccon(bool on);
 extern void cp_ccrestart(bool kwords);
 extern void cp_remcomm(char *word);
 extern void cp_remkword(int kw_class, const char *word);
@@ -152,7 +151,6 @@ enum cp_types {
   CP_LIST
 };
 
-extern bool cp_ignoreeof;
 extern bool cp_noclobber;
 extern bool cp_noglob;
 extern bool cp_nonomatch;

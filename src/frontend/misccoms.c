@@ -58,10 +58,8 @@ com_quit(wordlist *wl)
         (wl  &&  wl->wl_word  &&  cieq(wl->wl_word, "noask"))  ||
         !cp_getvar("askquit", CP_BOOL, NULL, 0);
 
-    /* update screen and reset terminal */
+    /* Update screen. */
     gr_clean();
-    cp_ccon(FALSE);
-
 
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg)
