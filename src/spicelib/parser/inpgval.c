@@ -89,7 +89,7 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
         INPgetNetTok(line, &word, 1);
         INPtermInsert(ckt, &word, tab, &(temp.nValue));
     } else if (type == IF_INSTANCE) {
-        INPgetTok(line, &word, 1);
+        INPgetNetTok(line, &word, 1);
         INPinsert(&word, tab);
         temp.uValue = word;
     } else if (type == IF_STRING) {
