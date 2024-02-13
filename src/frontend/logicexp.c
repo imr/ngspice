@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "ngspice/memory.h"
 #include "ngspice/macros.h"
@@ -22,10 +23,10 @@
 #include "ngspice/logicexp.h"
 #include "ngspice/udevices.h"
 
-/* Turn off/on debug tracing */
-#define PRINT_ALL    FALSE
-//#define PRINT_ALL    TRUE
 static char *get_pindly_instance_name(void);
+static char *get_inst_name(void);
+static char *get_logicexp_tmodel_delays(
+    char *out_name, int gate_op, BOOL isnot, DSTRING *mname);
 
 /* Start of btree symbol table */
 #define SYM_INPUT       1
@@ -40,7 +41,6 @@ static char *get_pindly_instance_name(void);
 typedef struct sym_entry *SYM_TAB;
 struct sym_entry {
     char *name;
-    char *alias;
     int attribute;
     int ref_count; // for inverters
     SYM_TAB left;
@@ -55,7 +55,6 @@ static SYM_TAB new_sym_entry(char *name, int attr)
     newp->right = NULL;
     newp->name = TMALLOC(char, strlen(name) + 1);
     strcpy(newp->name, name);
-    newp->alias = NULL;
     newp->attribute = attr;
     newp->ref_count = 0;
     return newp;
@@ -106,15 +105,6 @@ static SYM_TAB add_sym_tab_entry(char *name, int attr, SYM_TAB *stab)
     return entry;
 }
 
-static void alias_sym_tab(char *alias, SYM_TAB t)
-{
-    if (t == NULL) { return; }
-    if (t->alias)
-        tfree(t->alias);
-    t->alias = TMALLOC(char, strlen(alias) + 1);
-    strcpy(t->alias, alias);
-}
-
 static void delete_sym_tab(SYM_TAB t)
 {
     if (t == NULL) { return; }
@@ -122,22 +112,7 @@ static void delete_sym_tab(SYM_TAB t)
     delete_sym_tab(t->right);
     if (t->name)
         tfree(t->name);
-    if (t->alias)
-        tfree(t->alias);
     tfree(t);
-}
-
-static void print_sym_tab(SYM_TAB t, BOOL with_addr)
-{
-    if (t == NULL) { return; }
-    print_sym_tab(t->left, with_addr);
-    if (with_addr)
-        printf("%p --> \n", (void *)t);
-    printf("\"%s\"    %d  ref_count=%d", t->name, t->attribute, t->ref_count);
-    if (t->alias)
-        printf("  alias = \"%s\"", t->alias);
-    printf("\n");
-    print_sym_tab(t->right, with_addr);
 }
 /* End of btree symbol table */
 
@@ -152,6 +127,7 @@ struct lexer {
     char *lexer_buf;
     char *lexer_line;
     int lexer_pos;
+    int lexer_last_pos;
     int lexer_back;
     SYM_TAB lexer_sym_tab;
     size_t lexer_blen;
@@ -165,7 +141,7 @@ static LEXER new_lexer(char *line)
     lx = TMALLOC(struct lexer, 1);
     lx->lexer_line = TMALLOC(char, (strlen(line) + 1));
     strcpy(lx->lexer_line, line);
-    lx->lexer_pos = lx->lexer_back = 0;
+    lx->lexer_pos = lx->lexer_last_pos = lx->lexer_back = 0;
     lx->lexer_blen = LEX_INIT_SZ;
     lx->lexer_buf = TMALLOC(char, lx->lexer_blen);
     (void) memset(lx->lexer_buf, 0, lx->lexer_blen);
@@ -201,6 +177,7 @@ static int lexer_set_start(char *s, LEXER lx)
     if (!pos)
         return -1;
     lx->lexer_pos = (int) (pos - &lx->lexer_line[0]);
+    lx->lexer_last_pos = lx->lexer_pos;
     lx->lexer_back = lx->lexer_pos;
     return lx->lexer_pos;
 }
@@ -354,9 +331,15 @@ static int lex_ident(int c)
         return 0;
 }
 
+static void lexer_back_one(LEXER lx)
+{
+    lx->lexer_pos = lx->lexer_last_pos;
+}
+
 static int lexer_scan(LEXER lx)
 {
     int c;
+    lx->lexer_last_pos = lx->lexer_pos;
     while (1) {
         lx->lexer_buf[0] = '\0';
         c = lexer_getchar(lx);
@@ -420,6 +403,478 @@ static BOOL lex_all_digits(char *str)
 }
 /* End of lexical scanner */
 
+/* Start of name entries */
+typedef struct name_entry *NAME_ENTRY;
+struct name_entry {
+    char *name;
+    NAME_ENTRY next;
+};
+
+static NAME_ENTRY new_name_entry(char *name)
+{
+    NAME_ENTRY newp;
+    newp = TMALLOC(struct name_entry, 1);
+    newp->next = NULL;
+    newp->name = TMALLOC(char, strlen(name) + 1);
+    strcpy(newp->name, name);
+    return newp;
+}
+
+static NAME_ENTRY add_name_entry(char *name, NAME_ENTRY nelist)
+{
+    NAME_ENTRY newlist = NULL, x = NULL, last = NULL;
+
+    if (nelist == NULL) {
+        newlist = new_name_entry(name);
+        return newlist;
+    }
+    for (x = nelist; x; x = x->next) {
+        /* No duplicates */
+        if (eq(x->name, name)) {
+            //printf("\tFound entry %s\n", x->name);
+            return x;
+        }
+        last = x;
+    }
+    x = new_name_entry(name);
+    last->next = x;
+    //printf("\tAdd entry %s\n", x->name);
+    return x;
+}
+
+static void delete_name_entry(NAME_ENTRY entry)
+{
+    if (!entry) return;
+    if (entry->name) tfree(entry->name);
+    tfree(entry);
+}
+
+static void clear_name_list(NAME_ENTRY nelist)
+{
+    NAME_ENTRY x = NULL, next = NULL;
+    if (!nelist) { return; }
+    for (x = nelist; x; x = next) {
+        next = x->next;
+        delete_name_entry(x);
+    }
+}
+/* End of name entries */
+
+/* Start of infix to posfix */
+#define STACK_SIZE 100
+#define PUSH_ERROR 1
+#define POP_ERROR  2
+#define TMP_PREFIX  "tmp__"
+#define TMP_LEN     (strlen(TMP_PREFIX))
+
+struct Stack {
+    int top;
+    char *array[STACK_SIZE];
+};
+
+struct gate_data {
+    int type;
+    BOOL finished;
+    BOOL is_not;
+    BOOL is_possible;
+    char *outp;
+    NAME_ENTRY ins;
+    NAME_ENTRY last_input;
+    struct gate_data *nxt;
+    struct gate_data *prev;
+};
+
+static struct gate_data *first_gate = NULL;
+static struct gate_data *last_gate = NULL;
+
+static struct gate_data *new_gate(int c, char *out, char *i1, char *i2)
+{
+    NAME_ENTRY np;
+    struct gate_data *gdp = TMALLOC(struct gate_data, 1);
+    gdp->type = c;
+    gdp->finished = gdp->is_possible = FALSE;
+    if (c == '~') {
+        gdp->is_not = TRUE;
+    } else {
+        gdp->is_not = FALSE;
+    }
+    gdp->nxt = gdp->prev = NULL;
+    if (out) {
+        gdp->outp = TMALLOC(char, strlen(out) + 1);
+        strcpy(gdp->outp, out);
+    } else {
+        gdp->outp = NULL;
+    }
+    if (i1) { // Only have second input if there is a first
+        np = new_name_entry(i1);
+        gdp->ins = np;
+        if (i2) {
+            assert(c != '~'); // inverters have only one input
+            np = new_name_entry(i2);
+            gdp->ins->next = np;
+            if (strncmp(i1, TMP_PREFIX, TMP_LEN) == 0
+            && strncmp(i2, TMP_PREFIX, TMP_LEN) != 0) {
+                gdp->is_possible = TRUE;
+            }
+        }
+        gdp->last_input = np;
+    } else {
+        gdp->ins = NULL;
+        gdp->last_input = NULL;
+    }
+    return gdp;
+}
+
+static struct gate_data *insert_gate(struct gate_data *gp)
+{
+    if (!first_gate) {
+        first_gate = last_gate = gp;
+        gp->nxt = gp->prev = NULL;
+    } else {
+        last_gate->nxt = gp;
+        gp->nxt = NULL;
+        gp->prev = last_gate;
+        last_gate = gp;
+    }
+    return last_gate;
+}
+
+static char *tilde_tail(char *s, DSTRING *ds)
+{
+    ds_clear(ds);
+    if (strncmp(s, "tilde_", 6) == 0) {
+        ds_cat_printf(ds, "~%s", s + 6);
+        return ds_get_buf(ds);
+    } else {
+        return s;
+    }
+}
+
+static void move_inputs(struct gate_data *curr, struct gate_data *prev)
+{
+    if (curr == NULL || prev == NULL) return;
+    if (prev->finished) return;
+    delete_name_entry(curr->ins);
+    curr->ins = prev->ins;
+    prev->last_input->next = curr->last_input;
+    prev->ins = prev->last_input = NULL;
+    prev->finished = TRUE;
+}
+
+static void scan_gates(DSTRING *lhs)
+{
+    struct gate_data *current = NULL, *previous = NULL, *last_curr = NULL;
+    struct gate_data *prev = NULL;
+
+    current = first_gate;
+    while (current) {
+        int is_gate = (current->type == '&'
+                       || current->type == '^'
+                       || current->type == '|');
+        previous = current->prev;
+        if (is_gate && current->is_possible) {
+            if (previous && previous->type == current->type) {
+                if (eq(current->ins->name, previous->outp)) {
+                    move_inputs(current, previous);
+                }
+            }
+        } else if (current->type == '~') {
+            if (previous
+            && (previous->type == '&' || previous->type == '|'
+               || previous->type == '^')) {
+
+                if (strncmp(current->ins->name, TMP_PREFIX, TMP_LEN) == 0
+                && strncmp(previous->outp, TMP_PREFIX, TMP_LEN) == 0) {
+                    if (eq(current->ins->name, previous->outp)) {
+                        tfree(previous->outp);
+                        previous->outp = TMALLOC(char, strlen(current->outp) + 1);
+                        strcpy(previous->outp, current->outp);
+                        previous->is_not = TRUE;
+                        current->finished = TRUE;
+                    }
+                }
+            }
+        } else if (is_gate) {
+            if (current->finished == FALSE
+            && strncmp(current->ins->name, TMP_PREFIX, TMP_LEN) == 0) {
+                prev = current->prev;
+                while (prev) {
+                    if (prev->type == current->type
+                    && prev->finished == FALSE
+                    && strncmp(prev->outp, TMP_PREFIX, TMP_LEN) == 0
+                    && eq(current->ins->name, prev->outp)) {
+                        move_inputs(current, prev);
+                        break;
+                    }
+                    prev = prev->prev;
+                }
+            }
+        }
+        last_curr = current;
+        current = current->nxt;
+    }
+    if (ds_get_length(lhs) > 0 && last_curr) {
+        previous = last_curr;
+        while (previous && previous->finished) {
+            previous = previous->prev;
+        }
+        if (previous) {
+            assert(previous->outp != NULL);
+            assert(previous->finished == FALSE);
+            tfree(previous->outp);
+            previous->outp = TMALLOC(char, ds_get_length(lhs) + 1);
+            strcpy(previous->outp, ds_get_buf(lhs));
+        }
+    }
+}
+
+static void gen_scanned_gates(struct gate_data *gp)
+{
+    DS_CREATE(instance, 64);
+    DS_CREATE(ds, 32);
+    DS_CREATE(mname, 32);
+    NAME_ENTRY nm = NULL;
+    if (!gp) return;
+    while (gp) {
+        if (gp->finished) {
+            gp = gp->nxt;
+            continue;
+        }
+        ds_clear(&instance);
+        ds_cat_printf(&instance, "%s ", get_inst_name());
+        (void) get_logicexp_tmodel_delays(gp->outp, gp->type, gp->is_not, &mname);
+        if (gp->type == '&' || gp->type == '^' || gp->type == '|') {
+            nm = gp->ins;
+            ds_cat_str(&instance, "[");
+            while (nm) {
+                ds_cat_printf(&instance, " %s", tilde_tail(nm->name, &ds));
+                nm = nm->next;
+            }
+            ds_cat_printf(&instance, " ] %s %s", gp->outp, ds_get_buf(&mname));
+        } else if (gp->type == '~') {
+            ds_cat_printf(&instance, "%s %s %s", tilde_tail(gp->ins->name, &ds),
+                gp->outp, ds_get_buf(&mname));
+        }
+
+        u_add_instance(ds_get_buf(&instance));
+        gp = gp->nxt;
+    }
+    ds_free(&instance);
+    ds_free(&mname);
+}
+
+static void delete_gates(void)
+{
+    struct gate_data *g1, *g2;
+    NAME_ENTRY n1, n2;
+    g1 = first_gate;
+    while (g1) {
+        g2 = g1;
+        if (g1->outp) tfree(g1->outp);
+        n1 = g1->ins;
+        while (n1) {
+            n2 = n1;
+            n1 = n1->next;
+            delete_name_entry(n2);
+        }
+        g1 = g1->nxt;
+        tfree(g2);
+    }
+    first_gate = last_gate = NULL;
+}
+
+static int get_precedence(char  * s) {
+    switch (s[0]) {
+    case '~':
+        return 4;
+    case '&':
+        return 3;
+    case '^':
+        return 2;
+    case '|':
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+static int push(struct Stack* stack, char * item)
+{
+    if (stack->top == STACK_SIZE - 1) {
+        fprintf(stderr, "ERROR Postfix stack Overflow\n");
+        return PUSH_ERROR;
+    }
+    stack->array[++stack->top] = item;
+    return 0;
+}
+
+static char * pop(struct Stack* stack, int *status)
+{
+    if (stack->top == -1) {
+        fprintf(stderr, "ERROR Postfix stack Underflow\n");
+        *status = POP_ERROR;
+        return "";
+    }
+    *status = 0;
+    return stack->array[stack->top--];
+}
+
+static char *makestr(int c)
+{
+    static char buf[32];
+    sprintf(buf, "%c", c);
+    return buf;
+}
+
+static int infix_to_postfix(char* infix, DSTRING * postfix_p)
+{
+    struct Stack stack;
+    int ltok;
+    LEXER lx;
+    NAME_ENTRY nlist = NULL, entry = NULL;
+    int status = 0;
+
+    lx = new_lexer(infix);
+    stack.top = -1;
+    nlist = add_name_entry("first", NULL);
+    ds_clear(postfix_p);
+    while ( ( ltok = lexer_scan(lx) ) != 0 ) { // start while ltok loop
+        if (ltok == LEX_ID) {
+            ds_cat_printf(postfix_p, " %s", lx->lexer_buf);
+        } else if (ltok == '(') {
+            entry = add_name_entry(makestr(ltok), nlist);
+            if (push(&stack, entry->name)) goto err_return;
+        } else if (ltok == ')') {
+            while ( stack.top != -1 && !eq(stack.array[stack.top], "(") ) {
+                ds_cat_printf(postfix_p, " %s", pop(&stack, &status));
+                if (status) goto err_return;
+            }
+            pop(&stack, &status);
+            if (status) goto err_return;
+        } else if (lex_gate_op(ltok) || ltok == '~') {
+            char *tokstr = makestr(ltok);
+            if (ltok == '~') {  // change ~ id --> tilde_id and continue
+                int next_tok;
+                next_tok = lexer_scan(lx);
+                if (next_tok == LEX_ID) {
+                    ds_cat_printf(postfix_p, " tilde_%s", lx->lexer_buf);
+                    continue;  // while ltok loop
+                } else {
+                    lexer_back_one(lx);
+                }
+            }
+            while ( stack.top != -1 && !eq(stack.array[stack.top], "(") && get_precedence(stack.array[stack.top]) >= get_precedence(tokstr) ) {
+                ds_cat_printf(postfix_p, " %s", pop(&stack, &status));
+                if (status) goto err_return;
+            }
+            entry = add_name_entry(tokstr, nlist);
+            if (push(&stack, entry->name)) goto err_return;
+        }
+    } // end while ltok loop
+    while (stack.top != -1) {
+        ds_cat_printf(postfix_p, " %s", pop(&stack, &status));
+        if (status) goto err_return;
+    }
+err_return:
+    delete_lexer(lx);
+    clear_name_list(nlist);
+    return status;
+}
+
+static int evaluate_postfix(char* postfix)
+{
+    static int count = 1;
+    struct Stack stack;
+    stack.top = -1;
+    char *operand1, *operand2;
+    char tmp[32];
+    int ltok, prevtok = 0;
+    LEXER lx;
+    NAME_ENTRY nlist = NULL, entry = NULL;
+    struct gate_data *gp = NULL;
+    int status = 0;
+    int skip = 1;
+
+#ifdef PFX_USE_INVERTERS
+    if (getenv("PFX_USE_INVERTERS")) {
+        skip = 0;
+    } else {
+        skip = 1;
+    }
+#endif
+
+    lx = new_lexer(postfix);
+    nlist = add_name_entry("first", NULL);
+    tmp[0] = '\0';
+
+    while ( ( ltok = lexer_scan(lx) ) != 0 ) { // while ltok loop
+        if (ltok == LEX_ID) {
+            entry = add_name_entry(lx->lexer_buf, nlist);
+            if (push(&stack, entry->name)) goto err_return;
+        } else if (ltok == '~') {
+            operand1 = pop(&stack, &status);
+            if (status) goto err_return;
+            sprintf(tmp, "%s%d", TMP_PREFIX, count);
+            count++;
+            gp = new_gate('~', tmp, operand1, NULL);
+            gp = insert_gate(gp);
+            entry = add_name_entry(tmp, nlist);
+            if (push(&stack, entry->name)) goto err_return;
+        } else {
+            operand2 = pop(&stack, &status);
+            if (status) goto err_return;
+            operand1 = pop(&stack, &status);
+            if (status) goto err_return;
+            if (ltok == '|') {
+                sprintf(tmp, "%s%d", TMP_PREFIX, count);
+                count++;
+                gp = new_gate('|', tmp, operand1, operand2);
+                gp = insert_gate(gp);
+                entry = add_name_entry(tmp, nlist);
+                if (push(&stack, entry->name)) goto err_return;
+            } else if (ltok == '^') {
+                sprintf(tmp, "%s%d", TMP_PREFIX, count);
+                count++;
+                gp = new_gate('^', tmp, operand1, operand2);
+                gp = insert_gate(gp);
+                entry = add_name_entry(tmp, nlist);
+                if (push(&stack, entry->name)) goto err_return;
+            } else if (ltok == '&') {
+                sprintf(tmp, "%s%d", TMP_PREFIX, count);
+                count++;
+                gp = new_gate('&', tmp, operand1, operand2);
+                gp = insert_gate(gp);
+                entry = add_name_entry(tmp, nlist);
+                if (push(&stack, entry->name)) goto err_return;
+            }
+        }
+        prevtok = ltok;
+    }  // end while ltok loop
+    if (prevtok == LEX_ID) {
+        char *n1 = NULL;
+        DS_CREATE(ds1, 32);
+        count++;
+        sprintf(tmp, "%s%d", TMP_PREFIX, count);
+        n1 = tilde_tail(pop(&stack, &status), &ds1);
+        if (status) goto err_return;
+        if (!skip && n1[0] == '~') {
+            gp = new_gate('~', tmp, n1 + 1, NULL);
+            gp->is_not = TRUE;
+        } else {
+            gp = new_gate('~', tmp, n1, NULL);
+            gp->is_not = FALSE;
+        }
+        gp = insert_gate(gp);
+        ds_free(&ds1);
+    }
+err_return:
+    delete_lexer(lx);
+    clear_name_list(nlist);
+    return status;
+}
+
+/* End of infix to posfix */
+
 /* Start parse table */
 typedef struct table_line *TLINE;
 struct table_line {
@@ -436,7 +891,6 @@ struct parse_table {
 };
 
 static PTABLE parse_tab = NULL;
-static PTABLE gen_tab = NULL;
 
 static PTABLE new_parse_table(void)
 {
@@ -462,170 +916,24 @@ static void delete_parse_table(PTABLE pt)
     tfree(pt);
 }
 
-static void delete_parse_gen_tables(void)
+static void delete_parse_tables(void)
 {
     delete_parse_table(parse_tab);
-    delete_parse_table(gen_tab);
-    parse_tab = gen_tab = NULL;
+    parse_tab = NULL;
 }
 
 static void init_parse_tables(void)
 {
     parse_tab = new_parse_table();
-    gen_tab = new_parse_table();
-}
-
-static TLINE ptab_new_line(char *line)
-{
-    TLINE t = NULL;
-    t = TMALLOC(struct table_line, 1);
-    t->next = NULL;
-    t->line = TMALLOC(char, (strlen(line) + 1));
-    strcpy(t->line, line);
-    t->depth = 0;
-    return t;
-}
-
-static TLINE add_common(char *line, BOOL ignore_blank)
-{
-    if (!line)
-        return NULL;
-    if (ignore_blank) {
-        if (line[0] == '\0') {
-            return NULL;
-        } else if (line[0] == '\n' && strlen(line) < 2) {
-            return NULL;
-        }
-    }
-    return ptab_new_line(line);
-}
-
-static TLINE add_to_parse_table(PTABLE pt, char *line, BOOL ignore_blank)
-{
-    TLINE t;
-    if (!pt)
-        return NULL;
-    t = add_common(line, ignore_blank);
-    if (!t)
-        return NULL;
-    t->next = NULL;
-    if (!pt->first) {
-        pt->first = pt->last = t;
-    } else {
-        pt->last->next = t;
-        pt->last = t;
-    }
-    pt->entry_count++;
-    return t;
-}
-
-static TLINE ptab_add_line(char *line, BOOL ignore_blank, int depth)
-{
-    TLINE t;
-    t = add_to_parse_table(parse_tab, line, ignore_blank);
-    if (t)
-        t->depth = depth;
-    return t;
-}
-
-static TLINE gen_tab_add_line(char *line, BOOL ignore_blank)
-{
-    TLINE t;
-    t = add_to_parse_table(gen_tab, line, ignore_blank);
-    return t;
-}
-
-static char *get_temp_from_line(char *line, BOOL begin, DSTRING *pds)
-{
-    /* First occurrence of "tmpx.." on the line, x is a digit */
-    /* If begin is TRUE then "tmpx.." must be at the start of line */
-    char *p, *q;
-    int j = 0;
-    p = strstr(line, "tmp");
-    if (!p)
-        return NULL;
-    if (begin && p != line)
-        return NULL;
-    ds_clear(pds);
-    p += 3;
-    if (!isdigit(p[0]))
-        return NULL;
-    ds_cat_str(pds, "tmp");
-    for (q = p, j = 0; isdigit(q[j]) || q[j] == '_'; j++) {
-        ds_cat_char(pds, q[j]);
-    }
-    ds_cat_char(pds, '\0');
-    return ds_get_buf(pds);
-}
-
-static char *find_temp_begin(char *line, DSTRING *pds)
-{
-    return get_temp_from_line(line, TRUE, pds);
-}
-
-static char *find_temp_anywhere(char *line, DSTRING *pds)
-{
-    return get_temp_from_line(line, FALSE, pds);
-}
-
-static TLINE tab_find(PTABLE pt, char *str, BOOL start_of_line)
-{
-    TLINE t;
-    size_t len;
-
-    if (!pt)
-        return NULL;
-    t = pt->first;
-    len = strlen(str);
-    while (t) {
-        if (start_of_line) {
-            if (strncmp(t->line, str, len) == 0)
-                return t;
-        } else {
-            if (strstr(t->line, str))
-                return t;
-        }
-        t = t->next;
-    }
-    return NULL;
-}
-
-static void ptable_print(PTABLE pt)
-{
-    TLINE t;
-    if (!pt)
-        return;
-    t = pt->first;
-    printf("entry_count %u\n", pt->entry_count);
-    while (t) {
-        if (t->depth > 1) {
-            int i;
-            for (i = 1; i < t->depth; i++) {
-                printf("  ");
-            }
-        }
-        printf("%s", t->line);
-        if (t->depth > 0)
-            printf(" ...[%d]", t->depth);
-        printf("\n");
-        t = t->next;
-    }
 }
 /* End parse table */
 
 /* Start of logicexp parser */
-static char *get_inst_name(void);
-static char *get_temp_name(void);
 static void aerror(char *s);
 static BOOL amatch(int t);
-static BOOL bexpr(void);
-static BOOL bfactor(void);
 static BOOL bparse(char *line, BOOL new_lexer);
 
 static int lookahead = 0;
-static int adepth = 0;
-static int max_adepth = 0;
-static DSTRING d_curr_line;
 static int number_of_instances = 0;
 static BOOL use_tmodel_delays = FALSE;
 
@@ -633,7 +941,7 @@ static void cleanup_parser(void)
 {
     delete_lexer(parse_lexer);
     parse_lexer = NULL;
-    delete_parse_gen_tables();
+    delete_parse_tables();
 }
 
 static char *get_inst_name(void)
@@ -644,33 +952,6 @@ static char *get_inst_name(void)
     (void) sprintf(name, "a_%d", number);
     number_of_instances++;
     return name;
-}
-
-static char *get_inverter_output_name(char *input, DSTRING *pds)
-{
-    LEXER lx = parse_lexer;
-    // FIX ME keep this name in the symbol table to ensure uniqueness
-    ds_clear(pds);
-    ds_cat_printf(pds, "inv_out__%s", input);
-    if (member_sym_tab(ds_get_buf(pds), lx->lexer_sym_tab))
-        fprintf(stderr, "ERROR %s is already in use\n", ds_get_buf(pds));
-    return ds_get_buf(pds);
-}
-
-static char *get_inv_tail(char *str, DSTRING *pds)
-{
-    char *p = NULL, *q = NULL;
-    int j = 0;
-    size_t slen = strlen("inv_out__");
-    p = strstr(str, "inv_out__");
-    if (!p)
-        return NULL;
-    ds_clear(pds);
-    for (q = p + slen, j = 0; q[j] != '\0' && !isspace(q[j]); j++) {
-        ds_cat_char(pds, q[j]);
-    }
-    ds_cat_char(pds, '\0');
-    return ds_get_buf(pds);
 }
 
 static void gen_models(void)
@@ -733,15 +1014,6 @@ static void aerror(char *s)
     cleanup_parser();
 }
 
-char *get_temp_name(void)
-{
-    static char name[64];
-    static int number = 0;
-    number++;
-    (void) sprintf(name, "tmp%d", number);
-    return name;
-}
-
 static BOOL amatch(int t)
 {
     if (lookahead == t) {
@@ -755,688 +1027,88 @@ static BOOL amatch(int t)
     return TRUE;
 }
 
-#define AMATCH_BFACTOR(n) \
-{ \
-    if (!amatch((n))) { \
-        return FALSE; \
-    } \
-}
-
-static BOOL bfactor(void)
-{
-    /* factor is : ['~'] rest
-       where rest is: input_name_id | '(' expr ')' | error
-       [] means optional
-    */
-    BOOL is_not = FALSE;
-    SYM_TAB entry = NULL;
-    LEXER lx = parse_lexer;
-
-    adepth++;
-
-    if (lookahead == '~') {
-        is_not = TRUE;
-        lookahead = lex_scan();
-    }
-
-    if (lookahead == LEX_ID) {
-        entry = add_sym_tab_entry(lx->lexer_buf, SYM_ID, &lx->lexer_sym_tab);
-        if (is_not) {
-            DS_CREATE(dstr, 128);
-            ds_clear(&dstr);
-            ds_cat_printf(&d_curr_line, "%s ",
-                get_inverter_output_name(lx->lexer_buf, &dstr));
-            ds_free(&dstr);
-            entry->attribute |= SYM_INVERTER;
-            entry->ref_count++;
-        } else {
-            ds_cat_printf(&d_curr_line, "%s ", lx->lexer_buf);
-        }
-
-        lookahead = lex_scan();
-
-    } else if (lookahead == '(') {
-        DS_CREATE(tmpnam, 64);
-
-        ds_clear(&tmpnam);
-        if (adepth > max_adepth)
-            max_adepth = adepth;
-
-        ds_cat_str(&tmpnam, get_temp_name());
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
-        ds_clear(&d_curr_line);
-        ds_cat_printf(&d_curr_line, "%s__%d <- ", ds_get_buf(&tmpnam), adepth);
-
-        if (is_not) {
-            ds_cat_printf(&d_curr_line, "~ %c", lookahead);
-        } else {
-            ds_cat_printf(&d_curr_line, "%c", lookahead);
-        }
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
-        ds_clear(&d_curr_line);
-
-        lookahead = lex_scan();
-        if (!bexpr()) {
-            cleanup_parser();
-            return FALSE;
-        }
-
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
-        ds_clear(&d_curr_line);
-
-        ds_cat_printf(&d_curr_line, "%c -> %s__%d", lookahead,
-            ds_get_buf(&tmpnam), adepth);
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
-        ds_clear(&d_curr_line);
-
-        ds_free(&tmpnam);
-        AMATCH_BFACTOR(')');
-
-    } else {
-        aerror("bfactor: syntax error");
-        return FALSE;
-    }
-    adepth--;
-    return TRUE;
-}
-
-static BOOL bexpr(void)
-{
-    /* expr is: factor { gate_op factor }+
-       where {}+ means 0 or more times.
-    */
-    if (!bfactor()) {
-        cleanup_parser();
-        return FALSE;
-    }
-
-    while (lex_gate_op(lookahead)) {
-        ds_cat_printf(&d_curr_line, "%c ", lookahead);
-
-        lookahead = lex_scan();
-        if (!bfactor()) {
-            cleanup_parser();
-            return FALSE;
-        }
-    }
-    return TRUE;
-}
-
-#define AMATCH_BSTMT(n) \
-{ \
-    if (!amatch((n))) { \
-        ds_free(&tname); ds_free(&assign); \
-        return FALSE; \
-    } \
-}
-
-static BOOL bstmt(void)
+static BOOL bstmt_postfix(void)
 {
     /* A stmt is: output_name_id = '{' expr '}' */
-    BOOL verbose = PRINT_ALL;
-    int end_pos = 0, start_pos = 0;
-    SYM_TAB entry = NULL;
-    DS_CREATE(tname, 64);
-    DS_CREATE(assign, LEX_BUF_SZ);
+    DS_CREATE(lhs, 32);
+    DS_CREATE(postfix, 1024);
+    DS_CREATE(infix, 1024);
+    char *right_bracket = NULL, *rest = NULL;
+    BOOL retval = TRUE;
 
     if (lookahead == LEX_ID) {
-        entry = add_sym_tab_entry(parse_lexer->lexer_buf, SYM_ID,
-            &parse_lexer->lexer_sym_tab);
+        ds_clear(&lhs);
+        ds_cat_str(&lhs, parse_lexer->lexer_buf);
+        lookahead = lex_scan();
     } else {
-        aerror("bstmt: syntax error");
-        return FALSE;
+        aerror("bstmt_postfix: syntax error");
+        retval = FALSE;
+        goto bail_out;
+    }
+    if (!amatch(('='))) {
+        retval = FALSE;
+        goto bail_out;
     }
 
-    adepth++;
-    if (adepth > max_adepth)
-        max_adepth = adepth;
-
-    if (verbose) {
-        start_pos = parse_lexer->lexer_pos;
-        printf("* %s", parse_lexer->lexer_buf);
+    rest = parse_lexer->lexer_line + parse_lexer->lexer_pos;
+    right_bracket = strstr(rest, "}");
+    ds_clear(&infix);
+    ds_cat_mem(&infix, rest, right_bracket - rest);
+    if (infix_to_postfix(ds_get_buf(&infix), &postfix)) {
+        retval = FALSE;
+        goto bail_out;
     }
-
-    AMATCH_BSTMT(LEX_ID);
-    AMATCH_BSTMT('=');
-
-    ds_clear(&assign);
-    ds_cat_printf(&assign, "%s =", entry->name);
-    (void) ptab_add_line(ds_get_buf(&assign), TRUE, adepth);
-
-    AMATCH_BSTMT('{');
-
-    ds_clear(&tname);
-    ds_cat_str(&tname, get_temp_name());
-    ds_cat_printf(&d_curr_line, "%s__%d <- (", ds_get_buf(&tname), adepth);
-    (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
-    ds_clear(&d_curr_line);
-
-    if (!bexpr()) {
-        cleanup_parser();
-        ds_free(&assign);
-        ds_free(&tname);
-        return FALSE;
+    if (evaluate_postfix(ds_get_buf(&postfix))) {
+        retval = FALSE;
+        goto bail_out;
     }
-
-    if (ds_get_length(&d_curr_line) > 0) {
-        (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
+    scan_gates(&lhs);
+    gen_scanned_gates(first_gate);
+    lookahead = lex_scan();
+    while (lookahead != '}') {
+        lookahead = lex_scan();
     }
-    ds_clear(&d_curr_line);
-    ds_cat_printf(&d_curr_line, ") -> %s__%d", ds_get_buf(&tname), adepth);
-    (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE, adepth);
-    ds_clear(&d_curr_line);
+    lookahead = lex_scan();
 
-    if (verbose) {
-        DS_CREATE(stmt_str, 128);
-        end_pos = parse_lexer->lexer_pos;
-        ds_cat_mem(&stmt_str, &parse_lexer->lexer_line[start_pos],
-            (size_t) (end_pos - start_pos));
-        printf("%s\n", ds_get_buf(&stmt_str));
-        ds_free(&stmt_str);
-    }
-
-    AMATCH_BSTMT('}');
-
-    ds_free(&assign);
-    ds_free(&tname);
-    adepth--;
-    return TRUE;
+bail_out:
+    delete_gates();
+    ds_free(&lhs);
+    ds_free(&postfix);
+    ds_free(&infix);
+    return retval;
 }
 
-static PTABLE optimize_gen_tab(PTABLE pt)
+static char *get_logicexp_tmodel_delays(
+    char *out_name, int gate_op, BOOL isnot, DSTRING *mname)
 {
-    /* This function compacts the gen_tab, returning a new PTABLE.
-       Aliases are transformed and removed as described below.
-       Usually, optimize_gen_tab is called a second time on the
-       PTABLE created by the first call. The algorithm here will
-       only transform one level of aliases.
-    */
-    TLINE t = NULL;
-    LEXER lxr = NULL;
-    int val, idnum = 0, tok_count = 0;
-    SYM_TAB entry = NULL, alias_tab = NULL;
-    BOOL found_tilde = FALSE, starts_with_temp = FALSE;
-    BOOL prit = PRINT_ALL;
-    PTABLE new_gen = NULL;
-    DS_CREATE(scratch, LEX_BUF_SZ);
-    DS_CREATE(alias, 64);
-    DS_CREATE(non_tmp_name, 64);
-    DS_CREATE(tmp_name, 64);
-    DS_CREATE(find_str, 128);
-
-    if (!pt || !pt->first) {
-        ds_free(&scratch);
-        ds_free(&alias);
-        ds_free(&non_tmp_name);
-        ds_free(&tmp_name);
-        ds_free(&find_str);
-        return NULL;
-    }
-    t = pt->first;
-    lxr = new_lexer(t->line);
-    /* Look for tmp... = another_name
-         t1 = name1 (alias for t1)
-         t2 = name2 (alias for t2)
-         t3 = t1 op t2
-       during second pass transform
-         ignore t1, t2
-         t3 = name1 op name2
-    */
-    while (t) {
-        idnum = 0;
-        val = lexer_scan(lxr);
-        ds_clear(&alias);
-        entry = NULL;
-        found_tilde = FALSE;
-        if (find_temp_begin(t->line, &find_str))
-            starts_with_temp = TRUE;
-        else
-            starts_with_temp = FALSE;
-        tok_count = 0;
-        while (val != '\0') {
-            tok_count++;
-            if (val == LEX_ID) {
-                idnum++;
-                if (idnum == 1) {
-                    entry = add_sym_tab_entry(lxr->lexer_buf, SYM_ID,
-                        &alias_tab);
-                } else if (idnum == 2) {
-                    ds_cat_str(&alias, lxr->lexer_buf);
-                }
-            } else if (val == '~') {
-                found_tilde = TRUE;
-                if (tok_count != 3) {
-                    goto quick_return;
-                }
-            } else if (val == '=') {
-                if (tok_count != 2) {
-                    goto quick_return;
-                }
+    ds_clear(mname);
+    if (use_tmodel_delays) {
+        /* This is the case when logicexp has a UGATE
+           timing model (not d0_gate) and no pindly.
+        */
+        SYM_TAB entry = NULL;
+        char *nm1 = 0;
+        entry = member_sym_tab(out_name, parse_lexer->lexer_sym_tab);
+        if (entry && (entry->attribute & SYM_OUTPUT)) {
+            nm1 = tmodel_gate_name(gate_op, isnot);
+            if (nm1) {
+                ds_cat_str(mname, nm1);
             }
-            val = lexer_scan(lxr);
         }
-        if (starts_with_temp && !found_tilde && idnum == 2)
-            alias_sym_tab(ds_get_buf(&alias), entry);
-        t = t->next;
-        if (t) {
-            delete_lexer(lxr);
-            lxr = new_lexer(t->line);
+        if (!nm1) {
+            nm1 = lex_gate_name(gate_op, isnot);
+            ds_cat_str(mname, nm1);
         }
-    }
-    if (prit) {
-        printf("alias_tab:\n");
-        print_sym_tab(alias_tab, FALSE);
-    }
-    delete_lexer(lxr);
-
-
-    /* Second pass, replace names by their aliases.
-       Perform transformation as mentioned above.
-       Transform:
-         t1 = t2 op t3 {op t4 ...} (t* can also be name*, not just tmps)
-         lhs = t1 (lhs of original x = { expr } statement)
-       into:
-         ignore lhs = t1
-         lhs = t2 op t3 {op t4...}
-       NOTE that lhs_= t1 should be the last entry in gen_tab.
-       lhs = t1 (from stmt lhs = { expr }) is the top-most level
-       in the parse tree, and is encountered last in the evaluation order.
-    */
-    new_gen = new_parse_table();
-    ds_clear(&scratch);
-    t = pt->first;
-    lxr = new_lexer(t->line);
-    while (t) { // while (t) second pass
-        BOOL skip = FALSE;
-
-        val = lexer_scan(lxr);
-        idnum = 0;
-        entry = NULL;
-        if (find_temp_begin(t->line, &find_str))
-            starts_with_temp = TRUE;
-        else
-            starts_with_temp = FALSE;
-        tok_count = 0;
-        ds_clear(&scratch);
-        ds_clear(&non_tmp_name);
-        ds_clear(&tmp_name);
-        while (val != '\0' && !skip) {
-            tok_count++;
-            if (val == LEX_ID) {
-                idnum++;
-                entry = member_sym_tab(lxr->lexer_buf, alias_tab);
-                if (entry && entry->alias) {
-                    if (idnum > 1) {
-                        ds_cat_printf(&scratch, "%s ", entry->alias);
-                    } else if (idnum == 1) {
-                        if (starts_with_temp) {
-                            skip = TRUE;
-                        }
-                    }
-                } else {
-                    ds_cat_printf(&scratch, "%s ", lxr->lexer_buf);
-                    if (tok_count == 1) {
-                        ds_clear(&non_tmp_name);
-                        if (!find_temp_begin(lxr->lexer_buf, &find_str))
-                            ds_cat_str(&non_tmp_name, lxr->lexer_buf);
-                    } else if (tok_count == 3) {
-                        if (ds_get_length(&non_tmp_name) > 0) {
-                            char *str1 = NULL;
-                            str1 = find_temp_begin(lxr->lexer_buf, &find_str);
-                            if (str1) {
-                                ds_clear(&tmp_name);
-                                ds_cat_str(&tmp_name, lxr->lexer_buf);
-                            }
-                        }
-                    }
-                }
-
-                if (idnum > 2) {
-                    ds_clear(&non_tmp_name);
-                    ds_clear(&tmp_name);
-                }
-            } else {
-                if (val == LEX_OTHER) {
-                    delete_parse_table(new_gen);
-                    new_gen = NULL;
-                    goto quick_return;
-                }
-                ds_cat_printf(&scratch, "%c ", val);
-            }
-            val = lexer_scan(lxr);
-        }
-        t = t->next;
-        if (t) {
-            delete_lexer(lxr);
-            lxr = new_lexer(t->line);
-        }
-        if (!skip) {
-            TLINE tnamel = NULL;
-            char *p = NULL;
-            DS_CREATE(d_buf, 128);
-            BOOL ignore_lhs = FALSE;
-
-            ds_clear(&d_buf);
-            if (ds_get_length(&tmp_name) > 0)
-                tnamel = tab_find(new_gen, ds_get_buf(&tmp_name), TRUE);
-            if (ds_get_length(&non_tmp_name) > 0 && tnamel) {
-                ignore_lhs = TRUE;
-
-                ds_clear(&d_buf);
-                p = strstr(tnamel->line, " = ");
-                if (p) {
-                    ds_cat_str(&d_buf, ds_get_buf(&non_tmp_name));
-                    ds_cat_str(&d_buf, p);
-                    tfree(tnamel->line);
-                    tnamel->line = TMALLOC(char, ds_get_length(&d_buf) + 1);
-                    strcpy(tnamel->line, ds_get_buf(&d_buf));
-                }
-            }
-            if (!ignore_lhs) {
-                (void) add_to_parse_table(new_gen,
-                    ds_get_buf(&scratch), TRUE);
-            }
-            ds_free(&d_buf);
-        }
-    } // end of while (t) second pass
-
-quick_return:
-    if (new_gen && new_gen->entry_count == 0) {
-        delete_parse_table(new_gen);
-        new_gen = NULL;
-    }
-    ds_free(&alias);
-    ds_free(&scratch);
-    ds_free(&non_tmp_name);
-    ds_free(&tmp_name);
-    ds_free(&find_str);
-    delete_lexer(lxr);
-    delete_sym_tab(alias_tab);
-
-    return new_gen;
-}
-
-static BOOL gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
-{
-    /* gen_gates is called with PTABLE gate_tab being the final
-       PTABLE produced by optimize_gen_tab(,..) calls.
-       If gate tab is the orignal uncompacted gen_tab, then extra
-       redundant intermediate gates will be created.
-    */
-    TLINE t;
-    LEXER lxr = NULL;
-    int val, tok_count = 0, gate_op = 0, idnum = 0, in_count = 0;
-    BOOL found_tilde = FALSE;
-    BOOL prit = PRINT_ALL;
-    DS_CREATE(out_name, 64);
-    DS_CREATE(in_names, 64);
-    DS_CREATE(gate_name, 64);
-    DS_CREATE(instance, 128);
-
-    if (!gate_tab || !gate_tab->first) {
-        ds_free(&out_name);
-        ds_free(&in_names);
-        ds_free(&gate_name);
-        ds_free(&instance);
-        return FALSE;
-    }
-    t = gate_tab->first;
-    lxr = new_lexer(t->line);
-    while (t) { // while t loop
-        ds_clear(&out_name);
-        ds_clear(&in_names);
-        ds_clear(&gate_name);
-        ds_clear(&instance);
-        idnum = 0;
-        val = lexer_scan(lxr);
-        found_tilde = FALSE;
-        tok_count = 0;
-        gate_op = 0;
-        in_count = 0;
-        while (val != '\0') {  // while val loop
-            tok_count++;
-            if (val == LEX_ID) {
-                idnum++;
-                if (idnum == 1) { //output name
-                    ds_cat_str(&out_name, lxr->lexer_buf);
-                } else { // input name
-                    char *tail = NULL;
-                    DS_CREATE(dstr, 64);
-                    in_count++;
-                    tail = get_inv_tail(lxr->lexer_buf, &dstr);
-                    if (tail && strlen(tail) > 0) {
-                        ds_cat_printf(&in_names, " ~%s", tail);
-                        if (prit) {
-                            printf(
-                            "change input name \"%s\" tail \"~%s\"\n",
-                            lxr->lexer_buf, tail);
-                        }
-                    } else {
-                        ds_cat_printf(&in_names, " %s", lxr->lexer_buf);
-                    }
-                    ds_free(&dstr);
-                }
-            } else if (val == '~') {
-                found_tilde = TRUE;
-                if (tok_count != 3) goto gen_error;
-            } else if (val == '=') {
-                if (tok_count != 2) goto gen_error;
-            } else if (lex_gate_op(val)) {
-                if (gate_op != 0) {
-                    if (val != gate_op) {
-                        fprintf(stderr,
-                        "\nERROR operator precedence parsing is not implemented\n"
-                        " at expression %s\n"
-                        " Please modify the LOGICEXP by inserting parentheses.\n"
-                        " For example change   a & b | c & d & e | f\n"
-                        " to (a & b) | (c & d & e) | f\n"
-                        " to get the desired PSPice precedence rules\n",
-                        t->line
-                        );
-                        goto gen_error;
-                    }
-                }
-                gate_op = val;
-            } else {
-                goto gen_error;
-            }
-            val = lexer_scan(lxr);
-        }  // end while val loop
-
-        if (in_count == 1) { // buffer or inverter
-            if (gate_op != 0) goto gen_error;
-            gate_op = '~'; // found_tilde specifies inverter or buffer
-        } else if (in_count >= 2) { // AND, OR. XOR and inverses
-            if (gate_op == 0) goto gen_error;
-        } else {
-            goto gen_error;
-        }
-
-        if (use_tmodel_delays) {
-            /* This is the case when logicexp has a UGATE
-               timing model (not d0_gate) and no pindly.
-            */
-            SYM_TAB entry = NULL;
-            char *nm1 = 0;
-            entry = member_sym_tab(ds_get_buf(&out_name), parser_symbols);
-            if (entry && (entry->attribute & SYM_OUTPUT)) {
-                nm1 = tmodel_gate_name(gate_op, found_tilde);
-                if (nm1) {
-                    ds_cat_str(&gate_name, nm1);
-                }
-            }
-            if (!nm1) {
-                nm1 = lex_gate_name(gate_op, found_tilde);
-                ds_cat_str(&gate_name, nm1);
-            }
-        } else {
-            ds_cat_str(&gate_name, lex_gate_name(gate_op, found_tilde));
-        }
-
-        ds_cat_printf(&instance, "%s ", get_inst_name());
-        if (in_count == 1) {
-            ds_cat_printf(&instance, "%s %s ", ds_get_buf(&in_names),
-                ds_get_buf(&out_name));
-        } else {
-            ds_cat_printf(&instance, "[%s ] %s ", ds_get_buf(&in_names),
-                ds_get_buf(&out_name));
-        }
-        ds_cat_printf(&instance, "%s", ds_get_buf(&gate_name));
-        t = t->next;
-        if (t) {
-            delete_lexer(lxr);
-            lxr = new_lexer(t->line);
-        }
-        if (ds_get_length(&instance) > 0) {
-            u_add_instance(ds_get_buf(&instance));
-        }
-    } // end while t loop
-
-    delete_lexer(lxr);
-    ds_free(&out_name);
-    ds_free(&in_names);
-    ds_free(&gate_name);
-    ds_free(&instance);
-    return TRUE;
-
-gen_error:
-    delete_lexer(lxr);
-    ds_free(&out_name);
-    ds_free(&in_names);
-    ds_free(&gate_name);
-    ds_free(&instance);
-    return FALSE;
-}
-
-/*
-    gen_tab lines format:
-        name1 = [~] name2 [op name3 {op namei}+]
-    [] means optional, {}+ means zero or more times.
-    op is gate type (&, |, ^), ~ means invert output.
-    name1 is the gate output, and name2,... are inputs.
-    & is AND, | is OR, ^ is XOR.
-    ~ & is NAND, ~ | is NOR, ~ ^ is XNOR.
-    In any given line, all the op values are the same, and don't change.
-    AND and OR can have >= 2 inputs, XOR can have only 2 inputs.
-    If there is only a single input, then the gate is BUF or INV(~).
-*/
-static void bevaluate(TLINE t, int deep)
-{
-    /* TLINE t is the entry in the parse_tab and deep is the call depth
-       where the parse_tab is transformed into the gen_tab. The deeper
-       calls are evaluated first, bottom-up, as determined by beval_order.
-       The tokens in the parse_tab are reassembled into gen_tab lines
-       as described above.
-    */
-    char *s;
-    int down = 0;
-    DS_CREATE(this, 64);
-    DS_CREATE(other, 64);
-    DS_CREATE(new_line, LEX_BUF_SZ);
-    DS_CREATE(find_str, 128);
-
-    s = find_temp_begin(t->line, &find_str);
-    if (!s) {
-        ds_free(&find_str);
-        return;
-    }
-    ds_clear(&other);
-    ds_clear(&new_line);
-    ds_clear(&this);
-    ds_cat_str(&this, s);
-    if (strstr(t->line + ds_get_length(&this), " ~ ")) {
-        ds_cat_printf(&new_line, "%s =  ~ ", ds_get_buf(&this));
     } else {
-        if (deep == 1) {
-            ds_cat_printf(&new_line, "%s ", parse_tab->first->line);
-        } else {
-            ds_cat_printf(&new_line, "%s = ", ds_get_buf(&this));
-        }
+        ds_cat_str(mname, lex_gate_name(gate_op, isnot));
     }
-    t = t->next;
-    while (t) {
-        s = find_temp_anywhere(t->line, &find_str);
-        if (s) {
-            if (eq(ds_get_buf(&this), s)) {
-                break;
-            } else {
-                if (down == 0) {
-                    s = find_temp_begin(t->line, &find_str);
-                    ds_clear(&other);
-                    ds_cat_str(&other, s);
-                    down = 1;
-                    ds_cat_printf(&new_line, " %s", ds_get_buf(&other));
-                } else if (down == 1) {
-                    s = find_temp_anywhere(t->line, &find_str);
-                    if (eq(ds_get_buf(&other), s)) {
-                        down = 0;
-                        ds_clear(&other);
-                    }
-                }
-            }
-        } else if (down == 0) {
-            s = find_temp_anywhere(t->line, &find_str);
-            if (!s) {
-                ds_cat_printf(&new_line, " %s", t->line);
-            }
-        }
-        t = t->next;
-    }
-    (void) gen_tab_add_line(ds_get_buf(&new_line), TRUE);
-    ds_free(&this);
-    ds_free(&other);
-    ds_free(&new_line);
-    ds_free(&find_str);
-    return;
-}
-
-static void beval_order(void)
-{
-    /* The parser is top-down recursive descent. The depth is used
-       so that the parsed data is evaluated bottom-up. Then the
-       tmp.. regions can be evaluated before they are referenced.
-    */
-    int i, depth;
-    TLINE t;
-    size_t slen;
-
-    if (!parse_tab || !parse_tab->first)
-        return;
-    slen = strlen("tmp");
-    for (i = max_adepth; i > 0; i--) {
-        t = parse_tab->first;
-        while (t) {
-            char *q;
-            int cmp = 0;
-            cmp = strncmp(t->line, "tmp", slen);
-            if (cmp == 0 && ((q = strstr(t->line, " <- ")) != NULL)) {
-                depth = t->depth;
-                if (depth > 0) {
-                    if (i == depth) {
-                        bevaluate(t, i);
-                    }
-                }
-            }
-            t = t->next;
-        }
-    }
-    return;
+    return ds_get_buf(mname);
 }
 
 static BOOL bparse(char *line, BOOL new_lexer)
 {
-    int stmt_num = 0;
-    BOOL ret_val = TRUE, prit = PRINT_ALL;
-    PTABLE opt_tab1 = NULL, opt_tab2 = NULL;
+    BOOL ret_val = TRUE;
     DS_CREATE(stmt, LEX_BUF_SZ);
-    char *seed_buf;
-
-    seed_buf = TMALLOC(char, LEX_BUF_SZ);
-    (void) memcpy(seed_buf, "seed", strlen("seed"));
-
-    ds_init(&d_curr_line, seed_buf, strlen("seed"),
-        LEX_BUF_SZ, ds_buf_type_heap);
-    ds_clear(&d_curr_line);
 
     if (new_lexer)
         lex_init(line);
@@ -1445,83 +1117,17 @@ static BOOL bparse(char *line, BOOL new_lexer)
     lookahead = lex_scan(); // "logic"
     lookahead = lex_scan(); // ':'
     lookahead = lex_scan();
-    while (lookahead != '\0') { // while lookahead loop
-        unsigned int last_count = 0, curr_count = 0;
+    while (lookahead != '\0') {
         init_parse_tables();
-        adepth = max_adepth = 0;
-        stmt_num++;
         ds_clear(&stmt);
         ds_cat_str(&stmt, parse_lexer->lexer_buf);
-        if (!bstmt()) {
+        if (!bstmt_postfix()) {
             cleanup_parser();
             ret_val= FALSE;
             break;
         }
+    }
 
-        if (prit) {
-            printf("START parse_tab\n");
-            ptable_print(parse_tab);
-            printf("END parse_tab\n");
-        }
-
-        beval_order();
-
-        /* generate gates only when optimizations are successful */
-        if (prit) {
-            printf("gen_tab ");
-            ptable_print(gen_tab);
-        }
-        last_count = gen_tab->entry_count;
-        if (last_count == 1) {
-            ret_val = gen_gates(gen_tab, parse_lexer->lexer_sym_tab);
-            if (!ret_val) {
-                fprintf(stderr, "ERROR generating gates for logicexp\n");
-            }
-        } else if (last_count > 1) {
-            opt_tab1 = optimize_gen_tab(gen_tab);
-            if (prit) {
-                printf("opt_tab1 ");
-                ptable_print(opt_tab1);
-            }
-            if (opt_tab1) {
-                curr_count = opt_tab1->entry_count;
-                opt_tab2 = opt_tab1;
-                while (curr_count > 1 && curr_count < last_count) {
-                    last_count = curr_count;
-                    opt_tab2 = optimize_gen_tab(opt_tab1);
-                    if (prit) {
-                        printf("opt_tab2 ");
-                        ptable_print(opt_tab2);
-                    }
-                    delete_parse_table(opt_tab1);
-                    if (!opt_tab2) {
-                        ret_val = FALSE;
-                        break;
-                    }
-                    opt_tab1 = opt_tab2;
-                    curr_count = opt_tab2->entry_count;
-                }
-                if (opt_tab2) {
-                    ret_val = gen_gates(opt_tab2, parse_lexer->lexer_sym_tab);
-                    if (!ret_val) {
-                        fprintf(stderr,
-                            "ERROR generating gates for logicexp\n");
-                    }
-                    delete_parse_table(opt_tab2);
-                }
-            } else {
-                ret_val = FALSE;
-            }
-        } else {
-            ret_val = FALSE;
-        }
-        delete_parse_gen_tables();
-        if (!ret_val) {
-            break;
-        }
-    } // end while lookahead loop
-
-    ds_free(&d_curr_line);
     if (ret_val)
         gen_models();
     ds_free(&stmt);
@@ -1796,23 +1402,6 @@ static void delete_pindly_table(PINTABLE pint)
     tfree(pint);
 }
 
-static void print_pindly_table(PINTABLE pint)
-{
-    PLINE p, next;
-    if (!pint)
-        return;
-    printf("num_entries %d\n", pint->num_entries);
-    next = pint->first;
-    while (next) {
-        p = next;
-        printf("in_name \"%s\"", p->in_name);
-        printf(" out_name \"%s\"", p->out_name);
-        printf(" ena_name \"%s\"", p->ena_name);
-        printf(" delays \"%s\"\n", p->delays);
-        next = p->next;
-    }
-}
-
 static PLINE nth_pindly_entry(PINTABLE pint, int n)
 {
     /* Entries are from 0 to num_entries - 1 */
@@ -1860,9 +1449,7 @@ static void gen_pindly_buffers(void)
 {
     DS_CREATE(dbuf, 128);
     PLINE pline = NULL;
-    BOOL prit = PRINT_ALL;
 
-    if (prit) { print_pindly_table(pindly_tab); }
     pline = pindly_tab->first;
     while (pline) {
         char *iname = NULL;
@@ -2037,7 +1624,6 @@ static BOOL extract_delay(
     */
     BOOL in_delay = FALSE, ret_val = TRUE;
     int i;
-    BOOL prit = PRINT_ALL;
     BOOL shorter = FALSE, update_val = FALSE;
     struct udevices_info info = u_get_udevices_info();
     float del_max_val = 0.0, del_val = 0.0, del_min_val = FLT_MAX;
@@ -2084,10 +1670,6 @@ static BOOL extract_delay(
                         ret_val = FALSE;
                         ds_clear(&tmp_ds);
                         break;
-                    }
-                    if (prit) {
-                        printf("%s\n", ds_get_buf(&dly));
-                        printf("estimate \"%s\"\n", tmps);
                     }
                     del_val = strtof(tmps, &units);
                     update_val = FALSE;
@@ -2150,7 +1732,6 @@ static BOOL new_gen_output_models(LEXER lx)
 {
     int val, arrlen = 0, idx = 0, i;
     BOOL in_pindly = FALSE, in_tristate = FALSE;
-    BOOL prit = PRINT_ALL;
     DS_CREATE(enable_name, 64);
     DS_CREATE(last_enable, 64);
     PLINE pline = NULL;
@@ -2192,7 +1773,6 @@ static BOOL new_gen_output_models(LEXER lx)
         }
         if (in_pindly && val == LEX_ID) { // start in_pindly and LEX_ID
             while (val == LEX_ID) {
-                if (prit) { printf("pindly out \"%s\"\n", lx->lexer_buf); }
                 pline = find_pindly_out_name(pindly_tab, lx->lexer_buf);
                 if (pline) {
                     pline_arr[idx++] = pline;
@@ -2218,7 +1798,6 @@ static BOOL new_gen_output_models(LEXER lx)
                     BOOL invert = FALSE;
                     if (eq(lx->lexer_buf, "lo"))
                         invert = TRUE;
-                    if (prit) { printf("tristate enable %s ", lx->lexer_buf); }
                     val = lexer_scan(lx);
                     if (val != '=') {
                         // if there is no '=' it must be an enable id
@@ -2231,7 +1810,6 @@ static BOOL new_gen_output_models(LEXER lx)
                             goto err_return;
                         }
                     }
-                    if (prit) { printf("ena \"%s\"\n", lx->lexer_buf); }
                     ds_clear(&enable_name);
                     if (invert)
                         ds_cat_char(&enable_name, '~');
@@ -2252,7 +1830,6 @@ static BOOL new_gen_output_models(LEXER lx)
                 goto err_return;
             }
             while (val == LEX_ID) {
-                if (prit) { printf("tristate out \"%s\"\n", lx->lexer_buf); }
                 pline = find_pindly_out_name(pindly_tab, lx->lexer_buf);
                 if (pline) {
                     pline_arr[idx++] = pline;
