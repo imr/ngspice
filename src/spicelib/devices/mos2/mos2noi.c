@@ -10,6 +10,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/iferrmsg.h"
 #include "ngspice/noisedef.h"
 #include "ngspice/suffix.h"
+#include "ngspice/compatmode.h"
 
 /*
  * MOS2noise (mode, operation, firstModel, ckt, data, OnDens)
@@ -20,160 +21,223 @@ Modified: 2000 AlansFixes
  *    all of the MOSFET's is summed with the variable "OnDens".
  */
 
-
 int
-MOS2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
-           Ndata *data, double *OnDens)
-{
-    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
+MOS2noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
+    Ndata * data, double * OnDens) {
+    NOISEAN * job = (NOISEAN * ) ckt->CKTcurJob;
 
-    MOS2model *firstModel = (MOS2model *) genmodel;
-    MOS2model *model;
-    MOS2instance *inst;
+    MOS2model * firstModel = (MOS2model * ) genmodel;
+    MOS2model * model;
+    MOS2instance * inst;
     double tempOnoise;
     double tempInoise;
     double noizDens[MOS2NSRCS];
     double lnNdens[MOS2NSRCS];
     int i;
+    double vgs, vds, vgd, vgst, alpha, beta, Sid;
 
     /* define the names of the noise sources */
 
-    static char *MOS2nNames[MOS2NSRCS] = {       /* Note that we have to keep the order */
-	"_rd",              /* noise due to rd */        /* consistent with thestrchr definitions */
-	"_rs",              /* noise due to rs */        /* in MOS2defs.h */
-	"_id",              /* noise due to id */
-	"_1overf",          /* flicker (1/f) noise */
-	""                  /* total transistor noise */
+    static char * MOS2nNames[MOS2NSRCS] = {
+        /* Note that we have to keep the order */
+        "_rd",
+        /* noise due to rd */ /* consistent with thestrchr definitions */
+        "_rs",
+        /* noise due to rs */ /* in MOS2defs.h */
+        "_id",
+        /* noise due to id */
+        "_1overf",
+        /* flicker (1/f) noise */
+        "" /* total transistor noise */
     };
 
-    for (model=firstModel; model != NULL; model=MOS2nextModel(model)) {
-	for (inst=MOS2instances(model); inst != NULL; inst=MOS2nextInstance(inst)) {
+    for (model = firstModel; model != NULL; model = MOS2nextModel(model)) {
+        for (inst = MOS2instances(model); inst != NULL; inst = MOS2nextInstance(inst)) {
 
-	    switch (operation) {
+            switch (operation) {
 
-	    case N_OPEN:
+            case N_OPEN:
 
-		/* see if we have to to produce a summary report */
-		/* if so, name all the noise generators */
+                /* see if we have to to produce a summary report */
+                /* if so, name all the noise generators */
 
-		if (job->NStpsSm != 0) {
-		    switch (mode) {
+                if (job->NStpsSm != 0) {
+                    switch (mode) {
 
-		    case N_DENS:
-			for (i=0; i < MOS2NSRCS; i++) {
-			    NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->MOS2name, MOS2nNames[i]);
-			}
-			break;
+                    case N_DENS:
+                        for (i = 0; i < MOS2NSRCS; i++) {
+                            NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->MOS2name, MOS2nNames[i]);
+                        }
+                        break;
 
-		    case INT_NOIZ:
-			for (i=0; i < MOS2NSRCS; i++) {
-			    NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->MOS2name, MOS2nNames[i]);
-			    NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->MOS2name, MOS2nNames[i]);
-			}
-			break;
-		    }
-		}
-		break;
+                    case INT_NOIZ:
+                        for (i = 0; i < MOS2NSRCS; i++) {
+                            NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->MOS2name, MOS2nNames[i]);
+                            NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->MOS2name, MOS2nNames[i]);
+                        }
+                        break;
+                    }
+                }
+                break;
 
-	    case N_CALC:
-		switch (mode) {
+            case N_CALC:
+                switch (mode) {
 
-		case N_DENS:
-		    NevalSrc(&noizDens[MOS2RDNOIZ],&lnNdens[MOS2RDNOIZ],
-				 ckt,THERMNOISE,inst->MOS2dNodePrime,inst->MOS2dNode,
-				 inst->MOS2drainConductance);
+                case N_DENS:
+                    NevalSrc( & noizDens[MOS2RDNOIZ], & lnNdens[MOS2RDNOIZ],
+                        ckt, THERMNOISE, inst->MOS2dNodePrime, inst->MOS2dNode,
+                        inst->MOS2drainConductance);
 
-		    NevalSrc(&noizDens[MOS2RSNOIZ],&lnNdens[MOS2RSNOIZ],
-				 ckt,THERMNOISE,inst->MOS2sNodePrime,inst->MOS2sNode,
-				 inst->MOS2sourceConductance);
+                    NevalSrc( & noizDens[MOS2RSNOIZ], & lnNdens[MOS2RSNOIZ],
+                        ckt, THERMNOISE, inst->MOS2sNodePrime, inst->MOS2sNode,
+                        inst->MOS2sourceConductance);
 
-		    NevalSrc(&noizDens[MOS2IDNOIZ],&lnNdens[MOS2IDNOIZ],
-				 ckt,THERMNOISE,inst->MOS2dNodePrime,inst->MOS2sNodePrime,
-                                 (2.0/3.0 * fabs(inst->MOS2gm)));
+                    if (model->MOS2nlev < 3) {
 
-		    NevalSrc(&noizDens[MOS2FLNOIZ], NULL, ckt,
-				 N_GAIN,inst->MOS2dNodePrime, inst->MOS2sNodePrime,
-				 (double)0.0);
-		    noizDens[MOS2FLNOIZ] *= model->MOS2fNcoef * 
-				 exp(model->MOS2fNexp *
-				 log(MAX(fabs(inst->MOS2cd),N_MINLOG))) /
-				 (data->freq * inst->MOS2w *
-				 (inst->MOS2l - 2*model->MOS2latDiff) *
-				 model->MOS2oxideCapFactor * model->MOS2oxideCapFactor);
-		    lnNdens[MOS2FLNOIZ] = 
-				 log(MAX(noizDens[MOS2FLNOIZ],N_MINLOG));
+                        Sid = 2.0 / 3.0 * fabs(inst->MOS2gm);
 
-		    noizDens[MOS2TOTNOIZ] = noizDens[MOS2RDNOIZ] +
-						     noizDens[MOS2RSNOIZ] +
-						     noizDens[MOS2IDNOIZ] +
-						     noizDens[MOS2FLNOIZ];
-		    lnNdens[MOS2TOTNOIZ] = 
-				 log(MAX(noizDens[MOS2TOTNOIZ], N_MINLOG));
+                    } else {
+                        vds = *(ckt->CKTstate0 + inst->MOS2vds);
+                        vgs = *(ckt->CKTstate0 + inst->MOS2vgs);
+                        vgd = vgs - vds;
 
-		    *OnDens += noizDens[MOS2TOTNOIZ];
+                        vgst=(inst->MOS2mode==1?vgs:vgd) - model->MOS2type*inst->MOS2von;
+                        if (vgst > 0) {
+                            if (vgst <= (vds*inst->MOS2mode)) {
+                                /* saturation region */
+                                alpha = 0.0;
+                            } else {
+                                /* linear region */
+                                alpha = 1.0 - (vds*inst->MOS2mode/(model->MOS2type*inst->MOS2vdsat));
+                            }
+                        }
+                        beta = inst->MOS2tTransconductance * inst->MOS2m *
+                                   inst->MOS2w/(inst->MOS2l - 2 * model->MOS2latDiff);
+                        Sid = 2.0 / 3.0 * beta * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS2gdsnoi;
+                    }
 
-		    if (data->delFreq == 0.0) { 
+                    NevalSrc( & noizDens[MOS2IDNOIZ], & lnNdens[MOS2IDNOIZ],
+                        ckt, THERMNOISE, inst->MOS2dNodePrime, inst->MOS2sNodePrime,
+                        Sid);
 
-			/* if we haven't done any previous integration, we need to */
-			/* initialize our "history" variables                      */
+                    NevalSrc( & noizDens[MOS2FLNOIZ], NULL, ckt,
+                        N_GAIN, inst->MOS2dNodePrime, inst->MOS2sNodePrime,
+                        (double) 0.0);
+                    if (newcompat.s3) {
+                        noizDens[MOS2FLNOIZ] *= model->MOS2fNcoef *
+                            exp(model->MOS2fNexp *
+                                log(MAX(fabs(inst->MOS2cd), N_MINLOG))) /
+                            (data->freq *
+                                inst->MOS2w *
+                                (inst->MOS2l - 2 * model->MOS2latDiff) *
+                                model->MOS2oxideCapFactor * model->MOS2oxideCapFactor);
+                    } else {
+                        switch (model->MOS2nlev) {
+                        case 0:
+                            noizDens[MOS2FLNOIZ] *= model->MOS2fNcoef *
+                                exp(model->MOS2fNexp *
+                                    log(MAX(fabs(inst->MOS2cd), N_MINLOG))) /
+                                (data->freq *
+                                    (inst->MOS2l - 2 * model->MOS2latDiff) *
+                                    (inst->MOS2l - 2 * model->MOS2latDiff) *
+                                    model->MOS2oxideCapFactor);
+                            break;
+                        case 1:
+                            noizDens[MOS2FLNOIZ] *= model->MOS2fNcoef *
+                                exp(model->MOS2fNexp *
+                                    log(MAX(fabs(inst->MOS2cd), N_MINLOG))) /
+                                (data->freq *
+                                    inst->MOS2w *
+                                    (inst->MOS2l - 2 * model->MOS2latDiff) *
+                                    model->MOS2oxideCapFactor);
+                            break;
+                        case 2: case 3:
+                            noizDens[MOS2FLNOIZ] *= model->MOS2fNcoef *
+                                inst->MOS2gm * inst->MOS2gm /
+                                (pow(data->freq, model->MOS2fNexp) *
+                                    inst->MOS2w *
+                                    (inst->MOS2l - 2 * model->MOS2latDiff) *
+                                    model->MOS2oxideCapFactor);
+                            break;
+                        }
+                    }
+                    lnNdens[MOS2FLNOIZ] =
+                        log(MAX(noizDens[MOS2FLNOIZ], N_MINLOG));
 
-			for (i=0; i < MOS2NSRCS; i++) {
-			    inst->MOS2nVar[LNLSTDENS][i] = lnNdens[i];
-			}
+                    noizDens[MOS2TOTNOIZ] = noizDens[MOS2RDNOIZ] +
+                        noizDens[MOS2RSNOIZ] +
+                        noizDens[MOS2IDNOIZ] +
+                        noizDens[MOS2FLNOIZ];
+                    lnNdens[MOS2TOTNOIZ] =
+                        log(MAX(noizDens[MOS2TOTNOIZ], N_MINLOG));
 
-			/* clear out our integration variables if it's the first pass */
+                    * OnDens += noizDens[MOS2TOTNOIZ];
 
-			if (data->freq == job->NstartFreq) {
-			    for (i=0; i < MOS2NSRCS; i++) {
-				inst->MOS2nVar[OUTNOIZ][i] = 0.0;
-				inst->MOS2nVar[INNOIZ][i] = 0.0;
-			    }
-			}
-		    } else {   /* data->delFreq != 0.0 (we have to integrate) */
-			for (i=0; i < MOS2NSRCS; i++) {
-			    if (i != MOS2TOTNOIZ) {
-				tempOnoise = Nintegrate(noizDens[i], lnNdens[i],
-				      inst->MOS2nVar[LNLSTDENS][i], data);
-				tempInoise = Nintegrate(noizDens[i] * data->GainSqInv ,
-				      lnNdens[i] + data->lnGainInv,
-				      inst->MOS2nVar[LNLSTDENS][i] + data->lnGainInv,
-				      data);
-				inst->MOS2nVar[LNLSTDENS][i] = lnNdens[i];
-				data->outNoiz += tempOnoise;
-				data->inNoise += tempInoise;
-				if (job->NStpsSm != 0) {
-				    inst->MOS2nVar[OUTNOIZ][i] += tempOnoise;
-				    inst->MOS2nVar[OUTNOIZ][MOS2TOTNOIZ] += tempOnoise;
-				    inst->MOS2nVar[INNOIZ][i] += tempInoise;
-				    inst->MOS2nVar[INNOIZ][MOS2TOTNOIZ] += tempInoise;
+                    if (data->delFreq == 0.0) {
+
+                        /* if we haven't done any previous integration, we need to */
+                        /* initialize our "history" variables                      */
+
+                        for (i = 0; i < MOS2NSRCS; i++) {
+                            inst->MOS2nVar[LNLSTDENS][i] = lnNdens[i];
+                        }
+
+                        /* clear out our integration variables if it's the first pass */
+
+                        if (data->freq == job->NstartFreq) {
+                            for (i = 0; i < MOS2NSRCS; i++) {
+                                inst->MOS2nVar[OUTNOIZ][i] = 0.0;
+                                inst->MOS2nVar[INNOIZ][i] = 0.0;
+                            }
+                        }
+                    } else {
+                        /* data->delFreq != 0.0 (we have to integrate) */
+                        for (i = 0; i < MOS2NSRCS; i++) {
+                            if (i != MOS2TOTNOIZ) {
+                                tempOnoise = Nintegrate(noizDens[i], lnNdens[i],
+                                    inst->MOS2nVar[LNLSTDENS][i], data);
+                                tempInoise = Nintegrate(noizDens[i] * data->GainSqInv,
+                                    lnNdens[i] + data->lnGainInv,
+                                    inst->MOS2nVar[LNLSTDENS][i] + data->lnGainInv,
+                                    data);
+                                inst->MOS2nVar[LNLSTDENS][i] = lnNdens[i];
+                                data->outNoiz += tempOnoise;
+                                data->inNoise += tempInoise;
+                                if (job->NStpsSm != 0) {
+                                    inst->MOS2nVar[OUTNOIZ][i] += tempOnoise;
+                                    inst->MOS2nVar[OUTNOIZ][MOS2TOTNOIZ] += tempOnoise;
+                                    inst->MOS2nVar[INNOIZ][i] += tempInoise;
+                                    inst->MOS2nVar[INNOIZ][MOS2TOTNOIZ] += tempInoise;
                                 }
-			    }
-			}
-		    }
-		    if (data->prtSummary) {
-			for (i=0; i < MOS2NSRCS; i++) {     /* print a summary report */
-			    data->outpVector[data->outNumber++] = noizDens[i];
-			}
-		    }
-		    break;
+                            }
+                        }
+                    }
+                    if (data->prtSummary) {
+                        for (i = 0; i < MOS2NSRCS; i++) {
+                            /* print a summary report */
+                            data->outpVector[data->outNumber++] = noizDens[i];
+                        }
+                    }
+                    break;
 
-		case INT_NOIZ:        /* already calculated, just output */
-		    if (job->NStpsSm != 0) {
-			for (i=0; i < MOS2NSRCS; i++) {
-			    data->outpVector[data->outNumber++] = inst->MOS2nVar[OUTNOIZ][i];
-			    data->outpVector[data->outNumber++] = inst->MOS2nVar[INNOIZ][i];
-			}
-		    }    /* if */
-		    break;
-		}    /* switch (mode) */
-		break;
+                case INT_NOIZ:
+                    /* already calculated, just output */
+                    if (job->NStpsSm != 0) {
+                        for (i = 0; i < MOS2NSRCS; i++) {
+                            data->outpVector[data->outNumber++] = inst->MOS2nVar[OUTNOIZ][i];
+                            data->outpVector[data->outNumber++] = inst->MOS2nVar[INNOIZ][i];
+                        }
+                    } /* if */
+                    break;
+                } /* switch (mode) */
+                break;
 
-	    case N_CLOSE:
-		return (OK);         /* do nothing, the main calling routine will close */
-		break;               /* the plots */
-	    }    /* switch (operation) */
-	}    /* for inst */
-    }    /* for model */
+            case N_CLOSE:
+                return (OK); /* do nothing, the main calling routine will close */
+                break; /* the plots */
+            } /* switch (operation) */
+        } /* for inst */
+    } /* for model */
 
-return(OK);
+    return (OK);
 }

@@ -170,14 +170,22 @@ MOS2mParam(int param, IFvalue *value, GENmodel *inModel)
                 model->MOS2typeGiven = TRUE;
             }
             break;
-	case MOS2_MOD_KF:
-	    model->MOS2fNcoef = value->rValue;
-	    model->MOS2fNcoefGiven = TRUE;
-	    break;
-	case MOS2_MOD_AF:
-	    model->MOS2fNexp = value->rValue;
-	    model->MOS2fNexpGiven = TRUE;
-	    break;
+        case MOS2_MOD_KF:
+            model->MOS2fNcoef = value->rValue;
+            model->MOS2fNcoefGiven = TRUE;
+            break;
+        case MOS2_MOD_AF:
+            model->MOS2fNexp = value->rValue;
+            model->MOS2fNexpGiven = TRUE;
+            break;
+        case MOS2_MOD_NLEV:
+            model->MOS2nlev = value->iValue;
+            model->MOS2nlevGiven = TRUE;
+            break;
+        case MOS2_MOD_GDSNOI:
+            model->MOS2gdsnoi = value->rValue;
+            model->MOS2gdsnoiGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

@@ -1085,14 +1085,23 @@ zoomin(GRAPH *graph)
     if ((t = strchr(buf2, ':')) != NULL)
         *t = '\0';
 
+    /* Set the foreground and background colors to the
+     * "calling" window's colors using undocumented keyword, "sgraphid".
+     */
+
     if (!eq(plot_cur->pl_typename, buf2)) {
+        /* Switch plot before and after "plot" command. */
         (void) sprintf(buf,
-                       "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e sgraphid %d; setplot $curplot\n",
-                       buf2, graph->commandline, fx0, fx1, fy0, fy1, graph->graphid);
+                       "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e "
+                       "sgraphid %d; setplot $curplot\n",
+                       buf2, graph->commandline, fx0, fx1, fy0, fy1,
+                       graph->graphid);
     } else {
-        /* set the foreground and background colors to the "calling" window's colors */
-            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e sgraphid %d\n",
-                           graph->commandline, fx0, fx1, fy0, fy1, graph->graphid);
+        (void) sprintf(buf,
+                       "%s xlimit %.20e %.20e ylimit %.20e %.20e "
+                       "sgraphid %d\n",
+                       graph->commandline, fx0, fx1, fy0, fy1,
+                       graph->graphid);
     }
 
 /* don't use the following if using GNU Readline or BSD EditLine */

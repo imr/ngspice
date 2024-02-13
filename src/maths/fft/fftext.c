@@ -114,8 +114,10 @@ fft_windows(char *window, double *win, double *time, int length, double maxt, do
         for (i = 0; i < length; i++) {
             if (maxt-time[i] > span)
                 win[i] = 0.0;
+            else if (maxt-time[i] < span/2)
+                win[i] = 4.0 * (maxt-time[i]) / span;
             else
-                win[i] = 2.0 - fabs(2+4*(time[i]-maxt)/span);
+                win[i] = 4.0 - 4.0 * (maxt-time[i]) / span;
         }
     else if (eq(window, "hann") || eq(window, "hanning") || eq(window, "cosine"))
         for (i = 0; i < length; i++) {
@@ -139,6 +141,17 @@ fft_windows(char *window, double *win, double *time, int length, double maxt, do
                 win[i]  = 1.0;
                 win[i] -= 0.50/0.42*cos(2*M_PI*(time[i]-maxt)/span);
                 win[i] += 0.08/0.42*cos(4*M_PI*(time[i]-maxt)/span);
+            }
+        }
+    else if (eq(window, "blackmanharris"))
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span) {
+                win[i] = 0;
+            } else {
+                win[i]  = 1.0;
+                win[i] -= 0.48829/0.35875*cos(2*M_PI*(time[i]-maxt)/span);
+                win[i] += 0.14128/0.35875*cos(4*M_PI*(time[i]-maxt)/span);
+                win[i] -= 0.01168/0.35875*cos(6*M_PI*(time[i]-maxt)/span);
             }
         }
     else if (eq(window, "flattop"))

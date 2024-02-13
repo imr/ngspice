@@ -126,7 +126,7 @@ CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noise
             cplx Ycor = csubco(ckt->CKTYmat->d[0][0],
                 cmultco(
                     cdivco(tempCy->d[0][1], tempCy->d[1][1]),
-                    tempCy->d[1][0]
+                    ckt->CKTYmat->d[1][0]
                 ));
             double Y11_Ycor = cmodsqr(csubco(ckt->CKTYmat->d[0][0], Ycor));
 
@@ -138,7 +138,7 @@ CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noise
                 caddco(Y0, Ysopt));
             Fmin = 1.0 + 2.0 * Rn * (Ycor.re + Ysopt.re);
             double Ysoptmod = cmodu(csubco(Y0, Ysopt));
-            NF = Fmin + (Rn / Ysopt.re) * SQR(Ysoptmod);
+            NF = Fmin + (Rn / Y0.re) * SQR(Ysoptmod);
             Fmin = 10.0 * log10(Fmin);
             NF = 10.0 * log10(NF);
         }

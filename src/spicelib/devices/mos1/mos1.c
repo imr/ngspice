@@ -148,7 +148,9 @@ IFparm MOS1mPTable[] = { /* model parameters */
  IOP("nss",   MOS1_MOD_NSS,   IF_REAL   ,"Surface state density"),
  IOP("tnom",  MOS1_MOD_TNOM,  IF_REAL   ,"Parameter measurement temperature"),
  IOP("kf",     MOS1_MOD_KF,    IF_REAL   ,"Flicker noise coefficient"),
- IOP("af",     MOS1_MOD_AF,    IF_REAL   ,"Flicker noise exponent")
+ IOP("af",     MOS1_MOD_AF,    IF_REAL   ,"Flicker noise exponent"),
+ IOP("nlev",   MOS1_MOD_NLEV,  IF_INTEGER  ,"Noise model selection"),
+ IOP("gdsnoi", MOS1_MOD_GDSNOI, IF_REAL   ,"Channel shot noise coefficient")
 };
 
 char *MOS1names[] = {

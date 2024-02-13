@@ -17,8 +17,8 @@ Modified: 2000 AlansFixes
 
 int
 MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-        /* load the MOS3 device structure with those pointers needed later 
-         * for fast matrix loading 
+        /* load the MOS3 device structure with those pointers needed later
+         * for fast matrix loading
          */
 
 {
@@ -48,7 +48,7 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if(!model->MOS3delvt0Given) {
             model->MOS3delvt0 = 0;
-        } 
+        }
         if(!model->MOS3jctSatCurDensityGiven) {
             model->MOS3jctSatCurDensity = 0;
         }
@@ -132,21 +132,27 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if(!model->MOS3oxideThicknessGiven) {
             model->MOS3oxideThickness = 1e-7;
-        } 
-	if(!model->MOS3fNcoefGiven) {
-	    model->MOS3fNcoef = 0;
-	}
-	if(!model->MOS3fNexpGiven) {
-	    model->MOS3fNexp = 1;
-	}
+        }
+        if(!model->MOS3fNcoefGiven) {
+            model->MOS3fNcoef = 0;
+        }
+        if(!model->MOS3fNexpGiven) {
+            model->MOS3fNexp = 1;
+        }
+        if(!model->MOS3nlevGiven) {
+            model->MOS3nlev = 2;
+        }
+        if(!model->MOS3gdsnoiGiven) {
+            model->MOS3gdsnoi = 1;
+        }
 
         /* loop through all the instances of the model */
         for (here = MOS3instances(model); here != NULL ;
                 here=MOS3nextInstance(here)) {
 
-         CKTnode *tmpNode;
-         IFuid tmpName;
-            
+            CKTnode *tmpNode;
+            IFuid tmpName;
+
             /* allocate a chunk of the state vector */
             here->MOS3states = *states;
             *states += MOS3NUMSTATES;
@@ -195,8 +201,8 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -206,7 +212,7 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             if((model->MOS3sourceResistance != 0 ||
-                    (model->MOS3sheetResistance != 0 && 
+                    (model->MOS3sheetResistance != 0 &&
                      here->MOS3sourceSquares != 0     ) )) {
                 if (here->MOS3sNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->MOS3name,"internal#source");
@@ -215,8 +221,8 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -266,21 +272,21 @@ MOS3unsetup(GENmodel *inModel, CKTcircuit *ckt)
     MOS3instance *here;
 
     for (model = (MOS3model *)inModel; model != NULL;
-	    model = MOS3nextModel(model))
+        model = MOS3nextModel(model))
     {
         for (here = MOS3instances(model); here != NULL;
                 here=MOS3nextInstance(here))
-	{
-	    if (here->MOS3sNodePrime > 0
-		    && here->MOS3sNodePrime != here->MOS3sNode)
-		CKTdltNNum(ckt, here->MOS3sNodePrime);
-            here->MOS3sNodePrime= 0;
+        {
+            if (here->MOS3sNodePrime > 0
+                && here->MOS3sNodePrime != here->MOS3sNode)
+            CKTdltNNum(ckt, here->MOS3sNodePrime);
+                here->MOS3sNodePrime= 0;
 
-	    if (here->MOS3dNodePrime > 0
-		    && here->MOS3dNodePrime != here->MOS3dNode)
-		CKTdltNNum(ckt, here->MOS3dNodePrime);
-            here->MOS3dNodePrime= 0;
-	}
+            if (here->MOS3dNodePrime > 0
+                && here->MOS3dNodePrime != here->MOS3dNode)
+            CKTdltNNum(ckt, here->MOS3dNodePrime);
+                here->MOS3dNodePrime= 0;
+        }
     }
     return OK;
 }
