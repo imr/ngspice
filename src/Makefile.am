@@ -649,7 +649,7 @@ endif
 
 ## if !SHWIN
 ## if !SHCYG
-libngspice_la_LDFLAGS += -version-info $(LT_NGSPICE_CURRENT):$(LT_NGSPICE_REVISION):$(LT_LIBNGSPICE_AGE)
+libngspice_la_LDFLAGS += -version-info $(LT_NGSPICE_CURRENT):$(LT_NGSPICE_REVISION):$(LT_NGSPICE_AGE)
 ## endif
 ## endif
 
