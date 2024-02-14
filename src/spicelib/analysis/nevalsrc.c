@@ -288,7 +288,7 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
         case N_GAIN:
             inoise = 0.0;
             *noise = cmodu(csubco(ckt->CKTadjointRHS->d[0][node1], ckt->CKTadjointRHS->d[0][node2]));
-            return;
+            break;
 
         }
 
