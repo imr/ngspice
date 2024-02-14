@@ -62,7 +62,6 @@ NevalSrc(double* noise, double* lnNoise, CKTcircuit* ckt, int type, int node1, i
         case N_GAIN:
             inoise = 0.0;
             *noise = cmodu(csubco(ckt->CKTadjointRHS->d[0][node1], ckt->CKTadjointRHS->d[0][node2]));
-
             break;
 
         }
@@ -92,8 +91,8 @@ NevalSrc(double* noise, double* lnNoise, CKTcircuit* ckt, int type, int node1, i
 
         return;
     }
-
 #endif
+
     double realVal;
     double imagVal;
     double gain;
@@ -180,7 +179,6 @@ NevalSrc2(
 
         case THERMNOISE:
             knoise = 4 * CONSTboltz * ckt->CKTtemp;         /* param is the conductance of a resistor */
-        // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
             *noise = knoise;
             *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
@@ -216,7 +214,6 @@ NevalSrc2(
             iNoise->d[0][d] = in;
         }
 
-
         for (int d = 0; d < ckt->CKTportCount; d++)
             for (int s = 0; s < ckt->CKTportCount; s++)
                 ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
@@ -224,7 +221,6 @@ NevalSrc2(
         return;
     }
 #endif
-
 
     realVal1 = ckt->CKTrhs[node1] - ckt->CKTrhs[node2];
     imagVal1 = ckt->CKTirhs[node1] - ckt->CKTirhs[node2];
@@ -270,10 +266,7 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
     int node1, int node2, double param, double param2)
 {
 
-
 #ifdef RFSPICE
-    // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
-
     if (ckt->CKTcurrentAnalysis & DOING_SP)
     {
         double inoise = 0.0;
@@ -282,14 +275,12 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
 
         case SHOTNOISE:
             inoise = 2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
-        // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
             *noise = inoise;
             *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
 
         case THERMNOISE:
             inoise = 4.0 * CONSTboltz * (ckt->CKTtemp + param2) * param;         /* param is the conductance of a resistor */
-        // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
             *noise = inoise;
             *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
@@ -320,7 +311,6 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
             iNoise->d[0][d] = in;
         }
 
-
         for (int d = 0; d < ckt->CKTportCount; d++)
             for (int s = 0; s < ckt->CKTportCount; s++)
                 ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
@@ -328,12 +318,14 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
         return;
     }
 #endif
+
     double realVal;
     double imagVal;
     double gain;
     realVal = ckt->CKTrhs[node1] - ckt->CKTrhs[node2];
     imagVal = ckt->CKTirhs[node1] - ckt->CKTirhs[node2];
     gain = (realVal * realVal) + (imagVal * imagVal);
+
     switch (type) {
 
     case SHOTNOISE:
@@ -343,7 +335,7 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
 
     case THERMNOISE:
         *noise = gain * 4 * CONSTboltz * (ckt->CKTtemp + param2)  /* param2 is the instance temperature difference */
-            * param;                                         /* param is the conductance of a resistor */
+                 * param;                                         /* param is the conductance of a resistor */
         *lnNoise = log(MAX(*noise, N_MINLOG));
         break;
 
