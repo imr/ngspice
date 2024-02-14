@@ -729,7 +729,7 @@ static char *makestr(int c)
 static int infix_to_postfix(char* infix, DSTRING * postfix_p)
 {
     struct Stack stack;
-    int ltok;
+    int ltok, last_tok = -1;
     LEXER lx;
     NAME_ENTRY nlist = NULL, entry = NULL;
     int status = 0;
@@ -739,6 +739,18 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
     nlist = add_name_entry("first", NULL);
     ds_clear(postfix_p);
     while ( ( ltok = lexer_scan(lx) ) != 0 ) { // start while ltok loop
+        if (ltok == LEX_ID && last_tok == LEX_ID) {
+            fprintf(stderr, "ERROR no gate operator between two identifiers\n");
+            status = 1;
+            goto err_return;
+        }
+        if (lex_gate_op(ltok) && lex_gate_op(last_tok)) {
+            fprintf(stderr, "ERROR two consecutive gate operators\n");
+            status = 1;
+            goto err_return;
+        }
+
+        last_tok = ltok;
         if (ltok == LEX_ID) {
             ds_cat_printf(postfix_p, " %s", lx->lexer_buf);
         } else if (ltok == '(') {
@@ -769,6 +781,11 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
             }
             entry = add_name_entry(tokstr, nlist);
             if (push(&stack, entry->name)) goto err_return;
+        } else {
+            fprintf(stderr, "ERROR unexpected infix token %d \'%s\'\n",
+                ltok, lx->lexer_buf);
+            status = 1;
+            goto err_return;
         }
     } // end while ltok loop
     while (stack.top != -1) {
@@ -1046,6 +1063,12 @@ static BOOL bstmt_postfix(void)
         goto bail_out;
     }
     if (!amatch(('='))) {
+        retval = FALSE;
+        goto bail_out;
+    }
+    if (lookahead != '{') {
+        printf("ERROR in bstmt_postfix \'{\' was expected\n");
+        aerror("bstmt_postfix: syntax error");
         retval = FALSE;
         goto bail_out;
     }
