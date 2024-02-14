@@ -88,17 +88,23 @@ RESnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
 
                 case N_DENS:
 
+                    double dtemp;
+                    if (inst->REStempGiven)
+                        dtemp = inst->REStemp - ckt->CKTtemp + (model->REStnom-CONSTCtoK);
+                    else
+                        dtemp = inst->RESdtemp;
+
                     NevalSrcInstanceTemp(&noizDens[RESTHNOIZ],&lnNdens[RESTHNOIZ],
                         ckt, THERMNOISE, inst->RESposNode, inst->RESnegNode,
-                        inst->RESconduct, inst->RESdtemp);
+                        inst->RESconduct, dtemp);
 
-                    NevalSrcInstanceTemp(&noizDens[RESFLNOIZ], NULL, ckt,
+                    NevalSrc(&noizDens[RESFLNOIZ], NULL, ckt,
                         N_GAIN, inst->RESposNode, inst->RESnegNode,
-                        (double) 0.0, (double) 0.0);
+                        (double) 0.0);
 
-                    #if 0
+#if 0
                     printf("DC current in resistor %s: %e\n", inst->RESname, inst->REScurrent);
-                    #endif
+#endif
 
                     noizDens[RESFLNOIZ] *= inst->RESm * model->RESfNcoef *
                         pow(fabs(inst->REScurrent / inst->RESm), model->RESfNexp) /

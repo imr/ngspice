@@ -82,17 +82,23 @@ BJTnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
                 switch (mode) {
 
                 case N_DENS:
-                    NevalSrc(&noizDens[BJTRCNOIZ],&lnNdens[BJTRCNOIZ],
+                    double dtemp;
+                    if (inst->BJTtempGiven)
+                        dtemp = inst->BJTtemp - ckt->CKTtemp + (model->BJTtnom-CONSTCtoK);
+                    else
+                        dtemp = inst->BJTdtemp;
+
+                    NevalSrcInstanceTemp(&noizDens[BJTRCNOIZ],&lnNdens[BJTRCNOIZ],
                         ckt, THERMNOISE, inst->BJTcollCXNode, inst->BJTcolNode,
-                        inst->BJTtcollectorConduct * inst->BJTm);
+                        inst->BJTtcollectorConduct * inst->BJTm, dtemp);
 
-                    NevalSrc(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],
+                    NevalSrcInstanceTemp(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],
                         ckt, THERMNOISE, inst->BJTbasePrimeNode, inst->BJTbaseNode,
-                        *(ckt->CKTstate0 + inst->BJTgx) * inst->BJTm);
+                        *(ckt->CKTstate0 + inst->BJTgx) * inst->BJTm, dtemp);
 
-                    NevalSrc(&noizDens[BJT_RE_NOISE],&lnNdens[BJT_RE_NOISE],
+                    NevalSrcInstanceTemp(&noizDens[BJT_RE_NOISE],&lnNdens[BJT_RE_NOISE],
                         ckt, THERMNOISE, inst->BJTemitPrimeNode, inst->BJTemitNode,
-                        inst->BJTtemitterConduct * inst->BJTm);
+                        inst->BJTtemitterConduct * inst->BJTm, dtemp);
 
                     NevalSrc(&noizDens[BJTICNOIZ],&lnNdens[BJTICNOIZ],
                         ckt, SHOTNOISE, inst->BJTcolPrimeNode, inst->BJTemitPrimeNode,

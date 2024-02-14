@@ -80,9 +80,17 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                 switch (mode) {
 
                 case N_DENS:
-                    NevalSrc(&noizDens[DIORSNOIZ],&lnNdens[DIORSNOIZ],
+
+                    double dtemp;
+                    if (inst->DIOtempGiven)
+                        dtemp = inst->DIOtemp - ckt->CKTtemp + (model->DIOnomTemp-CONSTCtoK);
+                    else
+                        dtemp = inst->DIOdtemp;
+
+                    NevalSrcInstanceTemp(&noizDens[DIORSNOIZ],&lnNdens[DIORSNOIZ],
                         ckt, THERMNOISE, inst->DIOposPrimeNode, inst->DIOposNode,
-                        inst->DIOtConductance * inst->DIOarea * inst->DIOm);
+                        inst->DIOtConductance * inst->DIOarea * inst->DIOm, dtemp);
+
                     NevalSrc(&noizDens[DIOIDNOIZ],&lnNdens[DIOIDNOIZ],
                         ckt, SHOTNOISE, inst->DIOposPrimeNode, inst->DIOnegNode,
                         *(ckt->CKTstate0 + inst->DIOcurrent));

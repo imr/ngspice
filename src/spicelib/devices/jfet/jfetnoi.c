@@ -80,20 +80,27 @@ JFETnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
                 switch (mode) {
 
                 case N_DENS:
-                    NevalSrc(&noizDens[JFETRDNOIZ],&lnNdens[JFETRDNOIZ],
-                        ckt, THERMNOISE, inst->JFETdrainPrimeNode, inst->JFETdrainNode,
-                        model->JFETdrainConduct * inst->JFETarea * inst->JFETm);
 
-                    NevalSrc(&noizDens[JFETRSNOIZ],&lnNdens[JFETRSNOIZ],
+                    double dtemp;
+                    if (inst->JFETtempGiven)
+                        dtemp = inst->JFETtemp - ckt->CKTtemp + (model->JFETtnom-CONSTCtoK);
+                    else
+                        dtemp = inst->JFETdtemp;
+
+                    NevalSrcInstanceTemp(&noizDens[JFETRDNOIZ],&lnNdens[JFETRDNOIZ],
+                        ckt, THERMNOISE, inst->JFETdrainPrimeNode, inst->JFETdrainNode,
+                        model->JFETdrainConduct * inst->JFETarea * inst->JFETm, dtemp);
+
+                    NevalSrcInstanceTemp(&noizDens[JFETRSNOIZ],&lnNdens[JFETRSNOIZ],
                         ckt, THERMNOISE, inst->JFETsourcePrimeNode,
                         inst->JFETsourceNode, model->JFETsourceConduct *
-                        inst->JFETarea * inst->JFETm);
+                        inst->JFETarea * inst->JFETm, inst->JFETdtemp);
 
                     if (model->JFETnlev < 3) {
-                        NevalSrc(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
+                        NevalSrcInstanceTemp(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
                             ckt, THERMNOISE, inst->JFETdrainPrimeNode,
                             inst->JFETsourcePrimeNode,
-                            (2.0 / 3.0 * inst->JFETm * fabs(*(ckt->CKTstate0 + inst->JFETgm))));
+                            (2.0 / 3.0 * inst->JFETm * fabs(*(ckt->CKTstate0 + inst->JFETgm))), inst->JFETdtemp);
                     } else {
                         vgs = *(ckt->CKTstate0 + inst->JFETvgs);
                         vds = vgs - *(ckt->CKTstate0 + inst->JFETvgd);
@@ -104,16 +111,16 @@ JFETnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
                             alpha = 0; /* saturation region */
                         beta = inst->JFETtBeta * inst->JFETarea * inst->JFETm;
 
-                        NevalSrc(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
+                        NevalSrcInstanceTemp(&noizDens[JFETIDNOIZ],&lnNdens[JFETIDNOIZ],
                             ckt, THERMNOISE, inst->JFETdrainPrimeNode,
                             inst->JFETsourcePrimeNode,
-                            (2.0 / 3.0*beta*vgst*(1 + alpha + alpha*alpha) / (1 + alpha) * model->JFETgdsnoi));
+                            (2.0 / 3.0*beta*vgst*(1 + alpha + alpha*alpha) / (1 + alpha) * model->JFETgdsnoi), inst->JFETdtemp);
                     }
 
                     NevalSrc(&noizDens[JFETFLNOIZ], NULL, ckt,
                         N_GAIN, inst->JFETdrainPrimeNode,
                         inst->JFETsourcePrimeNode, (double) 0.0);
-                    noizDens[JFETFLNOIZ] *= inst->JFETm*model->JFETfNcoef *
+                    noizDens[JFETFLNOIZ] *= inst->JFETm * model->JFETfNcoef *
                         exp(model->JFETfNexp *
                             log(MAX(fabs(*(ckt->CKTstate0 + inst->JFETcd)), N_MINLOG))) /
                         data->freq;
