@@ -1075,6 +1075,12 @@ static BOOL bstmt_postfix(void)
 
     rest = parse_lexer->lexer_line + parse_lexer->lexer_pos;
     right_bracket = strstr(rest, "}");
+    if (!right_bracket) {
+        printf("ERROR in bstmt_postfix \'}\' was not found\n");
+        aerror("bstmt_postfix: syntax error");
+        retval = FALSE;
+        goto bail_out;
+    }
     ds_clear(&infix);
     ds_cat_mem(&infix, rest, right_bracket - rest);
     if (infix_to_postfix(ds_get_buf(&infix), &postfix)) {
