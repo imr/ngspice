@@ -84,13 +84,19 @@ MOS2noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                 switch (mode) {
 
                 case N_DENS:
-                    NevalSrc( & noizDens[MOS2RDNOIZ], & lnNdens[MOS2RDNOIZ],
-                        ckt, THERMNOISE, inst->MOS2dNodePrime, inst->MOS2dNode,
-                        inst->MOS2drainConductance);
+                    double dtemp;
+                    if (inst->MOS2tempGiven)
+                        dtemp = inst->MOS2temp - ckt->CKTtemp + (model->MOS2tnom-CONSTCtoK);
+                    else
+                        dtemp = inst->MOS2dtemp;
 
-                    NevalSrc( & noizDens[MOS2RSNOIZ], & lnNdens[MOS2RSNOIZ],
+                    NevalSrcInstanceTemp( & noizDens[MOS2RDNOIZ], & lnNdens[MOS2RDNOIZ],
+                        ckt, THERMNOISE, inst->MOS2dNodePrime, inst->MOS2dNode,
+                        inst->MOS2drainConductance, dtemp);
+
+                    NevalSrcInstanceTemp( & noizDens[MOS2RSNOIZ], & lnNdens[MOS2RSNOIZ],
                         ckt, THERMNOISE, inst->MOS2sNodePrime, inst->MOS2sNode,
-                        inst->MOS2sourceConductance);
+                        inst->MOS2sourceConductance, dtemp);
 
                     if (model->MOS2nlev < 3) {
 
@@ -116,9 +122,9 @@ MOS2noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                         Sid = 2.0 / 3.0 * beta * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS2gdsnoi;
                     }
 
-                    NevalSrc( & noizDens[MOS2IDNOIZ], & lnNdens[MOS2IDNOIZ],
+                    NevalSrcInstanceTemp( & noizDens[MOS2IDNOIZ], & lnNdens[MOS2IDNOIZ],
                         ckt, THERMNOISE, inst->MOS2dNodePrime, inst->MOS2sNodePrime,
-                        Sid);
+                        Sid, dtemp);
 
                     NevalSrc( & noizDens[MOS2FLNOIZ], NULL, ckt,
                         N_GAIN, inst->MOS2dNodePrime, inst->MOS2sNodePrime,
