@@ -92,33 +92,39 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                 switch (mode) {
 
                 case N_DENS:
-                    NevalSrc(&noizDens[VBICRCNOIZ],&lnNdens[VBICRCNOIZ],
+                    double dtemp;
+                    if (inst->VBICtempGiven)
+                        dtemp = inst->VBICtemp - ckt->CKTtemp + (model->VBICtnom-CONSTCtoK);
+                    else
+                        dtemp = inst->VBICdtemp;
+
+                    NevalSrcInstanceTemp(&noizDens[VBICRCNOIZ],&lnNdens[VBICRCNOIZ],
                                  ckt,THERMNOISE,inst->VBICcollCXNode,inst->VBICcollNode,
-                                 *(ckt->CKTstate0 + inst->VBICircx_Vrcx));
+                                 *(ckt->CKTstate0 + inst->VBICircx_Vrcx), dtemp);
 
-                    NevalSrc(&noizDens[VBICRCINOIZ],&lnNdens[VBICRCINOIZ],
+                    NevalSrcInstanceTemp(&noizDens[VBICRCINOIZ],&lnNdens[VBICRCINOIZ],
                                  ckt,THERMNOISE,inst->VBICcollCXNode,inst->VBICcollCINode,
-                                 *(ckt->CKTstate0 + inst->VBICirci_Vrci));
+                                 *(ckt->CKTstate0 + inst->VBICirci_Vrci), dtemp);
 
-                    NevalSrc(&noizDens[VBICRBNOIZ],&lnNdens[VBICRBNOIZ],
+                    NevalSrcInstanceTemp(&noizDens[VBICRBNOIZ],&lnNdens[VBICRBNOIZ],
                                  ckt,THERMNOISE,inst->VBICbaseBXNode,inst->VBICbaseNode,
-                                 *(ckt->CKTstate0 + inst->VBICirbx_Vrbx));
+                                 *(ckt->CKTstate0 + inst->VBICirbx_Vrbx), dtemp);
 
-                    NevalSrc(&noizDens[VBICRBINOIZ],&lnNdens[VBICRBINOIZ],
+                    NevalSrcInstanceTemp(&noizDens[VBICRBINOIZ],&lnNdens[VBICRBINOIZ],
                                  ckt,THERMNOISE,inst->VBICbaseBXNode,inst->VBICbaseBINode,
-                                 *(ckt->CKTstate0 + inst->VBICirbi_Vrbi));
+                                 *(ckt->CKTstate0 + inst->VBICirbi_Vrbi), dtemp);
 
-                    NevalSrc(&noizDens[VBICRENOIZ],&lnNdens[VBICRENOIZ],
+                    NevalSrcInstanceTemp(&noizDens[VBICRENOIZ],&lnNdens[VBICRENOIZ],
                                  ckt,THERMNOISE,inst->VBICemitEINode,inst->VBICemitNode,
-                                 *(ckt->CKTstate0 + inst->VBICire_Vre));
+                                 *(ckt->CKTstate0 + inst->VBICire_Vre), dtemp);
 
-                    NevalSrc(&noizDens[VBICRBPNOIZ],&lnNdens[VBICRBPNOIZ],
+                    NevalSrcInstanceTemp(&noizDens[VBICRBPNOIZ],&lnNdens[VBICRBPNOIZ],
                                  ckt,THERMNOISE,inst->VBICemitEINode,inst->VBICemitNode,
-                                 *(ckt->CKTstate0 + inst->VBICirbp_Vrbp));
+                                 *(ckt->CKTstate0 + inst->VBICirbp_Vrbp), dtemp);
 
-                    NevalSrc(&noizDens[VBICRSNOIZ],&lnNdens[VBICRSNOIZ],
+                    NevalSrcInstanceTemp(&noizDens[VBICRSNOIZ],&lnNdens[VBICRSNOIZ],
                                  ckt,THERMNOISE,inst->VBICsubsSINode,inst->VBICsubsNode,
-                                 *(ckt->CKTstate0 + inst->VBICirs_Vrs));
+                                 *(ckt->CKTstate0 + inst->VBICirs_Vrs), dtemp);
 
 
                     NevalSrc(&noizDens[VBICICNOIZ],&lnNdens[VBICICNOIZ],
