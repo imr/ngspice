@@ -125,25 +125,31 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                 switch (mode) {
 
                 case N_DENS:
-                    NevalSrc(&noizDens[HICUMRCNOIZ],&lnNdens[HICUMRCNOIZ],
+                    double dtemp;
+                    if (here->HICUMtempGiven)
+                        dtemp = here->HICUMtemp - ckt->CKTtemp + (model->HICUMtnom-CONSTCtoK);
+                    else
+                        dtemp = here->HICUMdtemp;
+
+                    NevalSrcInstanceTemp(&noizDens[HICUMRCNOIZ],&lnNdens[HICUMRCNOIZ],
                                  ckt,THERMNOISE,here->HICUMcollCINode,here->HICUMcollNode,
-                                 Icic_Vcic);
+                                 Icic_Vcic, dtemp);
 
-                    NevalSrc(&noizDens[HICUMRBNOIZ],&lnNdens[HICUMRBNOIZ],
+                    NevalSrcInstanceTemp(&noizDens[HICUMRBNOIZ],&lnNdens[HICUMRBNOIZ],
                                  ckt,THERMNOISE,here->HICUMbaseNode,here->HICUMbaseBPNode,
-                                 Ibbp_Vbbp);
+                                 Ibbp_Vbbp, dtemp);
 
-                    NevalSrc(&noizDens[HICUMRBINOIZ],&lnNdens[HICUMRBINOIZ],
+                    NevalSrcInstanceTemp(&noizDens[HICUMRBINOIZ],&lnNdens[HICUMRBINOIZ],
                                  ckt,THERMNOISE,here->HICUMbaseBPNode,here->HICUMbaseBINode,
-                                 Ibpbi_Vbpbi);
+                                 Ibpbi_Vbpbi, dtemp);
 
-                    NevalSrc(&noizDens[HICUMRENOIZ],&lnNdens[HICUMRENOIZ],
+                    NevalSrcInstanceTemp(&noizDens[HICUMRENOIZ],&lnNdens[HICUMRENOIZ],
                                  ckt,THERMNOISE,here->HICUMemitEINode,here->HICUMemitNode,
-                                 Ieie_Veie);
+                                 Ieie_Veie, dtemp);
 
-                    NevalSrc(&noizDens[HICUMRSNOIZ],&lnNdens[HICUMRSNOIZ],
+                    NevalSrcInstanceTemp(&noizDens[HICUMRSNOIZ],&lnNdens[HICUMRSNOIZ],
                                  ckt,THERMNOISE,here->HICUMsubsSINode,here->HICUMsubsNode,
-                                 Isis_Vsis);
+                                 Isis_Vsis, dtemp);
 
 
                     NevalSrc(&noizDens[HICUMIAVLNOIZ],&lnNdens[HICUMIAVLNOIZ],
