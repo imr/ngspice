@@ -34,6 +34,7 @@ BJTnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
     double noizDens[BJTNSRCS];
     double lnNdens[BJTNSRCS];
     int i;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -82,7 +83,7 @@ BJTnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
                 switch (mode) {
 
                 case N_DENS:
-                    double dtemp;
+
                     if (inst->BJTtempGiven)
                         dtemp = inst->BJTtemp - ckt->CKTtemp + (model->BJTtnom-CONSTCtoK);
                     else

@@ -35,6 +35,7 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
     double noizDens[HICUMNSRCS];
     double lnNdens[HICUMNSRCS];
     int i;
+    double dtemp;
 
     double Ibbp_Vbbp;
     double Icic_Vcic;
@@ -125,7 +126,7 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                 switch (mode) {
 
                 case N_DENS:
-                    double dtemp;
+
                     if (here->HICUMtempGiven)
                         dtemp = here->HICUMtemp - ckt->CKTtemp + (model->HICUMtnom-CONSTCtoK);
                     else

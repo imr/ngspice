@@ -34,6 +34,7 @@ JFETnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
     double lnNdens[JFETNSRCS];
     int i;
     double vgs, vds, vgst, alpha, beta;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -81,7 +82,6 @@ JFETnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
 
                 case N_DENS:
 
-                    double dtemp;
                     if (inst->JFETtempGiven)
                         dtemp = inst->JFETtemp - ckt->CKTtemp + (model->JFETtnom-CONSTCtoK);
                     else

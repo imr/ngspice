@@ -36,6 +36,7 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
     double lnNdens[MOS1NSRCS];
     int i;
     double vgs, vds, vgd, vgst, alpha, beta, Sid;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -95,7 +96,7 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                 switch (mode) {
 
                 case N_DENS:
-                    double dtemp;
+
                     if (inst->MOS1tempGiven)
                         dtemp = inst->MOS1temp - ckt->CKTtemp + (model->MOS1tnom-CONSTCtoK);
                     else

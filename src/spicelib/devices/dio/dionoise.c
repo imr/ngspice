@@ -35,6 +35,7 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     double noizDens[DIONSRCS];
     double lnNdens[DIONSRCS];
     int i;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -81,7 +82,6 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
                 case N_DENS:
 
-                    double dtemp;
                     if (inst->DIOtempGiven)
                         dtemp = inst->DIOtemp - ckt->CKTtemp + (model->DIOnomTemp-CONSTCtoK);
                     else

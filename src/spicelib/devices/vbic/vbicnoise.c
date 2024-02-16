@@ -36,6 +36,7 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
     double noizDens[VBICNSRCS];
     double lnNdens[VBICNSRCS];
     int i;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -92,7 +93,7 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                 switch (mode) {
 
                 case N_DENS:
-                    double dtemp;
+
                     if (inst->VBICtempGiven)
                         dtemp = inst->VBICtemp - ckt->CKTtemp + (model->VBICtnom-CONSTCtoK);
                     else

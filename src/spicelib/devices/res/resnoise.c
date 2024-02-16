@@ -39,6 +39,7 @@ RESnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
     double noizDens[RESNSRCS];
     double lnNdens[RESNSRCS];
     int i;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -88,7 +89,6 @@ RESnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
 
                 case N_DENS:
 
-                    double dtemp;
                     if (inst->REStempGiven)
                         dtemp = inst->REStemp - ckt->CKTtemp + (model->REStnom-CONSTCtoK);
                     else

@@ -35,6 +35,7 @@ MOS3noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
     double lnNdens[MOS3NSRCS];
     int i;
     double vgs, vds, vgd, vgst, alpha, beta, Sid;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -84,7 +85,7 @@ MOS3noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                 switch (mode) {
 
                 case N_DENS:
-                    double dtemp;
+
                     if (inst->MOS3tempGiven)
                         dtemp = inst->MOS3temp - ckt->CKTtemp + (model->MOS3tnom-CONSTCtoK);
                     else
