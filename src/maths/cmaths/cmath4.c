@@ -584,8 +584,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     double *datax = NULL;
 #endif
 
-    if (grouping == 0)
-        grouping = length;
+    NG_IGNORE(grouping);
 
     /* First do some sanity checks. */
     if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
@@ -847,8 +846,7 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     double scale;
 #endif
 
-    if (grouping == 0)
-        grouping = length;
+    NG_IGNORE(grouping);
 
     /* First do some sanity checks. */
     if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
