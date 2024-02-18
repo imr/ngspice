@@ -36,6 +36,7 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
     double lnNdens[MOS1NSRCS];
     int i;
     double vgs, vds, vgd, vgst, alpha, beta, Sid;
+    double dtemp;
 
     /* define the names of the noise sources */
 
@@ -95,13 +96,19 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                 switch (mode) {
 
                 case N_DENS:
-                    NevalSrc( & noizDens[MOS1RDNOIZ], & lnNdens[MOS1RDNOIZ],
-                        ckt, THERMNOISE, inst->MOS1dNodePrime, inst->MOS1dNode,
-                        inst->MOS1drainConductance);
 
-                    NevalSrc( & noizDens[MOS1RSNOIZ], & lnNdens[MOS1RSNOIZ],
+                    if (inst->MOS1tempGiven)
+                        dtemp = inst->MOS1temp - ckt->CKTtemp + (model->MOS1tnom-CONSTCtoK);
+                    else
+                        dtemp = inst->MOS1dtemp;
+
+                    NevalSrcInstanceTemp( & noizDens[MOS1RDNOIZ], & lnNdens[MOS1RDNOIZ],
+                        ckt, THERMNOISE, inst->MOS1dNodePrime, inst->MOS1dNode,
+                        inst->MOS1drainConductance, dtemp);
+
+                    NevalSrcInstanceTemp( & noizDens[MOS1RSNOIZ], & lnNdens[MOS1RSNOIZ],
                         ckt, THERMNOISE, inst->MOS1sNodePrime, inst->MOS1sNode,
-                        inst->MOS1sourceConductance);
+                        inst->MOS1sourceConductance, dtemp);
 
                     if (model->MOS1nlev < 3) {
 
@@ -127,9 +134,9 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                         Sid = 2.0 / 3.0 * beta * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS1gdsnoi;
                     }
 
-                    NevalSrc( & noizDens[MOS1IDNOIZ], & lnNdens[MOS1IDNOIZ],
+                    NevalSrcInstanceTemp( & noizDens[MOS1IDNOIZ], & lnNdens[MOS1IDNOIZ],
                         ckt, THERMNOISE, inst->MOS1dNodePrime, inst->MOS1sNodePrime,
-                        Sid);
+                        Sid, dtemp);
 
                     NevalSrc( & noizDens[MOS1FLNOIZ], NULL, ckt,
                         N_GAIN, inst->MOS1dNodePrime, inst->MOS1sNodePrime,
