@@ -892,59 +892,6 @@ err_return:
 
 /* End of infix to posfix */
 
-/* Start parse table */
-typedef struct table_line *TLINE;
-struct table_line {
-    char *line;
-    int depth;  /* expression nesting depth, outermost depth == 1 */
-    TLINE next;
-};
-
-typedef struct parse_table *PTABLE;
-struct parse_table {
-    TLINE first;
-    TLINE last;
-    unsigned int entry_count;
-};
-
-static PTABLE parse_tab = NULL;
-
-static PTABLE new_parse_table(void)
-{
-    PTABLE pt;
-    pt = TMALLOC(struct parse_table, 1);
-    pt->first = pt->last = NULL;
-    pt->entry_count = 0;
-    return pt;
-}
-
-static void delete_parse_table(PTABLE pt)
-{
-    TLINE t, next;
-    if (!pt)
-        return;
-    next = pt->first;
-    while (next) {
-        t = next;
-        tfree(t->line);
-        next = t->next;
-        tfree(t);
-    }
-    tfree(pt);
-}
-
-static void delete_parse_tables(void)
-{
-    delete_parse_table(parse_tab);
-    parse_tab = NULL;
-}
-
-static void init_parse_tables(void)
-{
-    parse_tab = new_parse_table();
-}
-/* End parse table */
-
 /* Start of logicexp parser */
 static void aerror(char *s);
 static BOOL amatch(int t);
@@ -958,7 +905,6 @@ static void cleanup_parser(void)
 {
     delete_lexer(parse_lexer);
     parse_lexer = NULL;
-    delete_parse_tables();
 }
 
 static char *get_inst_name(void)
@@ -1147,7 +1093,6 @@ static BOOL bparse(char *line, BOOL new_lexer)
     lookahead = lex_scan(); // ':'
     lookahead = lex_scan();
     while (lookahead != '\0') {
-        init_parse_tables();
         ds_clear(&stmt);
         ds_cat_str(&stmt, parse_lexer->lexer_buf);
         if (!bstmt_postfix()) {
