@@ -753,6 +753,11 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
         last_tok = ltok;
         if (ltok == LEX_ID) {
             ds_cat_printf(postfix_p, " %s", lx->lexer_buf);
+            if (strncmp(lx->lexer_buf, TMP_PREFIX, TMP_LEN) == 0) {
+                printf("WARNING potential name collision %s in logicexp\n",
+                    lx->lexer_buf);
+                fflush(stdout);
+            }
         } else if (ltok == '(') {
             entry = add_name_entry(makestr(ltok), nlist);
             if (push(&stack, entry->name)) goto err_return;
@@ -870,8 +875,8 @@ static int evaluate_postfix(char* postfix)
     if (prevtok == LEX_ID) {
         char *n1 = NULL;
         DS_CREATE(ds1, 32);
-        count++;
         sprintf(tmp, "%s%d", TMP_PREFIX, count);
+        count++;
         n1 = tilde_tail(pop(&stack, &status), &ds1);
         if (status) goto err_return;
         if (!skip && n1[0] == '~') {
@@ -1002,6 +1007,11 @@ static BOOL bstmt_postfix(void)
     if (lookahead == LEX_ID) {
         ds_clear(&lhs);
         ds_cat_str(&lhs, parse_lexer->lexer_buf);
+        if (strncmp(ds_get_buf(&lhs), TMP_PREFIX, TMP_LEN) == 0) {
+            printf("WARNING potential name collision %s in logicexp\n",
+                ds_get_buf(&lhs));
+            fflush(stdout);
+        }
         lookahead = lex_scan();
     } else {
         aerror("bstmt_postfix: syntax error");
@@ -1476,6 +1486,7 @@ static char *get_typ_estimate(char *min, char *typ, char *max, DSTRING *pds)
             if (!eq(unitsmin, unitsmax)) {
                 printf("WARNING typ_estimate units do not match"
                        " min %s max %s", tmpmin, tmpmax);
+                fflush(stdout);
                 if (unitsmin[0] == unitsmax[0]) {
                     average = (valmin + valmax) / (float)2.0;
                     ds_cat_printf(pds, "%.2f%cs", average, unitsmin[0]);
@@ -1676,6 +1687,7 @@ static BOOL extract_delay(
                             }
                         } else {
                             printf("WARNING pindly DELAY not found\n");
+                            fflush(stdout);
                             if (tri) {
                                 ds_cat_printf(&delay_string,
                                     "(inertial_delay=true delay=10ns)");
