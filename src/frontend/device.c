@@ -854,7 +854,7 @@ listparam(wordlist *p, dgen *dg)
                 else
                     fprintf(cp_out, "%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
                 k = dgen_for_n(dg, count, printvals_old, (plist + i), j);
-                printf("\n");
+                fprintf(cp_out,"\n");
                 j += 1;
             } while (k > 0);
         } else {

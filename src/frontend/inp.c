@@ -1447,17 +1447,20 @@ inp_dodeck(
                     else if (dd->linenum_orig == 0) {
                         fprintf(stderr, "Error on line:\n  %s\n%s\n",
                                    dd->line, dd->error);
+                        if (ft_stricterror)
+                            controlled_exit(EXIT_BAD);
                         have_err = TRUE;
                         return 1;
                     }
                     else {
                         fprintf(stderr, "Error on line %d or its substitute:\n  %s\n%s\n",
                                    dd->linenum_orig, dd->line, dd->error);
+                        if (ft_stricterror)
+                            controlled_exit(EXIT_BAD);
                         have_err = TRUE;
                         return 1;
                     }
-                    if (ft_stricterror)
-                        controlled_exit(EXIT_BAD);
+
                 } else {
                     fprintf(stderr, "%s\n", p);
                 }
@@ -1941,6 +1944,8 @@ com_source(wordlist *wl)
         Infile_Path = ngdirname(firstfile);
         if (inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word, FALSE) != 0) {
             fprintf(stderr, "    Simulation interrupted due to error!\n\n");
+            if (ft_stricterror)
+                controlled_exit(EXIT_FAILURE);
         }
     }
 

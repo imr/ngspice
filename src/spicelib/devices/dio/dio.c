@@ -104,6 +104,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "fc",  DIO_MOD_FC,  IF_REAL, "Forward bias junction fit parameter"),
  IOP( "fcs",  DIO_MOD_FCS,  IF_REAL, "Forward bias sidewall junction fit parameter"),
  IOP( "bv",  DIO_MOD_BV,  IF_REAL, "Reverse breakdown voltage"),
+ IOPR( "vb",  DIO_MOD_BV,  IF_REAL, "Reverse breakdown voltage"),
  IOP( "ibv", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  IOPR( "ib", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  IOP( "tcv", DIO_MOD_TCV, IF_REAL, "Reverse breakdown voltage temperature coefficient"),

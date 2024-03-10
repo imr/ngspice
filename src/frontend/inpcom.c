@@ -1115,6 +1115,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         if (inp_poly_2g6_compat(working)) {
             inp_rem_levels(root);
             line_free_x(cc, TRUE);
+            if (ft_stricterror)
+                controlled_exit(EXIT_BAD);
             return NULL;
         }
 #else
@@ -1393,6 +1395,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                 if (!y_resolved) {
                     fprintf(cp_err, "Error: Could not find include file %s\n",
                             y);
+                    if (ft_stricterror)
+                        controlled_exit(EXIT_FAILURE);
                     rv.line_number = line_number;
                     rv.cc = NULL;
                     return rv;
@@ -5849,6 +5853,8 @@ static void inp_compat(struct card *card)
                                 (firstno && !secondno)) {
                             fprintf(stderr, "Error: Missing token in %s\n",
                                     curr_line);
+                            if (ft_stricterror)
+                                controlled_exit(EXIT_FAILURE);
                             break;
                         }
                         else if (!firstno && !secondno)
@@ -6060,6 +6066,8 @@ static void inp_compat(struct card *card)
                     if ((!firstno && secondno) || (firstno && !secondno)) {
                         fprintf(stderr, "Error: Missing token in %s\n",
                                 curr_line);
+                        if (ft_stricterror)
+                            controlled_exit(EXIT_BAD);
                         break;
                     }
                     else if (!firstno && !secondno)
@@ -8080,6 +8088,8 @@ static int inp_vdmos_model(struct card *deck)
                     "    in VDMOS instance line with thermal model\n"
                     "    %s\n", card->line);
                 fprintf(stderr, "No circuit loaded!\n");
+                if (ft_stricterror)
+                    controlled_exit(EXIT_BAD);
                 return 1;
             }
             /* next token is the model name of instance */
@@ -8101,6 +8111,8 @@ static int inp_vdmos_model(struct card *deck)
                 "    %s\n", card->line);
             fprintf(stderr, "No circuit loaded!\n");
             tfree(instmodname);
+            if (ft_stricterror)
+                controlled_exit(EXIT_BAD);
             return 1;
         }
     }
@@ -9134,6 +9146,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
             if (!curr_line) {
                 fprintf(stderr, "Error: bad syntax of line\n   %s\n", thisline);
                 fprintf(stderr, "No circuit loaded!\n");
+                if (ft_stricterror)
+                    controlled_exit(EXIT_BAD);
                 return 1;
             }
             /* exclude all of the following fourth tokens */
@@ -9171,6 +9185,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
                 fprintf(stderr, "No circuit loaded!\n");
+                if (ft_stricterror)
+                    controlled_exit(EXIT_BAD);
                 return 1;
             }
             /* The next token may be a simple text token or an expression
@@ -9184,6 +9200,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
                 fprintf(stderr, "No circuit loaded!\n");
+                if (ft_stricterror)
+                    controlled_exit(EXIT_BAD);
                 return 1;
             }
             if (*curr_line == '\0')
@@ -9195,6 +9213,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
                 fprintf(stderr, "No circuit loaded!\n");
+                if (ft_stricterror)
+                    controlled_exit(EXIT_BAD);
                 return 1;
             }
             /* The next token may be a simple text token or an expression
@@ -9208,6 +9228,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
                 fprintf(stderr, "No circuit loaded!\n");
+                if (ft_stricterror)
+                    controlled_exit(EXIT_BAD);
                 return 1;
             }
             if (*curr_line == '\0')
