@@ -232,7 +232,7 @@ inp_subcktexpand(struct card *deck) {
 /*    use_numparams = cp_getvar("numparams", CP_BOOL, NULL, 0); */
 
     use_numparams = TRUE;
-
+//    tprint(deck);
     /*  deck has .control sections already removed, but not comments */
     if (use_numparams) {
 
