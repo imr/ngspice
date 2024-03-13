@@ -224,7 +224,7 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
              */
             vds=vgs-vgd;
             
-            vt_temp=here->JFETtemp*CONSTKoverQ;
+            vt_temp=here->JFETtemp*CONSTKoverQ*model->JFETemissionCoeff;
             if (vgs < -3*vt_temp) {
                 arg=3*vt_temp/(vgs*CONSTe);
                 arg = arg * arg * arg;

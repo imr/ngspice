@@ -62,6 +62,9 @@ JFETmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case JFET_MOD_IS:
             value->rValue = model->JFETgateSatCurrent;
             return(OK);
+        case JFET_MOD_N:
+            value->rValue = model->JFETemissionCoeff;
+            return(OK);
         case JFET_MOD_FC:
             value->rValue = model->JFETdepletionCapCoeff;
             return(OK);

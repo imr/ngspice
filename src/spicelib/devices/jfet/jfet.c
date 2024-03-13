@@ -62,6 +62,7 @@ IFparm JFETmPTable[] = { /* model parameters */
  IOPA("cgd",     JFET_MOD_CGD,    IF_REAL,"G-D junction cap"),
  IOP("pb",      JFET_MOD_PB,      IF_REAL,"Gate junction potential"),
  IOP("is",      JFET_MOD_IS,      IF_REAL,"Gate junction saturation current"),
+ IOP("n", JFET_MOD_N,   IF_REAL, "Emission Coefficient for gate-drain and gate-source diodes"),
  IOP("fc",      JFET_MOD_FC,      IF_REAL,"Forward bias junction fit parm."),
  /* Modification for Sydney University JFET model */
  IOP("b",     JFET_MOD_B,        IF_REAL,"Doping tail parameter"),

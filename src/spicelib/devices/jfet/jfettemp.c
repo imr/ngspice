@@ -22,7 +22,7 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
     JFETmodel *model = (JFETmodel*)inModel;
     JFETinstance *here;
     double xfc;
-    double vt;
+    double vt, vtn;
     double vtnom;
     double kt,kt1;
     double arg,arg1;
@@ -87,12 +87,13 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->JFETtemp = ckt->CKTtemp + here->JFETdtemp;
             }
             vt = here->JFETtemp * CONSTKoverQ;
+            vtn = vt * model->JFETemissionCoeff;
             fact2 = here->JFETtemp/REFTEMP;
             ratio1 = here->JFETtemp/model->JFETtnom -1;
             if (model->JFETxtiGiven) {
-                here->JFETtSatCur = model->JFETgateSatCurrent * exp(ratio1*model->JFETeg/vt) * pow(ratio1+1,model->JFETxti);
+                here->JFETtSatCur = model->JFETgateSatCurrent * exp(ratio1*model->JFETeg/vtn) * pow(ratio1+1,model->JFETxti);
             } else {
-                here->JFETtSatCur = model->JFETgateSatCurrent * exp(ratio1*model->JFETeg/vt);
+                here->JFETtSatCur = model->JFETgateSatCurrent * exp(ratio1*model->JFETeg/vtn);
             }
             here->JFETtCGS = model->JFETcapGS * cjfact;
             here->JFETtCGD = model->JFETcapGD * cjfact;

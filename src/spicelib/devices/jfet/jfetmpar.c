@@ -58,6 +58,10 @@ JFETmParam(int param, IFvalue *value, GENmodel *inModels)
             model->JFETgateSatCurrentGiven = TRUE;
             model->JFETgateSatCurrent = value->rValue;
             break;
+        case JFET_MOD_N:
+            model->JFETemissionCoeff = value->rValue;
+            model->JFETemissionCoeffGiven = TRUE;
+            break;
         case JFET_MOD_FC:
             model->JFETdepletionCapCoeffGiven = TRUE;
             model->JFETdepletionCapCoeff = value->rValue;

@@ -211,6 +211,7 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     double JFETcapGD;
     double JFETgatePotential;
     double JFETgateSatCurrent;
+    double JFETemissionCoeff;
     double JFETdepletionCapCoeff;
     double JFETfNcoef;
     double JFETfNexp;
@@ -242,6 +243,7 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     unsigned JFETcapGDGiven : 1;
     unsigned JFETgatePotentialGiven : 1;
     unsigned JFETgateSatCurrentGiven : 1;
+    unsigned JFETemissionCoeffGiven: 1;
     unsigned JFETdepletionCapCoeffGiven : 1;
     /* Modification for Sydney University JFET model */
     unsigned JFETbGiven : 1;
@@ -290,6 +292,7 @@ enum {
     JFET_MOD_CGD,
     JFET_MOD_PB,
     JFET_MOD_IS,
+    JFET_MOD_N,
     JFET_MOD_FC,
     JFET_MOD_NJF,
     JFET_MOD_PJF,
