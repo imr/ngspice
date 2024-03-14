@@ -748,17 +748,21 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
     nlist = add_name_entry("first", NULL);
     ds_clear(postfix_p);
     while ( ( ltok = lexer_scan(lx) ) != 0 ) { // start while ltok loop
-        if (ltok == '(') { lparen_count++; }
-        if (ltok == ')') { rparen_count++; }
         if (ltok == LEX_ID && last_tok == LEX_ID) {
             fprintf(stderr, "ERROR (1) no gate operator between two identifiers\n");
             status = 1;
             goto err_return;
         }
-        if (lex_gate_op(ltok) && lex_gate_op(last_tok)) {
-            fprintf(stderr, "ERROR (2) two consecutive gate operators\n");
-            status = 1;
-            goto err_return;
+        if (lex_gate_op(ltok)) {
+            if (lex_gate_op(last_tok)) {
+                fprintf(stderr, "ERROR (2) two consecutive gate operators\n");
+                status = 1;
+                goto err_return;
+            } else if (last_tok != LEX_ID && last_tok != ')') {
+                fprintf(stderr, "ERROR (2a) gate operator not after ID or rparen\n");
+                status = 1;
+                goto err_return;
+            }
         }
         if (last_tok == '~' && ltok != LEX_ID && ltok != '(') {
             fprintf(stderr, "ERROR (3) \'~\' is not followed by an ID or lparen\n");
@@ -785,15 +789,24 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
                 fflush(stdout);
             }
         } else if (ltok == '(') {
+            lparen_count++;
             entry = add_name_entry(makestr(ltok), nlist);
-            if (push(&stack, entry->name)) goto err_return;
+            status = push(&stack, entry->name);
+            if (status) {
+                goto err_return;
+            }
         } else if (ltok == ')') {
+            rparen_count++;
             while ( stack.top != -1 && !eq(stack.array[stack.top], "(") ) {
                 ds_cat_printf(postfix_p, " %s", pop(&stack, &status));
-                if (status) goto err_return;
+                if (status) {
+                    goto err_return;
+                }
             }
             pop(&stack, &status);
-            if (status) goto err_return;
+            if (status) {
+                goto err_return;
+            }
         } else if (lex_gate_op(ltok) || ltok == '~') {
             char *tokstr = makestr(ltok);
             if (ltok == '~') {  // change ~ id --> tilde_id and continue
@@ -809,10 +822,15 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
             }
             while ( stack.top != -1 && !eq(stack.array[stack.top], "(") && get_precedence(stack.array[stack.top]) >= get_precedence(tokstr) ) {
                 ds_cat_printf(postfix_p, " %s", pop(&stack, &status));
-                if (status) goto err_return;
+                if (status) {
+                    goto err_return;
+                }
             }
             entry = add_name_entry(tokstr, nlist);
-            if (push(&stack, entry->name)) goto err_return;
+            status = push(&stack, entry->name);
+            if (status) {
+                goto err_return;
+            }
         } else {
             fprintf(stderr, "ERROR (6) unexpected infix token %d \'%s\'\n",
                 ltok, lx->lexer_buf);
@@ -832,9 +850,14 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
     }
     while (stack.top != -1) {
         ds_cat_printf(postfix_p, " %s", pop(&stack, &status));
-        if (status) goto err_return;
+        if (status) {
+            goto err_return;
+        }
     }
 err_return:
+    if (status) {
+        fprintf(stderr, "ERROR invalid infix expression: %s\n", infix);
+    }
     delete_lexer(lx);
     clear_name_list(nlist);
     return status;
@@ -869,42 +892,43 @@ static int evaluate_postfix(char* postfix)
     while ( ( ltok = lexer_scan(lx) ) != 0 ) { // while ltok loop
         if (ltok == LEX_ID) {
             entry = add_name_entry(lx->lexer_buf, nlist);
-            if (push(&stack, entry->name)) goto err_return;
+            status = push(&stack, entry->name);
+            if (status) {
+                goto err_return;
+            }
         } else if (ltok == '~') {
             operand1 = pop(&stack, &status);
-            if (status) goto err_return;
+            if (status) {
+                goto err_return;
+            }
             sprintf(tmp, "%s%d", TMP_PREFIX, count);
             count++;
             gp = new_gate('~', tmp, operand1, NULL);
             gp = insert_gate(gp);
             entry = add_name_entry(tmp, nlist);
-            if (push(&stack, entry->name)) goto err_return;
+            status = push(&stack, entry->name);
+            if (status) {
+                goto err_return;
+            }
         } else {
             operand2 = pop(&stack, &status);
-            if (status) goto err_return;
+            if (status) {
+                goto err_return;
+            }
             operand1 = pop(&stack, &status);
-            if (status) goto err_return;
-            if (ltok == '|') {
+            if (status) {
+                goto err_return;
+            }
+            if (lex_gate_op(ltok)) {
                 sprintf(tmp, "%s%d", TMP_PREFIX, count);
                 count++;
-                gp = new_gate('|', tmp, operand1, operand2);
+                gp = new_gate(ltok, tmp, operand1, operand2);
                 gp = insert_gate(gp);
                 entry = add_name_entry(tmp, nlist);
-                if (push(&stack, entry->name)) goto err_return;
-            } else if (ltok == '^') {
-                sprintf(tmp, "%s%d", TMP_PREFIX, count);
-                count++;
-                gp = new_gate('^', tmp, operand1, operand2);
-                gp = insert_gate(gp);
-                entry = add_name_entry(tmp, nlist);
-                if (push(&stack, entry->name)) goto err_return;
-            } else if (ltok == '&') {
-                sprintf(tmp, "%s%d", TMP_PREFIX, count);
-                count++;
-                gp = new_gate('&', tmp, operand1, operand2);
-                gp = insert_gate(gp);
-                entry = add_name_entry(tmp, nlist);
-                if (push(&stack, entry->name)) goto err_return;
+                status = push(&stack, entry->name);
+                if (status) {
+                    goto err_return;
+                }
             }
         }
         prevtok = ltok;
@@ -915,7 +939,9 @@ static int evaluate_postfix(char* postfix)
         sprintf(tmp, "%s%d", TMP_PREFIX, count);
         count++;
         n1 = tilde_tail(pop(&stack, &status), &ds1);
-        if (status) goto err_return;
+        if (status) {
+            goto err_return;
+        }
         if (!skip && n1[0] == '~') {
             gp = new_gate('~', tmp, n1 + 1, NULL);
             gp->is_not = TRUE;
@@ -927,6 +953,9 @@ static int evaluate_postfix(char* postfix)
         ds_free(&ds1);
     }
 err_return:
+    if (status) {
+        fprintf(stderr, "ERROR invalid postfix expression: %s\n", postfix);
+    }
     delete_lexer(lx);
     clear_name_list(nlist);
     return status;
