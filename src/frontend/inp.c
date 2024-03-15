@@ -72,6 +72,7 @@ static bool mc_reload = FALSE;
 void eval_opt(struct card *deck);
 
 extern bool ft_batchmode;
+extern int dynmaxline;
 
 /* from inpcom.c */
 extern struct nscope* inp_add_levels(struct card *deck);
@@ -550,6 +551,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             expr_w_temper = TRUE;
             mc_reload = FALSE;
             fprintf(stdout, "Reset re-loads circuit %s\n", mc_deck->line);
+            dynmaxline = 0;
+            /* recover the number of lines in deck */
+            for (dd = deck; dd; dd = dd->nextcard)
+                dynmaxline++;
         }
         /* re-load input deck from the current circuit structure */
         else if (ft_curckt && ft_curckt->ci_mcdeck) {
