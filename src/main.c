@@ -26,6 +26,7 @@
    It is not vailable with older libedit versions (pre-1.42.2) , thus we have to set it ourselves */
 #ifdef HAVE_BSDEDITLINE
 #include <editline/readline.h>
+#include "../misc/tilde.h"
 #ifndef rl_hook_func_t
     typedef int rl_hook_func_t(void);
 #endif
