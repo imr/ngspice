@@ -748,36 +748,44 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
     nlist = add_name_entry("first", NULL);
     ds_clear(postfix_p);
     while ( ( ltok = lexer_scan(lx) ) != 0 ) { // start while ltok loop
-        if (ltok == LEX_ID && last_tok == LEX_ID) {
-            fprintf(stderr, "ERROR (1) no gate operator between two identifiers\n");
-            status = 1;
-            goto err_return;
-        }
-        if (lex_gate_op(ltok)) {
-            if (lex_gate_op(last_tok)) {
-                fprintf(stderr, "ERROR (2) two consecutive gate operators\n");
-                status = 1;
-                goto err_return;
-            } else if (last_tok != LEX_ID && last_tok != ')') {
-                fprintf(stderr, "ERROR (2a) gate operator not after ID or rparen\n");
+        if (last_tok == -1) { // check starting token
+            if (!(ltok == LEX_ID || ltok == '~' || ltok == '(')) {
+                fprintf(stderr, "ERROR (1) invalid starting token\n");
                 status = 1;
                 goto err_return;
             }
-        }
-        if (last_tok == '~' && ltok != LEX_ID && ltok != '(') {
-            fprintf(stderr, "ERROR (3) \'~\' is not followed by an ID or lparen\n");
-            status = 1;
-            goto err_return;
-        }
-        if (ltok == '~' && (last_tok == LEX_ID || last_tok == ')')) {
-            fprintf(stderr, "ERROR (4) \'~\' follows an ID or rparen\n");
-            status = 1;
-            goto err_return;
-        }
-        if (ltok == ')' && (lex_gate_op(last_tok) || last_tok == '~')) {
-            fprintf(stderr, "ERROR (5) incomplete infix sub-expression\n");
-            status = 1;
-            goto err_return;
+        } else {
+            if (last_tok == LEX_ID) { // check follower of an ID
+                if (!(lex_gate_op(ltok) || ltok == ')')) {
+                    fprintf(stderr, "ERROR (2) incorrect token after ID\n");
+                    status = 1;
+                    goto err_return;
+                }
+            } else if (lex_gate_op(last_tok)) { // check follower of a gate op
+                if (!(ltok == LEX_ID || ltok == '~' || ltok == '(')) {
+                    fprintf(stderr, "ERROR (3) incorrect token after gate op\n");
+                    status = 1;
+                    goto err_return;
+                }
+            } else if (last_tok == '~') { // check follower of ~
+                if (!(ltok == LEX_ID || ltok == '(')) {
+                    fprintf(stderr, "ERROR (4) incorrect token after \'~\'\n");
+                    status = 1;
+                    goto err_return;
+                }
+            } else if (last_tok == '(') { // check follower of lparen
+                if (!(ltok == LEX_ID || ltok == '~' || ltok == '(')) {
+                    fprintf(stderr, "ERROR (5) incorrect token after lparen\n");
+                    status = 1;
+                    goto err_return;
+                }
+            } else if (last_tok == ')') { // check follower of rparen
+                if (!(ltok == ')' || lex_gate_op(ltok))) {
+                    fprintf(stderr, "ERROR (6) incorrect token after rparen\n");
+                    status = 1;
+                    goto err_return;
+                }
+            }
         }
 
         last_tok = ltok;
@@ -832,19 +840,19 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
                 goto err_return;
             }
         } else {
-            fprintf(stderr, "ERROR (6) unexpected infix token %d \'%s\'\n",
+            fprintf(stderr, "ERROR (7) unexpected infix token %d \'%s\'\n",
                 ltok, lx->lexer_buf);
             status = 1;
             goto err_return;
         }
     } // end while ltok loop
     if (lex_gate_op(last_tok) || last_tok == '~') {
-        fprintf(stderr, "ERROR (7) incomplete infix expression\n");
+        fprintf(stderr, "ERROR (8) incomplete infix expression\n");
         status = 1;
         goto err_return;
     }
     if (lparen_count != rparen_count) {
-        fprintf(stderr, "ERROR (8) mismatched parentheses\n");
+        fprintf(stderr, "ERROR (9) mismatched parentheses\n");
         status = 1;
         goto err_return;
     }
