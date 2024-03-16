@@ -50,6 +50,12 @@ com_option(wordlist *wl)
         printf("indverbosity = %d\n", circuit->CKTindverbosity);
         printf("epsmin = %g\n", circuit->CKTepsmin);
 
+        printf("\nMatrix solver:\n");
+        if (circuit->CKTkluMODE == 0)
+            printf("Sparse 1.3\n");
+        else
+            printf("KLU\n");
+
         printf("\nTolerances (absolute):\n");
         printf("abstol      (current) = %g\n", circuit->CKTabstol);
         printf("chgtol      (charge)  = %g\n", circuit->CKTchgtol);
