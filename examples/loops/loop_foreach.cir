@@ -1,12 +1,20 @@
 example foreach loop
 .control
 
+* set values by numbers
 foreach val -40 -20 0 20 40
   echo var is $val
 end
 echo
+*set values by variable
 set myvariable = ( -4 -2 0 2 4 )
 foreach var $myvariable
+  echo var is $var
+end
+echo
+* set values by vector
+let myvec = vector(5)
+foreach var $&myvec
   echo var is $var
 end
 
