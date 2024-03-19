@@ -805,6 +805,11 @@ static int infix_to_postfix(char* infix, DSTRING * postfix_p)
             }
         } else if (ltok == ')') {
             rparen_count++;
+            if (rparen_count > lparen_count) {
+                fprintf(stderr, "ERROR (9a) mismatched rparen\n");
+                status = 1;
+                goto err_return;
+            }
             while ( stack.top != -1 && !eq(stack.array[stack.top], "(") ) {
                 ds_cat_printf(postfix_p, " %s", pop(&stack, &status));
                 if (status) {
