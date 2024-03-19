@@ -1,9 +1,20 @@
 example repeat loop
 .control
-
+* plain number
+repeat 3
+  echo How many loops? Count yourself!
+end
+echo
+* variable
 set loops = 7
 repeat $loops
   echo How many loops? $loops
+end
+echo
+* vector
+let loopvec = 4
+repeat $&loopvec
+  echo How many loops? $&loopvec
 end
 
 .endc
