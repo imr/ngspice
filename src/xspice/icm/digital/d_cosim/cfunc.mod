@@ -140,9 +140,9 @@ void accept_output(struct co_info *pinfo, unsigned int bit_num, Digital_t *val)
 
 static void output(struct instance *ip, ARGS)
 {
-    double     delay;
-    Digital_t *out_vals; // XSPICE rotating memory
-    int        i, j;
+    double        delay;
+    Digital_t    *out_vals; // XSPICE rotating memory
+    unsigned int  i, j;
 
     delay = PARAM(delay) - (TIME - ip->info.vtime);
     if (delay <= 0) {
@@ -314,7 +314,7 @@ static bool check_input(struct instance *ip, Digital_t *ovp,
 {
     if (ovp->state != rp->what.state ||
         ovp->strength != rp->what.strength) {
-        if (++ip->q_index < ip->q_length) {
+        if (++ip->q_index < (int) ip->q_length) {
             /* Record this event. */
 
             ip->q[ip->q_index] = *rp;
@@ -345,10 +345,10 @@ void ucm_d_cosim(ARGS)
 {
     struct instance *ip;
     Digital_t       *in_vals; // XSPICE rotating memory
-    int              i, index;
+    unsigned int     i, index;
 
     if (INIT) {
-        int            ins, outs, inouts;
+        unsigned int   ins, outs, inouts;
         unsigned int   alloc_size;
         void          *handle;
         void         (*ifp)(struct co_info *);
@@ -380,7 +380,7 @@ void ucm_d_cosim(ARGS)
             cm_message_send(dlerror());
             return;
         }
-        ifp = dlsym(handle, "Cosim_setup");
+        ifp = (void (*)(struct co_info *))dlsym(handle, "Cosim_setup");
         if (*ifp == NULL) {
             cm_message_printf("ERROR: no entry function in %s", fn);
             cm_message_send(dlerror());
@@ -468,7 +468,7 @@ void ucm_d_cosim(ARGS)
 
     ip = STATIC_VAR(cosim_instance);
     if (!ip) {
-        int ports;
+        unsigned int ports;
 
         /* Error state.  Do nothing at all. */
 

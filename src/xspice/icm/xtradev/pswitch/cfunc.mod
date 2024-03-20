@@ -177,8 +177,8 @@ void cm_pswitch(ARGS)  /* structure holding parms,
     r_off = (r_off > 1.0e12) ? 1.0e12 : r_off;  /* Set maximum 'OFF' resistance */
 
 
-    if(INIT == 1) { /* first time through, allocate memory, set static parameters */
-        char *cntl_error = "\n*****ERROR*****\nPSWITCH: CONTROL voltage delta less than 1.0e-12\n";
+    if(INIT == 1) {
+        /* First time through, allocate memory, set static parameters. */
 
         cntl_on = PARAM(cntl_on);
         cntl_off = PARAM(cntl_off);

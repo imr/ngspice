@@ -17,8 +17,6 @@ struct pwl {
 
 static void cm_d_osc_callback(ARGS, Mif_Callback_Reason_t reason)
 {
-    struct panel_instance *instance;
-
     if (reason == MIF_CB_DESTROY) {
         struct pwl *table = STATIC_VAR(locdata);
 

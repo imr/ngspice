@@ -691,16 +691,16 @@ vec_get(const char *vec_name) {
 
         for (v = vv; v; v = v->va_next) {
             struct dvec *nd;
-            char        *vec_name, new_name[256];
+            char        *new_vec_name, new_name[256];
 
             if (multiple) {
                 snprintf(new_name, sizeof new_name, "@%s[%s]",
                          name, v->va_name);
-                vec_name = new_name;
+                new_vec_name = new_name;
             } else {
-                vec_name = whole;
+                new_vec_name = whole;
             }
-            nd = dvec_alloc(copy(vec_name),
+            nd = dvec_alloc(copy(new_vec_name),
                             SV_NOTYPE,
                             VF_REAL,  /* No complex values yet... */
                             1, NULL);
@@ -719,7 +719,7 @@ vec_get(const char *vec_name) {
                 fprintf(stderr,
                         "ERROR: can not handle string value "
                         "of '%s' in vec_get(%s)\nIgnoring...\n",
-                        v->va_name, vec_name);
+                        v->va_name, new_vec_name);
                 dvec_free(nd);
                 continue;
                 break;
@@ -752,7 +752,7 @@ vec_get(const char *vec_name) {
                         fprintf(stderr,
                                 "ERROR: can not handle mixed, string or list "
                                 "value of '%s' in vec_get(%s)\nIgnoring...\n",
-                                v->va_name, vec_name);
+                                v->va_name, new_vec_name);
                         dvec_free(nd);
                         continue;
                     }
