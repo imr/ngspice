@@ -108,7 +108,6 @@ int EVTload_with_event(
     Evt_Node_Data_t     *node_data;
 
     Mif_Private_t       cm_data;
-    void                *value_ptr;
 
     /* ***************************** */
     /* Prepare the code model inputs */

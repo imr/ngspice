@@ -117,7 +117,7 @@ void com_fread(wordlist *wl)
         }
 
         if (fgets(buf, sizeof buf, Open_Files[fd].fp)) {
-            length = strlen(buf);
+            length = (int)strlen(buf);
             if (length > 0 && buf[length - 1] == '\n') {
                 --length;
                 if (length > 0 && buf[length - 1] == '\r') {

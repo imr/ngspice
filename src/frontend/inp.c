@@ -667,7 +667,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             with_params = TRUE;
             size = sizeof header + 10;  // Allow for %u and close.
             for (argc = 0; Copy_of_argv[optind + argc]; ++argc)
-                size += strlen(Copy_of_argv[optind + argc]);
+                size += (int)strlen(Copy_of_argv[optind + argc]);
             size += 3 * argc; // Spaces and quotes.
             if (size <= sizeof buf)
                 p_buf_active = buf;
