@@ -51,10 +51,14 @@ com_option(wordlist *wl)
         printf("epsmin = %g\n", circuit->CKTepsmin);
 
         printf("\nMatrix solver:\n");
+#ifdef KLU
         if (circuit->CKTkluMODE == 0)
             printf("Sparse 1.3\n");
         else
             printf("KLU\n");
+#else
+        printf("Sparse 1.3\n");
+#endif
 
         printf("\nTolerances (absolute):\n");
         printf("abstol      (current) = %g\n", circuit->CKTabstol);
