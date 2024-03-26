@@ -124,6 +124,7 @@ int OSDInoise(int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
           node_mapping =
               (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
           for (i = 0; i < descr->num_noise_src; i++) {
+            noise_dens[i] = fabs(noise_dens[i]);
             src = descr->noise_sources[i];
             node1 = node_mapping[src.nodes.node_1];
             if (src.nodes.node_2 == UINT32_MAX) {
