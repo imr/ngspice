@@ -22,6 +22,7 @@
 #include "ngspice/dstring.h"
 #include "ngspice/logicexp.h"
 #include "ngspice/udevices.h"
+#include "ngspice/cpextern.h"
 
 static char *get_pindly_instance_name(void);
 static char *get_inst_name(void);
@@ -573,6 +574,21 @@ static void scan_gates(DSTRING *lhs)
 {
     struct gate_data *current = NULL, *previous = NULL, *last_curr = NULL;
     struct gate_data *prev = NULL;
+    int ps_scan_gates_noopt = 0;
+
+    if (!cp_getvar("ps_scan_gates_noopt", CP_NUM, &ps_scan_gates_noopt, 0)) {
+        ps_scan_gates_noopt = 0;
+    }
+    if (ps_scan_gates_noopt) {
+        current = last_gate;
+        if (ds_get_length(lhs) > 0) {
+            assert(current->finished == FALSE);
+            tfree(current->outp);
+            current->outp = TMALLOC(char, ds_get_length(lhs) + 1);
+            strcpy(current->outp, ds_get_buf(lhs));
+        }
+        return;
+    }
 
     current = first_gate;
     while (current) {
