@@ -581,7 +581,8 @@ static void scan_gates(DSTRING *lhs)
                        || current->type == '|');
         previous = current->prev;
         if (is_gate && current->is_possible) {
-            if (previous && previous->type == current->type) {
+            if (previous && previous->type == current->type
+            && previous->is_not == current->is_not) {
                 if (eq(current->ins->name, previous->outp)) {
                     move_inputs(current, previous);
                 }
@@ -608,6 +609,7 @@ static void scan_gates(DSTRING *lhs)
                 prev = current->prev;
                 while (prev) {
                     if (prev->type == current->type
+                    && prev->is_not == current->is_not
                     && prev->finished == FALSE
                     && strncmp(prev->outp, TMP_PREFIX, TMP_LEN) == 0
                     && eq(current->ins->name, prev->outp)) {
@@ -633,6 +635,19 @@ static void scan_gates(DSTRING *lhs)
             previous->outp = TMALLOC(char, ds_get_length(lhs) + 1);
             strcpy(previous->outp, ds_get_buf(lhs));
         }
+    }
+}
+
+static void scan_gates_noopt(DSTRING *lhs)
+{
+    struct gate_data *current = NULL;
+
+    current = last_gate;
+    if (ds_get_length(lhs) > 0) {
+        assert(current->finished == FALSE);
+        tfree(current->outp);
+        current->outp = TMALLOC(char, ds_get_length(lhs) + 1);
+        strcpy(current->outp, ds_get_buf(lhs));
     }
 }
 
@@ -1126,7 +1141,11 @@ static BOOL bstmt_postfix(void)
         retval = FALSE;
         goto bail_out;
     }
+if (getenv("SCAN_NOOPT")) {
+    scan_gates_noopt(&lhs);
+} else {
     scan_gates(&lhs);
+}
     gen_scanned_gates(first_gate);
     lookahead = lex_scan();
     while (lookahead != '}') {

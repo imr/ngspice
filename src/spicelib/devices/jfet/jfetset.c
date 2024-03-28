@@ -59,6 +59,9 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->JFETgateSatCurrentGiven) {
             model->JFETgateSatCurrent = 1e-14;
         }
+        if(!model->JFETemissionCoeffGiven) {
+            model->JFETemissionCoeff = 1;
+        }
         if(!model->JFETdepletionCapCoeffGiven) {
             model->JFETdepletionCapCoeff = .5;
         }

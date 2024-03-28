@@ -144,6 +144,8 @@ static char start[32], sbend[32], invoke[32], model[32];
 static void
 collect_global_nodes(struct card *c)
 {
+    int num_global_nodes;
+
     /* hash table for global nodes */
     glonodes = nghash_init(NGHASH_MIN_SIZE);
 
@@ -152,7 +154,7 @@ collect_global_nodes(struct card *c)
 #ifdef XSPICE
     nghash_insert(glonodes, "null", DUMMYDATA);
 #endif
-
+    num_global_nodes = 2; /* already two in hash table*/
     for (; c; c = c->nextcard)
         if (ciprefix(".global", c->line)) {
             char *s = c->line;
@@ -168,20 +170,14 @@ collect_global_nodes(struct card *c)
                 tfree(gnode);
                 s = skip_ws(t);
             }
+            num_global_nodes++;
+#ifdef TRACE
+            if (num_global_nodes == 3)
+                fprintf(stderr, "***Global node option has been found.***\n");
+            fprintf(stderr, "***Global node no.%d is %s.***\n", num_global_nodes, c->line);
+#endif
             c->line[0] = '*'; /* comment it out */
         }
-
-
-#ifdef TRACE
-    {
-        int i;
-        printf("***Global node option has been found.***\n");
-        for (i = 0; i < num_global_nodes; i++)
-            printf("***Global node no.%d is %s.***\n", i, global_nodes[i]);
-        printf("\n");
-    }
-#endif
-
 }
 
 
@@ -238,15 +234,18 @@ inp_subcktexpand(struct card *deck) {
 
 #ifdef TRACE
         fprintf(stderr, "Numparams is processing this deck:\n");
-        for (c = deck; c; c = c->nextcard)
+        for (c = deck; c; c = c->nextcard) {
+            if (ciprefix("*", c->line))
+                continue;
             fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
+        }
 #endif
 
         nupa_signal(NUPADECKCOPY);
         /* get the subckt names from the deck */
         for (c = deck; c; c = c->nextcard) {    /* first Numparam pass */
             if (ciprefix(".subckt", c->line)) {
-                nupa_scan(c);
+                 nupa_scan(c);
             }
         }
 
@@ -260,8 +259,11 @@ inp_subcktexpand(struct card *deck) {
 
 #ifdef TRACE
         fprintf(stderr, "Numparams transformed deck:\n");
-        for (c = deck; c; c = c->nextcard)
+        for (c = deck; c; c = c->nextcard) {
+            if (ciprefix("*", c->line))
+                continue;
             fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
+        }
 #endif
 
     }
@@ -391,8 +393,11 @@ inp_subcktexpand(struct card *deck) {
 
 #ifdef TRACE
         fprintf(stderr, "Numparams converted deck:\n");
-        for (c = deck; c; c = c->nextcard)
+        for (c = deck; c; c = c->nextcard) {
+            if (ciprefix("*", c->line))
+                continue;
             fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
+        }
 #endif
 
         /*nupa_list_params(stdout);*/
@@ -453,8 +458,11 @@ doit(struct card *deck, wordlist *modnames) {
     {
         struct card *c;
         printf("In doit, about to start first pass through deck.\n");
-        for (c = deck; c; c = c->nextcard)
+        for (c = deck; c; c = c->nextcard) {
+            if (ciprefix("*", c->line))
+                continue;
             printf("   %s\n", c->line);
+        }
     }
 #endif
 
@@ -557,8 +565,11 @@ doit(struct card *deck, wordlist *modnames) {
     {
         struct card *c;
         printf("In doit, about to start second pass through deck.\n");
-        for (c = deck; c; c = c->nextcard)
+        for (c = deck; c; c = c->nextcard) {
+            if (ciprefix("*", c->line))
+                continue;
             printf("   %s\n", c->line);
+        }
     }
 #endif
 
@@ -781,8 +792,11 @@ doit(struct card *deck, wordlist *modnames) {
     {
         struct card *c = deck;
         printf("Converted deck\n");
-        for (; c; c = c->nextcard)
+        for (; c; c = c->nextcard) {
+            if (ciprefix("*", c->line))
+                continue;
             printf("%s\n", c->line);
+        }
     }
     {
         wordlist *w = modnames;

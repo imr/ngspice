@@ -1481,6 +1481,10 @@ measure_parse_when(
                     correct_vec(meas);
             } else {
                 meas->m_val = INPevaluate(&pVar2, &err, 1);
+                if (err) {
+                    snprintf(errBuf, 99, "Cannot evaluate %s \n", pVar2);
+                    return MEASUREMENT_FAILURE;
+                }
             }
         } else {
             if (measure_parse_stdParams(meas, wl, NULL, errBuf) == MEASUREMENT_FAILURE)
