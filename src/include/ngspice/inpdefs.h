@@ -116,6 +116,7 @@ char *INPerrCat(char *, char *);
 char *INPstrCat(char *, char, char *);
 char *INPerror(int);
 double INPevaluate(char **, int *, int);
+double INPevaluate2(char **, int *, int);
 double INPevaluateRKM_R(char **, int *, int);
 double INPevaluateRKM_C(char **, int *, int);
 double INPevaluateRKM_L(char **, int *, int);
