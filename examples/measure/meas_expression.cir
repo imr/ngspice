@@ -1,0 +1,20 @@
+* measurement examples with evaluating an expression 0.9*v(2)
+* transient simulation of two sine signals with different frequencies
+
+vac1   1 0 DC 0  sin(0 1   1.0k 0 0)
+vac2   2 0 DC 0  sin(0 1.2 0.9k 0 0)
+
+.tran  10u 5m
+
+** evaluate '0.9*v(2)' in dot command
+.measure tran yeval1 FIND v(2) WHEN v(1)=par('0.9*v(2)')
+
+.control
+run
+** evaluate '0.9*v(2)' in control language command
+let vint = 0.9*v(2)
+meas tran yeval2 FIND v(2) WHEN v(1)= vint
+plot V(1) v(2)
+.endc
+
+.end
