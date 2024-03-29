@@ -6596,11 +6596,13 @@ static void inp_compat(struct card *card)
                         // skip '='
                         cut_line++;
                         // copy the replacement without trailing '\0'
-                        for (ii = 0; ii < xlen; ii++)
+                        char* loc_ptr = str_ptr - 1;
+                        for (ii = 0; ii < xlen; ii++) {
                             if (*copy_ptr)
-                                *cut_line++ = *copy_ptr++;
+                                *loc_ptr++ = *copy_ptr++;
                             else
-                                *cut_line++ = ' ';
+                                *loc_ptr++ = ' ';
+                        }
 
                         tfree(del_ptr);
                         tfree(exp_ptr);
