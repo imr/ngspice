@@ -22,7 +22,6 @@
 #include "ngspice/dstring.h"
 #include "ngspice/logicexp.h"
 #include "ngspice/udevices.h"
-#include "ngspice/cpextern.h"
 
 static char *get_pindly_instance_name(void);
 static char *get_inst_name(void);
