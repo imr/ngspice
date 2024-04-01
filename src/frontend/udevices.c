@@ -280,7 +280,6 @@ static int ps_udevice_msgs = 0;  // Controls the verbosity of U* warnings
   If ps_udevice_exit is non-zero then exit when u_process_instance fails
 */
 static int ps_udevice_exit = 0;
-static int ps_scan_gates_optimize = 1;  // Allow optimization in scan_gates
 static int ps_tpz_delays = 0;  // For tristate delays
 static int ps_with_inverters = 0;  // For ff/latch control inputs
 static int ps_with_tri_inverters = 0;  // For inv3/inv3a data inputs
@@ -965,9 +964,6 @@ void initialize_udevice(char *subckt_line)
     */
     if (!cp_getvar("ps_udevice_exit", CP_NUM, &ps_udevice_exit, 0)) {
         ps_udevice_exit = 0;
-    }
-    if (!cp_getvar("ps_scan_gates_optimize", CP_NUM, &ps_scan_gates_optimize, 0)) {
-        ps_scan_gates_optimize = 1;
     }
     /* If non-zero use inverters with ff/latch control inputs */
     if (!cp_getvar("ps_with_inverters", CP_NUM, &ps_with_inverters, 0)) {
@@ -4322,7 +4318,7 @@ BOOL u_process_instance(char *nline)
             if (ps_ports_and_pins & 4) {
                 printf("TRANS_IN  %s\n", nline);
             }
-            behav_ret = f_logicexp(nline, ps_scan_gates_optimize);
+            behav_ret = f_logicexp(nline);
             if (!behav_ret && current_subckt) {
                 fprintf(stderr, "ERROR in %s\n", current_subckt);
             }
