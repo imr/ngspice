@@ -569,21 +569,10 @@ static void move_inputs(struct gate_data *curr, struct gate_data *prev)
     prev->finished = TRUE;
 }
 
-static void scan_gates(DSTRING *lhs, int optimize)
+static void scan_gates(DSTRING *lhs)
 {
     struct gate_data *current = NULL, *previous = NULL, *last_curr = NULL;
     struct gate_data *prev = NULL;
-
-    if (optimize < 1) {
-        current = last_gate;
-        if (ds_get_length(lhs) > 0) {
-            assert(current->finished == FALSE);
-            tfree(current->outp);
-            current->outp = TMALLOC(char, ds_get_length(lhs) + 1);
-            strcpy(current->outp, ds_get_buf(lhs));
-        }
-        return;
-    }
 
     current = first_gate;
     while (current) {
@@ -977,7 +966,7 @@ err_return:
 /* Start of logicexp parser */
 static void aerror(char *s);
 static BOOL amatch(int t);
-static BOOL bparse(char *line, BOOL new_lexer, int optimize);
+static BOOL bparse(char *line, BOOL new_lexer);
 
 static int lookahead = 0;
 static int number_of_instances = 0;
@@ -1072,7 +1061,7 @@ static BOOL amatch(int t)
     return TRUE;
 }
 
-static BOOL bstmt_postfix(int optimize)
+static BOOL bstmt_postfix(void)
 {
     /* A stmt is: output_name_id = '{' expr '}' */
     DS_CREATE(lhs, 32);
@@ -1124,7 +1113,7 @@ static BOOL bstmt_postfix(int optimize)
         retval = FALSE;
         goto bail_out;
     }
-    scan_gates(&lhs, optimize);
+    scan_gates(&lhs);
     gen_scanned_gates(first_gate);
     lookahead = lex_scan();
     while (lookahead != '}') {
@@ -1167,7 +1156,7 @@ static char *get_logicexp_tmodel_delays(
     return ds_get_buf(mname);
 }
 
-static BOOL bparse(char *line, BOOL new_lexer, int optimize)
+static BOOL bparse(char *line, BOOL new_lexer)
 {
     BOOL ret_val = TRUE;
     DS_CREATE(stmt, LEX_BUF_SZ);
@@ -1182,7 +1171,7 @@ static BOOL bparse(char *line, BOOL new_lexer, int optimize)
     while (lookahead != '\0') {
         ds_clear(&stmt);
         ds_cat_str(&stmt, parse_lexer->lexer_buf);
-        if (!bstmt_postfix(optimize)) {
+        if (!bstmt_postfix()) {
             cleanup_parser();
             ret_val= FALSE;
             break;
@@ -1244,9 +1233,8 @@ static BOOL expect_token(
     return TRUE;
 }
 
-BOOL f_logicexp(char *line, int optimize)
+BOOL f_logicexp(char *line)
 {
-    /* If optimize > 0 then perform optimizations in scan_gates */
     int t, num_ins = 0, num_outs = 0, i;
     char *endp;
     BOOL ret_val = TRUE;
@@ -1331,7 +1319,7 @@ BOOL f_logicexp(char *line, int optimize)
     }
     (void) add_sym_tab_entry(parse_lexer->lexer_buf,
         SYM_TMODEL, &parse_lexer->lexer_sym_tab);
-    ret_val = bparse(line, FALSE, optimize);
+    ret_val = bparse(line, FALSE);
 
     current_lexer = NULL;
     if (!ret_val) {
