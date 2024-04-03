@@ -265,63 +265,71 @@ ft_cpinit(void)
             wl_free(wl);
         }
 
-        /* Now source the standard startup file spinit or tclspinit. */
-
-        /* jump over leading spaces */
-        for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
-            s = skip_ws(s);
-            /* copy s into buf until end of s, r is the actual position in buf */
-            int ii;
-            for (r = buf, ii = 0; *s; r++, s++, ii++) {
-                *r = *s;
-                if (ii > 500) {
-                    fprintf(stderr, "Warning: spinit path is too long.\n");
-                    break;
+        /* Now source the standard startup file spinit or tclspinit
+           if no_spinit is not set . */
+        if (!cp_getvar("no_spinit", CP_BOOL, NULL, 0)) {
+            /* jump over leading spaces */
+            for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
+                s = skip_ws(s);
+                /* copy s into buf until end of s, r is the actual position in buf */
+                int ii;
+                for (r = buf, ii = 0; *s; r++, s++, ii++) {
+                    *r = *s;
+                    if (ii > 500) {
+                        fprintf(stderr, "Warning: spinit path is too long.\n");
+                        break;
+                    }
                 }
-            }
-            tfree(copys);
-            /* add a path separator to buf at actual position */
-            (void) strcpy(r, DIR_PATHSEP);
+                tfree(copys);
+                /* add a path separator to buf at actual position */
+                (void)strcpy(r, DIR_PATHSEP);
 #ifdef TCL_MODULE
-            /* add "tclspinit" to buf after actual position */
-            (void) strcat(r, "tclspinit");
+                /* add "tclspinit" to buf after actual position */
+                (void) strcat(r, "tclspinit");
 #else
-            /* add "spinit" to buf after actual position */
-            (void) strcat(r, "spinit");
+                /* add "spinit" to buf after actual position */
+                (void)strcat(r, "spinit");
 #endif
 
-            if ((fp = fopen(buf, "r")) != NULL) {
+                if ((fp = fopen(buf, "r")) != NULL) {
 
-                cp_interactive = FALSE;
-                inp_spsource(fp, TRUE, buf, FALSE);
-                cp_interactive = TRUE;
-                found = TRUE;
-                break;
+                    cp_interactive = FALSE;
+                    inp_spsource(fp, TRUE, buf, FALSE);
+                    cp_interactive = TRUE;
+                    found = TRUE;
+                    break;
 
 #if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
-                /* search in local directory where ngspice.exe resides */
+                    /* search in local directory where ngspice.exe resides */
 #if defined TCL_MODULE
-            } else if ((fp = fopen("./tclspinit", "r")) != NULL) {
+                }
+                else if ((fp = fopen("./tclspinit", "r")) != NULL) {
 #else
-            } else if ((fp = fopen("./spinit", "r")) != NULL) {
+                }
+                else if ((fp = fopen("./spinit", "r")) != NULL) {
 #endif
-                cp_interactive = FALSE;
-                inp_spsource(fp, TRUE, buf, FALSE);
-                cp_interactive = TRUE;
-                found = TRUE;
-                break;
+                    cp_interactive = FALSE;
+                    inp_spsource(fp, TRUE, buf, FALSE);
+                    cp_interactive = TRUE;
+                    found = TRUE;
+                    break;
 #endif
-            } else if (ft_controldb) {
-                fprintf(cp_err, "Note: can't open \"%s\".\n", buf);
+                }
+                else if (ft_controldb) {
+                    fprintf(cp_err, "Warning: can't open \"%s\".\n", buf);
+                }
+            }
+
+            if (!found) {
+#if defined TCL_MODULE
+                fprintf(cp_err, "Warning: can't find the initialization file tclspinit.\n");
+#else
+                fprintf(cp_err, "Warning: can't find the initialization file spinit.\n");
+#endif
             }
         }
-
-        if (!found) {
-#if defined TCL_MODULE
-            fprintf(cp_err, "Note: can't find the initialization file tclspinit.\n");
-#else
-            fprintf(cp_err, "Note: can't find the initialization file spinit.\n");
-#endif
+        else {
+            fprintf(cp_out, "Note: Start without reading file 'spinit'.\n");
         }
     }
 
