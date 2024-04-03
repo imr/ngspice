@@ -378,7 +378,7 @@ int WPRINT_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 }
 
 
-int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
+int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta, bool isgrid)
      /*
       * Notes:
       *    Draws an arc of <radius> and center at (x0,y0) beginning at
@@ -396,6 +396,8 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     double  r;
     double  dx0;
     double  dy0;
+
+    NG_IGNORE(isgrid);
 
     if (!currentgraph) return 0;
     pd = pPrintData(currentgraph);
