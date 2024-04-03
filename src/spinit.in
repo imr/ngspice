@@ -11,7 +11,7 @@ set x11lineararcs
 *set askquit
 ** set the number of threads in openmp
 ** default (if compiled with --enable-openmp) is: 2
-*set num_threads=4
+set num_threads=8
 
 * comment out if central osdi management is set up
 unset osdi_enabled
