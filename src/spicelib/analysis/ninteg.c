@@ -38,7 +38,7 @@ Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data)
         if (fabs(exponent) < N_INTUSELOG) {
             return (a * (data->lnFreq - data->lnLastFreq));
         } else {
-            return (a * ((exp(exponent * data->lnFreq) - exp(exponent * data->lnLastFreq)) /
+            return (a * ((limexp(exponent * data->lnFreq) - limexp(exponent * data->lnLastFreq)) /
                 exponent));
         }
     }
