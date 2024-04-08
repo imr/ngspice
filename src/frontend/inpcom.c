@@ -239,7 +239,31 @@ static char *keep_case_of_cider_param(char *buffer)
     }
     return s;
 }
+
+static char* make_lower_case_copy(char* inbuf)
+{
+    char* s = NULL;
+    char* rets = NULL;
+    size_t lenb = 0;
+
+    if (!inbuf) {
+        return NULL;
+    }
+    lenb = strlen(inbuf);
+    if (lenb < 1) {
+        return NULL;
+    }
+    rets = dup_string(inbuf, lenb);
+    if (!rets) {
+        return NULL;
+    }
+    for (s = rets; *s; s++) {
+        *s = tolower_c(*s);
+    }
+    return rets;
+}
 #endif
+
 #ifdef CIDER
 static int is_comment_or_blank(char *buffer)
 {
@@ -274,29 +298,6 @@ static int turn_off_case_retention(char *buffer)
     } else {
         return 1;
     }
-}
-
-static char *make_lower_case_copy(char *inbuf)
-{
-    char *s = NULL;
-    char *rets = NULL;
-    size_t lenb = 0;
-
-    if (!inbuf) {
-        return NULL;
-    }
-    lenb = strlen(inbuf);
-    if (lenb < 1) {
-        return NULL;
-    }
-    rets = dup_string(inbuf, lenb);
-    if (!rets) {
-        return NULL;
-    }
-    for (s = rets; *s; s++) {
-        *s = tolower_c(*s);
-    }
-    return rets;
 }
 
 static int ignore_line(char *buf)
