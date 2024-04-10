@@ -80,11 +80,7 @@ eprvcd a3 a2 a1 a0 b3 b2 b1 b0 cin s3 s2 s1 s0 cout > behav-283-1.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave behav-283-1.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave behav-283-1.vcd
-  else ; Linux and others
-    shell gtkwave behav-283-1.vcd --script nggtk.tcl &
-  end
+  shell gtkwave behav-283-1.vcd --script nggtk.tcl &
 end
 quit
 .endc

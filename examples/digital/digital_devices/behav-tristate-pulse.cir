@@ -71,11 +71,7 @@ eprvcd 1a 1y oebar a1 y1 oe > behav-tristate-pulse.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave behav-tristate-pulse.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave behav-tristate-pulse.vcd
-  else ; Linux and others
-    shell gtkwave behav-tristate-pulse.vcd --script nggtk.tcl &
-  end
+  shell gtkwave behav-tristate-pulse.vcd --script nggtk.tcl &
 end
 quit
 .endc
