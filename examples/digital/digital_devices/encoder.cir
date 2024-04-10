@@ -1,0 +1,162 @@
+Interface 74147 encoder with 74145 decoder
+
+* ----------------------------------------------------------- 74145 ------
+*  BCD-To-Decimal Decoders/Drivers
+*
+*  The TTL Logic Data Book, 1988, TI Pages 2-447 to 2-449
+*  bss    3/17/94
+*
+.SUBCKT 74145 A B C D O0 O1 O2 O3 O4 O5 O6 O7 O8 O9
++     optional:  DPWR=$G_DPWR DGND=$G_DGND
++     params:  MNTYMXDLY=0 IO_LEVEL=0
+
+U1LOG LOGICEXP(4,10) DPWR DGND
++     A B C D
++     O0_O O1_O O2_O O3_O O4_O O5_O O6_O O7_O O8_O O9_O
++     D0_GATE IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  LOGIC:
++     abar = {~A}
++     bbar = {~B}
++     cbar = {~C}
++     dbar = {~D}
++     O0_O = {~(abar & bbar & cbar & dbar)}
++     O1_O = {~(A & bbar & cbar & dbar)}
++     O2_O = {~(abar & B & cbar & dbar)}
++     O3_O = {~(A & B & cbar & dbar)}
++     O4_O = {~(abar & bbar & C & dbar)}
++     O5_O = {~(A & bbar & C & dbar)}
++     O6_O = {~(abar & B & C & dbar)}
++     O7_O = {~(A & B & C & dbar)}
++     O8_O = {~(abar & bbar & cbar & D)}
++     O9_O = {~(A & bbar & cbar & D)}
+
+U2DLY PINDLY(10,0,0) DPWR DGND
++     O0_O O1_O O2_O O3_O O4_O O5_O O6_O O7_O O8_O O9_O
++     O0 O1 O2 O3 O4 O5 O6 O7 O8 O9
++     IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  PINDLY:
++     O0 O1 O2 O3 O4 O5 O6 O7 O8 O9 = {
++        CASE(
++          DELAY(-1,-1,50ns))}
+
+.ENDS 74145
+*
+* ----------------------------------------------------------- 74147 ------
+*  10-Line To 4-Line Priority Encoders
+*
+*  The TTL Logic Data Book, 1988, TI Pages 2-451 to 2-456
+*  bss    3/18/94
+*
+.SUBCKT 74147 I1 I2 I3 I4 I5 I6 I7 I8 I9 A B C D
++     optional:  DPWR=$G_DPWR DGND=$G_DGND
++     params:  MNTYMXDLY=0 IO_LEVEL=0
+
+U1LOG LOGICEXP(9,4) DPWR DGND
++     I1 I2 I3 I4 I5 I6 I7 I8 I9
++     A_O B_O C_O D_O
++     D0_GATE IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  LOGIC:
++     i1bar = {~I1}
++     i2bar = {~I2}
++     i3bar = {~I3}
++     i4bar = {~I4}
++     i5bar = {~I5}
++     i6bar = {~I6}
++     i7bar = {~I7}
++     i8bar = {~I8}
++     i9bar = {~I9}
++     nor89 = {~(i8bar | i9bar)}
++     A_O = {~((i1bar & I2 & I4 & I6 & nor89) | (i3bar & I4 & I6 & nor89) | (i5bar & I6 & nor89) |
++                (i7bar & nor89) | i9bar)}
++     B_O = {~((i2bar & I4 & I5 & nor89) | (i3bar & I4 & I5 & nor89) | (i6bar & nor89) | 
++                (i7bar & nor89))}
++     C_O = {~((i4bar & nor89) | (i5bar & nor89) | (i6bar & nor89) | (i7bar & nor89))}
++     D_O = {~(i8bar | i9bar)}
+
+U2DLY PINDLY(4,0,9) DPWR DGND
++     A_O B_O C_O D_O
++     I1 I2 I3 I4 I5 I6 I7 I8 I9
++     A B C D
++     IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  BOOLEAN:
++     IN1 = {CHANGED(I1,0) & I2=='1 & I3=='1 & I4=='1 & I5=='1 & I6=='1 & I7=='1 & I8=='1 & 
++               I9=='1}
++     IN2 = {CHANGED(I2,0) & I1=='1 & I3=='1 & I4=='1 & I5=='1 & I6=='1 & I7=='1 & I8=='1 & 
++               I9=='1}
++     IN3 = {CHANGED(I3,0) & I1=='1 & I2=='1 & I4=='1 & I5=='1 & I6=='1 & I7=='1 & I8=='1 & 
++               I9=='1}
++     IN4 = {CHANGED(I4,0) & I1=='1 & I2=='1 & I3=='1 & I5=='1 & I6=='1 & I7=='1 & I8=='1 & 
++               I9=='1}
++     IN5 = {CHANGED(I5,0) & I1=='1 & I2=='1 & I3=='1 & I4=='1 & I6=='1 & I7=='1 & I8=='1 & 
++               I9=='1}
++     IN6 = {CHANGED(I6,0) & I1=='1 & I2=='1 & I3=='1 & I4=='1 & I5=='1 & I7=='1 & I8=='1 & 
++               I9=='1}
++     IN7 = {CHANGED(I7,0) & I1=='1 & I2=='1 & I3=='1 & I4=='1 & I5=='1 & I6=='1 & I8=='1 & 
++               I9=='1}
++     IN8 = {CHANGED(I8,0) & I1=='1 & I2=='1 & I3=='1 & I4=='1 & I5=='1 & I6=='1 & I7=='1 & 
++               I9=='1}
++     IN9 = {CHANGED(I9,0) & I1=='1 & I2=='1 & I3=='1 & I4=='1 & I5=='1 & I6=='1 & I7=='1 & 
++               I8=='1}   
++     IN = {IN1 | IN2 | IN3 | IN4 | IN5 | IN6 | IN7 | IN8 | IN9}
++
++  PINDLY:
++     A B C = {
++       CASE(
++         IN & TRN_LH, DELAY(-1,9ns,14ns),
++         IN & TRN_HL, DELAY(-1,7ns,11ns),
++         TRN_LH, DELAY(-1,13ns,19ns),
++         TRN_HL, DELAY(-1,12ns,19ns),
++         DELAY(-1,14ns,20ns))}
++
++     D = {
++       CASE(
++         (IN8 | IN9) & TRN_LH, DELAY(-1,9ns,14ns),
++         (IN8 | IN9) & TRN_HL, DELAY(-1,7ns,11ns),
++         TRN_LH, DELAY(-1,13ns,19ns),
++         TRN_HL, DELAY(-1,12ns,19ns),
++         DELAY(-1,14ns,20ns))}
+
+.ENDS 74147
+*
+
+* .SUBCKT 74147 I1 I2 I3 I4 I5 I6 I7 I8 I9 A B C D
+X1 i1 i2 i3 i4 i5 i6 i7 i8 i9 a b c d 74147
+
+* .SUBCKT 74145 A B C D O0 O1 O2 O3 O4 O5 O6 O7 O8 O9
+X2 a_i b_i c_i d_i O0 O1 O2 O3 O4 O5 O6 O7 O8 O9 74145
+
+a_1 a a_i d_inv_0
+a_2 b b_i d_inv_0
+a_3 c c_i d_inv_0
+a_4 d d_i d_inv_0
+.model d_inv_0 d_inverter(inertial_delay=true)
+
+a1 [i1 i2 i3 i4 i5 i6 i7 i8 i9] input_vec1
+.model input_vec1 d_source(input_file = "encoder.stim")
+
+.TRAN 4e-008 2U 0
+.save all
+
+.control
+listing
+run
+eprint i1 i2 i3 i4 i5 i6 i7 i8 i9
+eprint d c b a
+eprint o0 o1 o2 o3 o4 o5 o6 o7 o8 o9
+* save data to input directory
+cd $inputdir 
+eprvcd i1 i2 i3 i4 i5 i6 i7 i8 i9 a b c d o0 o1 o2 o3 o4 o5 o6 o7 o8 o9 > encoder.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave encoder.vcd --script nggtk.tcl
+else
+  shell gtkwave encoder.vcd --script nggtk.tcl &
+end
+quit
+.endc
+
+.END

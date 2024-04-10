@@ -185,11 +185,7 @@ eprvcd r01 r02 r91 r92 clka clkb qd1 qc1 qb1 qa1 o1 o2 o3 o4 > 7490a.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave 7490a.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave 7490a.vcd
-  else ; Linux and others
-    shell gtkwave 7490a.vcd --script nggtk.tcl &
-  end
+  shell gtkwave 7490a.vcd --script nggtk.tcl &
 end
 
 *plot qd1 qc1 qb1 qa1 digitop
