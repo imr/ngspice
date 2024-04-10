@@ -212,11 +212,7 @@ eprvcd io0 io1 io2 io3 io4 io5 io6 io7 cp i_s0 i_s1 csi i_sebar i_m o_cso o_eq o
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave 74f524.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave 74f524.vcd
-  else ; Linux and others
-    shell gtkwave 74f524.vcd --script nggtk.tcl &
-  end
+  shell gtkwave 74f524.vcd --script nggtk.tcl &
 end
 quit
 .endc

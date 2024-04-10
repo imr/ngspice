@@ -68,11 +68,7 @@ eprvcd a b c d o0 o1 o2 o3 o4 o5 o6 o7 o8 o9 > decoder.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave decoder.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave decoder.vcd
-  else ; Linux and others
-    shell gtkwave decoder.vcd --script nggtk.tcl &
-  end
+  shell gtkwave decoder.vcd --script nggtk.tcl &
 end
 quit
 .endc

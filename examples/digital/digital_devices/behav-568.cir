@@ -465,11 +465,7 @@ eprvcd clk loadb d0 d1 d2 d3 qd qc qb qa q3 q2 q1 q0 ya yb yc yd > behav-568.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave behav-568.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave behav-568.vcd
-  else ; Linux and others
-    shell gtkwave behav-568.vcd --script nggtk.tcl &
-  end
+  shell gtkwave behav-568.vcd --script nggtk.tcl &
 end
 quit
 .endc

@@ -46,11 +46,7 @@ eprvcd hi clr clock q1 q2 q3 q4 > counter.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave counter.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave counter.vcd
-  else ; Linux and others
-    shell gtkwave counter.vcd --script nggtk.tcl &
-  end
+  shell gtkwave counter.vcd --script nggtk.tcl &
 end
 quit
 .endc

@@ -1,4 +1,4 @@
-Componenet type 283 : 4-bit adder
+Componenent type 283 : 4-bit adder
 
 .subckt 283  a1 a2 a3 a4 b1 b2 b3 b4 c0 sigma1 sigma2 sigma3 sigma4 c4
 +     optional: DPWR=$G_DPWR DGND=$G_DGND
@@ -339,11 +339,7 @@ eprvcd a4 a3 a2 a1 b4 b3 b2 b1 c0 sigma4 sigma3 sigma2 sigma1 c4 > ex283.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave ex283.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave ex283.vcd
-  else ; Linux and others
-    shell gtkwave ex283.vcd --script nggtk.tcl &
-  end
+  shell gtkwave ex283.vcd --script nggtk.tcl &
 end
 quit
 .endc
