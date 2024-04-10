@@ -13,7 +13,7 @@ AUTHORS
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     digital d_state (state machine) code model.
 
 ===============================================================================*/
@@ -35,8 +35,8 @@ Description:         "input"        "clock"
 Direction:           in             in
 Default_Type:        d              d
 Allowed_Types:       [d]            [d]
-Vector:               yes            no
-Vector_Bounds:        -              -
+Vector:              yes            no
+Vector_Bounds:       -              -
 Null_Allowed:        yes            no
 
 
@@ -48,8 +48,8 @@ Description:         "reset"        "output"
 Direction:           in             out
 Default_Type:        d              d
 Allowed_Types:       [d]            [d]
-Vector:               no             yes
-Vector_Bounds:        -              [1 -]
+Vector:              no             yes
+Vector_Bounds:       -              [1 -]
 Null_Allowed:        yes            no
 
 
@@ -61,73 +61,75 @@ Parameter_Name:     clk_delay           reset_delay
 Description:        "delay from CLK"    "delay from reset"
 Data_Type:          real                real
 Default_Value:      1.0e-9              1.0e-9
-Limits:             -                   -          
-Vector:              no                  no
-Vector_Bounds:       -                   -           
-Null_Allowed:       yes                 yes       
+Limits:             -                   -
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     state_file
-Description:        "state transition specification file name"  
-Data_Type:          string 
-Default_Value:      "state.txt"                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "state transition specification file name"
+Data_Type:          string
+Default_Value:      "state.txt"
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     reset_state
-Description:        "default state on RESET & at DC"  
-Data_Type:          int 
-Default_Value:      0                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "default state on RESET & at DC"
+Data_Type:          int
+Default_Value:      0
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     input_load
-Description:        "input loading capacitance (F)"  
-Data_Type:          real 
-Default_Value:      1.0e-12                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "input loading capacitance (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 
 PARAMETER_TABLE:
 
 
 Parameter_Name:     clk_load
-Description:        "clock loading capacitance (F)"  
-Data_Type:          real 
-Default_Value:      1.0e-12                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "clock loading capacitance (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
 PARAMETER_TABLE:
 
 
 Parameter_Name:     reset_load
-Description:        "reset loading capacitance (F)"  
-Data_Type:          real 
-Default_Value:      1.0e-12                       
-Limits:             -                                  
-Vector:              no                              
-Vector_Bounds:       -                                
-Null_Allowed:       no                          
+Description:        "reset loading capacitance (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 STATIC_VAR_TABLE:
 

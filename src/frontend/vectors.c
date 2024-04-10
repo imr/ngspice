@@ -580,8 +580,8 @@ vec_get(const char *vec_name) {
     struct dvec *d, *end = NULL, *newv = NULL;
     struct plot *pl;
     char buf[BSIZE_SP], *s, *wd, *word, *whole, *name = NULL, *param;
-    int i = 0;
-    struct variable *vv;
+    int  i = 0;
+    struct variable *vv, *v;
 
     wd = word = copy(vec_name);   /* Gets mangled below... */
 
@@ -638,12 +638,20 @@ vec_get(const char *vec_name) {
     }
 
     if (!d && (*word == SPECCHAR)) { /* "@" */
+        int  multiple;
+
         /* This is a special quantity... */
         if (ft_nutmeg) {
             fprintf(cp_err,
                     "Error: circuit parameters only available with spice\n");
             tfree(wd);  /* MW. Memory leak fixed again */
             return (NULL); /* va: use NULL */
+        }
+
+        if (!ft_curckt) {
+            fprintf(cp_err, "Error: No circuit loaded.\n");
+            tfree(wd);
+            return (NULL);
         }
 
         whole = copy(word);
@@ -660,157 +668,131 @@ vec_get(const char *vec_name) {
             param = NULL;
         }
 
+        /*
+         *  This is what is done in case of "alter r1 resistance = 1234"
+         *                                r1    resistance, 0
+         * if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
+         */
 
-        if (ft_curckt) {
-            /*
-             *  This is what is done in case of "alter r1 resistance = 1234"
-             *                                r1    resistance, 0
-             * if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
-             */
-
-            /* vv = if_getparam (ft_curckt->ci_ckt, &name, param, 0, 0); */
-            vv = if_getparam(ft_curckt->ci_ckt, &name, param, 0, 0);
-            if (!vv) {
-                tfree(whole);
-                tfree(wd);
-                return (NULL);
-            }
-        } else {
-            fprintf(cp_err, "Error: No circuit loaded.\n");
+        vv = if_getparam(ft_curckt->ci_ckt, &name, param, 0, 0);
+        if (!vv) {
             tfree(whole);
             tfree(wd);
             return (NULL);
         }
 
-        d = dvec_alloc(copy(whole), /* MW. The same as word before */
-                       SV_NOTYPE,
-                       VF_REAL,  /* No complex values yet... */
-                       1, NULL);
-
-        /* In case the represented variable is a REAL vector this takes
-         * the actual value of the first element of the linked list which
-         * does not make sense.
-         * This is an error.
+        /* If vec_name was "@dev", "@model", "@dev[all]" or @model[all]",
+         * if_getparam() returns a list.
          */
 
-        /* This will copy the contents of the structure vv in another structure
-         * dvec (FTEDATA.H) that do not have INTEGER so that those parameters
-         * defined as IF_INTEGER are not given their value when using
-         * print @pot[pos_node]
-         * To fix this, it is necessary to define:
-         * OPU( "pos_node",    POT_QUEST_POS_NODE, IF_REAL,"Positive node of potenciometer"),
-         * int POTnegNode;     // number of negative node of potenciometer (Nodo_3)
-         *  case POT_QUEST_POS_NODE:
-         *  value->rValue = (double)fast->POTposNode;
-         *  return (OK);
-         *  Works but with the format 1.00000E0
-         */
+        multiple = (vv->va_next != NULL);
+        if (multiple && param)
+            *--param = '\0';
 
-        /* We must make a change in format between the data that carries a variable to
-         * put in a dvec.
-         */
+        for (v = vv; v; v = v->va_next) {
+            struct dvec *nd;
+            char        *new_vec_name, new_name[256];
 
-        /*
-         * #define va_bool    va_V.vV_bool
-         * #define va_num     va_V.vV_num
-         * #define va_real    va_V.vV_real
-         * #define va_string  va_V.vV_string
-         * #define va_vlist   va_V.vV_list
-         * enum cp_types {
-         *   CP_BOOL,
-         *   CP_NUM,
-         *   CP_REAL,
-         *   CP_STRING,
-         *   CP_LIST
-         ° };
-        */
-
-        /* The variable is a vector */
-        if (vv->va_type == CP_LIST) {
-            /* Compute the length of the vector,
-             * used with the parameters of isrc and vsrc
-             */
-            struct variable *nv;
-
-            /* Count the number of nodes in the list */
-            i = 0;
-            for (nv = vv->va_vlist; nv; nv = nv->va_next) {
-                i++;
+            if (multiple) {
+                snprintf(new_name, sizeof new_name, "@%s[%s]",
+                         name, v->va_name);
+                new_vec_name = new_name;
+            } else {
+                new_vec_name = whole;
             }
+            nd = dvec_alloc(copy(new_vec_name),
+                            SV_NOTYPE,
+                            VF_REAL,  /* No complex values yet... */
+                            1, NULL);
 
-            dvec_realloc(d, i, NULL); /* Resize to # nodes */
+            switch (v->va_type) {
+            case CP_BOOL:
+                *nd->v_realdata = (double)v->va_bool;
+                break;
+            case CP_NUM:
+                *nd->v_realdata = (double)v->va_num;
+                break;
+            case CP_REAL:
+                *nd->v_realdata = v->va_real;
+                break;
+            case CP_STRING:
+                fprintf(stderr,
+                        "ERROR: can not handle string value "
+                        "of '%s' in vec_get(%s)\nIgnoring...\n",
+                        v->va_name, new_vec_name);
+                dvec_free(nd);
+                continue;
+                break;
+            case CP_LIST:
+                {
+                    struct variable *nv;
+                    enum cp_types    ft;
 
-            /* Step through the list again, setting values this time */
-            i = 0;
-            for (nv = vv->va_vlist; nv; nv = nv->va_next) {
-                d->v_realdata[i++] = nv->va_real;
-            }
+                    /* Array values are presented as a list.
+                     * Compute the length of the vector, and check that
+                     * it is homogenous:
+                     * used with the parameters of isrc and vsrc
+                     */
 
-            /* To be able to identify the vector to represent
-             * belongs to a special "conunto" and should be printed in a
-             * special way.
-             */
-            d->v_dims[1] = 1;
-        }
-        else if (vv->va_type == CP_NUM) { /* Variable is an integer */
-            *d->v_realdata = (double) vv->va_num;
-        }
-        else if (vv->va_type == CP_REAL) { /* Variable is a real */
-            if (!(vv->va_next)) {
-                /* Only a real data
-                 * usually normal
-                 */
-                *d->v_realdata = vv->va_real;
-            }
-            else {
-                /* Real data set
-                 * When you print a model @ [all]
-                 * Just print numerical values, not the string
-                 */
-                struct variable *nv;
-                /* We go to print the list of values
-                 * nv->va_name = Parameter description
-                 * nv->va_string = Parameter
-                 * nv->va_real= Value
-                 */
-                nv = vv;
-                for (i = 1; ; i++) {
-                    switch (nv->va_type) {
-                    case  CP_REAL:
-                        fprintf(stdout, "%s=%g\n", nv->va_name, nv->va_real);
-                        break;
-                    case  CP_STRING:
-                        fprintf(stdout, "%s=%s\n", nv->va_name, nv->va_string);
-                        break;
-                    case  CP_NUM:
-                        fprintf(stdout, "%s=%d\n", nv->va_name, nv->va_num);
-                        break;
-                    case  CP_BOOL:
-                        fprintf(stdout, "%s=%d\n", nv->va_name, nv->va_bool);
-                        break;
-                    default: {
-                        fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in vec_get\nIgnoring...\n");
-                        break;
-                    }
-                    }
-                    nv = nv->va_next;
-
+                    i = 0;
+                    nv = v->va_vlist;
                     if (!nv) {
-                        break;
+                        dvec_free(nd);
+                        continue;
+                    }
+                    ft = nv->va_type;
+                    for (; nv; nv = nv->va_next) {
+                        /* Count the number of nodes in the list */
+
+                        i++;
+                        if (nv->va_type != ft)
+                            break;
+                    }
+                    if (nv || ft == CP_STRING || ft == CP_LIST) {
+                        fprintf(stderr,
+                                "ERROR: can not handle mixed, string or list "
+                                "value of '%s' in vec_get(%s)\nIgnoring...\n",
+                                v->va_name, new_vec_name);
+                        dvec_free(nd);
+                        continue;
+                    }
+                    dvec_realloc(nd, i, NULL); /* Resize to # nodes */
+
+                    /* Step through the list again, setting values this time */
+
+                    i = 0;
+                    for (nv = v->va_vlist; nv; nv = nv->va_next) {
+                        switch (ft) {
+                        case CP_BOOL:
+                            nd->v_realdata[i++] = (double)nv->va_bool;
+                            break;
+                        case CP_NUM:
+                            nd->v_realdata[i++] = (double)nv->va_num;
+                            break;
+                        default:
+                        case CP_REAL:
+                            nd->v_realdata[i++] = nv->va_real;
+                            break;
+                        }
+
+                        /* To be able to identify the vector to represent
+                         * belongs to a special "conunto" and should be printed
+                         * in a special way.
+                         */
+                        nd->v_dims[1] = 1;
                     }
                 }
-
-                /* To distinguish those does not take anything for print screen to
-                 * make a print or M1 @ @ M1 [all] leaving only the correct data
-                 * and not the last
-                 */
-                d->v_rlength = 1;
+                break;
             }
+            /* Chain it on. */
+
+            vec_new(nd);
+            nd->v_link2 = d;
+            d = nd;
         }
 
         free_struct_variable(vv);
         tfree(wd);
-        vec_new(d);
         tfree(whole);
         return d;
     }

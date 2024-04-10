@@ -42,6 +42,10 @@ NON-STANDARD FEATURES
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _MSC_VER
+#include <unistd.h>
+#endif
+
 #include  "cmpp.h"
 
 /* Local function prototypes */
@@ -183,6 +187,8 @@ EXITPOINT:
                     filename, strerror(errno));
             xrc = -1;
         }
+        if (xrc < 0 && filename)
+            unlink(filename); // So "make" will not see it.
     }
 
     if (filename != (char *) NULL) {
@@ -680,29 +686,101 @@ static int write_param_info(
     FILE        *fp,           /* File to write to */
     Ifs_Table_t *ifs_table)    /* Table of Interface Specification data */
 {
-    int xrc = 0;
-    int             i;
-    const char *str;
-
+    Param_Info_t * const  param = ifs_table->param;
+    const int             num_param = ifs_table->num_param;
+    int                   rc, xrc = 0;
+    int                   i, dv_idx;
+    const char           *str;
 
     /* Only write the paramTable if there is something to put in it.      */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
 
-    if (ifs_table->num_param == 0) {
+    if (num_param <= 0) {
         return 0;
     }
 
+    /* Write the default values for each parameter. */
 
-    /* Write the structure beginning */
-    int rc = 0;
+    for (i = 0, dv_idx = 0, rc = 0; i < num_param; i++) {
+        Param_Info_t * p_param_cur = param + i;
+        My_Value_t   * p_val = ifs_table->defaults_var + dv_idx;
+        int            start_index = dv_idx;
+
+        if (dv_idx >= ifs_table->num_default_values) {
+            fprintf(stderr, "Not enough default values for parameter: %s.\n",
+                    p_param_cur->name);
+            return 1;
+        }
+
+        if (!p_val->has_value) {
+            /* Dummy entry, no default values. */
+
+            ++dv_idx;
+            p_param_cur->default_value_cnt = 0;
+            continue;
+        }
+
+        if (!p_param_cur->null_allowed) {
+             fprintf(stderr,
+                     "Default value given for parameter %s but "
+                     "the user must set instance value (Null_Allowed: no).",
+                        p_param_cur->name);
+                    return 1;
+        }
+
+        rc |= fprintf(fp,
+                      "static union Mif_Parse_Value %s_default[] = {\n",
+                      p_param_cur->name);
+
+        do {            // Write the default values for this parameter.
+            if (!p_val->advance && !p_param_cur->is_array) {
+                fprintf(stderr,
+                        "Vector initialisation of default values "
+                        "for non-vector parameter: %s.\n",
+                        p_param_cur->name);
+                    return 1;
+            }
+
+            if (p_val->kind != p_param_cur->type) {
+                if (p_val->kind == CMPP_INTEGER &&
+                    p_param_cur->type == CMPP_REAL) {
+                    /* Promote it. */
+
+                    p_val->u.rvalue = p_val->u.ivalue;
+                } else {
+                    fprintf(stderr,
+                            "Data type of default value does not match for "
+                            "parameter: %s.\n",
+                            p_param_cur->name);
+                    return 1;
+                }
+            }
+
+            str = value_to_str(p_param_cur->type, p_val->u);
+            rc |= fprintf(fp, "    %s,\n", str);
+            ++dv_idx; ++p_val;
+        } while (dv_idx < ifs_table->num_default_values && !p_val->advance);
+
+        rc |= fprintf(fp, "};\n\n");
+        p_param_cur->default_value_cnt = dv_idx - start_index;
+    }
+
+    /* Check outputs */
+
+    if (rc < 0) {
+        print_error("Writing of default param values failed.");
+        return -1;
+    }
+
+    /* Write the main parameter structure beginning. */
+
+    rc = 0;
     rc |= fprintf(fp,
             "\n"
             "static Mif_Param_Info_t MIFparamTable[] = {\n");
 
-
     /* Write out an entry for each parameter in the table               */
-    const Param_Info_t * const param = ifs_table->param;
-    const int num_param = ifs_table->num_param;
+
     for (i = 0; i < num_param; i++) {
         const Param_Info_t * const p_param_cur = param + i;
 
@@ -713,14 +791,11 @@ static int write_param_info(
         rc |= fprintf(fp, "    %s,\n",
                 data_type_to_str(p_param_cur->type));
 
-        str = boolean_to_str(p_param_cur->has_default);
-        rc |= fprintf(fp, "    %s,\n", str);
-
-        if (p_param_cur->has_default == true)
-            str = value_to_str(p_param_cur->type, p_param_cur->default_value);
+        rc |= fprintf(fp, "    %d,\n", p_param_cur->default_value_cnt);
+        if (p_param_cur->default_value_cnt)
+            rc |= fprintf(fp, "    %s_default,\n", p_param_cur->name);
         else
-            str = no_value_to_str();
-        rc |= fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    NULL,\n");
 
         str = boolean_to_str(p_param_cur->has_lower_limit);
         rc |= fprintf(fp, "    %s,\n", str);
@@ -1205,20 +1280,20 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
 
         case CMPP_BOOLEAN:
             bool_str = boolean_to_str(value.bvalue);
-            sprintf(str, "{%s, 0, 0.0, {0.0, 0.0}, NULL}", bool_str);
+            sprintf(str, "{ .bvalue=%s }", bool_str);
             break;
 
         case CMPP_INTEGER:
-            sprintf(str, "{MIF_FALSE, %d, 0.0, {0.0, 0.0}, NULL}", value.ivalue);
+            sprintf(str, "{ .ivalue=%d }", value.ivalue);
             break;
 
         case CMPP_REAL:
-            sprintf(str, "{MIF_FALSE, 0, %e, {0.0, 0.0}, NULL}", value.rvalue);
+            sprintf(str, "{ .rvalue=%e }", value.rvalue);
             break;
 
         case CMPP_COMPLEX:
-            sprintf(str, "{MIF_FALSE, 0, 0.0, {%e, %e}, NULL}",
-                                      value.cvalue.real, value.cvalue.imag);
+            sprintf(str, "{ .cvalue={%e, %e} }",
+                    value.cvalue.real, value.cvalue.imag);
             break;
 
         case CMPP_STRING:
@@ -1238,7 +1313,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
                 max_len += str_len;
             } /* end of resize */
 
-            sprintf(str, "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, \"%s\"}", value.svalue);
+            sprintf(str, "{ .svalue=\"%s\" }", value.svalue);
             break;
 
         default:
@@ -1273,8 +1348,5 @@ static char  *integer_to_str(int value)
 
 static const char *no_value_to_str(void)
 {
-    return "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, NULL}";
+    return "{ .bvalue=MIF_FALSE }";
 }
-
-
-

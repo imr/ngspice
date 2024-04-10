@@ -79,7 +79,8 @@ extern INPmodel *modtab;
 extern NGHASHPTR modtabhash;
 extern bool ft_batchmode;
 
-static struct variable *parmtovar(IFvalue *pv, IFparm *opt);
+static struct variable *parmtovar(IFvalue *pv, IFparm *opt,
+                                  int use_description);
 static IFparm *parmlookup(IFdevice *dev, GENinstance **inptr, char *param,
                            int do_model, int inout);
 static IFvalue *doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod,
@@ -688,17 +689,12 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                     continue;
                 pv = doask(ckt, typecode, dev, mod, opt, ind);
                 if (pv) {
-                    tv = parmtovar(pv, opt);
-
-                    /* With the following we pack the name and the acronym of the parameter */
-                    {
-                        char *x = tv->va_name;
-                        tv->va_name = tprintf("%s [%s]", tv->va_name, device->instanceParms[i].keyword);
-                        tfree(x);
+                    tv = parmtovar(pv, opt, 0);
+                    if (tv) {
+                        if (vv)
+                            tv->va_next = vv;
+                        vv = tv;
                     }
-                    if (vv)
-                        tv->va_next = vv;
-                    vv = tv;
                 } else {
                     fprintf(cp_err,
                             "Internal Error: no parameter '%s' on device '%s'\n",
@@ -725,26 +721,12 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                     continue;
                 pv = doask(ckt, typecode, dev, mod, opt, ind);
                 if (pv) {
-                    tv = parmtovar(pv, opt);
-                    /* Inside parmtovar:
-                     * 1. tv->va_name = copy(opt->description);
-                     * 2. Copy the type of variable of IFparm into a variable (thus parm-to-var)
-                     * vv->va_type = opt->dataType
-                     * The long description of the parameter:
-                     * IFparm MOS_SGTmPTable[] = { // model parameters //
-                     * OP("type",   MOS_SGT_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS")
-                     * goes into tv->va_name to put braces around the parameter of the model
-                     * tv->va_name += device->modelParms[i].keyword;
-                     */
-                    {
-                        char *x = tv->va_name;
-                        tv->va_name = tprintf("%s [%s]", tv->va_name, device->modelParms[i].keyword);
-                        tfree(x);
+                    tv = parmtovar(pv, opt, 0);
+                    if (tv) {
+                        if (vv)
+                            tv->va_next = vv;
+                        vv = tv;
                     }
-                    /* tv->va_string = device->modelParms[i].keyword;   Put the name of the variable */
-                    if (vv)
-                        tv->va_next = vv;
-                    vv = tv;
                 } else {
                     fprintf(cp_err,
                             "Internal Error: no parameter '%s' on device '%s'\n",
@@ -768,7 +750,7 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
         }
         pv = doask(ckt, typecode, dev, mod, opt, ind);
         if (pv)
-            vv = parmtovar(pv, opt);
+            vv = parmtovar(pv, opt, 0);
         return (vv);
     } else {
         return (if_getstat(ckt, *name));
@@ -814,10 +796,12 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
                 continue;
             pv = doask(ckt, typecode, dev, mod, opt, ind);
             if (pv) {
-                tv = parmtovar(pv, opt);
-                if (vv)
-                    tv->va_next = vv;
-                vv = tv;
+                tv = parmtovar(pv, opt, 0);
+                if (tv) {
+                    if (vv)
+                        tv->va_next = vv;
+                    vv = tv;
+                }
             } else {
                 fprintf(cp_err,
                         "Internal Error: no parameter '%s' on device '%s'\n",
@@ -843,7 +827,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
         }
         pv = doask(ckt, typecode, dev, mod, opt, ind);
         if (pv)
-            vv = parmtovar(pv, opt);
+            vv = parmtovar(pv, opt, 0);
         return (vv);
     } else {
         return (if_getstat(ckt, *name));
@@ -991,49 +975,90 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
     }
 }
 
+/* Make a linked list where the first node is a CP_LIST variable
+ * pointing to the different values of the vector variables.
+ *
+ *
+ * In the case of Vin_sin 1 0 sin (0 2 2000)
+ * and of print @vin_sin[sin]
+ *
+ * vv->va_V.vV_list->va_V.vV_real = 2000
+ * vv->va_V.vV_list->va_next->va_V.vV_real = 2
+ * vv->va_V.vV_list->va_next->va_next->va_V.vV_real = 0
+ * So the list is starting from behind, but no problem
+ * This works fine
+ */
 
 static struct variable *
-parmtovar(IFvalue *pv, IFparm *opt)
+parmtolist(IFvalue *pv, IFparm *opt, char *name)
 {
-    /* It is not clear whether we want to name the variable
-     *   by `keyword' or by `description' */
+    struct variable *list = NULL;
+    int              i;
+
+    for (i = pv->v.numValue; --i >= 0;) {
+        switch (opt->dataType & (IF_VARTYPES & ~IF_VECTOR)) {
+        case IF_INTEGER:
+            list = var_alloc_num(NULL, pv->v.vec.iVec[i], list);
+            break;
+        case IF_REAL:
+        case IF_COMPLEX:
+            list = var_alloc_real(NULL, pv->v.vec.rVec[i], list);
+            break;
+        case IF_STRING:
+            list = var_alloc_string(NULL, copy(pv->v.vec.sVec[i]), list);
+            break;
+        case IF_FLAG:
+            list = var_alloc_bool(NULL, pv->v.vec.iVec[i] ? TRUE : FALSE,
+                                  list);
+            break;
+        default:
+            fprintf(cp_err,
+                    "parmtolist: Internal Error: bad PARM type "
+                    "%#x for %s (%s).\n",
+                    opt->dataType, opt->keyword, opt->description);
+            if (name)
+                free(name);
+            break;
+        }
+    }
+
+    if (i || pv->v.numValue == 0)
+        list = var_alloc_vlist(name, list, NULL);
+    if (pv->v.vec.iVec) {       // All the union members are pointers
+        free(pv->v.vec.iVec);
+        pv->v.vec.iVec = NULL;
+    }
+    return list;
+}
+
+static struct variable *
+parmtovar(IFvalue *pv, IFparm *opt, int use_description)
+{
+    char *name;
+
+    name = use_description ? opt->description : opt->keyword;
+    if (name)
+        name = copy(name);
+    if (opt->dataType & IF_VECTOR)
+        return parmtolist(pv, opt, name);
 
     switch (opt->dataType & IF_VARTYPES) {
     case IF_INTEGER:
-        return var_alloc_num(copy(opt->description), pv->iValue, NULL);
+        return var_alloc_num(name, pv->iValue, NULL);
     case IF_REAL:
     case IF_COMPLEX:
-        return var_alloc_real(copy(opt->description), pv->rValue, NULL);
+        return var_alloc_real(name, pv->rValue, NULL);
     case IF_STRING:
-        return var_alloc_string(copy(opt->description), pv->sValue, NULL);
+        return var_alloc_string(name, copy(pv->sValue), NULL);
     case IF_FLAG:
-        return var_alloc_bool(copy(opt->description), pv->iValue ? TRUE : FALSE, NULL);
-    case IF_REALVEC: {
-        struct variable *list = NULL;
-        int i;
-        for (i = pv->v.numValue; --i >= 0;)
-            list = var_alloc_real(NULL, pv->v.vec.rVec[i], list);
-        return var_alloc_vlist(copy(opt->description), list, NULL);
-        /* It is a linked list where the first node is a variable
-         * pointing to the different values of the variables.
-         *
-         * To access the values of the real variable vector must be
-         * vv->va_V.vV_real = valor node ppal that is of no use.
-         *
-         * In the case of Vin_sin 1 0 sin (0 2 2000)
-         * and of print @vin_sin[sin]
-         *
-         * vv->va_V.vV_list->va_V.vV_real = 2000
-         * vv->va_V.vV_list->va_next->va_V.vV_real = 2
-         * vv->va_V.vV_list->va_next->va_next->va_V.vV_real = 0
-         * So the list is starting from behind, but no problem
-         * This works fine
-         */
-    }
+        return var_alloc_bool(name, pv->iValue ? TRUE : FALSE,
+                              NULL);
     default:
         fprintf(cp_err,
-                "parmtovar: Internal Error: bad PARM type %d.\n",
-                opt->dataType);
+                "parmtovar: Internal Error: bad PARM type %#x for %s (%s).\n",
+                opt->dataType, opt->keyword, opt->description);
+        if (name)
+            free(name);
         return (NULL);
     }
 }
@@ -1317,7 +1342,7 @@ if_getstat(CKTcircuit *ckt, char *name)
             return (NULL);
         }
 
-        return (parmtovar(&parm, if_parm));
+        return (parmtovar(&parm, if_parm, 1));
 
     } else {
 
@@ -1339,7 +1364,7 @@ if_getstat(CKTcircuit *ckt, char *name)
                 return (NULL);
             }
 
-            *v = parmtovar(&parm, if_parm);
+            *v = parmtovar(&parm, if_parm, 1);
             v = &((*v)->va_next);
         }
 

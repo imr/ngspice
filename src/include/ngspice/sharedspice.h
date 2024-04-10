@@ -1,9 +1,13 @@
 /* header file for shared ngspice */
-/* Copyright 2021 Holger Vogt */
+/* Copyright 2021-2024 Holger Vogt */
 /* Modified BSD license */
 
 /*
 Interface between a calling program (caller) and ngspice.dll (ngspice.so)
+**
+ngSpice_nospinit(void)
+Set variable no_spinit, if reading the initialization file 'spinit' is not wanted.
+To be called before ngSpice_Init()
 
 **
 ngSpice_Init(SendChar*, SendStat*, ControlledExit*,
@@ -441,6 +445,9 @@ NG_BOOL ngSpice_running(void);
 IMPEXP
 NG_BOOL ngSpice_SetBkpt(double time);
 
+/* Set variable no_spinit, if reading 'spinit' is not wanted. */
+IMPEXP
+int ngSpice_nospinit(void);
 
 #ifdef __cplusplus
 }

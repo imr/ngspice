@@ -36,11 +36,11 @@ void com_strstr(wordlist *wl)
     if (*s2) {
         var = strstr(s1, s2); // Search for s2 in s1
         if (var)
-            i = var - s1;     // Offset to match
+            i = (int)(var - s1); // Offset to match
         else
             i = -1;
     } else {
-        i = strlen(s1);       // Length
+        i = (int)strlen(s1);     // Length
     }
     tfree(s1);
     tfree(s2);
@@ -58,7 +58,7 @@ void com_strslice(wordlist *wl)
     wl = wl->wl_next;
     offset = atoi(wl->wl_word);
     length = atoi(wl->wl_next->wl_word);
-    actual = strlen(s1);
+    actual = (int)strlen(s1);
     if (offset < 0)
         offset = actual + offset;
     if (length + offset > actual)

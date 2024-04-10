@@ -250,7 +250,8 @@ int output_paths_from_lst_file(const char *filename)
 
     bool f_have_path = false; /* do not have a path to store */
     FBTYPE fbtype;
-    FBOBJ fbobj;
+    FBOBJ fbobj = { .dbl_value = 0.0}; // Placate MS compiler.
+
     for ( ; ; ) { /* Read items until end of file */
         /* Get the next path if not found yet */
         if (!f_have_path) {
@@ -378,7 +379,8 @@ static int read_modpath(
 
     bool f_have_path = false; /* do not have a path to store */
     FBTYPE fbtype;
-    FBOBJ fbobj;
+    FBOBJ fbobj = { .dbl_value = 0.0};
+
     for ( ; ; ) { /* Read items until end of file */
         /* Get the next path if not found yet */
         if (!f_have_path) {
@@ -553,7 +555,7 @@ static int read_udnpath(
 
     bool f_have_path = false; /* do not have a path to store */
     FBTYPE fbtype;
-    FBOBJ fbobj;
+    FBOBJ fbobj = { .dbl_value = 0.0};
 
     for ( ; ; ) { /* Read items until end of file */
         /* Get the next path if not found yet */

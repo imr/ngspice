@@ -13,6 +13,7 @@
 #include  <stdlib.h>
 #include  <string.h>
 
+#include "ngspice/config.h"
 #include "ngspice/cpextern.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/dstring.h"

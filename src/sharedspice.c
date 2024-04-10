@@ -788,6 +788,15 @@ ngSpice_running (void)
 }
 #endif
 
+/* Set variable no_spinit, if reading 'spinit' is not wanted. */
+IMPEXP
+int
+ngSpice_nospinit(void)
+{
+    bool t = TRUE;
+    cp_vset("no_spinit", CP_BOOL, &t);
+    return 0;
+}
 
 /* Initialise external voltage source and synchronization */
 IMPEXP

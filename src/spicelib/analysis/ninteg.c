@@ -31,15 +31,15 @@ Nintegrate (double noizDens, double lnNdens, double lnNlstDens, Ndata *data)
 
     exponent = (lnNdens - lnNlstDens) / data->delLnFreq;
     if ( fabs(exponent) < N_INTFTHRESH ) {
-	return (noizDens * data->delFreq);
+        return (noizDens * data->delFreq);
     } else {
-	a = limexp(lnNdens - exponent*data->lnFreq);
-	exponent += 1.0;
-	if (fabs(exponent) < N_INTUSELOG) {
-	    return (a * (data->lnFreq - data->lnLastFreq));
+        a = limexp(lnNdens - exponent*data->lnFreq);
+        exponent += 1.0;
+        if (fabs(exponent) < N_INTUSELOG) {
+            return (a * (data->lnFreq - data->lnLastFreq));
         } else {
-	    return (a * ((exp(exponent * data->lnFreq) - exp(exponent * data->lnLastFreq)) /
-		    exponent));
+            return (a * ((limexp(exponent * data->lnFreq) - limexp(exponent * data->lnLastFreq)) /
+                exponent));
         }
     }
 }

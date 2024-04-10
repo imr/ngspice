@@ -567,28 +567,33 @@ MIF_INP2A (
 
         param_info = &(DEVices[type]->DEVpublic.param[i]);
 
-        if(mdfast->param[i]->is_null) {
-            char* emessage;
+        if (mdfast->param[i]->is_null) {
+            char* emessage = NULL;
 
-            if(! param_info->has_default) {
+            if (!param_info->null_allowed) {
+                emessage = tprintf("Null not allowed for parameter %s "
+                                   "on model %s.",
+                                   param_info->name, mdfast->gen.GENmodName);
+            } else if (param_info->default_value_siz == 0) {
                 if (param_info->type == MIF_STRING)
                     continue;   // Allow NULL
                 emessage = tprintf("Parameter %s on model %s has no default",
                                    param_info->name, mdfast->gen.GENmodName);
+            }
+
+            if (emessage) {
                 LITERR(emessage);
                 tfree(emessage);
                 gc_end();
                 return;
             }
-        }
-        if((! mdfast->param[i]->is_null) && (param_info->is_array)) {
-            if(param_info->has_conn_ref) {
-                if(fast[0]->conn[param_info->conn_ref]->size != fast[0]->param[i]->size) {
-                    LITERR("Array parameter size on model does not match connection size");
-                    gc_end();
-                    return;
-                }
-            }
+        } else if (param_info->is_array && param_info->has_conn_ref &&
+                   fast[0]->conn[param_info->conn_ref]->size !=
+                       fast[0]->param[i]->size) {
+            LITERR("Array parameter size on model does not match "
+                   "connection size");
+            gc_end();
+            return;
         }
     }
     gc_end();

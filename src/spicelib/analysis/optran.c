@@ -161,7 +161,8 @@ void com_optran(wordlist* wl) {
     wltmp = wltmp->wl_next;
     stpstr = wltmp->wl_word;
     opramptime = INPevaluate(&stpstr, &err, 1);
-    if (err || (*stpstr != '\0'))
+    /* optran with uic reads initial conditions */
+    if (err || ((*stpstr != '\0') && !strstr(stpstr, "uic")))
         goto bugquit;
     if (opstepsize > opfinaltime) {
         fprintf(stderr, "Error: Optran step size larger than final time.\n");

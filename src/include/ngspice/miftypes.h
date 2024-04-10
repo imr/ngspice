@@ -205,19 +205,19 @@ typedef struct Mif_Complex {
 
 typedef union {
 
-    Mif_Boolean_t  bvalue;         /* For digital node value */
+    Mif_Boolean_t  bvalue;         /* For boolean parameters */
     int            ivalue;         /* For integer parameters */
     double         rvalue;         /* For spice node values and real parameters */  
     Mif_Complex_t  cvalue;         /* For complex parameters */
-    char           *svalue;        /* For string parameters  */
-    void           *pvalue;        /* For user defined nodes */
+    char          *svalue;         /* For string parameters  */
+    void          *pvalue;         /* For Digital and user defined nodes */
 
 } Mif_Value_t;
 
 
 
 /* types from mifparse.h */
-typedef struct Mif_Parse_Value Mif_Parse_Value_t;
+typedef union Mif_Parse_Value Mif_Parse_Value_t;
 typedef struct Mif_Conn_Info Mif_Conn_Info_t;
 typedef struct Mif_Param_Info Mif_Param_Info_t;
 typedef struct Mif_Inst_Var_Info Mif_Inst_Var_Info_t;

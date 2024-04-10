@@ -33,8 +33,8 @@ Description:           "input"              "output"
 Direction:             in                   out
 Default_Type:          v                    v
 Allowed_Types:         [v,vd,i,id,vnam]     [v,vd,i,id]
-Vector:                 no                   no
-Vector_Bounds:          -                    -
+Vector:                no                   no
+Vector_Bounds:         -                    -
 Null_Allowed:          no                   no
 
 PARAMETER_TABLE:
@@ -42,11 +42,11 @@ PARAMETER_TABLE:
 Parameter_Name:     cntl_array            freq_array
 Description:        "control in array"    "frequency array"
 Data_Type:          real                  real
-Default_Value:      0.0                   1.0e3
+Default_Value:      [0.0 1.0]             [1.0e3 2.0e3]
 Limits:             -                     [0 -]
-Vector:              yes                   yes
-Vector_Bounds:       [2 -]                 [2 -]
-Null_Allowed:       no                    no
+Vector:             yes                   yes
+Vector_Bounds:      [2 -]                 [2 -]
+Null_Allowed:       yes                   yes
 
 
 PARAMETER_TABLE:
@@ -56,7 +56,6 @@ Description:        "output low value"     "output high value"
 Data_Type:          real                   real
 Default_Value:      -1.0                   1.0
 Limits:             -                      -
-Vector:              no                     no
-Vector_Bounds:       -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
 Null_Allowed:       yes                    yes
-

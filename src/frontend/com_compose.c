@@ -226,6 +226,36 @@ com_compose(wordlist *wl)
         }
 
         length *= blocksize;
+    } else if (eq(wl->wl_word, "device") && resname[0] == '@') {
+        /* Make vector(s) from device parameters; also works with models. */
+
+        result = vec_get(resname);
+
+        /* With @dev[all] a chain of vectors is returned. */
+
+        while (result) {
+            char *cp;
+
+            /* Change name so it is not an array reference. */
+
+            for (cp = result->v_name; cp && *cp; ++cp) {
+                if (*cp == '[')
+                    *cp = '_';
+                if (*cp == ']') {
+                    *cp = '\0';
+                    break;
+                }
+            }
+
+            /* Set dimension info */
+
+            result->v_numdims = 1;
+            result->v_dims[0] = length;
+
+            result->v_flags |= VF_PERMANENT;
+            result = result->v_link2;
+        }
+        goto done;
 #ifdef XSPICE
     } else if (eq(wl->wl_word, "xspice")) {
         /* Make vectors from an event node. */
@@ -240,7 +270,6 @@ com_compose(wordlist *wl)
         result->v_scale->v_flags |= VF_PERMANENT;
         vec_new(result->v_scale);
         cp_addkword(CT_VECTOR, result->v_scale->v_name);
-        txfree(resname); // It was copied
         goto finished;
 #endif
     } else {

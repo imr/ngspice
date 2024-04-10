@@ -147,7 +147,7 @@ void cm_bidi_bridge(ARGS)
                 out = 0.0;   /* AtoD, no analogue output. */
                 svoc = 0.5;
             } else {
-                double    target, iota, interval[2], range, partial;
+                double    target, iota, interval[2], range, partial = 0.0;
                 int       step, step_count;
                 Digital_t drive, *dp;
 
@@ -274,7 +274,6 @@ void cm_bidi_bridge(ARGS)
 
                     voc = out_low + (out_high - out_low) * voc;
                     target = 0.0;
-                    partial = 0.0;
 
                     /* Calculate new value for output current. */
 

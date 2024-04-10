@@ -57,7 +57,24 @@ typedef enum AnalysisType {
 static void measure_errMessage(const char *mName, const char *mFunction,
         const char *trigTarg, const char *errMsg, int chk_only);
 
+/* like in string.c, here special without () */
+static bool
+is_arith_char2(char c)
+{
+    return c != '\0' && strchr("*/<>?:|&^!%\\", c);
+}
 
+static bool
+str_has_arith_char2(char* s)
+{
+    if (*s == '+' || *s == '-')
+        s++;
+    for (; *s; s++)
+        if (is_arith_char2(*s))
+            return TRUE;
+
+    return FALSE;
+}
 
 /** return precision (either 5 or value of environment variable NGSPICE_MEAS_PRECISION) */
 int
@@ -466,7 +483,7 @@ com_measure_when(
         }
 
         /* 'dc' is special: it may start at an arbitrary scale value.
-           Use m_td to store this value, a delay TD does not make sense */
+           Use m_td to store this value, as a delay TD does not make sense */
         if (dc_check && (i == 0))
             meas->m_td = scaleValue;
         /* if analysis tran, suppress values below TD */
@@ -1480,8 +1497,12 @@ measure_parse_when(
                 if (cieq("ac", meas->m_analysis) || cieq("sp", meas->m_analysis))
                     correct_vec(meas);
             } else {
-                meas->m_val = INPevaluate(&pVar2, &err, 1);
-                if (err) {
+                if (str_has_arith_char2(pVar2)) {
+                    snprintf(errBuf, 99, "Expressions like %s are not supported.\n", pVar2);
+                    return MEASUREMENT_FAILURE;
+                }
+                meas->m_val = INPevaluate2(&pVar2, &err, 0);
+                if (err || (*pVar2 && (!strchr("avfc", *pVar2) || *(pVar2 + 1) != '\0'))) {
                     snprintf(errBuf, 99, "Cannot evaluate %s \n", pVar2);
                     return MEASUREMENT_FAILURE;
                 }

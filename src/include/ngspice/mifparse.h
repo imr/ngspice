@@ -47,21 +47,14 @@ NON-STANDARD FEATURES
 #include  "ngspice/miftypes.h"
 
 
-/*
- * Values of different types used by the parser.  Note that this is a structure
- * instead of a union because we need to do initializations in the ifspec.c files for
- * the models and unions cannot be initialized in any useful way in C
- *
- */
+/* Values of different types used by the parser. */
 
-struct Mif_Parse_Value {
-
+union Mif_Parse_Value {
     Mif_Boolean_t     bvalue;         /* For boolean values */
     int               ivalue;         /* For integer values */
     double            rvalue;         /* For real values */
     Mif_Complex_t     cvalue;         /* For complex values */
     char              *svalue;        /* For string values  */
-
 };
 
 
@@ -101,8 +94,8 @@ struct Mif_Param_Info {
     char                *name;            /* Name of this parameter */
     char                *description;     /* Description of this parameter */
     Mif_Data_Type_t     type;             /* Is this a real, boolean, string, ... */
-    Mif_Boolean_t       has_default;      /* True if there is a default value */
-    Mif_Parse_Value_t   default_value;    /* The default value */
+    int                 default_value_siz;/* Size of default_values array. */
+    Mif_Parse_Value_t  *default_values;   /* The default values (array). */
     Mif_Boolean_t       has_lower_limit;  /* True if there is a lower limit */
     Mif_Parse_Value_t   lower_limit;      /* The lower limit for this parameter */
     Mif_Boolean_t       has_upper_limit;  /* True if there is a upper limit */

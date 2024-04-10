@@ -206,7 +206,7 @@ static int inp_poly_2g6_compat(struct card* deck);
 static void inp_poly_err(struct card *deck);
 #endif
 
-#ifdef CIDER
+#if defined(CIDER) || defined(XSPICE)
 static char *keep_case_of_cider_param(char *buffer)
 {
     int numq = 0, keep_case = 0;
@@ -240,6 +240,31 @@ static char *keep_case_of_cider_param(char *buffer)
     return s;
 }
 
+static char* make_lower_case_copy(char* inbuf)
+{
+    char* s = NULL;
+    char* rets = NULL;
+    size_t lenb = 0;
+
+    if (!inbuf) {
+        return NULL;
+    }
+    lenb = strlen(inbuf);
+    if (lenb < 1) {
+        return NULL;
+    }
+    rets = dup_string(inbuf, lenb);
+    if (!rets) {
+        return NULL;
+    }
+    for (s = rets; *s; s++) {
+        *s = tolower_c(*s);
+    }
+    return rets;
+}
+#endif
+
+#ifdef CIDER
 static int is_comment_or_blank(char *buffer)
 {
     /* Assume line buffers have initial whitespace removed */
@@ -273,29 +298,6 @@ static int turn_off_case_retention(char *buffer)
     } else {
         return 1;
     }
-}
-
-static char *make_lower_case_copy(char *inbuf)
-{
-    char *s = NULL;
-    char *rets = NULL;
-    size_t lenb = 0;
-
-    if (!inbuf) {
-        return NULL;
-    }
-    lenb = strlen(inbuf);
-    if (lenb < 1) {
-        return NULL;
-    }
-    rets = dup_string(inbuf, lenb);
-    if (!rets) {
-        return NULL;
-    }
-    for (s = rets; *s; s++) {
-        *s = tolower_c(*s);
-    }
-    return rets;
 }
 
 static int ignore_line(char *buf)
@@ -392,6 +394,31 @@ static int is_cider_model(char *buf)
         tfree(s);
         return 1;
     } else {
+        tfree(s);
+        return 0;
+    }
+}
+#endif
+#ifdef XSPICE
+static int is_xspice_model(char* buf)
+{
+    /* Expect filesource, table2d, table3d, d_state, d_source, d_process, d_cosim
+       to be on the same line as the .model.
+       Otherwise it will be missed if on a continuation line.
+       This should be rare.
+    */
+    char* s;
+    if (!ciprefix(".model", buf)) {
+        return 0;
+    }
+    s = make_lower_case_copy(buf);
+    if (!s) return 0;
+    if (strstr(s, "filesource") || strstr(s, "table2d") || strstr(s, "table3d") || 
+        strstr(s, "d_state") || strstr(s, "d_source") || strstr(s, "d_process") || strstr(s, "d_cosim")) {
+        tfree(s);
+        return 1;
+    }
+    else {
         tfree(s);
         return 0;
     }
@@ -1213,26 +1240,26 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 }
 
 
-struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
-        bool comfile, bool intfile)
-/* fp: in, pointer to file to be read,
-   call_depth: in, nested call to fcn
-   dir_name: in, name of directory of file to be read
-   comfile: in, TRUE if command file (e.g. spinit, .spiceinit)
-   intfile: in, TRUE if deck is generated from internal circarray
-*/
+struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
+    bool comfile, bool intfile)
+    /* fp: in, pointer to file to be read,
+       call_depth: in, nested call to fcn
+       dir_name: in, name of directory of file to be read
+       comfile: in, TRUE if command file (e.g. spinit, .spiceinit)
+       intfile: in, TRUE if deck is generated from internal circarray
+    */
 {
     struct inp_read_t rv;
-    struct card *end = NULL, *cc = NULL;
-    char *buffer = NULL;
+    struct card* end = NULL, * cc = NULL;
+    char* buffer = NULL;
     /* segfault fix */
 #ifdef XSPICE
     char big_buff[5000];
     int line_count = 0;
 #endif
-    char *new_title = NULL;
+    char* new_title = NULL;
     int line_number = 1;
-            /* sjb - renamed to avoid confusion with struct card */
+    /* sjb - renamed to avoid confusion with struct card */
     int line_number_orig = 1;
     int cirlinecount = 0; /* length of circarray */
     static int is_control = 0; /* We are reading from a .control section */
@@ -1259,8 +1286,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc
              * enabled */
 
-            /* If IPC is not enabled, do equivalent of what SPICE did before
-             */
+             /* If IPC is not enabled, do equivalent of what SPICE did before
+              */
             if (!g_ipc.enabled) {
                 if (call_depth == 0 && line_count == 0) {
                     line_count++;
@@ -1280,7 +1307,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                 char ipc_buffer[1025]; /* Had better be big enough */
                 int ipc_len;
                 Ipc_Status_t ipc_status =
-                        ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
+                    ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
                 if (ipc_status == IPC_STATUS_END_OF_DECK) {
                     buffer = NULL;
                     break;
@@ -1302,7 +1329,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             buffer = readline(fp);
             if (!buffer) {
                 break;
-            }
+        }
 
 #endif
         }
@@ -1318,7 +1345,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
 
         /* OK -- now we have loaded the next line into 'buffer'.  Process it.
          */
-        /* If input line is blank, ignore it & continue looping.  */
+         /* If input line is blank, ignore it & continue looping.  */
         if ((strcmp(buffer, "\n") == 0) || (strcmp(buffer, "\r\n") == 0))
             if (call_depth != 0 || (call_depth == 0 && cc != NULL)) {
                 line_number_orig++;
@@ -1339,7 +1366,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
 
         /* now handle .title statement */
         if (ciprefix(".title", buffer)) {
-            char *s;
+            char* s;
             s = skip_non_ws(buffer); /* skip over .title */
             s = skip_ws(s); /* advance past space chars */
 
@@ -1362,7 +1389,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                  * so .lib is interpreted as old style .lib <file name> (no lib
                  * name given, .lib replaced by .include).
                  */
-                char *s = skip_non_ws(buffer); /* skip over .lib */
+                char* s = skip_non_ws(buffer); /* skip over .lib */
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
                 memcpy(buffer, ".inc", 4);
             }
@@ -1370,10 +1397,10 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
         /* now handle .include statements */
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
 
-            char *y = NULL;
-            char *s;
+            char* y = NULL;
+            char* s;
 
-            struct card *newcard;
+            struct card* newcard;
 
             inp_stripcomments_line(buffer, FALSE);
 
@@ -1388,13 +1415,13 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             }
 
             {
-                char *y_resolved = inp_pathresolve_at(y, dir_name);
-                char *y_dir_name;
-                FILE *newfp;
+                char* y_resolved = inp_pathresolve_at(y, dir_name);
+                char* y_dir_name;
+                FILE* newfp;
 
                 if (!y_resolved) {
                     fprintf(cp_err, "Error: Could not find include file %s\n",
-                            y);
+                        y);
                     if (ft_stricterror)
                         controlled_exit(EXIT_FAILURE);
                     rv.line_number = line_number;
@@ -1413,14 +1440,14 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                 y_dir_name = ngdirname(y_resolved);
 
                 newcard = inp_read(
-                        newfp, call_depth + 1, y_dir_name, FALSE, FALSE)
-                                  .cc; /* read stuff in include file into
-                                          netlist */
+                    newfp, call_depth + 1, y_dir_name, FALSE, FALSE)
+                    .cc; /* read stuff in include file into
+                            netlist */
 
                 tfree(y_dir_name);
                 tfree(y_resolved);
 
-                (void) fclose(newfp);
+                (void)fclose(newfp);
             }
 
             /* Make the .include a comment */
@@ -1429,7 +1456,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             /* append `buffer' to the (cc, end) chain of decks */
             {
                 end = insert_new_line(
-                        end, copy(buffer), line_number, line_number);
+                    end, copy(buffer), line_number, line_number);
 
                 if (!cc)
                     cc = end;
@@ -1447,17 +1474,17 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                 end->nextcard = newcard;
                 /* Renumber the lines */
                 for (end = newcard; end && end->nextcard;
-                        end = end->nextcard) {
+                    end = end->nextcard) {
                     end->linenum = line_number++;
                     end->linenum_orig = line_number_inc++;
                 }
                 end->linenum = line_number++; /* SJB - renumber last line */
                 end->linenum_orig = line_number_inc++;
-                                         /* SJB - renumber the last line */
+                /* SJB - renumber the last line */
             }
 
             /* Fix the buffer up a bit. */
-            (void) memcpy(buffer + 1, "end of: ", 8);
+            (void)memcpy(buffer + 1, "end of: ", 8);
         } /*  end of .include handling  */
 
         /* loop through 'buffer' until end is reached. Make all letters lower
@@ -1468,7 +1495,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
          * double quotes. Single quotes are later on swallowed and disappear,
          * double quotes are printed. */
         {
-            char *s;
+            char* s;
 #ifdef CIDER
             if (ciprefix(".model", buffer)) {
                 in_cider_model = is_cider_model(buffer);
@@ -1476,16 +1503,16 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                 printf("Found .model Cider model is %s\n",
                     (in_cider_model ? "ON" : "OFF"));
 #endif
-            }
+        }
             if (in_cider_model && turn_off_case_retention(buffer)) {
                 in_cider_model = 0;
 #ifdef TRACE
                 printf("Cider model is OFF\n");
 #endif
-            }
+    }
 #endif
             if (ciprefix("plot", buffer) || ciprefix("gnuplot", buffer) ||
-                    ciprefix("hardcopy", buffer)) {
+                ciprefix("hardcopy", buffer)) {
                 /* lower case excluded for tokens following title, xlabel,
                  * ylabel. tokens may contain spaces, then they have to be
                  * enclosed in quotes. keywords and tokens have to be
@@ -1549,9 +1576,9 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                 }
             }
             else if (ciprefix("print", buffer) ||
-                    ciprefix("eprint", buffer) ||
-                    ciprefix("eprvcd", buffer) ||
-                    ciprefix("asciiplot", buffer)) {
+                ciprefix("eprint", buffer) ||
+                ciprefix("eprvcd", buffer) ||
+                ciprefix("asciiplot", buffer)) {
                 /* lower case excluded for tokens following output redirection
                  * '>' */
                 bool redir = FALSE;
@@ -1565,10 +1592,17 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             }
 #ifdef CIDER
             else if (in_cider_model && !is_comment_or_blank(buffer) &&
-                    (ciprefix(".model", buffer) || buffer[0] == '+')) {
+                (ciprefix(".model", buffer) || buffer[0] == '+')) {
                 s = keep_case_of_cider_param(buffer);
             }
             else if (line_contains_icfile(buffer)) {
+                s = keep_case_of_cider_param(buffer);
+            }
+#endif
+#ifdef XSPICE
+            /* lower case excluded for text in quotes for .model of code models
+               filesource, rable2d, table3d, d_state, d_source, d_process, d_cosim */
+            else if (is_xspice_model(buffer)) {
                 s = keep_case_of_cider_param(buffer);
             }
 #endif
@@ -6596,11 +6630,13 @@ static void inp_compat(struct card *card)
                         // skip '='
                         cut_line++;
                         // copy the replacement without trailing '\0'
-                        for (ii = 0; ii < xlen; ii++)
+                        char* loc_ptr = str_ptr - 1;
+                        for (ii = 0; ii < xlen; ii++) {
                             if (*copy_ptr)
-                                *cut_line++ = *copy_ptr++;
+                                *loc_ptr++ = *copy_ptr++;
                             else
-                                *cut_line++ = ' ';
+                                *loc_ptr++ = ' ';
+                        }
 
                         tfree(del_ptr);
                         tfree(exp_ptr);

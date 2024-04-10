@@ -40,18 +40,6 @@ NON-STANDARD FEATURES
 #include "cmpp.h"
 
 typedef struct {
-   bool	has_value;
-   Data_Type_t	kind;
-   union {
-      bool   bvalue;
-      int         ivalue;
-      double      rvalue;
-      Complex_t   cvalue;
-      char        *svalue;
-   } u;
-} My_Value_t;
-
-typedef struct {
    bool	has_bound;
    My_Value_t	bound;
 } Bound_t;
