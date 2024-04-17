@@ -3241,7 +3241,12 @@ static void inp_stripcomments_line(char *s, bool cs)
         return; /* empty line */
     if (*s == '*')
         return; /* line is already a comment */
-    /* look for comments */
+    if (*s == '#') {
+        *s = '*'; // Convert to widely-recognised form.
+        return;
+    }
+
+    /* Look for comments in body of line. */
     while ((c = *d) != '\0') {
         d++;
 
