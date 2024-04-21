@@ -122,6 +122,38 @@ static char *resolve_input_path(const char *name) {
     }
   }
 
+  /* Check for NGSPICE_OSDI_DIR. If available, add file name
+     and try to resolve the path */
+  char* lbuffer = getenv("NGSPICE_OSDI_DIR");
+  if (lbuffer && *lbuffer) {
+      DS_CREATE(ds, 100);
+      int rc_ds = 0;
+      rc_ds |= ds_cat_str(&ds, lbuffer);  /* copy the dir name */
+      const size_t n = ds_get_length(&ds); /* end of copied dir name */
+
+      /* Append a directory separator if not present already */
+      const char ch_last = n > 0 ? lbuffer[n - 1] : '\0';
+      if (ch_last != DIR_TERM
+#ifdef _WIN32
+          && ch_last != DIR_TERM_LINUX
+#endif
+          ) {
+          rc_ds |= ds_cat_char(&ds, DIR_TERM);
+      }
+      rc_ds |= ds_cat_str(&ds, name); /* append the file name */
+
+      if (rc_ds != 0) {
+          (void)fprintf(cp_err, "Error: Unable to build \"dir\" path name "
+              "in inp_pathresolve_at");
+          controlled_exit(EXIT_FAILURE);
+      }
+
+      char* const r = resolve_path(ds_get_buf(&ds));
+      ds_free(&ds);
+      if (r)
+          return r;
+  }
+
   /*
    * If called from a script inputdir != NULL so try relativ to that dir
    * Otherwise try relativ to the current workdir and relativ to the
@@ -146,7 +178,7 @@ static char *resolve_input_path(const char *name) {
       rc_ds |= ds_cat_str(&ds, name); /* append the file name */
 
       if (rc_ds != 0) {
-          (void)fprintf(cp_err, "Unable to build \"dir\" path name "
+          (void)fprintf(cp_err, "Error: Unable to build \"dir\" path name "
               "in inp_pathresolve_at");
           controlled_exit(EXIT_FAILURE);
       }
