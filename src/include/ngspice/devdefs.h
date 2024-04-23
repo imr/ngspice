@@ -107,9 +107,6 @@ typedef struct SPICEdev {
 	/* noise routine */
     int (*DEVsoaCheck)(CKTcircuit*,GENmodel*);
 	/* subroutine to call on soa check */
-    int *DEVinstSize;    /* size of an instance */
-    int *DEVmodSize;     /* size of a model */
-
 #ifdef CIDER 	
     void (*DEVdump)(GENmodel *, CKTcircuit *);
     void (*DEVacct)(GENmodel *, CKTcircuit *, FILE *);
@@ -117,6 +114,8 @@ typedef struct SPICEdev {
          * now used only by cider numerical devices
          */
 #endif
+    int *DEVinstSize;    /* size of an instance */
+    int *DEVmodSize;     /* size of a model */
 
 #ifdef KLU
     int (*DEVbindCSC)(GENmodel *, CKTcircuit *);
