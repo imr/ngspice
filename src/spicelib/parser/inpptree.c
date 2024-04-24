@@ -1030,7 +1030,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
 
     if (p->funcnum != PTF_PWL) {
         fprintf(stderr, "PWL-INFO: %s, very unexpected\n", __func__);
-        controlled_exit(1);
+        controlled_exit(EXIT_BAD);
     }
 
 #ifdef TRACE
@@ -1042,7 +1042,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
 
     if (i<2 || (i%1)) {
         fprintf(stderr, "Error: PWL(expr, points...) needs an even and >=2 number of constant args\n");
-        return mkfirst(NULL, p);
+        controlled_exit(EXIT_BAD);
     }
 
     data = TMALLOC(struct pwldata, 1);
@@ -1062,9 +1062,8 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
         } else {
             fprintf(stderr, "PWL-ERROR: %s, not a constant\n", __func__);
             fprintf(stderr, "   type = %d\n", w->right->type);
-            //Breakpoint;
             fprintf(stderr, "Error: PWL(expr, points...) only *literal* points are supported\n");
-            return mkfirst(NULL, p);
+            controlled_exit(EXIT_BAD);
         }
 
 #ifdef TRACE
@@ -1075,7 +1074,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
     for (i = 2 ; i < data->n ; i += 2)
         if(data->vals[i-2] >= data->vals[i]) {
             fprintf(stderr, "Error: PWL(expr, points...) the abscissa of points must be ascending\n");
-            return mkfirst(NULL, p);
+            controlled_exit(EXIT_BAD);
         }
 
     /* strip all but the first arg,
