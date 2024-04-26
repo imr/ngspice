@@ -62,7 +62,7 @@
 #include "ngspice/hash.h"
 
 extern struct card* insert_new_line(
-    struct card* card, char* line, int linenum, int linenum_orig);
+    struct card* card, char* line, int linenum, int linenum_orig, char *lineinfo);
 
 /* device types */
 #define D_AND    0
@@ -845,13 +845,13 @@ struct card *replacement_udevice_cards(void)
         new_str = copy(x->translated);
         if (count == 0) {
             count++;
-            newcard = insert_new_line(NULL, new_str, 0, 0);
+            newcard = insert_new_line(NULL, new_str, 0, 0, NULL);
         } else if (count == 1) {
             count++;
-            nextcard = insert_new_line(newcard, new_str, 0, 0);
+            nextcard = insert_new_line(newcard, new_str, 0, 0, NULL);
         } else {
             count++;
-            nextcard = insert_new_line(nextcard, new_str, 0, 0);
+            nextcard = insert_new_line(nextcard, new_str, 0, 0, NULL);
         }
     }
     if (current_subckt && (ps_ports_and_pins & 2)) {
