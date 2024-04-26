@@ -1543,7 +1543,7 @@ com_alter_mod(wordlist *wl)
     }
     {
         char *dir_name = ngdirname(filename);
-        modeldeck = inp_readall(modfile, dir_name, 0, 0, NULL);
+        modeldeck = inp_readall(modfile, dir_name, filename, 0, 0, NULL);
         tfree(dir_name);
     }
     tfree(input);
