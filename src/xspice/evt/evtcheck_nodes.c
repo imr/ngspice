@@ -255,7 +255,7 @@ static struct card *flush_card(struct bridge *bridge, int ln,
              ln, bridge->held, bridge->held, bridge->vcc);
     bridge->count = 0;
     bridge->end_index = 0;
-    return insert_new_line(last, copy(buff), BIG + ln, 0);
+    return insert_new_line(last, copy(buff), BIG + ln, last->linenum_orig, last->linesource);
 }
 
 
@@ -738,7 +738,8 @@ bool Evtcheck_nodes(
 
                      head = insert_new_line(lastcard,
                                             copy("* Auto-bridge sub-deck."),
-                                            BIG + ln++, 0);
+                                            BIG + ln++, (lastcard ? lastcard->linenum_orig : 0),
+                                            (lastcard ? lastcard->linesource : NULL));
                      lastcard = head;
                  }
 
@@ -748,7 +749,8 @@ bool Evtcheck_nodes(
                       */
 
                      lastcard = insert_new_line(lastcard, bridge->setup,
-                                                BIG + ln++, 0);
+                                                BIG + ln++, (lastcard ? lastcard->linenum_orig : 0),
+                                                (lastcard ? lastcard->linesource : NULL));
                      bridge->setup = NULL;       // Output just once.
                  }
 
