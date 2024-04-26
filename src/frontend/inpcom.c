@@ -115,6 +115,8 @@ int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
 long dynsubst; /* spicenum.c 221 */
 
+wordlist* sourceinfo = NULL;
+
 static bool has_if = FALSE; /* if we have an .if ... .endif pair */
 
 static char *readline(FILE *fd);
@@ -197,7 +199,7 @@ struct inp_read_t {
 };
 
 struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
-        bool comfile, bool intfile);
+    const char* file_name, bool comfile, bool intfile);
 
 
 #ifdef XSPICE
@@ -580,7 +582,7 @@ static struct library *read_a_lib(const char *y, const char *dir_name)
         lib->habitat = ngdirname(yy);
 
         lib->deck =
-                inp_read(newfp, 1 /*dummy*/, lib->habitat, FALSE, FALSE).cc;
+            inp_read(newfp, 1 /*dummy*/, lib->habitat, NULL, FALSE, FALSE).cc;
 
         fclose(newfp);
     }
@@ -826,7 +828,7 @@ static void inp_cider_models(struct card* working)
                 }
                 else {
                     prev->actualLine =
-                        insert_new_line(NULL, s, prev->linenum, 0);
+                        insert_new_line(NULL, s, prev->linenum, prev->linenum_orig);
                     prev->actualLine->level = prev->level;
                     prev->actualLine->nextcard = working;
                 }
@@ -1025,7 +1027,7 @@ void inp_get_w_l_x(struct card* card) {
   remove the 'level' entries from each card
   *-------------------------------------------------------------------------*/
 
-struct card *inp_readall(FILE *fp, const char *dir_name,
+struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         bool comfile, bool intfile, bool *expr_w_temper_p)
 {
     struct card *cc;
@@ -1035,7 +1037,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
     /* set the members of the compatibility structure */
     set_compat_mode();
 
-    rv = inp_read(fp, 0, dir_name, comfile, intfile);
+    rv = inp_read(fp, 0, dir_name, file_name, comfile, intfile);
     cc = rv.cc;
 
     /* skip all pre-processing for expanded input files created by 'listing r' */
@@ -1205,22 +1207,22 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
                         "**************** uncommented deck "
                         "**************\n\n");
                 /* always print first line */
-                fprintf(fd, "%6d  %6d  %s\n", cc->linenum_orig, cc->linenum,
+                fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
                         cc->line);
                 /* here without out-commented lines */
                 for (t = cc->nextcard; t; t = t->nextcard) {
                     if (*(t->line) == '*')
                         continue;
-                    fprintf(fd, "%6d  %6d  %s\n",
-                            t->linenum_orig, t->linenum, t->line);
+                    fprintf(fd, "%6s  %6d  %6d  %s\n",
+                            t->linesource, t->linenum_orig, t->linenum, t->line);
                 }
                 fprintf(fd,
                         "\n****************** complete deck "
                         "***************\n\n");
                 /* now completely */
                 for (t = cc; t; t = t->nextcard)
-                    fprintf(fd, "%6d  %6d  %s\n",
-                            t->linenum_orig, t->linenum, t->line);
+                    fprintf(fd, "%6s  %6d  %6d  %s\n",
+                            t->linesource, t->linenum_orig,t->linenum, t->line);
                 fclose(fd);
 
                 fprintf(stdout,
@@ -1241,7 +1243,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
 
 struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
-    bool comfile, bool intfile)
+    const char* file_name, bool comfile, bool intfile)
     /* fp: in, pointer to file to be read,
        call_depth: in, nested call to fcn
        dir_name: in, name of directory of file to be read
@@ -1250,8 +1252,8 @@ struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
     */
 {
     struct inp_read_t rv;
-    struct card* end = NULL, * cc = NULL;
-    char* buffer = NULL;
+    struct card* end = NULL, * cc = NULL, *tmpcard=NULL;
+    char* buffer = NULL, *sourcelineinfo=NULL;
     /* segfault fix */
 #ifdef XSPICE
     char big_buff[5000];
@@ -1268,6 +1270,13 @@ struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
 #ifdef CIDER
     static int in_cider_model = 0;
 #endif
+
+    if (intfile)
+        sourcelineinfo = copy("circbyline");
+    else
+        sourcelineinfo = copy(file_name);
+
+    wl_append_word(&sourceinfo, &sourceinfo, sourcelineinfo);
 
     /* First read in all lines & put them in the struct cc */
     for (;;) {
@@ -1440,7 +1449,7 @@ struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
                 y_dir_name = ngdirname(y_resolved);
 
                 newcard = inp_read(
-                    newfp, call_depth + 1, y_dir_name, FALSE, FALSE)
+                    newfp, call_depth + 1, y_dir_name, NULL, FALSE, FALSE)
                     .cc; /* read stuff in include file into
                             netlist */
 
@@ -1464,6 +1473,15 @@ struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
                 line_number++;
             }
 
+            char* tmpstr = copy(nexttok(buffer));
+            wl_append_word(&sourceinfo, &sourceinfo, tmpstr);
+
+            /* Add source of netlist data, for use in verbose error messages */
+            for (tmpcard = newcard; tmpcard; tmpcard = tmpcard->nextcard) {
+                /* skip *include */
+                tmpcard->linesource = tmpstr;
+            }
+
             if (newcard) {
                 if (newcompat.lt && !newcompat.a)
                     newcard = ltspice_compat(newcard);
@@ -1476,11 +1494,10 @@ struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
                 for (end = newcard; end && end->nextcard;
                     end = end->nextcard) {
                     end->linenum = line_number++;
-                    end->linenum_orig = line_number_inc++;
                 }
                 end->linenum = line_number++; /* SJB - renumber last line */
                 end->linenum_orig = line_number_inc++;
-                /* SJB - renumber the last line */
+                /* renumber the last line */
             }
 
             /* Fix the buffer up a bit. */
@@ -1684,7 +1701,7 @@ struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
         {
             end = insert_new_line(
                     end, copy(buffer), line_number++, line_number_orig++);
-
+            end->linesource = sourcelineinfo;
             if (!cc)
                 cc = end;
         }
@@ -5921,8 +5938,11 @@ static void inp_compat(struct card *card)
                         // comment out current variable e line
                         *(card->line) = '*';
                         // insert new lines immediately after current line
-                        for (i = 0; i < 2; i++)
+                        char* tmpsource = card->linesource;
+                        for (i = 0; i < 2; i++) {
                             card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                            card->linesource = copy(tmpsource);
+                        }
                     }
                     else {
                         ckt_array[3] = tprintf(
@@ -5932,8 +5952,11 @@ static void inp_compat(struct card *card)
                         // comment out current variable e line
                         *(card->line) = '*';
                         // insert new lines immediately after current line
-                        for (i = 0; i < 4; i++)
+                        char* tmpsource = card->linesource;
+                        for (i = 0; i < 4; i++) {
                             card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                            card->linesource = copy(tmpsource);
+                        }
                     }
                     tfree(expression);
                     tfree(title_tok);
@@ -5977,9 +6000,11 @@ static void inp_compat(struct card *card)
                 // comment out current variable e line
                 *(card->line) = '*';
                 // insert new B source line immediately after current line
-                for (i = 0; i < 2; i++)
+                char* tmpsource = card->linesource;
+                for (i = 0; i < 2; i++) {
                     card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
-
+                    card->linesource = copy(tmpsource);
+                }
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
@@ -6134,8 +6159,11 @@ static void inp_compat(struct card *card)
                     // comment out current variable e line
                     *(card->line) = '*';
                     // insert new lines immediately after current line
-                    for (i = 0; i < 2; i++)
+                    char* tmpsource = card->linesource;
+                    for (i = 0; i < 2; i++) {
                         card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                        card->linesource = copy(tmpsource);
+                    }
                 }
                 else {
                     ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
@@ -6143,8 +6171,11 @@ static void inp_compat(struct card *card)
                     // comment out current variable g line
                     *(card->line) = '*';
                     // insert new lines immediately after current line
-                    for (i = 0; i < 4; i++)
+                    char* tmpsource = card->linesource;
+                    for (i = 0; i < 4; i++) {
                         card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                        card->linesource = copy(tmpsource);
+                    }
                 }
 
                 tfree(expression);
@@ -6200,8 +6231,11 @@ static void inp_compat(struct card *card)
                 // comment out current variable g line
                 *(card->line) = '*';
                 // insert new B source line immediately after current line
-                for (i = 0; i < 2; i++)
+                char* tmpsource = card->linesource;
+                for (i = 0; i < 2; i++) {
                     card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                    card->linesource = copy(tmpsource);
+                }
 
                 tfree(title_tok);
                 tfree(m_token);
@@ -6246,8 +6280,11 @@ static void inp_compat(struct card *card)
                 // comment out current variable f line
                 *(card->line) = '*';
                 // insert new three lines immediately after current line
-                for (i = 0; i < 3; i++)
+                char* tmpsource = card->linesource;
+                for (i = 0; i < 3; i++) {
                     card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                    card->linesource = copy(tmpsource);
+                }
 
                 tfree(title_tok);
                 tfree(vnamstr);
@@ -6292,8 +6329,11 @@ static void inp_compat(struct card *card)
                 // comment out current variable h line
                 *(card->line) = '*';
                 // insert new three lines immediately after current line
-                for (i = 0; i < 3; i++)
+                char* tmpsource = card->linesource;
+                for (i = 0; i < 3; i++) {
                     card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                    card->linesource = copy(tmpsource);
+                }
 
                 tfree(title_tok);
                 tfree(vnamstr);
@@ -6364,11 +6404,16 @@ static void inp_compat(struct card *card)
             // comment out current old R line
             *(card->line) = '*';
             // insert new B source line immediately after current line
+            char* tmpsource = card->linesource;
             card = insert_new_line(card, xline, 1, currlinenumber);
+            card->linesource = copy(tmpsource);
             if (rnoise) {
                 card = insert_new_line(card, x2line, 2, currlinenumber);
+                card->linesource = copy(tmpsource);
                 card = insert_new_line(card, x3line, 3, currlinenumber);
+                card->linesource = copy(tmpsource);
                 card = insert_new_line(card, x4line, 4, currlinenumber);
+                card->linesource = copy(tmpsource);
             }
 
             tfree(title_tok);
@@ -6443,8 +6488,11 @@ static void inp_compat(struct card *card)
             // comment out current variable capacitor line
             *(card->line) = '*';
             // insert new B source line immediately after current line
-            for (i = 0; i < 3; i++)
+            char* tmpsource = card->linesource;
+            for (i = 0; i < 3; i++) {
                 card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                card->linesource = copy(tmpsource);
+            }
 
             tfree(title_tok);
             tfree(node1);
@@ -6502,8 +6550,11 @@ static void inp_compat(struct card *card)
             // comment out current variable inductor line
             *(card->line) = '*';
             // insert new B source line immediately after current line
-            for (i = 0; i < 3; i++)
+            char* tmpsource = card->linesource;
+            for (i = 0; i < 3; i++) {
                 card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
+                card->linesource = copy(tmpsource);
+            }
 
             tfree(title_tok);
             tfree(node1);
