@@ -181,6 +181,7 @@ static void replace_table(struct card *startcard)
                     tfree(card->line);
                     card->line = cut_line = neweline;
                     insert_new_line(card, newbline, 0, card->linenum_orig);
+                    card->nextcard->linesource = card->linesource;
                     /* read next TABLE function in cut_line */
                     ftablebeg = strstr(cut_line, "table(");
                 }
