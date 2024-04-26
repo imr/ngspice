@@ -229,7 +229,7 @@ static struct card *expand_deck(struct card *head)
     /* The cards are passed to _inp_readall() via a global. */
 
     circarray = pointers;
-    card = inp_readall(NULL, Infile_Path, FALSE, TRUE, NULL);
+    card = inp_readall(NULL, Infile_Path, "autobridge", FALSE, TRUE, NULL);
     card = inp_subcktexpand(card);
     ft_ngdebug = save_debug;
 

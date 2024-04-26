@@ -532,7 +532,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     /* inp_source() called with fp: load from file, */
     /* called with *fp == NULL and intfile: we want to load circuit from circarray */
     if (fp || intfile) {
-        deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
+        deck = inp_readall(fp, dir_name, filename, comfile, intfile, &expr_w_temper);
 
         /* files starting with *ng_script are user supplied command files */
         if (deck && ciprefix("*ng_script", deck->line))
@@ -580,7 +580,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 fprintf(fdo, "****************** complete mc deck ***************\n\n");
                 /* now completely */
                 for (tc = deck; tc; tc = tc->nextcard)
-                    fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
+                    fprintf(fdo, "%6s  %6d  %6d  %s\n", tc->linesource, tc->linenum_orig, tc->linenum, tc->line);
                 fclose(fdo);
             }
             else
@@ -962,17 +962,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     struct card *tc = NULL;
                     fprintf(fdo, "**************** uncommented deck **************\n\n");
                     /* always print first line */
-                    fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
+                    fprintf(fdo, "%6s  %6d  %6d  %s\n", deck->linesource, deck->linenum_orig, deck->linenum, deck->line);
                     /* here without out-commented lines */
                     for (tc = deck->nextcard; tc; tc = tc->nextcard) {
                         if (*(tc->line) == '*')
                             continue;
-                        fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
+                        fprintf(fdo, "%6s  %6d  %6d  %s\n", tc->linesource, tc->linenum_orig, tc->linenum, tc->line);
                     }
                     fprintf(fdo, "\n****************** complete deck ***************\n\n");
                     /* now completely */
                     for (tc = deck; tc; tc = tc->nextcard)
-                        fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
+                        fprintf(fdo, "%6s  %6d  %6d  %s\n", tc->linesource, tc->linenum_orig, tc->linenum, tc->line);
                     fclose(fdo);
                 }
                 else
