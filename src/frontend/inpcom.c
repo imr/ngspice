@@ -1466,7 +1466,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             /* append `buffer' to the (cc, end) chain of decks */
             {
                 end = insert_new_line(
-                    end, copy(buffer), line_number, line_number, NULL);
+                    end, copy(buffer), line_number, end->linenum_orig, end->linesource);
 
                 if (!cc)
                     cc = end;
