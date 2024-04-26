@@ -180,8 +180,7 @@ static void replace_table(struct card *startcard)
                     tfree(begline);
                     tfree(card->line);
                     card->line = cut_line = neweline;
-                    insert_new_line(card, newbline, 0, card->linenum_orig);
-                    card->nextcard->linesource = card->linesource;
+                    insert_new_line(card, newbline, 0, card->linenum_orig, card->linesource);
                     /* read next TABLE function in cut_line */
                     ftablebeg = strstr(cut_line, "table(");
                 }
@@ -672,26 +671,26 @@ struct card *pspice_compat(struct card *oldcard)
 
     /* add predefined params TEMP, VT, GMIN to beginning of deck */
     char *new_str = copy(".param temp = 'temper'");
-    newcard = insert_new_line(NULL, new_str, 1, 0);
+    newcard = insert_new_line(NULL, new_str, 1, 0, "internal");
     new_str = copy(".param vt = '(temper + 273.15) * 8.6173303e-5'");
-    nextcard = insert_new_line(newcard, new_str, 2, 0);
+    nextcard = insert_new_line(newcard, new_str, 2, 0, "internal");
     new_str = copy(".param gmin = 1e-12");
-    nextcard = insert_new_line(nextcard, new_str, 3, 0);
+    nextcard = insert_new_line(nextcard, new_str, 3, 0, "internal");
     /* add funcs limit, pwr, pwrs, stp, if, int */
     /* LIMIT( Output Expression, Limit1, Limit2)
        Output will stay between the two limits given. */
     new_str = copy(".func limit(x, a, b) { ternary_fcn(a > b, max(min(x, a), b), max(min(x, b), a)) }");
-    nextcard = insert_new_line(nextcard, new_str, 4, 0);
+    nextcard = insert_new_line(nextcard, new_str, 4, 0, "internal");
     new_str = copy(".func pwr(x, a) { pow(x, a) }");
-    nextcard = insert_new_line(nextcard, new_str, 5, 0);
+    nextcard = insert_new_line(nextcard, new_str, 5, 0, "internal");
     new_str = copy(".func pwrs(x, a) { sgn(x) * pow(x, a) }");
-    nextcard = insert_new_line(nextcard, new_str, 6, 0);
+    nextcard = insert_new_line(nextcard, new_str, 6, 0, "internal");
     new_str = copy(".func stp(x) { u(x) }");
-    nextcard = insert_new_line(nextcard, new_str, 7, 0);
+    nextcard = insert_new_line(nextcard, new_str, 7, 0, "internal");
     new_str = copy(".func if(a, b, c) {ternary_fcn( a , b , c )}");
-    nextcard = insert_new_line(nextcard, new_str, 8, 0);
+    nextcard = insert_new_line(nextcard, new_str, 8, 0, "internal");
     new_str = copy(".func int(x) { sign(x)*floor(abs(x)) }");
-    nextcard = insert_new_line(nextcard, new_str, 9, 0);
+    nextcard = insert_new_line(nextcard, new_str, 9, 0, "internal");
     nextcard->nextcard = oldcard;
 
 #ifdef INTEGRATE_UDEVICES
@@ -715,9 +714,9 @@ struct card *pspice_compat(struct card *oldcard)
         char *cut_line = card->line;
         if (ciprefix(".subckt", cut_line)) {
             new_str = copy(".param temp = 'temper'");
-            nextcard = insert_new_line(card, new_str, 0, 0);
+            nextcard = insert_new_line(card, new_str, 0, card->linenum_orig, card->linesource);
             new_str = copy(".param vt = '(temper + 273.15) * 8.6173303e-5'");
-            nextcard = insert_new_line(nextcard, new_str, 1, 0);
+            nextcard = insert_new_line(nextcard, new_str, 1, card->linenum_orig, card->linesource);
             /* params: replace comma separator by space.
                Do nothing if you are inside of { }. */
             char* parastr = strstr(cut_line, "params:");
@@ -1727,16 +1726,16 @@ struct card *ltspice_compat(struct card *oldcard)
     char *new_str =
             copy(".func uplim(x, pos, z) { min(x, pos - z) + (1 - "
                  "(min(max(0, x - pos + z), 2 * z) / 2 / z - 1)**2)*z }");
-    newcard = insert_new_line(NULL, new_str, 1, 0);
+    newcard = insert_new_line(NULL, new_str, 1, 0, "internal");
     new_str = copy(".func dnlim(x, neg, z) { max(x, neg + z) - (1 - "
                    "(min(max(0, -x + neg + z), 2 * z) / 2 / z - 1)**2)*z }");
-    nextcard = insert_new_line(newcard, new_str, 2, 0);
+    nextcard = insert_new_line(newcard, new_str, 2, 0, "internal");
     new_str = copy(".func uplim_tanh(x, pos, z) { min(x, pos - z) + "
                    "tanh(max(0, x - pos + z) / z)*z }");
-    nextcard = insert_new_line(nextcard, new_str, 3, 0);
+    nextcard = insert_new_line(nextcard, new_str, 3, 0, "internal");
     new_str = copy(".func dnlim_tanh(x, neg, z) { max(x, neg + z) - "
                    "tanh(max(0, neg + z - x) / z)*z }");
-    nextcard = insert_new_line(nextcard, new_str, 4, 0);
+    nextcard = insert_new_line(nextcard, new_str, 4, 0, "internal");
     nextcard->nextcard = oldcard;
 
     /* remove .backanno, replace 'noiseless' by 'moisy=0' */
