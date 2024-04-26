@@ -16,7 +16,7 @@ void inp_probe(struct card* card);
 void modprobenames(INPtables* tab);
 
 extern struct card* insert_new_line(
-    struct card* card, char* line, int linenum, int linenum_orig);
+    struct card* card, char* line, int linenum, int linenum_orig, char *lineinfo);
 extern int get_number_terminals(char* c);
 extern char* search_plain_identifier(char* str, const char* identifier);
 
@@ -90,7 +90,7 @@ void inp_probe(struct card* deck)
 
     if (!havesave) {
         char* vline = copy(".save all");
-        deck = insert_new_line(deck, vline, 0, 0);
+        deck = insert_new_line(deck, vline, 0, deck->linenum_orig, deck->linesource);
     }
 
     /* set a variable if .probe command is given */
@@ -284,7 +284,7 @@ void inp_probe(struct card* deck)
                 tfree(card->line);
                 card->line = newline;
 
-                card = insert_new_line(card, vline, 0, card->linenum_orig);
+                card = insert_new_line(card, vline, 0, card->linenum_orig, card->linesource);
 
                 tfree(strnode1);
                 tfree(strnode2);
@@ -320,11 +320,11 @@ void inp_probe(struct card* deck)
                         continue;
                     }
                     char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, thisnode, newnode);
-                    card = insert_new_line(card, vline, 0, card->linenum_orig);
+                    card = insert_new_line(card, vline, 0, card->linenum_orig, card->linesource);
                     /* special for KiCad: add shunt resistor if thisnode contains 'unconnected' */
                     if (*instname == 'x' && strstr(thisnode, "unconnected")) {
                         char *rline = tprintf("R%s %s 0 1e15", thisnode, thisnode);
-                        card = insert_new_line(card, rline, 0, card->linenum_orig);
+                        card = insert_new_line(card, rline, 0, card->linenum_orig, card->linesource);
                     }
                     char* nodesaves = tprintf("%s:%s#branch", instname, nodename);
                     allsaves = wl_cons(nodesaves, allsaves);
@@ -342,7 +342,7 @@ void inp_probe(struct card* deck)
                 char* newline = wl_flatten(allsaves);
                 wl_free(allsaves);
                 allsaves = NULL;
-                card = insert_new_line(card, newline, 0, card->linenum_orig);
+                card = insert_new_line(card, newline, 0, card->linenum_orig, card->linesource);
             }
         }
     }
@@ -396,7 +396,7 @@ void inp_probe(struct card* deck)
                             tfree(strnode1);
                             tfree(strnode2);
                             tmpcard1 = deck->nextcard;
-                            tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig);
+                            tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
                         }
                         continue;
                     }
@@ -431,7 +431,7 @@ void inp_probe(struct card* deck)
                     allsaves = wl_cons(nodesaves, allsaves);
                     tfree(strnode1);
                     tfree(strnode2);
-                    tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig);
+                    tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
                     continue;
                 }
                 /* node containing ':' 
@@ -584,7 +584,7 @@ void inp_probe(struct card* deck)
                         char *newline = tprintf("Ediff%d_%s_%s vd_%s:%s_%s:%s 0 %s %s 1", ee, instname1, instname2, instname1, nodename1, instname2, nodename2, strnode1, strnode2);
                         char* nodesaves = tprintf("vd_%s:%s_%s:%s", instname1, nodename1, instname2, nodename2);
                         allsaves = wl_cons(nodesaves, allsaves);
-                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig);
+                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
                         tfree(strnode1);
                         tfree(strnode2);
                         tfree(nodename1);
@@ -706,7 +706,7 @@ void inp_probe(struct card* deck)
                         char* newline = tprintf("Ediff%d_%s vd_%s:%s:%s 0 %s %s 1", ee, instname1, instname1, nodename1, nodename2, strnode1, strnode2);
                         char* nodesaves = tprintf("vd_%s:%s:%s", instname1, nodename1, nodename2);
                         allsaves = wl_cons(nodesaves, allsaves);
-                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig);
+                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
                         tfree(strnode1);
                         tfree(strnode2);
                         tfree(nodename1);
@@ -791,7 +791,7 @@ void inp_probe(struct card* deck)
                     tfree(tmpcard->line);
                     tmpcard->line = newline;
 
-                    tmpcard = insert_new_line(tmpcard, vline, 0, card->linenum_orig);
+                    tmpcard = insert_new_line(tmpcard, vline, 0, card->linenum_orig, card->linesource);
 
                     tfree(strnode2);
                     tfree(newnode);
@@ -846,7 +846,7 @@ void inp_probe(struct card* deck)
                     tfree(tmpcard->line);
                     tmpcard->line = newline;
 
-                    tmpcard = insert_new_line(tmpcard, vline, 0, card->linenum_orig);
+                    tmpcard = insert_new_line(tmpcard, vline, 0, card->linenum_orig, card->linesource);
 
                     char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
                     allsaves = wl_cons(nodesaves, allsaves);
@@ -911,7 +911,7 @@ void inp_probe(struct card* deck)
             wl_free(allsaves);
             allsaves = NULL;
             card = deck->nextcard;
-            card = insert_new_line(card, newline, 0, card->linenum_orig);
+            card = insert_new_line(card, newline, 0, card->linenum_orig, card->linesource);
         }
 
     }
@@ -1379,7 +1379,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
 
         card = tmpcard->nextcard;
 
-        card = insert_new_line(card, vline, 0, card->linenum_orig);
+        card = insert_new_line(card, vline, 0, card->linenum_orig, card->linesource);
 
         if (power) {
             /* For example V(1)+V(2)+V(3)*/
@@ -1422,14 +1422,14 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         wl_free(allsaves);
         allsaves = NULL;
         card = tmpcard->nextcard;
-        card = insert_new_line(card, newsaveline, 0, card->linenum_orig);
+        card = insert_new_line(card, newsaveline, 0, card->linenum_orig, card->linesource);
     }
 
     if (power) {
         cadd(&BVrefline, ')');
         card = tmpcard->nextcard;
-        card = insert_new_line(card, copy(ds_get_buf(&BVrefline)), 0, card->linenum_orig);
-        card = insert_new_line(card, copy(ds_get_buf(&Bpowerline)), 0, card->linenum_orig);
+        card = insert_new_line(card, copy(ds_get_buf(&BVrefline)), 0, card->linenum_orig, card->linesource);
+        card = insert_new_line(card, copy(ds_get_buf(&Bpowerline)), 0, card->linenum_orig, card->linesource);
     }
 
     ds_free(&BVrefline);
