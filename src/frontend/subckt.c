@@ -841,6 +841,8 @@ struct card * inp_deckcopy(struct card *deck) {
             nd = d = TMALLOC(struct card, 1);
         }
         d->linenum = deck->linenum;
+        d->linenum_orig = deck->linenum_orig;
+        d->linesource = deck->linesource;
         d->w = deck->w;
         d->l = deck->l;
         d->nf = deck->nf;
@@ -889,7 +891,8 @@ struct card *inp_deckcopy_oc(struct card * deck)
         d->w = deck->w;
         d->l = deck->l;
         d->nf = deck->nf;
-        d->linenum_orig = deck->linenum;
+        d->linenum_orig = deck->linenum_orig;
+        d->linesource = deck->linesource;
         d->linenum = i++;
         d->line = copy(deck->line);
         if (deck->error) {
@@ -947,6 +950,7 @@ struct card* inp_deckcopy_ln(struct card* deck)
         d->l = deck->l;
         d->nf = deck->nf;
         d->linenum_orig = deck->linenum_orig;
+        d->linesource = deck->linesource;
         d->linenum = deck->linenum;
         d->line = copy(deck->line);
         if (deck->error) {
