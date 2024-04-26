@@ -505,6 +505,12 @@ static struct card *u_instances(struct card *startcard)
                 newcard = replacement_udevice_cards();
                 if (newcard) {
                     char *tmp = NULL, *pos, *posp, *new_str = NULL, *cl;
+                    struct card* tmpc;
+                    /* replace linenum_orig and linesource */
+                    for (tmpc = newcard; tmpc; tmpc = tmpc->nextcard) {
+                        tmpc->linenum_orig = subcktcard->linenum_orig;
+                        tmpc->linesource = subcktcard->linesource;
+                    }
                     DS_CREATE(ds_tmp, 128);
                     /* Pspice definition of .subckt card:
                        .SUBCKT <name> [node]*
@@ -1869,7 +1875,7 @@ struct card *ltspice_compat(struct card *oldcard)
             for (i = 0; i < 4; i++) {
                 stoks[i] = gettok_node(&cut_line);
                 if (stoks[i] == NULL) {
-                    fprintf(stderr, "Error in line %d: buggy diode instance line\n    %s\n", card->linenum_orig, card->line);
+                    fprintf(stderr, "Error in line %d: buggy diode instance line\n    %s\n", card->linenum_orig, card->linesource);
                     fprintf(stderr, "At least 'Dxx n1 n2 d' is required.\n");
                     controlled_exit(EXIT_BAD);
                 }
