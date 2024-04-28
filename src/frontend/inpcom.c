@@ -583,7 +583,12 @@ static struct library *read_a_lib(const char *y, const char *dir_name)
         lib->habitat = ngdirname(yy);
 
         lib->deck =
-            inp_read(newfp, 1 /*dummy*/, lib->habitat, NULL, FALSE, FALSE).cc;
+            inp_read(newfp, 1 /*dummy*/, lib->habitat, lib->realpath, FALSE, FALSE).cc;
+
+        struct card* tmpdeck;
+        int cnumber = 1;
+        for (tmpdeck = lib->deck; tmpdeck; tmpdeck = tmpdeck->nextcard)
+            tmpdeck->linenum_orig = cnumber++;
 
         fclose(newfp);
     }
@@ -1432,17 +1437,14 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 if (!y_resolved) {
                     fprintf(cp_err, "Error: Could not find include file %s\n",
                         y);
-                    if (ft_stricterror)
-                        controlled_exit(EXIT_FAILURE);
-                    rv.line_number = line_number;
-                    rv.cc = NULL;
-                    return rv;
+                    controlled_exit(EXIT_FAILURE);
                 }
 
                 newfp = fopen(y_resolved, "r");
 
                 if (!newfp) {
-                    fprintf(cp_err, "Error: .include statement failed.\n");
+                    fprintf(cp_err, "Error: .include statement failed.\n"
+                                    "Could not open file\n%s\n", y_resolved);
                     tfree(buffer); /* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
                 }
@@ -1465,8 +1467,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             /* append `buffer' to the (cc, end) chain of decks */
             {
-                end = insert_new_line(
-                    end, copy(buffer), line_number, end->linenum_orig, end->linesource);
+                if (end)
+                    end = insert_new_line(
+                            end, copy(buffer), line_number, end->linenum_orig, end->linesource);
+                else
+                    end = insert_new_line(
+                            end, copy(buffer), line_number, 1, file_name);
 
                 if (!cc)
                     cc = end;
@@ -5863,8 +5869,10 @@ static void inp_compat(struct card *card)
                             &cut_line, '}', TRUE, TRUE); /* expression */
                     if (!expression || !str_ptr) {
                         fprintf(stderr,
-                                "Error: bad syntax in line %d\n  %s\n",
-                                card->linenum_orig, card->line);
+                                "Error: bad syntax in line %d\n  %s\n"
+                                "from file\n"
+                                "  %s\n",
+                                card->linenum_orig, card->line, card->linesource);
                         controlled_exit(EXIT_BAD);
                     }
                     tfree(str_ptr);
@@ -6058,8 +6066,11 @@ static void inp_compat(struct card *card)
                 // skip "table"
                 cut_line = skip_ws(cut_line);
                 if (!ciprefix("table", cut_line)) {
-                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->linenum_orig, card->line);
+                    fprintf(stderr,
+                        "Error: bad syntax in line %d\n  %s\n"
+                        "from file\n"
+                        "  %s\n",
+                        card->linenum_orig, card->line, card->linesource);
                     controlled_exit(EXIT_BAD);
                 }
                 cut_line += 5;
@@ -6070,8 +6081,11 @@ static void inp_compat(struct card *card)
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE);
                 if (!expression || !str_ptr) {
-                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->linenum_orig, card->line);
+                    fprintf(stderr,
+                        "Error: bad syntax in line %d\n  %s\n"
+                        "from file\n"
+                        "  %s\n",
+                        card->linenum_orig, card->line, card->linesource);
                     controlled_exit(EXIT_BAD);
                 }
                 tfree(str_ptr);

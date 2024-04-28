@@ -5,6 +5,7 @@
 
   #include "ngspice/ngspice.h"
   #include "ngspice/inpptree.h"
+  #include "ngspice/inpdefs.h"
 
   #include <stdio.h>
   #include <stdlib.h>
@@ -143,5 +144,11 @@ PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, ch
   NG_IGNORE(retval);
   NG_IGNORE(ckt);
 
-  fprintf (stderr, "\n%s: %s, parsing stopped at\n    %s\n\n", __func__, s, locp->start);
+  fprintf (stderr,
+           "\nYYparse error, %s, in expression: parsing stopped at line %d"
+           "\n    %s in %s\n"
+           "\nfrom file"
+           "    %s\n\n",
+           s, Current_parse_line, locp->start, *line, Sourcefile);
+  controlled_exit(EXIT_BAD); // Unsafe to continue.
 }
