@@ -73,6 +73,7 @@ void eval_opt(struct card *deck);
 
 extern bool ft_batchmode;
 extern int dynmaxline;
+extern wordlist* sourceinfo;
 
 /* from inpcom.c */
 extern struct nscope* inp_add_levels(struct card *deck);
@@ -1533,6 +1534,7 @@ inp_dodeck(
         tfree(ct->ci_filename);
 #endif
     ct->ci_filename = copy(filename);
+    ct->ci_sourceinfo = sourceinfo;
 
     /* load the optran data, if provided by .spiceinit or spinit.
        Return immediately, if optran is not selected.*/
