@@ -23,6 +23,7 @@ void wl_delete_slice(wordlist *from, wordlist *to);
 wordlist *wl_find(const char *string, const wordlist *wlist);
 char * wl_flatten(const wordlist *wl);
 void wl_free(wordlist *wlist);
+void wl_delete(wordlist *wlist);
 wordlist *wl_from_string(const char *sz);
 int wl_length(const wordlist *wlist);
 char ** wl_mkvec(const wordlist *wl);
