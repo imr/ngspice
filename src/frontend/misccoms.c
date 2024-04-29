@@ -93,8 +93,10 @@ com_quit(wordlist *wl)
 
     /* Destroy CKT when quit. */
     if (!ft_nutmeg) {
-        while(ft_curckt)
+        while (ft_curckt) {
+            wl_delete(ft_curckt->ci_sourceinfo);
             com_remcirc(NULL);
+        }
     }
     cp_destroy_keywords();
     destroy_ivars();
@@ -102,8 +104,10 @@ com_quit(wordlist *wl)
     /* remove plotting parameters */
     pl_rempar();
 
-    while (ft_curckt)
+    while (ft_curckt) {
+        wl_delete(ft_curckt->ci_sourceinfo);
         com_remcirc(NULL);
+    }
 #endif
 
     tfree(errMsg);
