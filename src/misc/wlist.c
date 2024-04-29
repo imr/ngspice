@@ -39,6 +39,18 @@ wl_free(wordlist *wl)
     }
 }
 
+/* Free the storage used by the word list only,
+   but not the wl->wl_word. */
+void
+wl_delete(wordlist* wl)
+{
+    while (wl) {
+        wordlist* next = wl->wl_next;
+        tfree(wl);
+        wl = next;
+    }
+}
+
 
 /* Copy a wordlist and the words. */
 wordlist *
