@@ -52,6 +52,7 @@ struct circ {
     struct ccom *ci_nodes;    /* ccom structs for the nodes... */
     struct ccom *ci_devices;  /* and devices in the circuit. */
     char *ci_filename;        /* Where this circuit came from. */
+    wordlist* ci_sourceinfo;  /* paths and names of input files */
     TSKtask *ci_defTask;      /* default task for this circuit */
     TSKtask *ci_specTask;     /* special task for command line jobs */
     TSKtask *ci_curTask;      /* most recent task for this circuit */
