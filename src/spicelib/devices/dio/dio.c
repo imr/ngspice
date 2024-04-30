@@ -133,6 +133,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "xoi", DIO_MOD_XOI, IF_REAL, "Thickness of the polysilicon to bulk oxide (level=3)"),
  IOP( "xm",  DIO_MOD_XM,  IF_REAL, "Masking and etching effects in metal (level=3)"),
  IOP( "xp",  DIO_MOD_XP,  IF_REAL, "Masking and etching effects in polysilicon (level=3)"),
+ IOP( "xw",  DIO_MOD_XW,  IF_REAL, "Masking and etching effects (level=3)"),
 
  IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")
 };

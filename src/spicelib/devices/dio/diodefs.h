@@ -302,6 +302,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOpolyOxideThickGiven : 1;  /* Thickness of the polysilicon to bulk oxide (level=3) */
     unsigned DIOmetalMaskOffsetGiven : 1; /* Masking and etching effects in metal (level=3)") */
     unsigned DIOpolyMaskOffsetGiven : 1;  /* Masking and etching effects in polysilicon (level=3) */
+    unsigned DIOmaskOffsetGiven : 1;      /* Masking and etching effects (level=3) */
 
     int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
@@ -372,6 +373,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOpolyOxideThick;  /* Thickness of the polysilicon to bulk oxide (level=3) */
     double DIOmetalMaskOffset; /* Masking and etching effects in metal (level=3)") */
     double DIOpolyMaskOffset;  /* Masking and etching effects in polysilicon (level=3) */
+    double DIOmaskOffset;      /* Masking and etching effects (level=3) */
 
 } DIOmodel;
 
@@ -474,6 +476,7 @@ enum {
     DIO_MOD_XOI,
     DIO_MOD_XM,
     DIO_MOD_XP,
+    DIO_MOD_XW,
 };
 
 void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit *ckt);

@@ -243,6 +243,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOpolyMaskOffsetGiven) {
             model->DIOpolyMaskOffset = 0.0;
         }
+        if(!model->DIOmaskOffsetGiven) {
+            model->DIOmaskOffset = 0.0;
+        }
 
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
@@ -273,8 +276,8 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (model->DIOlevel == 3) {
                 double wm, lm, wp, lp;
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
-                    here->DIOarea = here->DIOw * here->DIOl * here->DIOm;
-                    here->DIOpj = (2 * here->DIOw + 2 * here->DIOl) * here->DIOm;
+                    here->DIOarea = (here->DIOw+model->DIOmaskOffset) * (here->DIOl+model->DIOmaskOffset) * here->DIOm;
+                    here->DIOpj = (2 * (here->DIOw+model->DIOmaskOffset) + 2 * (here->DIOl+model->DIOmaskOffset)) * here->DIOm;
                 }
                 here->DIOarea = here->DIOarea * scale * scale;
                 here->DIOpj = here->DIOpj * scale;

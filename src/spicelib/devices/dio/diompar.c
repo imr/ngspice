@@ -270,6 +270,10 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOpolyMaskOffset = value->rValue;
             model->DIOpolyMaskOffsetGiven = TRUE;
             break;
+        case DIO_MOD_XW:
+            model->DIOmaskOffset = value->rValue;
+            model->DIOmaskOffsetGiven = TRUE;
+            break;
 
         case DIO_MOD_D:
             /* no action - we already know we are a diode, but this */

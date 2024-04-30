@@ -218,6 +218,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_XP:
             value->rValue = model->DIOpolyMaskOffset;
             return(OK);
+        case DIO_MOD_XW:
+            value->rValue = model->DIOmaskOffset;
+            return(OK);
 
         default:
             return(E_BADPARM);
