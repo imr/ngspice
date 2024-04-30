@@ -106,6 +106,12 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_EG:
             value->rValue = model->DIOactivationEnergy;
             return (OK);
+        case DIO_MOD_GAP1:
+            value->rValue = model->DIOfirstBGcorrFactor;
+            return (OK);
+        case DIO_MOD_GAP2:
+            value->rValue = model->DIOsecndBGcorrFactor;
+            return (OK);
         case DIO_MOD_XTI:
             value->rValue = model->DIOsaturationCurrentExp;
             return(OK);

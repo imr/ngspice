@@ -262,6 +262,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOtlevGiven : 1;
     unsigned DIOtlevcGiven : 1;
     unsigned DIOactivationEnergyGiven : 1;
+    unsigned DIOfirstBGcorrFactorGiven : 1;
+    unsigned DIOsecndBGcorrFactorGiven : 1;
     unsigned DIOsaturationCurrentExpGiven : 1;
     unsigned DIOctaGiven : 1;
     unsigned DIOctpGiven : 1;
@@ -332,6 +334,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     int    DIOtlev; /* Diode temperature equation selector */
     int    DIOtlevc; /* Diode temperature equation selector */
     double DIOactivationEnergy; /* activation energy (EG) */
+    double DIOfirstBGcorrFactor; /* First bandgap correction factor */
+    double DIOsecndBGcorrFactor; /* Second bandgap correction factor */
     double DIOsaturationCurrentExp; /* Saturation current exponential (XTI) */
     double DIOcta; /* Area junction temperature coefficient */
     double DIOctp; /* Perimeter junction temperature coefficient */
@@ -420,6 +424,8 @@ enum {
     DIO_MOD_VJ,
     DIO_MOD_M,
     DIO_MOD_EG,
+    DIO_MOD_GAP1,
+    DIO_MOD_GAP2,
     DIO_MOD_XTI,
     DIO_MOD_FC,
     DIO_MOD_BV,

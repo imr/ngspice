@@ -84,6 +84,8 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "tlev", DIO_MOD_TLEV, IF_INTEGER, "Diode temperature equation selector"),
  IOP( "tlevc", DIO_MOD_TLEVC, IF_INTEGER, "Diode temperature equation selector"),
  IOP( "eg",  DIO_MOD_EG,  IF_REAL, "Activation energy"),
+ IOP( "gap1", DIO_MOD_GAP1, IF_REAL, "First bandgap correction factor"),
+ IOP( "gap2", DIO_MOD_GAP2, IF_REAL, "Second bandgap correction factor"),
  IOP( "xti", DIO_MOD_XTI, IF_REAL, "Saturation current temperature exp."),
  IOP( "cta", DIO_MOD_CTA, IF_REAL, "Area junction temperature coefficient"),
  IOPR( "ctc", DIO_MOD_CTA, IF_REAL, "Area junction capacitance temperature coefficient"),
