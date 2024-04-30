@@ -37,6 +37,7 @@ extern struct INPmodel *modtab;
 extern NGHASHPTR modtabhash;
 extern struct dbcomm *dbs;
 extern void NIresetwarnmsg(void);
+extern wordlist* sourceinfo;
 
 /* Routines for the commands op, tran, ac, dc, listing, device, state,
  * resume, stop, trace, run, end.  Op, tran, ac, and dc cause the action
@@ -109,6 +110,8 @@ com_scirc(wordlist *wl)
     ft_curckt = p;
     /* get the model table for the current circuit, store it in the global variable modtab */
     modtab = ft_curckt->ci_modtab;
+    /* get the current input file names */
+    sourceinfo = ft_curckt->ci_sourceinfo;
     modtabhash = ft_curckt->ci_modtabhash;
     /* get the database for save, iplot, stop */
     dbs = ft_curckt->ci_dbs;
