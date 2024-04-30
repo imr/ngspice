@@ -345,7 +345,8 @@ void ucm_d_cosim(ARGS)
 {
     struct instance *ip;
     Digital_t       *in_vals; // XSPICE rotating memory
-    unsigned int     i, index;
+    unsigned int     i;
+    int              index;
 
     if (INIT) {
         unsigned int   ins, outs, inouts;
