@@ -105,7 +105,7 @@ com_quit(wordlist *wl)
     pl_rempar();
 
     while (ft_curckt) {
-        wl_delete(ft_curckt->ci_sourceinfo);
+//        wl_delete(ft_curckt->ci_sourceinfo);
         com_remcirc(NULL);
     }
 #endif
