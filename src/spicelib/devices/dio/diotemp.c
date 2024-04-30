@@ -63,14 +63,21 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
 
     /* this part gets really ugly - I won't even try to
      * explain these equations */
+    if ((model->DIOtlev == 0) || (model->DIOtlev == 1)) {
+        egfet = 1.16-(7.02e-4*Temp*Temp)/
+                (Temp+1108);
+        egfet1 = 1.16 - (7.02e-4*model->DIOnomTemp*model->DIOnomTemp)/
+                (model->DIOnomTemp+1108);
+    } else {
+        egfet = model->DIOactivationEnergy-(model->DIOfirstBGcorrFactor*Temp*Temp)/
+                (Temp+model->DIOsecndBGcorrFactor);
+        egfet1 = model->DIOactivationEnergy - (model->DIOfirstBGcorrFactor*model->DIOnomTemp*model->DIOnomTemp)/
+                (model->DIOnomTemp+model->DIOsecndBGcorrFactor);
+    }
     fact2 = Temp/REFTEMP;
-    egfet = 1.16-(7.02e-4*Temp*Temp)/
-            (Temp+1108);
     arg = -egfet/(2*CONSTboltz*Temp) +
             1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
     pbfact = -2*vt*(1.5*log(fact2)+CHARGE*arg);
-    egfet1 = 1.16 - (7.02e-4*model->DIOnomTemp*model->DIOnomTemp)/
-            (model->DIOnomTemp+1108);
     arg1 = -egfet1/(CONSTboltz*2*model->DIOnomTemp) +
             1.1150877/(2*CONSTboltz*REFTEMP);
     fact1 = model->DIOnomTemp/REFTEMP;

@@ -114,6 +114,12 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOactivationEnergyGiven) {
             model->DIOactivationEnergy = 1.11;
         }
+        if(!model->DIOfirstBGcorrFactorGiven) {
+            model->DIOfirstBGcorrFactor = 7.02e-4;
+        }
+        if(!model->DIOsecndBGcorrFactorGiven) {
+            model->DIOsecndBGcorrFactor = 1108.0;
+        }
         if(!model->DIOsaturationCurrentExpGiven) {
             model->DIOsaturationCurrentExp = 3;
         }
