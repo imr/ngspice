@@ -4,7 +4,7 @@
 #include "ngspice/cosim.h"   // For struct co_info and prototypes
 
 int main(int argc, char** argv, char**) {
-    struct co_info info;
+    struct co_info info = {};
 
     Cosim_setup(&info);
     for (;;)

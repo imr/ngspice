@@ -67,6 +67,28 @@ Vector:             no
 Vector_Bounds:      -
 Null_Allowed:       no
 
+PARAMETER_TABLE:
+
+Parameter_Name:     lib_args
+Description:        "Argument strings made available to the shared library"
+Data_Type:          string
+Default_Value:      -
+Limits:             -
+Vector:             yes
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     sim_args
+Description:        "Argument strings made available to the simulation"
+Data_Type:          string
+Default_Value:      -
+Limits:             -
+Vector:             yes
+Vector_Bounds:      -
+Null_Allowed:       yes
+
 /* Instances maintain an internal input event queue that should be at least
  * as large as the number of inputs.  Performance with clocked logic may
  * be improved by making it larger than (2 * F) / MTS, where F is

@@ -39,7 +39,7 @@ char *dlerror(void) // Lifted from dev.c.
     if (rc == 0) { /* FormatMessage failed */
         (void) sprintf(errstr, errstr_fmt, (unsigned long) GetLastError());
     } else {
-        snprintf(errstr, sizeof errstr, errstr_fmt, lpMsgBuf);
+        snprintf(errstr, sizeof errstr, "%s", lpMsgBuf);
         LocalFree(lpMsgBuf);
     }
     return errstr;
@@ -94,6 +94,10 @@ static void callback(ARGS, Mif_Callback_Reason_t reason)
             return;
         if (ip->info.cleanup)
             (*ip->info.cleanup)(&ip->info);
+        if (ip->info.lib_argv)
+            free((void *)ip->info.lib_argv);
+        if (ip->info.sim_argv)
+            free((void *)ip->info.sim_argv);
         if (ip->so_handle)
             dlclose(ip->so_handle);
         if (ip->q)
@@ -232,8 +236,9 @@ static int advance(struct instance *ip, ARGS)
 		 * Try and recover: this may lead to a warning on output.
                  */
 
-                DBG("Attempting recovey from failed timestep lop %.16g->%.16g",
-                    TIME, when);
+                DBG("Attempting recovery from failed timestep truncation: %s "
+                    "%.16g->%.16g",
+                    cm_message_get_errmsg(), TIME, when);
                 delta = (TIME - ip->info.vtime) / 1000;
                 when = ip->info.vtime;
 		if (when < ip->last_step) {
@@ -298,7 +303,8 @@ static void run(struct instance *ip, ARGS)
         /* Step the simulation forward to the input event time. */
 
         ip->info.vtime = rp->when;
-        if (ip->info.method == Normal && advance(ip, XSPICE_ARG)) {
+        if ((ip->info.method == Normal || ip->info.method == Both) &&
+            advance(ip, XSPICE_ARG)) {
             ip->q_index = -1;
             return;
         }
@@ -316,7 +322,8 @@ static void run(struct instance *ip, ARGS)
 
         /* Simulator requested to run after input change. */
 
-        if (ip->info.method == After_input && advance(ip, XSPICE_ARG)) {
+        if ((ip->info.method == After_input || ip->info.method == Both) &&
+            advance(ip, XSPICE_ARG)) {
             ip->q_index = -1;
             return;
         }
@@ -427,7 +434,39 @@ void ucm_d_cosim(ARGS)
         ip->info.out_fn = accept_output;
         CALLBACK = callback;
 
-        /* Store the simulation interface information. */
+	if (PARAM_NULL(lib_args)) {
+            ip->info.lib_argc = 0;
+            *(void **)&ip->info.lib_argv = NULL;
+        } else {
+            char **args;
+
+            ip->info.lib_argc = PARAM_SIZE(lib_args);
+            args = malloc((ip->info.lib_argc + 1) * sizeof (char *));
+            if (args) {
+                for (i = 0; i < ip->info.lib_argc; ++i)
+                    args[i] = PARAM(lib_args[i]);
+                args[i] = NULL;
+            }
+            *(char ***)&ip->info.lib_argv = args;
+        }
+
+	if (PARAM_NULL(sim_args)) {
+            ip->info.sim_argc = 0;
+            *(void **)&ip->info.sim_argv = NULL;
+        } else {
+            char **args;
+
+            ip->info.sim_argc = PARAM_SIZE(sim_args);
+            args = malloc((ip->info.sim_argc + 1) * sizeof (char *));
+            if (args) {
+                for (i = 0; i < ip->info.sim_argc; ++i)
+                    args[i] = PARAM(sim_args[i]);
+                args[i] = NULL;
+            }
+            *(char ***)&ip->info.sim_argv = args;
+        }
+
+        /* Get the simulation interface information. */
 
         (*ifp)(&ip->info);
 
@@ -597,11 +636,21 @@ void ucm_d_cosim(ARGS)
          * forward, replaying any saved input events.
          */
 
-        if (TIME <= ip->info.vtime)
+        if (ip->last_step == 0.0) {
+            /* First step.  "Step" the co-simulation to time zero,
+             * as that may trigger initialisations.
+             */
+
+            if (advance(ip, XSPICE_ARG))
+                return;
+        }
+
+        if (TIME <= ip->info.vtime) {
             cm_message_printf("XSPICE time is behind vtime:\n"
                               "XSPICE %.16g\n"
                               "Cosim  %.16g",
                               TIME, ip->info.vtime);
+        }
         run(ip, XSPICE_ARG);
     }
 }

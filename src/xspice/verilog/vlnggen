@@ -1,5 +1,5 @@
 *ng_script_with_params
-// This Ngspice interpreter script accepts arbitrary argiments to
+// This Ngspice interpreter script accepts arbitrary arguments to
 // the Verilator compiler (Verilog to C++) and builds a shared library
 // or DLL that can be loaded by the d_cosim XSPICE code model.
 // Instances of the model are then digital circuit elements whose
@@ -30,7 +30,7 @@ set noglob
 
 // Compilation option for C/C++: -fpic is required by GCC for a shared library
 
-if $oscompiled = 8 // VisualC++ - Verilator is a Perl script
+if $oscompiled = 8 // VisualC++
    setcs cflags="--CFLAGS -fpic --compiler msvc"
 else
    setcs cflags="--CFLAGS -fpic" // For g++
@@ -41,7 +41,7 @@ if $oscompiled = 2 | $oscompiled = 3 | $oscompiled = 8 // Windows
    set dirsep1="\\"
    set dirsep2="/"
    set vloc="C:/mingw64/bin/verilator" // Expected location on Windows
-   set run_verilator="perl $vloc"
+   set run_verilator="perl $vloc"      // Verilator is a Perl script
 else
    set windows=0
    set dirsep1="/"
@@ -55,14 +55,32 @@ else
    set macos=0
 end
 
+// Check for an input.h file in the current directory.  If present it may
+// override the generated one with incorrect results.  A previous failure
+// may create such files.
+
+set silent_fileio
+fopen fh inputs.h
+if $fh >= 0
+   echo File inputs.h (and any other header files) in current directory
+   echo may interfere with compilation.
+   quit
+end
+unset silent_fileio
+
 // Loop through the arguments to find Verilog source: some_path/xxxx.v
 // The output file will have the same base name.
 
 let index=1
 set off=1                        // Avoid error in dowhile
+set timing=1
 repeat $argc
     set base="$argv[$&index]"
     let index = index + 1
+    if $timing <> 0
+        // Additional check for --timing option, preceeding any *.v files.
+        strcmp timing "$base" "--timing"
+    end
     strstr l "$base" ""
     if $l > 2                    // Look for xxxx.v
         strslice tail "$base" -2 2
@@ -122,6 +140,9 @@ setcs prefix="Vlng"
 // Run Verilator on the given input files.
 
 shell $run_verilator --Mdir $objdir --prefix $prefix $cflags --cc $argv
+if $shellstatus > 0
+    quit
+end
 
 // Parse the primary interface Class definition for members representing
 // the ports of the top-level Verilog module.
@@ -214,6 +235,8 @@ set shimfile=verilator_shim.cpp
 set shimobj=verilator_shim.o
 set mainfile=verilator_main.cpp
 set srcdir=src
+set hfile="cmtypes.h"
+set hpath="ngspice$dirsep1$hfile"
 set silent_fileio // Silences fopen complaints
 
 let i=1
@@ -221,15 +244,22 @@ repeat $#sourcepath
   set stem="$sourcepath[$&i]"
   let i = i + 1
   set fn="$stem$dirsep1$shimfile"
-  fopen fh $fn
-  if $fh > 0
-     break
+  fopen fh "$fn"
+  if $fh < 0
+    // Look in any "src" subdirectory (probably in installed tree).
+    set stem="$stem$dirsep1$srcdir"
+    set fn="$stem$dirsep1$shimfile"
+    fopen fh $fn
   end
-  set stem="$stem$dirsep1$srcdir"
-  set fn="$stem$dirsep1$shimfile"
-  fopen fh $fn
   if $fh > 0
-     break
+    // Found verilator_shim.cpp, but it needs header files on relative path.
+    fclose $fh
+    set hn="$stem$dirsep1$hpath"
+    fopen fh "$hn"
+    if $fh > 0
+      break
+    end
+    echo Ignoring source file "$fn" as "$hn" was not found.
   end
 end
 
@@ -263,6 +293,11 @@ else
    end
 end
 
+// verilator_shim.cpp has conditionally-compiled sections for --timing.
+
+if $timing = 0
+  setcs cflags="--CFLAGS -DWITH_TIMING ""$cflags"
+end
 
 // Compile the code. Verilator only does that when building an executable,
 // so include verilator_main.cpp.
@@ -277,6 +312,9 @@ if $bad = 0
    // g++ must be available: make a shared library/DLL.
 
    set   v_objs="$objdir$dirsep1$shimobj $objdir/verilated.o $objdir/verilated_threads.o"
+   if $timing = 0
+      set v_objs="$v_objs $objdir/verilated_timing.o"
+   end
    setcs tail="__ALL.a"
    setcs v_lib="$objdir/$prefix$tail"          // Like Vlng__ALL.a
 
