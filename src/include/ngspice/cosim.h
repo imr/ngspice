@@ -1,4 +1,6 @@
-/* Header file for the shim code between d_cosim and a co-simulator. */
+/* Header file for the shim code between XSPICE and a co-simulator
+ * attached by the d_cosim code model.
+ */
 
 #if __cplusplus
 extern "C" {
@@ -12,7 +14,7 @@ extern "C" {
  * so step() must be called after input.
  */
 
-typedef enum {Normal, After_input} Cosim_method;
+    typedef enum {Normal, After_input, Both} Cosim_method;
 
 /* Structure used by Cosim_setup() to pass and return
  * co-simulation interface information.
@@ -26,7 +28,8 @@ struct co_info {
     unsigned int    inout_count;
 
     /* The co-simulator may specify a function to be called just before
-     * it is unloaded at the end of a simulation run.
+     * it is unloaded at the end of a simulation run. It should not free
+     * this structure.
      */
 
     void          (*cleanup)(struct co_info *);
@@ -59,8 +62,17 @@ struct co_info {
 
     void          (*out_fn)(struct co_info *, unsigned int, Digital_t *);
     void           *handle;        // Co-simulator's private handle
-    double          vtime;         // Time in the co-simulation.
+    volatile double          vtime;         // Time in the co-simulation.
     Cosim_method    method;        // May be set in Cosim_setup;
+
+    /* Arguments for the co-simulator shim and the simulation itself
+     * are taken from parameters in the .model card.
+     */
+
+    int             lib_argc;
+    int             sim_argc;
+    const char    * const * const lib_argv;
+    const char    * const * const sim_argv;
 };
 
 extern void  Cosim_setup(struct co_info *pinfo); // This must exist.

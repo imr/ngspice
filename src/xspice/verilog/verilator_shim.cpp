@@ -93,6 +93,11 @@ static void accept_input(struct co_info *pinfo,
 
 /* The step function that calls the Verilator code. */
 
+#ifndef WITH_TIMING
+/* The simple case is when the Verilog source contained no time delays,
+ * or was compiled with compiled with --no-timing.
+ */
+
 #define VL_DATA(size, name, msb, lsb)        \
   for (i = msb; i >= lsb; --i) {             \
     if (topp->name & (1 << i))               \
@@ -106,7 +111,7 @@ static void accept_input(struct co_info *pinfo,
     }                                        \
     ++index;                                 \
   }
-      
+
 static void step(struct co_info *pinfo)
 {
     static Digital_t  oval = {ZERO, STRONG};
@@ -123,6 +128,71 @@ static void step(struct co_info *pinfo)
 #include "outputs.h"
 #include "inouts.h"
 }
+
+#else /* WITH_TIMING */
+
+#define VL_DATA(size, name, msb, lsb)        \
+  for (i = msb; i >= lsb; --i) {             \
+    if (topp->name & (1 << i))               \
+      bit = 1;                               \
+    else                                     \
+      bit = 0;                               \
+    if (bit ^ previous_output[index]) {      \
+      stop = 1;                              \
+      previous_output[index] = bit;          \
+      oval.state = (Digital_State_t)bit;     \
+      (*pinfo->out_fn)(pinfo, index, &oval); \
+    }                                        \
+    ++index;                                 \
+  }
+
+static void step(struct co_info *pinfo)
+{
+    static Digital_t  oval = {ZERO, STRONG};
+    VerilatedContext *contextp;
+    Vlng             *topp;
+    double            tick;
+    uint64_t          target, next;
+    int               index, i, stop = 0;
+    unsigned char     bit;
+
+    /* When Verilog source was compiled with --timing, run queued evants
+     * until the Verilog simulation catches up with SPICE.
+     */
+
+    topp = (Vlng *)pinfo->handle;
+    contextp = topp->contextp();
+    tick = pow(10, contextp->timeprecision());
+    target = pinfo->vtime / tick;
+
+    /* Step the Verilog simulation towards the target time. */
+
+    do {
+      if (topp->eventsPending())
+	next = topp->nextTimeSlot();
+      else
+	next = target;
+      if (next >= target) {
+	stop = 1;
+	next = target;
+      }
+      contextp->time(next);
+      topp->eval();
+
+      /* Scan for output and stop early if found. */
+
+      index = 0;
+#include "outputs.h"
+#include "inouts.h"
+    } while (!stop);
+
+    /* Update the shared simulation time on early exit. */
+
+    if (next < target)
+      pinfo->vtime = next * tick;
+}
+
+#endif /* WITH_TIMING */
 #undef VL_DATA
 
 extern "C" void Cosim_setup(struct co_info *pinfo)
@@ -152,6 +222,10 @@ extern "C" void Cosim_setup(struct co_info *pinfo)
     pinfo->out_count = outs;
     pinfo->inout_count = inouts;
     pinfo->in_fn = accept_input;
+#ifdef WITH_TIMING
+    pinfo->method = Both;         // There may be immediate results from input.
+#else
     pinfo->method = After_input;  // Verilator requires input to advance.
+#endif
 }
 #undef VL_DATA
