@@ -134,29 +134,21 @@ AC_SUBST(LIBNGSPICE_API_VERSION)
 # Package Options
 # ---------------
 
-# --disable-debug: remove -g and -Wall  option to the compiler
+# --enable-debug: add -g and -Wall  option to the compiler
 AC_ARG_ENABLE([debug],
-    [AS_HELP_STRING([--disable-debug], [Remove -g option for compilation (default is -g)])])
+    [AS_HELP_STRING([--enable-debug], [Add -g option for compilation (default is without -g)])])
 
- # --enable-oldapps: define OLDAPPS
-AC_ARG_ENABLE([oldapps],
-    [AS_HELP_STRING([--enable-oldapps], [Enable making old, outdated apps.])])
-
-# --enable-xspice: define XSPICE in the code. This is for xspice support
+# --disable-xspice: define XSPICE in the code. This is for xspice support
 AC_ARG_ENABLE([xspice],
-    [AS_HELP_STRING([--enable-xspice], [Enable XSPICE enhancements])])
+    [AS_HELP_STRING([--disable-xspice], [Disable XSPICE enhancements])])
 
-# --enable-osdi: define OSDI in the code. This is for osdi support
+# --disable-osdi: undefine OSDI in the code. This is for osdi support
 AC_ARG_ENABLE([osdi],
-    [AS_HELP_STRING([--enable-osdi], [Enable OSDI integration])])
+    [AS_HELP_STRING([--disable-osdi], [Disable OSDI integration])])
 
 # --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE([cider],
     [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements])])
-
-# --enable-adms: ADMS is no longer supported
-AC_ARG_ENABLE([adms],
-    [AS_HELP_STRING([--enable-adms], [ADMS is no longer supported])])
 
 # --enable-pss: enable PSS Analysis
 AC_ARG_ENABLE([pss],
@@ -171,9 +163,9 @@ AC_ARG_ENABLE([sp],
 AC_ARG_ENABLE([relpath],
     [AS_HELP_STRING([--enable-relpath], [Enable relative paths for spinit etc. Default=no])])
 
-# --with-readline:  Includes GNU readline support into CLI.  Default is "no".
+# --with-readline:  Includes GNU readline support into CLI.  Default is "yes".
 AC_ARG_WITH([readline],
-    [AS_HELP_STRING([--with-readline[=yes/no]], [Enable GNU readline support for CLI. Default=no.])])
+    [AS_HELP_STRING([--with-readline[=yes/no]], [Enable GNU readline support for CLI. Default=yes.])])
 
 # --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
 AC_ARG_WITH([editline],
@@ -195,7 +187,19 @@ AC_ARG_ENABLE([utf8],
 AC_ARG_ENABLE([shortcheck],
     [AS_HELP_STRING([--enable-shortcheck], [CMC QA check only for BSIM4/4])])
 
+# --with-fftw3: Use fftw3 for Fourier transforms.  Default is "yes".
+AC_ARG_WITH([fftw3],
+    [AS_HELP_STRING([--with-fftw3[=yes/no]], [Use fftw3 for Fourier transforms. Default=yes.])])
+
+# --disable-klu: Do not use the KLU linear systems solver
+AC_ARG_ENABLE([klu],
+    [AS_HELP_STRING([--disable-klu], [Use KLU linear systems solver. Default=yes.])])
+
 # old options, not maintained, may even not work at all
+
+# --enable-oldapps: define OLDAPPS
+AC_ARG_ENABLE([oldapps],
+    [AS_HELP_STRING([--enable-oldapps], [Enable making old, outdated apps.])])
 
 # --enable-ansi: try to force --ansi option to the compiler
 AC_ARG_ENABLE([ansi],
@@ -293,10 +297,6 @@ AC_ARG_ENABLE([cmathtests],
 AC_ARG_ENABLE([help],
     [AS_HELP_STRING([--enable-help], [Force building nghelp (deprecated)])])
 
-# --with-fftw3: Use fftw3 for Fourier transforms.  Default is "yes".
-AC_ARG_WITH([fftw3],
-    [AS_HELP_STRING([--with-fftw3[=yes/no]], [Use fftw3 for Fourier transforms. Default=yes.])])
-
 # readline and editline cannot both be enabled
 if test "x$with_editline" = xyes; then
     if test "x$with_readline" = xyes; then
@@ -304,16 +304,14 @@ if test "x$with_editline" = xyes; then
     fi
 fi
 
-# --enable-klu: Use KLU linear systems solver
-AC_ARG_ENABLE([klu],
-    [AS_HELP_STRING([--enable-klu], [Use KLU linear systems solver])])
-
 # Add KLU solver to ngspice
-if test "x$enable_klu" = xyes; then
+if test "x$enable_klu" = xyes || test "x$enable_klu" = x ; then
     AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
-    AC_MSG_WARN([KLU solver enabled])
+    AC_MSG_RESULT([KLU solver enabled])
+else
+    AC_MSG_RESULT([KLU solver disabled!])
 fi
-AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes])
+AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes ||  test "x$enable_klu" = x])
 
 
 # Enable maintainer commands only if requested
@@ -329,26 +327,28 @@ AM_MAINTAINER_MODE([enable])
 # the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "x$ext_CFLAGS" != xyes; then
 
-    if test "x$enable_debug" = xno; then
-        AC_MSG_WARN([Removing debugging option!])
-        if test "x$GCC" = xyes; then
-            CFLAGS="-O2 -s"
-        else
-            CFLAGS="-O2"
-        fi
-    else
+    if test "x$enable_debug" = xyes; then
         AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
+        AC_MSG_WARN([Compile with debugging option -g!])
         if test "x$GCC" = xyes; then
             CFLAGS="-g -O0"
         else
             CFLAGS="-g"
+        fi
+    else
+        AC_MSG_RESULT([Debugging option -g removed])
+        if test "x$GCC" = xyes; then
+            CFLAGS="-O2 -s"
+        else
+            CFLAGS="-O2"
         fi
     fi
 
     if test "x$GCC" = xyes; then
         CFLAGS="$CFLAGS -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable"
     fi
-
+else
+    AC_MSG_RESULT([Use external CFLAGS])
 fi
 
 # the profiling option
@@ -1103,10 +1103,23 @@ AM_CONDITIONAL([CMATHTESTS], [test "x$enable_cmathtests" = xyes])
 #################  XSPICE ##################################################
 # Add new code models to the build by pointing to them here.
 
-if test "x$enable_xspice" = xyes; then
+if test "x$enable_xspice" = xno; then
+    AC_MSG_RESULT([XSPICE features disabled])
+    XSPICEINIT="*"
+    if test "x$enable_osdi" = xyes || test "x$enable_osdi" = x ; then\
+        case $host_os in
+            *mingw* | *msys* | *cygwin* | *solaris* )
+                XSPICEDLLIBS=""
+                ;;
+            * )
+                XSPICEDLLIBS="-ldl"
+                ;;
+        esac
+    fi
+else
     VIS_CFLAGS=""
-    AC_MSG_RESULT([X-Spice features included])
-    AC_DEFINE([XSPICE], [1], [The xspice enhancements])
+    AC_MSG_RESULT([XSPICE features included])
+    AC_DEFINE([XSPICE], [1], [The XSPICE enhancements])
     case $host_os in
         *mingw* | *msys* )
             AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
@@ -1151,29 +1164,19 @@ if test "x$enable_xspice" = xyes; then
     AC_CHECK_FUNCS([modf])
     AC_CHECK_HEADERS([libintl.h malloc.h])
     AC_SUBST([VIS_CFLAGS])
-else
-    XSPICEINIT="*"
-    if test "x$enable_osdi" = xyes; then\
-        case $host_os in
-            *mingw* | *msys* | *cygwin* | *solaris* )
-                XSPICEDLLIBS=""
-                ;;
-            * )
-                XSPICEDLLIBS="-ldl"
-                ;;
-        esac
-    fi
 fi
 
 AC_SUBST([XSPICEINIT])
 AC_SUBST([XSPICEDLLIBS])
 
-AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
+AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes || test "x$enable_xspice" = x])
 
 AM_CONDITIONAL([SHORT_CHECK_WANTED], [test "x$enable_shortcheck" = xyes])
 
 
-if test "x$enable_osdi" = xyes; then
+if test "x$enable_osdi" = xno; then
+    AC_MSG_RESULT([OSDI interface disabled])
+else
     AC_DEFUN([AX_CHECK_COMPILE_FLAG],
     [AC_PREREQ(2.64)dnl for _AC_LANG_PREFIX and AS_VAR_IF
     AS_VAR_PUSHDEF([CACHEVAR],[ax_cv_check_[]_AC_LANG_ABBREV[]flags_$4_$1])dnl
@@ -1201,7 +1204,7 @@ if test "x$enable_osdi" = xyes; then
     AC_DEFINE([OSDI], [1], [The OSDI enhancements])
 fi
 
-AM_CONDITIONAL([OSDI_WANTED], [test "x$enable_osdi" = xyes])
+AM_CONDITIONAL([OSDI_WANTED], [test "x$enable_osdi" != xno])
 
 # Add CIDER enhancements to ngspice.
 if test "x$enable_cider" = xyes; then
@@ -1252,10 +1255,10 @@ fi
 #  ----  Default: disabled.                                     ----
 #  ----  Hope to see in the future readline replacement.        ----
 
-if test "x$with_readline" = x  ||  test "x$with_readline" = xno ; then
+if test "x$with_readline" = xno ; then
     AC_MSG_RESULT([GNU readline disabled.])
 else
-    if test "x$with_readline" = xyes; then
+    if test "x$with_readline" = x || test "x$with_readline" = xyes ; then
         if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
             AC_MSG_RESULT([Checking for readline:])
             AC_CHECK_HEADERS([readline/readline.h readline/history.h],
@@ -1318,13 +1321,15 @@ AC_ARG_ENABLE([openmp],
     [AS_HELP_STRING([--enable-openmp], [Use OpenMP parallel processing])])
 
 # Add OpenMP to ngspice.
-: ${enable_openmp:=no}
+: ${enable_openmp:=yes}
 m4_ifdef([AC_OPENMP], [AC_OPENMP])
 
-if test "x$enable_openmp" = xyes; then
+if test "x$enable_openmp" = xyes || test "x$enable_openmp" = x ; then
     AC_DEFINE([USE_OMP], [1], [OpenMP parallel processing])
     CFLAGS="$CFLAGS $OPENMP_CFLAGS"
     AC_MSG_RESULT([OpenMP feature enabled])
+else
+    AC_MSG_RESULT([OpenMP feature disabled])
 fi
 
 # Output Files
