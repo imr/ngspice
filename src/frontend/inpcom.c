@@ -8476,8 +8476,8 @@ static void inp_check_syntax(struct card *deck)
         controlled_exit(EXIT_BAD);
     }
 
-
     /* When '.probe alli' is set, disable auto bridging and set a flag */
+    cp_remvar("probe_alli_given");
     for (card = deck; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".probe", cut_line) && search_plain_identifier(cut_line, "alli")) {
