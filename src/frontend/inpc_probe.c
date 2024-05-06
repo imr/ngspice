@@ -396,7 +396,7 @@ void inp_probe(struct card* deck)
                             tfree(strnode1);
                             tfree(strnode2);
                             tmpcard1 = deck->nextcard;
-                            tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
+                            tmpcard1 = insert_new_line(tmpcard1, newline, 0, tmpcard1->linenum_orig, tmpcard1->linesource);
                         }
                         continue;
                     }
@@ -431,7 +431,7 @@ void inp_probe(struct card* deck)
                     allsaves = wl_cons(nodesaves, allsaves);
                     tfree(strnode1);
                     tfree(strnode2);
-                    tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
+                    tmpcard1 = insert_new_line(tmpcard1, newline, 0, tmpcard1->linenum_orig, tmpcard1->linesource);
                     continue;
                 }
                 /* node containing ':' 
@@ -584,7 +584,7 @@ void inp_probe(struct card* deck)
                         char *newline = tprintf("Ediff%d_%s_%s vd_%s:%s_%s:%s 0 %s %s 1", ee, instname1, instname2, instname1, nodename1, instname2, nodename2, strnode1, strnode2);
                         char* nodesaves = tprintf("vd_%s:%s_%s:%s", instname1, nodename1, instname2, nodename2);
                         allsaves = wl_cons(nodesaves, allsaves);
-                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
+                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, tmpcard1->linenum_orig, tmpcard1->linesource);
                         tfree(strnode1);
                         tfree(strnode2);
                         tfree(nodename1);
@@ -706,7 +706,7 @@ void inp_probe(struct card* deck)
                         char* newline = tprintf("Ediff%d_%s vd_%s:%s:%s 0 %s %s 1", ee, instname1, instname1, nodename1, nodename2, strnode1, strnode2);
                         char* nodesaves = tprintf("vd_%s:%s:%s", instname1, nodename1, nodename2);
                         allsaves = wl_cons(nodesaves, allsaves);
-                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, card->linenum_orig, card->linesource);
+                        tmpcard1 = insert_new_line(tmpcard1, newline, 0, tmpcard1->linenum_orig, tmpcard1->linesource);
                         tfree(strnode1);
                         tfree(strnode2);
                         tfree(nodename1);
@@ -790,8 +790,7 @@ void inp_probe(struct card* deck)
 
                     tfree(tmpcard->line);
                     tmpcard->line = newline;
-
-                    tmpcard = insert_new_line(tmpcard, vline, 0, card->linenum_orig, card->linesource);
+                    tmpcard = insert_new_line(tmpcard, vline, 0, tmpcard->linenum_orig, tmpcard->linesource);
 
                     tfree(strnode2);
                     tfree(newnode);
@@ -845,8 +844,7 @@ void inp_probe(struct card* deck)
 
                     tfree(tmpcard->line);
                     tmpcard->line = newline;
-
-                    tmpcard = insert_new_line(tmpcard, vline, 0, card->linenum_orig, card->linesource);
+                    tmpcard = insert_new_line(tmpcard, vline, 0, tmpcard->linenum_orig, tmpcard->linesource);
 
                     char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
                     allsaves = wl_cons(nodesaves, allsaves);
