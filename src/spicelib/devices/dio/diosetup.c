@@ -99,7 +99,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(model->DIOreverseKneeCurrentGiven) {
             if (model->DIOreverseKneeCurrent < ckt->CKTepsmin) {
                 model->DIOreverseKneeCurrentGiven = FALSE;
-                printf("Warning: IKK too small - model effect disabled!\n");
+                printf("Warning: IKR too small - model effect disabled!\n");
             }
         }
         if(!model->DIObrkdEmissionCoeffGiven) {
@@ -112,7 +112,11 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOtlevc = 0;
         }
         if(!model->DIOactivationEnergyGiven) {
-            model->DIOactivationEnergy = 1.11;
+            if(model->DIOtlev == 2) {
+                model->DIOactivationEnergy = 1.16;
+            } else {
+                model->DIOactivationEnergy = 1.11;
+            }
         }
         if(!model->DIOfirstBGcorrFactorGiven) {
             model->DIOfirstBGcorrFactor = 7.02e-4;
