@@ -1433,11 +1433,15 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 char* y_resolved = inp_pathresolve_at(y, dir_name);
                 char* y_dir_name;
                 FILE* newfp;
+                static char oldpath[512];
 
                 if (!y_resolved) {
-                    fprintf(cp_err, "Error: Could not find include file %s\n",
-                        y);
-                    controlled_exit(EXIT_FAILURE);
+                    /* try again with most recent .include path */
+                    y_resolved = inp_pathresolve_at(y, oldpath);
+                    if (!y_resolved) {
+                        fprintf(cp_err, "Error: Could not find include file %s\n", y);
+                        controlled_exit(EXIT_FAILURE);
+                    }
                 }
 
                 newfp = fopen(y_resolved, "r");
@@ -1456,7 +1460,14 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     .cc; /* read stuff in include file into
                             netlist */
 
-                tfree(y_dir_name);
+                strncpy(oldpath, y_dir_name, 511);
+
+                /* if we don't have dir_name, e.g. when the netlist is loaded via
+                circbyline, then set dir_name to first .include path found. */
+                if (dir_name)
+                    tfree(y_dir_name);
+                else
+                    dir_name = y_dir_name;
                 tfree(y_resolved);
 
                 (void)fclose(newfp);
