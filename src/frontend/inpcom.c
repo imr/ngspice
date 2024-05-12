@@ -8552,7 +8552,7 @@ static void inp_check_syntax(struct card *deck)
                 }
             }
             // nesting may be critical if params are involved
-            if (nesting_once && check_subs > 0 && strchr(cut_line, '=')) {
+            if (ft_ngdebug && nesting_once && check_subs > 0 && strchr(cut_line, '=')) {
                 fprintf(cp_err,
                     "\nWarning: Nesting of subcircuits with parameters "
                     "is only marginally supported!\n\n");
