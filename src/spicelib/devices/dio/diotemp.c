@@ -210,8 +210,6 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     here->DIOtDepSWCap=model->DIOdepletionSWcapCoeff*
             here->DIOtJctSWPot;
     /* and Vcrit */
-    vte=model->DIOemissionCoeff*vt;
-
     here->DIOtVcrit = vte * log(vte/(CONSTroot2*here->DIOtSatCur));
 
     /* limit junction potential to max of 1/FC */
