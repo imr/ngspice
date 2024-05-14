@@ -128,6 +128,8 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                                 /* linear region */
                                 alpha = 1.0 - (vds*inst->MOS1mode/(model->MOS1type*inst->MOS1vdsat));
                             }
+                        } else {
+                            alpha = 0.0;
                         }
                         beta = inst->MOS1tTransconductance * inst->MOS1m *
                                    inst->MOS1w/(inst->MOS1l - 2 * model->MOS1latDiff);
