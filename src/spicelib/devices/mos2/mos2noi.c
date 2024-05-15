@@ -117,12 +117,13 @@ MOS2noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                                 /* linear region */
                                 alpha = 1.0 - (vds*inst->MOS2mode/(model->MOS2type*inst->MOS2vdsat));
                             }
-                        } else {
-                            alpha = 0.0;
-                        }
-                        beta = inst->MOS2tTransconductance * inst->MOS2m *
+                            beta = inst->MOS2tTransconductance * inst->MOS2m *
                                    inst->MOS2w/(inst->MOS2l - 2 * model->MOS2latDiff);
-                        Sid = 2.0 / 3.0 * beta * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS2gdsnoi;
+                            Sid = 2.0 / 3.0 * beta * vgst * (1.0+alpha+alpha*alpha) / (1.0+alpha) * model->MOS2gdsnoi;
+                        } else {
+                            /* subthreshold region */
+                            Sid = 0.0;
+                        }
                     }
 
                     NevalSrcInstanceTemp( & noizDens[MOS2IDNOIZ], & lnNdens[MOS2IDNOIZ],
