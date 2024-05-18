@@ -377,7 +377,7 @@ static bool del_models(struct vsmodels *vsmodel)
 }
 
 /* Check for double '{', replace the inner '{', '}' by '(', ')'
-   in .subckt or .model (which both may stem from external sources) */
+   in .subckt, .model, or .param (which all three may stem from external sources) */
 static void rem_double_braces(struct card* newcard)
 {
     struct card* card;
@@ -389,7 +389,7 @@ static void rem_double_braces(struct card* newcard)
             slevel++;
         else if (ciprefix(".ends", cut_line))
             slevel--;
-        if (ciprefix(".model", cut_line) || slevel > 0) {
+        if (ciprefix(".model", cut_line) || slevel > 0 || ciprefix(".param", cut_line)) {
             cut_line = strchr(cut_line, '{');
             if (cut_line) {
                 int level = 1;
