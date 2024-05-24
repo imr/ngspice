@@ -143,6 +143,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     char *ch, tmpname[BSIZE_SP];
     bool saveall  = TRUE;
     bool savealli = FALSE;
+    bool savenosub = FALSE;
     char *an_name;
     int initmem;
     /*to resume a run saj
@@ -213,6 +214,13 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     saves[i].used = 1;
                     continue;
                 }
+
+                if (cieq(saves[i].name, "nosub")) {
+                    savenosub = TRUE;
+                    savesused[i] = TRUE;
+                    saves[i].used = 1;
+                    continue;
+                }
 #ifdef SHARED_MODULE
                 /* this may happen if shared ngspice*/
                 if (cieq(saves[i].name, "none")) {
@@ -226,7 +234,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             }
         }
 
-        if (numsaves && !saveall)
+        if (numsaves && !saveall && !savenosub)
             initmem = numsaves;
         else
             initmem = numNames;
@@ -245,7 +253,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
 
         /* Pass 1. */
-        if (numsaves && !saveall) {
+        if (numsaves && !saveall && !savenosub) {
             for (i = 0; i < numsaves; i++) {
                 if (!savesused[i]) {
                     for (j = 0; j < numNames; j++) {
@@ -269,7 +277,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
                     /*  Save the node as long as it's not an internal device node  */
-                    if (!strstr(dataNames[i], "#internal") &&
+                    if (!(savenosub && strchr(dataNames[i], '.')) && /* don't save subckt nodes */
+                        !strstr(dataNames[i], "#internal") &&
                         !strstr(dataNames[i], "#source") &&
                         !strstr(dataNames[i], "#drain") &&
                         !strstr(dataNames[i], "#collector") &&

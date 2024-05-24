@@ -65,30 +65,22 @@ settrace(wordlist *wl, int what, char *name)
         char *s = cp_unquote(wl->wl_word);
         char *db_nodename1 = NULL;
         char db_type = 0;
-        if (eq(s, "all")) {
+        if (eq(s, "all") || eq(s, "nosub")) {
             switch (what) {
             case VF_PRINT:
                 db_type = DB_TRACEALL;
                 break;
- /*         case VF_PLOT:
-                db_type = DB_IPLOTALL;
-                break; */
             case VF_ACCUM:
-                /* db_type = DB_SAVEALL; */
                 db_nodename1 = copy(s);
                 db_type = DB_SAVE;
                 break;
             }
             tfree(s);
-            /* wrd_chtrace(NULL, TRUE, what); */
         } else {
             switch (what) {
             case VF_PRINT:
                 db_type = DB_TRACENODE;
                 break;
-/*          case VF_PLOT:
-                db_type = DB_IPLOT;
-                break; */
             case VF_ACCUM:
                 db_type = DB_SAVE;
                 break;
@@ -98,7 +90,6 @@ settrace(wordlist *wl, int what, char *name)
             tfree(s);
             if (!db_nodename1)  /* skip on error */
                 continue;
-            /* wrd_chtrace(s, TRUE, what); */
         }
 
         /* Don't save a nodename more than once */
