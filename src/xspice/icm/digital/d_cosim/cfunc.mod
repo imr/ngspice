@@ -169,7 +169,8 @@ static void *cosim_dlopen(const char *fn)
  * Out-of-range values for bit_num must be ignored.
  */
 
-void accept_output(struct co_info *pinfo, unsigned int bit_num, Digital_t *val)
+static void accept_output(struct co_info *pinfo,
+                          unsigned int bit_num, Digital_t *val)
 {
     struct instance *ip = (struct instance *)pinfo; // First member.
     Digital_t       *out_vals;                      // XSPICE rotating memory.
@@ -448,14 +449,14 @@ void ucm_d_cosim(ARGS)
 
         /* Initialise outputs. Done early in case of failure. */
 
-        outs = PORT_NULL(d_out) ? 0 : PORT_SIZE(d_out);
+        outs = PORT_NULL(d_out) ? 0 : (unsigned int)PORT_SIZE(d_out);
         for (i = 0; i < outs; ++i) {
             OUTPUT_STATE(d_out[i]) = ZERO;
             OUTPUT_STRENGTH(d_out[i]) = STRONG;
             OUTPUT_DELAY(d_out[i]) = PARAM(delay);
         }
 
-        inouts = PORT_NULL(d_inout) ? 0 : PORT_SIZE(d_inout);
+        inouts = PORT_NULL(d_inout) ? 0 : (unsigned int)PORT_SIZE(d_inout);
         for (i = 0; i < inouts; ++i) {
             OUTPUT_STATE(d_inout[i]) = ZERO;
             OUTPUT_STRENGTH(d_inout[i]) = STRONG;
@@ -495,7 +496,7 @@ void ucm_d_cosim(ARGS)
         } else {
             char **args;
 
-            ip->info.lib_argc = PARAM_SIZE(lib_args);
+            ip->info.lib_argc = (unsigned int)PARAM_SIZE(lib_args);
             args = malloc((ip->info.lib_argc + 1) * sizeof (char *));
             if (args) {
                 for (i = 0; i < ip->info.lib_argc; ++i)
@@ -511,7 +512,7 @@ void ucm_d_cosim(ARGS)
         } else {
             char **args;
 
-            ip->info.sim_argc = PARAM_SIZE(sim_args);
+            ip->info.sim_argc = (unsigned int)PARAM_SIZE(sim_args);
             args = malloc((ip->info.sim_argc + 1) * sizeof (char *));
             if (args) {
                 for (i = 0; i < ip->info.sim_argc; ++i)
@@ -527,7 +528,7 @@ void ucm_d_cosim(ARGS)
 
         /* Check lengths. */
 
-        ins = PORT_NULL(d_in) ? 0 : PORT_SIZE(d_in);
+        ins = PORT_NULL(d_in) ? 0 : (unsigned int)PORT_SIZE(d_in);
         if (ins != ip->info.in_count) {
             cm_message_printf("Warning: mismatched XSPICE/co-simulator "
 	                      "input counts: %d/%d.",
@@ -548,7 +549,7 @@ void ucm_d_cosim(ARGS)
         /* Create input queue and output buffer. */
 
         ip->q_index = -1;
-        ip->q_length = PARAM(queue_size);
+        ip->q_length = (unsigned int)PARAM(queue_size);
 	ip->in_ports = ins;
 	ip->out_ports = outs;
 	ip->inout_ports = inouts;
@@ -570,13 +571,13 @@ void ucm_d_cosim(ARGS)
 
         /* Allocate XSPICE rotating storage to track changes. */
 
-        cm_event_alloc(0, (ins  + inouts) * sizeof (Digital_t));
-        cm_event_alloc(1, (outs + inouts) * sizeof (Digital_t));
+        cm_event_alloc(0, (int)((ins  + inouts) * sizeof (Digital_t)));
+        cm_event_alloc(1, (int)((outs + inouts) * sizeof (Digital_t)));
 
         /* Declare irreversible. */
 
 	if (PARAM(irreversible) > 0)
-            cm_irreversible(PARAM(irreversible));
+            cm_irreversible((unsigned int)PARAM(irreversible));
         return;
 
         /* Handle malloc failures. */
@@ -595,10 +596,10 @@ void ucm_d_cosim(ARGS)
 
         /* Error state.  Do nothing at all. */
 
-        ports = PORT_NULL(d_out) ? 0 : PORT_SIZE(d_out);
+        ports = PORT_NULL(d_out) ? 0 : (unsigned int)PORT_SIZE(d_out);
         for (i = 0; i < ports; ++i)
             OUTPUT_CHANGED(d_out[i]) = FALSE;
-        ports = PORT_NULL(d_inout) ? 0 : PORT_SIZE(d_inout);
+        ports = PORT_NULL(d_inout) ? 0 : (unsigned int)PORT_SIZE(d_inout);
         for (i = 0; i < ports; ++i)
             OUTPUT_CHANGED(d_inout[i]) = FALSE;
         return;

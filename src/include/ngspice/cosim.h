@@ -69,8 +69,8 @@ struct co_info {
      * are taken from parameters in the .model card.
      */
 
-    int             lib_argc;
-    int             sim_argc;
+    unsigned int    lib_argc;
+    unsigned int    sim_argc;
     const char    * const * const lib_argv;
     const char    * const * const sim_argv;
 

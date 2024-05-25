@@ -65,7 +65,7 @@ static double get_time(struct ng_vvp *ctx)
 
     vpi_get_time(NULL, &now);
     ticks = ((uint64_t)now.high << 32) + now.low;
-    return ticks * ctx->tick_length;
+    return (double)ticks * ctx->tick_length;
 }
 
 /* Arrange for end_advance_cb() to be called in the future. */
@@ -75,8 +75,8 @@ static vpiHandle set_stop(uint64_t length, struct ng_vvp *ctx)
     static struct t_vpi_time now = { .type = vpiSimTime };
     static struct t_cb_data  cbd = { .cb_rtn = next_advance_cb, .time = &now };
 
-    now.low = length;
-    now.high = length >> 32;
+    now.low = (unsigned int)length;
+    now.high = (unsigned int)(length >> 32);
     if (length == 0)
         cbd.reason = cbReadWriteSynch;
     else
@@ -157,7 +157,8 @@ static PLI_INT32 next_advance_cb(struct t_cb_data *cb)
             continue;
         }
 
-        ticks = (ctx->cosim_context->vtime - vl_time)  / ctx->tick_length;
+        ticks = (uint64_t)
+            ((ctx->cosim_context->vtime - vl_time)  / ctx->tick_length);
         if (ticks > 0) {
             DBG("Advancing from %g to %g: %lu ticks\n",
                 vl_time, ctx->cosim_context->vtime, ticks);
@@ -328,7 +329,7 @@ static PLI_INT32 start_cb(struct t_cb_data *cb)
         default:
             continue;
         }
-        pp->bits = vpi_get(vpiSize, item);
+        pp->bits = (uint16_t)vpi_get(vpiSize, item);
         pp->flags = 0;
         pp->position = first ? 0 : pp[-1].position + pp[-1].bits;
         pp->previous.aval = pp->previous.bval = 0;
