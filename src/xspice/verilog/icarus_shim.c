@@ -49,7 +49,8 @@ static void input(struct co_info *pinfo, unsigned int bit, Digital_t *val)
 {
     struct ng_vvp    *ctx = (struct ng_vvp *)pinfo->handle;
     struct ngvp_port *pp;
-    int               count, a, b, dirty;
+    unsigned int      count;
+    int               a, b, dirty;
 
     /* Convert the value. */
 
@@ -116,7 +117,6 @@ static void input(struct co_info *pinfo, unsigned int bit, Digital_t *val)
 static void step(struct co_info *pinfo)
 {
     struct ng_vvp *ctx = (struct ng_vvp *)pinfo->handle;
-    int            i;
 
     /* Let VVP run.  It will stop when it has caught up with SPICE time
      * (pinfo->vtime) or produced output.
@@ -128,17 +128,16 @@ static void step(struct co_info *pinfo)
 
     if (ctx->out_pending) {
         struct ngvp_port *pp;
-        uint32_t          changed, mask;
-        int               limit, i, bit;
+        uint32_t          changed, mask, limit, i, bit;
 
         limit = ctx->outs + ctx->inouts;
         for (i = 0, pp = ctx->ports + ctx->ins; i < limit; ++i, ++pp) {
             if (!(pp->flags & OUT_PENDING))
                 continue;
 
-            pp->flags &= ~OUT_PENDING;
-            changed = (pp->new.aval ^ pp->previous.aval) |
-                      (pp->new.bval ^ pp->previous.bval);
+            pp->flags &= (uint16_t)~OUT_PENDING;
+            changed = (uint32_t)((pp->new.aval ^ pp->previous.aval) |
+                                 (pp->new.bval ^ pp->previous.bval));
             if (changed) {
                 bit = pp->position;
                 mask = 1 << (pp->bits - 1);
@@ -147,10 +146,10 @@ static void step(struct co_info *pinfo)
                         const Digital_t lv_vals[] =
                             { {ZERO, STRONG}, {ONE, STRONG},
                               {ZERO, HI_IMPEDANCE}, {UNKNOWN, STRONG} };
-                        int a, b;
+                        uint32_t a, b;
 
-                        a = (pp->new.aval & mask) != 0;
-                        b = (pp->new.bval & mask) != 0;
+                        a = ((uint32_t)pp->new.aval & mask) != 0;
+                        b = ((uint32_t)pp->new.bval & mask) != 0;
                         a += (b << 1);
                         pinfo->out_fn(pinfo, bit, (Digital_t *)lv_vals + a);
                         changed &= ~mask;
@@ -202,7 +201,7 @@ struct ng_vvp *Get_ng_vvp(void)
 
 /* Thread start function runs the Verilog simulation. */
 
-void *run_vvp(void *arg)
+static void *run_vvp(void *arg)
 {
     static const char * const  fn_names[] = { VVP_FN_0, VVP_FN_1, VVP_FN_2,
                                               VVP_FN_3, VVP_FN_4, 0 };
@@ -233,7 +232,7 @@ void *run_vvp(void *arg)
 
     fns.add_module_path(".");
     file = (pinfo->lib_argc >= 3) ? pinfo->lib_argv[2] : NULL; // VVP log file.
-    fns.init(file, pinfo->sim_argc, (char **)pinfo->sim_argv);
+    fns.init(file, (int)pinfo->sim_argc, (char **)pinfo->sim_argv);
     fns.no_signals();
 
     /* The VPI file will usually be /usr/local/lib/ngspice/ivlng.vpi
