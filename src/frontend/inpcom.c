@@ -122,7 +122,7 @@ static bool has_if = FALSE; /* if we have an .if ... .endif pair */
 static char *readline(FILE *fd);
 int get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct card *deck, bool cs);
-static void inp_stripcomments_line(char *s, bool cs, bool inc);
+static void inp_stripcomments_line(char *s, bool cs);
 static void inp_fix_for_numparam(
         struct names *subckt_w_params, struct card *deck);
 static void inp_remove_excess_ws(struct card *deck);
@@ -1417,7 +1417,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             struct card* newcard;
 
-            inp_stripcomments_line(buffer, FALSE, TRUE);
+            inp_stripcomments_line(buffer, FALSE);
 
             s = skip_non_ws(buffer); /* advance past non-space chars */
 
@@ -1950,47 +1950,6 @@ static char *inp_pathresolve_at(const char *name, const char *dir)
      */
     if (is_absolute_pathname(name) || !dir || !dir[0]) {
         return inp_pathresolve(name);
-    }
-
-    /* this might contain an environmental variable at the front of the string */
-    if (name[0] == '$') {
-        char* s, *tmpnam, *tmpcurr;
-        tmpcurr = tmpnam = copy(name);
-        /* extract env variable, add rest of token to its contents */
-        char *envvar = gettok_char(&tmpcurr, '\\', FALSE, FALSE);
-        if (envvar) {
-            s = getenv(envvar + 1);/* skip '$' */
-            if (s) {
-                cp_vset(s, CP_STRING, envvar + 1);
-                char* newname = tprintf("%s%s", s, tmpcurr);
-                char* const r = inp_pathresolve(newname);
-                tfree(newname);
-                return r;
-            }
-        } else {
-            tmpcurr = tmpnam;
-            envvar = gettok_char(&tmpcurr, '/', FALSE, FALSE);
-        }
-        if (envvar) {
-            s = getenv(envvar + 1);/* skip '$' */
-            if (s) {
-                cp_vset(s, CP_STRING, envvar + 1);
-                char* newname = tprintf("%s%s", s, tmpcurr);
-                char* const r = inp_pathresolve(newname);
-                tfree(newname);
-                return r;
-            }
-        /* no directory separator found, just use the env entry (must include file name) */
-        } else {
-            envvar = tmpnam;
-            s = getenv(envvar + 1);/* skip '$' */
-            if (s) {
-                cp_vset(s, CP_STRING, envvar + 1);
-                char* const r = inp_pathresolve(s);
-                return r;
-            }
-            tfree(envvar);
-        }
     }
 
     if (name[0] == '~' && name[1] == '/') {
@@ -3280,7 +3239,7 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
             found_control = TRUE;
         if (ciprefix(".endc", c->line))
             found_control = FALSE;
-        inp_stripcomments_line(c->line, found_control | cf, FALSE);
+        inp_stripcomments_line(c->line, found_control | cf);
     }
 }
 
@@ -3308,7 +3267,7 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
  character, not as end-of-line comment delimiter, except for that it is
  located at the beginning of a line. If inside of a control section,
  still '$ ' is read a an end-of-line comment delimiter.*/
-static void inp_stripcomments_line(char *s, bool cs, bool inc)
+static void inp_stripcomments_line(char *s, bool cs)
 {
     char c = ' '; /* anything other than a comment character */
     char *d = s;
@@ -3319,12 +3278,6 @@ static void inp_stripcomments_line(char *s, bool cs, bool inc)
     if (*s == '#') {
         *s = '*'; // Convert to widely-recognised form.
         return;
-    }
-
-    if (inc) {
-        d = nexttok(d);
-        if (*d == '$')
-            d = nexttok(d);
     }
 
     /* Look for comments in body of line. */
