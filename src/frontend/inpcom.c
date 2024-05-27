@@ -122,7 +122,7 @@ static bool has_if = FALSE; /* if we have an .if ... .endif pair */
 static char *readline(FILE *fd);
 int get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct card *deck, bool cs);
-static void inp_stripcomments_line(char *s, bool cs);
+static void inp_stripcomments_line(char *s, bool cs, bool inc);
 static void inp_fix_for_numparam(
         struct names *subckt_w_params, struct card *deck);
 static void inp_remove_excess_ws(struct card *deck);
@@ -1417,7 +1417,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             struct card* newcard;
 
-            inp_stripcomments_line(buffer, FALSE);
+            inp_stripcomments_line(buffer, FALSE, TRUE);
 
             s = skip_non_ws(buffer); /* advance past non-space chars */
 
@@ -1942,9 +1942,99 @@ char *inp_pathresolve(const char *name)
 } /* end of function inp_pathresolve */
 
 
-
+/* Figure out if name starts with: environmental variables (replace them),
+   ~/ (expand the tilde), absolute path name, all others and return the
+   path, if file exists. */
 static char *inp_pathresolve_at(const char *name, const char *dir)
 {
+    /* the string might contain one or two environmental variables at its front:
+    .lib $ENV1/filename
+    .lib $ENV1\$ENV2\filename
+    .lib $ENV1
+    .lib $ENV1/$ENV2
+    */
+    if (name[0] == '$') {
+        char* s, * s1 = NULL, * tmpnam, * tmpcurr, * tmpcurr2 = NULL;
+        char* envvar, * envvar2 = NULL;
+        bool secenv = FALSE;
+        tmpcurr = tmpnam = copy(name);
+        while (*tmpcurr != '\0') {
+            if (*tmpcurr == '\\')
+                *tmpcurr = '/';
+            tmpcurr++;
+        }
+        tmpcurr = tmpnam;
+        /* extract env variable, add rest of token to its contents */
+        /* MS Windows directory separators */
+        envvar = gettok_char(&tmpcurr, '/', FALSE, FALSE);
+        if (envvar && ciprefix("/$", tmpcurr)) {
+            tmpcurr2 = tmpcurr + 1;
+            envvar2 = gettok_char(&tmpcurr2, '/', FALSE, FALSE);
+            secenv = TRUE;
+        }
+        if (envvar && !secenv) {
+            s = getenv(envvar + 1);
+            if (s) {
+                cp_vset(s, CP_STRING, envvar + 1);
+                char* newname = tprintf("%s%s", s, tmpcurr);
+                char* const r = inp_pathresolve(newname);
+                tfree(newname);
+                tfree(envvar);
+                return r;
+            }
+            fprintf(stderr, "Error: Cannot read environmental variable %s\n", envvar + 1);
+            controlled_exit(EXIT_BAD);
+        }
+        else if (envvar && envvar2) {
+            s = getenv(envvar + 1);
+            s1 = getenv(envvar2 + 1);
+            if (s && s1) {
+                char* newname = tprintf("%s/%s%s", s, s1, tmpcurr2);
+                char* const r = inp_pathresolve(newname);
+                tfree(newname);
+                tfree(envvar);
+                tfree(envvar2);
+                return r;
+            }
+            if (!s)
+                fprintf(stderr, "Error: Cannot read environmental variable %s\n", envvar + 1);
+            if (!s1)
+                fprintf(stderr, "Error: Cannot read environmental variable %s\n", envvar2 + 1);
+            controlled_exit(EXIT_BAD);
+        }
+        else if (envvar && !envvar2 && secenv) {
+            s = getenv(envvar + 1);/* skip "$" */
+            envvar2 = copy(tmpcurr);
+            s1 = getenv(envvar2 + 2);/* skip "$/" */
+            if (s && s1) {
+                char* newname = tprintf("%s/%s", s, s1);
+                char* const r = inp_pathresolve(newname);
+                tfree(newname);
+                tfree(envvar);
+                tfree(envvar2);
+                return r;
+            }
+            if (!s)
+                fprintf(stderr, "Error: Cannot read environmental variable %s\n", envvar + 1);
+            if (!s1)
+                fprintf(stderr, "Error: Cannot read environmental variable %s\n", envvar2 + 1);
+            controlled_exit(EXIT_BAD);
+        }
+
+        /* no directory separator found, just use the env entry (must include file name) */
+        envvar = tmpnam;
+        s = getenv(envvar + 1);/* skip '$' */
+        if (s) {
+            cp_vset(s, CP_STRING, envvar + 1);
+            char* const r = inp_pathresolve(s);
+            tfree(envvar);
+            return r;
+        }
+        fprintf(stderr, "Error: Cannot read environmental variable %s\n", envvar + 1);
+        tfree(envvar);
+        controlled_exit(EXIT_BAD);
+    }
+
     /* if name is an absolute path name,
      *   or if we haven't anything to prepend anyway
      */
@@ -1952,6 +2042,7 @@ static char *inp_pathresolve_at(const char *name, const char *dir)
         return inp_pathresolve(name);
     }
 
+    /* expand "~/" */
     if (name[0] == '~' && name[1] == '/') {
         char * const y = cp_tildexpand(name);
         if (y) {
@@ -3239,7 +3330,7 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
             found_control = TRUE;
         if (ciprefix(".endc", c->line))
             found_control = FALSE;
-        inp_stripcomments_line(c->line, found_control | cf);
+        inp_stripcomments_line(c->line, found_control | cf, FALSE);
     }
 }
 
@@ -3267,7 +3358,7 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
  character, not as end-of-line comment delimiter, except for that it is
  located at the beginning of a line. If inside of a control section,
  still '$ ' is read a an end-of-line comment delimiter.*/
-static void inp_stripcomments_line(char *s, bool cs)
+static void inp_stripcomments_line(char *s, bool cs, bool inc)
 {
     char c = ' '; /* anything other than a comment character */
     char *d = s;
@@ -3278,6 +3369,12 @@ static void inp_stripcomments_line(char *s, bool cs)
     if (*s == '#') {
         *s = '*'; // Convert to widely-recognised form.
         return;
+    }
+
+    if (inc) {
+        d = nexttok(d);
+        if (*d == '$')
+            d = nexttok(d);
     }
 
     /* Look for comments in body of line. */
