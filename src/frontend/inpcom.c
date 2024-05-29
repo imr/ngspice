@@ -1949,7 +1949,7 @@ static char *inp_pathresolve_at(const char *name, const char *dir)
 {
     /* the string might contain one or two environmental variables at its front:
     .lib $ENV1/filename
-    .lib $ENV1\$ENV2\filename
+    .lib $ENV1\$ENV2\dirs\filename
     .lib $ENV1
     .lib $ENV1/$ENV2
     */
