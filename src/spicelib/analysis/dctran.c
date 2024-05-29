@@ -256,7 +256,8 @@ DCtran(CKTcircuit *ckt,
             fprintf(stdout,"\n");
             fflush(stdout);
         } else if (ckt->CKTmode & MODEUIC && !ft_ngdebug) {
-            fprintf(stdout,"Using transient initial conditions\n");
+            fprintf(stdout,"Operating point simulation skipped by 'uic',\n");
+            fprintf(stdout,"  now using transient initial conditions.\n");
             fflush(stdout);
         } else if (!ft_noacctprint && !ft_noinitprint) {
             fprintf(stdout,"\nInitial Transient Solution\n");
