@@ -6658,6 +6658,44 @@ static void inp_compat(struct card *card)
             tfree(node2);
             tfree(equation);
         }
+        /* K1 L1 L2 L3 1 ->
+           K11 L1 L2 1
+           K12 L1 L3 1
+           K13 L2 L3 1
+         */
+        else if (*curr_line == 'k') {
+            int tokcount = 0;
+            char* kinst, **ltok, *couple;
+            cut_line = curr_line;
+            /* get number of tokens */
+            while (*cut_line != '\0') {
+                cut_line = nexttok(cut_line);
+                tokcount++;
+            }
+            /* number of inductors */
+            tokcount -= 2;
+            /* replacement of line by two-inductor equivalents */
+            if (tokcount > 2) {
+                cut_line = curr_line;
+                kinst = gettok(&cut_line);
+                ltok = TMALLOC(char*, tokcount);
+                for (i = 0; i < tokcount; i++) {
+                    ltok[i] = gettok(&cut_line);
+                }
+                couple = gettok(&cut_line);
+                *curr_line = '*';
+                for (i = 0; i < tokcount - 1; i++)
+                    for (ii = i + 1; ii < tokcount; ii++) {
+                        char* newline = tprintf("%s_%d_%d %s %s %s", kinst, i + 1, ii + 1, ltok[i], ltok[ii], couple);
+                        card = insert_new_line(card, newline, (int)i + 1, currlinenumber, card->linesource);
+                    }
+                tfree(kinst);
+                tfree(couple);
+                for (i = 0; i < tokcount; i++) {
+                    tfree(ltok[i]);
+                }
+            }
+        }
         /* .probe -> .save
            .print, .plot, .save, .four,
            An ouput vector may be replaced by the following:
