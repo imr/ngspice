@@ -86,8 +86,7 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
    }
 #endif
 
-    Current_parse_line =
-        current->linenum_orig ? current->linenum_orig : current->linenum;
+    Current_parse_line = current->linenum_orig;
     Sourcefile = current->linesource;
 
 	c = *(current->line);
