@@ -39,13 +39,15 @@ char *dlerror(void) // Lifted from dev.c.
     if (rc == 0) { /* FormatMessage failed */
         (void) sprintf(errstr, errstr_fmt, (unsigned long) GetLastError());
     } else {
-        snprintf(errstr, sizeof errstr, "%s", lpMsgBuf);
+        snprintf(errstr, sizeof errstr, "%s", (char *)lpMsgBuf);
         LocalFree(lpMsgBuf);
     }
     return errstr;
 } /* end of function dlerror */
 #else
 #include <dlfcn.h>
+#include <unistd.h>
+#include <fcntl.h>
 #endif
 
 #include "ngspice/cosim.h"
@@ -107,6 +109,60 @@ static void callback(ARGS, Mif_Callback_Reason_t reason)
         free(ip);
         STATIC_VAR(cosim_instance) = NULL;
     }
+}
+
+/* A utility function used to open static libraries, trying an installation
+ * directory and different file extenstions.
+ */
+
+#if defined (__MINGW32__) || defined (__CYGWIN__) || defined (_MSC_VER)
+#include <io.h>
+
+static const char *exts[] = { "", ".so", ".DLL", NULL};
+#define CMPFN _stricmp // Ignores case.
+#define TESTFN(f) (_access(f, 4) == 0) // Checks for read access.
+#define SLIBFILE "DLL"
+#ifndef NGSPICELIBDIR
+#define NGSPICELIBDIR "C:\\Spice64\\lib\\ngspice" // Defined by configure?
+#endif
+
+#else
+
+static const char *exts[] = { "", ".so", NULL};
+#define CMPFN strcmp
+#define TESTFN(f) (access(f, R_OK) == 0)
+#define SLIBFILE "shared library"
+#endif
+#define FLAGS  (RTLD_GLOBAL | RTLD_NOW)
+
+static void *cosim_dlopen(const char *fn)
+{
+    const char **xp;
+    size_t       l1, l2;
+    void        *handle;
+    char         path[2048];
+
+    l1 = strlen(fn);
+    for (xp = exts; *xp; xp++) {
+        l2 = strlen(*xp);
+        if (l2 && l1 > l2 && !CMPFN(*xp, fn + l1 - l2))
+            continue; // Extension already present
+        snprintf(path, sizeof path, "%s%s", fn, *xp);
+        handle = dlopen(path, FLAGS);
+        if (handle)
+            return handle;
+        if (TESTFN(path))       // File exists.
+            break;
+        snprintf(path, sizeof path,  NGSPICELIBDIR "/%s%s", fn, *xp);
+        handle = dlopen(path, FLAGS);
+        if (handle)
+            return handle;
+        if (TESTFN(path))
+            break;
+    }
+
+    fprintf(stderr, "Cannot open " SLIBFILE " %s: %s\n", path, dlerror());
+    return NULL;
 }
 
 /* Function called when a co-simulator output changes.
@@ -409,11 +465,9 @@ void ucm_d_cosim(ARGS)
         /* Load the shared library containing the co-simulator. */
 
         fn = PARAM(simulation);
-        handle = dlopen(fn, RTLD_GLOBAL | RTLD_NOW);
+        handle = cosim_dlopen(fn);
         if (!handle) {
-            cm_message_send("Failed to load simulation binary. "
-                            "Try setting LD_LIBRARY_PATH.");
-            cm_message_send(dlerror());
+            cm_message_send("d_cosim failed to load simulation binary.");
             return;
         }
         ifp = (void (*)(struct co_info *))dlsym(handle, "Cosim_setup");
@@ -432,6 +486,7 @@ void ucm_d_cosim(ARGS)
         ip->so_handle = handle;
         ip->info.vtime = 0.0;
         ip->info.out_fn = accept_output;
+        ip->info.dlopen_fn = cosim_dlopen;
         CALLBACK = callback;
 
 	if (PARAM_NULL(lib_args)) {
