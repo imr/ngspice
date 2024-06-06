@@ -285,15 +285,10 @@ void Cosim_setup(struct co_info *pinfo)
     if (pinfo->lib_argc > 0 && pinfo->lib_argv[0][0]) // Explicit path to VVP?
         file = (char *)pinfo->lib_argv[0];
     else //libvvp is assumed to be in the OS search path.
-#if defined(__MINGW32__) || defined(_MSC_VER)
-        file = "libvvp.DLL";
-#else
-        file = "libvvp.so";
-#endif
-    context->vvp_handle = dlopen(file, RTLD_GLOBAL | RTLD_NOW);
+        file = "libvvp";
+    context->vvp_handle = pinfo->dlopen_fn(file);
     if (!context->vvp_handle) {
-        fprintf(stderr, "Icarus shim failed to load VVP library: %s.\n",
-                dlerror());
+        fprintf(stderr, "Icarus shim failed to load VVP library\n");
         abort();
     }
 

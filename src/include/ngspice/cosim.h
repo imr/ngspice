@@ -62,7 +62,7 @@ struct co_info {
 
     void          (*out_fn)(struct co_info *, unsigned int, Digital_t *);
     void           *handle;        // Co-simulator's private handle
-    volatile double          vtime;         // Time in the co-simulation.
+    volatile double vtime;         // Time in the co-simulation.
     Cosim_method    method;        // May be set in Cosim_setup;
 
     /* Arguments for the co-simulator shim and the simulation itself
@@ -73,6 +73,10 @@ struct co_info {
     int             sim_argc;
     const char    * const * const lib_argv;
     const char    * const * const sim_argv;
+
+    /* Utility function for access to dynamic libraries. */
+
+    void         *(*dlopen_fn)(const char *fn);
 };
 
 extern void  Cosim_setup(struct co_info *pinfo); // This must exist.
