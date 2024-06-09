@@ -351,14 +351,27 @@ PTpwl(double arg, void *data)
   int k0 = 0;
   int k1 = thing->n/2 - 1;
 
-  while(k1-k0 > 1) {
-    int k = (k0+k1)/2;
-    if(thing->vals[2*k] > arg)
-      k1 = k;
-    else
-      k0 = k;
+  /* monotonically increasing abscissa */
+  if (thing->vals[0] < thing->vals[2]) {
+      while (k1 - k0 > 1) {
+          int k = (k0 + k1) / 2;
+          if (thing->vals[2 * k] > arg)
+              k1 = k;
+          else
+              k0 = k;
+      }
   }
-
+  /* monotonically decreasing abscissa */
+  else {
+      while (k1 - k0 > 1) {
+          int k = (k0 + k1) / 2;
+          if (thing->vals[2 * k] < arg)
+              k1 = k;
+          else
+              k0 = k;
+      }
+  }
+  /* interpolate the ordinate */
   y = thing->vals[2*k0+1] +
     (thing->vals[2*k1+1] - thing->vals[2*k0+1]) *
     (arg - thing->vals[2*k0]) / (thing->vals[2*k1] - thing->vals[2*k0]);
