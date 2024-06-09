@@ -24,7 +24,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_norefprint = FALSE, ft_skywaterpdk = FALSE;
-bool ft_ngdebug = FALSE, ft_nginfo = FALSE, ft_stricterror = FALSE;
+bool ft_ngdebug = FALSE, ft_nginfo = FALSE, ft_stricterror = FALSE, ft_spiniterror = FALSE;
 
 static void setdb(char *str);
 static struct variable *cp_enqvec_as_var(const char *vec_name,
@@ -327,6 +327,11 @@ cp_usrset(struct variable *var, bool isset)
         ft_strictnumparse = isset;
     } else if (eq(var->va_name, "strict_errorhandling")) {
         ft_stricterror = isset;
+        if (ft_ngdebug)
+            fprintf(stdout, "Note: strict_errorhandling is set\n");
+        /* Immediately bail out when spinit error has occured */
+        if (ft_spiniterror)
+            controlled_exit(EXIT_BAD);
     } else if (eq(var->va_name, "rawfileprec")) {
         if ((var->va_type == CP_BOOL) && (isset == FALSE))
             raw_prec = -1;
