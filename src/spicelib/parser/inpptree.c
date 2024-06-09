@@ -1078,13 +1078,31 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
         fprintf(stderr, "  (%lf %lf)\n", data->vals[i], data->vals[i+1]);
 #endif
 
-    for (i = 2 ; i < data->n ; i += 2)
-        if(data->vals[i-2] >= data->vals[i]) {
-            fprintf(stderr,
-                "Error: PWL(expr, points...) the abscissa of points "
-                "must be ascending at line %d\nfrom file\n  %s\n", Current_parse_line, Sourcefile);
-            controlled_exit(EXIT_BAD);
-        }
+    /* check for monotonic abscissa */
+    if (data->vals[0] > data->vals[2]) {
+        for (i = 2; i < data->n; i += 2)
+            if (data->vals[i - 2] < data->vals[i]) {
+                fprintf(stderr,
+                    "Error: PWL(expr, points...) the abscissa of points "
+                    "must be descending at line %d\nfrom file\n  %s\n", Current_parse_line, Sourcefile);
+                controlled_exit(EXIT_BAD);
+            }
+    }
+    else if (data->vals[0] < data->vals[2]) {
+        for (i = 2; i < data->n; i += 2)
+            if (data->vals[i - 2] > data->vals[i]) {
+                fprintf(stderr,
+                    "Error: PWL(expr, points...) the abscissa of points "
+                    "must be ascending at line %d\nfrom file\n  %s\n", Current_parse_line, Sourcefile);
+                controlled_exit(EXIT_BAD);
+            }
+    }
+    else {
+        fprintf(stderr,
+            "Error: PWL(expr, points...) the abscissa of points "
+            "must be monotonic at line %d\nfrom file\n  %s\n", Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
+    }
 
     /* strip all but the first arg,
      *   and attach the rest as opaque data to the INPparseNode
