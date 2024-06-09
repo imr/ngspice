@@ -24,6 +24,7 @@ static char* get_terminal_name(char* element, char* numberstr, NGHASHPTR instanc
 static char* get_terminal_number(char* element, char* numberstr);
 static int setallvsources(struct card* tmpcard, NGHASHPTR instances, char* instname, int numnodes, bool haveall, bool power);
 
+static int check_for_nodes(char* instance, int numnodes);
 
 /* Find any line starting with .probe: assemble all parameters like
    <empty>     add V(0) current measure sources to all device nodes in addition to .save all
@@ -255,6 +256,12 @@ void inp_probe(struct card* deck)
                 numnodes = 2;
             else
                 numnodes = get_number_terminals(card->line);
+
+            if (check_for_nodes(card->line, numnodes)) {
+                fprintf(stderr, "Error: Not enough tokens in line %d\n%s\n", card->linenum_orig, card->line);
+                fprintf(stderr, "    Please correct your input file\n");
+                controlled_exit(EXIT_BAD);
+            }
 
             char* thisline = curr_line;
             prevcard = card;
@@ -744,6 +751,12 @@ void inp_probe(struct card* deck)
                 else
                     numnodes = get_number_terminals(thisline);
 
+                if (check_for_nodes(tmpcard->line, numnodes)) {
+                    fprintf(stderr, "Error: Not enough tokens in line %d\n%s\n", tmpcard->linenum_orig, tmpcard->line);
+                    fprintf(stderr, "    Please correct your input file\n");
+                    controlled_exit(EXIT_BAD);
+                }
+
                 /* skip ',' */
                 if (*tmpstr == ',')
                     tmpstr++;
@@ -882,6 +895,12 @@ void inp_probe(struct card* deck)
                     fprintf(stderr, "Warning: Power mesasurement not available,\n   .probe %s will be ignored\n", wltmp->wl_word);
                     tfree(instname);
                     continue;
+                }
+
+                if (check_for_nodes(tmpcard->line, numnodes)) {
+                    fprintf(stderr, "Error: Not enough tokens in line %d\n%s\n", tmpcard->linenum_orig, tmpcard->line);
+                    fprintf(stderr, "    Please correct your input file\n");
+                    controlled_exit(EXIT_BAD);
                 }
 
                 int err = 0;
@@ -1434,4 +1453,18 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
     ds_free(&Bpowerline);
     ds_free(&Bpowersave);
     return err;
+}
+
+/* check if there are enough tokens in an instance line */
+static int check_for_nodes(char* instance, int numnodes) {
+    int i;
+    char* tmpinst = instance;
+    tmpinst = nexttok(tmpinst); /* instance name */
+    for (i = 0; i < numnodes; i++) {
+        tmpinst = nexttok(tmpinst);
+        if (!tmpinst || *tmpinst == '\0') {
+            return 1;;
+        }
+    }
+    return 0;
 }
