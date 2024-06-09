@@ -918,10 +918,7 @@ struct card *pspice_compat(struct card *oldcard)
                 fprintf(stderr, "Error: Missing token in line %d:\n%s\n",
                         card->linenum, cut_line);
                 fprintf(stderr, "    Please correct the input file\n");
-                if (ft_stricterror)
-                    controlled_exit(1);
-                else
-                    continue;
+                controlled_exit(1);
             }
             char *tctok = search_plain_identifier(ntok, "tc");
             if (tctok) {
