@@ -409,12 +409,15 @@ fi
 
 ####
 ### check for operating system at compile time
+AM_CONDITIONAL([DLIBS_FULLY_RESOLVED], false)
 case $host_os in
 	*mingw* | *msys* )
 		AC_DEFINE([OS_COMPILED], [1], [MINGW for MS Windows])
+		AM_CONDITIONAL([DLIBS_FULLY_RESOLVED], true)
 		;;
 	*cygwin* )
 		AC_DEFINE([OS_COMPILED], [2], [Cygwin for MS Windows])
+		AM_CONDITIONAL([DLIBS_FULLY_RESOLVED], true)
 		;;
 	*freebsd* )
 		AC_DEFINE([OS_COMPILED], [3], [FreeBSD])
@@ -989,10 +992,12 @@ AM_CONDITIONAL([RELPATH], [test "x$enable_relpath" = xyes])
 if test "x$enable_relpath" = xyes; then
     AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo ../bin`"], [Define the directory for executables])
     AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo ../share/ngspice`"], [Define the directory for architecture independent data files])
+    AC_DEFINE_UNQUOTED([NGSPICELIBDIR], ["`echo ../lib/ngspice`"], [Define the directory for architecture-dependent libraries])
     AC_DEFINE([HAS_RELPATH], [1], [rel. path of libraries and scripts])
 else
 AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
+AC_DEFINE_UNQUOTED([NGSPICELIBDIR], ["`echo $dprefix/lib/ngspice`"], [Define the directory for architecture-dependent libraries])
 fi
 
 # Create timestamp, may be overruled by setting env var SOURCE_DATE_EPOCH
@@ -1441,6 +1446,7 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/enh/Makefile
                  src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
+                 src/xspice/verilog/Makefile
                  src/osdi/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile
