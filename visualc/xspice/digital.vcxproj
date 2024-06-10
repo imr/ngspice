@@ -87,8 +87,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <PreBuildEvent>
-      <Message>generate cfunc.c and ifspec.c files</Message>
-      <Command>call .\aux-cfunc.bat $(ProjectName)</Command>
+      <Message>Generate Iverilog support, cfunc.c and ifspec.c files</Message>
+      <Command>call .\aux-digital.bat $(ProjectName)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
