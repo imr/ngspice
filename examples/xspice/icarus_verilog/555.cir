@@ -1,0 +1,10 @@
+Verilog-controlled simple timer.
+
+* This is the model for an RS flip-flop implemented by Icarus Verilog.
+
+.model vlog_ff d_cosim simulation="ivlng" sim_args=["555"]
+
+* The bulk of the circuit is in a shared file.
+
+.include ../verilator/555.shared
+.end

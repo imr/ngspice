@@ -1,0 +1,11 @@
+* Waveform generation by Verilog delays
+*
+
+adut null [ d4 d3 d2 d1 d0 ] ring
+.model ring d_cosim simulation="./delay"
+
+.control
+tran 20u 100u
+plot d4 d3 d2 d1 d0 digitop
+.endc
+.end

@@ -1,0 +1,10 @@
+Simulation of a switched-capacitor SAR ADC with Verilator and d_cosim
+
+* Model line for the digital control implemented by Icarus Verilog.
+
+.model dut d_cosim simulation="ivlng" sim_args=["adc"]
+
+* The bulk of the circuit is in a shared file.
+
+.include ../verilator/adc.shared
+.end
