@@ -1,0 +1,60 @@
+* This file is not intended to be used directly, but by 555.cir.
+* That allows it to be shared by different implemnetations.
+
+* This sub-circuit simulates the NE555 timer IC, with the very simple
+* digital part as a Verilog module.
+
+.subckt NE555 trigger threshold reset control output discharge vcc ground
+
+* Resistor chain
+
+r1 vcc control 5k
+r2 control trigger_ref 5k
+r3 trigger_ref ground 5k
+
+* Two XSPICE ADC instances serve as comparators.
+
+.model comparator adc_bridge(in_low = -0.0001 in_high = 0.0001)
+athresh_comparator [%vd threshold control] [over_threshold] comparator
+atrigger_comparator [%vd trigger_ref trigger] [under_trigger] comparator
+
+* A tiny Verilog module supplies the flip-flop.
+* The model is supplied by the outer circuit file.
+
+averilog [ under_trigger over_threshold reset ] [ output qbar ] vlog_ff
+
+* The discharge transistor and its base resistor.
+
+rbase qbar discharge_base 10k
+qdischarge discharge discharge_base ground npn_transistor
+.model npn_transistor npn
+
+.ends ; Ends subcircuit NE555
+
+
+* The usual 555 oscillator with threshold connected to discharge.
+
+.param vcc=12
+
+X555 trigger_threshold trigger_threshold reset control output discharge vcc 0 ne555
+
+r1 vcc discharge 10k
+r2 discharge trigger_threshold 10k
+Ct trigger_threshold 0 1uF ic=0
+
+* A resistive load forces analog output.
+
+rload output 0 1k
+
+* A voltage source for power.
+
+Vcc vcc 0 {vcc}
+
+* Pulse the Reset signal low for 2uS each 51mS
+
+Vpulse reset 0 PULSE {vcc} 0.2 0 1u 1u 2u 51m
+
+.control
+tran 10u 200m uic
+plot trigger_threshold output x555.under_trigger-3 x555.over_threshold-1.5
+.endc

@@ -1,0 +1,11 @@
+Verilog-controlled simple timer.
+
+* This is the model for an RS flip-flop implemented by Verilator.
+
+.model vlog_ff d_cosim simulation="./555"
+
+* The bulk of the circuit is in a shared file.
+
+.include 555.shared
+.end
+

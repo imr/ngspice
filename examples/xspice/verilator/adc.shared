@@ -1,0 +1,107 @@
+* This file is not intended to be used directly, but by adc.cir.
+* That allows it to be shared by different implemnetations.
+
+* Simulation of a switched-capacitor SAR ADC with Verilator and d_cosim
+
+.subckt sar_adc input vref start valid d5 d4 d3 d2 d1 d0 clk
+
+* A transmission gate connects the input to the capacitor set.
+
+xsample input iin sample vref tgate
+rin iin test_v 1k
+
+* Capacitors and controlling inverters
+
+xb5 test_v vref d5 ccap c=1p
+xb4 test_v vref d4 ccap c={1p / 2}
+xb3 test_v vref d3 ccap c={1p / 4}
+xb2 test_v vref d2 ccap c={1p / 8}
+xb1 test_v vref d1 ccap c={1p / 16}
+xb0 test_v vref d0 ccap c={1p / 32}
+clast test_v 0            {1p / 32}
+
+* An XSPICE ADC bridge functions as a comparator.
+
+acomp [%vd(test_v vref)] [comp] comparator
+.model comparator adc_bridge in_low=0 in_high=0
+
+* The digital portion of the circuit is specified in compiled Verilog.
+* Outputs inverted to cancel the inverter in subcircuit ccap,
+* and produce the correct numerical output value.  The model definition
+* is supplied by the calling circuit file.
+
+adut [ Clk Comp Start] [Sample Valid ~d5 ~d4 ~d3 ~d2 ~d1 ~d0] dut
+.ends // SUBCKT sar_adc
+
+* Some MOS transistors complete the circuit.
+* Models from https://homepages.rpi.edu/~sawyes/AIMSPICE_TutorialManual.pdf
+
+.model p1 pmos
++  level=2 vto=-0.5 kp=8.5e-6 gamma=0.4 phi=0.65 lambda=0.05 xj=0.5e-6
+.model n1 nmos
++  level=2 vto=0.5 kp=24e-6 gamma=0.15 phi=0.65 lambda=0.015 xj=0.5e-6
+
+* Use those for an inverter.
+
+.subckt ainv in out vdd
+mn out in 0 0 n1
+mp out in vdd vdd p1
+.ends
+
+* A transmission gate modelled by a switch.
+
+.subckt mos_tgate a b ctl vdd
+mn a ctl b b n1
+xinv ctl ictl vdd ainv
+mp b ictl a a p1
+.ends
+
+.subckt tgate a b ctl vdd
+switch a b ctl 0 tg
+.model tg sw vt=1.5 ron=2k
+.ends
+
+* The per-bit subcircuit in the adc
+
+.subckt ccap in vcc ctl c=10p
+xinv ctl tail vcc ainv
+cb in tail {c}
+.ends
+
+**** End of the ADC and its subcircuits.  Begin test circuit ****
+
+
+.param vcc=3.3
+vcc vcc 0 {vcc}
+
+* Digital clock signal
+
+aclock 0 clk clock
+.model clock d_osc cntl_array=[-1 1] freq_array=[1Meg 1Meg]
+
+* A simple DAC so that the result may be compared to the input.
+
+r5 d5 sum 2
+r4 d4 sum 4
+r3 d3 sum 8
+r2 d2 sum 16
+r1 d1 sum 32
+r0 d0 sum 64
+
+vamm sum 0 0
+
+* Pulse the Start signal high for 1.3uS each 10uS
+
+Vpulse Start 0 PULSE 0 {vcc} 0.2u 10n 10n 1.3u 10u
+Vtest input 0 PULSE 0 3 0 200u 200u 1u 401u
+
+* The ADC for testing
+
+xtest input vcc start valid d5 d4 d3 d2 d1 d0 clk sar_adc
+
+
+.control
+tran 100n 250u
+plot input xtest.test_v vamm#branch clk/2 start/3 xtest.sample/3 valid
+.endc
+.end
