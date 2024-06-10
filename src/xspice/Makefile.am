@@ -8,17 +8,8 @@ EXTRA_DIST = README examples icm xspice.c .gitignore \
 ## libs.  It is currently compiled manually, last.
 ##SUBDIRS = mif cm enh evt ipc idn icm
 
-SUBDIRS = mif cm enh evt ipc idn cmpp icm
+SUBDIRS = mif cm enh evt ipc idn cmpp icm verilog
 
-initdatadir = $(pkgdatadir)/scripts
-initdata_DATA = verilog/vlnggen
-
-initdata1dir = $(pkgdatadir)/scripts/src
-initdata1_DATA = verilog/verilator_shim.cpp verilog/verilator_main.cpp
-
-initdata2dir = $(pkgdatadir)/scripts/src/ngspice
-initdata2_DATA = ../include/ngspice/cosim.h ../include/ngspice/miftypes.h \
-                 ../include/ngspice/cmtypes.h
 dist-hook:
 	rm -f "$(distdir)/icm/makedefs"
 	rm -f "$(distdir)/icm/GNUmakefile"
