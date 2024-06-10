@@ -1,0 +1,12 @@
+* Waveform generation by PWM in Verilog
+
+adut null [ out ] pwm_sin
+.model pwm_sin d_cosim simulation="ivlng" sim_args = [ "pwm" ]
+
+r1 out smooth 100k
+c1 smooth 0 1u
+.control
+tran 1m 2
+plot out-3.3 smooth
+.endc
+.end
