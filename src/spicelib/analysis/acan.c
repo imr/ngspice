@@ -86,8 +86,17 @@ ACan(CKTcircuit* ckt, int restart)
                 fprintf(stderr, "ERROR: AC startfreq <= 0\n");
                 return E_PARMVAL;
             }
-            double num_steps = floor(fabs(log10(job->ACstopFreq / job->ACstartFreq)) * job->ACnumberSteps);
-            job->ACfreqDelta = exp((log(job->ACstopFreq / job->ACstartFreq)) / num_steps);
+            if (job->ACstopFreq / 10. < job->ACstartFreq) {
+                /* start-stop frequencies less than a decade apart */
+                if (job->ACstopFreq == job->ACstartFreq)
+                    job->ACfreqDelta = 1;
+                else
+                    job->ACfreqDelta = exp(log(10.0) / job->ACnumberSteps);
+            }
+            else {
+                double num_steps = floor(fabs(log10(job->ACstopFreq / job->ACstartFreq)) * job->ACnumberSteps);
+                job->ACfreqDelta = exp((log(job->ACstopFreq / job->ACstartFreq)) / num_steps);
+            }
 
             break;
         case OCTAVE:
