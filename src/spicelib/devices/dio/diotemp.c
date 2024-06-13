@@ -33,11 +33,7 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     double egfet1,arg1,fact1,pbfact1,pbo,gmaold,pboSW,gmaSWold;
     double fact2,pbfact,arg,egfet,gmanew,gmaSWnew;
     double arg1_dT, arg2, arg2_dT;
-    double gclimit;
     double lnTRatio, egfet_dT, arg0, vte_dT, vts_dT, vtt_dT, vtr_dT;
-
-    if (!cp_getvar("DIOgradingCoeffMax", CP_REAL, &gclimit, 0))
-        gclimit = 0.9;
 
     vt = CONSTKoverQ * Temp;
     vte = model->DIOemissionCoeff * vt;
@@ -56,16 +52,6 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     factor = 1.0 + (model->DIOgradCoeffTemp1 * dt)
                  + (model->DIOgradCoeffTemp2 * dt * dt);
     here->DIOtGradingCoeff = model->DIOgradingCoeff * factor;
-
-    /* limit temperature adjusted grading coeff
-     * to max of .9, or set new limit with variable DIOgradingCoeffMax
-     */
-    if(here->DIOtGradingCoeff>gclimit) {
-      SPfrontEnd->IFerrorf (ERR_WARNING,
-            "%s: temperature adjusted grading coefficient too large, limited to %g",
-            here->DIOname, gclimit);
-      here->DIOtGradingCoeff=gclimit;
-    }
 
     /* this part gets really ugly - I won't even try to
      * explain these equations */
@@ -211,23 +197,6 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
             here->DIOtJctSWPot;
     /* and Vcrit */
     here->DIOtVcrit = vte * log(vte/(CONSTroot2*here->DIOtSatCur));
-
-    /* limit junction potential to max of 1/FC */
-    if(here->DIOtDepCap > 1.0) {
-        here->DIOtJctPot=1.0/model->DIOdepletionCapCoeff;
-        here->DIOtDepCap=model->DIOdepletionCapCoeff*here->DIOtJctPot;
-        SPfrontEnd->IFerrorf (ERR_WARNING,
-                "%s: junction potential VJ too large, limited to %f",
-                model->DIOmodName, here->DIOtJctPot);
-    }
-    /* limit sidewall junction potential to max of 1/FCS */
-    if(here->DIOtDepSWCap > 1.0) {
-        here->DIOtJctSWPot=1.0/model->DIOdepletionSWcapCoeff;
-        here->DIOtDepSWCap=model->DIOdepletionSWcapCoeff*here->DIOtJctSWPot;
-        SPfrontEnd->IFerrorf (ERR_WARNING,
-                "%s: junction potential VJS too large, limited to %f",
-                model->DIOmodName, here->DIOtJctSWPot);
-    }
 
     /* and now to compute the breakdown voltage, again, using
      * temperature adjusted basic parameters */
