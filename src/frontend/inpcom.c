@@ -28,6 +28,8 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/fteinp.h"
 #include "numparam/general.h"
 
+#include "com_set.h"
+
 #include <limits.h>
 #include <stdlib.h>
 
@@ -192,6 +194,8 @@ extern void inp_probe(struct card* card);
 #ifndef EXT_ASC
 static void utf8_syntax_check(struct card *deck);
 #endif
+
+int add_to_sourcepath(const char* filepath, const char* path);
 
 struct inp_read_t {
     struct card *cc;
@@ -1279,8 +1283,10 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
     if (intfile)
         sourcelineinfo = copy("circbyline");
-    else
+    else {
         sourcelineinfo = copy(file_name);
+        add_to_sourcepath(sourcelineinfo, NULL);
+    }
 
     wl_append_word(&sourceinfo, &sourceinfo, sourcelineinfo);
 
@@ -9485,3 +9491,45 @@ static int inp_poly_2g6_compat(struct card* deck) {
     return 0;
 }
 #endif
+
+/* add path or filepath (without file name) to variable sourcepath */
+int add_to_sourcepath(const char* filepath, const char* path)
+{
+    const char* fpath;
+    char buf[512];
+
+
+    if ((filepath && path) || (!filepath && !path))
+        return 1;
+
+    /* if filepath, remove file entry */
+    if (path)
+        fpath = path;
+    else
+        fpath = ngdirname(filepath);
+
+    /* add fpath to 'sourcepath' list variable */
+    if (cp_getvar("sourcepath", CP_LIST, NULL, 0)) {
+        wordlist* wl;
+        char* toklist;
+        wl = vareval("sourcepath");
+        toklist = wl_flatten(wl);
+        (void)snprintf(buf, 511, "sourcepath = ( %s %s )", toklist, fpath);
+        wl_free(wl);
+        tfree(toklist);
+    }
+    else {
+        (void)snprintf(buf, 511, "sourcepath = ( %s )", fpath);
+    }
+
+//    fprintf(stdout, "Added to variable 'sourcepath':\n  %s\n", fpath);
+
+    {
+        wordlist* wl;
+        wl = cp_doglob(cp_lexer(buf));
+        com_set(wl);
+        wl_free(wl);
+    }
+
+    return 0;
+}
