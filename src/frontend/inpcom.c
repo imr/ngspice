@@ -1489,7 +1489,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                             end, copy(buffer), line_number, end->linenum_orig, end->linesource);
                 else
                     end = insert_new_line(
-                            end, copy(buffer), line_number, 1, file_name);
+                            end, copy(buffer), line_number, 1, (char *)file_name);
 
                 if (!cc)
                     cc = end;
@@ -6692,7 +6692,7 @@ static void inp_compat(struct card *card)
                 *curr_line = '*';
                 for (i = 0; i < tokcount - 1; i++)
                     for (ii = i + 1; ii < tokcount; ii++) {
-                        char* newline = tprintf("%s_%d_%d %s %s %s", kinst, i + 1, ii + 1, ltok[i], ltok[ii], couple);
+                        char* newline = tprintf("%s_%d_%d %s %s %s", kinst, (int)i + 1, (int)ii + 1, ltok[i], ltok[ii], couple);
                         card = insert_new_line(card, newline, (int)i + 1, currlinenumber, card->linesource);
                     }
                 tfree(kinst);

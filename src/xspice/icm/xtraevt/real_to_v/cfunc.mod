@@ -68,6 +68,8 @@ void ucm_real_to_v (ARGS)
         }
         break;
 
+    default:
+        break;
     }
 }
 

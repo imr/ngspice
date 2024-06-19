@@ -334,6 +334,8 @@ void cm_adc_bridge(ARGS)
                 OUTPUT_STRENGTH(out[i]) = STRONG;        
             }          
             break;
+        default:
+            break;
         }
     }
     else {  /*** TIME == 0.0 => set outputs to input value... ***/
