@@ -416,5 +416,9 @@ void cm_dac_bridge(ARGS)
             }
             OUTPUT(out[i]) = out[i];
         }
+        break;
+
+    default:
+        break;
     }
 }
