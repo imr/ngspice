@@ -282,8 +282,6 @@ struct IFdevice {
     int *numModelParms;         /* number of model parameter descriptors */
     IFparm *modelParms;         /* array  of model parameter descriptors */
 
-    int flags;          /* DEV_ */
-
 /* gtri - modify - wbk - 10/11/90 - add entries to hold data required */
 /*                                  by new parser                     */
 #ifdef XSPICE
@@ -299,6 +297,8 @@ struct IFdevice {
     Mif_Inst_Var_Info_t *inst_var; /* array of instance var info for mif parser */
 /* gtri - end - wbk - 10/11/90 */
 #endif
+
+    int flags;          /* DEV_ */
 
 #ifdef OSDI
     const void *registry_entry;

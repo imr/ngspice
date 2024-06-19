@@ -217,7 +217,7 @@ extern void inp_source(const char *file);
 int inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile);
 extern void inp_casefix(char *string);
 extern void inp_list(FILE *file, struct card *deck, struct card *extras, int type);
-struct card *inp_readall(FILE *fp, const char *dir_name,
+struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         bool comfile, bool intfile, bool *expr_w_temper_p);
 extern FILE *inp_pathopen(const char *name, const char *mode);
 extern char *search_identifier(char *str, const char *identifier, char *str_begin);
@@ -268,6 +268,7 @@ extern struct card *inp_getoptsc(char *line, struct card *options);
 extern bool ft_ngdebug;
 extern bool ft_nginfo;
 extern bool ft_stricterror;
+extern bool ft_spiniterror;
 extern bool ft_skywaterpdk;
 
 /* parse.c */

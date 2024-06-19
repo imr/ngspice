@@ -266,7 +266,7 @@ struct comm spcp_coms[] = {
       NULL,
       "node node ... : Print all event nodes." },
     { "codemodel", com_codemodel, FALSE, TRUE,
-      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, 1,
       NULL,
       "library library ... : Loads the code model libraries." } ,
 #endif

@@ -262,6 +262,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOtlevGiven : 1;
     unsigned DIOtlevcGiven : 1;
     unsigned DIOactivationEnergyGiven : 1;
+    unsigned DIOfirstBGcorrFactorGiven : 1;
+    unsigned DIOsecndBGcorrFactorGiven : 1;
     unsigned DIOsaturationCurrentExpGiven : 1;
     unsigned DIOctaGiven : 1;
     unsigned DIOctpGiven : 1;
@@ -302,6 +304,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOpolyOxideThickGiven : 1;  /* Thickness of the polysilicon to bulk oxide (level=3) */
     unsigned DIOmetalMaskOffsetGiven : 1; /* Masking and etching effects in metal (level=3)") */
     unsigned DIOpolyMaskOffsetGiven : 1;  /* Masking and etching effects in polysilicon (level=3) */
+    unsigned DIOmaskOffsetGiven : 1;      /* Masking and etching effects (level=3) */
 
     int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
@@ -331,6 +334,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     int    DIOtlev; /* Diode temperature equation selector */
     int    DIOtlevc; /* Diode temperature equation selector */
     double DIOactivationEnergy; /* activation energy (EG) */
+    double DIOfirstBGcorrFactor; /* First bandgap correction factor */
+    double DIOsecndBGcorrFactor; /* Second bandgap correction factor */
     double DIOsaturationCurrentExp; /* Saturation current exponential (XTI) */
     double DIOcta; /* Area junction temperature coefficient */
     double DIOctp; /* Perimeter junction temperature coefficient */
@@ -372,6 +377,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOpolyOxideThick;  /* Thickness of the polysilicon to bulk oxide (level=3) */
     double DIOmetalMaskOffset; /* Masking and etching effects in metal (level=3)") */
     double DIOpolyMaskOffset;  /* Masking and etching effects in polysilicon (level=3) */
+    double DIOmaskOffset;      /* Masking and etching effects (level=3) */
 
 } DIOmodel;
 
@@ -418,6 +424,8 @@ enum {
     DIO_MOD_VJ,
     DIO_MOD_M,
     DIO_MOD_EG,
+    DIO_MOD_GAP1,
+    DIO_MOD_GAP2,
     DIO_MOD_XTI,
     DIO_MOD_FC,
     DIO_MOD_BV,
@@ -474,6 +482,7 @@ enum {
     DIO_MOD_XOI,
     DIO_MOD_XM,
     DIO_MOD_XP,
+    DIO_MOD_XW,
 };
 
 void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit *ckt);

@@ -8,13 +8,21 @@
 #ifdef XSPICE
 void com_codemodel(wordlist *wl)
 {
-    wordlist *ww;
-    for (ww = wl; ww; ww = ww->wl_next)
-        if (load_opus(wl->wl_word)) {
-            fprintf(cp_err, "Error: Library %s couldn't be loaded!\n", ww->wl_word);
-            if (ft_stricterror)
-                controlled_exit(EXIT_BAD);
-         }
+if (wl && wl->wl_word)
+#ifdef CM_TRACE
+    fprintf(stdout, "Note: loading codemodel %s\n", ww->wl_word);
+#endif
+    if (load_opus(wl->wl_word)) {
+        fprintf(stderr, "Error: Library %s couldn't be loaded!\n", wl->wl_word);
+        ft_spiniterror = TRUE;
+        if (ft_stricterror) /* if set in spinit */
+            controlled_exit(EXIT_BAD);
+    }
+#ifdef CM_TRACE
+    else {
+        fprintf(stdout, "Codemodel %s is loaded\n", wl->wl_word);
+    }
+#endif
 }
 #endif
 
@@ -25,6 +33,7 @@ void com_osdi(wordlist *wl)
     for (ww = wl; ww; ww = ww->wl_next)
         if (load_osdi(ww->wl_word)) {
             fprintf(cp_err, "Error: Library %s couldn't be loaded!\n", ww->wl_word);
+            ft_spiniterror = TRUE;
             if (ft_stricterror)
                 controlled_exit(EXIT_BAD);
          }

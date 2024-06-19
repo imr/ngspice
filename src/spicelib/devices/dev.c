@@ -47,6 +47,8 @@ typedef void * funptr_t;
 #else /* ifdef HAS_WINGUI */
 #undef BOOLEAN
 #include <windows.h>
+#include <shlwapi.h>
+#include <libloaderapi.h>
 typedef FARPROC funptr_t;
 void *dlopen(const char *, int);
 funptr_t dlsym(void *, const char *);
@@ -420,7 +422,7 @@ int add_udn(int n,Evt_Udn_Info_t **udns){
 
 int load_opus(const char *name)
 {
-    void *lib;
+    void *lib = NULL;
     char *msg;
     int num;
     SPICEdev **devs;
@@ -428,9 +430,10 @@ int load_opus(const char *name)
     funptr_t fetch;
 
     lib = dlopen(name, RTLD_NOW);
+//    fprintf(stdout, "Lib %s has handle %p\n", name, lib);
     if (!lib) {
         msg = dlerror();
-        printf("Error opening code model \"%s\": %s\n", name, msg);
+        fprintf(stderr, "Error opening code model \"%s\"\n: %s\n", name, msg);
         FREE_DLERR_MSG(msg);
         return 1;
     }
@@ -445,7 +448,7 @@ int load_opus(const char *name)
         }
         else {
             msg = dlerror();
-            printf("Error getting the list of devices: %s\n",
+            fprintf(stderr, "Error getting the list of devices: %s\n",
                     msg);
             FREE_DLERR_MSG(msg);
             return 1;
@@ -453,7 +456,7 @@ int load_opus(const char *name)
     }
     else {
         msg = dlerror();
-        printf("Error finding the number of devices: %s\n", msg);
+        fprintf(stderr, "Error finding the number of devices: %s\n", msg);
         FREE_DLERR_MSG(msg);
         return 1;
     }
@@ -474,7 +477,7 @@ int load_opus(const char *name)
         }
         else {
             msg = dlerror();
-            printf("Error getting the list of user-defined types: %s\n",
+            fprintf(stderr, "Error getting the list of user-defined types: %s\n",
                     msg);
             FREE_DLERR_MSG(msg);
             return 1;
@@ -482,7 +485,7 @@ int load_opus(const char *name)
     }
     else {
         msg = dlerror();
-        printf("Error finding the number of user-defined types: %s\n", msg);
+        fprintf(stderr, "Error finding the number of user-defined types: %s\n", msg);
         FREE_DLERR_MSG(msg);
         return 1;
     }
@@ -501,7 +504,7 @@ int load_opus(const char *name)
     }
     else {
         msg = dlerror();
-        printf("Error getting interface pointer: %s\n", msg);
+        fprintf(stderr, "Error getting interface pointer: %s\n", msg);
         FREE_DLERR_MSG(msg);
         return 1;
     }
@@ -522,7 +525,33 @@ static char errstr[sizeof errstr_fmt - 3 + 3 * sizeof(unsigned long)];
 void *dlopen(const char *name, int type)
 {
     NG_IGNORE(type);
-    return LoadLibrary(name);
+    /* Replace / by \\ */
+    char* tmp, * tmpdel;
+    tmp = tmpdel = copy(name);
+    while (*tmp != '\0') {
+        if (*tmp == '/')
+            *tmp = '\\';
+        tmp++;
+    }
+    /* LoadLibrary returns some value even if lib is not available (maybe
+       due to relative path given) */
+    void* ret;
+    if (PathIsRelative(tmpdel)) {
+        /* Replace relative by absolute path */
+        char ngpath[512];
+        GetModuleFileName(NULL, ngpath, 512);
+        PathRemoveFileSpec(ngpath);
+        PathCombine(ngpath, ngpath, tmpdel);
+        if (PathFileExists(ngpath))
+            ret = LoadLibrary(ngpath);
+        else
+            ret = NULL;
+    }
+    else {
+        ret = LoadLibrary(tmpdel);
+    }
+    tfree(tmpdel);
+    return ret;
 }
 
 funptr_t dlsym(void *hDll, const char *funcname)

@@ -180,7 +180,7 @@ static void replace_table(struct card *startcard)
                     tfree(begline);
                     tfree(card->line);
                     card->line = cut_line = neweline;
-                    insert_new_line(card, newbline, 0, card->linenum_orig);
+                    insert_new_line(card, newbline, 0, card->linenum_orig, card->linesource);
                     /* read next TABLE function in cut_line */
                     ftablebeg = strstr(cut_line, "table(");
                 }
@@ -377,7 +377,7 @@ static bool del_models(struct vsmodels *vsmodel)
 }
 
 /* Check for double '{', replace the inner '{', '}' by '(', ')'
-   in .subckt or .model (which both may stem from external sources) */
+   in .subckt, .model, or .param (which all three may stem from external sources) */
 static void rem_double_braces(struct card* newcard)
 {
     struct card* card;
@@ -389,7 +389,7 @@ static void rem_double_braces(struct card* newcard)
             slevel++;
         else if (ciprefix(".ends", cut_line))
             slevel--;
-        if (ciprefix(".model", cut_line) || slevel > 0) {
+        if (ciprefix(".model", cut_line) || slevel > 0 || ciprefix(".param", cut_line)) {
             cut_line = strchr(cut_line, '{');
             if (cut_line) {
                 int level = 1;
@@ -505,6 +505,12 @@ static struct card *u_instances(struct card *startcard)
                 newcard = replacement_udevice_cards();
                 if (newcard) {
                     char *tmp = NULL, *pos, *posp, *new_str = NULL, *cl;
+                    struct card* tmpc;
+                    /* replace linenum_orig and linesource */
+                    for (tmpc = newcard; tmpc; tmpc = tmpc->nextcard) {
+                        tmpc->linenum_orig = subcktcard->linenum_orig;
+                        tmpc->linesource = subcktcard->linesource;
+                    }
                     DS_CREATE(ds_tmp, 128);
                     /* Pspice definition of .subckt card:
                        .SUBCKT <name> [node]*
@@ -671,26 +677,26 @@ struct card *pspice_compat(struct card *oldcard)
 
     /* add predefined params TEMP, VT, GMIN to beginning of deck */
     char *new_str = copy(".param temp = 'temper'");
-    newcard = insert_new_line(NULL, new_str, 1, 0);
+    newcard = insert_new_line(NULL, new_str, 1, 0, "internal");
     new_str = copy(".param vt = '(temper + 273.15) * 8.6173303e-5'");
-    nextcard = insert_new_line(newcard, new_str, 2, 0);
+    nextcard = insert_new_line(newcard, new_str, 2, 0, "internal");
     new_str = copy(".param gmin = 1e-12");
-    nextcard = insert_new_line(nextcard, new_str, 3, 0);
+    nextcard = insert_new_line(nextcard, new_str, 3, 0, "internal");
     /* add funcs limit, pwr, pwrs, stp, if, int */
     /* LIMIT( Output Expression, Limit1, Limit2)
        Output will stay between the two limits given. */
     new_str = copy(".func limit(x, a, b) { ternary_fcn(a > b, max(min(x, a), b), max(min(x, b), a)) }");
-    nextcard = insert_new_line(nextcard, new_str, 4, 0);
+    nextcard = insert_new_line(nextcard, new_str, 4, 0, "internal");
     new_str = copy(".func pwr(x, a) { pow(x, a) }");
-    nextcard = insert_new_line(nextcard, new_str, 5, 0);
+    nextcard = insert_new_line(nextcard, new_str, 5, 0, "internal");
     new_str = copy(".func pwrs(x, a) { sgn(x) * pow(x, a) }");
-    nextcard = insert_new_line(nextcard, new_str, 6, 0);
+    nextcard = insert_new_line(nextcard, new_str, 6, 0, "internal");
     new_str = copy(".func stp(x) { u(x) }");
-    nextcard = insert_new_line(nextcard, new_str, 7, 0);
+    nextcard = insert_new_line(nextcard, new_str, 7, 0, "internal");
     new_str = copy(".func if(a, b, c) {ternary_fcn( a , b , c )}");
-    nextcard = insert_new_line(nextcard, new_str, 8, 0);
+    nextcard = insert_new_line(nextcard, new_str, 8, 0, "internal");
     new_str = copy(".func int(x) { sign(x)*floor(abs(x)) }");
-    nextcard = insert_new_line(nextcard, new_str, 9, 0);
+    nextcard = insert_new_line(nextcard, new_str, 9, 0, "internal");
     nextcard->nextcard = oldcard;
 
 #ifdef INTEGRATE_UDEVICES
@@ -714,9 +720,9 @@ struct card *pspice_compat(struct card *oldcard)
         char *cut_line = card->line;
         if (ciprefix(".subckt", cut_line)) {
             new_str = copy(".param temp = 'temper'");
-            nextcard = insert_new_line(card, new_str, 0, 0);
+            nextcard = insert_new_line(card, new_str, 0, card->linenum_orig, card->linesource);
             new_str = copy(".param vt = '(temper + 273.15) * 8.6173303e-5'");
-            nextcard = insert_new_line(nextcard, new_str, 1, 0);
+            nextcard = insert_new_line(nextcard, new_str, 1, card->linenum_orig, card->linesource);
             /* params: replace comma separator by space.
                Do nothing if you are inside of { }. */
             char* parastr = strstr(cut_line, "params:");
@@ -912,10 +918,7 @@ struct card *pspice_compat(struct card *oldcard)
                 fprintf(stderr, "Error: Missing token in line %d:\n%s\n",
                         card->linenum, cut_line);
                 fprintf(stderr, "    Please correct the input file\n");
-                if (ft_stricterror)
-                    controlled_exit(1);
-                else
-                    continue;
+                controlled_exit(1);
             }
             char *tctok = search_plain_identifier(ntok, "tc");
             if (tctok) {
@@ -1363,7 +1366,11 @@ struct card *pspice_compat(struct card *oldcard)
             for (i = 0; i < 6; i++) {
                 stoks[i] = gettok_node(&cut_line);
                 if (!stoks[i]) {
-                    fprintf(stderr, "Error: Bad syntax in line:\n    %s\n", card->line);
+                    fprintf(stderr,
+                        "Error: bad syntax in line %d\n  %s\n"
+                        "from file\n"
+                        "  %s\n",
+                        card->linenum_orig, card->line, card->linesource);
                     good = FALSE;
                     break;
                 }
@@ -1726,16 +1733,16 @@ struct card *ltspice_compat(struct card *oldcard)
     char *new_str =
             copy(".func uplim(x, pos, z) { min(x, pos - z) + (1 - "
                  "(min(max(0, x - pos + z), 2 * z) / 2 / z - 1)**2)*z }");
-    newcard = insert_new_line(NULL, new_str, 1, 0);
+    newcard = insert_new_line(NULL, new_str, 1, 0, "internal");
     new_str = copy(".func dnlim(x, neg, z) { max(x, neg + z) - (1 - "
                    "(min(max(0, -x + neg + z), 2 * z) / 2 / z - 1)**2)*z }");
-    nextcard = insert_new_line(newcard, new_str, 2, 0);
+    nextcard = insert_new_line(newcard, new_str, 2, 0, "internal");
     new_str = copy(".func uplim_tanh(x, pos, z) { min(x, pos - z) + "
                    "tanh(max(0, x - pos + z) / z)*z }");
-    nextcard = insert_new_line(nextcard, new_str, 3, 0);
+    nextcard = insert_new_line(nextcard, new_str, 3, 0, "internal");
     new_str = copy(".func dnlim_tanh(x, neg, z) { max(x, neg + z) - "
                    "tanh(max(0, neg + z - x) / z)*z }");
-    nextcard = insert_new_line(nextcard, new_str, 4, 0);
+    nextcard = insert_new_line(nextcard, new_str, 4, 0, "internal");
     nextcard->nextcard = oldcard;
 
     /* remove .backanno, replace 'noiseless' by 'moisy=0' */
@@ -1869,7 +1876,7 @@ struct card *ltspice_compat(struct card *oldcard)
             for (i = 0; i < 4; i++) {
                 stoks[i] = gettok_node(&cut_line);
                 if (stoks[i] == NULL) {
-                    fprintf(stderr, "Error in line %d: buggy diode instance line\n    %s\n", card->linenum_orig, card->line);
+                    fprintf(stderr, "Error in line %d: buggy diode instance line\n    %s\n", card->linenum_orig, card->linesource);
                     fprintf(stderr, "At least 'Dxx n1 n2 d' is required.\n");
                     controlled_exit(EXIT_BAD);
                 }

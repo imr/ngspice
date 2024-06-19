@@ -16,6 +16,9 @@ Author: 1985 Thomas L. Quarles
 /* gtri - end - wbk - 11/9/90 */
 #endif
 
+// Ugly way to pass line info (number and source file) to lower-level error handlers.
+int Current_parse_line;
+char* Sourcefile;
 
 /* uncomment to trace in this file */
 /*#define TRACE*/
@@ -39,10 +42,6 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 #ifdef TRACE
     /* SDB debug statement */
     printf("Entered INPpas2 . . . .\n");
-#endif
-
-#ifdef XSPICE
-    if (!ckt->CKTadevFlag) ckt->CKTadevFlag = 0;
 #endif
 
     error = INPgetTok(&groundname, &gname, 1);
@@ -81,11 +80,14 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 #endif
 
 #ifdef HAS_PROGREP
-   if (linecount > 0) {     
+   if (linecount > 0) {
         SetAnalyse( "Parse", (int) (1000.*actcount/linecount));
         actcount++;
    }
 #endif
+
+    Current_parse_line = current->linenum_orig;
+    Sourcefile = current->linesource;
 
 	c = *(current->line);
 	if(islower_c(c))

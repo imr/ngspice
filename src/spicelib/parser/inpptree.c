@@ -1029,8 +1029,9 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
     int i;
 
     if (p->funcnum != PTF_PWL) {
-        fprintf(stderr, "PWL-INFO: %s, very unexpected\n", __func__);
-        controlled_exit(1);
+        fprintf(stderr, "PWL-INFO: %s, very unexpected at line %d\nfrom file\n  %s\n\n",
+            __func__, Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
     }
 
 #ifdef TRACE
@@ -1041,8 +1042,11 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
         i++;
 
     if (i<2 || (i%1)) {
-        fprintf(stderr, "Error: PWL(expr, points...) needs an even and >=2 number of constant args\n");
-        return mkfirst(NULL, p);
+        fprintf(stderr,
+            "Error: PWL(expr, points...) needs an even and >=2 number "
+             "of constant args at line %d\nfrom file\n  %s\n\n",
+            Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
     }
 
     data = TMALLOC(struct pwldata, 1);
@@ -1060,11 +1064,13 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
                    w->right->left->type == PT_CONSTANT) {
             data->vals[i] = - w->right->left->constant;
         } else {
-            fprintf(stderr, "PWL-ERROR: %s, not a constant\n", __func__);
-            fprintf(stderr, "   type = %d\n", w->right->type);
-            //Breakpoint;
-            fprintf(stderr, "Error: PWL(expr, points...) only *literal* points are supported\n");
-            return mkfirst(NULL, p);
+            fprintf(stderr,
+                "Error: PWL(expr, points...) only *literal* points "
+                "are supported at line %d\nfrom file\n  %s\n",
+                Current_parse_line, Sourcefile);
+                // In case #671, "Crash when loading an Infineon model: IR4427S",
+                // a crash occurred after this error.  There can be no recovery.
+                controlled_exit(EXIT_BAD);
         }
 
 #ifdef TRACE
@@ -1072,11 +1078,31 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
         fprintf(stderr, "  (%lf %lf)\n", data->vals[i], data->vals[i+1]);
 #endif
 
-    for (i = 2 ; i < data->n ; i += 2)
-        if(data->vals[i-2] >= data->vals[i]) {
-            fprintf(stderr, "Error: PWL(expr, points...) the abscissa of points must be ascending\n");
-            return mkfirst(NULL, p);
-        }
+    /* check for monotonic abscissa */
+    if (data->vals[0] > data->vals[2]) {
+        for (i = 2; i < data->n; i += 2)
+            if (data->vals[i - 2] < data->vals[i]) {
+                fprintf(stderr,
+                    "Error: PWL(expr, points...) the abscissa of points "
+                    "must be descending at line %d\nfrom file\n  %s\n", Current_parse_line, Sourcefile);
+                controlled_exit(EXIT_BAD);
+            }
+    }
+    else if (data->vals[0] < data->vals[2]) {
+        for (i = 2; i < data->n; i += 2)
+            if (data->vals[i - 2] > data->vals[i]) {
+                fprintf(stderr,
+                    "Error: PWL(expr, points...) the abscissa of points "
+                    "must be ascending at line %d\nfrom file\n  %s\n", Current_parse_line, Sourcefile);
+                controlled_exit(EXIT_BAD);
+            }
+    }
+    else {
+        fprintf(stderr,
+            "Error: PWL(expr, points...) the abscissa of points "
+            "must be monotonic at line %d\nfrom file\n  %s\n", Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
+    }
 
     /* strip all but the first arg,
      *   and attach the rest as opaque data to the INPparseNode
@@ -1111,13 +1137,15 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
     char buf[128];
 
     if (!fname) {
-        fprintf(stderr, "Error: bogus function name \n");
-        return mkfirst(NULL, arg);
+        fprintf(stderr, "Error: bogus function name at line %d\nfrom file\n  %s\n",
+            Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
     }
 
     if (!arg) {
-        fprintf(stderr, "Error: bad function arguments \n");
-        return mkfirst(NULL, arg);
+        fprintf(stderr, "Error: bad function arguments at line %d\nfrom file\n  %s\n",
+            Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
     }
 
     /* Make sure the case is ok. */
@@ -1144,8 +1172,9 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
             return mkfirst(p, arg);
         }
 
-        fprintf(stderr, "Error: bogus ternary_fcn form\n");
-        return mkfirst(NULL, arg);
+        fprintf(stderr, "Error: bogus ternary_fcn form at line %d\nfrom file\n  %s\n",
+            Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
     }
 
     /* This is used only to evaluate fcn gauss(a1, a2, a3) in .model files, where 
@@ -1161,8 +1190,9 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
             double a3 = arg3->constant;
 
             if (a2 == 0.0 || a3 == 0.0) {
-                fprintf(stderr, "Error: bogus gauss form\n");
-                return mkfirst(NULL, arg); //return mkcon(a1);
+                fprintf(stderr, "Error: bogus gauss form at line %d\nfrom file\n  %s\n",
+                    Current_parse_line, Sourcefile);
+                controlled_exit(EXIT_BAD);
             }
 
             return mkcon(gauss(a1, a2, a3));
@@ -1177,10 +1207,9 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
             break;
 
     if (i == NUM_FUNCS) {
-        fprintf(stderr, "Error: no such function '%s'\n", buf);
-        if (ft_stricterror)
-            controlled_exit(EXIT_BAD);
-        return mkfirst(NULL, arg);
+        fprintf(stderr, "Error: no such function '%s' at line %d\nfrom file\n  %s\n",
+            buf, Current_parse_line, Sourcefile);
+        controlled_exit(EXIT_BAD);
     }
 
     p = TMALLOC(INPparseNode, 1);
@@ -1197,10 +1226,9 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
     if (p->funcnum == PTF_PWL) {
         p = prepare_PTF_PWL(p);
         if (p == NULL) {
-            fprintf(stderr, "Error while parsing function '%s'\n", buf);
-            if (ft_stricterror)
-                controlled_exit(EXIT_BAD);
-            return mkfirst(NULL, arg);
+            fprintf(stderr, "Error while parsing function '%s' at line %d\nfrom file\n  %s\n",
+                buf, Current_parse_line, Sourcefile);
+            controlled_exit(EXIT_BAD);
         }
     }
 

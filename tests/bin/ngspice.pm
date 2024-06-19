@@ -6,6 +6,7 @@
 #
 #  Rel  Date            Who             Comments
 # ====  ==========      =============   ========
+#  1.2  04/15/2024      Geoffrey Coram  Support op-pt values
 #  1.1  07/05/17        Dietmar Warning Version detection included
 #  1.0  05/13/11        Dietmar Warning Initial version
 #
@@ -88,7 +89,7 @@ sub runNoiseTest {
                 print OF "rin dummy 0 1.0 noise=0";
                 foreach $pin (@main::Pin) {
                     if ($main::isFloatingPin{$pin}) {
-                        print OF "i_$pin $pin 0 0";
+                        print OF "r_$pin $pin 0 1e15";
                     } elsif ($pin eq $main::biasListPin) {
                         print OF "v_$pin $pin 0 $biasVoltage";
                     } elsif ($pin eq $main::biasSweepPin) {
@@ -206,6 +207,7 @@ sub runAcTest {
                 print OF "* AC simulation for $main::simulatorName";
                 &generateCommonNetlistInfo($variant,$temperature);
                 foreach $fPin (@main::Pin) {
+                    next if (!$main::needAcStimulusFor{$fPin});
                     foreach $mPin (@main::Pin) {
                         if ($mPin eq $fPin) {
                             $acStim=" ac 1";
@@ -213,7 +215,7 @@ sub runAcTest {
                             $acStim="";
                         }
                         if ($main::isFloatingPin{$mPin}) {
-                            print OF "i_${mPin}_$fPin ${mPin}_$fPin 0 0";
+                            print OF "r_${mPin}_$fPin ${mPin}_$fPin 0 1e15";
                         } elsif ($mPin eq $main::biasListPin) {
                             print OF "v_${mPin}_$fPin ${mPin}_$fPin 0 $biasVoltage$acStim";
                         } elsif ($mPin eq $main::biasSweepPin) {
@@ -226,7 +228,9 @@ sub runAcTest {
                 }
                 print OF ".ac $main::frequencySpec";
                 foreach $mPin (@main::Pin) {
+                    next if (!$main::needAcStimulusFor{$mPin});
                     foreach $fPin (@main::Pin) {
+                        next if (!$main::needAcStimulusFor{$fPin});
                         print OF ".print ac i(v_${mPin}_$fPin)";
                     }
                 }
@@ -349,7 +353,7 @@ sub runDcTest {
             &generateCommonNetlistInfo($variant,$temperature);
             foreach $pin (@main::Pin) {
                 if ($main::isFloatingPin{$pin}) {
-                    print OF "i_$pin $pin 0 0";
+                    print OF "r_$pin $pin 0 1e15";
                 } elsif ($pin eq $main::biasListPin) {
                     print OF "v_$pin $pin 0 $biasVoltage";
                 } elsif ($pin eq $main::biasSweepPin) {
@@ -361,7 +365,9 @@ sub runDcTest {
             print OF "x1 ".join(" ",@main::Pin)." mysub";
             print OF ".dc v_$main::biasSweepPin $main::biasSweepSpec";
             foreach $pin (@main::Outputs) {
-                if ($main::isFloatingPin{$pin}) {
+                if ($pin =~ /^OP\((.*)\)/) {
+                    print OF ".print dc \@${main::keyLetter}.x1.${main::keyLetter}1[$1]";
+                } elsif ($main::isFloatingPin{$pin}) {
                     print OF ".print dc v($pin)";
                 } else {
                     print OF ".print dc i(v_$pin)";
@@ -381,6 +387,7 @@ sub runDcTest {
             while (<SIMULATE>) {
                 chomp;s/^\s+//;s/\s+$//;s/#branch//;s/\(/_/;s/\)//;
                 if (/^Index\s+v-sweep\s+v_/i) {$inResults=1;($pin=$');<SIMULATE>;next}
+                if (/^Index\s+v-sweep\s+\@.*\[(.+)\]/i) {$inResults=1;$pin="OP($1)";<SIMULATE>;next}
                 @Field=split;
                 if ($#Field != 2) {$inResults=0}
                 next if (!$inResults);
@@ -402,7 +409,9 @@ sub runDcTest {
     }
     printf OF ("V($main::biasSweepPin)");
     foreach $pin (@main::Outputs) {
-        if ($main::isFloatingPin{$pin}) {
+        if ($pin =~ /^OP/) {
+            printf OF " $pin";
+        } elsif ($main::isFloatingPin{$pin}) {
             printf OF (" V($pin)");
         } else {
             printf OF (" I($pin)");
@@ -434,8 +443,18 @@ sub runDcTest {
 sub generateCommonNetlistInfo {
     my($variant,$temperature)=@_;
     my(@Pin_x,$arg,$name,$value,$eFactor,$fFactor,$pin);
+    if (!defined($main::keyLetter)) {
+        if (defined($main::verilogaFile)) {
+            $main::keyLetter="N";
+        } else {
+            die("ERROR: no keyLetter specified, stopped");
+        }
+    }
     foreach $pin (@main::Pin) {push(@Pin_x,"${pin}_x")}
-    print OF ".options temp=$temperature gmin=1e-13 abstol=1e-13 reltol=1e-3";
+    # print OF ".options temp=$temperature gmin=1e-3 abstol=1e-12 reltol=1e-6";
+    print OF ".options temp=$temperature abstol=1e-15 reltol=1e-5";
+    print OF ".option numdgt=8";
+    # print OF ".options temp=$temperature";
     if ($variant=~/^scale$/) {
         die("ERROR: there is no scale or shrink option for ngspice, stopped");
     }
@@ -454,8 +473,25 @@ sub generateCommonNetlistInfo {
             $fFactor/=$main::mFactor;
         }
     }
+    my $opvars="";
+    foreach $pin (@main::Outputs) {
+        if ($pin =~ /^OP\((.*)\)/) {
+            $opvars .= " \@${main::keyLetter}.x1.${main::keyLetter}1[$1]";
+        }
+    }
     if (defined($main::verilogaFile)) {
-        die("ERROR: Verilog-A model support is not implemented for ngspice, stopped");
+        my $osdifile = $main::verilogaFile;
+        $osdifile =~ s/\.va$/\.osdi/;
+        print OF ".control";
+        print OF "pre_osdi $osdifile";
+        if ($opvars ne "") {
+            print OF "save $opvars";
+        }
+        print OF ".endc";
+    } elsif ($opvars ne "") {
+        print OF ".control";
+        print OF "save $opvars";
+        print OF ".endc";
     }
     print OF ".subckt mysub ".join(" ",@Pin_x);
     foreach $pin (@main::Pin) {
@@ -491,7 +527,11 @@ sub generateCommonNetlistInfo {
         print OF "+ $name=$value";
     }
     if ($variant eq "m") {
-        print OF "+ m=$main::mFactor";
+        if (defined($main::verilogaFile)) {
+            print OF "+ \$mfactor=$main::mFactor";
+        } else {
+            print OF "+ m=$main::mFactor";
+        }
     }
     if ($variant=~/_P/) {
         print OF ".model mymodel $main::pTypeSelectionArguments";
@@ -505,3 +545,4 @@ sub generateCommonNetlistInfo {
 }
 
 1;
+

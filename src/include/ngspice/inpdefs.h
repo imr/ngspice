@@ -77,6 +77,7 @@ struct card_assoc {
 struct card {
     int linenum;
     int linenum_orig;
+    char* linesource;
     char *line;
     char *error;
     struct card *nextcard;
@@ -96,7 +97,9 @@ struct INPmodel {
     GENmodel *INPmodfast; /* high speed pointer to model for access */
 };
 
-
+// Ugly way to pass line onfo (number and source file) to lower-level error handlers.
+extern int Current_parse_line;
+extern char* Sourcefile;
 
 /* listing types - used for debug listings */
 #define LOGICAL 1
