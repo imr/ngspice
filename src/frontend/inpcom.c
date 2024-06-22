@@ -9504,7 +9504,7 @@ int add_to_sourcepath(const char* filepath, const char* path)
 
     /* if filepath, remove file entry */
     if (path)
-        fpath = path;
+        fpath = copy(path);
     else
         fpath = ngdirname(filepath);
 
@@ -9531,5 +9531,6 @@ int add_to_sourcepath(const char* filepath, const char* path)
         wl_free(wl);
     }
 
+    tfree(fpath);
     return 0;
 }
