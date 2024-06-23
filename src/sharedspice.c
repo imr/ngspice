@@ -1097,6 +1097,10 @@ sh_delete_myvec(void)
 IMPEXP
 int  ngSpice_Command(char* comexec)
 {
+    if (!is_initialized) {
+        return 1;
+    }
+
     /* delete existing command memory */
     if (comexec == NULL) {
         cp_resetcontrol(FALSE);
@@ -1385,6 +1389,9 @@ int ngSpice_UnlockRealloc(void)
 IMPEXP
 int ngSpice_Reset(void)
 {
+    if (!is_initialized)
+        return 1;
+    fprintf(stdout, "Note: Resetting ngspice\n\n");
     return totalreset();
 }
 
@@ -2425,10 +2432,21 @@ void shared_send_dict(int index, int no_of_nodes, char* name, char*type)
 
 static int totalreset(void)
 {
-    if(!is_initialized)
-        return 1;
 
     is_initialized = FALSE;
+
+    // if we are in a worker thread, we exit it here
+    // detaching then has to be done explicitely by the caller
+    if (fl_running && !fl_exited) {
+        fl_exited = TRUE;
+        bgtr(fl_exited, ng_ident, userptr);
+    // finish and exit the worker thread
+#ifdef HAVE_LIBPTHREAD
+        pthread_exit(NULL);
+#elif defined _MSC_VER || defined __MINGW32__
+        _endthreadex(1);
+#endif
+    }
 
     /* start to clean up the mess */
 
@@ -2442,32 +2460,6 @@ static int totalreset(void)
     wantsync = FALSE;
     immediate = FALSE;
     coquit = FALSE;
-
-#ifdef THREADS
-/* Destroy the mutexes */
-#ifdef HAVE_LIBPTHREAD
-    pthread_mutex_destroy(&triggerMutex);
-    pthread_mutex_destroy(&allocMutex);
-    pthread_mutex_destroy(&fputsMutex);
-    pthread_mutex_destroy(&vecreallocMutex);
-    cont_condition = FALSE;
-#else
-#ifdef SRW
-    /* Do we need to remove the SWR locks? */
-//    InitializeSRWLock(&triggerMutex);
-//    InitializeSRWLock(&allocMutex);
-//    InitializeSRWLock(&fputsMutex);
-//    InitializeSRWLock(&vecreallocMutex);
-#else
-    DeleteCriticalSection(&triggerMutex);
-    DeleteCriticalSection(&allocMutex);
-    DeleteCriticalSection(&fputsMutex);
-    DeleteCriticalSection(&vecreallocMutex);
-#endif
-#endif
-    // Id of primary thread
-    main_id = 0;
-#endif
 
     wordlist all = { "all", NULL, NULL };
     wordlist star = { "*", NULL, NULL };
@@ -2502,6 +2494,32 @@ static int totalreset(void)
     unset_all();
     cp_resetcontrol(FALSE);
     sh_delete_myvec();
+
+#ifdef THREADS
+    /* Destroy the mutexes */
+#ifdef HAVE_LIBPTHREAD
+    pthread_mutex_destroy(&triggerMutex);
+    pthread_mutex_destroy(&allocMutex);
+    pthread_mutex_destroy(&fputsMutex);
+    pthread_mutex_destroy(&vecreallocMutex);
+    cont_condition = FALSE;
+#else
+#ifdef SRW
+    /* Do we need to remove the SWR locks? */
+//    InitializeSRWLock(&triggerMutex);
+//    InitializeSRWLock(&allocMutex);
+//    InitializeSRWLock(&fputsMutex);
+//    InitializeSRWLock(&vecreallocMutex);
+#else
+    DeleteCriticalSection(&triggerMutex);
+    DeleteCriticalSection(&allocMutex);
+    DeleteCriticalSection(&fputsMutex);
+    DeleteCriticalSection(&vecreallocMutex);
+#endif
+#endif
+    // Id of primary thread
+    main_id = 0;
+#endif
 
     return 0;
 };
