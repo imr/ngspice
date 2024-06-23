@@ -965,6 +965,7 @@ static void killplot(struct plot *pl)
     /* delete the hash table entry for this plot */
     if (pl->pl_lookup_table) {
         nghash_free(pl->pl_lookup_table, NULL, NULL);
+        pl->pl_lookup_table = NULL;
     }
     txfree(pl->pl_title);
     txfree(pl->pl_name);
@@ -998,6 +999,7 @@ destroy_const_plot(void)
     /* delete the hash table entry for the const plot */
     if (pl->pl_lookup_table) {
         nghash_free(pl->pl_lookup_table, NULL, NULL);
+        pl->pl_lookup_table = NULL;
     }
     wl_free(pl->pl_commands);
     if (pl->pl_ccom)    /* va: also tfree (memory leak) */
