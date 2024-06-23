@@ -1690,19 +1690,24 @@ void cm_d_state(ARGS)
               *s;                     /* Main string variable. */
 
         static char *open_error =
-	    "\nERROR\n  D_STATE: failed to open state file.\n";
+	    "\nError:\n  D_STATE: failed to open state file.\n";
         static char *loading_error =
-	    "\nERROR\n  D_STATE: state file was not read successfully.\n  "
+	    "\nError:\n  D_STATE: state file was not read successfully.\n  "
 	    "The most common cause of this problem is a\n  "
 	    "trailing blank line in the state.in file.\n";
 
-	/* Allocate storage for the state transition table. */
 
-        table = calloc(1, sizeof (State_Table_t));
-        STATIC_VAR(table) = table;
 
         /*** open file and count the number of vectors in it ***/
         state_file = fopen_with_path( PARAM(state_file), "r");
+        if(!state_file) {
+            cm_message_send(open_error);
+            cm_cexit(1);
+        }
+
+        /* Allocate storage for the state transition table. */
+        table = calloc(1, sizeof (State_Table_t));
+        STATIC_VAR(table) = table;
 
         /* increment counter if not a comment until EOF reached... */
         i = 0;                                                
