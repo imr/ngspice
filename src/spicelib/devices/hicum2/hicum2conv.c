@@ -1,7 +1,7 @@
 /**********
 License              : 3-clause BSD
 Spice3 Implementation: 2019-2020 Dietmar Warning, Markus Müller, Mario Krattenmacher
-Model Author         : 1990 Michael Schröter TU Dresden
+Model Author         : (Copyright 1993-2024) Michael Schroter
 **********/
 
 /*
