@@ -1996,11 +1996,8 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             s->line = copy(bxx_buffer(&buffer));
             break;
 
-           /* 2 or 3 (temp) terminals for diode d, 2 or more for OSDI devices */
+           /* 2 or 3 (temp) terminals for diode d */
         case 'd':
-#ifdef OSDI
-        case 'n':
-#endif
             name = gettok(&t);  /* get refdes */
             bxx_printf(&buffer, "%s ", name);
             tfree(name);
@@ -2039,8 +2036,48 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             s->line = copy(bxx_buffer(&buffer));
             break;
 
+#ifdef OSDI
+        /* 1 or more terinals for OSDI devices*/
+        case 'n':
+            name = gettok(&t);  /* get refdes */
+            bxx_printf(&buffer, "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* get first attached netname */
+            bxx_printf(&buffer, "%s ", name);
+            tfree(name);
+            name = gettok_node(&t);  /* this can be either a model name or a node name. */
+            if (name == NULL) {
+                name = copy(""); /* allow 'tfree' */
+            }
+            else {
+                for (;;) {
+                    wlsub = wl_find(name, orig_modnames);
+                    if (wlsub) {
+                        break;
+                    }
+                    else {
+                        bxx_printf(&buffer, "%s ", name);
+                        tfree(name);
+                        name = gettok(&t);
+                        if (name == NULL) {  /* No token anymore - leave */
+                            name = copy(""); /* allow 'tfree' */
+                            break;
+                        }
+                    }
+                }  /* while  */
+            }
+
+            translate_mod_name(&buffer, name, subname, orig_modnames);
+
+            tfree(name);
+            bxx_putc(&buffer, ' ');
+            bxx_put_cstring(&buffer, t);
+            tfree(s->line);
+            s->line = copy(bxx_buffer(&buffer));
+            break;
+#endif
+        /* 3 terminal devices */
         case 'u': /* urc transmissionline */
-            /* 3 terminal devices */
         case 'w': /* current controlled switch */
         case 'j': /* jfet */
         case 'z': /* hfet, mesa */
