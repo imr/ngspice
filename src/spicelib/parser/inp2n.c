@@ -46,7 +46,8 @@ void INP2N(CKTcircuit *ckt, INPtables *tab, struct card *current) {
     char *token;
     INPgetNetTok(&line, &token, 1);
 
-    if (i >= 2) {
+    /* We have single terminal Verilog-A modules */
+    if (i >= 1) {
       txfree(INPgetMod(ckt, token, &thismodel, tab));
 
       /* /1* check if using model binning -- pass in line since need 'l' and 'w' *1/ */
