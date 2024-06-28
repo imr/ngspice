@@ -753,7 +753,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
         break;
 
     default:
-        fprintf(stderr, "Internal error: bad node type %d\n", p->type);
+        fprintf(stderr, "Error: bad node type %d\n", p->type);
         newp = NULL;
         break;
     }
@@ -777,6 +777,10 @@ static INPparseNode *mkb(int type, INPparseNode * left,
 {
     INPparseNode *p;
     int i;
+
+    if (!right || !left) {
+        return (NULL);
+    }
 
     if ((right->type == PT_CONSTANT) && (left->type == PT_CONSTANT)) {
         double value;
@@ -889,6 +893,9 @@ static INPparseNode *mkf(int type, INPparseNode * arg)
 {
     INPparseNode *p;
     int i;
+
+    if (!arg)
+        return NULL;
 
     for (i = 0; i < NUM_FUNCS; i++)
         if (funcs[i].number == type)
