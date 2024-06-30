@@ -37,6 +37,7 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
            Ibcp_Vrth, Iccp_Vrth, Irs_Vrth, Irth_Vrth, Icth_Vrth, Ith_Vrth,
            Ith_Vbei, Ith_Vbci, Ith_Vcei, Ith_Vbex, Ith_Vbep, Ith_Vbcp, Ith_Vcep,
            Ith_Vrci, Ith_Vbcx, Ith_Vrbi, Ith_Vrbp, Ith_Vrcx, Ith_Vrbx, Ith_Vre, Ith_Vrs;
+    double XQcth_Vrth, XQbe_Vrth, XQbex_Vrth, XQbc_Vrth, XQbcx_Vrth, XQbep_Vrth, XQbcp_Vrth;
 
     /*  loop through all the models */
     for( ; model != NULL; model = VBICnextModel(model)) {
@@ -459,13 +460,23 @@ c   Stamp element: Qbco
             *(here->VBICbaseCollPtr + 1) += -XQbco_Vbc;
             *(here->VBICcollBasePtr + 1) += -XQbco_Vbc;
 
-
-
             if (here->VBIC_selfheat) {
+                XQcth_Vrth = *(ckt->CKTstate0 + here->VBICcqcth) * ckt->CKTomega;
+                XQbe_Vrth  = *(ckt->CKTstate0 + here->VBICcqbeth) * ckt->CKTomega;
+                XQbex_Vrth = *(ckt->CKTstate0 + here->VBICcqbexth) * ckt->CKTomega;
+                XQbc_Vrth  = *(ckt->CKTstate0 + here->VBICcqbcth) * ckt->CKTomega;
+                XQbcx_Vrth = *(ckt->CKTstate0 + here->VBICcqbcxth) * ckt->CKTomega;
+                XQbep_Vrth = *(ckt->CKTstate0 + here->VBICcqbepth) * ckt->CKTomega;
+                XQbcp_Vrth = *(ckt->CKTstate0 + here->VBICcqbcpth) * ckt->CKTomega;
+
+//                *(here->VBICtempTempPtr + 1) +=  XQcth_Vrth;
+//
+//                *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vrth;
+//                *(here->VBICbaseBItempPtr + 1)   += -XQbe_Vrth;
+//                *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vrth;
+//                *(here->VBICemitEItempPtr + 1)   +=  XQbe_Vrth;
 
             }
-
-
 
         }
     }

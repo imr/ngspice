@@ -706,8 +706,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->VBICqbeo) = Qbeo;
                 *(ckt->CKTstate0 + here->VBICqbco) = Qbco;
                 *(ckt->CKTstate0 + here->VBICqbcp) = Qbcp;
-                if (here->VBIC_selfheat)
+                if (here->VBIC_selfheat) {
                     *(ckt->CKTstate0 + here->VBICqcth) = Qcth;
+                }
 
                 here->VBICcapbe = Qbe_Vbei;
                 here->VBICcapbex = Qbex_Vbex;
@@ -716,7 +717,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 here->VBICcapbep = Qbep_Vbep;
                 here->VBICcapbcp = Qbcp_Vbcp;
                 if (here->VBIC_selfheat)
-                    here->VBICcapcth = Qcth_Vrth;
+                    here->VBICcapcth  = Qcth_Vrth;
 
                 /*
                  *   store small-signal parameters
@@ -734,8 +735,15 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->VBICcqbeo)   = Qbeo_Vbe;
                         *(ckt->CKTstate0 + here->VBICcqbco)   = Qbco_Vbc;
                         *(ckt->CKTstate0 + here->VBICcqbcp)   = Qbcp_Vbcp;
-                        if (here->VBIC_selfheat)
+                        if (here->VBIC_selfheat) {
                             *(ckt->CKTstate0 + here->VBICcqcth)   = Qcth_Vrth;
+                            *(ckt->CKTstate0 + here->VBICcqbeth)  = Qbe_Vrth;
+                            *(ckt->CKTstate0 + here->VBICcqbexth) = Qbex_Vrth;
+                            *(ckt->CKTstate0 + here->VBICcqbcth)  = Qbc_Vrth;
+                            *(ckt->CKTstate0 + here->VBICcqbcxth) = Qbcx_Vrth;
+                            *(ckt->CKTstate0 + here->VBICcqbepth) = Qbep_Vrth;
+                            *(ckt->CKTstate0 + here->VBICcqbcpth) = Qbcp_Vrth;
+                        }
                         continue; /* go to 1000 */
                     }
                     /*
