@@ -466,7 +466,14 @@ typedef struct sVBICinstance {
 #define VBICith_Vre VBICstate+100
 #define VBICith_Vrs VBICstate+101
 
-#define VBICnumStates 102
+#define VBICcqbeth VBICstate+102
+#define VBICcqbexth VBICstate+103
+#define VBICcqbcth VBICstate+104
+#define VBICcqbcxth VBICstate+105
+#define VBICcqbepth VBICstate+106
+#define VBICcqbcpth VBICstate+107
+
+#define VBICnumStates 108
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
