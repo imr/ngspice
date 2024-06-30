@@ -900,6 +900,40 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             {
                 *(ckt->CKTstate0 + here->VBICcqcth)     = Icth;
                 *(ckt->CKTstate0 + here->VBICicth_Vrth) = Icth_Vrth;
+
+                *(ckt->CKTstate0 + here->VBICibe_Vrth)  = Ibe_Vrth ;
+                *(ckt->CKTstate0 + here->VBICibex_Vrth) = Ibex_Vrth;
+                *(ckt->CKTstate0 + here->VBICitzf_Vrth) = Itzf_Vrth;
+                *(ckt->CKTstate0 + here->VBICitzr_Vrth) = Itzr_Vrth;
+                *(ckt->CKTstate0 + here->VBICibc_Vrth)  = Ibc_Vrth ;
+                *(ckt->CKTstate0 + here->VBICibep_Vrth) = Ibep_Vrth;
+                *(ckt->CKTstate0 + here->VBICircx_Vrth) = Ircx_Vrth;
+                *(ckt->CKTstate0 + here->VBICirci_Vrth) = Irci_Vrth;
+                *(ckt->CKTstate0 + here->VBICirbx_Vrth) = Irbx_Vrth;
+                *(ckt->CKTstate0 + here->VBICirbi_Vrth) = Irbi_Vrth;
+                *(ckt->CKTstate0 + here->VBICire_Vrth)  = Ire_Vrth ;
+                *(ckt->CKTstate0 + here->VBICirbp_Vrth) = Irbp_Vrth;
+                *(ckt->CKTstate0 + here->VBICibcp_Vrth) = Ibcp_Vrth;
+                *(ckt->CKTstate0 + here->VBICiccp_Vrth) = Iccp_Vrth;
+                *(ckt->CKTstate0 + here->VBICirs_Vrth)  = Irs_Vrth ;
+                *(ckt->CKTstate0 + here->VBICirth_Vrth) = Irth_Vrth;
+                *(ckt->CKTstate0 + here->VBICith_Vrth)  = Ith_Vrth ;
+                *(ckt->CKTstate0 + here->VBICith_Vbei)  = Ith_Vbei ;
+                *(ckt->CKTstate0 + here->VBICith_Vbci)  = Ith_Vbci ;
+                *(ckt->CKTstate0 + here->VBICith_Vcei)  = Ith_Vcei ;
+                *(ckt->CKTstate0 + here->VBICith_Vbex)  = Ith_Vbex ;
+                *(ckt->CKTstate0 + here->VBICith_Vbep)  = Ith_Vbep ;
+                *(ckt->CKTstate0 + here->VBICith_Vbcp)  = Ith_Vbcp ;
+                *(ckt->CKTstate0 + here->VBICith_Vcep)  = Ith_Vcep ;
+                *(ckt->CKTstate0 + here->VBICith_Vrci)  = Ith_Vrci ;
+                *(ckt->CKTstate0 + here->VBICith_Vbcx)  = Ith_Vbcx ;
+                *(ckt->CKTstate0 + here->VBICith_Vrbi)  = Ith_Vrbi ;
+                *(ckt->CKTstate0 + here->VBICith_Vrbp)  = Ith_Vrbp ;
+                *(ckt->CKTstate0 + here->VBICith_Vrcx)  = Ith_Vrcx ;
+                *(ckt->CKTstate0 + here->VBICith_Vrbx)  = Ith_Vrbx ;
+                *(ckt->CKTstate0 + here->VBICith_Vre)   = Ith_Vre  ;
+                *(ckt->CKTstate0 + here->VBICith_Vrs)   = Ith_Vrs  ;
+
             }
 load:
             /*
