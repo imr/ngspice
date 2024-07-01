@@ -249,6 +249,47 @@ typedef struct sVBICinstance {
     double VBICcapbcp;
     double VBICcapcth;
 
+    double VBICcapqbeth;
+    double VBICcapqbexth;
+    double VBICcapqbcth;
+    double VBICcapqbcxth;
+    double VBICcapqbepth;
+    double VBICcapqbcpth;
+
+    double VBICibe_Vrth;
+    double VBICibex_Vrth;
+    double VBICitzf_Vrth;
+    double VBICitzr_Vrth;
+    double VBICibc_Vrth;
+    double VBICibep_Vrth;
+    double VBICircx_Vrth;
+    double VBICirci_Vrth;
+    double VBICirbx_Vrth;
+    double VBICirbi_Vrth;
+    double VBICire_Vrth;
+    double VBICirbp_Vrth;
+    double VBICibcp_Vrth;
+    double VBICiccp_Vrth;
+    double VBICirs_Vrth;
+    double VBICirth_Vrth;
+    double VBICith_Vrth;
+
+    double VBICith_Vbei;
+    double VBICith_Vbci;
+    double VBICith_Vcei;
+    double VBICith_Vbex;
+    double VBICith_Vbep;
+    double VBICith_Vbcp;
+    double VBICith_Vcep;
+    double VBICith_Vrci;
+    double VBICith_Vbcx;
+    double VBICith_Vrbi;
+    double VBICith_Vrbp;
+    double VBICith_Vrcx;
+    double VBICith_Vrbx;
+    double VBICith_Vre;
+    double VBICith_Vrs;
+
     int VBIC_selfheat; /* self-heating enabled  */
 
 #ifndef NONOISE
@@ -433,47 +474,7 @@ typedef struct sVBICinstance {
 #define VBICvrth VBICstate+68
 #define VBICicth_Vrth VBICstate+69
 
-#define VBICibe_Vrth VBICstate+70
-#define VBICibex_Vrth VBICstate+71
-#define VBICitzf_Vrth VBICstate+72
-#define VBICitzr_Vrth VBICstate+73
-#define VBICibc_Vrth VBICstate+74
-#define VBICibep_Vrth VBICstate+75
-#define VBICircx_Vrth VBICstate+76
-#define VBICirci_Vrth VBICstate+77
-#define VBICirbx_Vrth VBICstate+78
-#define VBICirbi_Vrth VBICstate+79
-#define VBICire_Vrth VBICstate+80
-#define VBICirbp_Vrth VBICstate+81
-#define VBICibcp_Vrth VBICstate+82
-#define VBICiccp_Vrth VBICstate+83
-#define VBICirs_Vrth VBICstate+84
-#define VBICirth_Vrth VBICstate+85
-#define VBICith_Vrth VBICstate+86
-#define VBICith_Vbei VBICstate+87
-#define VBICith_Vbci VBICstate+88
-#define VBICith_Vcei VBICstate+89
-#define VBICith_Vbex VBICstate+90
-#define VBICith_Vbep VBICstate+91
-#define VBICith_Vbcp VBICstate+92
-#define VBICith_Vcep VBICstate+93
-#define VBICith_Vrci VBICstate+94
-#define VBICith_Vbcx VBICstate+95
-#define VBICith_Vrbi VBICstate+96
-#define VBICith_Vrbp VBICstate+97
-#define VBICith_Vrcx VBICstate+98
-#define VBICith_Vrbx VBICstate+99
-#define VBICith_Vre VBICstate+100
-#define VBICith_Vrs VBICstate+101
-
-#define VBICcqbeth VBICstate+102
-#define VBICcqbexth VBICstate+103
-#define VBICcqbcth VBICstate+104
-#define VBICcqbcxth VBICstate+105
-#define VBICcqbepth VBICstate+106
-#define VBICcqbcpth VBICstate+107
-
-#define VBICnumStates 108
+#define VBICnumStates 70
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
