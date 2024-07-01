@@ -855,6 +855,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
+            *(ckt->CKTstate0 + here->VBICvrth)      = Vrth;
             *(ckt->CKTstate0 + here->VBICvbei)      = Vbei;
             *(ckt->CKTstate0 + here->VBICvbex)      = Vbex;
             *(ckt->CKTstate0 + here->VBICvbci)      = Vbci;
