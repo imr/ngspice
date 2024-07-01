@@ -464,20 +464,20 @@ c   Stamp element: Qbco
                 XQbep_Vrth = here->VBICcapqbepth * ckt->CKTomega;
                 XQbcp_Vrth = here->VBICcapqbcpth * ckt->CKTomega;
 
-//                *(here->VBICtempTempPtr + 1)   +=  XQcth_Vrth;
-//
-//                *(here->VBICbaseBItempPtr + 1) +=  XQbe_Vrth;
-//                *(here->VBICemitEItempPtr + 1) += -XQbe_Vrth;
-//                *(here->VBICbaseBXtempPtr + 1) +=  XQbex_Vrth;
-//                *(here->VBICemitEItempPtr + 1) += -XQbex_Vrth;
-//                *(here->VBICbaseBItempPtr + 1) +=  XQbc_Vrth;
-//                *(here->VBICcollCItempPtr + 1) += -XQbc_Vrth;
-//                *(here->VBICbaseBItempPtr + 1) +=  XQbcx_Vrth;
-//                *(here->VBICcollCXtempPtr + 1) += -XQbcx_Vrth;
-//                *(here->VBICbaseBXtempPtr + 1) +=  XQbep_Vrth;
-//                *(here->VBICbaseBPtempPtr + 1) += -XQbep_Vrth;
-//                *(here->VBICsubsSItempPtr + 1) +=  XQbcp_Vrth;
-//                *(here->VBICbaseBPtempPtr + 1) += -XQbcp_Vrth;
+                *(here->VBICtempTempPtr + 1)   +=  XQcth_Vrth;
+
+                *(here->VBICbaseBItempPtr + 1) +=  XQbe_Vrth;
+                *(here->VBICemitEItempPtr + 1) += -XQbe_Vrth;
+                *(here->VBICbaseBXtempPtr + 1) +=  XQbex_Vrth;
+                *(here->VBICemitEItempPtr + 1) += -XQbex_Vrth;
+                *(here->VBICbaseBItempPtr + 1) +=  XQbc_Vrth;
+                *(here->VBICcollCItempPtr + 1) += -XQbc_Vrth;
+                *(here->VBICbaseBItempPtr + 1) +=  XQbcx_Vrth;
+                *(here->VBICcollCXtempPtr + 1) += -XQbcx_Vrth;
+                *(here->VBICbaseBXtempPtr + 1) +=  XQbep_Vrth;
+                *(here->VBICbaseBPtempPtr + 1) += -XQbep_Vrth;
+                *(here->VBICsubsSItempPtr + 1) +=  XQbcp_Vrth;
+                *(here->VBICbaseBPtempPtr + 1) += -XQbcp_Vrth;
             }
 
         }
