@@ -34,7 +34,7 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     double Ibe_Vrth, Ibex_Vrth, Itzf_Vrth, Itzr_Vrth, Ibc_Vrth, Ibep_Vrth,
            Ircx_Vrth, Irci_Vrth, Irbx_Vrth, Irbi_Vrth, Ire_Vrth, Irbp_Vrth,
-           Ibcp_Vrth, Iccp_Vrth, Irs_Vrth, Irth_Vrth, Icth_Vrth, Ith_Vrth,
+           Ibcp_Vrth, Iccp_Vrth, Irs_Vrth, Irth_Vrth, Ith_Vrth,
            Ith_Vbei, Ith_Vbci, Ith_Vcei, Ith_Vbex, Ith_Vbep, Ith_Vbcp, Ith_Vcep,
            Ith_Vrci, Ith_Vbcx, Ith_Vrbi, Ith_Vrbp, Ith_Vrcx, Ith_Vrbx, Ith_Vre, Ith_Vrs;
     double XQcth_Vrth, XQbe_Vrth, XQbex_Vrth, XQbc_Vrth, XQbcx_Vrth, XQbep_Vrth, XQbcp_Vrth;
@@ -228,39 +228,38 @@ c           Stamp element: Rs
 
             if (here->VBIC_selfheat) {
 
-                Ibe_Vrth   = *(ckt->CKTstate0 + here->VBICibe_Vrth);
-                Ibex_Vrth  = *(ckt->CKTstate0 + here->VBICibex_Vrth);
-                Itzf_Vrth  = *(ckt->CKTstate0 + here->VBICitzf_Vrth);
-                Itzr_Vrth  = *(ckt->CKTstate0 + here->VBICitzr_Vrth);
-                Ibc_Vrth   = *(ckt->CKTstate0 + here->VBICibc_Vrth);
-                Ibep_Vrth  = *(ckt->CKTstate0 + here->VBICibep_Vrth);
-                Ircx_Vrth  = *(ckt->CKTstate0 + here->VBICircx_Vrth);
-                Irci_Vrth  = *(ckt->CKTstate0 + here->VBICirci_Vrth);
-                Irbx_Vrth  = *(ckt->CKTstate0 + here->VBICirbx_Vrth);
-                Irbi_Vrth  = *(ckt->CKTstate0 + here->VBICirbi_Vrth);
-                Ire_Vrth   = *(ckt->CKTstate0 + here->VBICire_Vrth);
-                Irbp_Vrth  = *(ckt->CKTstate0 + here->VBICirbp_Vrth);
-                Ibcp_Vrth  = *(ckt->CKTstate0 + here->VBICibcp_Vrth);
-                Iccp_Vrth  = *(ckt->CKTstate0 + here->VBICiccp_Vrth);
-                Irs_Vrth   = *(ckt->CKTstate0 + here->VBICirs_Vrth);
-                Irth_Vrth  = *(ckt->CKTstate0 + here->VBICirth_Vrth);
-                Icth_Vrth  = *(ckt->CKTstate0 + here->VBICicth_Vrth);
-                Ith_Vrth   = *(ckt->CKTstate0 + here->VBICith_Vrth);
-                Ith_Vbei   = *(ckt->CKTstate0 + here->VBICith_Vbei);
-                Ith_Vbci   = *(ckt->CKTstate0 + here->VBICith_Vbci);
-                Ith_Vcei   = *(ckt->CKTstate0 + here->VBICith_Vcei);
-                Ith_Vbex   = *(ckt->CKTstate0 + here->VBICith_Vbex);
-                Ith_Vbep   = *(ckt->CKTstate0 + here->VBICith_Vbep);
-                Ith_Vbcp   = *(ckt->CKTstate0 + here->VBICith_Vbcp);
-                Ith_Vcep   = *(ckt->CKTstate0 + here->VBICith_Vcep);
-                Ith_Vrci   = *(ckt->CKTstate0 + here->VBICith_Vrci);
-                Ith_Vbcx   = *(ckt->CKTstate0 + here->VBICith_Vbcx);
-                Ith_Vrbi   = *(ckt->CKTstate0 + here->VBICith_Vrbi);
-                Ith_Vrbp   = *(ckt->CKTstate0 + here->VBICith_Vrbp);
-                Ith_Vrcx   = *(ckt->CKTstate0 + here->VBICith_Vrcx);
-                Ith_Vrbx   = *(ckt->CKTstate0 + here->VBICith_Vrbx);
-                Ith_Vre    = *(ckt->CKTstate0 + here->VBICith_Vre);
-                Ith_Vrs    = *(ckt->CKTstate0 + here->VBICith_Vrs);
+                Ibe_Vrth   = here->VBICibe_Vrth;
+                Ibex_Vrth  = here->VBICibex_Vrth;
+                Itzf_Vrth  = here->VBICitzf_Vrth;
+                Itzr_Vrth  = here->VBICitzr_Vrth;
+                Ibc_Vrth   = here->VBICibc_Vrth;
+                Ibep_Vrth  = here->VBICibep_Vrth;
+                Ircx_Vrth  = here->VBICircx_Vrth;
+                Irci_Vrth  = here->VBICirci_Vrth;
+                Irbx_Vrth  = here->VBICirbx_Vrth;
+                Irbi_Vrth  = here->VBICirbi_Vrth;
+                Ire_Vrth   = here->VBICire_Vrth;
+                Irbp_Vrth  = here->VBICirbp_Vrth;
+                Ibcp_Vrth  = here->VBICibcp_Vrth;
+                Iccp_Vrth  = here->VBICiccp_Vrth;
+                Irs_Vrth   = here->VBICirs_Vrth;
+                Irth_Vrth  = here->VBICirth_Vrth;
+                Ith_Vrth   = here->VBICith_Vrth;
+                Ith_Vbei   = here->VBICith_Vbei;
+                Ith_Vbci   = here->VBICith_Vbci;
+                Ith_Vcei   = here->VBICith_Vcei;
+                Ith_Vbex   = here->VBICith_Vbex;
+                Ith_Vbep   = here->VBICith_Vbep;
+                Ith_Vbcp   = here->VBICith_Vbcp;
+                Ith_Vcep   = here->VBICith_Vcep;
+                Ith_Vrci   = here->VBICith_Vrci;
+                Ith_Vbcx   = here->VBICith_Vbcx;
+                Ith_Vrbi   = here->VBICith_Vrbi;
+                Ith_Vrbp   = here->VBICith_Vrbp;
+                Ith_Vrcx   = here->VBICith_Vrcx;
+                Ith_Vrbx   = here->VBICith_Vrbx;
+                Ith_Vre    = here->VBICith_Vre;
+                Ith_Vrs    = here->VBICith_Vrs;
 
 /*
 c               Stamp element: Ibe
@@ -341,10 +340,6 @@ c               Stamp element: Rs
 c               Stamp element: Rth
 */
                 *(here->VBICtempTempPtr) +=  Irth_Vrth;
-/*
-c               Stamp element: Cth
-*/
-                *(here->VBICtempTempPtr) +=  Icth_Vrth;
 /*
 c               Stamp element: Ith
 */
@@ -461,21 +456,28 @@ c   Stamp element: Qbco
             *(here->VBICcollBasePtr + 1) += -XQbco_Vbc;
 
             if (here->VBIC_selfheat) {
-                XQcth_Vrth = *(ckt->CKTstate0 + here->VBICcqcth) * ckt->CKTomega;
-                XQbe_Vrth  = *(ckt->CKTstate0 + here->VBICcqbeth) * ckt->CKTomega;
-                XQbex_Vrth = *(ckt->CKTstate0 + here->VBICcqbexth) * ckt->CKTomega;
-                XQbc_Vrth  = *(ckt->CKTstate0 + here->VBICcqbcth) * ckt->CKTomega;
-                XQbcx_Vrth = *(ckt->CKTstate0 + here->VBICcqbcxth) * ckt->CKTomega;
-                XQbep_Vrth = *(ckt->CKTstate0 + here->VBICcqbepth) * ckt->CKTomega;
-                XQbcp_Vrth = *(ckt->CKTstate0 + here->VBICcqbcpth) * ckt->CKTomega;
+                XQcth_Vrth = here->VBICcapcth * ckt->CKTomega;
+                XQbe_Vrth  = here->VBICcapqbeth * ckt->CKTomega;
+                XQbex_Vrth = here->VBICcapqbexth * ckt->CKTomega;
+                XQbc_Vrth  = here->VBICcapqbcth * ckt->CKTomega;
+                XQbcx_Vrth = here->VBICcapqbcxth * ckt->CKTomega;
+                XQbep_Vrth = here->VBICcapqbepth * ckt->CKTomega;
+                XQbcp_Vrth = here->VBICcapqbcpth * ckt->CKTomega;
 
-//                *(here->VBICtempTempPtr + 1) +=  XQcth_Vrth;
+//                *(here->VBICtempTempPtr + 1)   +=  XQcth_Vrth;
 //
-//                *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vrth;
-//                *(here->VBICbaseBItempPtr + 1)   += -XQbe_Vrth;
-//                *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vrth;
-//                *(here->VBICemitEItempPtr + 1)   +=  XQbe_Vrth;
-
+//                *(here->VBICbaseBItempPtr + 1) +=  XQbe_Vrth;
+//                *(here->VBICemitEItempPtr + 1) += -XQbe_Vrth;
+//                *(here->VBICbaseBXtempPtr + 1) +=  XQbex_Vrth;
+//                *(here->VBICemitEItempPtr + 1) += -XQbex_Vrth;
+//                *(here->VBICbaseBItempPtr + 1) +=  XQbc_Vrth;
+//                *(here->VBICcollCItempPtr + 1) += -XQbc_Vrth;
+//                *(here->VBICbaseBItempPtr + 1) +=  XQbcx_Vrth;
+//                *(here->VBICcollCXtempPtr + 1) += -XQbcx_Vrth;
+//                *(here->VBICbaseBXtempPtr + 1) +=  XQbep_Vrth;
+//                *(here->VBICbaseBPtempPtr + 1) += -XQbep_Vrth;
+//                *(here->VBICsubsSItempPtr + 1) +=  XQbcp_Vrth;
+//                *(here->VBICbaseBPtempPtr + 1) += -XQbcp_Vrth;
             }
 
         }
