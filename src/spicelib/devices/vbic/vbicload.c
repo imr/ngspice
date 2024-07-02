@@ -68,11 +68,11 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Ircx_Vrth=0.0,Irci,Irci_Vrci,Irci_Vrth=0.0,Irci_Vbci,Irci_Vbcx,Irbx
     ,Irbx_Vrbx,Irbx_Vrth=0.0,Irbi,Irbi_Vrbi,Irbi_Vrth=0.0,Irbi_Vbei,Irbi_Vbci
     ,Ire,Ire_Vre,Ire_Vrth=0.0,Irbp,Irbp_Vrbp,Irbp_Vrth=0.0,Irbp_Vbep
-    ,Irbp_Vbci,Qbe,Qbe_Vrth,Qbe_Vbei,Qbe_Vbci,Qbex,Qbex_Vrth
-    ,Qbex_Vbex,Qbc,Qbc_Vrth,Qbc_Vbci,Qbcx,Qbcx_Vrth,Qbcx_Vbcx
-    ,Qbep,Qbep_Vrth,Qbep_Vbep,Qbep_Vbci,Qbeo,Qbeo_Vbe,Qbco
+    ,Irbp_Vbci,Qbe,Qbe_Vrth=0.0,Qbe_Vbei,Qbe_Vbci,Qbex,Qbex_Vrth=0.0
+    ,Qbex_Vbex,Qbc,Qbc_Vrth=0.0,Qbc_Vbci,Qbcx,Qbcx_Vrth=0.0,Qbcx_Vbcx
+    ,Qbep,Qbep_Vrth=0.0,Qbep_Vbep,Qbep_Vbci,Qbeo,Qbeo_Vbe,Qbco
     ,Qbco_Vbc,Ibcp,Ibcp_Vrth=0.0,Ibcp_Vbcp,Iccp,Iccp_Vrth=0.0,Iccp_Vbep
-    ,Iccp_Vbci,Iccp_Vbcp,Irs,Irs_Vrs,Irs_Vrth=0.0,Qbcp,Qbcp_Vrth
+    ,Iccp_Vbci,Iccp_Vbcp,Irs,Irs_Vrs,Irs_Vrth=0.0,Qbcp,Qbcp_Vrth=0.0
     ,Qbcp_Vbcp,Irth,Irth_Vrth=0.0,Ith=0.0,Ith_Vrth=0.0,Ith_Vbei=0.0,Ith_Vbci=0.0
     ,Ith_Vcei=0.0,Ith_Vbex=0.0,Ith_Vbep=0.0,Ith_Vrs=0.0,Ith_Vbcp=0.0,Ith_Vcep=0.0,Ith_Vrcx=0.0
     ,Ith_Vrci=0.0,Ith_Vbcx=0.0,Ith_Vrbx=0.0,Ith_Vrbi=0.0,Ith_Vre=0.0,Ith_Vrbp=0.0,Qcth=0.0
