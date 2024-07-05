@@ -30,7 +30,7 @@ void com_ghelp(wordlist *wl)
             "ngspice manual in PDF format at\n"
             "  " BASE_HELP_URL "/ngspice-manual.pdf\n"
            "or in HTML format at\n"
-           "  " BASE_HELP_URL "/ngspice-html-manual/manual.html\n\n");
+           "  " BASE_HELP_URL "/ngspice-html-manual/manual.xhtml\n\n");
     return;
 
 #else
