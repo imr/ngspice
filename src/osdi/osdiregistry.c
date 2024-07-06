@@ -392,7 +392,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
       (OSDI_VERSION_MAJOR == 0 && OSDI_VERSION_MINOR >= 4) ||
       OSDI_VERSION_MAJOR >= 1
     )) {
-      printf("NGSPICE supports OpenVAF-reloaded OSDI>=0.4 but \"%s\" uses v%d.%d!",
+      printf("NGSPICE supports OpenVAF-reloaded OSDI>=v0.4 but \"%s\" uses v%d.%d!",
         path, OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
       txfree(path); 
       return INVALID_OBJECT;
