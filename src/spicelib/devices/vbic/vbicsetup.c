@@ -501,6 +501,27 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->VBICbaseBINode = tmp->number;
             }
 
+            if (model->VBICdelayTimeFGiven) {
+                if(here->VBICxf1Node == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->VBICname, "xf1");
+                    if(error) return(error);
+                    here->VBICxf1Node = tmp->number;
+                }
+                if(here->VBICxf2Node == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->VBICname, "xf2");
+                    if(error) return(error);
+                    here->VBICxf2Node = tmp->number;
+                }
+                if(here->VBICbrEq == 0) {
+                    error = CKTmkCur(ckt,&tmp,here->VBICname,"branch");
+                    if(error) return(error);
+                    here->VBICbrEq = tmp->number;
+                }
+            } else {
+                here->VBICxf1Node = 0;
+                here->VBICxf2Node = 0;
+            }
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -584,8 +605,34 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VBICtempSubsPtr,VBICtempNode,VBICsubsNode);
                 TSTALLOC(VBICtempSubsSIPtr,VBICtempNode,VBICsubsSINode);
                 TSTALLOC(VBICtempTempPtr,VBICtempNode,VBICtempNode);
+                if (model->VBICdelayTimeFGiven) {
+                    TSTALLOC(VBICtempXf2Ptr, VBICtempNode, VBICxf2Node);
+                    TSTALLOC(VBICxf1TempPtr, VBICxf1Node ,VBICtempNode);
+                }
             }
 
+            if (model->VBICdelayTimeFGiven) {
+                TSTALLOC(VBICxf1Xf1Ptr   ,VBICxf1Node   ,VBICxf1Node);
+                TSTALLOC(VBICxf1BaseBIPtr,VBICxf1Node   ,VBICbaseBINode);
+                TSTALLOC(VBICxf1EmitEIPtr,VBICxf1Node   ,VBICemitEINode);
+                TSTALLOC(VBICxf1CollCIPtr,VBICxf1Node   ,VBICcollCINode);
+                TSTALLOC(VBICxf1Xf2Ptr   ,VBICxf1Node   ,VBICxf2Node);
+
+                TSTALLOC(VBICxf2Xf1Ptr   ,VBICxf2Node   ,VBICxf1Node);
+                TSTALLOC(VBICxf2BaseBIPtr,VBICxf2Node   ,VBICbaseBINode);
+                TSTALLOC(VBICxf2EmitEIPtr,VBICxf2Node   ,VBICemitEINode);
+                TSTALLOC(VBICxf2CollCIPtr,VBICxf2Node   ,VBICcollCINode);
+                TSTALLOC(VBICxf2Xf2Ptr   ,VBICxf2Node   ,VBICxf2Node);
+                TSTALLOC(VBICemitEIXf2Ptr,VBICemitEINode,VBICxf2Node);
+                TSTALLOC(VBICcollCIXf2Ptr,VBICcollCINode,VBICxf2Node);
+
+                TSTALLOC(VBICxf1IbrPtr, VBICxf1Node, VBICbrEq);
+                TSTALLOC(VBICxf2IbrPtr, VBICxf2Node, VBICbrEq);
+                TSTALLOC(VBICibrXf2Ptr, VBICbrEq,    VBICxf2Node);
+                TSTALLOC(VBICibrXf1Ptr, VBICbrEq,    VBICxf1Node);
+                TSTALLOC(VBICibrIbrPtr, VBICbrEq,    VBICbrEq);
+
+            }
         }
     }
     return(OK);
@@ -636,6 +683,20 @@ VBICunsetup(
                 && here->VBICcollCXNode != here->VBICcollNode)
                 CKTdltNNum(ckt, here->VBICcollCXNode);
             here->VBICcollCXNode = 0;
+
+            if (model->VBICdelayTimeFGiven) {
+                if(here->VBICxf1Node > 0)
+                    CKTdltNNum(ckt, here->VBICxf1Node);
+                here->VBICxf1Node = 0;
+
+                if(here->VBICxf2Node > 0)
+                    CKTdltNNum(ckt, here->VBICxf2Node);
+                here->VBICxf2Node = 0;
+
+                if (here->VBICbrEq > 0)
+                    CKTdltNNum(ckt, here->VBICbrEq);
+                here->VBICbrEq = 0;
+            }
         }
     }
     return OK;
