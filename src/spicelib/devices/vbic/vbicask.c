@@ -122,19 +122,19 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
                             fabs(IS.rValue * *(ckt->CKTstate0 + here->VBICvrbp));
             return(OK);
         case VBIC_QUEST_GM:
-            value->rValue = *(ckt->CKTstate0 + here->VBICitzf_Vbei);
+            value->rValue = *(ckt->CKTstate0 + here->VBICitzf_vbei);
             return(OK);
         case VBIC_QUEST_GO:
-            value->rValue = *(ckt->CKTstate0 + here->VBICitzf_Vbci);
+            value->rValue = *(ckt->CKTstate0 + here->VBICitzf_vbci);
             return(OK);
         case VBIC_QUEST_GPI:
-            value->rValue = *(ckt->CKTstate0 + here->VBICibe_Vbei);
+            value->rValue = *(ckt->CKTstate0 + here->VBICibe_vbei);
             return(OK);
         case VBIC_QUEST_GMU:
-            value->rValue = *(ckt->CKTstate0 + here->VBICibc_Vbci);
+            value->rValue = *(ckt->CKTstate0 + here->VBICibc_vbci);
             return(OK);
         case VBIC_QUEST_GX:
-            value->rValue = *(ckt->CKTstate0 + here->VBICirbi_Vrbi);
+            value->rValue = *(ckt->CKTstate0 + here->VBICirbi_vrbi);
             return(OK);
         case VBIC_QUEST_CBE:
             value->rValue = here->VBICcapbe;

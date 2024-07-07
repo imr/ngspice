@@ -60,6 +60,9 @@ typedef struct sVBICinstance {
     int VBICemitEINode; /* number of internal emitter node of vbic */
     int VBICbaseBPNode; /* number of internal base node of vbic */
     int VBICsubsSINode; /* number of internal substrate node */
+    int VBICxf1Node;    /* number of internal excess phase 1 node itf */
+    int VBICxf2Node;    /* number of internal excess phase 2 node itf */
+    int VBICbrEq;    /* number of the branch equation added for current */
 
     double VBICarea;     /* area factor for the vbic */
     double VBICicVBE;    /* initial condition voltage B-E*/
@@ -125,6 +128,10 @@ typedef struct sVBICinstance {
                              * (emitter prime,emitter prime) */
     double *VBICsubsSISubsSIPtr;    /* pointer to sparse matrix at
                              * (substrate prime, substrate prime) */
+    double *VBICemitEIXfPtr;   /* pointer to sparse matrix at
+                             * (emitter prime,xf) */
+    double *VBICbaseBIXfPtr;   /* pointer to sparse matrix at
+                             * (base prime,xf) */
 
     double *VBICbaseEmitPtr; /* pointer to sparse matrix at
                              * (base,emit) */
@@ -233,6 +240,32 @@ typedef struct sVBICinstance {
     double *VBICtempSubsSIPtr;
     double *VBICtempTempPtr;
 
+    /* excess phase */
+
+    double *VBICxf1Xf1Ptr;    //
+    double *VBICxf1TempPtr;
+    double *VBICxf1BaseBIPtr; //
+    double *VBICxf1EmitEIPtr; //
+    double *VBICxf1CollCIPtr; //
+    double *VBICxf1Xf2Ptr;    //
+
+    double *VBICxf2Xf1Ptr;
+    double *VBICtempXf2Ptr;   //
+    double *VBICxf2BaseBIPtr;
+    double *VBICxf2EmitEIPtr;
+    double *VBICxf2CollCIPtr;
+    double *VBICxf2Xf2Ptr;
+    double *VBICemitXf2Ptr;
+    double *VBICemitEIXf2Ptr; //
+    double *VBICbaseBIXf2Ptr; //
+    double *VBICcollCIXf2Ptr; //
+
+    double *VBICxf1IbrPtr; //
+    double *VBICxf2IbrPtr; //
+    double *VBICibrXf1Ptr; //
+    double *VBICibrXf2Ptr; //
+    double *VBICibrIbrPtr; //
+
     unsigned VBICareaGiven   :1; /* flag to indicate area was specified */
     unsigned VBICoff         :1; /* 'off' flag for vbic */
     unsigned VBICicVBEGiven  :1; /* flag to indicate VBE init. cond. given */
@@ -280,6 +313,7 @@ typedef struct sVBICinstance {
     double VBICith_Vbex;
     double VBICith_Vbep;
     double VBICith_Vbcp;
+    double VBICqf_Vxf;
     double VBICith_Vcep;
     double VBICith_Vrci;
     double VBICith_Vbcx;
@@ -289,6 +323,9 @@ typedef struct sVBICinstance {
     double VBICith_Vrbx;
     double VBICith_Vre;
     double VBICith_Vrs;
+
+    double VBICcapxf;
+    double VBICindInduct;
 
     int VBIC_selfheat; /* self-heating enabled  */
 
@@ -308,6 +345,7 @@ typedef struct sVBICinstance {
     BindElement *VBICcollCICollCIBinding ;
     BindElement *VBICbaseBXBaseBXBinding ;
     BindElement *VBICbaseBIBaseBIBinding ;
+    BindElement *VBICbaseBIXfBinding ;
     BindElement *VBICemitEIEmitEIBinding ;
     BindElement *VBICbaseBPBaseBPBinding ;
     BindElement *VBICsubsSISubsSIBinding ;
@@ -356,11 +394,14 @@ typedef struct sVBICinstance {
     BindElement *VBICemitTempBinding ;
     BindElement *VBICsubsTempBinding ;
     BindElement *VBICcollCItempBinding ;
+    BindElement *VBICcollCIXf2Binding ;
     BindElement *VBICcollCXtempBinding ;
     BindElement *VBICbaseBItempBinding ;
     BindElement *VBICbaseBXtempBinding ;
     BindElement *VBICbaseBPtempBinding ;
     BindElement *VBICemitEItempBinding ;
+    BindElement *VBICemitEIXf2Binding ;
+    BindElement *VBICemitEIXfBinding ;
     BindElement *VBICsubsSItempBinding ;
     BindElement *VBICtempCollBinding ;
     BindElement *VBICtempCollCIBinding ;
@@ -374,107 +415,143 @@ typedef struct sVBICinstance {
     BindElement *VBICtempSubsBinding ;
     BindElement *VBICtempSubsSIBinding ;
     BindElement *VBICtempTempBinding ;
+    BindElement *VBICxf1BaseBIBinding ;
+    BindElement *VBICxf1CollCIBinding ;
+    BindElement *VBICxf1EmitEIBinding ;
+    BindElement *VBICxf1TempBinding ;
+    BindElement *VBICxf1Xf1Binding ;
+    BindElement *VBICxf1Xf2Binding ;
+    BindElement *VBICxf2BaseBIBinding ;
+    BindElement *VBICxf2CollCIBinding ;
+    BindElement *VBICxf2EmitEIBinding ;
+    BindElement *VBICxf2TempBinding ;
+    BindElement *VBICxf2Xf1Binding ;
+    BindElement *VBICxf2Xf2Binding ;
 #endif
 
 } VBICinstance ;
 
 /* entries in the state vector for vbic: */
 
-#define VBICvbei VBICstate
-#define VBICvbex VBICstate+1
-#define VBICvbci VBICstate+2
-#define VBICvbcx VBICstate+3
-#define VBICvbep VBICstate+4
-#define VBICvrci VBICstate+5
-#define VBICvrbi VBICstate+6
-#define VBICvrbp VBICstate+7
-#define VBICvbcp VBICstate+8
+#define VBICvbei  VBICstate
+#define VBICvbex  VBICstate+1
+#define VBICvbci  VBICstate+2
+#define VBICvbcx  VBICstate+3
+#define VBICvbep  VBICstate+4
+#define VBICvrci  VBICstate+5
+#define VBICvrbi  VBICstate+6
+#define VBICvrbp  VBICstate+7
+#define VBICvbcp  VBICstate+8
+#define VBICvxf1  VBICstate+9
+#define VBICvxf2  VBICstate+10
 
-#define VBICibe VBICstate+9
-#define VBICibe_Vbei VBICstate+10
+#define VBICibe       VBICstate+11
+#define VBICibe_vbei  VBICstate+12
 
-#define VBICibex VBICstate+11
-#define VBICibex_Vbex VBICstate+12
+#define VBICibex      VBICstate+13
+#define VBICibex_vbex VBICstate+14
 
-#define VBICitzf VBICstate+13
-#define VBICitzf_Vbei VBICstate+14
-#define VBICitzf_Vbci VBICstate+15
+#define VBICitzf      VBICstate+15
+#define VBICitzf_vbei VBICstate+16
+#define VBICitzf_vbci VBICstate+17
+#define VBICitzf_vrth VBICstate+18
 
-#define VBICitzr VBICstate+16
-#define VBICitzr_Vbci VBICstate+17
-#define VBICitzr_Vbei VBICstate+18
+#define VBICitzr      VBICstate+19
+#define VBICitzr_vbci VBICstate+20
+#define VBICitzr_vbei VBICstate+21
 
-#define VBICibc VBICstate+19
-#define VBICibc_Vbci VBICstate+20
-#define VBICibc_Vbei VBICstate+21
+#define VBICibc       VBICstate+22
+#define VBICibc_vbci  VBICstate+23
+#define VBICibc_vbei  VBICstate+24
 
-#define VBICibep VBICstate+22
-#define VBICibep_Vbep VBICstate+23
+#define VBICibep      VBICstate+25
+#define VBICibep_vbep VBICstate+26
 
-#define VBICirci VBICstate+24
-#define VBICirci_Vrci VBICstate+25
-#define VBICirci_Vbci VBICstate+26
-#define VBICirci_Vbcx VBICstate+27
+#define VBICirci      VBICstate+27
+#define VBICirci_vrci VBICstate+28
+#define VBICirci_vbci VBICstate+29
+#define VBICirci_vbcx VBICstate+30
 
-#define VBICirbi VBICstate+28
-#define VBICirbi_Vrbi VBICstate+29
-#define VBICirbi_Vbei VBICstate+30
-#define VBICirbi_Vbci VBICstate+31
+#define VBICirbi      VBICstate+31
+#define VBICirbi_vrbi VBICstate+32
+#define VBICirbi_vbei VBICstate+33
+#define VBICirbi_vbci VBICstate+34
 
-#define VBICirbp VBICstate+32
-#define VBICirbp_Vrbp VBICstate+33
-#define VBICirbp_Vbep VBICstate+34
-#define VBICirbp_Vbci VBICstate+35
+#define VBICirbp      VBICstate+35
+#define VBICirbp_vrbp VBICstate+36
+#define VBICirbp_vbep VBICstate+37
+#define VBICirbp_vbci VBICstate+38
 
 
-#define VBICqbe VBICstate+36
-#define VBICcqbe VBICstate+37
-#define VBICcqbeci VBICstate+38
+#define VBICqbe    VBICstate+39
+#define VBICcqbe   VBICstate+40
+#define VBICcqbeci VBICstate+41
 
-#define VBICqbex VBICstate+39
-#define VBICcqbex VBICstate+40
+#define VBICqbex   VBICstate+42
+#define VBICcqbex  VBICstate+43
 
-#define VBICqbc VBICstate+41
-#define VBICcqbc VBICstate+42
+#define VBICqbc    VBICstate+44
+#define VBICcqbc   VBICstate+45
 
-#define VBICqbcx VBICstate+43
-#define VBICcqbcx VBICstate+44
+#define VBICqbcx   VBICstate+46
+#define VBICcqbcx  VBICstate+47
 
-#define VBICqbep VBICstate+45
-#define VBICcqbep VBICstate+46
-#define VBICcqbepci VBICstate+47
+#define VBICqbep    VBICstate+48
+#define VBICcqbep   VBICstate+49
+#define VBICcqbepci VBICstate+50
 
-#define VBICqbeo VBICstate+48
-#define VBICcqbeo VBICstate+49
-#define VBICgqbeo VBICstate+50
+#define VBICqbeo  VBICstate+51
+#define VBICcqbeo VBICstate+52
+#define VBICgqbeo VBICstate+53
 
-#define VBICqbco VBICstate+51
-#define VBICcqbco VBICstate+52
-#define VBICgqbco VBICstate+53
+#define VBICqbco  VBICstate+54
+#define VBICcqbco VBICstate+55
+#define VBICgqbco VBICstate+56
 
-#define VBICibcp VBICstate+54
-#define VBICibcp_Vbcp VBICstate+55
+#define VBICibcp      VBICstate+57
+#define VBICibcp_vbcp VBICstate+58
 
-#define VBICiccp VBICstate+56
-#define VBICiccp_Vbep VBICstate+57
-#define VBICiccp_Vbci VBICstate+58
-#define VBICiccp_Vbcp VBICstate+59
+#define VBICiccp      VBICstate+59
+#define VBICiccp_vbep VBICstate+60
+#define VBICiccp_vbci VBICstate+61
+#define VBICiccp_vbcp VBICstate+62
 
-#define VBICqbcp VBICstate+60
-#define VBICcqbcp VBICstate+61
+#define VBICqbcp  VBICstate+63
+#define VBICcqbcp VBICstate+64
 
-#define VBICircx_Vrcx VBICstate+62
-#define VBICirbx_Vrbx VBICstate+63
-#define VBICirs_Vrs VBICstate+64
-#define VBICire_Vre VBICstate+65
+#define VBICircx_vrcx VBICstate+65
+#define VBICirbx_vrbx VBICstate+66
+#define VBICirs_vrs   VBICstate+67
+#define VBICire_vre   VBICstate+68
 
-#define VBICqcth VBICstate+66  /* thermal capacitor charge */
-#define VBICcqcth VBICstate+67 /* thermal capacitor current */
+#define VBICqcth  VBICstate+69 /* thermal capacitor charge */
+#define VBICcqcth VBICstate+70 /* thermal capacitor current */
 
-#define VBICvrth VBICstate+68
-#define VBICicth_Vrth VBICstate+69
+#define VBICvrth        VBICstate+71
+#define VBICicth_vrth   VBICstate+72
 
-#define VBICnumStates 70
+#define VBICqcxf        VBICstate+73
+#define VBICcqcxf       VBICstate+74
+#define VBICgqxf        VBICstate+75
+
+#define VBICibc_vrxf    VBICstate+76
+
+#define VBICixzf        VBICstate+77
+#define VBICixzf_vbei   VBICstate+78
+#define VBICixzf_vbci   VBICstate+79
+#define VBICixzf_vrth   VBICstate+80
+
+#define VBICixxf        VBICstate+81
+#define VBICixxf_vrxf   VBICstate+82
+
+#define VBICitxf        VBICstate+83
+#define VBICitxf_vrxf   VBICstate+84
+#define VBICith_vrxf    VBICstate+85
+
+#define VBICindFlux     VBICstate+86
+#define VBICindVolt     VBICstate+87
+
+#define VBICnumStates 88
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
