@@ -827,16 +827,16 @@ will be updated every time the device specific code is altered or changed to ref
  13.8 r2_cmc
  
       More models are available at https://github.com/dwarning/VA-Models,
-      user compiled models are possible as well (See ngspice manual, chapter 13).
+      user compiled models are possible as well (See ngspice manual, chapter 9).
 
 
  14. XSpice code models
  
-      more than 100 models are available, please see ngspice manual chapt. 12
+      more than 100 models are available, please see ngspice manual chapt. 8
  
  15. Digital Building Blocks (U instances)
  
       U instances are digital primitives which may be used (in proper combination) to
       model digital devices, e.g. from the 74xx or 40xx families. ngspice maps them
       onto XSPICE models, which allows a fast event based simulation. Please see the
-      ngspice manual, chapter 14.
+      ngspice manual, chapter 10.

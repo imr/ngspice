@@ -30,9 +30,3 @@ OPEN BUGS:
   algorithms, does not give correct results for all tested input files.
   The effort to correct that issue seems to be large.
 
-
-* voltage (and current) controlled switches need better timing
-
-  The controlled switches (SW, CSW), which still stem from the original
-  spice3f5 implementation, sometimes lead to wrong results when on and off
-  ramp times differ considerably.
