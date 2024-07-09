@@ -39,32 +39,32 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for( here = VBICinstances(model); here!= NULL; 
                 here = VBICnextInstance(here)) {
 
-            Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_vbei);
-            Ibex_Vbex = *(ckt->CKTstate0 + here->VBICibex_vbex);
-            Itzf_Vbei = *(ckt->CKTstate0 + here->VBICitzf_vbei);
-            Itzf_Vbci = *(ckt->CKTstate0 + here->VBICitzf_vbci);
-            Itzr_Vbci = *(ckt->CKTstate0 + here->VBICitzr_vbci);
-            Itzr_Vbei = *(ckt->CKTstate0 + here->VBICitzr_vbei);
-            Ibc_Vbci  = *(ckt->CKTstate0 + here->VBICibc_vbci);
-            Ibc_Vbei  = *(ckt->CKTstate0 + here->VBICibc_vbei);
-            Ibep_Vbep = *(ckt->CKTstate0 + here->VBICibep_vbep);
-            Irci_Vrci = *(ckt->CKTstate0 + here->VBICirci_vrci);
-            Irci_Vbci = *(ckt->CKTstate0 + here->VBICirci_vbci);
-            Irci_Vbcx = *(ckt->CKTstate0 + here->VBICirci_vbcx);
-            Irbi_Vrbi = *(ckt->CKTstate0 + here->VBICirbi_vrbi);
-            Irbi_Vbei = *(ckt->CKTstate0 + here->VBICirbi_vbei);
-            Irbi_Vbci = *(ckt->CKTstate0 + here->VBICirbi_vbci);
-            Irbp_Vrbp = *(ckt->CKTstate0 + here->VBICirbp_vrbp);
-            Irbp_Vbep = *(ckt->CKTstate0 + here->VBICirbp_vbep);
-            Irbp_Vbci = *(ckt->CKTstate0 + here->VBICirbp_vbci);
-            Ibcp_Vbcp = *(ckt->CKTstate0 + here->VBICibcp_vbcp);
-            Iccp_Vbep = *(ckt->CKTstate0 + here->VBICiccp_vbep);
-            Iccp_Vbci = *(ckt->CKTstate0 + here->VBICiccp_vbci);
-            Iccp_Vbcp = *(ckt->CKTstate0 + here->VBICiccp_vbcp);
-            Ircx_Vrcx = *(ckt->CKTstate0 + here->VBICircx_vrcx);
-            Irbx_Vrbx = *(ckt->CKTstate0 + here->VBICirbx_vrbx);
-            Irs_Vrs   = *(ckt->CKTstate0 + here->VBICirs_vrs);
-            Ire_Vre   = *(ckt->CKTstate0 + here->VBICire_vre);
+            Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);
+            Ibex_Vbex = *(ckt->CKTstate0 + here->VBICibex_Vbex);
+            Itzf_Vbei = *(ckt->CKTstate0 + here->VBICitzf_Vbei);
+            Itzf_Vbci = *(ckt->CKTstate0 + here->VBICitzf_Vbci);
+            Itzr_Vbci = *(ckt->CKTstate0 + here->VBICitzr_Vbci);
+            Itzr_Vbei = *(ckt->CKTstate0 + here->VBICitzr_Vbei);
+            Ibc_Vbci  = *(ckt->CKTstate0 + here->VBICibc_Vbci);
+            Ibc_Vbei  = *(ckt->CKTstate0 + here->VBICibc_Vbei);
+            Ibep_Vbep = *(ckt->CKTstate0 + here->VBICibep_Vbep);
+            Irci_Vrci = *(ckt->CKTstate0 + here->VBICirci_Vrci);
+            Irci_Vbci = *(ckt->CKTstate0 + here->VBICirci_Vbci);
+            Irci_Vbcx = *(ckt->CKTstate0 + here->VBICirci_Vbcx);
+            Irbi_Vrbi = *(ckt->CKTstate0 + here->VBICirbi_Vrbi);
+            Irbi_Vbei = *(ckt->CKTstate0 + here->VBICirbi_Vbei);
+            Irbi_Vbci = *(ckt->CKTstate0 + here->VBICirbi_Vbci);
+            Irbp_Vrbp = *(ckt->CKTstate0 + here->VBICirbp_Vrbp);
+            Irbp_Vbep = *(ckt->CKTstate0 + here->VBICirbp_Vbep);
+            Irbp_Vbci = *(ckt->CKTstate0 + here->VBICirbp_Vbci);
+            Ibcp_Vbcp = *(ckt->CKTstate0 + here->VBICibcp_Vbcp);
+            Iccp_Vbep = *(ckt->CKTstate0 + here->VBICiccp_Vbep);
+            Iccp_Vbci = *(ckt->CKTstate0 + here->VBICiccp_Vbci);
+            Iccp_Vbcp = *(ckt->CKTstate0 + here->VBICiccp_Vbcp);
+            Ircx_Vrcx = *(ckt->CKTstate0 + here->VBICircx_Vrcx);
+            Irbx_Vrbx = *(ckt->CKTstate0 + here->VBICirbx_Vrbx);
+            Irs_Vrs   = *(ckt->CKTstate0 + here->VBICirs_Vrs);
+            Ire_Vre   = *(ckt->CKTstate0 + here->VBICire_Vre);
 
 /*
 c           The real part
