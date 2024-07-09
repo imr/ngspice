@@ -809,7 +809,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 if (!eq(s, ".plot") && !eq(s, ".print"))
                     inp_casefix(dd->line);
                 if (eq(s, ".width") ||
-                        ciprefix(".four", s) ||
+/*                        ciprefix(".four", s) || */
                         eq(s, ".plot") ||
                         eq(s, ".print") ||
 /*                        eq(s, ".save") || add .save only after subcircuit expansion */
@@ -940,7 +940,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Scan the deck again, now also adding .save commands to wl_first */
             for (dd = deck->nextcard; dd; dd = dd->nextcard) {
                 char* curr_line = dd->line;
-                if (ciprefix(".save", curr_line)) {
+                if (ciprefix(".save", curr_line) || ciprefix(".four", curr_line)) {
                     wl_append_word(&wl_first, &end, copy(dd->line));
                     *curr_line = '*';
                 }
@@ -1284,7 +1284,7 @@ int
 inp_dodeck(
     struct card *deck,     /*in: the spice deck */
     char *tt,              /*in: the title of the deck */
-    wordlist *end,         /*in: all lines with .width, .plot, .print, .save, .op, .meas, .tf */
+    wordlist *end,         /*in: all lines with .width, .plot, .print, .save, .op, .meas, .tf, .four */
     bool reuse,            /*in: TRUE if called from runcoms2.c com_rset,
                              FALSE if called from inp_spsource() */
     struct card *options,  /*in: all .option lines from deck */
