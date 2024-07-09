@@ -2137,7 +2137,7 @@ int HSMHVevaluate
        * - Psa : Analytical solution of 
        *             Cox( Vgp - Psa ) = cnst0 * Qacc
        *         where Qacc is the 3-degree series of (fdep)^{1/2}.
-       *         The unkown is transformed to Chi=beta(Ps0-Vbs).
+       *         The unknown is transformed to Chi=beta(Ps0-Vbs).
        * - Ps0_min : |Ps0_min| when Vbs=0.
        *-----------------*/
       Ps0_min = here->HSMHV_eg - Pb2 ;
