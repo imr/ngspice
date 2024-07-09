@@ -411,7 +411,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
     IS_LIM_FUN("fetlim", 1, osdi_fetlim)
     IS_LIM_FUN("limitlog", 1, osdi_limitlog)
     if (expected_args == -1) {
-      printf("warning(osdi): unkown $limit function \"%s\"", lim_table[i].name);
+      printf("warning(osdi): unknown $limit function \"%s\"", lim_table[i].name);
     } else {
       printf("warning(osdi): unexpected number of arguments %i (expected %i) "
              "for \"%s\", ignoring...",
