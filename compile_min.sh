@@ -10,14 +10,17 @@
 # './compile_min.sh' for release or './compile_min.sh d' for debug version.
 
 # Options:
-# CIDER, XSPICE, OpenMP, OSDI, and KLU may be selected at will.
-# --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
+# CIDER may be selected at will.
+# XSPICE, OpenMP, OSDI, and KLU may be deselected. if not required.
 # --enable-oldapps will make ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx in addition to ngspice
 
-# ngspice as shared library:
-# Replace --with-wingui by --with-ngshared in line ../configure ... .
-# Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
+# ngspice as console app:
+# Install readline, ncurses
+# Remove --with-wingui in line ../configure ... .
 # It might be necessary to uncomment and run ./autogen.sh .
+
+# ngspice as shared library:
+# Use compile_min_shared.sh
 
 SECONDS=0
 
@@ -43,13 +46,19 @@ if test "$1" = "d"; then
    if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-  ../configure --with-wingui --enable-xspice --enable-cider  --enable-klu --enable-openmp --enable-osdi --enable-predictor prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-g -m64"
+# executable with GUI
+  ../configure --with-wingui --enable-cider prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-g -m64"
+# console executable
+#  ../configure --enable-cider prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-g -m64"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-klu --enable-openmp --enable-osdi --enable-predictor --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+# executable with GUI
+  ../configure --with-wingui --enable-cider prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+# console executable
+#  ../configure --with-wingui=no --enable-cider prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
