@@ -907,7 +907,7 @@ AC_CHECK_FUNCS([localtime])
 
 AC_CHECK_FUNCS([ftime gettimeofday])
 # Do not use time or getrusage function for CPU time measurement under OpenMP
-if test "x$enable_openmp" != xyes; then
+if test "x$enable_openmp" = xno; then
     AC_CHECK_FUNCS([time getrusage])
 fi
 AC_CHECK_FUNCS([utimes])
