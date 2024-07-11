@@ -448,13 +448,13 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0+here->VBICqcxf)=*(ckt->CKTstate1+here->VBICqcxf);
                         *(ckt->CKTstate0+here->VBICcqcxf)=*(ckt->CKTstate1+here->VBICcqcxf);
                         *(ckt->CKTstate0+here->VBICgqcxf)=*(ckt->CKTstate1+here->VBICgqcxf);
-                        *(ckt->CKTstate0+here->VBICibc_Vrxf)=*(ckt->CKTstate1+here->VBICibc_Vrxf;
-                        *(ckt->CKTstate0+here->VBICixzf)=*(ckt->CKTstate1+here->VBICixzf;
+                        *(ckt->CKTstate0+here->VBICibc_Vrxf)=*(ckt->CKTstate1+here->VBICibc_Vrxf);
+                        *(ckt->CKTstate0+here->VBICixzf)=*(ckt->CKTstate1+here->VBICixzf);
                         *(ckt->CKTstate0+here->VBICixzf_Vbei)=*(ckt->CKTstate1+here->VBICixzf_Vbei);
                         *(ckt->CKTstate0+here->VBICixzf_Vbci)=*(ckt->CKTstate1+here->VBICixzf_Vbci);
-                        *(ckt->CKTstate0+here->VBICixxf)=*(ckt->CKTstate1+here->VBICixxf;
+                        *(ckt->CKTstate0+here->VBICixxf)=*(ckt->CKTstate1+here->VBICixxf);
                         *(ckt->CKTstate0+here->VBICixxf_Vrxf)=*(ckt->CKTstate1+here->VBICixxf_Vrxf);
-                        *(ckt->CKTstate0+here->VBICitxf)=*(ckt->CKTstate1+here->VBICitxf;
+                        *(ckt->CKTstate0+here->VBICitxf)=*(ckt->CKTstate1+here->VBICitxf);
                         *(ckt->CKTstate0+here->VBICitxf_Vrxf)=*(ckt->CKTstate1+here->VBICitxf_Vrxf);
                         if (here->VBIC_selfheat) {
                             *(ckt->CKTstate0+here->VBICixzf_Vrth)=*(ckt->CKTstate1+here->VBICixzf_Vrth);
