@@ -623,20 +623,18 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VBICxf1CollCIPtr, VBICxf1Node   , VBICcollCINode);
                 TSTALLOC(VBICxf1BaseBIPtr, VBICxf1Node   , VBICbaseBINode);
                 TSTALLOC(VBICxf1EmitEIPtr, VBICxf1Node   , VBICemitEINode);
-
                 TSTALLOC(VBICxf2Xf2Ptr   , VBICxf2Node   , VBICxf2Node);
                 TSTALLOC(VBICxf2Xf1Ptr   , VBICxf2Node   , VBICxf1Node);
                 TSTALLOC(VBICcollCIXf2Ptr, VBICcollCINode, VBICxf2Node);
                 TSTALLOC(VBICbaseBIXf2Ptr, VBICbaseBINode, VBICxf2Node);
                 TSTALLOC(VBICemitEIXf2Ptr, VBICemitEINode, VBICxf2Node);
-
                 TSTALLOC(VBICxf1IbrPtr, VBICxf1Node, VBICbrEq);
                 TSTALLOC(VBICxf2IbrPtr, VBICxf2Node, VBICbrEq);
                 TSTALLOC(VBICibrXf2Ptr, VBICbrEq,    VBICxf2Node);
                 TSTALLOC(VBICibrXf1Ptr, VBICbrEq,    VBICxf1Node);
                 TSTALLOC(VBICibrIbrPtr, VBICbrEq,    VBICbrEq);
-
             }
+
         }
     }
     return(OK);

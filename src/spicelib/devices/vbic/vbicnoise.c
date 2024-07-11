@@ -127,11 +127,16 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                                  ckt,THERMNOISE,inst->VBICsubsSINode,inst->VBICsubsNode,
                                  *(ckt->CKTstate0 + inst->VBICirs_Vrs), dtemp);
 
-
-                    NevalSrc(&noizDens[VBICICNOIZ],&lnNdens[VBICICNOIZ],
-                                 ckt,SHOTNOISE,inst->VBICcollCINode, inst->VBICemitEINode,
-                                 *(ckt->CKTstate0 + inst->VBICitzf));
-
+                    if (!inst->VBIC_excessPhase) {
+                        NevalSrc(&noizDens[VBICICNOIZ],&lnNdens[VBICICNOIZ],
+                                     ckt,SHOTNOISE,inst->VBICcollCINode, inst->VBICemitEINode,
+                                     *(ckt->CKTstate0 + inst->VBICitzf));
+                    }
+                    if (inst->VBIC_excessPhase) {
+                        NevalSrc(&noizDens[VBICICNOIZ],&lnNdens[VBICICNOIZ],
+                                     ckt,SHOTNOISE,inst->VBICcollCINode, inst->VBICemitEINode,
+                                     *(ckt->CKTstate0 + inst->VBICitxf));
+                    }
                     NevalSrc(&noizDens[VBICIBNOIZ],&lnNdens[VBICIBNOIZ],
                                  ckt,SHOTNOISE,inst->VBICbaseBINode, inst->VBICemitEINode,
                                  *(ckt->CKTstate0 + inst->VBICibe));
