@@ -82,8 +82,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Vrth=0.0,Vbei,Vbex,Vbci,Vbep,Vbcp
     ,Vrcx,Vbcx,Vrci,Vrbx,Vrbi,Vre,Vrbp
     ,Vrs,Vbe,Vbc,Vcei=0.0,Vcep=0.0,Ibe,Ibe_Vrth=0.0
-    ,Ibe_Vbei,Ibex,Ibex_Vrth=0.0,Ibex_Vbex,Itzf,Itzf_Vrth=0.0,Itzf_Vbei
-    ,Itzf_Vbci,Itzr,Itzr_Vrth=0.0,Itzr_Vbci,Itzr_Vbei,Ibc,Ibc_Vrth=0.0
+    ,Ibe_Vbei,Ibex,Ibex_Vrth=0.0,Ibex_Vbex,Itzf=0.0,Itzf_Vrth=0.0,Itzf_Vbei=0.0
+    ,Itzf_Vbci=0.0,Itzr,Itzr_Vrth=0.0,Itzr_Vbci,Itzr_Vbei,Ibc,Ibc_Vrth=0.0
     ,Ibc_Vbci,Ibc_Vbei,Ibep,Ibep_Vrth=0.0,Ibep_Vbep,Ircx,Ircx_Vrcx
     ,Ircx_Vrth=0.0,Irci,Irci_Vrci,Irci_Vrth=0.0,Irci_Vbci,Irci_Vbcx,Irbx
     ,Irbx_Vrbx,Irbx_Vrth=0.0,Irbi,Irbi_Vrbi,Irbi_Vrth=0.0,Irbi_Vbei,Irbi_Vbci
@@ -98,9 +98,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Ith_Vrci=0.0,Ith_Vbcx=0.0,Ith_Vrbx=0.0,Ith_Vrbi=0.0,Ith_Vre=0.0,Ith_Vrbp=0.0,Qcth=0.0
     ,Qcth_Vrth=0.0,SCALE;
     //NQS
-    double Vrxf, Vcxf, Itxf=0.0, Itxf_Vrxf=0.0, Ibc_Vrxf, Ith_Vrxf, Ixzf_Vrth,
-    Ixxf_Vrxf, Qcxf, Qcxf_Vcxf, Flxf, Flxf_Vrxf;
-    double Vxf1xf2, Rxf1xf2, newmind, req, veq;
+    double Vrxf=0.0, Vcxf=0.0, Itxf=0.0, Itxf_Vrxf=0.0, Ibc_Vrxf=0.0, Ith_Vrxf=0.0,
+    Ixzf_Vrth=0.0, Ixxf_Vrxf=0.0, Qcxf=0.0, Qcxf_Vcxf=0.0, Flxf=0.0, Flxf_Vrxf;
+    double Vxf1xf2=0.0, Rxf1xf2=0.0, newmind, req, veq;
 
     int iret;
     double vce;
@@ -119,8 +119,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     double delvbcp;
     double ibehat;
     double ibexhat;
-    double itzfhat;
-    double ixzfhat;
+    double itzfhat=0.0;
+    double ixzfhat=0.0;
     double itzrhat;
     double ibchat;
     double ibephat;
@@ -136,8 +136,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     double gqbeo, cqbeo, gqbco, cqbco, gbcx, cbcx;
     double Icth, Icth_Vrth;
     //NQS
-    double Ixzf,Ixxf;
-    double Ixzf_Vbei, Ixzf_Vbci;
+    double Ixzf=0.0,Ixxf=0.0;
+    double Ixzf_Vbei=0.0, Ixzf_Vbci=0.0;
     double Icxf, Icxf_Vcxf;
 
     /*  loop through all the models */

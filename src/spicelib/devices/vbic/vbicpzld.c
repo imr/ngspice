@@ -32,7 +32,7 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
            XQbcx_Vbcx, XQbep_Vbep, XQbep_Vbci,
            XQbcp_Vbcp, XQbeo_Vbe, XQbco_Vbc;
 
-    double Ibe_Vrth, Ibex_Vrth, Itzf_Vrth, Itzr_Vrth, Ibc_Vrth, Ibep_Vrth,
+    double Ibe_Vrth, Ibex_Vrth, Itzf_Vrth=0.0, Itzr_Vrth, Ibc_Vrth, Ibep_Vrth,
            Ircx_Vrth, Irci_Vrth, Irbx_Vrth, Irbi_Vrth, Ire_Vrth, Irbp_Vrth,
            Ibcp_Vrth, Iccp_Vrth, Irs_Vrth, Irth_Vrth, Ith_Vrth,
            Ith_Vbei, Ith_Vbci, Ith_Vcei, Ith_Vbex, Ith_Vbep, Ith_Vbcp, Ith_Vcep,
