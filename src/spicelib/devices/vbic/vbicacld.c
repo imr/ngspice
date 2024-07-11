@@ -39,6 +39,10 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
            Ith_Vrci, Ith_Vbcx, Ith_Vrbi, Ith_Vrbp, Ith_Vrcx, Ith_Vrbx, Ith_Vre, Ith_Vrs;
     double XQcth_Vrth, XQbe_Vrth, XQbex_Vrth, XQbc_Vrth, XQbcx_Vrth, XQbep_Vrth, XQbcp_Vrth;
 
+    //NQS
+    double Itxf_Vrxf, Ibc_Vrxf, Ith_Vrxf, Ixzf_Vrth, Ixxf_Vrxf, XQcxf_Vcxf;
+    double Ixzf_Vbei, Ixzf_Vbci, Xl;
+
     /*  loop through all the models */
     for( ; model != NULL; model = VBICnextModel(model)) {
 
@@ -90,17 +94,20 @@ c           Stamp element: Ibex
             *(here->VBICbaseBXEmitEIPtr) += -Ibex_Vbex;
             *(here->VBICemitEIBaseBXPtr) += -Ibex_Vbex;
             *(here->VBICemitEIEmitEIPtr) +=  Ibex_Vbex;
+
+            if (!here->VBIC_excessPhase) {
 /*
 c           Stamp element: Itzf
 */
-            *(here->VBICcollCIBaseBIPtr) +=  Itzf_Vbei;
-            *(here->VBICcollCIEmitEIPtr) += -Itzf_Vbei;
-            *(here->VBICcollCIBaseBIPtr) +=  Itzf_Vbci;
-            *(here->VBICcollCICollCIPtr) += -Itzf_Vbci;
-            *(here->VBICemitEIBaseBIPtr) += -Itzf_Vbei;
-            *(here->VBICemitEIEmitEIPtr) +=  Itzf_Vbei;
-            *(here->VBICemitEIBaseBIPtr) += -Itzf_Vbci;
-            *(here->VBICemitEICollCIPtr) +=  Itzf_Vbci;
+                *(here->VBICcollCIBaseBIPtr) +=  Itzf_Vbei;
+                *(here->VBICcollCIEmitEIPtr) += -Itzf_Vbei;
+                *(here->VBICcollCIBaseBIPtr) +=  Itzf_Vbci;
+                *(here->VBICcollCICollCIPtr) += -Itzf_Vbci;
+                *(here->VBICemitEIBaseBIPtr) += -Itzf_Vbei;
+                *(here->VBICemitEIEmitEIPtr) +=  Itzf_Vbei;
+                *(here->VBICemitEIBaseBIPtr) += -Itzf_Vbci;
+                *(here->VBICemitEICollCIPtr) +=  Itzf_Vbci;
+            }
 /*
 c           Stamp element: Itzr
 */
@@ -230,7 +237,8 @@ c           Stamp element: Rs
 
                 Ibe_Vrth   = here->VBICibe_Vrth;
                 Ibex_Vrth  = here->VBICibex_Vrth;
-                Itzf_Vrth  = here->VBICitzf_vrth;
+                if (!here->VBIC_excessPhase)
+                    Itzf_Vrth  = here->VBICitzf_vrth;
                 Itzr_Vrth  = here->VBICitzr_Vrth;
                 Ibc_Vrth   = here->VBICibc_Vrth;
                 Ibep_Vrth  = here->VBICibep_Vrth;
@@ -271,11 +279,14 @@ c               Stamp element: Ibex
 */
                 *(here->VBICbaseBXtempPtr) +=  Ibex_Vrth;
                 *(here->VBICemitEItempPtr) += -Ibex_Vrth;
+
+                if (!here->VBIC_excessPhase) {
 /*
 c               Stamp element: Itzf
 */
-                *(here->VBICcollCItempPtr) +=  Itzf_Vrth;
-                *(here->VBICemitEItempPtr) += -Itzf_Vrth;
+                    *(here->VBICcollCItempPtr) +=  Itzf_Vrth;
+                    *(here->VBICemitEItempPtr) += -Itzf_Vrth;
+                }
 /*
 c               Stamp element: Itzr
 */
@@ -375,6 +386,44 @@ c               Stamp element: Ith
                 *(here->VBICtempEmitEIPtr) += +Ith_Vre;
                 *(here->VBICtempSubsPtr)   += -Ith_Vrs;
                 *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
+                if (here->VBIC_excessPhase) {
+                    Ith_Vrxf = *(ckt->CKTstate0 + here->VBICith_Vrxf);
+                    *(here->VBICtempXf2Ptr) += +Ith_Vrxf;
+                }
+            }
+
+            if (here->VBIC_excessPhase) {
+                Itxf_Vrxf = *(ckt->CKTstate0 + here->VBICitxf_Vrxf);
+                Ibc_Vrxf  = *(ckt->CKTstate0 + here->VBICibc_Vrxf);
+                Ixzf_Vbei = *(ckt->CKTstate0 + here->VBICixzf_Vbei);
+                Ixzf_Vbci = *(ckt->CKTstate0 + here->VBICixzf_Vbci);
+                Ixxf_Vrxf = *(ckt->CKTstate0 + here->VBICixxf_Vrxf);
+/*
+c           Stamp element: Itxf
+*/
+                *(here->VBICcollCIXf2Ptr)     +=  Itxf_Vrxf;
+                *(here->VBICemitEIXf2Ptr)     += -Itxf_Vrxf;
+/*
+c           Stamp element: Ibc
+*/
+                *(here->VBICbaseBIXf2Ptr)     +=  Ibc_Vrxf;
+                *(here->VBICcollCIXf2Ptr)     += -Ibc_Vrxf;
+/*
+c               Stamp element: Ixzf, Branch: xf1-ground
+*/
+                *(here->VBICxf1BaseBIPtr)     += +Ixzf_Vbei;
+                *(here->VBICxf1EmitEIPtr)     += -Ixzf_Vbei;
+                *(here->VBICxf1BaseBIPtr)     += +Ixzf_Vbci;
+                *(here->VBICxf1CollCIPtr)     += -Ixzf_Vbci;
+                if (here->VBIC_selfheat) {
+                    Ixzf_Vrth = *(ckt->CKTstate0 + here->VBICixzf_Vrth);
+                    *(here->VBICxf1TempPtr)   +=  Ixzf_Vrth;
+                }
+/*
+c               Stamp element: Ixxf, Branch: xf2-ground
+*/
+                *(here->VBICxf2Xf2Ptr)        += +Ixxf_Vrxf;
+
             }
 
 /*
@@ -478,6 +527,24 @@ c   Stamp element: Qbco
                 *(here->VBICbaseBPtempPtr + 1) += -XQbep_Vrth;
                 *(here->VBICsubsSItempPtr + 1) +=  XQbcp_Vrth;
                 *(here->VBICbaseBPtempPtr + 1) += -XQbcp_Vrth;
+            }
+            if (here->VBIC_excessPhase) {
+/*
+c               Stamp element: Qcxf
+*/
+                XQcxf_Vcxf = here->VBICcapQcxf * ckt->CKTomega;
+                *(here->VBICxf1Xf1Ptr + 1) +=  XQcxf_Vcxf;
+/*
+c               Stamp element: L = TD/3
+*/
+                Xl = here->VBICindInduct * ckt->CKTomega;
+
+                *(here->VBICxf1IbrPtr) +=  1;
+                *(here->VBICxf2IbrPtr) -=  1;
+                *(here->VBICibrXf1Ptr) +=  1;
+                *(here->VBICibrXf2Ptr) -=  1;
+                *(here->VBICibrIbrPtr + 1) -= Xl;
+
             }
 
         }
