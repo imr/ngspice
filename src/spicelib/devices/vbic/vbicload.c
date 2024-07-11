@@ -98,7 +98,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Ith_Vrci=0.0,Ith_Vbcx=0.0,Ith_Vrbx=0.0,Ith_Vrbi=0.0,Ith_Vre=0.0,Ith_Vrbp=0.0,Qcth=0.0
     ,Qcth_Vrth=0.0,SCALE;
     //NQS
-    double Vrxf, Vcxf, Itxf, Itxf_Vrxf, Ibc_Vrxf, Ith_Vrxf, Ixzf_Vrth,
+    double Vrxf, Vcxf, Itxf=0.0, Itxf_Vrxf=0.0, Ibc_Vrxf, Ith_Vrxf, Ixzf_Vrth,
     Ixxf_Vrxf, Qcxf, Qcxf_Vcxf, Flxf, Flxf_Vrxf;
     double Vxf1xf2, Rxf1xf2, newmind, req, veq;
 
@@ -135,7 +135,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
     double gqbeo, cqbeo, gqbco, cqbco, gbcx, cbcx;
     double Icth, Icth_Vrth;
-
     //NQS
     double Ixzf,Ixxf;
     double Ixzf_Vbei, Ixzf_Vbci;
@@ -381,7 +380,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0 + here->VBICitzr) =
                             *(ckt->CKTstate1 + here->VBICitzr);
                     *(ckt->CKTstate0 + here->VBICitzr_Vbei) =
-                            *(ckt->CKTstate1 + here->VBICitzf_Vbei);
+                            *(ckt->CKTstate1 + here->VBICitzr_Vbei);
                     *(ckt->CKTstate0 + here->VBICitzr_Vbci) =
                             *(ckt->CKTstate1 + here->VBICitzr_Vbci);
                     *(ckt->CKTstate0 + here->VBICibc) =
@@ -453,14 +452,14 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0+here->VBICixzf)=*(ckt->CKTstate1+here->VBICixzf;
                         *(ckt->CKTstate0+here->VBICixzf_Vbei)=*(ckt->CKTstate1+here->VBICixzf_Vbei);
                         *(ckt->CKTstate0+here->VBICixzf_Vbci)=*(ckt->CKTstate1+here->VBICixzf_Vbci);
-                        *(ckt->CKTstate0+here->VBICixzf_Vrth)=*(ckt->CKTstate1+here->VBICixzf_Vrth);
                         *(ckt->CKTstate0+here->VBICixxf)=*(ckt->CKTstate1+here->VBICixxf;
                         *(ckt->CKTstate0+here->VBICixxf_Vrxf)=*(ckt->CKTstate1+here->VBICixxf_Vrxf);
                         *(ckt->CKTstate0+here->VBICitxf)=*(ckt->CKTstate1+here->VBICitxf;
                         *(ckt->CKTstate0+here->VBICitxf_Vrxf)=*(ckt->CKTstate1+here->VBICitxf_Vrxf);
-                        *(ckt->CKTstate0+here->VBICith_Vrxf)=*(ckt->CKTstate1+here->VBICitxf_Vrxf);
-                        if (here->VBIC_selfheat)
+                        if (here->VBIC_selfheat) {
+                            *(ckt->CKTstate0+here->VBICixzf_Vrth)=*(ckt->CKTstate1+here->VBICixzf_Vrth);
                             *(ckt->CKTstate0+here->VBICith_Vrxf)=*(ckt->CKTstate1+here->VBICith_Vrxf);
+                        }
                         *(ckt->CKTstate0+here->VBICindFlux)=*(ckt->CKTstate1+here->VBICindFlux);
                     }
                 } else {
@@ -610,7 +609,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             ckt->CKTreltol* MAX(fabs(ibexhat),
                             fabs(*(ckt->CKTstate0 + here->VBICibex)))+
                             ckt->CKTabstol) )
-
                     if (!here->VBIC_excessPhase)
                         if( (fabs(itzfhat-*(ckt->CKTstate0 + here->VBICitzf)) <
                                 ckt->CKTreltol* MAX(fabs(itzfhat),
@@ -621,7 +619,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                                 ckt->CKTreltol* MAX(fabs(ixzfhat),
                                 fabs(*(ckt->CKTstate0 + here->VBICixzf)))+
                                 ckt->CKTabstol) )
-
                     if( (fabs(itzrhat-*(ckt->CKTstate0 + here->VBICitzr)) <
                             ckt->CKTreltol* MAX(fabs(itzrhat),
                             fabs(*(ckt->CKTstate0 + here->VBICitzr)))+
@@ -714,7 +711,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         Itxf_Vrxf = *(ckt->CKTstate0 + here->VBICitxf_Vrxf);
                         Ixxf      = *(ckt->CKTstate0 + here->VBICixxf);
                         Ixxf_Vrxf = *(ckt->CKTstate0 + here->VBICixxf_Vrxf);
-                        Ith_Vrxf  = *(ckt->CKTstate0 + here->VBICith_Vrxf);
                         Qcxf      = *(ckt->CKTstate0 + here->VBICqcxf);
                         Icxf      = *(ckt->CKTstate0 + here->VBICcqcxf);
                         Icxf_Vcxf = *(ckt->CKTstate0 + here->VBICgqcxf);
@@ -723,8 +719,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         Ixzf_Vbei = *(ckt->CKTstate0 + here->VBICixzf_Vbei);
                         Ixzf_Vbci = *(ckt->CKTstate0 + here->VBICixzf_Vbci);
                         Ixzf_Vrth = *(ckt->CKTstate0 + here->VBICixzf_Vrth);
-                        if (here->VBIC_selfheat)
+                        if (here->VBIC_selfheat) {
+                            Ixzf_Vrth = *(ckt->CKTstate0 + here->VBICixzf_Vrth);
                             Ith_Vrxf = *(ckt->CKTstate0 + here->VBICith_Vrxf);
+                        }
                         Flxf = *(ckt->CKTstate0 + here->VBICindFlux);
                     }
                     goto load;
@@ -887,7 +885,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             here->VBICcapqbcpth = Qbcp_Vrth;
                         }
                         if (here->VBIC_excessPhase) {
-                            *(ckt->CKTstate0 + here->VBICcqcxf) = Qcxf_Vcxf;
+                            here->VBICcapQcxf = Qcxf_Vcxf;
                         }
                         continue; /* go to 1000 */
                     }
@@ -1121,7 +1119,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->VBICitxf_Vrxf) = Itxf_Vrxf;
                 *(ckt->CKTstate0 + here->VBICixxf)      = Ixxf;
                 *(ckt->CKTstate0 + here->VBICixxf_Vrxf) = Ixxf_Vrxf;
-                *(ckt->CKTstate0 + here->VBICith_Vrxf)  = Ith_Vrxf;
                 *(ckt->CKTstate0 + here->VBICqcxf)      = Qcxf;
                 *(ckt->CKTstate0 + here->VBICcqcxf)     = Icxf;
                 *(ckt->CKTstate0 + here->VBICgqcxf)     = Icxf_Vcxf;
@@ -1129,9 +1126,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->VBICixzf)      = Ixzf;
                 *(ckt->CKTstate0 + here->VBICixzf_Vbei) = Ixzf_Vbei;
                 *(ckt->CKTstate0 + here->VBICixzf_Vbci) = Ixzf_Vbci;
-                *(ckt->CKTstate0 + here->VBICixzf_Vrth) = Ixzf_Vrth;
-                if (here->VBIC_selfheat)
+                if (here->VBIC_selfheat) {
+                    *(ckt->CKTstate0 + here->VBICixzf_Vrth) = Ixzf_Vrth;
                     *(ckt->CKTstate0 + here->VBICith_Vrxf) = Ith_Vrxf;
+                }
                 *(ckt->CKTstate0 + here->VBICindFlux) = Flxf;
             }
 
@@ -1549,7 +1547,7 @@ c               Stamp element: Ith
                 *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
                 if (here->VBIC_excessPhase) {
                     rhs_current = -Ith_Vrxf*Vrxf;
-                    *(ckt->CKTrhs + here->VBICxf2Node) += -rhs_current;
+                    *(ckt->CKTrhs + here->VBICtempNode) += -rhs_current;
                     *(here->VBICtempXf2Ptr)            += +Ith_Vrxf;
                 }
             }

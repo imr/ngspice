@@ -309,7 +309,6 @@ typedef struct sVBICinstance {
     double VBICith_Vbex;
     double VBICith_Vbep;
     double VBICith_Vbcp;
-    double VBICqf_Vxf;
     double VBICith_Vcep;
     double VBICith_Vrci;
     double VBICith_Vbcx;
@@ -321,6 +320,7 @@ typedef struct sVBICinstance {
     double VBICith_Vrs;
 
     double VBICindInduct;
+    double VBICcapQcxf;
 
     int VBIC_selfheat;    /* self-heating enabled  */
     int VBIC_excessPhase; /* excess phase enabled  */
@@ -344,6 +344,7 @@ typedef struct sVBICinstance {
     BindElement *VBICemitEIEmitEIBinding ;
     BindElement *VBICbaseBPBaseBPBinding ;
     BindElement *VBICsubsSISubsSIBinding ;
+
     BindElement *VBICbaseEmitBinding ;
     BindElement *VBICemitBaseBinding ;
     BindElement *VBICbaseCollBinding ;
@@ -364,6 +365,7 @@ typedef struct sVBICinstance {
     BindElement *VBICbaseBXSubsSIBinding ;
     BindElement *VBICbaseBIEmitEIBinding ;
     BindElement *VBICbaseBPSubsSIBinding ;
+
     BindElement *VBICcollCXCollBinding ;
     BindElement *VBICbaseBXBaseBinding ;
     BindElement *VBICemitEIEmitBinding ;
@@ -384,6 +386,7 @@ typedef struct sVBICinstance {
     BindElement *VBICsubsSICollCIBinding ;
     BindElement *VBICsubsSIBaseBIBinding ;
     BindElement *VBICsubsSIBaseBPBinding ;
+
     BindElement *VBICcollTempBinding ;
     BindElement *VBICbaseTempBinding ;
     BindElement *VBICemitTempBinding ;
@@ -407,8 +410,10 @@ typedef struct sVBICinstance {
     BindElement *VBICtempSubsBinding ;
     BindElement *VBICtempSubsSIBinding ;
     BindElement *VBICtempTempBinding ;
+
     BindElement *VBICtempXf2Binding ;
     BindElement *VBICxf1TempBinding ;
+
     BindElement *VBICxf1Xf1Binding ;
     BindElement *VBICxf1Xf2Binding ;
     BindElement *VBICxf1CollCIBinding ;
