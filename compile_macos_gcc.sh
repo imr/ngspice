@@ -1,14 +1,16 @@
 #!/bin/bash
 # ngspice build script for macOS, release or debug version, 64 bit
 # compile_macos.sh <d>
+# tested with macOS BigSur 11.7.9, MacBook Air i5
 
 # Procedure:
 # Install gcc, bison, flex, libtool, autoconf, automake,
 # libx11 and libx11-dev (headers), libXaw and libXaw-dev, libreadline and dev
-# Declare 'compile_linux.sh' executable and start compiling with
+# XCODE and commandline tools
+# Declare 'compile_macos_gcc.sh' executable and start compiling with
 # './compile_macos.sh' or './compile_macos.sh d' from the ngspice directory.
 # Options:
-# CIDER, XSPICE, and OpenMP may be selected at will.
+# KLU, OSDI, XSPICE, and OpenMP may be deselected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 
 # ngspice as shared library:

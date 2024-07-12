@@ -1,17 +1,17 @@
 #!/bin/bash
 # ngspice build script for macOS, release or debug version, 64 bit
-# compile_macos_clang.sh <d>
-# tested with macOS BigSur 11.7.9, MacBook Air i5
-# OpenMP is not available!
+# compile_macos_clang_M2.sh <d>
+# tested with Mac mini, Apple M2
 
 # Procedure:
 # Install gcc, bison, flex, libtool, autoconf, automake,
 # libx11 and libx11-dev (headers), libXaw and libXaw-dev, libreadline and dev
-# XCODE and commandline tools
-# Declare 'compile_macos_clang.sh' executable and start compiling with
-# './compile_macos_clang.sh' or './compile_macos_clang.sh d' from the ngspice directory.
+# XCODE, commandline tools
+# Declare 'compile_macos_clang_M2.sh' executable and start compiling with
+# './compile_macoss_clang_M2.sh' or './compile_macoss_clang_M2.sh d' from the ngspice directory.
 # Options:
-# KLU, OSDI, and XSPICE may be deselected at will.
+# CIDER may be selected at will.
+# OpenMP has been installed from https://mac.r-project.org/openmp/
 
 # ngspice as shared library:
 # Replace --with-x by --with-ngshared in line ../configure ... .
@@ -42,15 +42,14 @@ if test "$1" = "d"; then
    if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-# Builtin readline is not compatible (Big Sur), readline via Homebrew required (in /usr/local/opt)
-# Standard clang does not support OpenMP
-  ../configure --with-x --enable-cider --disable-openmp --with-readline=/usr/local/opt/readline CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/usr/local/opt/readline/include" LDFLAGS="-m64 -g -L/usr/local/opt/readline/lib -L/opt/X11/lib"
+
+  ../configure --with-ngshared --enable-cider --with-readline=/opt/homebrew/opt/readline --enable-debug CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include" LDFLAGS="-m64 -g -L/opt/homebrew/opt/readline/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-  ../configure --with-x --enable-cider --disable-openmp --with-readline=/usr/local/opt/readline CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/usr/local/opt/readline/include -I/usr/local/opt/ncurses/include" LDFLAGS="-m64 -L/usr/local/opt/readline/lib -L/usr/local/opt/ncurses/lib -L/opt/X11/lib"
+  ../configure --with-ngshared --enable-cider --with-readline=/opt/homebrew/opt/readline CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/ncurses/include" LDFLAGS="-m64 -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/ncurses/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
