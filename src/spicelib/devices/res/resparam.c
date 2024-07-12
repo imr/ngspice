@@ -12,6 +12,8 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "ngspice/missing_math.h"
 #include "ngspice/fteext.h"
 
+#define RESMIN 1e-6
+
 int
 RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
@@ -37,7 +39,15 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         break;
     case RES_RESIST:
         /* 0 valued resistor causes ngspice to hang -- can't solve for initial voltage */
-        if ( AlmostEqualUlps( value->rValue, 0, 3 ) ) value->rValue = 0.001; /* 0.001 should be sufficiently small */
+//        if ( AlmostEqualUlps( value->rValue, 0, 3 ) ) value->rValue = 0.001; /* 0.001 should be sufficiently small */
+        if (value->rValue >= 0 && value->rValue < RESMIN) {
+            fprintf(stderr, "Warning: Value of resistor %s is too small, set to %e\n", here->gen.GENname, RESMIN);
+            value->rValue = RESMIN;
+        }
+        else if (value->rValue < 0 && value->rValue > -RESMIN) {
+            fprintf(stderr, "Warning: Value of resistor %s is too small, set to %e\n", here->gen.GENname, -RESMIN);
+            value->rValue = -RESMIN;
+        }
         here->RESresist = value->rValue;
         here->RESresGiven = TRUE;
         break;
