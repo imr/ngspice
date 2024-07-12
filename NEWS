@@ -1,7 +1,7 @@
 Ngspice-43, July 14th, 2024
 ============
 - New features:
-    + Update to VBIC model: Enable self-heating in AC sim.
+    + Update to VBIC model: Enable self-heating in AC sim, enable nqs.
     + Enable single terminal n devices (Verilog-A modules)
     + Add path or filepath (without file name) to variable sourcepath,
       when calling command 'source'
