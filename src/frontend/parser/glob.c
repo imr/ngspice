@@ -604,7 +604,7 @@ wordlist_l *wll_cons(
     w->n_char_word = n_char_word;
     w->n_elem_word_alloc = n_elem_word_alloc;
 
-    if (opt & OPT_WLL_COPY_ALL) {
+    if (p_word && opt && OPT_WLL_COPY_ALL) {
         char *p_dst = w->wl.wl_word = TMALLOC(char, n_elem_word_alloc);
         (void) memcpy(p_dst, p_word, n_char_word);
         p_dst += n_char_word;
