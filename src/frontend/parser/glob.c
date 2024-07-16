@@ -606,7 +606,8 @@ wordlist_l *wll_cons(
 
     if (opt & OPT_WLL_COPY_ALL) {
         char *p_dst = w->wl.wl_word = TMALLOC(char, n_elem_word_alloc);
-        (void) memcpy(p_dst, p_word, n_char_word);
+        if(p_word)
+            (void) memcpy(p_dst, p_word, n_char_word);
         p_dst += n_char_word;
         *p_dst = '\0';
     }
