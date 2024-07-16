@@ -16,12 +16,12 @@ vbsp 44 0 0
 
 .options Temp=27.0
 
-* BSIM3v3.3.0 model with modified default parameters 0.18µm
+* BSIM3v3.3.0 model with modified default parameters 0.18Âµm
 .model n1 nmos level=49 version=3.3.0 tox=3.5n nch=2.4e17 nsub=5e16 vth0=0.15
 .model p1 pmos level=49 version=3.3.0 tox=3.5n nch=2.5e17 nsub=5e16 vth0=-0.15
 
-*.include ./Modelcards/modelcard.nmos $ Berkeley model cards limited to L >= 0.35µm
-*.include ./Modelcards/modelcard.pmos $ Berkeley model cards limited to L >= 0.35µm
+*.include ./Modelcards/modelcard.nmos $ Berkeley model cards limited to L >= 0.35Âµm
+*.include ./Modelcards/modelcard.pmos $ Berkeley model cards limited to L >= 0.35Âµm
 
 * update of the default parameters required
 *.model n1 NMOS level=49 version=3.3.0 $ nearly no current due to VT > 2 V ?
