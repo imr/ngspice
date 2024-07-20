@@ -352,6 +352,8 @@ static char* outstorage(char*, bool);
 static void printsend(void);
 #endif
 
+extern wordlist* sourceinfo;
+
 static int totalreset(void);
 extern void rem_controls(void);
 extern void destroy_wallace(void);
@@ -2464,6 +2466,10 @@ static int totalreset(void)
     wordlist all = { "all", NULL, NULL };
     wordlist star = { "*", NULL, NULL };
 
+    tfree(Infile_Path);
+    wl_free(sourceinfo);
+    sourceinfo = NULL;
+
     com_destroy(&all);
     com_unalias(&star);
     com_undefine(&star);
@@ -2480,7 +2486,6 @@ static int totalreset(void)
     rem_controls();
 
     while (ft_curckt) {
-        wl_delete(ft_curckt->ci_sourceinfo);
         com_remcirc(NULL);
     }
 
