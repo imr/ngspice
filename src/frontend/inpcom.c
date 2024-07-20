@@ -1288,7 +1288,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         add_to_sourcepath(sourcelineinfo, NULL);
     }
 
-    wl_append_word(&sourceinfo, &sourceinfo, sourcelineinfo);
+    sourceinfo = wl_cons(sourcelineinfo, sourceinfo);
 
     /* First read in all lines & put them in the struct cc */
     for (;;) {
