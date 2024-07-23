@@ -75,9 +75,14 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             value->rValue = *(ckt->CKTstate0 + here->VBICvbci);
             return(OK);
         case VBIC_QUEST_CC:
-            value->rValue = *(ckt->CKTstate0 + here->VBICitzf) -
-                            *(ckt->CKTstate0 + here->VBICitzr) -
-                            *(ckt->CKTstate0 + here->VBICibc);
+            if (!here->VBIC_excessPhase)
+                value->rValue = *(ckt->CKTstate0 + here->VBICitzf) -
+                                *(ckt->CKTstate0 + here->VBICitzr) -
+                                *(ckt->CKTstate0 + here->VBICibc);
+            else
+                value->rValue = *(ckt->CKTstate0 + here->VBICitxf) -
+                                *(ckt->CKTstate0 + here->VBICitzr) -
+                                *(ckt->CKTstate0 + here->VBICibc);
             value->rValue *= VBICmodPtr(here)->VBICtype;
             return(OK);
         case VBIC_QUEST_CB:
@@ -89,10 +94,16 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             value->rValue *= VBICmodPtr(here)->VBICtype;
             return(OK);
         case VBIC_QUEST_CE:
-            value->rValue = - *(ckt->CKTstate0 + here->VBICibe) -
-                            *(ckt->CKTstate0 + here->VBICibex) -
-                            *(ckt->CKTstate0 + here->VBICitzf) +
-                            *(ckt->CKTstate0 + here->VBICitzr);
+            if (!here->VBIC_excessPhase)
+                value->rValue = - *(ckt->CKTstate0 + here->VBICibe) -
+                                *(ckt->CKTstate0 + here->VBICibex) -
+                                *(ckt->CKTstate0 + here->VBICitzf) +
+                                *(ckt->CKTstate0 + here->VBICitzr);
+            else
+                value->rValue = - *(ckt->CKTstate0 + here->VBICibe) -
+                                *(ckt->CKTstate0 + here->VBICibex) -
+                                *(ckt->CKTstate0 + here->VBICitxf) +
+                                *(ckt->CKTstate0 + here->VBICitzr);
             value->rValue *= VBICmodPtr(here)->VBICtype;
             return(OK);
         case VBIC_QUEST_CS:
@@ -105,21 +116,38 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             VBICask(ckt, instPtr, VBIC_QUEST_CB, &IB, select);
             VBICask(ckt, instPtr, VBIC_QUEST_CE, &IE, select);
             VBICask(ckt, instPtr, VBIC_QUEST_CS, &IS, select);
-            value->rValue = fabs(*(ckt->CKTstate0 + here->VBICibe) * *(ckt->CKTstate0 + here->VBICvbei)) +
-                            fabs(*(ckt->CKTstate0 + here->VBICibc) * *(ckt->CKTstate0 + here->VBICvbci)) +
-                            fabs(*(ckt->CKTstate0 + here->VBICitzf) - *(ckt->CKTstate0 + here->VBICitzr)) 
-                                * fabs(*(ckt->CKTstate0 + here->VBICvbei) - *(ckt->CKTstate0 + here->VBICvbci)) +
-                            fabs(*(ckt->CKTstate0 + here->VBICibex) * *(ckt->CKTstate0 + here->VBICvbex)) +
-                            fabs(*(ckt->CKTstate0 + here->VBICibep) * *(ckt->CKTstate0 + here->VBICvbep)) +
-                            fabs(*(ckt->CKTstate0 + here->VBICibcp) * *(ckt->CKTstate0 + here->VBICvbcp)) +
-                            fabs(*(ckt->CKTstate0 + here->VBICiccp)) 
-                                * fabs(*(ckt->CKTstate0 + here->VBICvbep) - *(ckt->CKTstate0 + here->VBICvbcp)) +
-                            fabs(IC.rValue * IC.rValue * here->VBICtextCollResist) +
-                            fabs(IC.rValue * *(ckt->CKTstate0 + here->VBICvrci)) +
-                            fabs(IB.rValue * IB.rValue * here->VBICtextBaseResist) +
-                            fabs(IB.rValue * *(ckt->CKTstate0 + here->VBICvrbi)) +
-                            fabs(IE.rValue * IE.rValue * here->VBICtemitterResist) +
-                            fabs(IS.rValue * *(ckt->CKTstate0 + here->VBICvrbp));
+            if (!here->VBIC_excessPhase)
+                value->rValue = fabs(*(ckt->CKTstate0 + here->VBICibe) * *(ckt->CKTstate0 + here->VBICvbei)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibc) * *(ckt->CKTstate0 + here->VBICvbci)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICitzf) - *(ckt->CKTstate0 + here->VBICitzr)) 
+                                    * fabs(*(ckt->CKTstate0 + here->VBICvbei) - *(ckt->CKTstate0 + here->VBICvbci)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibex) * *(ckt->CKTstate0 + here->VBICvbex)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibep) * *(ckt->CKTstate0 + here->VBICvbep)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibcp) * *(ckt->CKTstate0 + here->VBICvbcp)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICiccp)) 
+                                    * fabs(*(ckt->CKTstate0 + here->VBICvbep) - *(ckt->CKTstate0 + here->VBICvbcp)) +
+                                fabs(IC.rValue * IC.rValue * here->VBICtextCollResist) +
+                                fabs(IC.rValue * *(ckt->CKTstate0 + here->VBICvrci)) +
+                                fabs(IB.rValue * IB.rValue * here->VBICtextBaseResist) +
+                                fabs(IB.rValue * *(ckt->CKTstate0 + here->VBICvrbi)) +
+                                fabs(IE.rValue * IE.rValue * here->VBICtemitterResist) +
+                                fabs(IS.rValue * *(ckt->CKTstate0 + here->VBICvrbp));
+            else
+                value->rValue = fabs(*(ckt->CKTstate0 + here->VBICibe) * *(ckt->CKTstate0 + here->VBICvbei)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibc) * *(ckt->CKTstate0 + here->VBICvbci)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICitxf) - *(ckt->CKTstate0 + here->VBICitzr)) 
+                                    * fabs(*(ckt->CKTstate0 + here->VBICvbei) - *(ckt->CKTstate0 + here->VBICvbci)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibex) * *(ckt->CKTstate0 + here->VBICvbex)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibep) * *(ckt->CKTstate0 + here->VBICvbep)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICibcp) * *(ckt->CKTstate0 + here->VBICvbcp)) +
+                                fabs(*(ckt->CKTstate0 + here->VBICiccp)) 
+                                    * fabs(*(ckt->CKTstate0 + here->VBICvbep) - *(ckt->CKTstate0 + here->VBICvbcp)) +
+                                fabs(IC.rValue * IC.rValue * here->VBICtextCollResist) +
+                                fabs(IC.rValue * *(ckt->CKTstate0 + here->VBICvrci)) +
+                                fabs(IB.rValue * IB.rValue * here->VBICtextBaseResist) +
+                                fabs(IB.rValue * *(ckt->CKTstate0 + here->VBICvrbi)) +
+                                fabs(IE.rValue * IE.rValue * here->VBICtemitterResist) +
+                                fabs(IS.rValue * *(ckt->CKTstate0 + here->VBICvrbp));
             return(OK);
         case VBIC_QUEST_GM:
             value->rValue = *(ckt->CKTstate0 + here->VBICitzf_Vbei);
