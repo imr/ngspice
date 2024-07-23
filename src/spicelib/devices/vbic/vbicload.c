@@ -497,6 +497,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     if (here->VBIC_selfheat)
                         Vrth = *(ckt->CKTrhsOld + here->VBICtempNode);
                     if (here->VBIC_excessPhase) {
+                        Vrxf = *(ckt->CKTrhsOld + here->VBICxf2Node);
                         if (ckt->CKTmode & MODEINITTRAN) {
                             *(ckt->CKTstate1 + here->VBICindFlux) =
                                 *(ckt->CKTstate0 + here->VBICindFlux);
@@ -535,6 +536,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhsOld+here->VBICsubsSINode));
                 if (here->VBIC_selfheat)
                     Vrth = *(ckt->CKTrhsOld + here->VBICtempNode);
+                if (here->VBIC_excessPhase)
+                    Vrxf = *(ckt->CKTrhsOld + here->VBICxf2Node);
 
                 ibehat = *(ckt->CKTstate0 + here->VBICibe) +
                          *(ckt->CKTstate0 + here->VBICibe_Vbei)*delvbei;
