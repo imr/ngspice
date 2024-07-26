@@ -119,8 +119,13 @@ static void callback(ARGS, Mif_Callback_Reason_t reason)
 #include <io.h>
 
 static const char *exts[] = { "", ".so", ".DLL", NULL};
+#if defined (__CYGWIN__)
+#define CMPFN strcasecmp // Ignores case.
+#define TESTFN(f) (access(f, 4) == 0) // Checks for read access.
+#else
 #define CMPFN _stricmp // Ignores case.
 #define TESTFN(f) (_access(f, 4) == 0) // Checks for read access.
+#endif
 #define SLIBFILE "DLL"
 #ifndef NGSPICELIBDIR
 #define NGSPICELIBDIR "C:\\Spice64\\lib\\ngspice" // Defined by configure?
