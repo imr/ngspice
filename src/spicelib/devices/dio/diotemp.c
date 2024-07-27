@@ -33,7 +33,7 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     double egfet1,arg1,fact1,pbfact1,pbo,gmaold,pboSW,gmaSWold;
     double fact2,pbfact,arg,egfet,gmanew,gmaSWnew;
     double arg1_dT, arg2, arg2_dT;
-    double lnTRatio, egfet_dT, arg0, vte_dT, vts_dT, vtt_dT, vtr_dT;
+    double lnTRatio, egfet_dT = 0.0, arg0, vte_dT, vts_dT, vtt_dT, vtr_dT;
 
     vt = CONSTKoverQ * Temp;
     vte = model->DIOemissionCoeff * vt;

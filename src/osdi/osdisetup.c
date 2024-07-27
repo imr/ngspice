@@ -162,10 +162,10 @@ static int init_matrix(SMPmatrix *matrix, const OsdiDescriptor *descr,
 
   for (uint32_t i = 0; i < descr->num_jacobian_entries; i++) {
     uint32_t equation = descr->jacobian_entries[i].nodes.node_1;
-    uint32_t unkown = descr->jacobian_entries[i].nodes.node_2;
+    uint32_t unknown = descr->jacobian_entries[i].nodes.node_2;
     equation = node_mapping[equation];
-    unkown = node_mapping[unkown];
-    double *ptr = SMPmakeElt(matrix, (int)equation, (int)unkown);
+    unknown = node_mapping[unknown];
+    double *ptr = SMPmakeElt(matrix, (int)equation, (int)unknown);
 
     if (ptr == NULL) {
       return (E_NOMEM);
@@ -424,10 +424,10 @@ static int init_matrix_klu(SMPmatrix *matrix, const OsdiDescriptor *descr,
 
   for (uint32_t i = 0; i < descr->num_jacobian_entries; i++) {
     uint32_t equation = descr->jacobian_entries[i].nodes.node_1;
-    uint32_t unkown = descr->jacobian_entries[i].nodes.node_2;
+    uint32_t unknown = descr->jacobian_entries[i].nodes.node_2;
     equation = node_mapping[equation];
-    unkown = node_mapping[unkown];
-    if (equation != 0 && unkown != 0) {
+    unknown = node_mapping[unknown];
+    if (equation != 0 && unknown != 0) {
       tmp.COO = jacobian_ptr_resist[i];
       tmp.CSC = NULL;
       tmp.CSC_Complex = NULL;
@@ -461,10 +461,10 @@ static int update_matrix_klu(const OsdiDescriptor *descr, void *inst,
 
   for (uint32_t i = 0; i < descr->num_jacobian_entries; i++) {
     uint32_t equation = descr->jacobian_entries[i].nodes.node_1;
-    uint32_t unkown = descr->jacobian_entries[i].nodes.node_2;
+    uint32_t unknown = descr->jacobian_entries[i].nodes.node_2;
     equation = node_mapping[equation];
-    unkown = node_mapping[unkown];
-    if (equation != 0 && unkown != 0) {
+    unknown = node_mapping[unknown];
+    if (equation != 0 && unknown != 0) {
       jacobian_ptr_resist[i] = inst_matrix_ptrs[2 * i + complex];
     }
   }

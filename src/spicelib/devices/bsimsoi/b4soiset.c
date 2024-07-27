@@ -1732,7 +1732,7 @@ B4SOIinstance **InstArray;
         if (!model->B4SOIpfbjtiiGiven)
             model->B4SOIpfbjtii = 0.0;
         /*4.1 Iii model*/
-            if (!model->B4SOIpebjtiiGiven)
+        if (!model->B4SOIpebjtiiGiven)
            model->B4SOIpebjtii = 0.0;
         if (!model->B4SOIpcbjtiiGiven)
            model->B4SOIpcbjtii = 0.0;
@@ -1775,7 +1775,7 @@ B4SOIinstance **InstArray;
         if (!model->B4SOIpfgidlGiven)
             model->B4SOIpfgidl = 0.0;
 
-                if (!model->B4SOIpagislGiven)
+        if (!model->B4SOIpagislGiven)
             model->B4SOIpagisl = 0.0;
         if (!model->B4SOIpbgislGiven)
             model->B4SOIpbgisl = 0.0;

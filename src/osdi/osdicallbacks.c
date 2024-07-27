@@ -27,7 +27,7 @@ void osdi_log(void *handle_, char *msg, uint32_t lvl) {
     dst = stderr;
     break;
   default:
-    fprintf(stderr, "OSDI(unkown) %s", handle->name);
+    fprintf(stderr, "OSDI(unknown) %s", handle->name);
     break;
   }
 

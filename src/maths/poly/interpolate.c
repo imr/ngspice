@@ -40,7 +40,7 @@ ft_interpolate(double *data, double *ndata, double *oscale, int olen,
 	       double *nscale, int nlen, int degree)
 {
     double *result, *scratch, *xdata, *ydata, diff;
-    int sign, lastone, i, l, middle, tdegree;
+    int sign = 1, lastone, i, l, middle, tdegree;
 
     if ((olen < 2) || (nlen < 2)) {
         fprintf(cp_err, "Error: lengths too small to interpolate.\n");

@@ -352,6 +352,22 @@ static char* outstorage(char*, bool);
 static void printsend(void);
 #endif
 
+extern wordlist* sourceinfo;
+
+static int totalreset(void);
+extern void rem_controls(void);
+extern void destroy_wallace(void);
+extern void sh_delete_myvec(void);
+extern IFsimulator SIMinfo;
+extern void spice_destroy_devices(void); /* FIXME need a better place */
+
+extern void destroy_const_plot(void);
+extern void com_destroy(wordlist* wl);
+extern void com_unalias(wordlist* wl);
+extern void com_undefine(wordlist* wl);
+extern void com_remcirc(wordlist* wl);
+extern void unset_all(void);
+
 #include "ngspice/sharedspice.h"
 
 static SendChar* pfcn;
@@ -1083,6 +1099,10 @@ sh_delete_myvec(void)
 IMPEXP
 int  ngSpice_Command(char* comexec)
 {
+    if (!is_initialized) {
+        return 1;
+    }
+
     /* delete existing command memory */
     if (comexec == NULL) {
         cp_resetcontrol(FALSE);
@@ -1367,6 +1387,15 @@ int ngSpice_UnlockRealloc(void)
     return 1;
 }
 
+/* Reset ngspice as far as possible */
+IMPEXP
+int ngSpice_Reset(void)
+{
+    if (!is_initialized)
+        return 1;
+    fprintf(stdout, "Note: Resetting ngspice\n\n");
+    return totalreset();
+}
 
 /* add the preliminary breakpoints to the list.
    called from dctran.c */
@@ -2034,12 +2063,12 @@ ATTRIBUTE_NORETURN void shared_exit(int status)
       hand this information over to caller */
     if (status >= 1000) {
         coquit = TRUE;
-        fprintf(stdout, "\nNote: 'quit' asks for detaching ngspice.dll.\n");
+        fprintf(stdout, "\nNote: 'quit' asks for resetting or detaching ngspice.dll.\n");
         status -= 1000;
     }
     else {
         coquit = FALSE;
-        fprintf(stderr, "Error: ngspice.dll cannot recover and awaits to be detached\n");
+        fprintf(stderr, "Error: ngspice.dll cannot recover and awaits to be reset or detached\n");
     }
 #ifndef low_latency
     // set flag to stop the printsend thread
@@ -2402,3 +2431,100 @@ void shared_send_dict(int index, int no_of_nodes, char* name, char*type)
         sendinitevt(index, no_of_nodes, name, type, ng_ident, euserptr);
 }
 #endif
+
+static int totalreset(void)
+{
+
+    is_initialized = FALSE;
+
+    // if we are in a worker thread, we exit it here
+    // detaching then has to be done explicitely by the caller
+    if (fl_running && !fl_exited) {
+        fl_exited = TRUE;
+        bgtr(fl_exited, ng_ident, userptr);
+    // finish and exit the worker thread
+#ifdef HAVE_LIBPTHREAD
+        pthread_exit(NULL);
+#elif defined _MSC_VER || defined __MINGW32__
+        _endthreadex(1);
+#endif
+    }
+
+    /* start to clean up the mess */
+
+    noprintfwanted = FALSE;
+    nostatuswanted = FALSE;
+    nodatawanted = FALSE;
+    nodatainitwanted = FALSE;
+    nobgtrwanted = FALSE;
+    wantvdat = FALSE;
+    wantidat = FALSE;
+    wantsync = FALSE;
+    immediate = FALSE;
+    coquit = FALSE;
+
+    wordlist all = { "all", NULL, NULL };
+    wordlist star = { "*", NULL, NULL };
+
+    tfree(Infile_Path);
+    wl_free(sourceinfo);
+    sourceinfo = NULL;
+
+    com_destroy(&all);
+    com_unalias(&star);
+    com_undefine(&star);
+
+    cp_remvar("history");
+    cp_remvar("noglob");
+    cp_remvar("brief");
+    cp_remvar("sourcepath");
+    cp_remvar("program");
+    cp_remvar("prompt");
+
+    destroy_wallace();
+
+    rem_controls();
+
+    while (ft_curckt) {
+        com_remcirc(NULL);
+    }
+
+    cp_destroy_keywords();
+    destroy_ivars();
+
+    tfree(errMsg);
+
+    destroy_const_plot();
+    spice_destroy_devices();
+    unset_all();
+    cp_resetcontrol(FALSE);
+    sh_delete_myvec();
+
+#ifdef THREADS
+    /* Destroy the mutexes */
+#ifdef HAVE_LIBPTHREAD
+    pthread_mutex_destroy(&triggerMutex);
+    pthread_mutex_destroy(&allocMutex);
+    pthread_mutex_destroy(&fputsMutex);
+    pthread_mutex_destroy(&vecreallocMutex);
+    cont_condition = FALSE;
+#else
+#ifdef SRW
+    /* Do we need to remove the SWR locks? */
+//    InitializeSRWLock(&triggerMutex);
+//    InitializeSRWLock(&allocMutex);
+//    InitializeSRWLock(&fputsMutex);
+//    InitializeSRWLock(&vecreallocMutex);
+#else
+    DeleteCriticalSection(&triggerMutex);
+    DeleteCriticalSection(&allocMutex);
+    DeleteCriticalSection(&fputsMutex);
+    DeleteCriticalSection(&vecreallocMutex);
+#endif
+#endif
+    // Id of primary thread
+    main_id = 0;
+#endif
+
+    return 0;
+};

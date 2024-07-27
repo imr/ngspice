@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.59])
 
-m4_define([ngspice_major_version], [42+])
+m4_define([ngspice_major_version], [43+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
@@ -117,7 +117,7 @@ LT_INIT([shared static])
 #  --> Set 'LT_NGSPICE_AGE' to 0.
 
 LT_NGSPICE_CURRENT=0
-LT_NGSPICE_REVISION=9
+LT_NGSPICE_REVISION=10
 LT_NGSPICE_AGE=0
 LIBNGSPICE_SO_VERSION=$LT_NGSPICE_CURRENT.$LT_NGSPICE_REVISION.$LT_NGSPICE_AGE
 
@@ -409,12 +409,15 @@ fi
 
 ####
 ### check for operating system at compile time
+AM_CONDITIONAL([DLIBS_FULLY_RESOLVED], false)
 case $host_os in
 	*mingw* | *msys* )
 		AC_DEFINE([OS_COMPILED], [1], [MINGW for MS Windows])
+		AM_CONDITIONAL([DLIBS_FULLY_RESOLVED], true)
 		;;
 	*cygwin* )
 		AC_DEFINE([OS_COMPILED], [2], [Cygwin for MS Windows])
+		AM_CONDITIONAL([DLIBS_FULLY_RESOLVED], true)
 		;;
 	*freebsd* )
 		AC_DEFINE([OS_COMPILED], [3], [FreeBSD])
@@ -907,7 +910,7 @@ AC_CHECK_FUNCS([localtime])
 
 AC_CHECK_FUNCS([ftime gettimeofday])
 # Do not use time or getrusage function for CPU time measurement under OpenMP
-if test "x$enable_openmp" != xyes; then
+if test "x$enable_openmp" = xno; then
     AC_CHECK_FUNCS([time getrusage])
 fi
 AC_CHECK_FUNCS([utimes])
@@ -989,10 +992,12 @@ AM_CONDITIONAL([RELPATH], [test "x$enable_relpath" = xyes])
 if test "x$enable_relpath" = xyes; then
     AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo ../bin`"], [Define the directory for executables])
     AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo ../share/ngspice`"], [Define the directory for architecture independent data files])
+    AC_DEFINE_UNQUOTED([NGSPICELIBDIR], ["`echo ../lib/ngspice`"], [Define the directory for architecture-dependent libraries])
     AC_DEFINE([HAS_RELPATH], [1], [rel. path of libraries and scripts])
 else
 AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
+AC_DEFINE_UNQUOTED([NGSPICELIBDIR], ["`echo $dprefix/lib/ngspice`"], [Define the directory for architecture-dependent libraries])
 fi
 
 # Create timestamp, may be overruled by setting env var SOURCE_DATE_EPOCH
@@ -1252,63 +1257,68 @@ if test "x$enable_expdevices" = xyes; then
 fi
 
 #  ----  Option to include GNU readline support in ngspice CLI  ----
-#  ----  Default: disabled.                                     ----
+#  ----  Default: enabled.                                     ----
 #  ----  Hope to see in the future readline replacement.        ----
 
-if test "x$with_readline" = xno ; then
+if test "x$with_wingui" = xyes || test "x$with_ngshared" = xyes; then
     AC_MSG_RESULT([GNU readline disabled.])
-else
-    if test "x$with_readline" = x || test "x$with_readline" = xyes ; then
-        if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
-            AC_MSG_RESULT([Checking for readline:])
-            AC_CHECK_HEADERS([readline/readline.h readline/history.h],
-                [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
-                [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-            AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
-                [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
-                [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
-            AC_CHECK_LIB([readline], [readline],
-                [LIBS="$LIBS -lreadline"],
-                [AC_MSG_ERROR([Couldn't find readline libraries.])])
-        fi
-    else
-# Especially defined for macOS (Big Sur), with readline installed from Brew
-        for dir in \
-            $with_readline
-            do
-                if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
-                    AC_MSG_RESULT([Checking for readline:])
-                    AC_CHECK_HEADERS([$dir/include/readline/readline.h $dir/include/readline/history.h],
-                        [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
-                        [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-                    AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
-                        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
-                        [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
-                    AC_CHECK_LIB([readline], [readline],
-                        [LIBS="$LIBS -lreadline"],
-                        [AC_MSG_ERROR([Couldn't find readline libraries.])])
-                fi
-            done
-    fi
-fi
-
-#  ----  Option to include BSD editline support in ngspice CLI  ----
-#  ----  Default: disabled.                                     ----
-
-if test "x$with_editline" != xyes; then
     AC_MSG_RESULT([BSD editline disabled.])
 else
-    AC_MSG_RESULT([Checking for editline:])
-    AC_CHECK_HEADERS([editline/readline.h],
-        [AC_DEFINE([HAVE_BSDEDITLINE], [1], [Define to enable BSD editline])],
-        [AC_MSG_ERROR([Couldn't find BSD editline headers.])])
-    AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
-        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
-        [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
-    AC_CHECK_LIB([edit], [readline],
-        [LIBS="$LIBS -ledit"],
-        [AC_MSG_ERROR([Couldn't find editline libraries.])],
-        [-lncurses])
+    if test "x$with_readline" = xno ; then
+        AC_MSG_RESULT([GNU readline disabled.])
+    else
+        if test "x$with_readline" = x || test "x$with_readline" = xyes ; then
+            if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
+                AC_MSG_RESULT([Checking for readline:])
+                AC_CHECK_HEADERS([readline/readline.h readline/history.h],
+                    [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
+                    [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
+                AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+                    [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+                    [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
+                AC_CHECK_LIB([readline], [readline],
+                    [LIBS="$LIBS -lreadline"],
+                    [AC_MSG_ERROR([Couldn't find readline libraries.])])
+            fi
+        else
+    # Especially defined for macOS (Big Sur), with readline installed from Brew
+            for dir in \
+                $with_readline
+                do
+                    if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
+                        AC_MSG_RESULT([Checking for readline:])
+                        AC_CHECK_HEADERS([$dir/include/readline/readline.h $dir/include/readline/history.h],
+                            [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
+                            [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
+                        AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+                            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+                            [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
+                        AC_CHECK_LIB([readline], [readline],
+                            [LIBS="$LIBS -lreadline"],
+                            [AC_MSG_ERROR([Couldn't find readline libraries.])])
+                    fi
+                done
+        fi
+    fi
+
+    #  ----  Option to include BSD editline support in ngspice CLI  ----
+    #  ----  Default: disabled.                                     ----
+
+    if test "x$with_editline" != xyes; then
+        AC_MSG_RESULT([BSD editline disabled.])
+    else
+        AC_MSG_RESULT([Checking for editline:])
+        AC_CHECK_HEADERS([editline/readline.h],
+            [AC_DEFINE([HAVE_BSDEDITLINE], [1], [Define to enable BSD editline])],
+            [AC_MSG_ERROR([Couldn't find BSD editline headers.])])
+        AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+            [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
+        AC_CHECK_LIB([edit], [readline],
+            [LIBS="$LIBS -ledit"],
+            [AC_MSG_ERROR([Couldn't find editline libraries.])],
+            [-lncurses])
+    fi
 fi
 
 # Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
@@ -1436,6 +1446,7 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/enh/Makefile
                  src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
+                 src/xspice/verilog/Makefile
                  src/osdi/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile

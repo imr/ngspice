@@ -11,9 +11,9 @@
 
 # Options:
 # Please see http://ngspice.sourceforge.net/admshowto.html for more info on adms.
-# CIDER, XSPICE, KLU, and OpenMP may be selected at will.
-# --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
-# To obtain a 32 bit executable, replace -m64 by -m32 ./configure lines.
+# CIDER may be selected at will.
+# XSPICE, KLU, and OpenMP may be deselected, if not required.
+# To obtain a 32 bit executable, replace -m64 by -m32 ./configure lines (not tested).
 
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 # It might be necessary to uncomment and run ./autogen.sh .
@@ -42,13 +42,13 @@ if test "$1" = "d"; then
    if [ $? -ne 0 ]; then  echo "cd debug-sh failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-klu --enable-relpath prefix="C:/Spice64d" CFLAGS="-m64 -g -O0 -Wall" LDFLAGS="-m64"
+  ../configure --with-ngshared --enable-cider --enable-relpath prefix="C:/Spice64d" CFLAGS="-m64 -g -O0 -Wall" LDFLAGS="-m64"
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-klu --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-ngshared --enable-cider --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 

@@ -1,3 +1,45 @@
+Ngspice-43, July 14th, 2024
+============
+- New features:
+    + Compile on Apple M2
+    + Update to VBIC model: Enable self-heating in AC sim, enable nqs.
+    + Enable single terminal n devices (Verilog-A modules)
+    + Add path or filepath (without file name) to variable sourcepath,
+      when calling command 'source'
+    + B source pwl, enable monotonic negative growth of abscissa values.
+    + Enable coupling of more than 2 inductots in a single line:
+      K1 L1 L2 L3 L4 L5 0.99
+    + Enable reading library search paths from env. variables like
+      .lib "$ENVS1/$ENVS2/libraries/sky130_fd_pr/latest/models/sky130.lib.spice" tt
+    + Add '.save nosub' to suppress storing the node vectors from inside
+      of subcircuits.
+    + Transform nested braces {{}} into {()} also in .param statements
+    + Save path to .include file, add it to the search paths
+      for loading the next .include file.
+    + In ./configure, the following options are now standard:
+      non-debug, osdi, xspice, readline, klu, openmp
+    + in case of netlist errors, try identifying the file and line number
+      of its origin.
+    + Add diode model parameters, Level 3, for diode breakdown voltage
+      as used in sky130 PDK
+    + New environmental variable NGSPICE_OSDI_DIR may contain
+      a path for *.osdi files (compiled Verilog-A models)
+    + optran 0 0 0 0 0 uic may be used to load initial conditions (.ic=xxx
+      statements) without starting an op iteration.
+    + Add variable ps_scan_gates_optimize (default 1). If < 1, then turn off
+      the optimizations in scan_gates.
+    + new exported function ngSpice_nospinit() to set variable no_spinit
+    + Update to JFET model (add emission coefficient)
+    + MOS models 1...3: updated noise code
+    + Update to fft window functions, scaling etc.
+    + Add transformer model with params on the .subckt line
+    + timing .model statements at the global level for subckts with U* instances
+    + variable 'rsdiode' sets RS of a diode, if not given in the .model line.
+    + Update the AM voltage/current sources: enable amplitude
+      modulation, carrier suppression.
+    + Remove some ADMS remnants.
+
+
 Ngspice-42, Dec 24th, 2023
 ============
 - New features:
@@ -25,7 +67,6 @@ Ngspice-42, Dec 24th, 2023
     + Add a predefined variable 'skywaterpdk' to speed up circuit
       loading and parsing.
     + Add scripts for running the paranoia tests in parallel on Linux with valgrind.
-
 
 
 Ngspice-41, Aug 13th, 2023
@@ -60,7 +101,8 @@ Ngspice-41, Aug 13th, 2023
     + Several crash bugs (double delete, access NULL pointer etc) removed
       which have occurred mostly due to incomplete or faulty inputs.
     + Memory leaks for CIDER removed
-    
+
+
 Ngspice-40, Mar 31st, 2023
 ============
 - New features:
@@ -153,7 +195,7 @@ Ngspice-38, Oct 30th, 2022
 Ngspice-37, May 22nd, 2022
 ============
 - New features:
-    + Reduce XSPICE memory consumption dramatically 
+    + Reduce XSPICE memory consumption dramatically
       (> factor of 10).
     + Add source stepping to B source
     + Add 'esave' command to save only specific event nodes.
@@ -320,7 +362,7 @@ Ngspice-32, Apr 25th, 2020
 - New features:
     + Add resource info on memory used and available for macOS
     + redesign of memory monitoring
-    + Replace B source pwl by XSPICE PWL Controlled Source that has smooth rounded and 
+    + Replace B source pwl by XSPICE PWL Controlled Source that has smooth rounded and
       stepless differentiable corners.
     + Get a variable directly from an input file with i/o redirection
     + Make 64 bit compilation the standard

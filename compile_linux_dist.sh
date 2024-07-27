@@ -27,7 +27,7 @@ if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
 echo "configuring for 64 bit release"
 echo
 
-../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp --enable-osdi --disable-debug CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+../configure --with-x --enable-cider CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 

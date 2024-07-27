@@ -1288,7 +1288,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         add_to_sourcepath(sourcelineinfo, NULL);
     }
 
-    wl_append_word(&sourceinfo, &sourceinfo, sourcelineinfo);
+    sourceinfo = wl_cons(sourcelineinfo, sourceinfo);
 
     /* First read in all lines & put them in the struct cc */
     for (;;) {
@@ -9504,7 +9504,7 @@ int add_to_sourcepath(const char* filepath, const char* path)
 
     /* if filepath, remove file entry */
     if (path)
-        fpath = path;
+        fpath = copy(path);
     else
         fpath = ngdirname(filepath);
 
@@ -9531,5 +9531,6 @@ int add_to_sourcepath(const char* filepath, const char* path)
         wl_free(wl);
     }
 
+    tfree(fpath);
     return 0;
 }

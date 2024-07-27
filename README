@@ -5,16 +5,17 @@ Ngspice is a mixed-level/mixed-signal circuit simulator. Its code
 is based on three open source software packages: Spice3f5, Cider1b1
 and Xspice.
 
-Spice3 does not need any introduction, is the most popular circuit
-simulator. In over 30 years of its life Spice3 has become a de-facto
-standard for simulating circuits.
+Spice3 does not need any introduction, it is the ancestor of many
+commercial or open source circuit simulators. In over 30 years
+since its existence it has set several de-facto standards for
+simulating circuits.
 
-Cider couples Spice3f5 circuit level simulator to a device simulator
+Cider couples the Spice3 circuit level simulator to a device simulator
 to provide greater simulation accuracy of critical devices. So you may
 create device models for diodes, bipolar, JFet and MOSFETs derived 
 from their cross-sectional structures and materials.
 
-Xspice is an extension to Spice3C1 that provides code modelling support
+Xspice is an extension to Spice3 that provides code modelling support
 and simulation of digital components through an embedded event driven
 algorithm.
 

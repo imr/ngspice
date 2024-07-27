@@ -1,5 +1,5 @@
 /* ngspice file inpc_probe.c
-   Copyright Holger Vogt 2021
+   Copyright Holger Vogt 2021-2024
    License: BSD 3-clause
  */
 

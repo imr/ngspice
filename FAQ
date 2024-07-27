@@ -96,7 +96,7 @@
   from a tcl script and vector plotted or post processed using tcl. A small
   GUI may be built by the user to analyze a circuit or a set of circuits.
   Tclspice is obtained compiling ngspice activating an additional option.
-  This has not been used and tested for recently.
+  This has not been used and tested for some time now.
 
 
  1.4 Why resurrecting Berkeley's Spice?
@@ -135,7 +135,7 @@
     most of the commercial simulators available tracked each other in netlist
     language, this should not be an impossible task. The most important goal
     here is to provide a reliable support for model libraries coming from
-    foundries.
+    foundries. Some compatibility switches are available.
 
   + Compact models:  The interest in using ngspice is intimately connected
     to the available models. To provide the latest models available for
@@ -256,7 +256,7 @@
 
   The latest version released is:
 
-  ngspice-41 (released on Aug 13 2023)
+  ngspice-43 (released on July 14 2024)
 
 
  2.2.  What are the latest features in the current release?
@@ -308,8 +308,8 @@
 
  3.1.  What systems are supported?
 
-  Ngspice is written in C, and uses some GNU extensions. You may use
-  a GNU C compiler and a LINUX environment to compile it. Ngspice can
+  Ngspice is written in C, C++, and uses some GNU extensions. You may use
+  a GNU C/C++ compiler and a LINUX environment to compile it. Ngspice can
   be compiled under Windows using the mingw or cygwin environment as
   well as MS Visual Studio. It will readily compile on macOS.
   FreeBSD or Solaris will do, but are not officially supported.
@@ -356,7 +356,7 @@
 
  4.4.  Disclaimer and Copyright
 
-  Copyright: Holger Vogt, 2023
+  Copyright: Holger Vogt, 2024
   License: Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0.
   This document is provided as is. The information in it is not
   warranted to be correct: you use it at your own risk.

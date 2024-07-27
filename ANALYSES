@@ -1,5 +1,3 @@
-12345678901234567890123456789012345678901234567890123456789012345678901234567890
-
 ANALYSES
 ========
 
@@ -46,7 +44,9 @@ Table of Contents
 2 Operating point analysis (OP)
 
     The operating point analysis determines the dc operating point of the
- circuit with inductors shorted and capacitors opened.
+ circuit with inductors shorted and capacitors opened. If a simple matrix
+ solution fails, two versions of gmin stepping may be followed by source
+ stepping and finally an OP search by a transient simulation.
 
 
 3 Operating point sweep Analysis (DC)

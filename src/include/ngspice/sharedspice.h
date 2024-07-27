@@ -97,6 +97,10 @@ during reading output vectors in the primary thread, while the simulation in the
 background thread is moving on.
 
 **
+int ngSpice_Reset(void)
+Reset ngspice as far as possible
+
+**
 Additional basics:
 No memory mallocing and freeing across the interface:
 Memory allocated in ngspice.dll has to be freed in ngspice.dll.
@@ -111,7 +115,7 @@ are of type bool if sharedspice.h is used externally.
 */
 
 #ifndef NGSPICE_PACKAGE_VERSION
-#define NGSPICE_PACKAGE_VERSION "42+"
+#define NGSPICE_PACKAGE_VERSION "43+"
 #endif
 /* we have NG_BOOL instead of BOOL */
 #ifndef HAS_NG_BOOL
