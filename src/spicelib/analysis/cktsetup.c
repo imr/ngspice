@@ -171,10 +171,12 @@ CKTsetup(CKTcircuit *ckt)
                     BindNode.CSC = NULL ;
                     BindNode.CSC_Complex = NULL ;
                     matched = (BindElement *) bsearch (&BindNode, BindStruct, nz, sizeof (BindElement), BindCompare) ;
-                    if (matched == NULL) {
-                        printf ("Ptr %p not found in BindStruct Table\n", ckt->enh->rshunt_data.diag [i]) ;
+                    if (!matched) {
+                        fprintf (stderr, "Error: Ptr %p not found in BindStruct Table\n", ckt->enh->rshunt_data.diag [i]) ;
+                        ckt->enh->rshunt_data.diag[i] = NULL;
                     }
-                    ckt->enh->rshunt_data.diag [i] = matched->CSC ; 
+                    else
+                        ckt->enh->rshunt_data.diag [i] = matched->CSC ;
                     i++;
                 }
             }
