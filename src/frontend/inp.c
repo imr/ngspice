@@ -1107,8 +1107,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         strstr(dd->line, " rms ") ||
                         strstr(dd->line, " integ "))
                     {
-                        printf("Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n");
-                        printf("         AUTOSTOP being disabled...\n");
+                        fprintf(stderr, "Warning: .OPTION AUTOSTOP will not be effective because one of 'max|min|avg|rms|integ' is used in .meas\n");
+                        fprintf(stderr, "         AUTOSTOP being disabled...\n");
                         cp_remvar("autostop");
                     }
                 }
