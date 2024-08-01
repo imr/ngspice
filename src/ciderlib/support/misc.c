@@ -134,16 +134,16 @@ foundError(int error)
     switch( error ) {
 	/*  Removed for Spice3e1 Compatibility 
 	case spSMALL_PIVOT:
-	    printf( "Warning: LU Decomposition Problem - SMALL PIVOT\n" );
+	    fprintf(stderr, "Warning: LU Decomposition Problem - SMALL PIVOT\n" );
 	    matrixError = FALSE;
 	    break;
 	*/
 	case spPANIC:
-	    printf( "Error: LU Decomposition Failed - PANIC\n" );
+	    fprintf(stderr, "Error: LU Decomposition Failed - PANIC\n" );
 	    matrixError = TRUE;
 	    break;
 	case spSINGULAR:
-	    printf( "Error: LU Decomposition Failed - SINGULAR\n" );
+	    fprintf(stderr, "Error: LU Decomposition Failed - SINGULAR\n" );
 	    matrixError = TRUE;
 	    break;
 	/*  Removed for Spice3e1 Compatibility 
