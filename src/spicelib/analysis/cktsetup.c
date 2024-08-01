@@ -182,7 +182,7 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
     } else {
-        fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
+        fprintf (stdout, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
     }
 #endif
 
