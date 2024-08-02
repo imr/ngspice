@@ -11,6 +11,8 @@
 
 #include "ngspice/ngspice.h"
 
+extern char* inp_pathresolve(const char* name);
+
 #define MAX_D 6 
 static char* (sources[MAX_D]);
 
@@ -72,17 +74,28 @@ void closefile_sf(int d) {
 
 int openfile_sf(int d, char* filename) {
     SF_INFO sfinfo;
-    if (!m_sndfile[d]) sf_close(m_sndfile[d]);
-    printf("opening file '%s' for id:%i\n", filename, d);
-    m_sndfile[d] = sf_open(filename, SFM_READ, &sfinfo);
+    if (!m_sndfile[d])
+        sf_close(m_sndfile[d]);
+    printf("Opening file '%s' for id:%i\n", filename, d);
+
+    /* search intensively for the input file */
+    char* const path = inp_pathresolve(filename);
+
+    if (!path) {
+        fprintf(stderr, "Error: Could not find file %s.\n", filename);
+        return (-1);
+    }
+
+    m_sndfile[d] = sf_open(path, SFM_READ, &sfinfo);
+    txfree(path);
     ilb_end[d] = ilb_start[d] = 0;
 
     if (SF_ERR_NO_ERROR != sf_error(m_sndfile[d])) {
-        fprintf(stderr, "This is not a sndfile supported audio file format\n");
+        fprintf(stderr, "Error: This is not a sndfile supported audio file format\n");
         return (-1);
     }
     if (sfinfo.frames == 0) {
-        fprintf(stderr, "This is an empty audio file\n");
+        fprintf(stderr, "Error: This is an empty audio file\n");
         return (-1);
     }
     m_channels[d] = sfinfo.channels;
@@ -212,7 +225,7 @@ int vsjack_open(int d) {
     assert(d >= 0 && d < MAX_D);
     assert(sources[d] != NULL);
     if (openfile_sf(d, sources[d])) {
-        fprintf(stderr, "could not open '%s'\n", sources[d]);
+        fprintf(stderr, "Error: Could not open or read '%s'\n", sources[d]);
         controlled_exit(1);
     }
     return (d);
