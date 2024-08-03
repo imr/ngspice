@@ -462,7 +462,7 @@ com_sndprint(wordlist* wl)
         ngood += 1;
     }
 
-    if (vecs->v_plot->pl_scale->v_type != SV_TIME)
+    if (!vecs || vecs->v_plot->pl_scale->v_type != SV_TIME)
         return;
 
     if (!ngood) return;
