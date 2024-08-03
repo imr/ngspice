@@ -229,7 +229,7 @@
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -278,7 +278,7 @@
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -332,7 +332,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -386,7 +386,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -439,7 +439,7 @@
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -488,7 +488,7 @@
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -540,7 +540,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -594,7 +594,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -648,7 +648,7 @@
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -705,7 +705,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -761,7 +761,7 @@
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -818,7 +818,7 @@
       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libsndfile-1.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sndfile.lib;libsamplerate-0.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
