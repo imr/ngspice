@@ -104,7 +104,7 @@ static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
 #else
 static WNDCLASSW hwMainClassW;        /* Class definition for the main window */
 static LPCWSTR  hwClassNameW = L"SPICE_TEXT_WND";/* Class name of the main window */
-static LPCWSTR hwWindowNameW = L"ngspice 26";   /* main window displayed name */
+static LPCWSTR hwWindowNameW = L"ngspice 43";   /* main window displayed name */
 static WNDCLASSW twTextClassW;                    /* Class definition for the text box */
 static LPCWSTR twClassNameW = L"SPICE_TEXT_BOX"; /* Class name for the text box */
 static LPCWSTR twWindowNameW = L"TextOut";        /* text box name */
