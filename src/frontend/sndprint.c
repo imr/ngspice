@@ -227,7 +227,7 @@ void snd_init(int nchannel) {
 	sp_buf = calloc(nchannel, sizeof(SP_BUF));
 	for (i = 0; i < SP_MAX; i++) {
 		sp_buf[i].tme = 0.0;
-		sp_buf[i].val = calloc(nchannel, sizeof(float));
+		sp_buf[i].val = calloc(nchannel, sizeof(double));
 	}
 	sample = 0;
 #ifdef HAVE_SRC
