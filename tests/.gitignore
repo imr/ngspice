@@ -1,6 +1,7 @@
 *.test
 *.log
 *.out
+*.vcd
 
 ngspiceCkt
 hspiceCkt
