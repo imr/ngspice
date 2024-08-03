@@ -462,6 +462,9 @@ com_sndprint(wordlist* wl)
         ngood += 1;
     }
 
+    if (vecs->v_plot->pl_scale->v_type != SV_TIME)
+        return;
+
     if (!ngood) return;
 
     snd_init(ngood);
@@ -475,7 +478,11 @@ com_sndprint(wordlist* wl)
     double samplerate = snd_get_samplerate();
     while ((j < npoints)) {
 
-        double tme = bv->v_plot->pl_scale->v_realdata[j] * samplerate;
+        double tme;
+        if (isreal(bv->v_plot->pl_scale))
+            tme = bv->v_plot->pl_scale->v_realdata[j] * samplerate;
+        else
+            tme = realpart(bv->v_plot->pl_scale->v_compdata[j]) * samplerate;
         int c = 0;
         for (v = bv; v; v = v->v_link2) {
             if (v->v_length <= j) {
