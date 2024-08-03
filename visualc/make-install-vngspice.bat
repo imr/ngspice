@@ -25,6 +25,7 @@ if "%2" == "fftw" goto copy2
 if "%3" == "fftw" goto copy2
 
 copy %1\ngspice.exe %dst%\bin\
+copy .\spinitr .\spinit
 goto end
 
 :copy2
@@ -52,6 +53,7 @@ if "%2" == "fftw" goto copy2-64
 if "%3" == "fftw" goto copy2-64
 
 copy %1\ngspice.exe %dst%\bin\
+copy .\spinitr64 .\spinit
 goto end
 
 :copy2-64
@@ -61,7 +63,6 @@ copy ..\..\fftw-3.3-dll64\libfftw3-3.dll %dst%\bin\
 :end
 mkdir %dst%\share\ngspice\scripts\src\ngspice
 copy .\spinit_all %dst%\share\ngspice\scripts\spinit
-copy .\spinitr .\spinit
 cd ..\src
 copy ciderinit %dst%\share\ngspice\scripts
 copy devaxis %dst%\share\ngspice\scripts
