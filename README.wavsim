@@ -1,35 +1,26 @@
-This branch, based on ngspice-32+ from pre-master branch on 25.07.2020,
+This branch, based on ngspice-43 from master branch on 14.07.2024,
 contains functions to read, simulate and output wav audio files.
 
 The origin of the code stems from
 http://gareus.org/oss/spicesound/start
 http://gareus.org/oss/spicesound/examples
-made by Robin Gareus, enhanced by Hannu Vuolasaho at
-https://sourceforge.net/p/ngspice/patches/13/
+has been made by Robin Gareus, enhanced by Hannu Vuolasaho at
+https://sourceforge.net/p/ngspice/patches/13/,
+compatibility and integration into ngspice-43 by Holger Vogt.
 
-It uses the external libraries libsndfile and libsamplerate-0.1.9.
+It uses the external libraries libsndfile and libsamplerate.
 
-The current setup has been tested only with MSVC 2019 on Windows 10.
+The current setup (ngspice.exe) has been tested with MSVC 2022 on Windows 10.
+A setup for KiCad (MS Windows) is available.
 
-libsndfile has been downloaded from http://www.mega-nerd.com/libsndfile/ as
-http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.28-w64-setup.exe
+64 bit libsndfile has been downloaded from https://github.com/libsndfile/libsndfile/releases/
 
-libsamplerate-0.1.9 has been downloaded from http://www.mega-nerd.com/SRC/download.html as
-http://www.mega-nerd.com/SRC/libsamplerate-0.1.9.tar.gz, and compiled
-with mingw gcc 10.2 for 64 bit Windows 10. libsamplerate.lib has been created 
-from libsamplerate.def by command
-lib /def:libsamplerate-0.def /out:libsamplerate-0.lib /machine:x64
-in the Visual Studio 2019 Developer Command Prompt.
+64 bit libsamplerate has been downloaded from https://github.com/libsndfile/libsamplerate/releases
 
 The usage is described in
 http://gareus.org/oss/spicesound/start
 
-A complete package for Windows is available at
-http://ngspice.sourceforge.net/download.html#wav .
-
-For Linux you have to install libsamplerate and libsndfile and their development headers.
-./compile_linux.sh will then compile and install ngspice with *.wav capability.
-
-Test on macOS will follow.
+This is a complete package for Windows.
+Test on Linux and macOS will follow.
 
 
