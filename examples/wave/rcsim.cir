@@ -1,0 +1,13 @@
+capacitive bandpass filter 
+v1 1 0 dc 0 ac 1 ; sin 
+r1 1 2 200      
+c1 2 0 5u     
+c2 2 3 1u       
+rload 3 0 1k    
+.ac lin 50 20 1000      
+.plot ac v(3)
+.control
+run
+plot db(v(3)) xlog xlimit 10 1000
+.endc
+.end
