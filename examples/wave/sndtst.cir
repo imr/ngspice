@@ -1,0 +1,24 @@
+simple audio test
+
+V_V2 1 0 file ..\exampleswav\gits.wav snd 0 0 1.0 0 0 32
+R_R1 1 0 1M
+
+.sndparam ..\exampleswav\test-io.wav 48000 wav24 1.0 0.0 1.0
+.sndprint tran  v(1)
+.tran 2.08333e-05 2.0 0 2.08333e-05
+.op
+
+.control
+if $?batchmode
+else
+  sndparam ..\exampleswav\test-io.wav 48000 wav24 1.0 0.0 1.0
+  tran 6.5104166e-07 3.0 0.1 6.5104166e-07
+  rusage
+  sndprint v(1)
+  rusage
+end
+.endc
+
+
+
+.END

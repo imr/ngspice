@@ -1,0 +1,35 @@
+README.examples, slightly adapted to the new ngspice wav capability,
+taken from http://gareus.org/oss/spicesound/examples
+Simulation either as batch mode
+ngspice -b xxx.cir
+or in control mode
+ngspice xxx.cir
+
+output of jimi_fuzz-snd.cir, ready to compare
+git-fuzz64.mp3
+git-fuzz64.wav
+
+input for jimi_fuzz-snd.cir
+gits.wav
+
+circuit of fuzzer in jimi_fuzz-snd.cir
+jhfface.pdf
+
+just a simulation file of the fuzzer circuit
+jimi_fuzz.cir
+
+guitar input, fuzzified output on the left,
+original on the right channel
+jimi_fuzz-snd.cir
+
+bandpass RC filter, input sweep_sin20_20k_5s48k.wav
+rcfilter.cir
+
+just a simulation file for the RC filter
+rcsim.cir
+
+wav simulation input (gits.wav) is output
+sndtst.cir
+
+input to rcfilter.cir
+sweep_sin20_20k_5s48k.wav

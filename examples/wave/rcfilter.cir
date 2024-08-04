@@ -1,0 +1,29 @@
+capacitive bandpass filter
+
+v1 1 0 file ..\exampleswav\sweep_sin20_20k_5s48k.wav snd(0 0 1.0 0 0 1.0)
+r1 1 2 200 
+c1 2 0 5u
+c2 2 33 1u
+rload 33 0 1k
+B3 3 0 v = v(33) * 3
+
+.sndparam ..\exampleswav\test-filter.wav 48000 wav24 1.0 0.0 1.0
+.sndprint tran v(1) v(3)
+.tran 2.08333e-05 5.0 0 2.08333e-05
+.op
+
+.control
+if $?batchmode
+else
+  save v(1) v(3)
+  sndparam ..\exampleswav\test-filter.wav 48000 wav24 1.0 0.0 1.0
+  tran 2.08333e-05 5.0 0 2.08333e-05
+  rusage
+  sndprint v(1) v(3)
+  rusage
+end
+.endc
+
+
+
+.end
