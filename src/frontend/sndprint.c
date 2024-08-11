@@ -91,7 +91,7 @@ static void* my_open_sf(char* fn, int nchannel) {
     return ((void*)d);
 }
 
-static int my_write_sf(void* d, float val) {
+static size_t my_write_sf(void* d, float val) {
     SSFILE* p = (SSFILE*)d;
     p->sf_buf[p->sf_bptr++] = val;
     if (p->sf_bptr >= p->sf_channels) {
@@ -120,7 +120,7 @@ typedef struct SP_BUF {
 
 static void (*p_close)(void*);
 static void* (*p_open)(char*, int);
-static int  (*p_write)(void*, float);
+static size_t  (*p_write)(void*, float);
 static void* outfile;
 static uint32_t sample;
 static int sp_nchannel;
