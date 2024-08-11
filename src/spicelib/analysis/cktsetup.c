@@ -151,7 +151,7 @@ CKTsetup(CKTcircuit *ckt)
 #ifdef KLU
     if (ckt->CKTmatrix->CKTkluMODE)
     {
-        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+        fprintf (stdout, "Using KLU as Direct Linear Solver\n") ;
 
         /* Convert the COO Storage to CSC for KLU and Fill the Binding Table */
         SMPconvertCOOtoCSC (matrix) ;
@@ -171,10 +171,12 @@ CKTsetup(CKTcircuit *ckt)
                     BindNode.CSC = NULL ;
                     BindNode.CSC_Complex = NULL ;
                     matched = (BindElement *) bsearch (&BindNode, BindStruct, nz, sizeof (BindElement), BindCompare) ;
-                    if (matched == NULL) {
-                        printf ("Ptr %p not found in BindStruct Table\n", ckt->enh->rshunt_data.diag [i]) ;
+                    if (!matched) {
+                        fprintf (stderr, "Error: Ptr %p not found in BindStruct Table\n", ckt->enh->rshunt_data.diag [i]) ;
+                        ckt->enh->rshunt_data.diag[i] = NULL;
                     }
-                    ckt->enh->rshunt_data.diag [i] = matched->CSC ; 
+                    else
+                        ckt->enh->rshunt_data.diag [i] = matched->CSC ;
                     i++;
                 }
             }
@@ -182,7 +184,7 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
     } else {
-        fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
+        fprintf (stdout, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
     }
 #endif
 

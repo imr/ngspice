@@ -55,7 +55,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 #endif
 
     if (ckt->CKTniState & NIUNINITIALIZED) {
-        error = NIreinit(ckt);
+        error = NIreinit(ckt); /* always returns 0 */
         if (error) {
 #ifdef STEPDEBUG
             printf("re-init returned error \n");
