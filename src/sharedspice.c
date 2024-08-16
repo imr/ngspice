@@ -1114,6 +1114,9 @@ int  ngSpice_Command(char* comexec)
         return 1;
     }
 
+    if (ft_ngdebug)
+        fprintf(stdout, "\nngSpiceCommand: received command '%s'\n", comexec);
+
     if ( ! setjmp(errbufc) ) {
 
         immediate = FALSE;
