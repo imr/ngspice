@@ -21,6 +21,8 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/compatmode.h"
 
+extern IFsimulator SIMinfo;
+extern char Spice_Build_Date[];
 
 static void fixdims(struct dvec *v, char *s);
 
@@ -112,6 +114,7 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     fprintf(fp, "Title: %s\n", pl->pl_title);
     fprintf(fp, "Date: %s\n", pl->pl_date);
+    fprintf(fp, "Command: %s-%s, Build %s\n", ft_sim->simulator, ft_sim->version, Spice_Build_Date);
     fprintf(fp, "Plotname: %s\n", pl->pl_name);
     fprintf(fp, "Flags: %s%s\n",
             realflag ? "real" : "complex", raw_padding ? "" : " unpadded");
@@ -121,11 +124,11 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
         dimstring(dims, numdims, buf);
         fprintf(fp, "Dimensions: %s\n", buf);
     }
-
-    for (wl = pl->pl_commands; wl; wl = wl->wl_next) {
-        fprintf(fp, "Command: %s\n", wl->wl_word);
+    if (pl->pl_commands) {
+        for (wl = pl->pl_commands; wl; wl = wl->wl_next) {
+            fprintf(fp, "Command: %s\n", wl->wl_word);
+        }
     }
-
     for (vv = pl->pl_env; vv; vv = vv->va_next) {
         wl = cp_varwl(vv);
         if (vv->va_type == CP_BOOL) {
@@ -451,15 +454,19 @@ raw_read(char *name) {
         } else if (ciprefix("command:", buf)) {
             /* Note that we reverse these commands eventually... */
             s = SKIP(buf);
-            NONL(s);
-            if (curpl) {
-                curpl->pl_commands = wl_cons(copy(s), curpl->pl_commands);
-                wl = curpl->pl_commands;
-            } else {
-                fprintf(cp_err, "Error: misplaced Command: line\n");
+            /* Exec command only if not ngspice simulator info */
+            if (!ciprefix(ft_sim->simulator, s)) {
+                NONL(s);
+                if (curpl) {
+                    curpl->pl_commands = wl_cons(copy(s), curpl->pl_commands);
+                    wl = curpl->pl_commands;
+                }
+                else {
+                    fprintf(cp_err, "Error: misplaced Command: line\n");
+                }
+                /* Now execute the command if we can. */
+                (void)cp_evloop(s);
             }
-            /* Now execute the command if we can. */
-            (void) cp_evloop(s);
         } else if (ciprefix("option:", buf)) {
             s = SKIP(buf);
             NONL(s);
