@@ -36,6 +36,8 @@ extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
 extern int EVTsetup_plot(CKTcircuit* ckt, char* plotname);
 
+extern IFsimulator SIMinfo;
+extern char Spice_Build_Date[];
 
 static int beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName,
                      char *refName, int refType, int numNames, char **dataNames, int dataType,
@@ -915,6 +917,9 @@ fileInit(runDesc *run)
     sprintf(buf, "Date: %s\n", datestring());
     n += strlen(buf);
     fputs(buf, run->fp);
+    sprintf(buf, "Command: %s-%s, Build %s\n", ft_sim->simulator, ft_sim->version, Spice_Build_Date);
+    n += strlen(buf);
+    fputs(buf, run->fp);
     sprintf(buf, "Plotname: %s\n", run->type);
     n += strlen(buf);
     fputs(buf, run->fp);
@@ -933,7 +938,6 @@ fileInit(runDesc *run)
         run->pointPos = (long) n;
     fprintf(run->fp, "0       \n"); /* Save 8 spaces here. */
 
-    /*fprintf(run->fp, "Command: version %s\n", ft_sim->version);*/
     fprintf(run->fp, "Variables:\n");
 
     printf("No. of Data Columns : %d  \n", run->numData);
