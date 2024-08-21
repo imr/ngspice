@@ -40,18 +40,18 @@ static unsigned char previous_output[outs + inouts];
 
 /* The input function: it should ignore out-of-range values of index. */
 
-#define VL_DATA(size, name, msb, lsb)     \
-  if (index >= msb - lsb + 1) {           \
-    index -= msb - lsb + 1;               \
-  } else if (msb == 0 && lsb == 0) {      \
-    topp->name = val ? 1 : 0;             \
-    return;                               \
-  } else {                                \
-    if (val)                              \
-      topp->name |= (1 << (msb - index)); \
-    else                                  \
-      topp->name &= (1 << (msb - index)); \
-    return;                               \
+#define VL_DATA(size, name, msb, lsb)      \
+  if (index >= msb - lsb + 1) {            \
+    index -= msb - lsb + 1;                \
+  } else if (msb == 0 && lsb == 0) {       \
+    topp->name = val ? 1 : 0;              \
+    return;                                \
+  } else {                                 \
+    if (val)                               \
+      topp->name |= (1 << (msb - index));  \
+    else                                   \
+      topp->name &= ~(1 << (msb - index)); \
+    return;                                \
   }
 
 static void accept_input(struct co_info *pinfo,
@@ -70,21 +70,21 @@ static void accept_input(struct co_info *pinfo,
 
     offset = outs;
 #undef VL_DATA
-#define VL_DATA(size, name, msb, lsb)      \
-  if (index >= msb - lsb + 1) {            \
-    index -= msb - lsb + 1;                \
-    offset += msb - lsb + 1;               \
-  } else if (msb == 0 && lsb == 0) {       \
-    topp->name = val ? 1 : 0;              \
-    previous_output[index + offset] = val; \
-    return;                                \
-  } else {                                 \
-    if (val) 				   \
-      topp->name | (1 << (msb - index));   \
-    else                                   \
-      topp->name &= (1 << (msb - index));  \
-    previous_output[index + offset] = val; \
-    return;                                \
+#define VL_DATA(size, name, msb, lsb)       \
+  if (index >= msb - lsb + 1) {             \
+    index -= msb - lsb + 1;                 \
+    offset += msb - lsb + 1;                \
+  } else if (msb == 0 && lsb == 0) {        \
+    topp->name = val ? 1 : 0;               \
+    previous_output[index + offset] = val;  \
+    return;                                 \
+  } else {                                  \
+    if (val) 			 	    \
+      topp->name | (1 << (msb - index));    \
+    else                                    \
+      topp->name &= ~(1 << (msb - index));  \
+    previous_output[index + offset] = val;  \
+    return;                                 \
   }
 
 #include "inouts.h"
