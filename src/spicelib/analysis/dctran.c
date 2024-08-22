@@ -341,8 +341,10 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
         /* modeinittran set here */
         ckt->CKTag[0]=ckt->CKTag[1]=0;
-        memcpy(ckt->CKTstate1, ckt->CKTstate0,
-              (size_t) ckt->CKTnumStates * sizeof(double));
+        if (ckt->CKTstate1 && ckt->CKTstate0) {
+            memcpy(ckt->CKTstate1, ckt->CKTstate0,
+                  (size_t) ckt->CKTnumStates * sizeof(double));
+        }
 
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){
@@ -790,7 +792,7 @@ resume:
 
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
-        if(firsttime) {
+        if(firsttime && ckt->CKTstate1 && ckt->CKTstate2 && ckt->CKTstate3) {
             memcpy(ckt->CKTstate2, ckt->CKTstate1,
                    (size_t) ckt->CKTnumStates * sizeof(double));
             memcpy(ckt->CKTstate3, ckt->CKTstate1,
