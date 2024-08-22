@@ -456,8 +456,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 
         if (firstTime) {
             firstTime = 0;
-            memcpy(ckt->CKTstate1, ckt->CKTstate0,
-                   (size_t) ckt->CKTnumStates * sizeof(double));
+            if (ckt->CKTstate1 && ckt->CKTstate0) {
+                memcpy(ckt->CKTstate1, ckt->CKTstate0,
+                       (size_t) ckt->CKTnumStates * sizeof(double));
+            }
         }
 
         i = 0;
