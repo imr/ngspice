@@ -399,6 +399,30 @@ BSIM4v6instance *here = (BSIM4v6instance*)inst;
         case BSIM4v6_QBD:
             value->rValue = *(ckt->CKTstate0 + here->BSIM4v6qbd); 
             return(OK);
+        case BSIM4v6_VGSTEFF:
+            value->rValue = here->BSIM4v6Vgsteff;
+            return(OK);
+        case BSIM4v6_VDSEFF:
+            value->rValue = here->BSIM4v6Vdseff;
+            return(OK);
+        case BSIM4v6_CGSO:
+            value->rValue = here->BSIM4v6cgso;
+            value->rValue *= here->BSIM4v6m;
+            return(OK);
+        case BSIM4v6_CGDO:
+            value->rValue = here->BSIM4v6cgdo;
+            value->rValue *= here->BSIM4v6m;
+            return(OK);
+        case BSIM4v6_CGBO:
+            value->rValue = here->pParam->BSIM4v6cgbo;
+            value->rValue *= here->BSIM4v6m;
+            return(OK);
+        case BSIM4v6_WEFF:
+            value->rValue = here->pParam->BSIM4v6weff;
+            return(OK);
+        case BSIM4v6_LEFF:
+            value->rValue = here->pParam->BSIM4v6leff;
+            return(OK);
         default:
             return(E_BADPARM);
     }
