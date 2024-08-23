@@ -499,7 +499,7 @@ com_sndprint(wordlist* wl)
         j++;
     }
     snd_close();
-    printf("wrote %i audio-samples from %i data-points\n", i / ngood, j);
+    printf("Info: wrote %i audio-samples from %i data-points\n", i / ngood, j);
     /* Get rid of the vectors. */
     return;
  }
@@ -515,7 +515,7 @@ com_sndparam(wordlist* wl)
 	int fmt = -1;
 	double mult = 1.0;
 	double off = 0.0;
-	int oversampling = 1;
+	int oversampling = 4;
 
 	while (wl) {
 		copypath = cp_unquote(wl->wl_word);
