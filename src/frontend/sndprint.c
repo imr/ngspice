@@ -120,7 +120,7 @@ typedef struct SP_BUF {
 
 static void (*p_close)(void*);
 static void* (*p_open)(char*, int);
-static size_t  (*p_write)(void*, float);
+static size_t (*p_write)(void*, float);
 static void* outfile;
 static uint32_t sample;
 static int sp_nchannel;
@@ -135,7 +135,7 @@ static char* filename = NULL;
 #else
 #include <samplerate.h>
 #define OBUFSIZE 256
-static int oversampling = 64;
+static int oversampling = 4;
 #define OVERSAMPLING ((double) oversampling)
 static SRC_STATE* rabbit;
 static int rabbit_err;
@@ -166,11 +166,11 @@ static int resample_wrapper(void* d, float val) {
         }
 
         if (src_data.output_frames_gen * sp_nchannel != obufsize) {
-            fprintf(stderr, "resample warning: out %li != %i\n", src_data.output_frames_gen * sp_nchannel, (int)obufsize);
+            fprintf(stderr, "Warning: resample: out %li != %i\n", src_data.output_frames_gen * sp_nchannel, (int)obufsize);
         }
 
         if (src_data.input_frames_used * sp_nchannel != iptr) {
-            printf("resample warning: in: %li != %i\n", src_data.input_frames_used * sp_nchannel, iptr);
+            fprintf(stderr, "Warning: resample: in: %li != %i\n", src_data.input_frames_used * sp_nchannel, iptr);
         }
 
         int i;
@@ -224,7 +224,7 @@ void snd_init(int nchannel) {
     if (!filename) snd_configure("spice.wav", 48000, o_sndfmt, o_mult, o_off, oversampling);
     outfile = p_open(filename, nchannel);
     sp_nchannel = nchannel;
-    sp_buf = calloc(nchannel, sizeof(SP_BUF));
+    sp_buf = calloc(SP_MAX, sizeof(SP_BUF));
     for (i = 0; i < SP_MAX; i++) {
         sp_buf[i].tme = 0.0;
         sp_buf[i].val = calloc(nchannel, sizeof(double));
@@ -242,6 +242,7 @@ void snd_init(int nchannel) {
 int snd_send(double tme, int c, double out) {
     int i;
     int rv = 0;
+    static bool shown = FALSE;
     if (c == 0) for (i = SP_MAX - 1; i > 0; i--) {
         memcpy(&(sp_buf[i]), &(sp_buf[i - 1]), sizeof(SP_BUF));
     }
@@ -258,10 +259,16 @@ int snd_send(double tme, int c, double out) {
     }
 
     if ((sample) < ceil(tme * OVERSAMPLING)) {
-        if (!(sp_buf[0].tme > sample)) printf("error 1 %f !> %i\n", sp_buf[0].tme, sample);
-        if ((sp_buf[1].tme > sample)) printf("error 2 %f !< %i\n", sp_buf[1].tme, sample);
-#if 1 // DEBUG
-        if ((sp_buf[0].tme - sample) > 1.0) printf("error 3 large timestep: dv/dt=%e dt:%f dv:%e\n",
+        if (!(sp_buf[0].tme > sample))
+            fprintf(stderr, "Error: Oversampling error 1 %f !> %i\n", sp_buf[0].tme, sample);
+        if (!shown && (sp_buf[1].tme > sample)) {
+            fprintf(stderr, "Error: Oversampling error 2 %f !< %i\n", sp_buf[1].tme, sample);
+            fprintf(stderr, "    Time step too large\n");
+            shown = TRUE;
+        }
+#if 0 // DEBUG
+        if ((sp_buf[0].tme - sample) > 1.0)
+            fprintf(stderr, "Error: Oversampling error 3 large timestep: dv/dt=%e dt:%f dv:%e\n",
             (sp_buf[0].val[c] - sp_buf[1].val[c]) / (sp_buf[0].tme - sample),
             (sp_buf[0].tme - sample), (sp_buf[0].val[c] - sp_buf[1].val[c]));
 #endif
