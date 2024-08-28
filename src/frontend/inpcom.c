@@ -8654,7 +8654,13 @@ static void inp_check_syntax(struct card *deck)
     bool mwarn = FALSE;
     char* subs[10];  /* store subckt lines */
     int ends = 0;  /* store .ends line numbers */
+    struct card* bugcard = deck->nextcard; /* if error, store card */
     static bool nesting_once = TRUE;
+
+    if (!bugcard) {
+        fprintf(cp_err, "\nEmpty netlist!\n\n");
+        return;
+    }
 
     /* prevent crash in inp.c, fcn inp_spsource: */
     if (ciprefix(".param", deck->line) || ciprefix(".meas", deck->line)) {
@@ -8753,8 +8759,10 @@ static void inp_check_syntax(struct card *deck)
             check_subs--;
             if (check_subs >= 0 && check_subs < 10)
                 subs[check_subs] = NULL;
-            else if (ends == 0) /* store first occurence */
+            else if (ends == 0) {/* store first occurence */
                 ends = card->linenum_orig;
+                bugcard = card;
+            }
             continue;
         }
         // check for .if ... .endif
@@ -8829,15 +8837,18 @@ static void inp_check_syntax(struct card *deck)
 
     if (check_control > 0) {
         fprintf(cp_err, "\nWarning: Missing .endc statement!\n");
+        fprintf(stderr, "    in file %s\n", bugcard->linesource);
         fprintf(cp_err, "    This may cause subsequent errors.\n\n");
     }
     if (check_control < 0) {
         fprintf(cp_err, "\nWarning: Missing .control statement!\n");
+        fprintf(stderr, "    in file %s\n", bugcard->linesource);
         fprintf(cp_err, "    This may cause subsequent errors.\n\n");
     }
     if (check_subs != 0) {
         fprintf(cp_err,
                 "\nError: Mismatch of .subckt ... .ends statements!\n");
+        fprintf(stderr, "    in file %s\n", bugcard->linesource);
         fprintf(cp_err, "    This will cause subsequent errors.\n\n");
         if (ends > 0)
             fprintf(cp_err, "Check .ends in line number %d\n", ends);
@@ -8847,6 +8858,7 @@ static void inp_check_syntax(struct card *deck)
     }
     if (check_if != 0) {
         fprintf(cp_err, "\nError: Mismatch of .if ... .endif statements!\n");
+        fprintf(stderr, "    in file %s\n", bugcard->linesource);
         fprintf(cp_err, "    This may cause subsequent errors.\n\n");
     }
 }
