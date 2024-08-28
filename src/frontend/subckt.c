@@ -1220,6 +1220,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
 
                     if ((paren_ptr = strchr(name, ')')) == NULL) {
                         fprintf(cp_err, "Error: missing closing ')' for .save statement %s\n", c->line);
+                        fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                         goto quit;
                     }
 
@@ -1254,6 +1255,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
 
                     if ((paren_ptr = strchr(name, ')')) == NULL) {
                         fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->line);
+                        fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                         goto quit;
                     }
 
@@ -1387,6 +1389,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few nodes: %s\n",
                             c->line);
+                    fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                     goto quit;
                 }
 
@@ -1410,6 +1413,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
                 if (get_l_paren(&s) == 1) {
                     fprintf(cp_err, "Error: no left paren after POLY %s\n",
                             c->line);
+                    fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                     tfree(next_name);
                     goto quit;
                 }
@@ -1422,6 +1426,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
                 if (get_r_paren(&s) == 1) {
                     fprintf(cp_err, "Error: no right paren after POLY %s\n",
                             c->line);
+                    fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                     tfree(next_name);
                     goto quit;
                 }
@@ -1439,6 +1444,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
                 name = gettok_node(&s);   /* name points to the returned token */
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few devs: %s\n", c->line);
+                    fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                     goto quit;
                 }
 
@@ -1478,6 +1484,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
                 name = gettok_node(&s);
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few nodes: %s\n", c->line);
+                    fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                     goto quit;
                 }
 
@@ -1495,6 +1502,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
                 name = gettok_node(&s);
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few devs: %s\n", c->line);
+                    fprintf(cp_err, "    line no. %d from file %s\n", c->linenum_orig, c->linesource);
                     goto quit;
                 }
 
