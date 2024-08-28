@@ -374,6 +374,7 @@ inp_subcktexpand(struct card *deck) {
     for (c = deck; c; c = c->nextcard)
         if (ciprefix(invoke, c->line)) {
             fprintf(cp_err, "Error: unknown subckt: %s\n", c->line);
+            fprintf(cp_err, "    in line no. %d from file %s\n", c->linenum_orig, c->linesource);
             if (use_numparams)
                 nupa_signal(NUPAEVALDONE);
             return NULL;
@@ -476,6 +477,8 @@ doit(struct card *deck, wordlist *modnames) {
             if (ciprefix(sbend, c->line)) {  /* if line == .ends  */
                 fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
                         c->line);
+                fprintf(cp_err, "    line no. %d from file %s \n",
+                        c->linenum_orig, c->linesource);
                 return (NULL);
             }
 
@@ -486,6 +489,8 @@ doit(struct card *deck, wordlist *modnames) {
 
                 if (!ends) {
                     fprintf(cp_err, "Error: no %s line.\n", sbend);
+                    fprintf(cp_err, "    in file %s \n",
+                        c->linesource);
                     return (NULL);
                 }
 
