@@ -8658,7 +8658,7 @@ static void inp_check_syntax(struct card *deck)
     static bool nesting_once = TRUE;
 
     if (!bugcard) {
-        fprintf(cp_err, "\nEmpty netlist!\n\n");
+        fprintf(cp_err, "\nWarning: Empty netlist!\n\n");
         return;
     }
 
