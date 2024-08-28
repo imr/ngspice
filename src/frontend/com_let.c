@@ -29,6 +29,8 @@ static int get_index_values(char *s, int n_elem_this_dim,
         index_range_t *p_range);
 int get_one_index_value(const char *s, int *p_index);
 
+static char* kivec(char* rhs);
+
 /* let <vec_name> = <expr>
  * let <vec_name> = <vec_name_old> if variable 'plainlet' is set
  * let <vec_name>[<bracket_expr>] = <expr>
@@ -127,6 +129,7 @@ void com_let(wordlist *wl)
     } /* end of case that an indexing bracket '[' was found */
 
     /* Evaluate rhs */
+
     /* Just copy a vector. rhs has to be a valid existing vector name
        May be used to copy vectors with forbidden characters in their names
        into a vector with a valid name.*/
@@ -136,6 +139,27 @@ void com_let(wordlist *wl)
             fprintf(cp_err, "Error: Can't evaluate \"%s\"\n", rhs);
             goto quit;
         }
+    }
+    /* KiCad special vectors: set "" around node name inside of vector
+       v(/out1) -> v("/out1") */
+    else if (strstr(rhs, "v(/")) {
+        char *rhs2 = kivec(rhs);
+        if (rhs2) {
+            if ((names = ft_getpnames_from_string(
+                rhs2, TRUE)) == (struct pnode*)NULL) {
+                fprintf(cp_err, "Error: RHS \"%s\" invalid\n", rhs2);
+                tfree(rhs2);
+                goto quit;
+            }
+            if ((vec_src = ft_evaluate(names)) == (struct dvec*)NULL) {
+                fprintf(cp_err, "Error: Can't evaluate \"%s\"\n", rhs);
+                tfree(rhs2);
+                goto quit;
+            }
+            tfree(rhs2);
+        }
+        else
+            goto quit;
     }
     /* evaluate the rhs expression as usual, math characters may not be used in vec names,
        the expression parser then will complain about a syntax error */
@@ -151,7 +175,7 @@ void com_let(wordlist *wl)
         }
     }
 
-    if (vec_src->v_link2) {
+    if (vec_src && vec_src->v_link2) {
         fprintf(cp_err, "Warning: extra wildcard values ignored\n");
     }
 
@@ -796,5 +820,49 @@ static void copy_vector_data_with_stride(struct dvec *vec_dst,
     } /* end of case both real or complex */
 } /* end of function copy_vector_data_with_stride */
 
+/* KiCad special vectors: set "" around node name 
+   v(/out1) -> v("/out1") */
+static char* kivec(char* rhs) {
+    char *str1, *str2, *cont, *next, *newstr = NULL, *newstrc = NULL;
+    next = cont = rhs;
+    size_t rhslen = strlen(rhs);
+    size_t ii = 0;
 
+    /* How many "v(/" do we have in the line? */
+    while ((str1 = strstr(cont, "v(/"))) {
+        ii++;
+        cont = str1 + 1;
+    }
+
+    cont = rhs;
+
+    while ((str1 = strstr(cont, "v(/"))) {
+        str2 = strchr(str1, ')');
+        if (str2) {
+            rhslen = rhslen + 2 * ii + 1;
+            cont = str2;
+            if (!newstr) {
+                newstrc = newstr = TMALLOC(char, rhslen);
+            }
+            /* copy */
+            while (next < str1 + 2)
+                *newstrc++ = *next++;
+            *newstrc++ = '\"';
+            while (next < str2)
+                *newstrc++ = *next++;
+            *newstrc++ = '\"';
+        }
+        else {
+            fprintf(stderr, "Error: Bad right hand side %s\n", rhs);
+            tfree(newstr);
+            return NULL;
+        }
+    }
+    if (newstrc) {
+        while (*next != '\0')
+            *newstrc++ = *next++;
+        *newstrc = '\0';
+    }
+    return newstr;
+}
 
