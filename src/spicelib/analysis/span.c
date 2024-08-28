@@ -760,6 +760,20 @@ SPan(CKTcircuit* ckt, int restart)
         else
             vsrcRoot = ckt->CKTVSRCid;
 
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        /* Conversion from Real Matrix to Complex Matrix */
+        if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
+        {
+            for (i = 0 ; i < DEVmaxnum ; i++)
+                if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                    DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
+        }
+    }
+#endif
 
         // Pre-load everything but RF Ports (these will be updated in the next cycle).
         error = NIspPreload(ckt);
