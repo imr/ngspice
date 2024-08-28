@@ -473,7 +473,7 @@ static struct card *insert_deck(struct card *card, struct card *new_card)
 static struct library *new_lib(void)
 {
     if (num_libraries >= N_LIBRARIES) {
-        fprintf(stderr, "ERROR, N_LIBRARIES overflow\n");
+        fprintf(stderr, "ERROR, number of libraries > %d, N_LIBRARIES overflow\n", N_LIBRARIES);
         controlled_exit(EXIT_FAILURE);
     }
 
@@ -2292,6 +2292,7 @@ static int inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 
         if (!ok) {
             fprintf(stderr, "ERROR: malformed line: %s\n", line);
+            fprintf(stderr, "    line no. %d of file %s\n", c->linenum_orig, c->linesource);
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -4490,7 +4491,7 @@ static char *inp_expand_macro_in_str(struct function_env *env, char *str)
             if (num_parens) {
                 fprintf(stderr,
                         "ERROR: did not find closing parenthesis for "
-                        "function call in str: %s\n",
+                        "function call in string %s\n",
                         orig_str);
                 controlled_exit(EXIT_FAILURE);
             }
@@ -4539,7 +4540,7 @@ static char *inp_expand_macro_in_str(struct function_env *env, char *str)
 
         if (function->num_parameters != num_params) {
             fprintf(stderr,
-                    "ERROR: parameter mismatch for function call in str: "
+                    "ERROR: parameter mismatch for function call in string "
                     "%s\n",
                     orig_str);
             controlled_exit(EXIT_FAILURE);
@@ -4642,8 +4643,9 @@ static struct card *inp_expand_macros_in_deck(
             if (c)
                 continue;
 
-            fprintf(stderr, "Error: line %d, missing .ends\n  %s\n",
-                    subckt->linenum_orig, subckt->line);
+            fprintf(stderr, "Error: missing .ends for line %s,\n"
+                "    line no. %d from file %s\n",
+                subckt->line, subckt->linenum_orig, subckt->linesource);
             controlled_exit(EXIT_BAD);
         }
 
@@ -4973,6 +4975,8 @@ static int inp_get_param_level(
             "    You probably do have a circular parameter dependency at line\n");
         fprintf(stderr,
             "    %s\n", deps[param_num].card->line);
+        fprintf(stderr,
+            "    line no. %d from file %s\n", deps[param_num].card->linenum_orig, deps[param_num].card->linesource);
         recounter = 0;
         controlled_exit(EXIT_FAILURE);
     }
@@ -4992,6 +4996,8 @@ static int inp_get_param_level(
             fprintf(stderr,
                     "ERROR: unable to find dependency parameter for %s!\n",
                     deps[param_num].param_name);
+            fprintf(stderr,
+                    "    line no. %d from file %s\n", deps[param_num].card->linenum_orig, deps[param_num].card->linesource);
             recounter = 0;
             controlled_exit(EXIT_FAILURE);
         }
@@ -5425,7 +5431,9 @@ static struct card *inp_reorder_params_subckt(
     }
 
     /* the terminating `.ends' deck wasn't found */
-    fprintf(stderr, "Error: Missing .ends statement\n");
+    fprintf(stderr, "Error: Missing .ends statement\n"
+        "    for line no. %d from file %s\n",
+        subckt_card->linenum_orig, subckt_card->linesource);
     controlled_exit(EXIT_FAILURE);
 }
 
@@ -5458,8 +5466,9 @@ static void inp_reorder_params(
 
         /* check for an unexpected extra `.ends' deck */
         if (ciprefix(".ends", curr_line)) {
-            fprintf(stderr, "Error: Unexpected extra .ends in line:\n  %s.\n",
-                    curr_line);
+            fprintf(stderr, "Error: Unexpected extra .ends\n"
+                "    in line no. %d from file %s.\n",
+                    c->linenum_orig, c->linesource);
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -5988,10 +5997,9 @@ static void inp_compat(struct card *card)
                             &cut_line, '}', TRUE, TRUE); /* expression */
                     if (!expression || !str_ptr) {
                         fprintf(stderr,
-                                "Error: bad syntax in line %d\n  %s\n"
-                                "from file\n"
-                                "  %s\n",
-                                card->linenum_orig, card->line, card->linesource);
+                                "Error: bad syntax in line %s\n"
+                                "    line no. %d from file %s\n",
+                                card->line, card->linenum_orig, card->linesource);
                         controlled_exit(EXIT_BAD);
                     }
                     tfree(str_ptr);
@@ -6029,8 +6037,10 @@ static void inp_compat(struct card *card)
                         secondno = gettok_node(&cut_line);
                         if ((!firstno && secondno) ||
                                 (firstno && !secondno)) {
-                            fprintf(stderr, "Error: Missing token in %s\n",
-                                    curr_line);
+                            fprintf(stderr,
+                                "Error: Missing token in line %s\n"
+                                "    line no. %d from file %s\n",
+                                curr_line, card->linenum_orig, card->linesource);
                             if (ft_stricterror)
                                 controlled_exit(EXIT_FAILURE);
                             break;
@@ -6103,8 +6113,8 @@ static void inp_compat(struct card *card)
                 /* Find equation, starts with '{', till end of line */
                 str_ptr = strchr(cut_line, '{');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed E line: %s\n",
-                            curr_line);
+                    fprintf(stderr, "ERROR: mal formed E source instance: %s\n", curr_line);
+                    fprintf(stderr, "    in line no. %d of file %s\n", card->linenum_orig, card->linesource);
                     controlled_exit(EXIT_FAILURE);
                 }
 
@@ -6325,8 +6335,8 @@ static void inp_compat(struct card *card)
                 /* Find equation, starts with '{', till end of line */
                 str_ptr = strchr(cut_line, '{');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed G line: %s\n",
-                            curr_line);
+                    fprintf(stderr, "ERROR: mal formed G source instance: %s\n", curr_line);
+                    fprintf(stderr, "    in line no. %d of file %s\n", card->linenum_orig, card->linesource);
                     controlled_exit(EXIT_FAILURE);
                 }
                 /* find multiplier m at end of line */
@@ -6477,7 +6487,8 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed R line: %s\n", curr_line);
+                fprintf(stderr, "ERROR: mal formed resistor instance R: %s\n", curr_line);
+                fprintf(stderr, "    in line no. %d of file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
                 controlled_exit(EXIT_FAILURE);
             }
@@ -6556,7 +6567,8 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed C line: %s\n", curr_line);
+                fprintf(stderr, "ERROR: mal formed capacitor instance C: %s\n", curr_line);
+                fprintf(stderr, "    in line no. %d of file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
                 controlled_exit(EXIT_FAILURE);
             }
@@ -6627,7 +6639,8 @@ static void inp_compat(struct card *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
+                fprintf(stderr, "ERROR: mal formed inductor instance L: %s\n", curr_line);
+                fprintf(stderr, "    in line no. %d of file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "    {...} or '...' around equation's right hand side are missing!\n");
                 controlled_exit(EXIT_FAILURE);
             }
@@ -7038,7 +7051,8 @@ static void inp_bsource_compat(struct card *card)
             equal_ptr = strchr(curr_line, '=');
             /* check for errors */
             if (equal_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed B line: %s\n", curr_line);
+                fprintf(stderr, "ERROR: mal formed B source instance: %s\n", curr_line);
+                fprintf(stderr, "    in line no. %d of file %s\n", card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_FAILURE);
             }
             /* prepare to skip parsing in numparam with expressions */
@@ -7493,12 +7507,11 @@ static void inp_poly_err(struct card *card)
             curr_line = nexttok(curr_line);
             if (ciprefix("poly", curr_line)) {
                 fprintf(stderr,
-                        "\nError: XSPICE is required to run the 'poly' "
-                        "option in line %d\n",
-                        card->linenum_orig);
-                fprintf(stderr, "  %s\n", card->line);
+                    "\nError: XSPICE is required to run the 'poly' option in instance %s\n"
+                    "line no %d of file %s\n",
+                     card->line, card->linenum_orig, card->linesource);
                 fprintf(stderr,
-                        "\nSee manual chapt. 31 for installation "
+                        "\nSee manual chapt. 28 for installation "
                         "instructions\n");
                 controlled_exit(EXIT_BAD);
             }
@@ -7591,9 +7604,10 @@ static void inp_dot_if(struct card *card)
             char *firstbr = strchr(curr_line, '(');
             char *lastbr = strrchr(curr_line, ')');
             if ((!firstbr) || (!lastbr)) {
-                fprintf(cp_err, "Error in netlist line no. %d\n",
-                        card->linenum_orig);
-                fprintf(cp_err, "   Bad syntax: %s\n\n", curr_line);
+                fprintf(cp_err, "Error: Bad sytax in netlist line %s\n",
+                    curr_line);
+                fprintf(cp_err, "    line no. %d from file %s\n",
+                        card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_BAD);
             }
             *firstbr = '{';
@@ -7680,6 +7694,8 @@ static void inp_fix_temper_in_param(struct card *deck)
                 fprintf(stderr,
                         "ERROR: could not find '=' on parameter line '%s'!\n",
                         curr_line);
+                fprintf(stderr, "    line no. %d from file %s\n", 
+                        card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -7690,6 +7706,8 @@ static void inp_fix_temper_in_param(struct card *deck)
             if (find_assignment(equal_ptr + 1)) {
                 fprintf(stderr, "ERROR: internal error on line '%s'!\n",
                         curr_line);
+                fprintf(stderr, "    line no. %d from file %s\n", 
+                        card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -7706,8 +7724,9 @@ static void inp_fix_temper_in_param(struct card *deck)
             if (temper < equal_ptr) {
                 fprintf(stderr,
                         "Error: you cannot assign a value to TEMPER\n"
-                        "  Line no. %d, %s\n",
-                        card->linenum, curr_line);
+                        "    Line %s\n"
+                        "    Line no. %d from file %s\n",
+                        curr_line, card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_BAD);
             }
 
@@ -7900,6 +7919,9 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
                 fprintf(stderr,
                         "ERROR: could not find '=' on parameter line '%s'!\n",
                         curr_line);
+                fprintf(stderr,
+                        "    line no. %d from file %s!\n",
+                        card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -7910,6 +7932,9 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
             if (find_assignment(equal_ptr + 1)) {
                 fprintf(stderr, "ERROR: internal error on line '%s'!\n",
                         curr_line);
+                fprintf(stderr,
+                    "    line no. %d from file %s!\n",
+                    card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -7926,8 +7951,11 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
             if (temper < equal_ptr) {
                 fprintf(stderr,
                         "Error: you cannot assign a value to %s\n"
-                        "  Line no. %d, %s\n",
-                        fcn, card->linenum, curr_line);
+                        "    Line  %s\n",
+                        fcn, curr_line);
+                fprintf(stderr,
+                        "    line no. %d from file %s\n",
+                    card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_BAD);
             }
 
@@ -8320,6 +8348,9 @@ static int inp_vdmos_model(struct card *deck)
                     "    drain, gate, source, tjunction, tcase\n"
                     "    in VDMOS instance line with thermal model\n"
                     "    %s\n", card->line);
+                fprintf(stderr,
+                    "    line no. %d from file %s\n",
+                    card->linenum_orig, card->linesource);
                 fprintf(stderr, "No circuit loaded!\n");
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
@@ -8342,6 +8373,9 @@ static int inp_vdmos_model(struct card *deck)
                 "    drain, gate, source, tjunction, tcase\n"
                 "    in VDMOS instance line with thermal model\n"
                 "    %s\n", card->line);
+            fprintf(stderr,
+                "    line no. %d from file %s\n",
+                card->linenum_orig, card->linesource);
             fprintf(stderr, "No circuit loaded!\n");
             tfree(instmodname);
             if (ft_stricterror)
@@ -8652,13 +8686,19 @@ static void inp_check_syntax(struct card *deck)
         if (strchr("=[]?()&%$\"!:,\f", *cut_line)) {
             if (ft_stricterror) {
                 fprintf(stderr, "Error: '%c' is not allowed as first character in line %s.\n", *cut_line, cut_line);
+                fprintf(stderr,
+                    "    line no. %d from file %s\n",
+                    card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_BAD);
             }
             else {
                 if (!check_ch) {
                     fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,\\f'\n", *cut_line);
                     fprintf(stderr, "    in netlist or included files, will be replaced with '*'.\n");
-                    fprintf(stderr, "    Check line no %d:  %s\n\n", card->linenum_orig, cut_line);
+                    fprintf(stderr, "    check line  %s\n", cut_line);
+                    fprintf(stderr,
+                        "    line no. %d from file %s!\n\n",
+                        card->linenum_orig, card->linesource);
                     check_ch = 1; /* just one warning */
                 }
                 *cut_line = '*';
@@ -8674,6 +8714,9 @@ static void inp_check_syntax(struct card *deck)
                 fprintf(cp_err,
                         "\nError: Nesting of .control statements is not "
                         "allowed!\n\n");
+                fprintf(stderr,
+                    "    line no. %d from file %s\n",
+                    card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_BAD);
             }
             check_control++;
@@ -8735,6 +8778,9 @@ static void inp_check_syntax(struct card *deck)
             if (!acline) {
                 fprintf(stderr, "Error in line   %s\n", cut_line);
                 fprintf(stderr, "    Not enough parameters\n");
+                fprintf(stderr,
+                    "    line no. %d from file %s\n",
+                    card->linenum_orig, card->linesource);
                 controlled_exit(EXIT_BAD);
             }
             acline = search_plain_identifier(acline, "ac");
@@ -9141,6 +9187,9 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
             char *model_type = get_model_type(curr_line);
             if (!model_type) {
                 fprintf(stderr, "Error: no model type given in line %s!\n", curr_line);
+                fprintf(stderr,
+                    "    line no. %d from file %s!\n",
+                    card->linenum_orig, card->linesource);
                 tfree(modl_new);
                 controlled_exit(EXIT_BAD);
             }
@@ -9321,6 +9370,7 @@ utf8_syntax_check(struct card *deck)
 
         if (s) {
             fprintf(stderr, "Error: UTF-8 syntax error in input deck,\n    line %d at token/word %s\n", card->linenum_orig, s);
+            fprintf(stderr, "    input file %s\n", card->linesource);
             controlled_exit(1);
         }
     }
@@ -9378,6 +9428,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok_noparens(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: bad syntax of line\n   %s\n", thisline);
+                fprintf(stderr, "    line no %d, file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "No circuit loaded!\n");
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
@@ -9417,6 +9468,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok_noparens(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "    line no %d, file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "No circuit loaded!\n");
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
@@ -9432,6 +9484,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
                 curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "    line no %d, file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "No circuit loaded!\n");
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
@@ -9445,6 +9498,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "    line no %d, file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "No circuit loaded!\n");
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
@@ -9460,6 +9514,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
                 curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "    line no %d, file %s\n", card->linenum_orig, card->linesource);
                 fprintf(stderr, "No circuit loaded!\n");
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
