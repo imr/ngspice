@@ -1667,7 +1667,19 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 for (s = buffer; *s && (*s != '\n'); s++)
                     ;
             }
-
+            /* lower case for variables or vectors in command 'echo'  */
+            if (ciprefix("echo", buffer)) {
+                char* p = buffer;
+                while (p && *p != '\n' &&  *p != '\0') {
+                    p = nexttok(p);
+                    /* vectors or variables start with $ */
+                    if (p && *p == '$') {
+                        for (s = p; *s && !isspace_c(*s); s++)
+                            *s = tolower_c(*s);
+                        p = s;
+                    }
+                }
+            }
             /* add Inp_Path to buffer while keeping the sourcepath variable contents */
             if (ciprefix("set", buffer)) {
                 char *p;
