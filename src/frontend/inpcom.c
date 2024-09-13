@@ -1669,14 +1669,14 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             }
             /* lower case for variables or vectors in command 'echo'  */
             if (ciprefix("echo", buffer)) {
-                char* p = buffer;
+                char* p = buffer, *tmpstr;
                 while (p && *p != '\n' &&  *p != '\0') {
                     p = nexttok(p);
                     /* vectors or variables start with $ */
                     if (p && *p == '$') {
-                        for (s = p; *s && !isspace_c(*s); s++)
-                            *s = tolower_c(*s);
-                        p = s;
+                        for (tmpstr = p; *tmpstr && !isspace_c(*tmpstr); tmpstr++)
+                            *tmpstr = tolower_c(*tmpstr);
+                        p = tmpstr;
                     }
                 }
             }
@@ -1961,7 +1961,7 @@ char *inp_pathresolve(const char *name)
 
 
 /* Figure out if name starts with: environmental variables (replace them),
-   ~/ (expand the tilde), absolute path name, all others and return the
+   absolute path name, ~/ (expand the tilde), all others and return the
    path, if file exists. */
 static char *inp_pathresolve_at(const char *name, const char *dir)
 {
