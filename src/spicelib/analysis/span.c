@@ -662,6 +662,20 @@ SPan(CKTcircuit* ckt, int restart)
             return(error);
         }
     }
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        /* Conversion from Real Matrix to Complex Matrix */
+        if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
+        {
+            for (i = 0; i < DEVmaxnum; i++)
+                if (DEVices[i] && DEVices[i]->DEVbindCSCComplex && ckt->CKThead[i])
+                    DEVices[i]->DEVbindCSCComplex(ckt->CKThead[i], ckt);
+
+            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex;
+        }
+    }
+#endif
 
     ckt->CKTactivePort = 0;
     /* main loop through all scheduled frequencies */
@@ -678,6 +692,19 @@ SPan(CKTcircuit* ckt, int restart)
 
         /* Update opertating point, if variable 'hertz' is given */
         if (ckt->CKTvarHertz) {
+
+#ifdef KLU
+            if (ckt->CKTmatrix->CKTkluMODE)
+            {
+                /* Conversion from Complex Matrix to Real Matrix */
+                for (i = 0; i < DEVmaxnum; i++)
+                    if (DEVices[i] && DEVices[i]->DEVbindCSCComplexToReal && ckt->CKThead[i])
+                        DEVices[i]->DEVbindCSCComplexToReal(ckt->CKThead[i], ckt);
+
+                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal;
+            }
+#endif
+
 #ifdef XSPICE
             /* Call EVTop if event-driven instances exist */
 
@@ -709,7 +736,17 @@ SPan(CKTcircuit* ckt, int restart)
                 tfree(data);  return(error);
             }
         }
+#ifdef KLU
+        if (ckt->CKTmatrix->CKTkluMODE)
+        {
+            /* Conversion from Real Matrix to Complex Matrix */
+            for (i = 0; i < DEVmaxnum; i++)
+                if (DEVices[i] && DEVices[i]->DEVbindCSCComplex && ckt->CKThead[i])
+                    DEVices[i]->DEVbindCSCComplex(ckt->CKThead[i], ckt);
 
+            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex;
+        }
+#endif
         // Store previous rhs
         if (rhswoPorts == NULL)
             rhswoPorts = (double*)TMALLOC(double, ckt->CKTmaxEqNum);
@@ -760,20 +797,6 @@ SPan(CKTcircuit* ckt, int restart)
         else
             vsrcRoot = ckt->CKTVSRCid;
 
-#ifdef KLU
-    if (ckt->CKTmatrix->CKTkluMODE)
-    {
-        /* Conversion from Real Matrix to Complex Matrix */
-        if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
-        {
-            for (i = 0 ; i < DEVmaxnum ; i++)
-                if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
-                    DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
-
-            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
-        }
-    }
-#endif
 
         // Pre-load everything but RF Ports (these will be updated in the next cycle).
         error = NIspPreload(ckt);
@@ -977,6 +1000,17 @@ endsweep:
     tfree(irhswoPorts);
     deleteSPmatrix(ckt);
     tfree(data);
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        /* Conversion from Complex Matrix to Real Matrix */
+        for (i = 0; i < DEVmaxnum; i++)
+            if (DEVices[i] && DEVices[i]->DEVbindCSCComplexToReal && ckt->CKThead[i])
+                DEVices[i]->DEVbindCSCComplexToReal(ckt->CKThead[i], ckt);
+
+        ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal;
+    }
+#endif
     return(0);
 }
 
