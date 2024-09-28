@@ -111,6 +111,13 @@ OP( "qinv",        BSIM4v6_QINV,       IF_REAL,    "Qinversion"),
 OP( "qdef",        BSIM4v6_QDEF,       IF_REAL,    "Qdef"),
 OP( "gcrg",        BSIM4v6_GCRG,       IF_REAL,    "Gcrg"),
 OP( "gtau",        BSIM4v6_GTAU,       IF_REAL,    "Gtau"),
+OP( "vgsteff",     BSIM4v6_VGSTEFF,    IF_REAL,    "Vgsteff"),
+OP( "vdseff",      BSIM4v6_VDSEFF,     IF_REAL,    "Vdseff"),
+OP( "cgso",        BSIM4v6_CGSO,       IF_REAL,    "Cgso"),
+OP( "cgdo",        BSIM4v6_CGDO,       IF_REAL,    "Cgdo"),
+OP( "cgbo",        BSIM4v6_CGBO,       IF_REAL,    "Cgbo"),
+OP( "weff",        BSIM4v6_WEFF,       IF_REAL,    "Weff"),
+OP( "leff",        BSIM4v6_LEFF,       IF_REAL,    "Leff"),
 };
 
 IFparm BSIM4v6mPTable[] = { /* model parameters */

@@ -3876,6 +3876,14 @@ typedef struct sBSIM4model
 #define BSIM4_MOD_VBSR_MAX          1310
 #define BSIM4_MOD_VBDR_MAX          1311
 
+#define BSIM4_VGSTEFF               1400
+#define BSIM4_VDSEFF                1401
+#define BSIM4_CGSO                  1402
+#define BSIM4_CGDO                  1403
+#define BSIM4_CGBO                  1404
+#define BSIM4_WEFF                  1405
+#define BSIM4_LEFF                  1406
+
 #include "bsim4ext.h"
 
 extern void BSIM4evaluate(double,double,double,BSIM4instance*,BSIM4model*,
