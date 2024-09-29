@@ -189,6 +189,7 @@ NOISEan(CKTcircuit* ckt, int restart)
             EVTop_save(ckt, MIF_TRUE, 0.0);
         }
         else
+        { // start of no XSPICE event-driven instances
 #endif
 
 #ifdef KLU
@@ -216,10 +217,13 @@ NOISEan(CKTcircuit* ckt, int restart)
                     return(error);
                 }
             }
-            else
+            else {
                 fprintf(stdout, "\n Linear circuit, option noopac given: no OP analysis\n");
+            }
 
 #ifdef XSPICE
+        } // end of no XSPICE event-driven instances
+
         /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
 
             /* Send the operating point results for Mspice compatibility */
