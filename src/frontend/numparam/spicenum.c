@@ -121,8 +121,9 @@ stripbraces(DSTRINGPTR dstr_p)
 
         cadd(&tstr, ' ');
         {
-            char buf[25+1];
-            sprintf(buf, "numparm__________%08lx", ++placeholder);
+            char buf[ACT_CHARACTS + 1];
+
+            sprintf(buf, MARKER "%08lx", ++placeholder);
             sadd(&tstr, buf);
         }
         cadd(&tstr, ' ');

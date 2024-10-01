@@ -23,8 +23,6 @@
 
 extern long dynsubst;           /* see inpcom.c */
 
-#define ACT_CHARACTS 25      /* actual string length to be inserted and replaced */
-
 #define  S_init   0
 #define  S_atom   1
 #define  S_binop  2
@@ -1165,7 +1163,7 @@ static char *string_expr(dico_t *dico, DSTRINGPTR qstr_p,
 
 /* stupid, produce a string representation of a given double
  *   to be spliced back into the circuit deck
- * we want *exactly* 25 chars, we have
+ * we want *exactly* 25 (ACT_CHARACTS) chars, we have
  *   sign, leading digit, '.', 'e', sign, upto 3 digits exponent
  * ==> 8 chars, thus we have 17 left for precision
  * don't print a leading '+', something choked
@@ -1214,10 +1212,10 @@ insertnumber(dico_t *dico, char **lp, DSTRINGPTR ustr_p)
     long        id = 0;
     int         n;
 
-    char *p = strstr(s, "numparm__________");
+    char *p = strstr(s, MARKER);
 
     if (p &&
-        (1 == sscanf(p, "numparm__________%8lx%n", &id, &n)) &&
+        (1 == sscanf(p, MARKER "%8lx%n", &id, &n)) &&
         (n == ACT_CHARACTS) &&
         (id > 0) && (id < dynsubst + 1)) {
         /* Found a target for substitution. */

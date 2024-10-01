@@ -1,0 +1,33 @@
+.TITLE SUBCKT VECTOR PARAM TEST
+* Example of passing a vector parameter to a sub-circuit.
+* Modified from https://sourceforge.net/p/ngspice/feature-requests/55/
+
+* An AND gate impmented as a LUT in a subcircuit.
+
+.param default_vec="[1e-12 2e-12]"
+                                    *--vector parameter--
+.subckt testcir in0 in1 outlut testpar = {default_vec}
+
+A_genlut [in0 in1] [outlut] genlut
+.model genlut d_genlut (
++ input_delay  = {testpar}
++ table_values = "0001")
+
+.ends testcir
+
+V_Vss vss 0 DC 3.3
+V_pulse sine 0 DC 0 SIN(0 1 1000)
+
+.param actual_vec="[1.3e-3 2e-3]"
+                                    *--vector parameter--
+X_subckt no1 dss node3 testcir testpar={actual_vec}
+
+A_ADC [sine vss] [no1 dss] ADC
+.model ADC adc_bridge(in_low=0.7 in_high=0.71)
+
+.control
+  tran 20u 4m
+  plot sine node3
+.endc
+
+.end
