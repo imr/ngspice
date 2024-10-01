@@ -40,13 +40,13 @@ if test "$1" = "d"; then
    if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-  ../configure --with-x --disable-dependency-tracking --enable-xspice --enable-openmp --enable-relan --prefix="/usr/local" --libdir="/usr/local/lib" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-m64 -g"
+  ../configure --with-x --with-readline=yes ---disable-dependency-tracking --enable-xspice --enable-openmp --enable-relan --prefix="/usr/local" --libdir="/usr/local/lib" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-m64 -g"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-  ../configure --with-x --disable-dependency-tracking --enable-xspice --enable-openmp --enable-relan --prefix="/usr/local" --libdir="/usr/local/lib" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-x  --with-readline=yes --disable-dependency-tracking --enable-xspice --enable-openmp --enable-relan --prefix="/usr/local" --libdir="/usr/local/lib" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
