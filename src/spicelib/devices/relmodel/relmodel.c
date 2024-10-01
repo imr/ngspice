@@ -7,8 +7,14 @@ Author: Francesco Lannutti - July 2015
 #include "relmodeldefs.h"
 #include "ngspice/suffix.h"
 
+#ifndef _MSC_VER
 IFparm RELMODELpTable [] = { /* parameters */
 } ;
+#else
+IFparm RELMODELpTable [] = { /* parameters */
+	IOP("empty", RELMODEL_MOD_TYPE, IF_INTEGER, "not used")
+} ;
+#endif
 
 IFparm RELMODELmPTable [] = { /* model parameters */
 IOP ("type", RELMODEL_MOD_TYPE, IF_INTEGER, "Aging Model Type"),
@@ -41,11 +47,18 @@ IOP ("t_s_new", RELMODEL_MOD_T_S_NEW, IF_REAL, "t_s"),
 IP  ("relmodel", RELMODEL_MOD_RELMODEL,  IF_FLAG, "Flag to indicate RELMODEL")
 } ;
 
-char *RELMODELnames [] = {
-} ;
+#ifndef _MSC_VER
+char* RELMODELnames[] = {
+};
+#else
+char* RELMODELnames[] = {
+	"empty"
+};
+#endif
 
 int RELMODELnSize = NUMELEMS(RELMODELnames) ;
 int RELMODELpTSize = NUMELEMS(RELMODELpTable) ;
+
 int RELMODELmPTSize = NUMELEMS(RELMODELmPTable) ;
 int RELMODELiSize = 0 ;
 int RELMODELmSize = sizeof(RELMODELmodel) ;
