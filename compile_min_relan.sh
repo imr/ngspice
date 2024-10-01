@@ -1,65 +1,41 @@
 #!/bin/bash
-# ngspice build script for MINGW-w64, release version, 32 or 64 bit
-# compile_min.sh
+# ngspice-26 from git branch Reliability_Analysis_New_Model.
+# build script for MINGW MSYS2, release version, 64 bit
+# compile_min_relan.sh
 
 #Procedure:
-# Install MSYS, plus bison, flex, auto tools, perl, libiconv, libintl
-# Install MINGW-w64, activate OpenMP support
-#     See either http://mingw-w64.sourceforge.net/ or http://tdm-gcc.tdragon.net/
-#     (allows to generate either 32 or 64 bit executables by setting flag -m32 or -m64)
-# set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
+# Install MSYS2, plus bison, flex, auto tools, perl, libiconv, libintl gsl
+#     See https://www.msys2.org/
+# activate OpenMP support
+
+# Only generates 64 bit executables by setting flag -m64
+
 # start compiling with
-# './compile_min.sh' or './compile_min.sh 64'
+# './compile_min_relan.sh'
 
 # Options:
-# --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
-# adms interface.
-# Please see http://ngspice.sourceforge.net/admshowto.html for more info on adms.
-# CIDER, XSPICE, and OpenMP may be selected at will.
+# Not compatible with CIDER! 
+# XSPICE, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 
 
-if test "$1" = "64"; then
-   if [ ! -d "release64" ]; then
-      mkdir release64
-      if [ $? -ne 0 ]; then  echo "mkdir release64 failed"; exit 1 ; fi
-   fi   
-else
-   if [ ! -d "release" ]; then
-      mkdir release
-      if [ $? -ne 0 ]; then  echo "mkdir release failed"; exit 1 ; fi
-   fi
-fi
+if [ ! -d "release64" ]; then
+   mkdir release64
+   if [ $? -ne 0 ]; then  echo "mkdir release64 failed"; exit 1 ; fi
+fi   
+
 
 # If compiling sources from git, you may need to uncomment the following two lines:
 ./autogen.sh
 if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
-# Alternatively, if compiling sources from git, and want to add adms created devices,
-# you may need to uncomment the following two lines (and don't forget to add adms option
-# to the ../configure statement):
-#./autogen.sh --adms
-#if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
-
-# In the following ../configure commands you will find an additional entry to the CFLAGS
-# '-fno-omit-frame-pointer'. This entry compensates for a compiler bug of actual mingw gcc 4.6.1. 
-
 echo
-if test "$1" = "64"; then
-   cd release64
-   if [ $? -ne 0 ]; then  echo "cd release64 failed"; exit 1 ; fi
-  echo "configuring for 64 bit"
-  echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --disable-debug --enable-relan prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
-else
-   cd release
-   if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
-  echo "configuring for 32 bit"
-  echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --disable-debug prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
-fi
+cd release64
+if [ $? -ne 0 ]; then  echo "cd release64 failed"; exit 1 ; fi
+echo "configuring for 64 bit"
+echo
+../configure --with-wingui --disable-debug --enable-xspice --enable-openmp --enable-relan prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
 echo

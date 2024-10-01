@@ -24,19 +24,13 @@ fi
 ./autogen.sh
 if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
-# Alternatively, if compiling sources from CVS, and want to add adms created devices,
-# you may need to uncomment the following two lines (and don't forget to add adms option
-# to the ../configure statement):
-#./autogen.sh --adms
-#if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
-
 echo
 cd release64_cyg
 if [ $? -ne 0 ]; then  echo "cd release64_cyg failed"; exit 1 ; fi
 echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
 # ../configure --with-x=yes --with-readline=yes --disable-debug --enable-xspice --enable-pss --enable-cider --enable-openmp --enable-relan CFLAGS="-O2" LDFLAGS="-s"
-../configure --with-x=yes --with-readline=yes --disable-debug --enable-relan CFLAGS="-O2" LDFLAGS="-s"
+../configure --with-x=yes --with-readline=yes --disable-debug --enable-xspice --enable-openmp --enable-relan CFLAGS="-O2" LDFLAGS="-s"
 #../configure --with-x=no --with-readline=yes --disable-debug --enable-xspice --enable-cider --enable-openmp
 
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
