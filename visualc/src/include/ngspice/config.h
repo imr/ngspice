@@ -12,7 +12,7 @@
 /* #undef CAPBYPASS */
 
 /* The CIDER enhancements */
-#define CIDER 1
+/* #undef CIDER */
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 /* #undef CLOSEDIR_VOID */
@@ -495,6 +495,9 @@
 
 /* Define if you want to debug pole-zero analysis */
 /* #undef PZDEBUG */
+
+/* Enable the reliability code. */
+#define RELAN 1
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
