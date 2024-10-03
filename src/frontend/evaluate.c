@@ -721,7 +721,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         v->v_numdims = 1;
         v->v_dims[0] = v->v_length;
         if (v->v_length <= 1) {
-            fprintf(cp_err, "Error: nostrchring on a scalar (%s)\n",
+            fprintf(cp_err, "Error: indexing a scalar (%s)\n",
                     v->v_name);
             return (NULL);
         }
