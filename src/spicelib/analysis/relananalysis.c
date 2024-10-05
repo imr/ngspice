@@ -837,6 +837,13 @@ resume:
     QUI, deve essere controllato che all'istante precedente il device sia acceso (o spento). Se si manifesta un cambio, allora la fase di stress (o di recovery)
       è finita e bisogna calcolare il delta_vth attraverso il modello.
 */
+/*  In RHSold, each device must access its own values ​​to see if it itself is on or off.
+    In the case of BSIM4, the rule Vgs > Vth applies, where Vgs = ckt->CKTrhsOld [here->BSIM4...] - ckt->CKTrhsOld [here->BSIM4...] and Vth = here->BSIM4vth .
+    If the transistor is on, a flag rises, private to the device, which indicates that it is on. If it is off, the same flag will be low.
+    The current CKTtime must be stored together, so that the delta time needed by the model can then be calculated.
+    HERE, it must be checked that the device was turned on (or off) at the previous moment. If a change occurs, then the stress (or recovery) phase
+    it's over and we need to calculate the delta_vth through the model.
+*/
             CKTreliability (ckt, 0) ;
 
             if (firsttime) {
