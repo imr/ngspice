@@ -26,6 +26,14 @@ PZan(CKTcircuit *ckt, int reset)
 
     NG_IGNORE(reset);
 
+#ifdef KLU
+    if (ckt->CKTkluMODE) {
+        fprintf(stderr, "Error: Pole/zero analysis is not (yet) supported with 'option KLU'.\n");
+        fprintf(stderr, "    Use 'option sparse' instead.\n");
+        return(E_UNSUPP);
+    }
+#endif
+
     error = PZinit(ckt);
     if (error != OK) return error;
 
