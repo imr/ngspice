@@ -153,6 +153,7 @@ dot_appendmodel (CKTcircuit *ckt, INPtables *tab, card *current)
  * been created by now, (except for internal device nodes), so any
  * nodeset or IC nodes which have to be created are flagged with a
  * warning.  */
+/* Check for the .appendmodel line*/
 
 void
 INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
