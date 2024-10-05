@@ -182,6 +182,9 @@ xNOT4_2 0 VDD cout_load cout32 NOT4_SUB
 
 .CONTROL
 run
+set color0=white
+set xbrushwidth=3
+plot cin relan1.cout32 cout32
 .ENDC
 
 .END

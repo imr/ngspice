@@ -182,7 +182,9 @@ xNOT4_1 0 VDD out_load out32 NOT4_SUB
 xNOT4_2 0 VDD cout_load cout32 NOT4_SUB
 
 .CONTROL
+save cin cout32
 run
+plot cin relan1.cout32  tran1.cout32 
 .ENDC
 
 .END
