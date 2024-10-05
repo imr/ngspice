@@ -194,31 +194,31 @@ void cm_potentiometer (ARGS)
 
         ac_gain.imag= 0.0;              
 
-        ac_gain.real = -1.0 / r_lower;
+        ac_gain.real = 1.0 / r_lower;
         AC_GAIN(r0,r0) = ac_gain;
 
         ac_gain.real = 0.0;             
         AC_GAIN(r0,r1) = ac_gain;
 
-        ac_gain.real = 1.0 / r_lower;             
+        ac_gain.real = -1.0 / r_lower;             
         AC_GAIN(r0,wiper) = ac_gain;
 
         ac_gain.real = 0.0;
         AC_GAIN(r1,r0) = ac_gain;
 
-        ac_gain.real = -1.0 / r_upper;             
+        ac_gain.real = 1.0 / r_upper;             
         AC_GAIN(r1,r1) = ac_gain;
 
-        ac_gain.real = 1.0 / r_upper;             
+        ac_gain.real = -1.0 / r_upper;             
         AC_GAIN(r1,wiper) = ac_gain;
 
-        ac_gain.real = 1.0 / r_lower;
+        ac_gain.real = -1.0 / r_lower;
         AC_GAIN(wiper,r0) = ac_gain;
 
-        ac_gain.real = 1.0 / r_upper;             
+        ac_gain.real = -1.0 / r_upper;             
         AC_GAIN(wiper,r1) = ac_gain;
 
-        ac_gain.real = -(1.0/r_lower) - (1.0/r_upper);             
+        ac_gain.real = (1.0/r_lower) + (1.0/r_upper);             
         AC_GAIN(wiper,wiper) = ac_gain;
 
     }
