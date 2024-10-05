@@ -372,7 +372,8 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 }
             }
 
-            printf ("\n\nExtrapolation at %-.9g years:\n\t\t\t\tDeltaVth: %-.9gmV\n\n\n\n", ckt->CKTtargetFitting, here->relStruct->deltaVth * 1000) ;
+            fprintf (stdout, "\n\nExtrapolation at %-.9g seconds (%-.2g years):\n\t\t\t\tDeltaVth: %-.9gmV\n\n\n\n", 
+                ckt->CKTtargetFitting, ckt->CKTtargetFitting / 365 / 24 / 60 / 60, here->relStruct->deltaVth * 1000) ;
         }
 
         // Free the vgs average list
