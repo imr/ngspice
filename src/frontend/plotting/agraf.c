@@ -86,12 +86,6 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     yrange[0] = ylims[0];
     yrange[1] = ylims[1];
 
-    if (maxx < 2) {
-        fprintf(cp_err,
-                "Error: asciiplot can't handle scale with length < 2\n");
-        return;
-    }
-
     if (maxx <= 0) {
         fprintf(cp_err, "Note: no points to plot\n");
         return;
@@ -294,12 +288,18 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     for (i = 0; i < maxx; i++) {
         if (nointerp)
             x = isreal(xscale) ? xscale->v_realdata[i] :
-                realpart(xscale->v_compdata[i]);
+            realpart(xscale->v_compdata[i]);
         else if (xlog && xrange[0] > 0.0 && xrange[1] > 0.0)
-            x = xrange[0] * pow(10.0, mylog10(xrange[1]/xrange[0])
-                                 * i / (maxx - 1));
+            if (maxx == 1)
+                x = (xrange[0] + xrange[1]) / 2.;
+            else
+                x = xrange[0] * pow(10.0, mylog10(xrange[1] / xrange[0])
+                    * i / (maxx - 1));
         else
-            x = xrange[0] + (xrange[1] - xrange[0]) * i / (maxx - 1);
+            if (maxx == 1)
+                x = (xrange[0] + xrange[1]) / 2.;
+            else
+                x = xrange[0] + (xrange[1] - xrange[0]) * i / (maxx - 1);
 
         if (x < 0.0)
             out_printf("%.3e ", x);

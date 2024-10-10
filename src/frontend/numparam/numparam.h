@@ -20,6 +20,11 @@ extern const struct nupa_type S_nupa_string;
 extern const struct nupa_type S_nupa_subckt;
 extern const struct nupa_type S_nupa_unknown;
 
+/* Length of "numparam____ ..." string to be inserted and replaced. */
+
+#define ACT_CHARACTS 25
+#define MARKER "numparm__________"
+
 #define  NUPA_REAL     (&S_nupa_real)
 #define  NUPA_STRING   (&S_nupa_string)
 #define  NUPA_SUBCKT   (&S_nupa_subckt)

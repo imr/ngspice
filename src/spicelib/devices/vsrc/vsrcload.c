@@ -320,9 +320,8 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         double end_time, itime;
 
                         time -= here->VSRCrdelay;
-                        if (time < here->VSRCcoeffs[0]) {
+                        if (time <= here->VSRCcoeffs[0]) {
                             value = here->VSRCcoeffs[1];
-                            value = value;
                             break;
                         }
 

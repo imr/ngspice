@@ -8,9 +8,8 @@ Public Domain
 Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 PROJECT A-8503-405
-               
 
-AUTHORS                      
+AUTHORS
 
     19 June 1992     Jeffrey P. Murray
 
@@ -19,7 +18,7 @@ MODIFICATIONS
 
     19 June 1992     Jeffrey P. Murray
     22 October 2022  Holger Vogt
-                                   
+    05 October 2024  Holger Vogt
 
 SUMMARY
 
@@ -27,17 +26,16 @@ SUMMARY
     code model.
 
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
+    CMmacros.h           cm_message_send();
 
 
 REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
-                     
 
 NON-STANDARD FEATURES
 
@@ -49,36 +47,24 @@ NON-STANDARD FEATURES
 
 #include <math.h>
 
-                                      
-
 /*=== CONSTANTS ========================*/
-
-
 
 
 /*=== MACROS ===========================*/
 
 
-
-  
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
 
-    
-           
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
 
-
-
-
-                   
 /*==============================================================================
 
 FUNCTION cm_potentiometer()
 
-AUTHORS                      
+AUTHORS
 
     19 June 1992     Jeffrey P. Murray
 
@@ -90,11 +76,11 @@ SUMMARY
 
     This function implements the potentiometer code model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
+    CMmacros.h           cm_message_send();
 
 RETURNED VALUE
     
@@ -123,11 +109,7 @@ void cm_potentiometer (ARGS)
     double vr1;          /* voltage at r1 */
     double vwiper;       /* voltage at wiper */
 
-
-
     Mif_Complex_t ac_gain;
-                   
-                       
 
     /* Retrieve frequently used parameters... */
 
@@ -148,29 +130,25 @@ void cm_potentiometer (ARGS)
     vr1 = INPUT(r1);
 
 
-    if ( PARAM(log) == FALSE ) {   
+    if ( PARAM(log) == FALSE ) {
 
         /* Linear Variation in resistance w.r.t. position */
         r_lower = position * resistance;
         r_upper = resistance - r_lower;
 
     }
-    else {        
+    else {
         
         /* Logarithmic Variation in resistance w.r.t. position */
-        r_lower = resistance / 
+        r_lower = resistance /
                   pow(10.0,(position * PARAM(log_multiplier)));
         r_upper = resistance - r_lower;
 
     }
 
-
-
-
-
     /* Output DC & Transient Values  */
 
-    if(ANALYSIS != MIF_AC) {               
+    if(ANALYSIS != MIF_AC) {
         OUTPUT(r0) = (vr0 - vwiper) / r_lower;
         OUTPUT(r1) = (vr1 - vwiper) / r_upper;
         OUTPUT(wiper) = ((vwiper - vr0)/r_lower) + ((vwiper - vr1)/r_upper);
@@ -188,43 +166,39 @@ void cm_potentiometer (ARGS)
         PARTIAL(wiper,wiper) = (1.0/r_lower) + (1.0/r_upper);
 
     }
-    else {                       
+    else {
 
         /*   Output AC Gain Values      */
 
-        ac_gain.imag= 0.0;              
+        ac_gain.imag= 0.0;
 
-        ac_gain.real = -1.0 / r_lower;
+        ac_gain.real = 1.0 / r_lower;
         AC_GAIN(r0,r0) = ac_gain;
 
-        ac_gain.real = 0.0;             
+        ac_gain.real = 0.0; 
         AC_GAIN(r0,r1) = ac_gain;
 
-        ac_gain.real = 1.0 / r_lower;             
+        ac_gain.real = -1.0 / r_lower;
         AC_GAIN(r0,wiper) = ac_gain;
 
         ac_gain.real = 0.0;
         AC_GAIN(r1,r0) = ac_gain;
 
-        ac_gain.real = -1.0 / r_upper;             
+        ac_gain.real = 1.0 / r_upper;
         AC_GAIN(r1,r1) = ac_gain;
 
-        ac_gain.real = 1.0 / r_upper;             
+        ac_gain.real = -1.0 / r_upper;
         AC_GAIN(r1,wiper) = ac_gain;
 
-        ac_gain.real = 1.0 / r_lower;
+        ac_gain.real = -1.0 / r_lower;
         AC_GAIN(wiper,r0) = ac_gain;
 
-        ac_gain.real = 1.0 / r_upper;             
+        ac_gain.real = -1.0 / r_upper;
         AC_GAIN(wiper,r1) = ac_gain;
 
-        ac_gain.real = -(1.0/r_lower) - (1.0/r_upper);             
+        ac_gain.real = (1.0/r_lower) + (1.0/r_upper);
         AC_GAIN(wiper,wiper) = ac_gain;
 
     }
 
 }
-
-
-
-
