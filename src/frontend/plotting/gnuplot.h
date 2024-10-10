@@ -11,7 +11,7 @@ void ft_gnuplot(double *xlims, double *ylims,
         const char *filename, const char *title,
         const char *xlabel, const char *ylabel,
         GRIDTYPE gridtype, PLOTTYPE plottype,
-        struct dvec *vecs, bool xycontour);
+        struct dvec *vecs, bool xycontour, bool save_files_only);
 
 
 void ft_writesimple(double *xlims, double *ylims,

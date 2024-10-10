@@ -288,6 +288,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     static PLOTTYPE ptype = PLOT_LIN;
 
     bool gfound = FALSE, pfound = FALSE, oneval = FALSE, contour2d = FALSE, digitop = FALSE;
+    bool save_files_only = FALSE;
     double ylims[2], xlims[2];
     struct pnode *pn, *names = NULL;
     struct dvec *d = NULL, *vecs = NULL, *lv = NULL, *lastvs = NULL;
@@ -363,6 +364,11 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
 
     /* See if contours for 2D Cider data can be plotted with gnuplot */
     contour2d = getflag(wl, "xycontour");
+
+    /* save_files_only to save gnuplot plt and data files without plotting */
+    if (devname && eq(devname, "gnuplot")) {
+        save_files_only = getflag(wl, "save_files_only");
+    }
 
     /* Now extract all the parameters. */
     digitop = getflag(wl, "digitop");
@@ -1208,7 +1214,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
                    title ? title : vecs->v_plot->pl_title,
                    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
                    ylabel ? ylabel : ft_typabbrev(y_type),
-                   gtype, ptype, vecs, contour2d);
+                   gtype, ptype, vecs, contour2d, save_files_only);
         rtn = TRUE;
         goto quit;
     }
