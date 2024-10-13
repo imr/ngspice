@@ -742,6 +742,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         for (dd = deck->nextcard; dd; dd = ld->nextcard) {
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
+
             s = skip_ws(dd->line);
             if ((*s == '*') && ((s != dd->line) || (s[1] != '#'))) {
                 if (commands) {
@@ -776,22 +777,31 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 else
                     fprintf(cp_err, "Warning: misplaced .endc card\n");
             } else if (commands || prefix("*#", dd->line)) {
+                s = dd->line;
+
+                /* Special control lines outside of .control section? */
+
+                if (prefix("*#", s)) {
+                    s = skip_ws(s + 2);
+                    if (!*s)
+                        continue;
+                }
+
                 /* assemble all commands starting with pre_ after stripping
                  * pre_, to be executed before circuit parsing */
-                if (ciprefix("pre_", dd->line)) {
-                    s = copy(dd->line + 4);
-                    pre_controls = wl_cons(s, pre_controls);
-                }
-                /* assemble all other commands to be executed after circuit
-                 * parsing */
-                else {
-                    /* special control lines outside of .control section*/
-                    if (prefix("*#", dd->line)) {
-                        s = copy(dd->line + 2);
-                    /* all commands from within .control section */
+
+                if (ciprefix("pre_", s)) {
+                    s = s + 4;
+                    pre_controls = wl_cons(copy(s), pre_controls);
+                } else {
+                    /* Assemble all other commands to be executed
+                     * after circuit parsing */
+
+                    if (s == dd->line) {
+                        dd->line = NULL; /* Going to wl->wl_word. */
                     } else {
-                        s = dd->line;
-                        dd->line = NULL; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
+                        s = copy(s);
+                        *dd->line = '*';
                     }
                     controls = wl_cons(s, controls);
                 }
