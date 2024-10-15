@@ -815,20 +815,27 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 /* lines .width, .four, .plot, .print, .save added to wl_first, removed from deck */
                 /* lines .op, .meas, .tf added to wl_first */
                 inp_casefix(s); /* s: first token from line */
-                /* Do not eliminate " around netnames, to allow '/' or '-' in netnames */
-                if (!eq(s, ".plot") && !eq(s, ".print"))
+                /* Do not eliminate " around netnames, to allow '/' or '-'
+                 * in netnames.  Leave subcircuits and invocations alone
+                 * as quoted string parameters may be present.
+                 */
+
+                if (*s != 'x' &&
+                    !eq(s, ".plot") && !eq(s, ".print") && !eq(s, ".subckt"))
                     inp_casefix(dd->line);
                 if (eq(s, ".width") ||
-                        ciprefix(".four", s) ||
-                        eq(s, ".plot") ||
-                        eq(s, ".print") ||
-/*                        eq(s, ".save") || add .save only after subcircuit expansion */
-                        eq(s, ".op") ||
-                        ciprefix(".meas", s) ||
-                        eq(s, ".tf")) {
+                    ciprefix(".four", s) ||
+                    eq(s, ".plot") ||
+                    eq(s, ".print") ||
+/* eq(s, ".save") || add .save only after subcircuit expansion */
+                    eq(s, ".op") ||
+                    ciprefix(".meas", s) ||
+                    eq(s, ".tf"))
+                {
                     wl_append_word(&wl_first, &end, copy(dd->line));
 
-                    if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)) {
+                    if (!eq(s, ".op") && !eq(s, ".tf") &&
+                        !ciprefix(".meas", s)) {
                         ld->nextcard = dd->nextcard;
                         line_free(dd, FALSE);
                     } else {

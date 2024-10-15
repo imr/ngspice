@@ -169,7 +169,7 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn);
 static int inp_vdmos_model(struct card *deck);
 static void inp_check_syntax(struct card *deck);
 
-static char *inp_spawn_brace(char *s);
+static char *inp_spawn_brace(const char *s);
 
 static char *inp_pathresolve_at(const char *name, const char *dir);
 
@@ -1137,7 +1137,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
-//        tprint(working);
+
         /* Special handling for large PDKs: We need to know W and L of
            transistor subcircuits by checking their x invocation */
         inp_get_w_l_x(working);
@@ -3255,7 +3255,7 @@ inp_search_opening_paren(char *s, char *start)
 
 
 /* search forward for closing brace */
-static char *inp_spawn_brace(char *s)
+static char *inp_spawn_brace(const char *s)
 {
     int count = 0;
     // assert(*s == '{')
@@ -3265,7 +3265,7 @@ static char *inp_spawn_brace(char *s)
         if (*s == '}')
             count--;
         if (count == 0)
-            return s + 1;
+            return (char *)s + 1;
         s++;
     }
 
@@ -3525,6 +3525,33 @@ static char **find_name(struct names *p, char *name)
 }
 
 
+/* Advance a pointer to the end of the current parameter value. */
+
+static void missing_param_close(char c, const char *s)
+{
+    fprintf(stderr, "Error: Missing '%c' in line %s\n", c, s);
+    controlled_exit(EXIT_FAILURE);
+}
+
+static char *end_of_numparam(const char *ptr, const char *s) {
+    while (*ptr && *ptr != ' ') {
+        if (*ptr == '{') {
+            ptr = inp_spawn_brace(ptr);     // Numparam expression.
+            if (!ptr)
+                missing_param_close('{', s);
+        } else if (*ptr == '"') {           // Quoted string.
+            while (*++ptr && *ptr != '"')
+                ;
+            if (!*ptr)
+                missing_param_close('"', s);
+            ++ptr;
+        } else {
+            ptr = skip_non_ws(ptr);         // Parameter identifier or number.
+        }
+    }
+    return (char *)ptr;
+}
+
 static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
     struct card *head, *first_param_card, *c;
@@ -3558,16 +3585,7 @@ static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
             ptr1 = skip_back_non_ws(ptr1, beg);
             /* ptr1 points to beginning of parameter */
 
-            if (*ptr2 == '{')
-                ptr2 = inp_spawn_brace(ptr2);
-            else
-                ptr2 = skip_non_ws(ptr2);
-
-            if (!ptr2) {
-                fprintf(stderr, "Error: Missing } in line %s\n", s);
-                controlled_exit(EXIT_FAILURE);
-            }
-
+            ptr2 = end_of_numparam(ptr2, s);
             beg = ptr2;
 
             c = insert_new_line(c, copy_substring(ptr1, ptr2), 0, 0, "internal");
@@ -3897,30 +3915,16 @@ static int inp_get_params(
 
         param_names[num_params++] = copy_substring(name, end);
 
-        /* get parameter value */
+        /* Get parameter value, it may be a string expression
+         * like: p1"Hello there"{p2}
+         */
+
         value = skip_ws(equal_ptr + 1);
-
-        if (*value == '{')
-            end = inp_spawn_brace(value);
-        else
-            end = skip_non_ws(value);
-
-        if (!end) {
-            fprintf(stderr, "Error: Missing } in %s\n", line);
-            controlled_exit(EXIT_FAILURE);
-        }
+        end = end_of_numparam(value, line);
 
         keep = *end;
         *end = '\0';
-
-        if (*value == '{' || isdigit_c(*value) ||
-                (*value == '.' && isdigit_c(value[1]))) {
-            value = copy(value);
-        }
-        else {
-            value = tprintf("{%s}", value);
-        }
-
+        value = copy(value);
         param_values[num_params - 1] = value;
         *end = keep;
 
@@ -4770,7 +4774,9 @@ static void inp_fix_param_values(struct card *c)
                 }
 
             beg_of_str = skip_ws(equal_ptr + 1);
+
             /* all cases where no {} have to be put around selected token */
+
             if (isdigit_c(*beg_of_str) || *beg_of_str == '{' ||
                     *beg_of_str == '.' || *beg_of_str == '"' ||
                     ((*beg_of_str == '-' || *beg_of_str == '+') &&
@@ -4806,7 +4812,8 @@ static void inp_fix_param_values(struct card *c)
                             (*natok == '-' && isdigit_c(natok[1])) ||
                             ciprefix("true", natok) ||
                             ciprefix("false", natok) || eq(natok, "<") ||
-                            eq(natok, ">")) {
+                            eq(natok, ">") ||
+                            strpbrk(natok, "\"{}")) {
                         (void) sprintf(buffer, "%s", natok);
                         /* A complex value found inside a vector [< x1 y1> <x2
                          * y2>] */
@@ -4906,6 +4913,8 @@ static void inp_fix_param_values(struct card *c)
                 tfree(old_str);
             }
             else {
+                char *p;
+
                 /* put {} around token to be accepted as numparam */
                 end_of_str = beg_of_str;
                 parens = 0;
@@ -4916,6 +4925,16 @@ static void inp_fix_param_values(struct card *c)
                     if (*end_of_str == ')')
                         parens--;
                     end_of_str++;
+                }
+
+                /* Ignore anything with existing braces or quote as
+                 * it may be a numparam string expression.
+                 */
+
+                p = strpbrk(beg_of_str, "\"{}");
+                if (p && p < end_of_str) {
+                    line = equal_ptr + 1;
+                    continue;
                 }
 
                 *equal_ptr = '\0';

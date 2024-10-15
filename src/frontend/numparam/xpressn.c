@@ -1134,7 +1134,7 @@ static char *string_expr(dico_t *dico, DSTRINGPTR qstr_p,
             tie = t;
             t = fetchid(t, t_end);
             if (t == tie )
-                return NULL;
+                return ok ? (char *)t : NULL;
         }
         /* Now pointers tie, t should bracket an identifier. */
 
@@ -1415,7 +1415,9 @@ nupa_assignment(dico_t *dico, const char *s, char mode)
 {
     if (!s || !*s)
         return 1;
+
     /* s has the format: ident = expression; ident= expression ...  */
+
     const char * const s_end = s + strlen(s);
     const char *p = s;
     const char *tmp;
@@ -1461,8 +1463,8 @@ nupa_assignment(dico_t *dico, const char *s, char mode)
             rval = formula(dico, tmp, tmp + strlen(tmp), &error);
             if (error) {
                 message(dico,
-                        " Formula() error.\n"
-                        "      |%s| : |%s|=|%s|\n", s, ds_get_buf(&tstr), ds_get_buf(&ustr));
+                        " Formula() error.\n      |%s| : |%s|=|%s|\n",
+                        s, ds_get_buf(&tstr), ds_get_buf(&ustr));
                 break;
             }
         } else if (dtype == NUPA_STRING) {
@@ -1542,7 +1544,7 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
         j2 = skip_ws(j2 + 6);     /* skip subckt and whitespace */
         pscopy(&subname, j2, skip_non_ws(j2));
     } else {
-        err = message(dico, " ! a subckt line!\n");
+        err = message(dico, "Numparam error: expected a subckt line!\n");
     }
 
     /* Scan the .subckt line for assignments, copying templates to idlist. */
@@ -1620,22 +1622,27 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
 
             while (*jp) {
                 /* try to fetch valid arguments */
-                char *kp = jp;
-                ds_clear(&ustr);
+                char *kp;
 
+                ds_clear(&ustr);
+                while (*jp && *jp <= ' ')
+                    ++jp;       // Skip whitespace
+                kp = jp;
                 if (alfanum(*kp) || *kp == '.') {
                     /* number, identifier */
                     jp = skip_non_ws(kp);
                     pscopy(&ustr, kp, jp);
-                } else if (*kp == '{') {
-                    jp = getexpress(dico, NULL, &ustr, jp);
                 } else {
-                    jp++;
-                    if ((unsigned char)(*kp) > ' ') {
-                        fprintf(stderr, "Error in line: %s\n", x);
-                        fprintf(stderr, "    near %s\n", kp);
-                        message(dico, "Subckt call, symbol %c not understood\n\n", *kp);
-
+                    jp = getexpress(dico, NULL, &ustr, jp);
+                    if (jp == NULL) {
+                        jp = kp + 1;
+                        if ((unsigned char)(*kp) > ' ') {
+                            fprintf(stderr, "Error in line: %s\n", x);
+                            fprintf(stderr, "    near %s\n", kp);
+                            message(dico,
+                                    "Subckt call, params %s not understood.\n",
+                                    kp);
+                        }
                     }
                 }
 

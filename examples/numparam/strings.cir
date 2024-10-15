@@ -16,10 +16,9 @@ xor d1 d2 o_or pgate table=or
 ap [ 1 2 ] out poly
 .ends
 
-* Strings can be concatenated by .param, but not in .subckt lines or instances.
+* Strings can be concatenated.
 
-.param both=or{and}
-xboth d1 d2 d3 o_both pgate3 table=both
+xboth d1 d2 d3 o_both pgate3 table=or{and}
 
 .subckt pgate3 1 2 3 out table="00000000"
 .model poly3 d_lut table_values=table
