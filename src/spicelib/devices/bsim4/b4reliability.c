@@ -290,7 +290,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->time = ckt->CKTtime ;
                 here->relStruct->IsON = 0 ;
 
-                // Calculate Aging - Giogio Liatis' Model
+                // Calculate Aging - Giorgio Liatis' Model
                 ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, delta, 1e-12, 0) ;
                 if (ret == 1)
                 {
@@ -323,6 +323,10 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
 
 
         /* Calculate fitting */
+
+#ifdef HAS_PROGREP
+        SetAnalyse("extrapolate", 0);
+#endif
 
         if (here->relStruct->semiPeriods > 1)
         {
@@ -372,7 +376,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 }
             }
 
-            fprintf (stdout, "\n\nExtrapolation at %-.9g seconds (%-.2g years):\n\t\t\t\tDeltaVth: %-.9gmV\n\n\n\n", 
+            fprintf (stdout, "B4 Extrapolation at %-.9g seconds (%-.2g years):\tDeltaVth: %-.6gmV\n\n\n\n", 
                 ckt->CKTtargetFitting, ckt->CKTtargetFitting / 365 / 24 / 60 / 60, here->relStruct->deltaVth * 1000) ;
         }
 

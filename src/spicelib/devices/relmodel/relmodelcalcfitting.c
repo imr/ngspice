@@ -66,7 +66,7 @@ RELMODELcalculateFitting (unsigned int rows, unsigned int number_of_periods, dou
         f += gsl_vector_get (x, 2 * j) * sin (j * target * factor_for_2pi) ;
     }
 
-    fprintf (stderr, "\n\nExtrapolation at %-.9g seconds (%-.2g years):\n\t\t\t\tDeltaVth: %-.9gmV\n\n\n\n",
+    fprintf (stderr, "RMac Extrapolation at %-.9g seconds (%-.2g years):\tDeltaVth: %-.6gmV\n\n\n\n",
         target, target / 31536000, f * 1000) ;
 
     *result = f ;
