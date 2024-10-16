@@ -523,9 +523,9 @@ resume:
 #endif
 #ifdef HAS_PROGREP
     if (ckt->CKTtime == 0.)
-        SetAnalyse( "tran init", 0);
+        SetAnalyse( "rtran init", 0);
     else
-        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime + 0.5));
+        SetAnalyse( "rtran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime + 0.5));
 #endif
     ckt->CKTdelta =
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
