@@ -12,23 +12,22 @@ listInsert (BSIM4vgsList **list, double vgs)
 {
     BSIM4vgsList *current, *previous ;
 
-    /* Loop until the end of the list */
-    previous = NULL ;
-    current = *list ;
-    while (current != NULL)
-    {
-        previous = current ;
-        current = current->next ;
-    }
+    /* create a new 'list' or add an element.
+    'last' contains the address of the last element */
+    if (*list)
+        previous = (*list)->last;
+    else
+        previous = NULL;
 
     /* Insert the new element into the list */
     if (previous == NULL)
     {
-        *list = TMALLOC (BSIM4vgsList, 1) ;
-        current = *list ;
-    } else {
-        current = TMALLOC (BSIM4vgsList, 1) ;
-        previous->next = current ;
+        *list = TMALLOC(BSIM4vgsList, 1);
+        (*list)->last = current = *list;
+    }
+    else {
+        current = TMALLOC(BSIM4vgsList, 1);
+        (*list)->last = previous->next = current;
     }
 
     /* Populate the element */

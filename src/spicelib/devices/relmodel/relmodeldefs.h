@@ -15,6 +15,7 @@ typedef struct sRELMODELrelList {
     double time ;
     double deltaVth ;
     struct sRELMODELrelList *next ;
+    struct sRELMODELrelList *last ;
 } RELMODELrelList ;
 
 typedef struct sRELMODELrelStruct {

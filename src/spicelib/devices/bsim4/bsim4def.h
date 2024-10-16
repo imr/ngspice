@@ -35,6 +35,7 @@ Modified by Pankaj Kumar Thakur, 07/23/2012
 typedef struct sBSIM4vgsList {
     double vgs ;
     struct sBSIM4vgsList *next ;
+    struct sBSIM4vgsList *last ;
 } BSIM4vgsList ;
 #endif
 

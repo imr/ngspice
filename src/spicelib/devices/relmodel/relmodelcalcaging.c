@@ -19,23 +19,21 @@ listInsert (RELMODELrelList **list, double time, double deltaVth)
     RELMODELrelList *current ;
     RELMODELrelList *previous ;
 
-    /* Loop until the end of the list */
-    previous = NULL ;
-    current = *list ;
-    while (current != NULL)
-    {
-        previous = current ;
-        current = current->next ;
-    }
+    /* create a new 'list' or add an element. 
+    'last' contains the address of the last element */
+    if (*list)
+        previous = (*list)->last;
+    else
+        previous = NULL;
 
     /* Insert the new element into the list */
     if (previous == NULL)
     {
         *list = TMALLOC (RELMODELrelList, 1) ;
-        current = *list ;
+        (*list)->last = current = *list ;
     } else {
         current = TMALLOC (RELMODELrelList, 1) ;
-        previous->next = current ;
+        (*list)->last = previous->next = current ;
     }
 
     /* Populate the element */
