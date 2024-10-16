@@ -229,6 +229,9 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
                     {
                         /* In case of Reliability Analysis, perform the final CKTreliability */
                         printf ("\n\nFinal Aging...\n") ;
+#ifdef HAS_PROGREP
+                        SetAnalyse("Final Aging", 0);
+#endif
                         CKTreliability (ckt, 1) ;
                         error = CKTtemp (ckt) ;
                         if (error)
