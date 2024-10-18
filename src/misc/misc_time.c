@@ -80,9 +80,9 @@ void timebegin(void) {
     }
 #else
 #ifdef HAVE_FTIME
-    struct timeb timezero;
+    struct timeb ftimezero;
     void timebegin(void) {
-        ftime(&timezero);
+        ftime(&ftimezero);
     }
 #endif /* FTIME */
 #endif /* TIMES */

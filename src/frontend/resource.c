@@ -182,14 +182,15 @@ printres(char *name)
         total_msec = ((x % hz) * 1000) / hz;
         cpu_elapsed = "CPU";
 #    else
-#      ifdef HAVE_FTIME
-        struct timeb timenow;
-        ftime(&timenow);
-        timediff(&timenow, &timebegin, &total_sec, &total_msec);
-        cpu_elapsed = "elapsed";
-#      else
+#       ifdef HAVE_FTIME
+            struct timeb timenow;
+            struct timeb ftimezero;
+            ftime(&timenow);
+            timediff(&timenow, &ftimezero, &total_sec, &total_msec);
+            cpu_elapsed = "elapsed";
+#       else
 #        define NO_RUDATA
-#      endif
+#       endif
 #    endif
 #  endif
 
