@@ -22,7 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include <inttypes.h>
 
-#include "../misc/misc_time.h" /* timediff */
+#include "../misc/misc_time.h" /* timebegin */
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
@@ -81,15 +81,7 @@ init_rlimits(void)
 void
 init_time(void)
 {
-#ifdef HAVE_GETRUSAGE
-#else
-#  ifdef HAVE_TIMES
-#  else
-#    ifdef HAVE_FTIME
-    ftime(&timebegin);
-#    endif
-#  endif
-#endif
+    timebegin();
 }
 
 
