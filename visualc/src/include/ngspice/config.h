@@ -163,6 +163,9 @@
 /* Define to 1 if you have the `fork' function. */
 /* #undef HAVE_FORK */
 
+/* Define to 1 if you have the `queryperformancecounter' function. */
+#define HAVE_QUERYPERFORMANCECOUNTER 1
+
 /* Define to 1 if you have the `ftime' function. */
 #define HAVE_FTIME 1
 

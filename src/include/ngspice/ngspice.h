@@ -117,15 +117,17 @@
 #    include <sys/time.h>
 #    include <sys/resource.h>
 #  endif
-#else
-#  ifdef HAVE_TIMES
-#    include <sys/times.h>
-#    include <sys/param.h>
-#  else
-#    ifdef HAVE_FTIME
-#      include <sys/timeb.h>
-#    endif
-#  endif
+#endif
+
+#ifdef HAVE_TIMES
+#  include <sys/times.h>
+#  include <sys/param.h>
+#endif
+#ifdef HAVE_GETTIMEOFDAY
+#  include <sys/time.h>
+#endif
+#ifdef HAVE_FTIME
+#  include <sys/timeb.h>
 #endif
 
 #ifdef HAVE_UNISTD_H

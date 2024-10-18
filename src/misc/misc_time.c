@@ -8,34 +8,27 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include "ngspice/ngspice.h"
 #include <string.h>
+
+#if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
+#ifdef HAVE_QUERYPERFORMANCECOUNTER
+#define WIN32_LEAN_AND_MEAN
+ /*
+  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
+  * clashes with the definition obtained from windows.h (via winnt.h).
+  * However, BOOLEAN is not used by this file so we can work round this problem
+  * by undefining BOOLEAN before including windows.h
+  * SJB - April 2005
+  */
+#undef BOOLEAN
+#include <windows.h>
+#endif
+#endif
+
 #include "misc_time.h"
 
-#ifdef HAVE_LOCALTIME
-#include <time.h>
+#ifdef USE_OMP
+#include <omp.h>
 #endif
-
-#ifdef HAVE_GETRUSAGE
-#  include <sys/types.h>
-#  include <sys/time.h>
-#  include <sys/resource.h>
-#else
-#  ifdef HAVE_TIMES
-#    include <sys/types.h>
-#    include <sys/times.h>
-#    include <sys/param.h>
-#  else
-#    ifdef HAVE_FTIME
-/* default to ftime if we can't get real CPU times */
-#      include <sys/types.h>
-#      include <sys/timeb.h>
-#    endif
-#  endif
-#endif
-
-#ifdef HAVE_FTIME
-#  include <sys/timeb.h>
-#endif
-
 
 /* Return the date. Return value is static data. */
 
@@ -68,15 +61,13 @@ datestring(void)
 
 /* return time interval in seconds and milliseconds */
 
-#ifdef HAVE_FTIME
+PerfTime timebegin;
 
-struct timeb timebegin;
-
-void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
+void timediff(PerfTime *now, PerfTime *begin, int *sec, int *msec)
 {
 
-    *msec = (int) now->millitm - (int) begin->millitm;
-    *sec = (int) now->time - (int) begin->time;
+    *msec = (int) now->milliseconds - (int) begin->milliseconds;
+    *sec = (int) now->seconds - (int) begin->seconds;
     if (*msec < 0) {
       *msec += 1000;
       (*sec)--;
@@ -84,8 +75,6 @@ void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
     return;
 
 }
-
-#endif
 
 /* 
  * How many seconds have elapsed in running time. 
@@ -95,39 +84,65 @@ void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
 double
 seconds(void)
 {
-#ifdef HAVE_GETRUSAGE
-    int ret;
-    struct rusage ruse;
-
-    memset(&ruse, 0, sizeof(ruse));
-    ret = getrusage(RUSAGE_SELF, &ruse);
-    if(ret == -1) {
-      perror("getrusage(): ");
-      return 1;
-    }
-    return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
+#ifdef USE_OMP
+    // Usage of OpenMP time function
+    return omp_get_wtime();
+#elif defined(HAVE_QUERYPERFORMANCECOUNTER)
+    // Windows (MSC and mingw) specific implementation
+    LARGE_INTEGER frequency, counter;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&counter);
+    return (double)counter.QuadPart / frequency.QuadPart;
+#elif defined(HAVE_CLOCK_GETTIME)
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec + ts.tv_nsec / 1e9;
+#elif defined(HAVE_GETTIMEOFDAY)
+    // Usage of gettimeofday
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec + tv.tv_usec / 1e6;
+#elif defined(HAVE_TIMES)
+    // Usage of times
+    struct tms t;
+    clock_t ticks = times(&t);
+    return (double)ticks / sysconf(_SC_CLK_TCK);
+#elif defined(HAVE_GETRUSAGE)
+    // Usage of getrusage
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    return usage.ru_utime.tv_sec + usage.ru_utime.tv_usec / 1e6;
+#elif defined(HAVE_FTIME)
+    // Usage of ftime
+    struct timeb tb;
+    ftime(&tb);
+    return tb.time + tb.millitm / 1000.0;
 #else
-#ifdef HAVE_TIMES
+    #error "No timer function available."
+#endif
+}
 
-    struct tms tmsbuf;
+void perf_timer_start(PerfTimer *timer)
+{
+    timer->start = seconds();
+}
 
-    times(&tmsbuf);
-    return((double) tmsbuf.tms_utime / HZ);
+void perf_timer_stop(PerfTimer *timer)
+{
+    timer->end = seconds();
+}
 
-#else
-#ifdef HAVE_FTIME
-    struct timeb timenow;
-    int sec, msec;
+void perf_timer_elapsed_sec_ms(const PerfTimer *timer, int *seconds, int *milliseconds)
+{
+    double elapsed = timer->end - timer->start;
+    *seconds = (int)elapsed;
+    *milliseconds = (int)((elapsed - *seconds) * 1000.0);
+}
 
-    ftime(&timenow);
-    timediff(&timenow, &timebegin, &sec, &msec);
-    return(sec + (double) msec / 1000.0);
+void perf_timer_get_time(PerfTime *time)
+{
+    double secs = seconds();
+    time->seconds = (int)secs;
+    time->milliseconds = (int)((secs - time->seconds) * 1000.0);
 
-#else /* unknown */
-    /* don't know how to do this in general. */
-    return(-1.0);	/* Obvious error condition */
-
-#endif /* !FTIME */
-#endif /* !SYSV */
-#endif /* !BSD */
 }
