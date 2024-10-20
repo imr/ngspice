@@ -908,7 +908,7 @@ AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS([localtime])
 
-AC_CHECK_FUNCS([clock_gettime gettimeofday times ftime])
+AC_CHECK_FUNCS([clock_gettime gettimeofday ftime times])
 
 # Do not use time or getrusage function for CPU time measurement under OpenMP
 if test "x$enable_openmp" = xno; then

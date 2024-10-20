@@ -46,7 +46,7 @@ datestring(void)
 
 /* return time interval in seconds and milliseconds */
 
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
 
 void timediff(PortableTime *now, PortableTime *begin, int *sec, int *msec)
 {
@@ -70,12 +70,23 @@ void get_portable_time(PortableTime *pt) {
     pt->milliseconds = ts.tv_nsec / 1000000; // Convert nanoseconds to milliseconds
 }
 #else
+#ifdef HAVE_GETTIMEOFDAY
 void get_portable_time(PortableTime *pt) {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     pt->seconds = tv.tv_sec;
-    pt->milliseconds = tv.tv_usec / 1000;
+    pt->milliseconds = tv.tv_usec / 1000; // Convert microseconds to milliseconds
 }
+#else
+#ifdef HAVE_FTIME
+void get_portable_time(PortableTime *pt) {
+    struct timeb timenow;
+    ftime(&timenow);
+    pt->seconds = timenow.time;
+    pt->milliseconds = timenow.millitm;
+}
+#endif
+#endif
 #endif
 
 #endif
@@ -88,6 +99,15 @@ void get_portable_time(PortableTime *pt) {
 double
 seconds(void)
 {
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
+    PortableTime timenow;
+    PortableTime timebegin;
+    int sec, msec;
+
+    get_portable_time(&timenow);
+    timediff(&timenow, &timebegin, &sec, &msec);
+    return(sec + (double) msec / 1000.0);
+#else
 #ifdef HAVE_GETRUSAGE
     int ret;
     struct rusage ruse;
@@ -107,21 +127,11 @@ seconds(void)
     times(&tmsbuf);
     return((double) tmsbuf.tms_utime / HZ);
 
-#else
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
-    PortableTime timenow;
-    PortableTime timebegin;
-    int sec, msec;
-
-    get_portable_time(&timenow);
-    timediff(&timenow, &timebegin, &sec, &msec);
-    return(sec + (double) msec / 1000.0);
-
 #else /* unknown */
 
     return(-1.0);   /* Obvious error condition */
 
-#endif /* GETTIMEOFDAY || CLOCK_GETTIME */
-#endif /* TIMES */
 #endif /* GETRUSAGE */
+#endif /* TIMES */
+#endif /* CLOCK_GETTIME || GETTIMEOFDAY || FTIME */
 }

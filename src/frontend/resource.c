@@ -77,7 +77,7 @@ init_rlimits(void)
     ft_ckspace();
 }
 
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
    PortableTime timebegin;
 #endif
 
@@ -88,7 +88,7 @@ init_time(void)
 #else
 #  ifdef HAVE_TIMES
 #  else
-#    if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
+#    if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
        get_portable_time(&timebegin);
 #    endif
 #  endif
@@ -172,7 +172,13 @@ printres(char *name)
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
         int total_sec, total_msec;
 
-#  ifdef HAVE_GETRUSAGE
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
+        PortableTime timenow;
+        get_portable_time(&timenow);
+        timediff(&timenow, &timebegin, &total_sec, &total_msec);
+        cpu_elapsed = "elapsed";
+#else
+#ifdef HAVE_GETRUSAGE
         int ret;
         struct rusage ruse;
         memset(&ruse, 0, sizeof(ruse));
@@ -183,8 +189,8 @@ printres(char *name)
         total_sec = (int) (ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec);
         total_msec = (int) (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
         cpu_elapsed = "CPU";
-#  else
-#    ifdef HAVE_TIMES
+#else
+#ifdef HAVE_TIMES
         struct tms ruse;
         times(&ruse);
         clock_t x = ruse.tms_utime + ruse.tms_stime;
@@ -192,13 +198,7 @@ printres(char *name)
         total_sec = x / hz;
         total_msec = ((x % hz) * 1000) / hz;
         cpu_elapsed = "CPU";
-#    else
-#if     defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
-            PortableTime timenow;
-            get_portable_time(&timenow);
-            timediff(&timenow, &timebegin, &total_sec, &total_msec);
-            cpu_elapsed = "elapsed";
-#       else
+#else
 #        define NO_RUDATA
 #       endif
 #    endif

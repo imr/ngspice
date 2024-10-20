@@ -9,7 +9,7 @@
 char * datestring(void);
 double seconds(void);
 
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
 
 typedef struct {
     long seconds;
