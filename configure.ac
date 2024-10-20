@@ -910,13 +910,10 @@ AC_CHECK_FUNCS([localtime])
 
 case $host_os in
     *mingw* | *msys* )
-        AC_CHECK_FUNCS([gettimeofday times])
-        AC_CHECK_LIB([msvcr100], [ftime],
-        [AC_DEFINE([HAVE_FTIME], [1], [Have ftime routines in libmsvcr100])
-         LIBS="$LIBS -lmsvcr100"])
+        AC_CHECK_FUNCS([clock_gettime gettimeofday times ftime])
         ;;
     *)
-        AC_CHECK_FUNCS([gettimeofday times ftime])
+        AC_CHECK_FUNCS([clock_gettime gettimeofday times ftime])
         ;;
 esac
 

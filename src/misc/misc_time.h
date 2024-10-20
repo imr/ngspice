@@ -8,11 +8,16 @@
 
 char * datestring(void);
 double seconds(void);
-void timebegin(void);
 
-#ifdef HAVE_FTIME
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
 
-void timediff(struct timeb *, struct timeb *, int *, int *);
+typedef struct {
+    long seconds;
+    long milliseconds;
+} PortableTime;
+
+void get_portable_time(PortableTime *);
+void timediff(PortableTime *, PortableTime *, int *, int *);
 
 #endif
 

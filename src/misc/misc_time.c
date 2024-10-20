@@ -46,13 +46,15 @@ datestring(void)
 
 /* return time interval in seconds and milliseconds */
 
-#ifdef HAVE_FTIME
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
 
-void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
+PortableTime timebegin;
+
+void timediff(PortableTime *now, PortableTime *begin, int *sec, int *msec)
 {
 
-    *msec = (int) now->millitm - (int) begin->millitm;
-    *sec = (int) now->time - (int) begin->time;
+    *msec = (int) now->milliseconds - (int) begin->milliseconds;
+    *sec = (int) now->seconds - (int) begin->seconds;
     if (*msec < 0) {
       *msec += 1000;
       (*sec)--;
@@ -61,33 +63,24 @@ void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
 
 }
 
-#endif
-
-
-/* Initialize time */
-
-#ifdef HAVE_GETTIMEOFDAY
-struct timeval timezero;
-void timebegin(void) {
-    gettimeofday(&timezero, NULL);
+#ifdef HAVE_CLOCK_GETTIME
+void get_portable_time(PortableTime *pt) {
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    
+    pt->seconds = ts.tv_sec;
+    pt->milliseconds = ts.tv_nsec / 1000000; // Convert nanoseconds to milliseconds
 }
 #else
-#ifdef HAVE_TIMES
-    clock_t timezero;
-    void timebegin(void) {
-        struct tms ruse;
-        timezero = times(&ruse);
-    }
-#else
-#ifdef HAVE_FTIME
-    struct timeb ftimezero;
-    void timebegin(void) {
-        ftime(&ftimezero);
-    }
-#endif /* FTIME */
-#endif /* TIMES */
-#endif /* GETTIMEOFDAY */
+void get_portable_time(PortableTime *pt) {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    pt->seconds = tv.tv_sec;
+    pt->milliseconds = tv.tv_usec / 1000;
+}
+#endif
 
+#endif
 
 /*
  * How many seconds have elapsed in running time.
@@ -97,43 +90,39 @@ void timebegin(void) {
 double
 seconds(void)
 {
-#ifdef HAVE_GETTIMEOFDAY
-    struct timeval timenow;
-    int sec, msec, usec;
+#ifdef HAVE_GETRUSAGE
+    int ret;
+    struct rusage ruse;
 
-    gettimeofday(&timenow, NULL);
-
-    sec = (int) timenow.tv_sec - (int) timezero.tv_sec;
-    usec = (int) timenow.tv_usec - (int) timezero.tv_usec;
-    msec = usec / 1000; // Get rid of extra accuracy
-    return(sec + (double) msec / 1000.0);
-
+    memset(&ruse, 0, sizeof(ruse));
+    ret = getrusage(RUSAGE_SELF, &ruse);
+    if(ret == -1) {
+      perror("getrusage(): ");
+      return 1;
+    }
+    return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
 #else
 #ifdef HAVE_TIMES
-    struct tms ruse;
-    long long msec;
 
-    clock_t timenow = times(&ruse);
-    double hz = (double) sysconf(_SC_CLK_TCK);
-    msec = (timenow - timezero) / hz * 1000.0; // Get rid of extra accuracy
-    return((double) msec / 1000.0);
+    struct tms tmsbuf;
+
+    times(&tmsbuf);
+    return((double) tmsbuf.tms_utime / HZ);
 
 #else
-#ifdef HAVE_FTIME
-    struct timeb timenow;
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
+    struct PortableTime timenow;
     int sec, msec;
 
-    ftime(&timenow);
-
-    sec = (int) timenow.time - (int) timezero.time;
-    msec = (int) timenow.millitm - (int) timezero.millitm;
+    get_portable_time(&timenow);
+    timediff(&timenow, &timebegin, &sec, &msec);
     return(sec + (double) msec / 1000.0);
 
 #else /* unknown */
 
     return(-1.0);   /* Obvious error condition */
 
-#endif /* FTIME */
+#endif /* GETTIMEOFDAY || CLOCK_GETTIME */
 #endif /* TIMES */
-#endif /* GETTIMEOFDAY */
+#endif /* GETRUSAGE */
 }
