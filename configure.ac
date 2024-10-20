@@ -908,14 +908,7 @@ AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS([localtime])
 
-case $host_os in
-    *mingw* | *msys* )
-        AC_CHECK_FUNCS([clock_gettime gettimeofday times ftime])
-        ;;
-    *)
-        AC_CHECK_FUNCS([clock_gettime gettimeofday times ftime])
-        ;;
-esac
+AC_CHECK_FUNCS([clock_gettime gettimeofday times ftime])
 
 # Do not use time or getrusage function for CPU time measurement under OpenMP
 if test "x$enable_openmp" = xno; then

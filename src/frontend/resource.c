@@ -77,6 +77,9 @@ init_rlimits(void)
     ft_ckspace();
 }
 
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
+   PortableTime timebegin;
+#endif
 
 void
 init_time(void)
@@ -86,7 +89,6 @@ init_time(void)
 #  ifdef HAVE_TIMES
 #  else
 #    if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
-       struct PortableTime timebegin;
        get_portable_time(&timebegin);
 #    endif
 #  endif
@@ -192,7 +194,7 @@ printres(char *name)
         cpu_elapsed = "CPU";
 #    else
 #if     defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
-            struct PortableTime timenow;
+            PortableTime timenow;
             get_portable_time(&timenow);
             timediff(&timenow, &timebegin, &total_sec, &total_msec);
             cpu_elapsed = "elapsed";

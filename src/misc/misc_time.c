@@ -48,8 +48,6 @@ datestring(void)
 
 #if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
 
-PortableTime timebegin;
-
 void timediff(PortableTime *now, PortableTime *begin, int *sec, int *msec)
 {
 
@@ -111,7 +109,8 @@ seconds(void)
 
 #else
 #if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
-    struct PortableTime timenow;
+    PortableTime timenow;
+    PortableTime timebegin;
     int sec, msec;
 
     get_portable_time(&timenow);

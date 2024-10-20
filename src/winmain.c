@@ -220,8 +220,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     static int OldPercent = -2;     /* Previous progress value */
     static char OldAn[128];         /* Previous analysis type */
     char s[128], t[128];            /* outputs to analysis window and task bar */
-    static struct timeb timebefore; /* previous time stamp */
-    struct timeb timenow;           /* actual time stamp */
+    static PortableTime timebefore; /* previous time stamp */
+    PortableTime timenow;           /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
 
     WaitForIdle();
@@ -232,7 +232,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
         return;
 
     /* get actual time */
-    ftime(&timenow);
+    get_portable_time(&timenow);
     timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
 
     OldPercent = DecaPercent;
@@ -255,10 +255,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
             sprintf(s, " %s: %3.1f%%", Analyse, (double)DecaPercent/10.);
             sprintf(t, "%s   %3.1f%%", PACKAGE_STRING, (double)DecaPercent/10.);
         }
-        timebefore.dstflag = timenow.dstflag;
-        timebefore.millitm = timenow.millitm;
-        timebefore.time = timenow.time;
-        timebefore.timezone = timenow.timezone;
+        timebefore.milliseconds = timenow.milliseconds;
+        timebefore.seconds = timenow.seconds;
         /* info when previous analysis period has finished */
         if (strcmp(OldAn, Analyse)) {
             if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
