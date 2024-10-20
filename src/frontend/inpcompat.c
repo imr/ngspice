@@ -695,7 +695,7 @@ struct card *pspice_compat(struct card *oldcard)
     nextcard = insert_new_line(nextcard, new_str, 7, 0, "internal");
     new_str = copy(".func if(a, b, c) {ternary_fcn( a , b , c )}");
     nextcard = insert_new_line(nextcard, new_str, 8, 0, "internal");
-    new_str = copy(".func int(x) { sign(x)*floor(abs(x)) }");
+    new_str = copy(".func int(x) { sgn(x)*floor(abs(x)) }");
     nextcard = insert_new_line(nextcard, new_str, 9, 0, "internal");
     nextcard->nextcard = oldcard;
 
