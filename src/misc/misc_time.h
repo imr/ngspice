@@ -21,4 +21,28 @@ void timediff(PortableTime *, PortableTime *, int *, int *);
 
 #endif
 
+#ifdef HAVE_GETRUSAGE
+
+typedef struct {
+    struct rusage start;
+    struct rusage end;
+} GTimer;
+
+void start_timer(GTimer *);
+void stop_timer(GTimer *);
+
+#endif
+
+#ifdef HAVE_TIMES
+
+typedef struct {
+    struct tms start;
+    struct tms end;
+} TTimer;
+
+clock_t start_timer(TTimer *);
+clock_t stop_timer(TTimer *);
+
+#endif
+
 #endif

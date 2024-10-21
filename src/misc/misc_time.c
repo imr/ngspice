@@ -93,7 +93,8 @@ void get_portable_time(PortableTime *pt) {
 
 /*
  * How many seconds have elapsed in running time.
- * This is the routine called in IFseconds
+ * This is the routine called in IFseconds where start / stop is handled
+ * and we don't need calculate timediff here.
  */
 
 double
@@ -105,8 +106,7 @@ seconds(void)
     int sec, msec;
 
     get_portable_time(&timenow);
-    timediff(&timenow, &timebegin, &sec, &msec);
-    return(sec + (double) msec / 1000.0);
+    return((double) timenow.seconds + (double) timenow.milliseconds / 1000.0);
 #else
 #ifdef HAVE_GETRUSAGE
     int ret;
@@ -125,7 +125,7 @@ seconds(void)
     struct tms tmsbuf;
 
     times(&tmsbuf);
-    return((double) tmsbuf.tms_utime / HZ);
+    return((double) tmsbuf.tms_utime / (clock_t) sysconf(_SC_CLK_TCK));
 
 #else /* unknown */
 
@@ -135,3 +135,33 @@ seconds(void)
 #endif /* TIMES */
 #endif /* CLOCK_GETTIME || GETTIMEOFDAY || FTIME */
 }
+
+#ifdef HAVE_GETRUSAGE
+void start_timer(GTimer *timer) {
+    int ret;
+    ret = getrusage(RUSAGE_SELF, &timer->start);
+    if(ret == -1) {
+      perror("getrusage(): ");
+    }
+}
+void stop_timer(GTimer *timer) {
+    int ret;
+    ret = getrusage(RUSAGE_SELF, &timer->end);
+    if(ret == -1) {
+      perror("getrusage(): ");
+    }
+}
+#endif /* GETRUSAGE */
+
+#ifdef HAVE_TIMES
+clock_t start_timer(TTimer *timer) {
+    clock_t start_clock;
+    start_clock = times(&timer->start);
+    return start_clock;
+}
+clock_t stop_timer(TTimer *timer) {
+    clock_t stop_clock;
+    stop_clock = times(&timer->end);
+    return stop_clock;
+}
+#endif /* TIMES */

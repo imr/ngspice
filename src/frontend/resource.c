@@ -80,18 +80,27 @@ init_rlimits(void)
 #if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
    PortableTime timebegin;
 #endif
+#ifdef HAVE_GETRUSAGE
+   GTimer gtimer;
+#endif
+#ifdef HAVE_TIMES
+   TTimer ttimer;
+#endif
 
 void
 init_time(void)
 {
-#ifdef HAVE_GETRUSAGE
+#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
+    get_portable_time(&timebegin);
 #else
-#  ifdef HAVE_TIMES
-#  else
-#    if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
-       get_portable_time(&timebegin);
-#    endif
-#  endif
+#ifdef HAVE_GETRUSAGE
+    start_timer(&gtimer);
+#else
+#ifdef HAVE_TIMES
+    clock_t start_clock;
+    start_clock = start_timer(&ttimer);
+#endif
+#endif
 #endif
 }
 
@@ -179,31 +188,26 @@ printres(char *name)
         cpu_elapsed = "elapsed";
 #else
 #ifdef HAVE_GETRUSAGE
-        int ret;
-        struct rusage ruse;
-        memset(&ruse, 0, sizeof(ruse));
-        ret = getrusage(RUSAGE_SELF, &ruse);
-        if (ret == -1)
-            perror("getrusage(): ");
+        stop_timer(&gtimer);
 
-        total_sec = (int) (ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec);
-        total_msec = (int) (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
+        total_sec = (int) (gtimer.end.ru_utime.tv_sec + gtimer.start.ru_stime.tv_sec);
+        total_msec = (int) (gtimer.end.ru_utime.tv_usec + gtimer.start.ru_stime.tv_usec) / 1000;
         cpu_elapsed = "CPU";
 #else
 #ifdef HAVE_TIMES
-        struct tms ruse;
-        times(&ruse);
-        clock_t x = ruse.tms_utime + ruse.tms_stime;
+        clock_t stop_clock = stop_timer(&ttimer);
+        clock_t user_time = (ttimer.end.tms_utime - ttimer.start.tms_utime);
+        clock_t system_time = (ttimer.end.tms_stime - ttimer.start.tms_stime);
+        clock_t x = user_time + system_time;
         clock_t hz = (clock_t) sysconf(_SC_CLK_TCK);
-        total_sec = x / hz;
-        total_msec = ((x % hz) * 1000) / hz;
+        total_sec = (int) (x / hz);
+        total_msec = (int) (((x % hz) * 1000) / hz);
         cpu_elapsed = "CPU";
 #else
 #        define NO_RUDATA
 #       endif
 #    endif
 #  endif
-
 
 #ifndef NO_RUDATA
 

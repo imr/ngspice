@@ -906,13 +906,13 @@ AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h stddef.h sys/file.h sys/param
 # Check time and resources headers and functions:
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
-AC_CHECK_FUNCS([localtime])
+AC_CHECK_FUNCS([time localtime])
 
 AC_CHECK_FUNCS([clock_gettime gettimeofday ftime times])
 
-# Do not use time or getrusage function for CPU time measurement under OpenMP
+# Do not use getrusage function for CPU time measurement under OpenMP
 if test "x$enable_openmp" = xno; then
-    AC_CHECK_FUNCS([time getrusage])
+    AC_CHECK_FUNCS([getrusage])
 fi
 AC_CHECK_FUNCS([utimes])
 AC_CHECK_FUNCS([getrlimit ulimit], [break])
