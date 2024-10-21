@@ -82,7 +82,7 @@ void get_portable_time(PortableTime *pt) {
 void get_portable_time(PortableTime *pt) {
     struct timeb timenow;
     ftime(&timenow);
-    pt->seconds = timenow.time;
+    pt->seconds = (long int)timenow.time;
     pt->milliseconds = timenow.millitm;
 }
 #endif
@@ -102,8 +102,6 @@ seconds(void)
 {
 #if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
     PortableTime timenow;
-    PortableTime timebegin;
-    int sec, msec;
 
     get_portable_time(&timenow);
     return((double) timenow.seconds + (double) timenow.milliseconds / 1000.0);
