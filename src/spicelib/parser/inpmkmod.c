@@ -20,7 +20,9 @@ NGHASHPTR modtabhash = NULL;
  * This fcn takes the model name and looks to see if it is already
  * in the model table.  If it is, then just return.  Otherwise,
  * stick the model into the model table.
- * Note that the model table INPmodel
+ * Note that the model table INPmodel *modtab is a linked list,
+ * in parallel a hash table modtabhash is filled in for faster
+ * access to modtab elements by giving the model name.
  *--------------------------------------------------------------*/
 
 int INPmakeMod(char *token, int type, struct card *line)
