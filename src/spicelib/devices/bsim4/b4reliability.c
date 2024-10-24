@@ -368,7 +368,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
         } else {
             if (here->relStruct->deltaVth > 0)
             {
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, 315360000.0, 0, 1) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, ckt->CKTtargetFitting, 0, 1) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
