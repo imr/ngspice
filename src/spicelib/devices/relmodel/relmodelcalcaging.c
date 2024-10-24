@@ -155,10 +155,10 @@ RELMODELcalculateAging (GENinstance *inInstance, int modType, CKTcircuit *ckt, d
             here->relStruct->deltaVth = relmodel->RELMODELalpha_new * delta_Vth_fast + (1 - relmodel->RELMODELalpha_new) * delta_Vth_slow ;
 
             // Saturation at 10% of the Average Vgs - This is not in the original aging model
-            if (here->relStruct->deltaVth > here->relStruct->Vstress * 0.5)
+            /*if (here->relStruct->deltaVth > here->relStruct->Vstress * 0.5)
             {
                 here->relStruct->deltaVth = here->relStruct->Vstress * 0.5 ;
-            }
+            } */
         } else {
             for (i = 0 ; i < t_aging ; i += t_step)
             {
