@@ -37,9 +37,14 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if(!here->INDdtempGiven)   here->INDdtemp  = 0.0;
             } else { /* INDtempGiven */
                 here->INDdtemp = 0.0;
-                if (here->INDdtempGiven)
-                    printf("%s: Instance temperature specified, dtemp ignored\n",
+                if (here->INDdtempGiven &&
+                    ckt->CKTcurJob && ckt->CKTcurJob->JOBtype != 9) {
+                    /* Keep quiet in sensistivity analysis. */
+
+                    printf("%s: Instance temperature specified, "
+                           "dtemp ignored\n",
                            here->INDname);
+                }
             }
 
             if (!here->INDscaleGiven) here->INDscale = 1.0;
