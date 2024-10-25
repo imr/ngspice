@@ -11,9 +11,7 @@ struct s_sgen {
 	int		param, max_param;
 	int		is_dc;
 	int		is_instparam;
-	int		is_q;
 	int		is_principle;
-	int		is_zerook;
 };
 
 extern sgen *sgen_init(CKTcircuit *ckt, int is_dc);

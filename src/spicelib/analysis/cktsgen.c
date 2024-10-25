@@ -35,8 +35,6 @@ sgen_init(CKTcircuit *ckt, int is_dc)
 	sg->ptable = NULL;
 	sg->is_dc = is_dc;
 	sg->is_principle = 0;
-	sg->is_q = 0;
-	sg->is_zerook = 0;
 	sg->value = 0.0;
 
 	sgen_next(&sg);	/* get the ball rolling XXX check return val? */
@@ -212,22 +210,9 @@ int set_param(sgen *sg)
 	if (sg->is_dc &&
 		(sg->ptable[sg->param].dataType & (IF_AC | IF_AC_ONLY)))
 		return 0;
-	if ((sg->ptable[sg->param].dataType & IF_CHKQUERY) && !sg->is_q)
-		return 0;
 
 	if (sens_getp(sg, sg->ckt, &ifval))
 		return 0;
-
-	if (fabs(ifval.rValue) < 1e-30) {
-		if (sg->ptable[sg->param].dataType & IF_SETQUERY)
-			sg->is_q = 0;
-
-		if (!sg->is_zerook
-			&& !(sg->ptable[sg->param].dataType & IF_PRINCIPAL))
-			return 0;
-
-	} else if (sg->ptable[sg->param].dataType & (IF_SETQUERY|IF_ORQUERY))
-			sg->is_q = 1;
 
 	if (sg->ptable[sg->param].dataType & IF_PRINCIPAL)
 		sg->is_principle += 1;
