@@ -983,6 +983,8 @@ guess_type(const char *name, char* pltypename)
         type = SV_IMPEDANCE;
     else if (pltypename && ciprefix("sp", pltypename) && cieq(name, "SOpt"))
         type = SV_NOTYPE;
+    else if (pltypename && ciprefix("sp", pltypename) && ciprefix("Cy_", name))
+        type = SV_CURRENT;
     else if (strstr(name, ":power\0"))
         type = SV_POWER;
     /* current source ISRC parameters for current */
