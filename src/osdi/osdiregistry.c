@@ -312,6 +312,10 @@ static size_t calc_osdi_noise_off(const OsdiDescriptor *descr) {
   }                                                                            \
   const ty *name = (ty *)sym;
 
+#define GET_PTR_NOCHECK(name, ty)                                              \
+  sym = GET_SYM(handle, STRINGIFY(name));                                      \
+  const ty *name = (ty *)sym;
+
 #define INIT_CALLBACK(name, ty)                                                \
   sym = GET_SYM(handle, STRINGIFY(name));                                      \
   if (sym) {                                                                   \
@@ -373,18 +377,40 @@ extern OsdiObjectFile load_object_file(const char *input) {
     return EMPTY_OBJECT;
   }
 
+  // Try to get OSDI_DESCRIPTOR_SIZE
+  GET_PTR_NOCHECK(OSDI_DESCRIPTOR_SIZE, uint32_t);
+  size_t descriptor_size;
+
+  // Get major and minor OSDI version  
   GET_CONST(OSDI_VERSION_MAJOR, uint32_t);
   GET_CONST(OSDI_VERSION_MINOR, uint32_t);
 
-  if (OSDI_VERSION_MAJOR != OSDI_VERSION_MAJOR_CURR ||
+  if (OSDI_DESCRIPTOR_SIZE) {
+    // This must be openvaf-reloaded 
+    // Must be version>=0.4
+    if (!(
+      (OSDI_VERSION_MAJOR == 0 && OSDI_VERSION_MINOR >= 4) ||
+      OSDI_VERSION_MAJOR >= 1
+    )) {
+      printf("NGSPICE supports OpenVAF-reloaded OSDI version >= 0.4 but \"%s\" uses v%d.%d!",
+        path, OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
+      txfree(path); 
+      return INVALID_OBJECT;
+    }
+    descriptor_size = *OSDI_DESCRIPTOR_SIZE;
+  } else {
+    // Original OpenVAF, must be version==0.3
+    if (OSDI_VERSION_MAJOR != OSDI_VERSION_MAJOR_CURR ||
       OSDI_VERSION_MINOR != OSDI_VERSION_MINOR_CURR) {
-    printf("NGSPICE only supports OSDI v%d.%d but \"%s\" targets v%d.%d!",
-           OSDI_VERSION_MAJOR_CURR, OSDI_VERSION_MINOR_CURR, path,
-           OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
-    txfree(path);
-    return INVALID_OBJECT;
+      printf("NGSPICE only supports OSDI v%d.%d but \"%s\" uses v%d.%d!",
+        OSDI_VERSION_MAJOR_CURR, OSDI_VERSION_MINOR_CURR, path,
+        OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
+      txfree(path);
+      return INVALID_OBJECT;
+    }
+    descriptor_size = sizeof(OsdiDescriptor);
   }
-
+  
   GET_CONST(OSDI_NUM_DESCRIPTORS, uint32_t);
   GET_PTR(OSDI_DESCRIPTORS, OsdiDescriptor);
 
@@ -420,10 +446,12 @@ extern OsdiObjectFile load_object_file(const char *input) {
   }
 
   OsdiRegistryEntry *dst = TMALLOC(OsdiRegistryEntry, OSDI_NUM_DESCRIPTORS);
-
+  
+  char* desc_ptr = (char*)OSDI_DESCRIPTORS;
   for (uint32_t i = 0; i < OSDI_NUM_DESCRIPTORS; i++) {
-    const OsdiDescriptor *descr = &OSDI_DESCRIPTORS[i];
-
+    const OsdiDescriptor *descr = (OsdiDescriptor*)desc_ptr;
+    desc_ptr += descriptor_size;
+     
     uint32_t dt = descr->num_params + descr->num_opvars;
     bool has_m = false;
     uint32_t temp = descr->num_params + descr->num_opvars + 1;

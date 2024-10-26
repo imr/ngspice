@@ -947,7 +947,7 @@ fileInit(runDesc *run)
    or special parameter names for @ vecors. FIXME This guessing may fail
    due to the many options, especially for the @ vectors. */
 static int
-guess_type(const char *name)
+guess_type(const char *name, char* pltypename)
 {
     int type;
 
@@ -969,6 +969,20 @@ guess_type(const char *name)
         type = SV_RES;
     else if (cieq(name, "i-sweep"))
         type = SV_CURRENT;
+    else if (pltypename && ciprefix("sp", pltypename) && ciprefix("S_", name))
+        type = SV_SPARAM;
+    else if (pltypename && ciprefix("sp", pltypename) && ciprefix("Y_", name))
+        type = SV_ADMITTANCE;
+    else if (pltypename && ciprefix("sp", pltypename) && ciprefix("Z_", name))
+        type = SV_IMPEDANCE;
+    else if (pltypename && ciprefix("sp", pltypename) && cieq(name, "NF"))
+        type = SV_DB;
+    else if (pltypename && ciprefix("sp", pltypename) && cieq(name, "NFmin"))
+        type = SV_DB;
+    else if (pltypename && ciprefix("sp", pltypename) && cieq(name, "Rn"))
+        type = SV_IMPEDANCE;
+    else if (pltypename && ciprefix("sp", pltypename) && cieq(name, "SOpt"))
+        type = SV_NOTYPE;
     else if (strstr(name, ":power\0"))
         type = SV_POWER;
     /* current source ISRC parameters for current */
@@ -1001,7 +1015,7 @@ fileInit_pass2(runDesc *run)
 
         char *name = run->data[i].name;
 
-        type = guess_type(name);
+        type = guess_type(name, NULL);
 
         if (type == SV_CURRENT && !keepbranch) {
             char *branch = strstr(name, "#branch");
@@ -1141,7 +1155,7 @@ plotInit(runDesc *run)
             name = copy(dd->name);
 
         v = dvec_alloc(name,
-                       guess_type(name),
+                       guess_type(name, pl->pl_typename),
                        run->isComplex
                        ? (VF_COMPLEX | VF_PERMANENT)
                        : (VF_REAL | VF_PERMANENT),
