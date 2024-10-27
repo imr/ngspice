@@ -1050,9 +1050,15 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
     rv = inp_read(fp, 0, dir_name, file_name, comfile, intfile);
     cc = rv.cc;
 
-    /* skip all pre-processing for expanded input files created by 'listing r' */
-    if (cc && ciprefix("* expanded deck of", cc->line))
+    /* skip all pre-processing for expanded input files created by 'listing r',
+    but evaluate number of lines in input deck */
+    if (cc && ciprefix("* expanded deck of", cc->line)) {
+        struct card* dd;
+        dynmaxline = 0;
+        for (dd = cc; dd; dd = dd->nextcard)
+            dynmaxline++;
         return cc;
+    }
 
     /* files starting with *ng_script are user supplied command files */
     if (cc && ciprefix("*ng_script", cc->line))
