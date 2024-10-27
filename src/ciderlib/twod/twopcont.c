@@ -493,44 +493,35 @@ void
 
 	    }
 	  } else { /* Horizontal Slice */
-// <<<<<<< HEAD
-// 	    if ( nIndex == 0 || nIndex == 3 ) { /* Left (Top?) Side : bug 483 */
-// 	      pNode->fPPsiIn   = spGetElement( matrix, pEqn, psiEqnInM );
-// 	      pNode->fPPsiInP1 = spGetElement( matrix, pEqn, psiEqnInP );
-// 	      pNode->fPPsiOx   = spGetElement( matrix, pEqn, psiEqnOxM );
-// 	      pNode->fPPsiOxP1 = spGetElement( matrix, pEqn, psiEqnOxP );
-// =======
- 	    if ( nIndex <= 1 ) { /* Top Side */
-// 
-// #ifdef KLU
-//               pNode->fPPsiIn = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInM) ;
-//               pNode->fPPsiInBinding = NULL ;
-// #else
-//               pNode->fPPsiIn = SMPmakeElt(matrix, pEqn, psiEqnInM);
-// #endif
-// 
-// #ifdef KLU
-//               pNode->fPPsiInP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInP) ;
-//               pNode->fPPsiInP1Binding = NULL ;
-// #else
-//               pNode->fPPsiInP1 = SMPmakeElt(matrix, pEqn, psiEqnInP);
-// #endif
-// 
-// #ifdef KLU
-//               pNode->fPPsiOx = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxM) ;
-//               pNode->fPPsiOxBinding = NULL ;
-// #else
-//               pNode->fPPsiOx = SMPmakeElt(matrix, pEqn, psiEqnOxM);
-// #endif
-// 
-// #ifdef KLU
-//               pNode->fPPsiOxP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxP) ;
-//               pNode->fPPsiOxP1Binding = NULL ;
-// #else
-//               pNode->fPPsiOxP1 = SMPmakeElt(matrix, pEqn, psiEqnOxP);
-// #endif
-// 
-// >>>>>>> First KLU support of CIDER TWOD simulations
+ 	    if ( nIndex == 0 || nIndex == 3 ) { /* Left (Top?) Side : bug 483 */
+#ifdef KLU
+              pNode->fPPsiIn = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInM) ;
+              pNode->fPPsiInBinding = NULL ;
+#else
+              pNode->fPPsiIn = SMPmakeElt(matrix, pEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiInP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInP) ;
+              pNode->fPPsiInP1Binding = NULL ;
+#else
+              pNode->fPPsiInP1 = SMPmakeElt(matrix, pEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOx = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxM) ;
+              pNode->fPPsiOxBinding = NULL ;
+#else
+              pNode->fPPsiOx = SMPmakeElt(matrix, pEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOxP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxP) ;
+              pNode->fPPsiOxP1Binding = NULL ;
+#else
+              pNode->fPPsiOxP1 = SMPmakeElt(matrix, pEqn, psiEqnOxP);
+#endif
+
 	    } else { /* Bottom Side */
 
 #ifdef KLU
