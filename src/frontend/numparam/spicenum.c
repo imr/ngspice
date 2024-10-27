@@ -311,6 +311,11 @@ nupa_init(void)
     dicoS = TMALLOC(dico_t, 1);
     initdico(dicoS);
 
+    if (dynmaxline < 1) {
+        fprintf(stderr, "Error: not a valid input deck, check your netlist\n");
+        controlled_exit(EXIT_BAD);
+    }
+
     dicoS->dynrefptr = TMALLOC(char*, dynmaxline + 1);
     dicoS->dyncategory = TMALLOC(char, dynmaxline + 1);
 
