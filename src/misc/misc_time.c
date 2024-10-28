@@ -8,6 +8,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include "ngspice/ngspice.h"
 #include <string.h>
+
+#ifdef HAVE_QUERYPERFORMANCECOUNTER
+#include <windows.h>
+#endif
+
 #include "misc_time.h"
 
 #ifdef USE_OMP
