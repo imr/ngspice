@@ -155,6 +155,10 @@ static bool cont_condition;
 #include "ngspice/stringskip.h"
 #include "frontend/variable.h"
 
+#ifdef HAVE_FTIME
+#include <sys/timeb.h>
+#endif
+
 /* To interupt a spice run */
 #include <signal.h>
 typedef void (*sighandler)(int);
@@ -1888,26 +1892,26 @@ void SetAnalyse(
     static unsigned int ng_id1 = 0, ng_id2 = 0;
     bool thread1;
 
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY
-    PortableTime timenow;           /* actual time stamp */
+#ifdef HAVE_FTIME
+    struct timeb timenow;           /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
     int result;                     /* return value from callback function */    
     char* s;                        /* outputs to callback function */
     int OldPercent;                 /* Previous progress value */
     char OldAn[128];                /* Previous analysis type */
     char olds[128];                 /* previous output */
-    static PortableTime timebefore; /* previous time stamp */
+    static struct timeb timebefore; /* previous time stamp */
 
     /* thread 1 */
     static int OldPercent1 = -2;     /* Previous progress value */
     static char OldAn1[128];         /* Previous analysis type */
     static char olds1[128];          /* previous output */
-    static PortableTime timebefore1; /* previous time stamp */
+    static struct timeb timebefore1; /* previous time stamp */
     /* thread2 */
     static int OldPercent2 = -2;     /* Previous progress value */
     static char OldAn2[128];         /* Previous analysis type */
     static char olds2[128];          /* previous output */
-    static PortableTime timebefore2; /* previous time stamp */
+    static struct timeb timebefore2; /* previous time stamp */
 
     /*set the two thread ids */
     unsigned int ng_idl = threadid_self();
@@ -1925,16 +1929,20 @@ void SetAnalyse(
         strcpy(OldAn, OldAn1);
         strcpy(olds, olds1);
         OldPercent = OldPercent1;
-        timebefore.milliseconds = timebefore1.milliseconds;
-        timebefore.seconds = timebefore1.seconds;
+        timebefore.dstflag = timebefore1.dstflag;
+        timebefore.millitm = timebefore1.millitm;
+        timebefore.time = timebefore1.time;
+        timebefore.timezone = timebefore1.timezone;
     }
     else if (ng_idl == ng_id2) {
         thread1 = FALSE;
         strcpy(OldAn, OldAn2);
         strcpy(olds, olds2);
         OldPercent = OldPercent2;
-        timebefore.milliseconds = timebefore2.milliseconds;
-        timebefore.seconds = timebefore2.seconds;
+        timebefore.dstflag = timebefore2.dstflag;
+        timebefore.millitm = timebefore2.millitm;
+        timebefore.time = timebefore2.time;
+        timebefore.timezone = timebefore2.timezone;
     }
     else
         return;
@@ -1948,7 +1956,7 @@ void SetAnalyse(
        return;
 
    /* get actual time */
-   get_portable_time(&timenow);
+   ftime(&timenow);
    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
    s = TMALLOC(char, 128);
 
@@ -1999,12 +2007,16 @@ void SetAnalyse(
          sprintf( s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
       }
         if (thread1) {
-            timebefore1.milliseconds = timenow.milliseconds;
-            timebefore1.seconds = timenow.seconds;
+            timebefore1.dstflag = timenow.dstflag;
+            timebefore1.millitm = timenow.millitm;
+            timebefore1.time = timenow.time;
+            timebefore1.timezone = timenow.timezone;
         }
         else {
-            timebefore2.milliseconds = timenow.milliseconds;
-            timebefore2.seconds = timenow.seconds;
+            timebefore2.dstflag = timenow.dstflag;
+            timebefore2.millitm = timenow.millitm;
+            timebefore2.time = timenow.time;
+            timebefore2.timezone = timenow.timezone;
         }
       /* info when previous analysis period has finished */
       if (strcmp(OldAn, Analyse)) {
