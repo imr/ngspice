@@ -18,4 +18,12 @@ void perf_timer_start(PerfTimer *);
 void perf_timer_stop(PerfTimer *);
 void perf_timer_elapsed_sec_ms(const PerfTimer *, int *, int *);
 
+#ifdef HAVE_FTIME
+
+extern struct timeb timebegin;
+
+void timediff(struct timeb *, struct timeb *, int *, int *);
+
+#endif
+
 #endif

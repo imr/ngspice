@@ -43,6 +43,27 @@ datestring(void)
 #endif
 }
 
+/* return time interval in seconds and milliseconds */
+
+#ifdef HAVE_FTIME
+
+struct timeb timebegin;
+
+void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
+{
+
+    *msec = (int) now->millitm - (int) begin->millitm;
+    *sec = (int) now->time - (int) begin->time;
+    if (*msec < 0) {
+      *msec += 1000;
+      (*sec)--;
+    }
+    return;
+
+}
+
+#endif
+
 /* 
  * How many seconds have elapsed in running time. 
  * This is the routine called in IFseconds 
