@@ -545,7 +545,10 @@ Gaussian_Elimination1(int dims)
 	    max = ABS(A[j][i]);
 	 } 
       if (max < epsi) {
-         fprintf(stderr, " can not choose a pivot \n");
+          fprintf(stderr, "\nError: Gaussian elimination fails during setup of TXL\n");
+          fprintf(stderr, "    All matrix elements are less than %e, \n", epsi);
+          fprintf(stderr, "    thus cannot choose a pivot.\n");
+          fprintf(stderr, "    Please check your model parameters.\n");
          controlled_exit(EXIT_FAILURE);
       }
       if (imax != i)
@@ -905,7 +908,10 @@ Gaussian_Elimination2(int dims)
             max = ABS(AA[j][i]);
          }
       if (max < epsi2) {
-         fprintf(stderr, " can not choose a pivot \n");
+         fprintf(stderr, "\nError: Gaussian elimination fails during setup of TXL\n");
+         fprintf(stderr, "    All matrix elements are less than %e, \n", epsi2);
+         fprintf(stderr, "    thus cannot choose a pivot.\n");
+         fprintf(stderr, "    Please check your model parameters.\n");
          controlled_exit(EXIT_FAILURE);
       }
       if (imax != i)

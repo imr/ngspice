@@ -832,7 +832,10 @@ Gaussian_Elimination2(int dims, int type)
 				max = ABS(A[j][i]);
 			}
 		if (max < epsilon) {
-			fprintf(stderr, " can not choose a pivot (misc)\n");
+			fprintf(stderr, "\nError: Gaussian elimination (misc) fails during setup of CPL\n");
+			fprintf(stderr, "    All matrix elements are less than %e, \n", epsilon);
+			fprintf(stderr, "    thus cannot choose a pivot.\n");
+			fprintf(stderr, "    Please check your model parameters.\n");
 			controlled_exit(EXIT_FAILURE);
 		}
 		if (imax != i)
@@ -1767,7 +1770,10 @@ Gaussian_Elimination(int dims)
 				max = ABS(At[j][i]);
 			}
 		if (max < epsi_mult) {
-			fprintf(stderr, " can not choose a pivot (mult)\n");
+			fprintf(stderr, "\nError: Gaussian elimination (mult) fails during setup of CPL\n");
+			fprintf(stderr, "    All matrix elements are less than %e, \n", epsi_mult);
+			fprintf(stderr, "    thus cannot choose a pivot.\n");
+			fprintf(stderr, "    Please check your model parameters.\n");
 			controlled_exit(EXIT_FAILURE);
 		}
 		if (imax != i)
