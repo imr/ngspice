@@ -22,7 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include <inttypes.h>
 
-#include "../misc/misc_time.h" /* timebegin */
+#include "../misc/misc_time.h" /* timediff */
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
@@ -77,31 +77,12 @@ init_rlimits(void)
     ft_ckspace();
 }
 
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
-   PortableTime timebegin;
-#endif
-#ifdef HAVE_GETRUSAGE
-   GTimer gtimer;
-#endif
-#ifdef HAVE_TIMES
-   TTimer ttimer;
-#endif
+PerfTimer timer;
 
 void
 init_time(void)
 {
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
-    get_portable_time(&timebegin);
-#else
-#ifdef HAVE_GETRUSAGE
-    start_timer(&gtimer);
-#else
-#ifdef HAVE_TIMES
-    clock_t start_clock;
-    start_clock = start_timer(&ttimer);
-#endif
-#endif
-#endif
+    perf_timer_start(&timer);
 }
 
 
@@ -181,33 +162,23 @@ printres(char *name)
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
         int total_sec, total_msec;
 
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
-        PortableTime timenow;
-        get_portable_time(&timenow);
-        timediff(&timenow, &timebegin, &total_sec, &total_msec);
-        cpu_elapsed = "elapsed";
-#else
-#ifdef HAVE_GETRUSAGE
-        stop_timer(&gtimer);
+#if defined (USE_OMP) \
+ || defined (HAVE_QUERYPERFORMANCECOUNTER) || defined(HAVE_CLOCK_GETTIME) \
+ || defined (HAVE_GETTIMEOFDAY) || defined(HAVE_TIMES) \
+ || defined (HAVE_GETRUSAGE) || defined(HAVE_FTIME)
 
-        total_sec = (int) (gtimer.end.ru_utime.tv_sec + gtimer.start.ru_stime.tv_sec);
-        total_msec = (int) (gtimer.end.ru_utime.tv_usec + gtimer.start.ru_stime.tv_usec) / 1000;
+        perf_timer_stop(&timer);
+        perf_timer_elapsed_sec_ms(&timer, &total_sec, &total_msec);
+
+#if defined (HAVE_TIMES) || defined(HAVE_GETRUSAGE)
         cpu_elapsed = "CPU";
 #else
-#ifdef HAVE_TIMES
-        clock_t stop_clock = stop_timer(&ttimer);
-        clock_t user_time = (ttimer.end.tms_utime - ttimer.start.tms_utime);
-        clock_t system_time = (ttimer.end.tms_stime - ttimer.start.tms_stime);
-        clock_t x = user_time + system_time;
-        clock_t hz = (clock_t) sysconf(_SC_CLK_TCK);
-        total_sec = (int) (x / hz);
-        total_msec = (int) (((x % hz) * 1000) / hz);
-        cpu_elapsed = "CPU";
-#else
+        cpu_elapsed = "elapsed";
+#endif
+
+#      else
 #        define NO_RUDATA
-#       endif
-#    endif
-#  endif
+#      endif
 
 #ifndef NO_RUDATA
 

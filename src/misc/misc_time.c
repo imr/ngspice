@@ -10,10 +10,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <string.h>
 #include "misc_time.h"
 
-#ifdef HAVE_LOCALTIME
-#include <time.h>
+#ifdef USE_OMP
+#include <omp.h>
 #endif
-
 
 /* Return the date. Return value is static data. */
 
@@ -44,122 +43,65 @@ datestring(void)
 #endif
 }
 
-/* return time interval in seconds and milliseconds */
-
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
-
-void timediff(PortableTime *now, PortableTime *begin, int *sec, int *msec)
-{
-
-    *msec = (int) now->milliseconds - (int) begin->milliseconds;
-    *sec = (int) now->seconds - (int) begin->seconds;
-    if (*msec < 0) {
-      *msec += 1000;
-      (*sec)--;
-    }
-    return;
-
-}
-
-#ifdef HAVE_CLOCK_GETTIME
-void get_portable_time(PortableTime *pt) {
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    
-    pt->seconds = ts.tv_sec;
-    pt->milliseconds = ts.tv_nsec / 1000000; // Convert nanoseconds to milliseconds
-}
-#else
-#ifdef HAVE_GETTIMEOFDAY
-void get_portable_time(PortableTime *pt) {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    pt->seconds = tv.tv_sec;
-    pt->milliseconds = tv.tv_usec / 1000; // Convert microseconds to milliseconds
-}
-#else
-#ifdef HAVE_FTIME
-void get_portable_time(PortableTime *pt) {
-    struct timeb timenow;
-    ftime(&timenow);
-    pt->seconds = (long int)timenow.time;
-    pt->milliseconds = timenow.millitm;
-}
-#endif
-#endif
-#endif
-
-#endif
-
-/*
- * How many seconds have elapsed in running time.
- * This is the routine called in IFseconds where start / stop is handled
- * and we don't need calculate timediff here.
+/* 
+ * How many seconds have elapsed in running time. 
+ * This is the routine called in IFseconds 
  */
 
 double
 seconds(void)
 {
-#if defined HAVE_CLOCK_GETTIME || defined HAVE_GETTIMEOFDAY || defined HAVE_FTIME
-    PortableTime timenow;
-
-    get_portable_time(&timenow);
-    return((double) timenow.seconds + (double) timenow.milliseconds / 1000.0);
+#ifdef USE_OMP
+    // Usage of OpenMP time function
+    return omp_get_wtime();
+#elif defined(HAVE_QUERYPERFORMANCECOUNTER)
+    // Windows (MSC and mingw) specific implementation
+    LARGE_INTEGER frequency, counter;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&counter);
+    return (double)counter.QuadPart / frequency.QuadPart;
+#elif defined(HAVE_CLOCK_GETTIME)
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec + ts.tv_nsec / 1e9;
+#elif defined(HAVE_GETTIMEOFDAY)
+    // Usage of gettimeofday
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec + tv.tv_usec / 1e6;
+#elif defined(HAVE_TIMES)
+    // Usage of times
+    struct tms t;
+    clock_t ticks = times(&t);
+    return (double)ticks / sysconf(_SC_CLK_TCK);
+#elif defined(HAVE_GETRUSAGE)
+    // Usage of getrusage
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+    return usage.ru_utime.tv_sec + usage.ru_utime.tv_usec / 1e6;
+#elif defined(HAVE_FTIME)
+    // Usage of ftime
+    struct timeb tb;
+    ftime(&tb);
+    return tb.time + tb.millitm / 1000.0;
 #else
-#ifdef HAVE_GETRUSAGE
-    int ret;
-    struct rusage ruse;
-
-    memset(&ruse, 0, sizeof(ruse));
-    ret = getrusage(RUSAGE_SELF, &ruse);
-    if(ret == -1) {
-      perror("getrusage(): ");
-      return 1;
-    }
-    return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
-#else
-#ifdef HAVE_TIMES
-
-    struct tms tmsbuf;
-
-    times(&tmsbuf);
-    return((double) tmsbuf.tms_utime / (clock_t) sysconf(_SC_CLK_TCK));
-
-#else /* unknown */
-
-    return(-1.0);   /* Obvious error condition */
-
-#endif /* GETRUSAGE */
-#endif /* TIMES */
-#endif /* CLOCK_GETTIME || GETTIMEOFDAY || FTIME */
+    error_no_timer_function_available;
+#endif
 }
 
-#ifdef HAVE_GETRUSAGE
-void start_timer(GTimer *timer) {
-    int ret;
-    ret = getrusage(RUSAGE_SELF, &timer->start);
-    if(ret == -1) {
-      perror("getrusage(): ");
-    }
+void perf_timer_start(PerfTimer *timer)
+{
+    timer->start = seconds();
 }
-void stop_timer(GTimer *timer) {
-    int ret;
-    ret = getrusage(RUSAGE_SELF, &timer->end);
-    if(ret == -1) {
-      perror("getrusage(): ");
-    }
-}
-#endif /* GETRUSAGE */
 
-#ifdef HAVE_TIMES
-clock_t start_timer(TTimer *timer) {
-    clock_t start_clock;
-    start_clock = times(&timer->start);
-    return start_clock;
+void perf_timer_stop(PerfTimer *timer)
+{
+    timer->end = seconds();
 }
-clock_t stop_timer(TTimer *timer) {
-    clock_t stop_clock;
-    stop_clock = times(&timer->end);
-    return stop_clock;
+
+void perf_timer_elapsed_sec_ms(const PerfTimer *timer, int *seconds, int *milliseconds)
+{
+    double elapsed = timer->end - timer->start;
+    *seconds = (int)elapsed;
+    *milliseconds = (int)((elapsed - *seconds) * 1000.0);
 }
-#endif /* TIMES */

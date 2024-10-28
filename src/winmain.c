@@ -38,7 +38,7 @@
 
 #include "hist_info.h" /* history management */
 #include "ngspice/bool.h"   /* bool defined as unsigned char */
-#include "misc/misc_time.h" /* timediff */
+#include "misc/misc_time.h" /* timer functions and structure */
 #include "ngspice/memory.h" /* TMALLOC */
 #include "winmain.h"
 
@@ -220,8 +220,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     static int OldPercent = -2;     /* Previous progress value */
     static char OldAn[128];         /* Previous analysis type */
     char s[128], t[128];            /* outputs to analysis window and task bar */
-    static PortableTime timebefore; /* previous time stamp */
-    PortableTime timenow;           /* actual time stamp */
+    PortableTime timer;             /* previous time stamp and actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
 
     WaitForIdle();
@@ -232,8 +231,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
         return;
 
     /* get actual time */
-    get_portable_time(&timenow);
-    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
+    perf_timer_stop(&timer);
+    perf_timer_elapsed_sec_ms(&timer, &diffsec, &diffmillisec);
 
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
@@ -255,8 +254,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
             sprintf(s, " %s: %3.1f%%", Analyse, (double)DecaPercent/10.);
             sprintf(t, "%s   %3.1f%%", PACKAGE_STRING, (double)DecaPercent/10.);
         }
-        timebefore.milliseconds = timenow.milliseconds;
-        timebefore.seconds = timenow.seconds;
+//        timebefore.milliseconds = timenow.milliseconds;
+//        timebefore.seconds = timenow.seconds;
         /* info when previous analysis period has finished */
         if (strcmp(OldAn, Analyse)) {
             if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
