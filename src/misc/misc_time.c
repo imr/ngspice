@@ -61,15 +61,13 @@ datestring(void)
 
 /* return time interval in seconds and milliseconds */
 
-#ifdef HAVE_FTIME
+PerfTime timebegin;
 
-struct timeb timebegin;
-
-void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
+void timediff(PerfTime *now, PerfTime *begin, int *sec, int *msec)
 {
 
-    *msec = (int) now->millitm - (int) begin->millitm;
-    *sec = (int) now->time - (int) begin->time;
+    *msec = (int) now->milliseconds - (int) begin->milliseconds;
+    *sec = (int) now->seconds - (int) begin->seconds;
     if (*msec < 0) {
       *msec += 1000;
       (*sec)--;
@@ -77,8 +75,6 @@ void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
     return;
 
 }
-
-#endif
 
 /* 
  * How many seconds have elapsed in running time. 
@@ -122,7 +118,7 @@ seconds(void)
     ftime(&tb);
     return tb.time + tb.millitm / 1000.0;
 #else
-    error_no_timer_function_available;
+    #error "No timer function available."
 #endif
 }
 
@@ -141,4 +137,12 @@ void perf_timer_elapsed_sec_ms(const PerfTimer *timer, int *seconds, int *millis
     double elapsed = timer->end - timer->start;
     *seconds = (int)elapsed;
     *milliseconds = (int)((elapsed - *seconds) * 1000.0);
+}
+
+void perf_timer_get_time(PerfTime *time)
+{
+    double secs = seconds();
+    time->seconds = (int)secs;
+    time->milliseconds = (int)((secs - time->seconds) * 1000.0);
+
 }

@@ -220,7 +220,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     static int OldPercent = -2;     /* Previous progress value */
     static char OldAn[128];         /* Previous analysis type */
     char s[128], t[128];            /* outputs to analysis window and task bar */
-    PerfTimer timer;                /* previous time stamp and actual time stamp */
+    static Perftime timebefore;     /* previous time stamp */
+    Perftime timenow;               /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
 
     WaitForIdle();
@@ -231,8 +232,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
         return;
 
     /* get actual time */
-    perf_timer_stop(&timer);
-    perf_timer_elapsed_sec_ms(&timer, &diffsec, &diffmillisec);
+    perf_timer_get_time(&timenow);
+    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
 
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
@@ -254,7 +255,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
             sprintf(s, " %s: %3.1f%%", Analyse, (double)DecaPercent/10.);
             sprintf(t, "%s   %3.1f%%", PACKAGE_STRING, (double)DecaPercent/10.);
         }
-        timer.start = timer.end;
+        timebefore.milliseconds = timenow.milliseconds;
+        timebefore.seconds = timenow.seconds;
         /* info when previous analysis period has finished */
         if (strcmp(OldAn, Analyse)) {
             if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))

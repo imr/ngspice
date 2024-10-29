@@ -155,10 +155,6 @@ static bool cont_condition;
 #include "ngspice/stringskip.h"
 #include "frontend/variable.h"
 
-#ifdef HAVE_FTIME
-#include <sys/timeb.h>
-#endif
-
 /* To interupt a spice run */
 #include <signal.h>
 typedef void (*sighandler)(int);
@@ -1892,26 +1888,32 @@ void SetAnalyse(
     static unsigned int ng_id1 = 0, ng_id2 = 0;
     bool thread1;
 
-#ifdef HAVE_FTIME
-    struct timeb timenow;           /* actual time stamp */
+#if defined (USE_OMP) \
+|| defined (HAVE_QUERYPERFORMANCECOUNTER) \
+|| defined (HAVE_CLOCK_GETTIME) \
+|| defined (HAVE_GETTIMEOFDAY) \
+|| defined (HAVE_TIMES) \
+|| defined (HAVE_GETRUSAGE) \
+|| defined (HAVE_FTIME)
+    PerfTime timenow;               /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
     int result;                     /* return value from callback function */    
     char* s;                        /* outputs to callback function */
     int OldPercent;                 /* Previous progress value */
     char OldAn[128];                /* Previous analysis type */
     char olds[128];                 /* previous output */
-    static struct timeb timebefore; /* previous time stamp */
+    static PerfTime timebefore;     /* previous time stamp */
 
     /* thread 1 */
     static int OldPercent1 = -2;     /* Previous progress value */
     static char OldAn1[128];         /* Previous analysis type */
     static char olds1[128];          /* previous output */
-    static struct timeb timebefore1; /* previous time stamp */
+    static PerfTime timebefore1;     /* previous time stamp */
     /* thread2 */
     static int OldPercent2 = -2;     /* Previous progress value */
     static char OldAn2[128];         /* Previous analysis type */
     static char olds2[128];          /* previous output */
-    static struct timeb timebefore2; /* previous time stamp */
+    static PerfTime timebefore2;     /* previous time stamp */
 
     /*set the two thread ids */
     unsigned int ng_idl = threadid_self();
@@ -1929,20 +1931,16 @@ void SetAnalyse(
         strcpy(OldAn, OldAn1);
         strcpy(olds, olds1);
         OldPercent = OldPercent1;
-        timebefore.dstflag = timebefore1.dstflag;
-        timebefore.millitm = timebefore1.millitm;
-        timebefore.time = timebefore1.time;
-        timebefore.timezone = timebefore1.timezone;
+        timebefore.milliseconds = timebefore1.milliseconds;
+        timebefore.seconds = timebefore1.seconds;
     }
     else if (ng_idl == ng_id2) {
         thread1 = FALSE;
         strcpy(OldAn, OldAn2);
         strcpy(olds, olds2);
         OldPercent = OldPercent2;
-        timebefore.dstflag = timebefore2.dstflag;
-        timebefore.millitm = timebefore2.millitm;
-        timebefore.time = timebefore2.time;
-        timebefore.timezone = timebefore2.timezone;
+        timebefore.milliseconds = timebefore2.milliseconds;
+        timebefore.seconds = timebefore2.seconds;
     }
     else
         return;
@@ -1956,7 +1954,7 @@ void SetAnalyse(
        return;
 
    /* get actual time */
-   ftime(&timenow);
+   perf_timer_get_time(&timenow);
    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
    s = TMALLOC(char, 128);
 
@@ -2007,16 +2005,12 @@ void SetAnalyse(
          sprintf( s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
       }
         if (thread1) {
-            timebefore1.dstflag = timenow.dstflag;
-            timebefore1.millitm = timenow.millitm;
-            timebefore1.time = timenow.time;
-            timebefore1.timezone = timenow.timezone;
+            timebefore1.milliseconds = timenow.milliseconds;
+            timebefore1.seconds = timenow.seconds;
         }
         else {
-            timebefore2.dstflag = timenow.dstflag;
-            timebefore2.millitm = timenow.millitm;
-            timebefore2.time = timenow.time;
-            timebefore2.timezone = timenow.timezone;
+            timebefore2.milliseconds = timenow.milliseconds;
+            timebefore2.seconds = timenow.seconds;
         }
       /* info when previous analysis period has finished */
       if (strcmp(OldAn, Analyse)) {

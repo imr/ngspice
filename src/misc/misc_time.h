@@ -14,16 +14,18 @@ typedef struct {
     double end;
 } PerfTimer;
 
+typedef struct {
+    int seconds;
+    int milliseconds;
+} PerfTime;
+
 void perf_timer_start(PerfTimer *);
 void perf_timer_stop(PerfTimer *);
 void perf_timer_elapsed_sec_ms(const PerfTimer *, int *, int *);
+void perf_timer_get_time(PerfTime *);
 
-#ifdef HAVE_FTIME
+extern PerfTime timebegin;
 
-extern struct timeb timebegin;
-
-void timediff(struct timeb *, struct timeb *, int *, int *);
-
-#endif
+void timediff(PerfTime *, PerfTime *, int *, int *);
 
 #endif

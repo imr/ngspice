@@ -82,6 +82,7 @@ PerfTimer timer;
 void
 init_time(void)
 {
+    perf_timer_get_time(&timebegin);
     perf_timer_start(&timer);
 }
 
