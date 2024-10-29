@@ -199,6 +199,7 @@ void inp_probe(struct card* deck)
 
             char* curr_line = card->line;
             struct card* prevcard = NULL;
+            int nn = 0;
 
             /* exclude any command inside .control ... .endc */
             if (ciprefix(".control", curr_line)) {
@@ -330,7 +331,8 @@ void inp_probe(struct card* deck)
                     card = insert_new_line(card, vline, 0, card->linenum_orig, card->linesource);
                     /* special for KiCad: add shunt resistor if thisnode contains 'unconnected' */
                     if (*instname == 'x' && strstr(thisnode, "unconnected")) {
-                        char *rline = tprintf("R%s %s 0 1e15", thisnode, thisnode);
+                        /* nn makes the resistor name unique for a device with multiple unconnected nodes */
+                        char *rline = tprintf("R%s%d %s 0 1e15", thisnode, nn++, thisnode);
                         card = insert_new_line(card, rline, 0, card->linenum_orig, card->linesource);
                     }
                     char* nodesaves = tprintf("%s:%s#branch", instname, nodename);
