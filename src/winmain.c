@@ -220,8 +220,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     static int OldPercent = -2;     /* Previous progress value */
     static char OldAn[128];         /* Previous analysis type */
     char s[128], t[128];            /* outputs to analysis window and task bar */
-    static Perftime timebefore;     /* previous time stamp */
-    Perftime timenow;               /* actual time stamp */
+    static PerfTime timebefore;     /* previous time stamp */
+    PerfTime timenow;               /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
 
     WaitForIdle();
