@@ -3,11 +3,20 @@
 /* Modified BSD license */
 
 /*
-Interface between a calling program (caller) and ngspice.dll (ngspice.so)
+Interface between a calling program (caller) and ngspice.dll (libngspice.so)
+
 **
 ngSpice_nospinit(void)
 Set variable no_spinit, if reading the initialization file 'spinit' is not wanted.
 To be called before ngSpice_Init()
+
+**
+ngSpice_nospiceinit(void)
+Set variable no_spiceinit, if reading the user defined initialization file 
+'.spiceinit' is not wanted.
+To be called before ngSpice_Init().
+Use with care, as this removes the last chance to send preparative commands
+before the netlist is loaded. Then use the the caller to send such commands.
 
 **
 ngSpice_Init(SendChar*, SendStat*, ControlledExit*,
@@ -452,6 +461,10 @@ NG_BOOL ngSpice_SetBkpt(double time);
 /* Set variable no_spinit, if reading 'spinit' is not wanted. */
 IMPEXP
 int ngSpice_nospinit(void);
+
+/* Set variable no_spiceinit, if reading '.spiceinit' is not wanted. */
+IMPEXP
+int ngSpice_nospiceinit(void);
 
 #ifdef __cplusplus
 }

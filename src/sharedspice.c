@@ -814,6 +814,16 @@ ngSpice_nospinit(void)
     return 0;
 }
 
+/* Set variable no_spiceinit, if reading '.spiceinit' is not wanted. */
+IMPEXP
+int
+ngSpice_nospiceinit(void)
+{
+    bool t = TRUE;
+    cp_vset("no_spicenit", CP_BOOL, &t);
+    return 0;
+}
+
 /* Initialise external voltage source and synchronization */
 IMPEXP
 int
@@ -968,55 +978,61 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         tfree(s);
     }
 #else /* ~ HAVE_PWD_H */
-             /* load user's initialisation file
-               try accessing the initialisation file .spiceinit in a user provided
-               path read from environmental variable SPICE_USERINIT_DIR, 
-               if that fails try the alternate name spice.rc, then look into
-               the current directory, then the HOME directory, then into USERPROFILE */
-    do {
-        {
-            const char* const userinit = getenv("SPICE_USERINIT_DIR");
-            if (userinit) {
-                if (read_initialisation_file(userinit, INITSTR) != FALSE) {
-                    break;
-                }
-                if (read_initialisation_file(userinit, ALT_INITSTR) != FALSE) {
-                    break;
-                }
-            }
-        }
-
-        if (read_initialisation_file("", INITSTR) != FALSE) {
-            break;
-        }
-        if (read_initialisation_file("", ALT_INITSTR) != FALSE) {
-            break;
-        }
-
-        {
-            const char* const home = getenv("HOME");
-            if (home) {
-                if (read_initialisation_file(home, INITSTR) != FALSE) {
-                    break;
-                }
-                if (read_initialisation_file(home, ALT_INITSTR) != FALSE) {
-                    break;
+    /* load user's initialisation file
+       try accessing the initialisation file .spiceinit in a user provided
+       path read from environmental variable SPICE_USERINIT_DIR, 
+       if that fails try the alternate name spice.rc, then look into
+       the current directory, then the HOME directory, then into USERPROFILE.
+       Don't read .spiceinit, if ngSpice_nospiceinit() has been called. */
+    if (!cp_getvar("no_spiceinit", CP_BOOL, NULL, 0)) {
+        do {
+            {
+                const char* const userinit = getenv("SPICE_USERINIT_DIR");
+                if (userinit) {
+                    if (read_initialisation_file(userinit, INITSTR) != FALSE) {
+                        break;
+                    }
+                    if (read_initialisation_file(userinit, ALT_INITSTR) != FALSE) {
+                        break;
+                    }
                 }
             }
-        }
 
-        {
-            const char* const usr = getenv("USERPROFILE");
-            if (usr) {
-                if (read_initialisation_file(usr, INITSTR) != FALSE) {
-                    break;
-                }
-                if (read_initialisation_file(usr, ALT_INITSTR) != FALSE) {
-                    break;
+            if (read_initialisation_file("", INITSTR) != FALSE) {
+                break;
+            }
+            if (read_initialisation_file("", ALT_INITSTR) != FALSE) {
+                break;
+            }
+
+            {
+                const char* const home = getenv("HOME");
+                if (home) {
+                    if (read_initialisation_file(home, INITSTR) != FALSE) {
+                        break;
+                    }
+                    if (read_initialisation_file(home, ALT_INITSTR) != FALSE) {
+                        break;
+                    }
                 }
             }
-        }
-    } while (0); /* end of case that init file is read */
+
+            {
+                const char* const usr = getenv("USERPROFILE");
+                if (usr) {
+                    if (read_initialisation_file(usr, INITSTR) != FALSE) {
+                        break;
+                    }
+                    if (read_initialisation_file(usr, ALT_INITSTR) != FALSE) {
+                        break;
+                    }
+                }
+            }
+        } while (0); /* end of case that init file is read */
+    }
+    else {
+        fprintf(stdout, "Note: .spiceinit is ignored, because ngSpice_nospiceinit() has been called.\n");
+    }
 
 #endif /* ~ HAVE_PWD_H */
 
