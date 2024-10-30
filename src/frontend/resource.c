@@ -171,15 +171,25 @@ printres(char *name)
         perf_timer_stop(&timer);
         perf_timer_elapsed_sec_ms(&timer, &total_sec, &total_msec);
 
-#if defined (HAVE_TIMES) || defined(HAVE_GETRUSAGE)
+#ifdef USE_OMP
+        cpu_elapsed = "elapsed";
+#elif defined(HAVE_QUERYPERFORMANCECOUNTER)
+        cpu_elapsed = "elapsed";
+#elif defined(HAVE_CLOCK_GETTIME)
+        cpu_elapsed = "elapsed";
+#elif defined(HAVE_GETTIMEOFDAY)
+        cpu_elapsed = "elapsed";
+#elif defined(HAVE_TIMES)
         cpu_elapsed = "CPU";
-#else
+#elif defined(HAVE_GETRUSAGE)
+        cpu_elapsed = "CPU";
+#elif defined(HAVE_FTIME)
         cpu_elapsed = "elapsed";
 #endif
 
-#      else
-#        define NO_RUDATA
-#      endif
+#else
+#  define NO_RUDATA
+#endif
 
 #ifndef NO_RUDATA
 
