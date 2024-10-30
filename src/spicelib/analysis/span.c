@@ -363,14 +363,17 @@ SPan(CKTcircuit* ckt, int restart)
         data = TMALLOC(Ndata, 1);
     }
 
-
     if (ckt->CKTportCount == 0)
     {
-        fprintf(stderr, "No RF Port is present\n");
-        return (E_PARMVAL);
+        fprintf(stderr, "\nError: No RF Port is present, cannot run sp analysis\n");
+        controlled_exit(EXIT_BAD);
     }
 
-
+    if (ckt->CKTportCount == 1)
+    {
+        fprintf(stderr, "\nError: Only one RF Port is found, we need at least two!\n");
+        controlled_exit(EXIT_BAD);
+    }
 
 #ifdef XSPICE
     /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
