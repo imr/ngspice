@@ -69,7 +69,7 @@ SPICEdev HFETAinfo = {
 
 #ifdef KLU
     .DEVbindCSC = HFETAbindCSC,
-    .DEVbindCSCComplex = HFETAbindCSC,
+    .DEVbindCSCComplex = HFETAbindCSCComplex,
     .DEVbindCSCComplexToReal = HFETAbindCSCComplexToReal,
 #endif
 };
