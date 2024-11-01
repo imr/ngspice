@@ -21,14 +21,14 @@
 SECONDS=0
 
 if test "$1" = "d"; then
-   if [ ! -d "debug" ]; then
-      mkdir debug
-      if [ $? -ne 0 ]; then  echo "mkdir debug failed"; exit 1 ; fi
+   if [ ! -d "debug_sh" ]; then
+      mkdir debug_sh
+      if [ $? -ne 0 ]; then  echo "mkdir debug_sh failed"; exit 1 ; fi
    fi
 else
-   if [ ! -d "release" ]; then
-      mkdir release
-      if [ $? -ne 0 ]; then  echo "mkdir release failed"; exit 1 ; fi
+   if [ ! -d "release_sh" ]; then
+      mkdir release_sh
+      if [ $? -ne 0 ]; then  echo "mkdir release_sh failed"; exit 1 ; fi
    fi
 fi
 
@@ -38,15 +38,15 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
 if test "$1" = "d"; then
-   cd debug
-   if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
+   cd debug_sh
+   if [ $? -ne 0 ]; then  echo "cd debug_sh failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
 
   ../configure --with-ngshared --enable-cider --with-readline=/opt/homebrew/opt/readline --enable-debug CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include" LDFLAGS="-m64 -g -L/opt/homebrew/opt/readline/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
 else
-   cd release
-   if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
+   cd release_sh
+   if [ $? -ne 0 ]; then  echo "cd release_sh failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
   ../configure --with-ngshared --enable-cider --with-readline=/opt/homebrew/opt/readline CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/ncurses/include" LDFLAGS="-m64 -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/ncurses/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
