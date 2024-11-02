@@ -77,19 +77,13 @@ init_rlimits(void)
     ft_ckspace();
 }
 
+PerfTimer timer;
 
 void
 init_time(void)
 {
-#ifdef HAVE_GETRUSAGE
-#else
-#  ifdef HAVE_TIMES
-#  else
-#    ifdef HAVE_FTIME
-    ftime(&timebegin);
-#    endif
-#  endif
-#endif
+    perf_timer_get_time(&timebegin);
+    perf_timer_start(&timer);
 }
 
 
@@ -169,38 +163,33 @@ printres(char *name)
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
         int total_sec, total_msec;
 
-#  ifdef HAVE_GETRUSAGE
-        int ret;
-        struct rusage ruse;
-        memset(&ruse, 0, sizeof(ruse));
-        ret = getrusage(RUSAGE_SELF, &ruse);
-        if (ret == -1)
-            perror("getrusage(): ");
+#if defined (USE_OMP) \
+ || defined (HAVE_QUERYPERFORMANCECOUNTER) || defined(HAVE_CLOCK_GETTIME) \
+ || defined (HAVE_GETTIMEOFDAY) || defined(HAVE_TIMES) \
+ || defined (HAVE_GETRUSAGE) || defined(HAVE_FTIME)
 
-        total_sec = (int) (ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec);
-        total_msec = (int) (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
-        cpu_elapsed = "CPU";
-#  else
-#    ifdef HAVE_TIMES
-        struct tms ruse;
-        times(&ruse);
-        clock_t x = ruse.tms_utime + ruse.tms_stime;
-        clock_t hz = (clock_t) sysconf(_SC_CLK_TCK);
-        total_sec = x / hz;
-        total_msec = ((x % hz) * 1000) / hz;
-        cpu_elapsed = "CPU";
-#    else
-#      ifdef HAVE_FTIME
-        struct timeb timenow;
-        ftime(&timenow);
-        timediff(&timenow, &timebegin, &total_sec, &total_msec);
+        perf_timer_stop(&timer);
+        perf_timer_elapsed_sec_ms(&timer, &total_sec, &total_msec);
+
+#ifdef USE_OMP
         cpu_elapsed = "elapsed";
-#      else
-#        define NO_RUDATA
-#      endif
-#    endif
-#  endif
+#elif defined(HAVE_QUERYPERFORMANCECOUNTER)
+        cpu_elapsed = "elapsed";
+#elif defined(HAVE_CLOCK_GETTIME)
+        cpu_elapsed = "elapsed";
+#elif defined(HAVE_GETTIMEOFDAY)
+        cpu_elapsed = "elapsed";
+#elif defined(HAVE_TIMES)
+        cpu_elapsed = "CPU";
+#elif defined(HAVE_GETRUSAGE)
+        cpu_elapsed = "CPU";
+#elif defined(HAVE_FTIME)
+        cpu_elapsed = "elapsed";
+#endif
 
+#else
+#  define NO_RUDATA
+#endif
 
 #ifndef NO_RUDATA
 
