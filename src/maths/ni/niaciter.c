@@ -85,7 +85,7 @@ retry:
     }
 
     return (OK);
-};
+}
 
 int NIspSolve(CKTcircuit* ckt)
 {
@@ -107,7 +107,7 @@ int NIspSolve(CKTcircuit* ckt)
 
     SWAP(double*, ckt->CKTrhs, ckt->CKTrhsOld);
     return (OK);
-};
+}
 
 #endif
 
