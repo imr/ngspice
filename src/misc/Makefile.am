@@ -2,8 +2,6 @@
 
 noinst_LTLIBRARIES = libmisc.la
 
-EXTRA_DIST = win_time.c
-
 libmisc_la_SOURCES = \
 		getopt_long_bsd.c	\
 		getopt_bsd.h	\
