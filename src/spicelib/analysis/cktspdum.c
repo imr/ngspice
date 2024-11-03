@@ -33,7 +33,7 @@ extern double Fmin;
 int CKTmatrixIndex(CKTcircuit* ckt, int source, int dest)
 {
     return  source * ckt->CKTportCount + dest;
-};
+}
 
 int CKTspCalcSMatrix(CKTcircuit* ckt)
 {

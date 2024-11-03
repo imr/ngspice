@@ -368,4 +368,4 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
 void NIresetwarnmsg(void) {
     msgcount = 0;
-};
+}
