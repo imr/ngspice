@@ -49,10 +49,10 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->VDMOStnom-CONSTCtoK;
             return(OK);
         case VDMOS_MOD_AF:
-            value->rValue = model->VDMOSfNcoef;
+            value->rValue = model->VDMOSfNexp;
             return(OK);
         case VDMOS_MOD_KF:
-            value->rValue = model->VDMOSfNexp;
+            value->rValue = model->VDMOSfNcoef;
             return(OK);
         case VDMOS_MOD_RQ:
             value->rValue = model->VDMOSqsResistance;
