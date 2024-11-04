@@ -635,7 +635,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     every quarter of a second, to give some feedback without using
                     too much CPU time  */
 #ifndef HAS_WINGUI
-                if (!orflag && !ft_norefprint) {
+                if (!orflag && !ft_norefprint && !cp_background) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stdout, " Reference value : % 12.5e\r",
@@ -649,7 +649,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             else { /* And the same for a non-complex (real) value  */
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINGUI
-                if (!orflag && !ft_norefprint) {
+                if (!orflag && !ft_norefprint && !cp_background) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stdout, " Reference value : % 12.5e\r",
@@ -744,7 +744,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             variable just the same  */
 
 #ifndef HAS_WINGUI
-        if (!orflag && !ft_norefprint) {
+        if (!orflag && !ft_norefprint && !cp_background) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 if (run->isComplex) {
@@ -1532,7 +1532,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
             interpolatenow = FALSE;
         }
 #ifndef HAS_WINGUI
-        if (!orflag && !ft_norefprint) {
+        if (!orflag && !ft_norefprint && !cp_background) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 fprintf(stdout, " Reference value : % 12.5e\r",
@@ -1693,7 +1693,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
 #ifndef HAS_WINGUI
-    if (!orflag && !ft_norefprint) {
+    if (!orflag && !ft_norefprint && !cp_background) {
         currclock = clock();
         if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
             fprintf(stdout, " Reference value : % 12.5e\r",
