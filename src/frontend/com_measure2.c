@@ -1107,7 +1107,7 @@ measure_rms_integral(
             i += 2;
         }
         // Trapezoidal Rule
-        else if (!AlmostEqualUlps(width[i], width[i+1], 100)) {
+        else {
             sum3 += width[i] * (y[i] + y[i+1]) / 2;
             i++;
         }
