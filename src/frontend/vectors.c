@@ -284,6 +284,7 @@ static struct dvec* findvec_alle(void) {
     pl->pl_title = copy("DigitalData");
     pl->pl_name = copy("digital");
     pl->pl_date = copy(datestring());
+    pl->pl_typename = copy("dig1");
     plot_new(pl);
 
     /* find all event data, create vectors, link them to v_link2 */
@@ -296,7 +297,6 @@ static struct dvec* findvec_alle(void) {
         if (d->v_length == 1)
             continue;
         d->v_plot = pl;
-        d->v_plot->pl_typename = copy("dig1");
         if (d->v_link2) {
             v = vec_copy(d);
             vec_new(v);

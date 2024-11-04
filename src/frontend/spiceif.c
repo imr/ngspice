@@ -1360,8 +1360,11 @@ if_getstat(CKTcircuit *ckt, char *name)
                                           if_parm->id, &parm,
                                           NULL) == -1)
             {
-                fprintf(cp_err, "if_getstat: Internal Error: can't get a name\n");
-                return (NULL);
+                fprintf(cp_err,
+                        "if_getstat: Internal Error: can't get a name for "
+                        "analysis parameter %d\n",
+                        if_parm->id);
+                continue;
             }
 
             *v = parmtovar(&parm, if_parm, 1);
