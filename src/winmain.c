@@ -223,6 +223,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     static PerfTime timebefore;     /* previous time stamp */
     PerfTime timenow;               /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
+    int sdiffsec, sdiffmillisec;    /* differences actual minus start time stamp */
 
     WaitForIdle();
 
@@ -234,6 +235,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     /* get actual time */
     perf_timer_get_time(&timenow);
     timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
+    timediff(&timenow, &timebegin, &sdiffsec, &sdiffmillisec);
 
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
@@ -260,7 +262,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
         /* info when previous analysis period has finished */
         if (strcmp(OldAn, Analyse)) {
             if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
-                win_x_printf("%s finished after %4.2f seconds.\n", OldAn, seconds());
+                win_x_printf("%s finished after %5.3f seconds.\n", OldAn, (double)sdiffsec + (double)sdiffmillisec / 1000.);
             strncpy(OldAn, Analyse, 127);
         }
 
