@@ -704,7 +704,7 @@ app_rl_readlines(void)
 
             cp_cwait = TRUE;
             app_event_func(); // Direct call to process X11 input.
-        }
+        } else
 #endif
         cp_cwait = TRUE;
         line = readline(cp_background ? NULL : prompt());
@@ -1213,10 +1213,12 @@ int main(int argc, char **argv)
 
 #ifdef SIGTSTP
         signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
+        signal(SIGCONT, (SIGNAL_FUNCTION) sigcont);
 #endif
 #ifdef SIGTTIN
         signal(SIGTTIN, (SIGNAL_FUNCTION) sigttio);
         signal(SIGTTOU, (SIGNAL_FUNCTION) sigttio);
+        test_background(); // Process started in the background?
 #endif
     }
 

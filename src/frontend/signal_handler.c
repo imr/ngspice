@@ -2,7 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
-
 /*
  * The signal routines for spice 3 and nutmeg.
  */
@@ -17,6 +16,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <signal.h>
 #include "signal_handler.h"
 #include "plotting/graf.h"
+
+#ifdef SIGTTIN
+#include <unistd.h>
+#endif
 
 #ifdef HAS_WINGUI
 void winmessage(char* new_msg);
@@ -138,6 +141,23 @@ sigttio(void)
         (void) kill(getpid(), SIGTSTP); /* This should stop us */
     }
 }
+
+/* Is this a background process? */
+
+void test_background(void)
+{
+    pid_t terminal_group;
+    int   tty;
+
+    tty = open("/dev/tty", O_RDONLY);
+    if (tty < 0) {
+        cp_background = TRUE; // No controlling terminal, so "in background".
+        return;
+    }
+    terminal_group = tcgetpgrp(tty); // Posix 2001, so portable.
+    close(tty);
+    cp_background = (terminal_group != getpgrp());
+}
 #endif
 
 /* This should give a new prompt if cshpar is waiting for input.  */
@@ -148,10 +168,8 @@ void
 sigstop(void)
 {
     gr_clean();
-    if (!cp_background) {
-        (void) signal(SIGTSTP, SIG_DFL);
-        (void) kill(getpid(), SIGTSTP); /* This should stop us */
-    }
+    (void) signal(SIGTSTP, SIG_DFL);
+    (void) kill(getpid(), SIGTSTP); /* This should stop us */
 }
 
 
@@ -159,6 +177,7 @@ void
 sigcont(void)
 {
     (void) signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
+    test_background();
     if (cp_cwait)
         LONGJMP(jbuf, 1);
 }

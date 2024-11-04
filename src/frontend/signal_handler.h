@@ -16,6 +16,7 @@ void sigbus(void);
 void sigsegv(void);
 void sigsegvsh(void);
 void sig_sys(void);
+void test_background(void);
 
 extern JMP_BUF jbuf;
 
