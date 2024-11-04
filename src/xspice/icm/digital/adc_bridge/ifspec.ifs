@@ -24,6 +24,11 @@ Spice_Model_Name:      adc_bridge
 C_Function_Name:       cm_adc_bridge
 Description:           "analog-to-digital converter node bridge"
 
+/* Input and output are vector ports.  If port numbers are equal the
+ * device acts as a set of individual comparators (use %vd or %id for
+ * differential inputs.  With a single input and multiple outputs,
+ * it is a single ADC with multi-bit output.
+ */
 
 PORT_TABLE:
 
@@ -32,11 +37,12 @@ Description:         "input"            "output"
 Direction:           in                 out
 Default_Type:        v                  d
 Allowed_Types:       [v,vd,i,id,vnam]   [d]
-Vector:               yes                yes
-Vector_Bounds:        -                  -
+Vector:              yes                yes
+Vector_Bounds:       -                  -
 Null_Allowed:        no                 no
 
 
+/* If in_low > in_high the adc_bridge has hysteresis - a Schmitt trigger. */
 
 PARAMETER_TABLE:
 
@@ -72,3 +78,15 @@ Limits:             [1e-12 -]                   [1e-12 -]
 Vector:              no                          no
 Vector_Bounds:       -                           -
 Null_Allowed:       yes                         yes    
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     family
+Description:        "Logic family for bridging"
+Data_Type:          string
+Default_Value:      -
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
