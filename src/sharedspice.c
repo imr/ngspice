@@ -1930,6 +1930,7 @@ void SetAnalyse(
     static char OldAn2[128];         /* Previous analysis type */
     static char olds2[128];          /* previous output */
     static PerfTime timebefore2;     /* previous time stamp */
+    int sdiffsec, sdiffmillisec;    /* differences current time minus start time stamp */
 
     /*set the two thread ids */
     unsigned int ng_idl = threadid_self();
@@ -1969,9 +1970,11 @@ void SetAnalyse(
    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
        return;
 
-   /* get actual time */
+   /* get current time */
    perf_timer_get_time(&timenow);
    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
+   timediff(&timenow, &timebegin, &sdiffsec, &sdiffmillisec);
+
    s = TMALLOC(char, 128);
 
    if (!strcmp(Analyse, "tran")) {
@@ -2030,8 +2033,8 @@ void SetAnalyse(
         }
       /* info when previous analysis period has finished */
       if (strcmp(OldAn, Analyse)) {
-         if (ft_ngdebug && (strcmp(OldAn, "")))
-            printf("%s finished after %4.2f seconds.\n", OldAn, seconds());
+         if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
+            printf("%s finished after %5.3f seconds.\n", OldAn, (double)sdiffsec + (double)sdiffmillisec / 1000.);
          if(thread1)
              strncpy(OldAn1, Analyse, 127);
          else
