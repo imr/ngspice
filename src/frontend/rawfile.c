@@ -414,6 +414,8 @@ raw_read(char *name) {
                     raw_padded = TRUE;
                 else
                     fprintf(cp_err, "Warning: unknown flag %s\n", t);
+
+                tfree(t);
             }
         } else if (ciprefix("no. variables:", buf)) {
             s = SKIP(buf);
@@ -540,6 +542,8 @@ raw_read(char *name) {
                     v->v_type = ft_typnum(t);
                 else
                     fprintf(cp_err, "Error: bad var line %s\n", buf);
+
+                tfree(t);
 
                 /* Fix the name... */
                 if (isdigit_c(v->v_name[0]) && (r = ft_typabbrev(v ->v_type)) != NULL) {
