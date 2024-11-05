@@ -531,8 +531,10 @@ INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessa
 
             char *parm;                /* name of a parameter */
             INPgetTok(&line, &parm, 1);
-            if (!*parm)
+            if (!*parm) {
+                FREE(parm);
                 break;
+            }
 
             int idx = INPfindParm(parm, info->cardParms, info->numParms);
             if (idx == E_MISSING) {
@@ -559,8 +561,13 @@ INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessa
                 }
 
                 error = info->setCardParm(info->cardParms[idx].id, value, tmpCard);
-                if (info->cardParms[idx].dataType & IF_STRING)
+                if (info->cardParms[idx].dataType & IF_STRING) {
                     FREE(value->sValue);
+                } else if (info->cardParms[idx].dataType & IF_REALVEC) {
+                    FREE(value->v.vec.rVec);
+                } else if (info->cardParms[idx].dataType & IF_INTVEC) {
+                    FREE(value->v.vec.iVec);
+                }
                 if (error)
                     return error;
             }
