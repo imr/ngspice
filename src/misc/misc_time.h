@@ -15,6 +15,7 @@ typedef struct {
 } PerfTimer;
 
 typedef struct {
+    double secs;
     int seconds;
     int milliseconds;
 } PerfTime;

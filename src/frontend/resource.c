@@ -171,20 +171,20 @@ printres(char *name)
         perf_timer_stop(&timer);
         perf_timer_elapsed_sec_ms(&timer, &total_sec, &total_msec);
 
-#ifdef USE_OMP
-        cpu_elapsed = "elapsed";
+#ifdef USE_OMP                            // this order have to be same as
+        cpu_elapsed = "elapsed";          // the order in seconds() misc_time.c
 #elif defined(HAVE_QUERYPERFORMANCECOUNTER)
         cpu_elapsed = "elapsed";
 #elif defined(HAVE_CLOCK_GETTIME)
         cpu_elapsed = "elapsed";
 #elif defined(HAVE_GETTIMEOFDAY)
         cpu_elapsed = "elapsed";
+#elif defined(HAVE_FTIME)
+        cpu_elapsed = "elapsed";
 #elif defined(HAVE_TIMES)
         cpu_elapsed = "CPU";
 #elif defined(HAVE_GETRUSAGE)
         cpu_elapsed = "CPU";
-#elif defined(HAVE_FTIME)
-        cpu_elapsed = "elapsed";
 #endif
 
 #else
