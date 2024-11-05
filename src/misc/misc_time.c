@@ -118,37 +118,42 @@ seconds(void)
 {
 #ifdef USE_OMP
     // Usage of OpenMP time function
-    return omp_get_wtime();
+    return(omp_get_wtime() - timebegin.secs);
 #elif defined(HAVE_QUERYPERFORMANCECOUNTER)
     // Windows (MSC and mingw) specific implementation
     LARGE_INTEGER frequency, counter;
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&counter);
-    return (double)counter.QuadPart / frequency.QuadPart;
+    return ((double)counter.QuadPart / frequency.QuadPart - timebegin.secs);
 #elif defined(HAVE_CLOCK_GETTIME)
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    return ts.tv_sec + ts.tv_nsec / 1e9;
+    return (ts.tv_sec + ts.tv_nsec / 1e9 - timebegin.secs);
 #elif defined(HAVE_GETTIMEOFDAY)
     // Usage of gettimeofday
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return tv.tv_sec + tv.tv_usec / 1e6;
-#elif defined(HAVE_TIMES)
-    // Usage of times
-    struct tms t;
-    clock_t ticks = times(&t);
-    return (double)ticks / sysconf(_SC_CLK_TCK);
-#elif defined(HAVE_GETRUSAGE)
-    // Usage of getrusage
-    struct rusage usage;
-    getrusage(RUSAGE_SELF, &usage);
-    return usage.ru_utime.tv_sec + usage.ru_utime.tv_usec / 1e6;
+    return (tv.tv_sec + tv.tv_usec / 1e6 - timebegin.secs);
 #elif defined(HAVE_FTIME)
     // Usage of ftime
     struct timeb tb;
+    PerfTime timenow;
+    int sec, msec;
     ftime(&tb);
-    return tb.time + tb.millitm / 1000.0;
+    timenow.seconds = tb.time;
+    timenow.milliseconds = tb.millitm;
+    timediff(&timenow, &timebegin, &sec, &msec);
+    return(sec + (double) msec / 1000.0);
+#elif defined(HAVE_TIMES)
+    // Usage of times
+    struct tms tmsbuf;
+    clock_t ticks = times(&tmsbuf);
+    return((double) tmsbuf.tms_utime / HZ);
+#elif defined(HAVE_GETRUSAGE)
+    // Usage of getrusage
+    struct rusage ruse;
+    getrusage(RUSAGE_SELF, &ruse);
+    return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
 #else
     #error "No timer function available."
 #endif
@@ -173,8 +178,8 @@ void perf_timer_elapsed_sec_ms(const PerfTimer *timer, int *seconds, int *millis
 
 void perf_timer_get_time(PerfTime *time)
 {
-    double secs = seconds();
-    time->seconds = (int)secs;
-    time->milliseconds = (int)((secs - time->seconds) * 1000.0);
+    time->secs = seconds();
+    time->seconds = (int)time->secs;
+    time->milliseconds = (int)((time->secs - time->seconds) * 1000.0);
 
 }
