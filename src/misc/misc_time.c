@@ -159,23 +159,6 @@ seconds(void)
 #endif
 }
 
-void perf_timer_start(PerfTimer *timer)
-{
-    timer->start = seconds();
-}
-
-void perf_timer_stop(PerfTimer *timer)
-{
-    timer->end = seconds();
-}
-
-void perf_timer_elapsed_sec_ms(const PerfTimer *timer, int *seconds, int *milliseconds)
-{
-    double elapsed = timer->end - timer->start;
-    *seconds = (int)elapsed;
-    *milliseconds = (int)((elapsed - *seconds) * 1000.0);
-}
-
 void perf_timer_get_time(PerfTime *time)
 {
     time->secs = seconds();

@@ -77,13 +77,10 @@ init_rlimits(void)
     ft_ckspace();
 }
 
-PerfTimer timer;
-
 void
 init_time(void)
 {
     perf_timer_get_time(&timebegin);
-    perf_timer_start(&timer);
 }
 
 
@@ -158,6 +155,7 @@ printres(char *name)
     static bool called = FALSE;
     static long last_sec = 0, last_msec = 0;
     struct variable *v, *vfree = NULL;
+    PerfTime timenow;               /* actual time stamp */
     char *cpu_elapsed;
 
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
@@ -168,8 +166,9 @@ printres(char *name)
  || defined (HAVE_GETTIMEOFDAY) || defined(HAVE_TIMES) \
  || defined (HAVE_GETRUSAGE) || defined(HAVE_FTIME)
 
-        perf_timer_stop(&timer);
-        perf_timer_elapsed_sec_ms(&timer, &total_sec, &total_msec);
+        perf_timer_get_time(&timenow);
+        total_sec = timenow.seconds;
+        total_msec = timenow.milliseconds;
 
 #ifdef USE_OMP                            // this order have to be same as
         cpu_elapsed = "elapsed";          // the order in seconds() misc_time.c
