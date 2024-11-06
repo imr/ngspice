@@ -202,7 +202,7 @@ SetSource(char *Name)
         tfree(NameW);
 #endif
         InvalidateRgn(hwSource, NULL, TRUE);
-	}
+    }
 }
 
 
@@ -1192,7 +1192,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     }
 #else
     {
-	    HDC textDC;
+        HDC textDC;
         TEXTMETRICW tm;
         tfont = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE,
             FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -1240,7 +1240,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
                 LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
             ReleaseDC(swString, stringDC);
         }
-	}
+    }
 #else
     swString = CreateWindowExW(WS_EX_NOPARENTNOTIFY, swClassNameW, swWindowNameW,
         ES_LEFT | WS_CHILD | WS_BORDER |
@@ -1258,7 +1258,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
                 LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
             ReleaseDC(swString, stringDC);
         }
-	}
+    }
 #endif
 
     /* Element windows */

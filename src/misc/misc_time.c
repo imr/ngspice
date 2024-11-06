@@ -23,7 +23,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <windows.h>
 #ifndef HAVE_GETTIMEOFDAY
 #include <winsock2.h>
-#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+#include <stdint.h> // portable: uint64_t   MSVC: __int64
 
 /*/ MSVC defines this in winsock2.h!?
 typedef struct timeval {
@@ -36,7 +36,7 @@ int gettimeofday(struct timeval * tp, void * unused)
     NG_IGNORE(unused);
     // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
     // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
-    // until 00:00:00 January 1, 1970 
+    // until 00:00:00 January 1, 1970
     static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
 
     SYSTEMTIME  system_time;
@@ -108,9 +108,9 @@ void timediff(PerfTime *now, PerfTime *begin, int *sec, int *msec)
 
 }
 
-/* 
- * How many seconds have elapsed in running time. 
- * This is the routine called in IFseconds 
+/*
+ * How many seconds have elapsed in running time.
+ * This is the routine called in IFseconds
  */
 
 double
