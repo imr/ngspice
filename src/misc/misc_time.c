@@ -10,7 +10,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <string.h>
 
 #if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
-#ifdef HAVE_QUERYPERFORMANCECOUNTER
 #define WIN32_LEAN_AND_MEAN
  /*
   * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
@@ -52,7 +51,6 @@ int gettimeofday(struct timeval * tp, void * unused)
     tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
     return 0;
 }
-#endif
 #endif
 #endif
 
