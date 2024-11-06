@@ -980,6 +980,9 @@ resume:
             } else {
                 UPDATE_STATS(DOING_TRAN);
                 errMsg = CKTtrouble(ckt, "Timestep too small");
+                SPfrontEnd->OUTendPlot(job->TRANplot);
+                job->TRANplot = NULL;
+                UPDATE_STATS(0);
                 return(E_TIMESTEP);
             }
         }
