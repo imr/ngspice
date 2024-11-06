@@ -1971,7 +1971,8 @@ void SetAnalyse(
 
    /* get current time */
    perf_timer_get_time(&timenow);
-   timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
+   diffsec = timenow.seconds;
+   diffmillisec = timenow.milliseconds;
 
    s = TMALLOC(char, 128);
 
