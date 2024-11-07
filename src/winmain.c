@@ -233,8 +233,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
 
     /* get actual time */
     perf_timer_get_time(&timenow);
-    diffsec = timenow.seconds;
-    diffmillisec = timenow.milliseconds;
+    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
 
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
