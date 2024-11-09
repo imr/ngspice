@@ -1234,7 +1234,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             ft_curckt->FTEstats->FTESTATnetPrepTime = seconds() - startTime;
         }
 
-        /* in shared ngspice controls a execute in the primary thread, typically
+        /* in shared ngspice controls are executed in the primary thread, typically
            before the background thread has finished. This leads to premature execution
            of commands. Thus this is delegated to a function using a third thread, that
            only starts when the background thread has finished (sharedspice.c).*/
