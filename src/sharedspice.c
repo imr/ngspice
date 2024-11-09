@@ -593,7 +593,7 @@ sighandler_sharedspice(int num)
 #endif /*THREADS*/
 
 /* create a suspended thread tid2 that is activated when bg_run has finished.
-   It executes the .control commands. If the arguemnt is NULL, the thread is
+   It executes the .control commands. If the argument is NULL, the thread is
    started with the existing controls (e.g. during command 'reset'. */
 void
 exec_controls(wordlist *newcontrols)
