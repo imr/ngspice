@@ -12,7 +12,7 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "ngspice/missing_math.h"
 #include "ngspice/fteext.h"
 
-#define RESMIN 1e-6
+#define RESMIN 1e-12
 
 int
 RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
