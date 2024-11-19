@@ -18,21 +18,53 @@ Modified: 2000 AlanFixes
 /* #define ASDEBUG */
 #ifdef ASDEBUG
 #define DEBUG(X)	if ((X) < Sens_Debug)
-int Sens_Debug = 0;
-char SF1[] = "res";
-char SF2[] = "dc";
-char SF3[] = "bf";
+static int Sens_Debug = 0;
 #endif
 
-char* Sfilter = NULL;
-double Sens_Delta = 0.000001;
-double Sens_Abs_Delta = 0.000001;
+static double Sens_Delta = 0.000001;
+static double Sens_Abs_Delta = 0.000001;
 
 static int sens_setp(sgen* sg, CKTcircuit* ckt, IFvalue* val);
 static int sens_load(sgen* sg, CKTcircuit* ckt, int is_dc);
 static int sens_temp(sgen* sg, CKTcircuit* ckt);
 static int count_steps(int type, double low, double high, int steps, double* stepsize);
 static double inc_freq(double freq, int type, double step_size);
+
+char **Sens_filter;
+
+/* Match a potential vector name against a filter string. */
+
+static int scan(char *filter, char *name)
+{
+    while (*filter && *name) {
+        if (*filter == '*') {
+            if (!filter[1])
+                return 1;       // Terminal '*' matches all.
+            while (*name && !scan(filter + 1, name))
+                ++name;
+            return *name != '\0';
+        }
+        if (*filter == *name || *filter == '?')
+            ++name, ++filter;
+        else
+            return 0;
+    }
+
+    /* Match if both strings exhausted. */
+
+    return !*name && (!*filter || (*filter == '*' && !filter[1]));
+}
+
+static int check_filter(char *name)
+{
+    char **pp, *filter;
+
+    for (pp = Sens_filter; (filter = *pp); pp++) {
+        if (scan(filter, name))
+            return 1;
+    }
+    return 0;
+}
 
 #define save_context(thing, place) {	    \
     place = thing;			    \
@@ -75,7 +107,7 @@ int sens_sens(CKTcircuit* ckt, int restart)
 
     static int	size;
     static double* delta_I, * delta_iI,
-        * delta_I_delta_Y, * delta_iI_delta_Y;
+                 * delta_I_delta_Y, * delta_iI_delta_Y;
     sgen* sg;
     static double	freq;
     static int nfreqs;
@@ -90,14 +122,13 @@ int sens_sens(CKTcircuit* ckt, int restart)
     int    (*fn) (SMPmatrix*, GENmodel*, CKTcircuit*, int*);
     static int	is_dc;
     int k, j, n;
-    int		num_vars, branch_eq = 0;
+    int	num_vars, branch_eq = 0;
     runDesc* sen_data = NULL;
-    char namebuf[513];
-    IFuid* output_names, freq_name;
+    IFuid *vec_names, *output_names, freq_name;
     int bypass;
     int type;
     double* saved_rhs = NULL,
-        * saved_irhs = NULL;
+          * saved_irhs = NULL;
     SMPmatrix* saved_matrix = NULL;
 
 #ifdef KLU
@@ -185,31 +216,53 @@ int sens_sens(CKTcircuit* ckt, int restart)
         if (!num_vars)
             return OK; /* XXXX Should be E_ something */
 
-        k = 0;
         output_names = TMALLOC(IFuid, num_vars);
+        k = 0;
+        num_vars = 0;
         for (sg = sgen_init(ckt, is_dc); sg; sgen_next(&sg)) {
+            char namebuf[513];
+
             if (!sg->is_instparam) {
-                sprintf(namebuf, "%s:%s",
-                    sg->instance->GENname,
-                    sg->ptable[sg->param].keyword);
+                snprintf(namebuf, sizeof namebuf, "%s:%s",
+                         sg->instance->GENname,
+                         sg->ptable[sg->param].keyword);
             }
             else if ((sg->ptable[sg->param].dataType
                 & IF_PRINCIPAL) && sg->is_principle == 1)
             {
-                sprintf(namebuf, "%s", sg->instance->GENname);
+                snprintf(namebuf, sizeof namebuf, "%s", sg->instance->GENname);
             }
             else {
-                sprintf(namebuf, "%s_%s",
-                    sg->instance->GENname,
-                    sg->ptable[sg->param].keyword);
+                snprintf(namebuf, sizeof namebuf, "%s_%s",
+                         sg->instance->GENname,
+                         sg->ptable[sg->param].keyword);
             }
 
-            SPfrontEnd->IFnewUid(ckt,
-                output_names + k, NULL,
-                namebuf, UID_OTHER, NULL);
+            /* Check against the filter list. */
+
+            if (!Sens_filter || check_filter(namebuf)) {
+                num_vars++;
+                SPfrontEnd->IFnewUid(ckt, output_names + k, NULL,
+                                     namebuf, UID_OTHER, NULL);
+            }
             k += 1;
         }
+        if (num_vars == k) {
+            vec_names = output_names;
+        } else {
+            if (!num_vars) {
+                FREE(output_names);
+                return OK;
+            }
 
+            /* Make a non-sparse array of names for OUTpBeginPlot(). */
+
+            vec_names = TMALLOC(IFuid, num_vars);
+            for (i = 0, j = 0; j < num_vars; ++i) {
+                if (output_names[i])
+                    vec_names[j++] = output_names[i];
+            }
+        }
         if (is_dc) {
             type = IF_REAL;
             freq_name = NULL;
@@ -221,15 +274,18 @@ int sens_sens(CKTcircuit* ckt, int restart)
                 "frequency", UID_OTHER, NULL);
         }
 
-        error = SPfrontEnd->OUTpBeginPlot(
-            ckt, ckt->CKTcurJob,
-            ckt->CKTcurJob->JOBname,
-            freq_name, IF_REAL,
-            num_vars, output_names, type, &sen_data);
-        if (error)
+        error = SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
+                                          ckt->CKTcurJob->JOBname,
+                                          freq_name, IF_REAL,
+                                          num_vars, vec_names,
+                                          type, &sen_data);
+        if (vec_names != output_names)
+            FREE(vec_names);
+        if (error) {
+        err:
+            FREE(output_names);
             return error;
-
-        FREE(output_names);
+        }
         if (is_dc) {
             output_values = TMALLOC(double, num_vars);
             output_cvalues = NULL;
@@ -305,7 +361,8 @@ int sens_sens(CKTcircuit* ckt, int restart)
 
         if (SPfrontEnd->IFpauseTest()) {
             /* XXX Save State */
-            return E_PAUSE;
+            error = E_PAUSE;
+            goto err;
         }
 
         for (j = 0; j < size; j++) {
@@ -322,13 +379,13 @@ int sens_sens(CKTcircuit* ckt, int restart)
             /* XXX Free old states */
             error = CKTunsetup(ckt);
             if (error)
-                return error;
+                goto err;
 
             /* XXX ckt->CKTmatrix->SPmatrix = Y; */
 
             error = CKTsetup(ckt);
             if (error)
-                return error;
+                goto err;
 
 #ifdef notdef
             for (j = 0; j <= ckt->CKTmaxOrder + 1; j++) {
@@ -338,10 +395,10 @@ int sens_sens(CKTcircuit* ckt, int restart)
 #endif
             error = CKTtemp(ckt);
             if (error)
-                return error;
+                goto err;
             error = CKTload(ckt); /* INITSMSIGS */
             if (error)
-                return error;
+                goto err;
 
 #ifdef KLU
             if (ckt->CKTmatrix->CKTkluMODE)
@@ -363,7 +420,7 @@ int sens_sens(CKTcircuit* ckt, int restart)
 
             error = NIacIter(ckt);
             if (error)
-                return error;
+                goto err;
 
 #ifdef notdef
             /* XXX Why? */
@@ -389,10 +446,13 @@ int sens_sens(CKTcircuit* ckt, int restart)
         ckt->CKTmatrix = delta_Y;
 
         /* calc. effect of each param */
+
+        k = 0;
         for (sg = sgen_init(ckt, is_dc /* job->plist */);
             sg; sgen_next(&sg))
         {
-
+            if (!output_names[k++])
+                continue;       // Ignore filtered parameters.
 #ifdef ASDEBUG
             DEBUG(2) {
                 printf("E/iE: %x/%x; delta_I/iI: %x/%x\n",
@@ -486,7 +546,7 @@ int sens_sens(CKTcircuit* ckt, int restart)
 #endif
             if (sens_load(sg, ckt, is_dc)) {
                 if (error && error != E_BADPARM)
-                    return error;	/* XXX */
+                    goto err;
                 continue;
             }
 
@@ -521,7 +581,7 @@ int sens_sens(CKTcircuit* ckt, int restart)
 
             sens_setp(sg, ckt, &nvalue);
             if (error && error != E_BADPARM)
-                return error;
+                goto err;
 
             SMPconstMult(delta_Y, -1.0);
 
@@ -709,7 +769,6 @@ int sens_sens(CKTcircuit* ckt, int restart)
 
         release_context(ckt->CKTrhs, saved_rhs);
         release_context(ckt->CKTirhs, saved_irhs);
-
         release_context(ckt->CKTmatrix, saved_matrix);
 
         if (is_dc)
@@ -724,6 +783,7 @@ int sens_sens(CKTcircuit* ckt, int restart)
         freq = inc_freq(freq, job->step_type, step_size);
 
     }
+    FREE(output_names);
 
     SPfrontEnd->OUTendPlot(sen_data);
 
