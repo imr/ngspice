@@ -202,7 +202,7 @@ SetSource(char *Name)
         tfree(NameW);
 #endif
         InvalidateRgn(hwSource, NULL, TRUE);
-	}
+    }
 }
 
 
@@ -223,7 +223,6 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     static PerfTime timebefore;     /* previous time stamp */
     PerfTime timenow;               /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
-    int sdiffsec, sdiffmillisec;    /* differences actual minus start time stamp */
 
     WaitForIdle();
 
@@ -235,7 +234,6 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     /* get actual time */
     perf_timer_get_time(&timenow);
     timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
-    timediff(&timenow, &timebegin, &sdiffsec, &sdiffmillisec);
 
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
@@ -262,7 +260,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
         /* info when previous analysis period has finished */
         if (strcmp(OldAn, Analyse)) {
             if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
-                win_x_printf("%s finished after %5.3f seconds.\n", OldAn, (double)sdiffsec + (double)sdiffmillisec / 1000.);
+                win_x_printf("%s finished after %5.3f seconds.\n", OldAn, seconds());
             strncpy(OldAn, Analyse, 127);
         }
 
@@ -1193,7 +1191,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     }
 #else
     {
-	    HDC textDC;
+        HDC textDC;
         TEXTMETRICW tm;
         tfont = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE,
             FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -1241,7 +1239,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
                 LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
             ReleaseDC(swString, stringDC);
         }
-	}
+    }
 #else
     swString = CreateWindowExW(WS_EX_NOPARENTNOTIFY, swClassNameW, swWindowNameW,
         ES_LEFT | WS_CHILD | WS_BORDER |
@@ -1259,7 +1257,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
                 LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
             ReleaseDC(swString, stringDC);
         }
-	}
+    }
 #endif
 
     /* Element windows */

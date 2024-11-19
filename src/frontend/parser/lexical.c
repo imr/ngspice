@@ -22,26 +22,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <pwd.h>
 #endif
 
-/* MW. Linux has TIOCSTI, so we include all headers here */
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
-#include <sys/ioctl.h>
-#endif
-
-#ifdef HAVE_SGTTY_H
-#include <sys/types.h>
-#include <sgtty.h>
-#else
-#ifdef HAVE_TERMIO_H
-#include <sys/types.h>
-#include <termio.h>
-#else
-#ifdef HAVE_TERMIOS_H
-#include <sys/types.h>
-#include <termios.h>
-#endif
-#endif
-#endif
-
 #include "ngspice/fteinput.h"
 #include "lexical.h"
 
@@ -73,11 +53,7 @@ bool cp_bqflag = FALSE;
 char *cp_promptstring = NULL;
 char *cp_altprompt = NULL;
 
-static int numeofs = 0;
-
-
 #define ESCAPE  '\033'
-
 
 /* Return a list of words, with backslash quoting and '' quoting done.
  * Strings enclosed in "" or `` are made single words and returned,
@@ -155,7 +131,6 @@ wordlist *
 cp_lexer(char *string)
 {
     int c, d;
-    int i;
     wordlist *wlist, *wlist_tail;
     struct cp_lexer_buf buf, linebuf;
     int paren;
@@ -165,7 +140,6 @@ cp_lexer(char *string)
 
     /* prompt for string if none is passed */
     if (!string && cp_interactive) {
-        cp_ccon(TRUE);
         prompt();
     }
 
@@ -194,11 +168,8 @@ nloop:
         if (string && (c == ESCAPE))
             continue;
 
-        if ((c != EOF) && (c != ESCAPE))
-            push(&linebuf, c);
-
         if (c != EOF)
-            numeofs = 0;
+            push(&linebuf, c);
 
         /* if '\' or '^', add following character to linebuf */
         if ((c == '\\' && DIR_TERM != '\\') || (c == '\026') /* ^V */ ) {
@@ -292,70 +263,6 @@ nloop:
             push(&buf, d);
             push(&linebuf, d);
             break;
-
-        case '\004':
-        case EOF:
-            /* upon command completion, not used actually */
-            if (cp_interactive && !cp_nocc && !string) {
-
-                if (linebuf.i == 0) {
-                    if (cp_ignoreeof && (numeofs++ < 23)) {
-                        fputs("Use \"quit\" to quit.\n", stdout);
-                    } else {
-                        fputs("quit\n", stdout);
-                        cp_doquit();
-                    }
-                    append(NULL);
-                    goto done;
-                }
-
-                push(&buf, '\0');
-                push(&linebuf, '\0');
-
-                // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
-                cp_ccom(wlist, buf.s, FALSE);
-                (void) fputc('\r', cp_out);
-                prompt();
-                for (i = 0; linebuf.s[i]; i++)
-#ifdef TIOCSTI
-                    (void) ioctl(fileno(cp_out), TIOCSTI, linebuf.s + i);
-#else
-                fputc(linebuf.s[i], cp_out);  /* But you can't edit */
-#endif
-                goto nloop;
-            }
-
-            /* EOF during a source */
-            if (cp_interactive) {
-                fputs("quit\n", stdout);
-                cp_doquit();
-                append(NULL);
-                goto done;
-            }
-
-            wl_free(wlist);
-            tfree(buf.s);
-            tfree(linebuf.s);
-            return NULL;
-
-        case ESCAPE:
-            /* upon command completion, not used actually */
-            if (cp_interactive && !cp_nocc) {
-                push(&buf, '\0');
-                push(&linebuf, '\0');
-                fputs("\b\b  \b\b\r", cp_out);
-                prompt();
-                for (i = 0; linebuf.s[i]; i++)
-#ifdef TIOCSTI
-                    (void) ioctl(fileno(cp_out), TIOCSTI, linebuf.s + i);
-#else
-                fputc(linebuf.s[i], cp_out);  /* But you can't edit */
-#endif
-                // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
-                cp_ccom(wlist, buf.s, TRUE);
-                goto nloop;
-            }
-            goto ldefault;
 
         case ',':
             if ((paren < 1) && (buf.i > 0)) {

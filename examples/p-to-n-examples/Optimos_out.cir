@@ -1,4 +1,5 @@
 Test Optimos PSPICE models
+* compatibility mode psa is required
 
 *Xopt Nvd Nvg Nvs Tj Tcase SPD50N03S2-07  dVth=0 dRdson=0 dgfs=0 dC=0 Zthtype=0
 *Xopt Nvd Nvg Nvs Tj Tcase SPD30N03S2L-10  dVth=0 dRdson=0 dgfs=0 dC=0 Zthtype=0

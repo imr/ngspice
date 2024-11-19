@@ -1621,6 +1621,7 @@ settrans(char *formal, int flen, char *actual, const char *subname)
 {
     int i;
 
+    flen++; // make flen large enough to detect over- or underflow
     table = TMALLOC(struct tab, flen + 1);
     memset(table, 0, (size_t)(flen + 1) * sizeof(struct tab));
 

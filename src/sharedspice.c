@@ -593,7 +593,7 @@ sighandler_sharedspice(int num)
 #endif /*THREADS*/
 
 /* create a suspended thread tid2 that is activated when bg_run has finished.
-   It executes the .control commands. If the arguemnt is NULL, the thread is
+   It executes the .control commands. If the argument is NULL, the thread is
    started with the existing controls (e.g. during command 'reset'. */
 void
 exec_controls(wordlist *newcontrols)
@@ -976,7 +976,7 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
 #else /* ~ HAVE_PWD_H */
     /* load user's initialisation file
        try accessing the initialisation file .spiceinit in a user provided
-       path read from environmental variable SPICE_USERINIT_DIR, 
+       path read from environmental variable SPICE_USERINIT_DIR,
        if that fails try the alternate name spice.rc, then look into
        the current directory, then the HOME directory, then into USERPROFILE.
        Don't read .spiceinit, if ngSpice_nospiceinit() has been called. */
@@ -1913,7 +1913,7 @@ void SetAnalyse(
 || defined (HAVE_FTIME)
     PerfTime timenow;               /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
-    int result;                     /* return value from callback function */    
+    int result;                     /* return value from callback function */
     char* s;                        /* outputs to callback function */
     int OldPercent;                 /* Previous progress value */
     char OldAn[128];                /* Previous analysis type */
@@ -1930,7 +1930,6 @@ void SetAnalyse(
     static char OldAn2[128];         /* Previous analysis type */
     static char olds2[128];          /* previous output */
     static PerfTime timebefore2;     /* previous time stamp */
-    int sdiffsec, sdiffmillisec;    /* differences current time minus start time stamp */
 
     /*set the two thread ids */
     unsigned int ng_idl = threadid_self();
@@ -1962,67 +1961,66 @@ void SetAnalyse(
     else
         return;
 
-   CKTcircuit *ckt = NULL;
+    CKTcircuit *ckt = NULL;
 
-   if (ft_curckt)
-       ckt = ft_curckt->ci_ckt;
+    if (ft_curckt)
+        ckt = ft_curckt->ci_ckt;
 
-   if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
-       return;
+    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
+        return;
 
-   /* get current time */
-   perf_timer_get_time(&timenow);
-   timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
-   timediff(&timenow, &timebegin, &sdiffsec, &sdiffmillisec);
+    /* get current time */
+    perf_timer_get_time(&timenow);
+    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
 
-   s = TMALLOC(char, 128);
+    s = TMALLOC(char, 128);
 
-   if (!strcmp(Analyse, "tran")) {
-       if (ckt && (ckt->CKTtime > ckt->CKTfinalTime - ckt->CKTmaxStep)) {
-          sprintf(s, "--ready--");
-          result = statfcn(s, ng_ident, userptr);
-          tfree(s);
-          return;
-       }
-   }
-
-   if (DecaPercent >= 1000){
-       /* Because CKTmaxStep may be smaller than 0.1%, we print only when CKTtime is large enough. */
-       if (!strcmp(Analyse, "tran") && ckt && (ckt->CKTtime < ckt->CKTfinalTime - ckt->CKTmaxStep)) {
+    if (!strcmp(Analyse, "tran")) {
+        if (ckt && (ckt->CKTtime > ckt->CKTfinalTime - ckt->CKTmaxStep)) {
+           sprintf(s, "--ready--");
+           result = statfcn(s, ng_ident, userptr);
            tfree(s);
            return;
+        }
+    }
+
+    if (DecaPercent >= 1000){
+        /* Because CKTmaxStep may be smaller than 0.1%, we print only when CKTtime is large enough. */
+        if (!strcmp(Analyse, "tran") && ckt && (ckt->CKTtime < ckt->CKTfinalTime - ckt->CKTmaxStep)) {
+            tfree(s);
+            return;
+        }
+        sprintf( s, "--ready--");
+        result = statfcn(s, ng_ident, userptr);
+        tfree(s);
+        return;
+    }
+    /* info every one percent of progress:
+       actual time, progress,
+       to catch linearity of progress of simulation */
+    if (ft_ngdebug && !strcmp(Analyse, "tran"))
+       if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.)) {
+          printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());
        }
-       sprintf( s, "--ready--");
-       result = statfcn(s, ng_ident, userptr);
-       tfree(s);
-       return;
-   }
-   /* info every one percent of progress:
-      actual time, progress,
-      to catch linearity of progress of simulation */
-   if (ft_ngdebug && !strcmp(Analyse, "tran"))
-      if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.)) {
-         printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());
-      }
-   if(thread1)
-       OldPercent1 = DecaPercent;
-   else
-       OldPercent2 = DecaPercent;
-   /* output only into hwAnalyse window and if time elapsed is larger than
-      DELTATIME given value, or if analysis has changed, else return */
-   if ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse)) {
+    if(thread1)
+        OldPercent1 = DecaPercent;
+    else
+        OldPercent2 = DecaPercent;
+    /* output only into hwAnalyse window and if time elapsed is larger than
+       DELTATIME given value, or if analysis has changed, else return */
+    if ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse)) {
         if (DecaPercent < 0) {
             sprintf( s, "--ready--");
         }
-      else if (DecaPercent == 0) {
-         sprintf( s, "%s", Analyse);
-      }
-      else if (!strcmp(Analyse, "shooting")) {
-         sprintf( s, "%s: %d", Analyse, DecaPercent);
-      }
-      else {
-         sprintf( s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
-      }
+        else if (DecaPercent == 0) {
+            sprintf( s, "%s", Analyse);
+        }
+        else if (!strcmp(Analyse, "shooting")) {
+            sprintf( s, "%s: %d", Analyse, DecaPercent);
+        }
+        else {
+            sprintf( s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
+        }
         if (thread1) {
             timebefore1.milliseconds = timenow.milliseconds;
             timebefore1.seconds = timenow.seconds;
@@ -2031,34 +2029,34 @@ void SetAnalyse(
             timebefore2.milliseconds = timenow.milliseconds;
             timebefore2.seconds = timenow.seconds;
         }
-      /* info when previous analysis period has finished */
-      if (strcmp(OldAn, Analyse)) {
-         if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
-            printf("%s finished after %5.3f seconds.\n", OldAn, (double)sdiffsec + (double)sdiffmillisec / 1000.);
-         if(thread1)
-             strncpy(OldAn1, Analyse, 127);
-         else
-             strncpy(OldAn2, Analyse, 127);
-      }
-      /* ouput only after a change */
-      if (strcmp(olds, s))
-          result = statfcn(s, ng_ident, userptr);
-      if(thread1)
-          strcpy(olds1, s);
-      else
-          strcpy(olds2, s);
-   }
-   tfree(s);
+        /* info when previous analysis period has finished */
+        if (strcmp(OldAn, Analyse)) {
+            if ((ft_nginfo || ft_ngdebug) && (strcmp(OldAn, "")))
+               printf("%s finished after %5.3f seconds.\n", OldAn, seconds());
+            if(thread1)
+                strncpy(OldAn1, Analyse, 127);
+            else
+                strncpy(OldAn2, Analyse, 127);
+        }
+        /* ouput only after a change */
+        if (strcmp(olds, s))
+            result = statfcn(s, ng_ident, userptr);
+        if(thread1)
+            strcpy(olds1, s);
+        else
+            strcpy(olds2, s);
+    }
+    tfree(s);
 #else
-   char* s;
-   int result;
-   static bool havesent = FALSE;
-   if (!havesent) {
-       s = copy("No usage info available");
-       result = statfcn(s, ng_ident, userptr);
-       tfree(s);
-       havesent = TRUE;
-   }
+    char* s;
+    int result;
+    static bool havesent = FALSE;
+    if (!havesent) {
+        s = copy("No usage info available");
+        result = statfcn(s, ng_ident, userptr);
+        tfree(s);
+        havesent = TRUE;
+    }
 #endif
 }
 
