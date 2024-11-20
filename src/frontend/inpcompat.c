@@ -463,6 +463,12 @@ static struct card *u_instances(struct card *startcard)
     BOOL insub = FALSE;
     int ps_global_tmodels = 0;
 
+    /* NOTE: PSpice ref. manual Product Version 16.5 page 105.
+       Subcircuits can be nested. That is, an X device can appear between
+       .SUBCKT and .ENDS commands. However, subcircuit definitions cannot
+       be nested. That is, a .SUBCKT statement cannot appear in the
+       statements between a .SUBCKT and a .ENDS.
+    */
     if (!cp_getvar("ps_global_tmodels", CP_NUM, &ps_global_tmodels, 0)) {
         ps_global_tmodels = 0;
     }
@@ -472,6 +478,7 @@ static struct card *u_instances(struct card *startcard)
         while (c) {
             char *line = c->line;
             if (ciprefix(".subckt", line)) {
+                u_subckt_line(line);
                 insub = TRUE;
             } else if (ciprefix(".ends", line)) {
                 insub = FALSE;
