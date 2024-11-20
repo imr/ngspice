@@ -468,7 +468,7 @@ static void clear_name_list(NAME_ENTRY nelist)
 }
 /* End of name entries */
 
-/* Start of infix to posfix */
+/* Start of infix to postfix */
 #define STACK_SIZE 100
 #define PUSH_ERROR 1
 #define POP_ERROR  2
@@ -987,7 +987,7 @@ err_return:
     return status;
 }
 
-/* End of infix to posfix */
+/* End of infix to postfix */
 
 /* Start of logicexp parser */
 static void aerror(char *s);

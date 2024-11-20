@@ -16,5 +16,6 @@ void u_add_instance(char *str);
 void u_add_logicexp_model(char *tmodel, char *xspice_gate, char *model_name);
 void u_remember_pin(char *name, int type);
 struct udevices_info u_get_udevices_info(void);
+void u_subckt_line(char *subckt_line);
 
 #endif
