@@ -1365,14 +1365,15 @@ static int cm_read_state_file(FILE *state_file, State_Table_t *table)
 	}                 
 
     i = 0;                                 
-    s = temp;
-    while ( fgets(s,MAX_STRING_SIZE,state_file) != NULL) {
+    while (fgets(temp, MAX_STRING_SIZE, state_file) != NULL) {
         /* Test this string to see if it is whitespace... */
 
+        s = temp;
         base_address = s;
         while(isspace_c(*s) || (*s == '*')) 
               (s)++;
-        if ( *s != '\0' ) {     /* This is not a blank line, so process... */
+        if ( *s != '\0' ) {
+            /* This is not a blank line, so process... */
             s = base_address;
 
             if ( '*' != s[0] ) {
@@ -1571,7 +1572,6 @@ static int cm_read_state_file(FILE *state_file, State_Table_t *table)
                 }
                 i++;
             }
-            s = temp;  
         }
     }
     return 0;
