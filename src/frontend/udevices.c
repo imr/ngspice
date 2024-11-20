@@ -293,6 +293,7 @@ static NAME_ENTRY input_names_list = NULL;
 static NAME_ENTRY output_names_list = NULL;
 static NAME_ENTRY tristate_names_list = NULL;
 static NAME_ENTRY port_names_list = NULL;
+static NAME_ENTRY xsubckt_names_list = NULL;
 static unsigned int num_name_collisions = 0;
 /* .model d_zero_inv99 d_inverter just once per subckt */
 static BOOL add_zero_delay_inverter_model = FALSE;
@@ -413,6 +414,15 @@ static void add_tristate_pin(char *name)
 static void add_port_name(char *name)
 {
     add_pin_name(name, &port_names_list);
+}
+
+static void add_xsubckt_name(char *name)
+{
+    if (!xsubckt_names_list) {
+        xsubckt_names_list = add_name_entry(name, xsubckt_names_list);
+    } else {
+        (void) add_name_entry(name, xsubckt_names_list);
+    }
 }
 
 void u_remember_pin(char *name, int type)
@@ -934,6 +944,8 @@ void initialize_udevice(char *subckt_line)
         } else {
             printf("NOTE using global models linear list search\n");
         }
+        clear_name_list(xsubckt_names_list);
+        xsubckt_names_list = NULL;
         return;
     }
     new_names_list = NULL;
@@ -1025,6 +1037,8 @@ void cleanup_udevice(BOOL global)
             nghash_free(global_model_hash_table, NULL, NULL);
         }
         global_model_hash_table = NULL;
+        clear_name_list(xsubckt_names_list);
+        xsubckt_names_list = NULL;
         return;
     }
     cleanup_translated_xlator();
@@ -4284,6 +4298,106 @@ BOOL u_check_instance(char *line)
     }
 }
 
+void u_subckt_line(char *subckt_line)
+{
+    /* If the .subckt line contains "optional:", then assume this
+       refers to dpwr & dgnd or vdd & vss.
+       Save the names of those subcircuits without "optional:"
+    */
+    char *copy_line, *tok, *pos;
+    if (!ciprefix(".subckt", subckt_line)) { return; }
+    pos = strstr(subckt_line, "optional:");
+    if (!pos) {
+        DS_CREATE(ds, 128);
+        copy_line = tprintf("%s", subckt_line);
+        ds_clear(&ds);
+        tok = strtok(copy_line, " \t");  // .subckt
+        if (tok) {
+            tok = strtok(NULL, " \t");  // subcircuit name
+            if (tok) {
+                ds_cat_str(&ds, tok);
+                add_xsubckt_name(ds_get_buf(&ds));
+            }
+        }
+
+        ds_free(&ds);
+        tfree(copy_line);
+    }
+    return;
+}
+
+static NAME_ENTRY subcircuit_has_no_optional(char *str)
+{
+    /* str is the X* subcircuit instance line
+       Return NAME_ENTRY for matching subcircuit with no optional:
+    */
+    NAME_ENTRY x = NULL, next = NULL;
+    char *pos;
+    if (!xsubckt_names_list) { return NULL; }
+    for (x = xsubckt_names_list; x; x = next) {
+        pos = strstr(str, x->name);
+        if (pos) {
+            char *tail, *tok;
+            tail = tprintf("%s", pos);
+            tok = strtok(tail, " \t"); // subcircuit name in X* instance
+            if (eq(tok, x->name)) {
+                tfree(tail);
+                return x;
+            }
+            tfree(tail);
+        }
+        next = x->next;
+    }
+    return NULL;
+}
+
+static int remove_optional(DSTRING *dstrp, char *line)
+{
+    /* Remove optional: DPWR, DGND, VDD, and VSS from X* subckt instances.
+       The line string is all lower case.
+       Return 0 when no removal was attempted.
+    */
+    char *s;
+    BOOL was_space;
+    if (!ps_global_tmodels || subcircuit_has_no_optional(line)) {
+        return 0;
+    }
+    ds_clear(dstrp);
+    s = line;
+    was_space = FALSE;
+    while (*s) {
+        if (isalpha(*s)) {
+            if (was_space) {
+                if (strncmp(s, "dpwr ", 5) == 0) {
+                    s += 4;
+                } else if (strncmp(s, "dgnd ", 5) == 0) {
+                    s += 4;
+                } else if (strncmp(s, "vdd ", 4) == 0) {
+                    s += 3;
+                } else if (strncmp(s, "vss ", 4) == 0) {
+                    s += 3;
+                } else {
+                    ds_cat_char(dstrp, *s);
+                    s++;
+                }
+                was_space = FALSE;
+            } else {
+                ds_cat_char(dstrp, *s);
+                s++;
+            }
+        } else {
+            if (isspace(*s)) {
+                was_space = TRUE;
+            } else {
+                was_space = FALSE;
+            }
+            ds_cat_char(dstrp, *s);
+            s++;
+        }
+    }
+    return 1;
+}
+
 /* NOTE
   The input nline is expected to be a card in the deck which contains
   a Pspice u* instance statement with all the '+' continuations added
@@ -4299,15 +4413,25 @@ BOOL u_process_instance(char *nline)
 
 
     if (ciprefix("x", nline)) {
-        /* An X* instance of a subckt is translated unchanged */
-        Xlate_datap xdp = create_xlate_translated(nline);
-        Xlatorp xlp = create_xlator();
+        /* Usually an X* instance of a subckt is translated unchanged */
+        /* If ps_global_tmodels!=0, then dpwr, dgnd, vdd, vss maybe removed */
+        Xlate_datap xdp = NULL;
+        Xlatorp xlp = NULL;
+        DS_CREATE(dstr, 128);
+
+        if (remove_optional(&dstr, nline)) {
+            xdp = create_xlate_translated(ds_get_buf(&dstr));
+        } else {
+            xdp = create_xlate_translated(nline);
+        }
+        xlp = create_xlator();
         (void) add_xlator(xlp, xdp);
         append_xlator(translated_p, xlp);
         if (ps_ports_and_pins & 4) {
             printf("TRANS_IN  %s\n", nline);
         }
         delete_xlator(xlp);
+        ds_free(&dstr);
         return TRUE;
     }
     hdr = create_instance_header(nline);
