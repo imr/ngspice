@@ -9580,9 +9580,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
 /* add path or filepath (without file name) to variable sourcepath */
 int add_to_sourcepath(const char* filepath, const char* path)
 {
-    const char* fpath;
-    char buf[512];
-
+    char* fpath=NULL;
+    wordlist *addwl=NULL, *newwl=NULL, *startwl, *endwl;
 
     if ((filepath && path) || (!filepath && !path))
         return 1;
@@ -9593,29 +9592,35 @@ int add_to_sourcepath(const char* filepath, const char* path)
     else
         fpath = ngdirname(filepath);
 
+    if (fpath)
+        addwl = cp_doglob(cp_lexer(fpath));
+    else
+        return 1;
+
+    startwl = newwl = wl_from_string("sourcepath = ( ");
+    endwl = wl_from_string(" )");
+
     /* add fpath to 'sourcepath' list variable */
     if (cp_getvar("sourcepath", CP_LIST, NULL, 0)) {
-        wordlist* wl;
-        char* toklist;
-        wl = vareval("sourcepath");
-        toklist = wl_flatten(wl);
-        (void)snprintf(buf, 511, "sourcepath = ( %s %s )", toklist, fpath);
-        wl_free(wl);
-        tfree(toklist);
+        wordlist* wl = vareval("sourcepath");
+        wl_append(newwl, wl);
     }
+    /* new sourcepath variable */
     else {
-        (void)snprintf(buf, 511, "sourcepath = ( %s )", fpath);
+        wordlist* wl = wl_from_string(fpath);
+        wl_append(newwl, wl);
     }
+    /* add new entry */
+    if (addwl)
+        wl_append(newwl, addwl);
+    /* add end section */
+    wl_append(newwl, endwl);
 
 //    fprintf(stdout, "Added to variable 'sourcepath':\n  %s\n", fpath);
 
-    {
-        wordlist* wl;
-        wl = cp_doglob(cp_lexer(buf));
-        com_set(wl);
-        wl_free(wl);
-    }
+    com_set(startwl);
 
+    wl_free(startwl);
     tfree(fpath);
     return 0;
 }
