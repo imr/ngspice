@@ -7123,7 +7123,7 @@ static bool inp_temper_compat(struct card *card)
             continue;
         }
         /* exclude some elements */
-        if (strchr("*vbiegfh", curr_line[0]))
+        if (strchr("*vbiegfhVBIEGFH", curr_line[0]))
             continue;
         /* exclude all dot commands except .model */
         if (curr_line[0] == '.' && !prefix(".model", curr_line))
