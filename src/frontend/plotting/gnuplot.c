@@ -18,7 +18,6 @@
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #undef BOOLEAN
 #include <windows.h>
-static BOOL executeCommandLine(char* cmdLine);
 #else
 #include <unistd.h>
 #endif
@@ -263,9 +262,9 @@ void ft_gnuplot(double *xlims, double *ylims,
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
     double xval, yval, prev_xval, extrange;
-    int i, dir, numVecs, linewidth, gridlinewidth, terminal_type;
+    int i, dir, numVecs, linewidth, gridlinewidth, err, terminal_type;
     bool xlog, ylog, nogrid, markers, nolegend, contours = FALSE;
-    char buf[BSIZE_SP], buf2[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
+    char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
     char filename_data[128];
     char filename_plt[128];
@@ -625,11 +624,10 @@ void ft_gnuplot(double *xlims, double *ylims,
     (void) fclose(file_data);
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
-    /* for external fcn CreateProcess() */
-    GetCurrentDirectory(BSIZE_SP, buf2);
-    (void)snprintf(buf, sizeof(buf) - 1, "\"C:\\Program Files\\gnuplot\\bin\\wgnuplot.exe\" \"%s\\%s\"", buf2, filename_plt);
+    /* for external fcn system() */
+    // (void) sprintf(buf, "start /B wgnuplot %s -" ,  filename_plt);
+    (void) sprintf(buf, "start /B wgnuplot -persist %s " ,  filename_plt);
     _flushall();
-    executeCommandLine(buf);
 #else
     /* for external fcn system() from LINUX environment */
     if (terminal_type == 3) {
@@ -646,14 +644,15 @@ void ft_gnuplot(double *xlims, double *ylims,
     else {
         (void) sprintf(buf, "gnuplot -persist %s &", filename_plt);
     }
-    int err = system(buf);
 #endif
-
+    err = system(buf);
 
     /* delete the plt and data files */
     if ((terminal_type == 3) || (terminal_type == 5)) {
         /* wait for gnuplot generating eps or png file */
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        Sleep(200);
+#else
         usleep(200000);
 #endif
         if (remove(filename_data)) {
@@ -820,55 +819,3 @@ void ft_writesimple(double *xlims, double *ylims,
 
     (void) fclose(file_data);
 }
-
-#if defined(__MINGW32__) || defined(_MSC_VER)
-/* Executes the given command using CreateProcess() and WaitForSingleObject().
-   Returns FALSE if the command could not be executed or if the exit code could not be determined. */
-static BOOL executeCommandLine(char *cmdLine)
-{
-    PROCESS_INFORMATION processInformation = { 0 };
-    STARTUPINFO startupInfo = { 0 };
-    startupInfo.cb = sizeof(startupInfo);
-    int nStrBuffer = (int)strlen(cmdLine) + 50;
-    char* newcmdLine = TMALLOC(char, nStrBuffer);
-    memcpy(newcmdLine, cmdLine, strlen(cmdLine + 1));
-
-    // Create the process
-    BOOL result = CreateProcess(NULL, newcmdLine,
-        NULL, NULL, FALSE,
-        NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW,
-        NULL, NULL, &startupInfo, &processInformation);
-    tfree(newcmdLine);
-
-    if (!result)
-    {
-        // CreateProcess() failed
-        // Get the error from the system
-        LPVOID lpMsgBuf;
-        DWORD dw = GetLastError();
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-            NULL, dw, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
-
-        // Display the error
-        char * strError = (LPTSTR)lpMsgBuf;
-        fprintf(stderr, "Error: executeCommandLine() failed at CreateProcess()\nCommand=%s\nMessage=%s\n\n", cmdLine, strError);
-
-        // Free resources created by the system
-        LocalFree(lpMsgBuf);
-
-        // We failed.
-        return FALSE;
-    }
-    else
-    {
-        // Successfully created the process.  Wait for it to finish.
-        WaitForSingleObject(processInformation.hProcess, INFINITE);
-
-        // Close the handles.
-        CloseHandle(processInformation.hProcess);
-        CloseHandle(processInformation.hThread);
-
-        return TRUE;
-    }
-}
-#endif
