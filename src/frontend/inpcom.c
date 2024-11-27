@@ -3304,7 +3304,12 @@ void inp_casefix(char *string)
             tmpstr = strstr(string, "file=\"");
 
 #endif
-        keepquotes = ciprefix(".param", string); // Allow string params
+        /* Allow string params */
+        keepquotes = ciprefix(".param", string);
+        /* Allow string param in .subckt lines */
+        keepquotes = keepquotes || (ciprefix(".subckt", string) && (strstr(string, "=\"")));
+        /* Keep quoted strings in X lines */
+        keepquotes = keepquotes || (*string == 'x' && strchr(string, '\"'));
 
         while (*string) {
 #ifdef XSPICE
@@ -3914,7 +3919,8 @@ static int inp_get_params(
         *end = '\0';
 
         if (*value == '{' || isdigit_c(*value) ||
-                (*value == '.' && isdigit_c(value[1]))) {
+                (*value == '.' && isdigit_c(value[1])) ||
+                (*value == '\"')) {
             value = copy(value);
         }
         else {
