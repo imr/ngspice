@@ -1404,7 +1404,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         tfree(tmpcard->line);
         tmpcard->line = newline;
 
-        card = tmpcard->nextcard;
+        card = tmpcard;
 
         card = insert_new_line(card, vline, 0, card->linenum_orig, card->linesource);
 
