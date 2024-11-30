@@ -166,7 +166,7 @@ static void *cosim_dlopen(const char *fn)
             break;
     }
 
-    fprintf(stderr, "Cannot open " SLIBFILE " %s: %s\n", path, dlerror());
+    fprintf(stderr, "Cannot open " SLIBFILE " %s: %s\n", fn, dlerror());
     return NULL;
 }
 
