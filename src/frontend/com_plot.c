@@ -9,15 +9,27 @@
 
 extern bool ft_batchmode;
 
+/* Utility function to check for batch mode. */
+
+int check_batch(const char *cmd)
+{
+    if (ft_batchmode) {
+        fprintf(stderr,
+                "\nWarning: command '%s' is not available during "
+                "batch simulation, ignored!\n",
+                cmd);
+        fprintf(stderr, "    You may use Gnuplot instead.\n\n");
+        return 1;
+    }
+    return 0;
+}
+
 /* plot name ... [xl[imit]] xlo xhi] [yl[imit ylo yhi] [vs xname] */
 void
 com_plot(wordlist *wl)
 {
-    if (ft_batchmode) {
-        fprintf(stderr, "\nWarning: command 'plot' is not available during batch simulation, ignored!\n");
-        fprintf(stderr, "    You may use Gnuplot instead.\n\n");
+    if (check_batch("plot"))
         return;
-    }
     plotit(wl, NULL, NULL);
 }
 
@@ -25,6 +37,8 @@ com_plot(wordlist *wl)
 void
 com_bltplot(wordlist *wl)
 {
+    if (check_batch("bltplot"))
+        return;
     plotit(wl, NULL, "blt");
 }
 

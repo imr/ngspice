@@ -15,6 +15,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "breakp.h"
 #include "breakp2.h"
 #include "runcoms2.h"
+#include "com_plot.h"
 
 #include "completion.h"
 
@@ -213,6 +214,9 @@ com_trce(wordlist *wl)
 void
 com_iplot(wordlist *wl)
 {
+    if (check_batch("iplot"))
+        return;
+
     /* Check for an active circuit */
     if (ft_curckt == (struct circ *) NULL) {
         fprintf(cp_err, "No circuit loaded. "
