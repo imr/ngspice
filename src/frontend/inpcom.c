@@ -8697,9 +8697,7 @@ static void inp_check_syntax(struct card *deck)
     for (card = deck; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".probe", cut_line) && search_plain_identifier(cut_line, "alli")) {
-            int i = 0;
             bool bi = TRUE;
-            cp_vset("auto_bridge", CP_NUM, &i);
             cp_vset("probe_alli_given", CP_BOOL, &bi);
             break;
         }
