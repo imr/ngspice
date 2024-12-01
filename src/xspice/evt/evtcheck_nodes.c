@@ -696,9 +696,7 @@ bool Evtcheck_nodes(
     if (!cp_getvar("auto_bridge", CP_NUM, &show, sizeof show))
         show = AB_SILENT;
 
-    /* Try to create joining device if any analog node name matches
-     * an event node. Failure is fatal.
-     */
+    /* Check for incompatible command '.probe alli' */
 
     if (ckt->evt->info.node_list && cp_getvar("probe_alli_given", CP_BOOL, NULL, 0)) {
         fprintf(stderr,
@@ -707,6 +705,10 @@ bool Evtcheck_nodes(
         fprintf(stderr, "    Simulation will fail!\n\n");
         controlled_exit(EXIT_FAILURE);
     }
+
+    /* Try to create joining device if any analog node name matches
+     * an event node. Failure is fatal.
+     */
 
     for (event_node = ckt->evt->info.node_list;
          event_node;
