@@ -1429,6 +1429,47 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             struct card* newcard;
 
+            struct compat tmpcomp;
+            bool compset = FALSE;
+
+            /* special treatment of special .inc commands */
+            if (ciprefix(".incpslt", buffer) || ciprefix(".inchs", buffer)) {
+                compset = TRUE;
+                /* save the current compatibility status */
+                tmpcomp.isset = newcompat.isset; /* at least one mode is set */
+                tmpcomp.hs = newcompat.hs; /* HSPICE */
+                tmpcomp.s3 = newcompat.s3; /* spice3 */
+                tmpcomp.ll = newcompat.ll; /* all */
+                tmpcomp.ps = newcompat.ps; /* PSPICE */
+                tmpcomp.lt = newcompat.lt; /* LTSPICE */
+                tmpcomp.ki = newcompat.ki; /* KiCad */
+                tmpcomp.a = newcompat.a; /* whole netlist */
+                tmpcomp.spe = newcompat.spe; /* spectre */
+                tmpcomp.eg = newcompat.eg; /* EAGLE */
+                tmpcomp.mc = newcompat.mc; /* to be set for 'make check' */
+                tmpcomp.xs = newcompat.xs; /* XSPICE */
+                /* save the new comptmode */
+                newcompat.isset = TRUE; /* at least one mode is set */
+                if (ciprefix(".incpslt", buffer)) {
+                    newcompat.hs = FALSE;
+                    newcompat.ps = TRUE;
+                    newcompat.lt = TRUE;
+                }
+                else {
+                    newcompat.hs = TRUE;
+                    newcompat.ps = FALSE;
+                    newcompat.lt = FALSE;
+                }
+                newcompat.s3 = FALSE;
+                newcompat.ll = FALSE;
+                newcompat.ki = FALSE;
+                newcompat.a = FALSE;
+                newcompat.spe = FALSE;
+                newcompat.eg = FALSE;
+                newcompat.mc = FALSE;
+                newcompat.xs = FALSE;
+            }
+
             inp_stripcomments_line(buffer, FALSE, TRUE);
 
             s = skip_non_ws(buffer); /* advance past non-space chars */
@@ -1532,6 +1573,23 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             /* Fix the buffer up a bit. */
             (void)memcpy(buffer + 1, "end of: ", 8);
+
+            if (compset) {
+                /* restore the previous compatibility status */
+                newcompat.isset = tmpcomp.isset; /* at least one mode is set */
+                newcompat.hs = tmpcomp.hs; /* HSPICE */
+                newcompat.s3 = tmpcomp.s3; /* spice3 */
+                newcompat.ll = tmpcomp.ll; /* all */
+                newcompat.ps = tmpcomp.ps; /* PSPICE */
+                newcompat.lt = tmpcomp.lt; /* LTSPICE */
+                newcompat.ki = tmpcomp.ki; /* KiCad */
+                newcompat.a = tmpcomp.a; /* whole netlist */
+                newcompat.spe = tmpcomp.spe; /* spectre */
+                newcompat.eg = tmpcomp.eg; /* EAGLE */
+                newcompat.mc = tmpcomp.mc; /* to be set for 'make check' */
+                newcompat.xs = tmpcomp.xs; /* XSPICE */
+            }
+
         } /*  end of .include handling  */
 
         /* loop through 'buffer' until end is reached. Make all letters lower
