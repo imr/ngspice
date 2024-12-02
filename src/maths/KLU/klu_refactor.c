@@ -1,6 +1,12 @@
-/* ========================================================================== */
-/* === KLU_refactor ========================================================= */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// KLU/Source/klu_refactor: factor another matrix (no pivoting)
+//------------------------------------------------------------------------------
+
+// KLU, Copyright (c) 2004-2022, University of Florida.  All Rights Reserved.
+// Authors: Timothy A. Davis and Ekanathan Palamadai.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
 
 /* Factor the matrix, after ordering and analyzing it with KLU_analyze, and
  * factoring it once with KLU_factor.  This routine cannot do any numerical
@@ -15,7 +21,7 @@
 /* === KLU_refactor ========================================================= */
 /* ========================================================================== */
 
-Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
+int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
 (
     /* inputs, not modified */
     Int Ap [ ],         /* size n+1, column pointers */
@@ -31,8 +37,7 @@ Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
     Entry ukk, ujk, s ;
     Entry *Offx, *Lx, *Ux, *X, *Az, *Udiag ;
     double *Rs ;
-    Int *P, *Q, *R, *Pnum, *Offp, *Offi, *Ui, *Li, *Pinv, *Lip, *Uip, *Llen,
-        *Ulen ;
+    Int *Q, *R, *Pnum, *Ui, *Li, *Pinv, *Lip, *Uip, *Llen, *Ulen ;
     Unit **LUbx ;
     Unit *LU ;
     Int k1, k2, nk, k, block, oldcol, pend, oldrow, n, p, newrow, scale,
@@ -43,10 +48,6 @@ Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
     /* ---------------------------------------------------------------------- */
 
     if (Common == NULL)
-    {
-        return (FALSE) ;
-    }
-    if (Common->status == KLU_EMPTY_MATRIX)
     {
         return (FALSE) ;
     }
@@ -69,7 +70,6 @@ Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
     /* ---------------------------------------------------------------------- */
 
     n = Symbolic->n ;
-    P = Symbolic->P ;
     Q = Symbolic->Q ;
     R = Symbolic->R ;
     nblocks = Symbolic->nblocks ;
@@ -80,8 +80,6 @@ Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
     /* ---------------------------------------------------------------------- */
 
     Pnum = Numeric->Pnum ;
-    Offp = Numeric->Offp ;
-    Offi = Numeric->Offi ;
     Offx = (Entry *) Numeric->Offx ;
 
     LUbx = (Unit **) Numeric->LUbx ;
@@ -442,20 +440,20 @@ Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
     }
 
 #ifndef NDEBUG
-    ASSERT (Offp [n] == poff) ;
+    ASSERT (Numeric->Offp [n] == poff) ;
     ASSERT (Symbolic->nzoff == poff) ;
     PRINTF (("\n------------------- Off diagonal entries, new:\n")) ;
-    ASSERT (KLU_valid (n, Offp, Offi, Offx)) ;
+    ASSERT (KLU_valid (n, Numeric->Offp, Numeric->Offi, Offx)) ;
     if (Common->status == KLU_OK)
     {
-        PRINTF (("\n ########### KLU_BTF_REFACTOR done, nblocks %d\n",nblocks));
+        PRINTF (("\n ----------- KLU_BTF_REFACTOR done, nblocks %d\n",nblocks));
         for (block = 0 ; block < nblocks ; block++)
         {
             k1 = R [block] ;
             k2 = R [block+1] ;
             nk = k2 - k1 ;
             PRINTF ((
-                "\n================KLU_refactor output: k1 %d k2 %d nk %d\n",
+                "\n--------------- KLU_refactor output: k1 %d k2 %d nk %d\n",
                 k1, k2, nk)) ;
             if (nk == 1)
             {

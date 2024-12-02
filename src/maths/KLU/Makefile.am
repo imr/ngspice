@@ -75,7 +75,8 @@ libKLU_la_SOURCES =		\
 	klu_defaults.c		\
 	klu_free_symbolic.c	\
 	klu_memory.c		\
-	klusmp.c
+	klusmp.c		\
+	SuiteSparse_config.c
 
 libKLU_la_LIBADD =		\
 	libKLU_real.la		\

@@ -1,12 +1,18 @@
-/* ========================================================================== */
-/* === KLU_defaults ========================================================= */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// KLU/Source/klu_defaults: default parameters for KLU
+//------------------------------------------------------------------------------
+
+// KLU, Copyright (c) 2004-2022, University of Florida.  All Rights Reserved.
+// Authors: Timothy A. Davis and Ekanathan Palamadai.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
 
 /* Sets default parameters for KLU */
 
 #include "klu_internal.h"
 
-Int KLU_defaults
+int KLU_defaults
 (
     KLU_common *Common
 )
@@ -18,8 +24,8 @@ Int KLU_defaults
 
     /* parameters */
     Common->tol = 0.001 ;       /* pivot tolerance for diagonal */
-    Common->memgrow = 10;      /* realloc size ratio increase for LU factors */
-    Common->initmem_amd = 10 ; /* init. mem with AMD:  c*nnz(L) + n */
+    Common->memgrow = 1.2;      /* realloc size ratio increase for LU factors */
+    Common->initmem_amd = 1.2 ; /* init. mem with AMD:  c*nnz(L) + n */
     Common->initmem = 10 ;      /* init. mem otherwise: c*nnz(A) + n */
     Common->btf = TRUE ;        /* use BTF pre-ordering, or not */
     Common->maxwork = 0 ;       /* no limit to work done by btf_order */
@@ -30,12 +36,6 @@ Int KLU_defaults
                                  * 0: none, but check for errors,
                                  * 1: sum, 2: max */
     Common->halt_if_singular = TRUE ;   /* quick halt if matrix is singular */
-
-    /* memory management routines */
-    Common->malloc_memory  = malloc ;
-    Common->calloc_memory  = calloc ;
-    Common->free_memory    = free ;
-    Common->realloc_memory = realloc ;
 
     /* user ordering function and optional argument */
     Common->user_order = NULL ;

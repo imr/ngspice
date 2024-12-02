@@ -1,13 +1,12 @@
-/* ========================================================================= */
-/* === AMD_info ============================================================ */
-/* ========================================================================= */
+//------------------------------------------------------------------------------
+// AMD/Source/amd_info: print output statistics for AMD
+//------------------------------------------------------------------------------
 
-/* ------------------------------------------------------------------------- */
-/* AMD, Copyright (c) Timothy A. Davis,					     */
-/* Patrick R. Amestoy, and Iain S. Duff.  See ../README.txt for License.     */
-/* email: davis at cise.ufl.edu    CISE Department, Univ. of Florida.        */
-/* web: http://www.cise.ufl.edu/research/sparse/amd                          */
-/* ------------------------------------------------------------------------- */
+// AMD, Copyright (c) 1996-2022, Timothy A. Davis, Patrick R. Amestoy, and
+// Iain S. Duff.  All Rights Reserved.
+// SPDX-License-Identifier: BSD-3-clause
+
+//------------------------------------------------------------------------------
 
 /* User-callable.  Prints the output statistics for AMD.  See amd.h
  * for details.  If the Info array is not present, nothing is printed.
@@ -15,16 +14,16 @@
 
 #include "amd_internal.h"
 
-#define PRI(format,x) { if (x >= 0) { PRINTF ((format, x)) ; }}
+#define PRI(format,x) { if (x >= 0) { SUITESPARSE_PRINTF ((format, x)) ; }}
 
-GLOBAL void AMD_info
+void AMD_info
 (
     double Info [ ]
 )
 {
     double n, ndiv, nmultsubs_ldl, nmultsubs_lu, lnz, lnzd ;
 
-    PRINTF (("\nAMD version %d.%d.%d, %s, results:\n",
+    SUITESPARSE_PRINTF (("\nAMD version %d.%d.%d, %s, results:\n",
 	AMD_MAIN_VERSION, AMD_SUB_VERSION, AMD_SUBSUB_VERSION, AMD_DATE)) ;
 
     if (!Info)
@@ -40,26 +39,26 @@ GLOBAL void AMD_info
     lnzd = (n >= 0 && lnz >= 0) ? (n + lnz) : (-1) ;
 
     /* AMD return status */
-    PRINTF (("    status: ")) ;
+    SUITESPARSE_PRINTF (("    status: ")) ;
     if (Info [AMD_STATUS] == AMD_OK)
     {
-	PRINTF (("OK\n")) ;
+	SUITESPARSE_PRINTF (("OK\n")) ;
     }
     else if (Info [AMD_STATUS] == AMD_OUT_OF_MEMORY)
     {
-	PRINTF (("out of memory\n")) ;
+	SUITESPARSE_PRINTF (("out of memory\n")) ;
     }
     else if (Info [AMD_STATUS] == AMD_INVALID)
     {
-	PRINTF (("invalid matrix\n")) ;
+	SUITESPARSE_PRINTF (("invalid matrix\n")) ;
     }
     else if (Info [AMD_STATUS] == AMD_OK_BUT_JUMBLED)
     {
-	PRINTF (("OK, but jumbled\n")) ;
+	SUITESPARSE_PRINTF (("OK, but jumbled\n")) ;
     }
     else
     {
-	PRINTF (("unknown\n")) ;
+	SUITESPARSE_PRINTF (("unknown\n")) ;
     }
 
     /* statistics about the input matrix */
@@ -82,7 +81,7 @@ GLOBAL void AMD_info
 	Info [AMD_NCMPA]) ;
 
     /* statistics about the ordering quality */
-    PRINTF (("\n"
+    SUITESPARSE_PRINTF (("\n"
 	"    The following approximate statistics are for a subsequent\n"
 	"    factorization of A(P,P) + A(P,P)'.  They are slight upper\n"
 	"    bounds if there are no dense rows/columns in A+A', and become\n"
@@ -105,7 +104,7 @@ GLOBAL void AMD_info
 
     if (n >= 0 && ndiv >= 0 && nmultsubs_ldl >= 0 && nmultsubs_lu >= 0)
     {
-	PRINTF (("\n"
+	SUITESPARSE_PRINTF (("\n"
 	"    chol flop count for real A, sqrt counted as 1 flop: %.20g\n"
 	"    LDL' flop count for real A:                         %.20g\n"
 	"    LDL' flop count for complex A:                      %.20g\n"

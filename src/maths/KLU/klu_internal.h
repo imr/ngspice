@@ -1,13 +1,19 @@
-/* ========================================================================== */
-/* === KLU/Include/klu_internal.h =========================================== */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// KLU/Include/klu_internal.h: internal include file for KLU
+//------------------------------------------------------------------------------
+
+// KLU, Copyright (c) 2004-2023, University of Florida.  All Rights Reserved.
+// Authors: Timothy A. Davis and Ekanathan Palamadai.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
 
 /* For internal use in KLU routines only, not for user programs */
 
 #ifndef _KLU_INTERNAL_H
 #define _KLU_INTERNAL_H
 
-#include "ngspice/klu.h"
+#include "ngspice/klu.h" 
 #include "ngspice/btf.h"
 #include "klu_version.h"
 
@@ -31,11 +37,7 @@
 
 /* ========================================================================== */
 
-#include <stdio.h>
 #include <assert.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <math.h>
 
 #undef ASSERT
 #ifndef NDEBUG
@@ -47,7 +49,7 @@
 #define SCALAR_IS_NAN(x) ((x) != (x))
 
 /* true if an integer (stored in double x) would overflow (or if x is NaN) */
-#define INT_OVERFLOW(x) ((!((x) * (1.0+1e-8) <= (double) INT_MAX)) \
+#define INT_OVERFLOW(x) ((!((x) * (1.0+1e-8) <= (double) Int_MAX)) \
                         || SCALAR_IS_NAN (x))
 
 #undef TRUE
@@ -58,7 +60,7 @@
 #undef FLIP
 
 #ifndef NPRINT
-#define PRINTF(s) { printf s ; } ;
+#define PRINTF(s) SUITESPARSE_PRINTF (s)
 #else
 #define PRINTF(s)
 #endif
@@ -106,7 +108,7 @@ size_t KLU_kernel   /* final size of LU on output */
     Int Stack [ ],  /* size n */
     Int Flag [ ],   /* size n */
     Int adj_pos [ ],    /* size n */
-
+    
     /* workspace for pruning only */
     Int Lpend [ ],      /* size n workspace */
 
@@ -217,20 +219,20 @@ void KLU_utsolve
     Entry X [ ]
 ) ;
 
-Int KLU_valid
+Int KLU_valid 
 (
-    Int n,
-    Int Ap [ ],
-    Int Ai [ ],
+    Int n, 
+    Int Ap [ ], 
+    Int Ai [ ], 
     Entry Ax [ ]
 ) ;
 
-Int KLU_valid_LU
+Int KLU_valid_LU 
 (
-    Int n,
-    Int flag_test_start_ptr,
+    Int n, 
+    Int flag_test_start_ptr, 
     Int Xip [ ],
-    Int Xlen [ ],
+    Int Xlen [ ],  
     Unit LU [ ]
 );
 

@@ -1,13 +1,12 @@
-/* ========================================================================= */
-/* === AMD_defaults ======================================================== */
-/* ========================================================================= */
+//------------------------------------------------------------------------------
+// AMD/Source/amd_defaults: set defaults for AMD
+//------------------------------------------------------------------------------
 
-/* ------------------------------------------------------------------------- */
-/* AMD, Copyright (c) Timothy A. Davis,					     */
-/* Patrick R. Amestoy, and Iain S. Duff.  See ../README.txt for License.     */
-/* email: davis at cise.ufl.edu    CISE Department, Univ. of Florida.        */
-/* web: http://www.cise.ufl.edu/research/sparse/amd                          */
-/* ------------------------------------------------------------------------- */
+// AMD, Copyright (c) 1996-2022, Timothy A. Davis, Patrick R. Amestoy, and
+// Iain S. Duff.  All Rights Reserved.
+// SPDX-License-Identifier: BSD-3-clause
+
+//------------------------------------------------------------------------------
 
 /* User-callable.  Sets default control parameters for AMD.  See amd.h
  * for details.
@@ -19,7 +18,7 @@
 /* === AMD defaults ======================================================== */
 /* ========================================================================= */
 
-GLOBAL void AMD_defaults
+void AMD_defaults
 (
     double Control [ ]
 )

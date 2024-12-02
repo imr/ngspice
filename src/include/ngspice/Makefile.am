@@ -136,7 +136,8 @@ noinst_HEADERS = \
 	fftext.h	\
 	wallace.h	\
 	wincolornames.h	\
-	wstdio.h
+	wstdio.h	\
+	SuiteSparse_config.h
 
 if SHARED_MODULE
 pkginclude_HEADERS = \

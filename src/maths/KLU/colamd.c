@@ -1,6 +1,12 @@
-/* ========================================================================== */
-/* === colamd/symamd - a sparse matrix column ordering algorithm ============ */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// COLAMD/Source/colamd.c: column approximate minimum degree ordering
+//------------------------------------------------------------------------------
+
+// COLAMD, Copyright (c) 1998-2022, Timothy A. Davis and Stefan Larimore,
+// All Rights Reserved.
+// SPDX-License-Identifier: BSD-3-clause
+
+//------------------------------------------------------------------------------
 
 /* COLAMD / SYMAMD
 
@@ -30,12 +36,12 @@
 	floating point operations than A.  Symamd constructs a matrix M such
 	that M'M has the same nonzero pattern of A, and then orders the columns
 	of M using colmmd.  The column ordering of M is then returned as the
-	row and column ordering P of A.
+	row and column ordering P of A. 
 
     Authors:
 
 	The authors of the code itself are Stefan I. Larimore and Timothy A.
-	Davis (davis at cise.ufl.edu), University of Florida.  The algorithm was
+	Davis (DrTimothyAldenDavis@gmail.com).  The algorithm was
 	developed in collaboration with John Gilbert, Xerox PARC, and Esmond
 	Ng, Oak Ridge National Laboratory.
 
@@ -46,44 +52,15 @@
 
     Copyright and License:
 
-	Copyright (c) 1998-2007, Timothy A. Davis, All Rights Reserved.
+	Copyright (c) 1998-2022, Timothy A. Davis, All Rights Reserved.
 	COLAMD is also available under alternate licenses, contact T. Davis
 	for details.
 
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
-
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
-
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301
-	USA
-
-	Permission is hereby granted to use or copy this program under the
-	terms of the GNU LGPL, provided that the Copyright, this License,
-	and the Availability of the original version is retained on all copies.
-	User documentation of any code that uses this code or any modified
-	version of this code must cite the Copyright, this License, the
-	Availability note, and "Used by permission." Permission to modify
-	the code and to distribute modified code is granted, provided the
-	Copyright, this License, and the Availability note are retained,
-	and a notice that the code was modified is included.
+        See COLAMD/Doc/License.txt for the license.
 
     Availability:
 
-	The colamd/symamd library is available at
-
-	    http://www.cise.ufl.edu/research/sparse/colamd/
-
-	This is the http://www.cise.ufl.edu/research/sparse/colamd/colamd.c
-	file.  It requires the colamd.h file.  It is required by the colamdmex.c
-	and symamdmex.c files, for the MATLAB interface to colamd and symamd.
+	The colamd/symamd library is available at http://www.suitesparse.com
 	Appears as ACM Algorithm 836.
 
     See the ChangeLog file for changes since Version 1.0.
@@ -105,9 +82,9 @@
 /* === Description of user-callable routines ================================ */
 /* ========================================================================== */
 
-/* COLAMD includes both int and UF_long versions of all its routines.  The
- * description below is for the int version.  For UF_long, all int arguments
- * become UF_long.  UF_long is normally defined as long, except for WIN64.
+/* COLAMD includes both int32_t and int64_t versions of all its routines.
+    The description below is for the int32_t version.  For int64_t, all
+    int32_t arguments become int64_t.
 
     ----------------------------------------------------------------------------
     colamd_recommended:
@@ -116,9 +93,9 @@
 	C syntax:
 
 	    #include "colamd.h"
-	    size_t colamd_recommended (int nnz, int n_row, int n_col) ;
-	    size_t colamd_l_recommended (UF_long nnz, UF_long n_row,
-		UF_long n_col) ;
+	    size_t colamd_recommended (int32_t nnz, int32_t n_row, int32_t n_col) ;
+	    size_t colamd_l_recommended (int64_t nnz,
+                int64_t n_row, int64_t n_col) ;
 
 	Purpose:
 
@@ -127,19 +104,16 @@
 	    is optional.  Not needed for symamd, which dynamically allocates
 	    its own memory.
 
-	    Note that in v2.4 and earlier, these routines returned int or long.
-	    They now return a value of type size_t.
-
 	Arguments (all input arguments):
 
-	    int nnz ;		Number of nonzeros in the matrix A.  This must
+	    int32_t nnz ;	Number of nonzeros in the matrix A.  This must
 				be the same value as p [n_col] in the call to
 				colamd - otherwise you will get a wrong value
 				of the recommended memory to use.
 
-	    int n_row ;		Number of rows in the matrix A.
+	    int32_t n_row ;	Number of rows in the matrix A.
 
-	    int n_col ;		Number of columns in the matrix A.
+	    int32_t n_col ;	Number of columns in the matrix A.
 
     ----------------------------------------------------------------------------
     colamd_set_defaults:
@@ -168,7 +142,7 @@
 		entries are removed prior to ordering.  Columns with more than
 		max (16, knobs [COLAMD_DENSE_COL] * sqrt (MIN (n_row,n_col)))
 		entries are removed prior to
-		ordering, and placed last in the output column ordering.
+		ordering, and placed last in the output column ordering. 
 
 		Symamd: uses only knobs [COLAMD_DENSE_ROW], which is knobs [0].
 		Rows and columns with more than
@@ -199,11 +173,12 @@
 	C syntax:
 
 	    #include "colamd.h"
-	    int colamd (int n_row, int n_col, int Alen, int *A, int *p,
-	    	double knobs [COLAMD_KNOBS], int stats [COLAMD_STATS]) ;
-	    UF_long colamd_l (UF_long n_row, UF_long n_col, UF_long Alen,
-		UF_long *A, UF_long *p, double knobs [COLAMD_KNOBS],
-		UF_long stats [COLAMD_STATS]) ;
+	    int colamd (int32_t n_row, int32_t n_col, int32_t Alen, int32_t *A, int32_t *p,
+	    	double knobs [COLAMD_KNOBS], int32_t stats [COLAMD_STATS]) ;
+	    int colamd_l (int64_t n_row,
+                int64_t n_col, int64_t Alen,
+                int64_t *A, int64_t *p, double knobs
+                [COLAMD_KNOBS], int64_t stats [COLAMD_STATS]) ;
 
 	Purpose:
 
@@ -211,26 +186,26 @@
 	    (AQ)'AQ=LL' have less fill-in and require fewer floating point
 	    operations than factorizing the unpermuted matrix A or A'A,
 	    respectively.
-
+	    
 	Returns:
 
 	    TRUE (1) if successful, FALSE (0) otherwise.
 
 	Arguments:
 
-	    int n_row ;		Input argument.
+	    int32_t n_row ;		Input argument.
 
 		Number of rows in the matrix A.
 		Restriction:  n_row >= 0.
 		Colamd returns FALSE if n_row is negative.
 
-	    int n_col ;		Input argument.
+	    int32_t n_col ;		Input argument.
 
 		Number of columns in the matrix A.
 		Restriction:  n_col >= 0.
 		Colamd returns FALSE if n_col is negative.
 
-	    int Alen ;		Input argument.
+	    int32_t Alen ;		Input argument.
 
 		Restriction (see note):
 		Alen >= 2*nnz + 6*(n_col+1) + 4*(n_row+1) + n_col
@@ -246,7 +221,7 @@
 		for integer overflow, and thus is not recommended.  Use
 		the colamd_recommended routine instead.
 
-	    int A [Alen] ;	Input argument, undefined on output.
+	    int32_t A [Alen] ;	Input argument, undefined on output.
 
 		A is an integer array of size Alen.  Alen must be at least as
 		large as the bare minimum value given above, but this is very
@@ -270,7 +245,7 @@
 		The contents of A are modified during ordering, and are
 		undefined on output.
 
-	    int p [n_col+1] ;	Both input and output argument.
+	    int32_t p [n_col+1] ;	Both input and output argument.
 
 		p is an integer array of size n_col+1.  On input, it holds the
 		"pointers" for the column form of the matrix A.  Column c of
@@ -294,7 +269,7 @@
 
 		See colamd_set_defaults for a description.
 
-	    int stats [COLAMD_STATS] ;		Output argument.
+	    int32_t stats [COLAMD_STATS] ;		Output argument.
 
 		Statistics on the ordering, and error status.
 		See colamd.h for related definitions.
@@ -378,9 +353,8 @@
 		Future versions may return more statistics in the stats array.
 
 	Example:
-
-	    See http://www.cise.ufl.edu/research/sparse/colamd/example.c
-	    for a complete example.
+	
+	    See colamd_example.c for a complete example.
 
 	    To order the columns of a 5-by-4 matrix with 11 nonzero entries in
 	    the following nonzero pattern
@@ -395,9 +369,9 @@
 
 		#include "colamd.h"
 		#define ALEN 100
-		int A [ALEN] = {0, 1, 4, 2, 4, 0, 1, 2, 3, 1, 3} ;
-		int p [ ] = {0, 3, 5, 9, 11} ;
-		int stats [COLAMD_STATS] ;
+		int32_t A [ALEN] = {0, 1, 4, 2, 4, 0, 1, 2, 3, 1, 3} ;
+		int32_t p [ ] = {0, 3, 5, 9, 11} ;
+		int32_t stats [COLAMD_STATS] ;
 		colamd (5, 4, ALEN, A, p, (double *) NULL, stats) ;
 
 	    The permutation is returned in the array p, and A is destroyed.
@@ -409,12 +383,13 @@
 	C syntax:
 
 	    #include "colamd.h"
-	    int symamd (int n, int *A, int *p, int *perm,
-	    	double knobs [COLAMD_KNOBS], int stats [COLAMD_STATS],
+	    int symamd (int32_t n, int32_t *A, int32_t *p, int32_t *perm,
+	    	double knobs [COLAMD_KNOBS], int32_t stats [COLAMD_STATS],
 		void (*allocate) (size_t, size_t), void (*release) (void *)) ;
-	    UF_long symamd_l (UF_long n, UF_long *A, UF_long *p, UF_long *perm,
-	    	double knobs [COLAMD_KNOBS], UF_long stats [COLAMD_STATS],
-		void (*allocate) (size_t, size_t), void (*release) (void *)) ;
+	    int symamd_l (int64_t n, int64_t *A,
+                int64_t *p, int64_t *perm, double knobs
+                [COLAMD_KNOBS], int64_t stats [COLAMD_STATS], void
+                (*allocate) (size_t, size_t), void (*release) (void *)) ;
 
 	Purpose:
 
@@ -433,21 +408,21 @@
 
 	Arguments:
 
-	    int n ;		Input argument.
+	    int32_t n ;		Input argument.
 
 	    	Number of rows and columns in the symmetrix matrix A.
 		Restriction:  n >= 0.
 		Symamd returns FALSE if n is negative.
 
-	    int A [nnz] ;	Input argument.
+	    int32_t A [nnz] ;	Input argument.
 
 	    	A is an integer array of size nnz, where nnz = p [n].
-
+		
 		The row indices of the entries in column c of the matrix are
 		held in A [(p [c]) ... (p [c+1]-1)].  The row indices in a
 		given column c need not be in ascending order, and duplicate
 		row indices may be present.  However, symamd will run faster
-		if the columns are in sorted order with no duplicate entries.
+		if the columns are in sorted order with no duplicate entries. 
 
 		The matrix is 0-based.  That is, rows are in the range 0 to
 		n-1, and columns are in the range 0 to n-1.  Symamd
@@ -455,7 +430,7 @@
 
 		The contents of A are not modified.
 
-	    int p [n+1] ;   	Input argument.
+	    int32_t p [n+1] ;   	Input argument.
 
 		p is an integer array of size n+1.  On input, it holds the
 		"pointers" for the column form of the matrix A.  Column c of
@@ -467,7 +442,7 @@
 
 		The contents of p are not modified.
 
-	    int perm [n+1] ;   	Output argument.
+	    int32_t perm [n+1] ;   	Output argument.
 
 		On output, if symamd returns TRUE, the array perm holds the
 		permutation P, where perm [0] is the first index in the new
@@ -482,14 +457,14 @@
 
 		See colamd_set_defaults for a description.
 
-	    int stats [COLAMD_STATS] ;		Output argument.
+	    int32_t stats [COLAMD_STATS] ;		Output argument.
 
 		Statistics on the ordering, and error status.
 		See colamd.h for related definitions.
 		Symamd returns FALSE if stats is not present.
 
 		stats [0]:  number of dense or empty row and columns ignored
-				(and ordered last in the output permutation
+				(and ordered last in the output permutation 
 				perm).  Note that a row/column can become
 				"empty" if it contains only "dense" and/or
 				"empty" columns/rows.
@@ -580,8 +555,8 @@
 	C syntax:
 
 	    #include "colamd.h"
-	    colamd_report (int stats [COLAMD_STATS]) ;
-	    colamd_l_report (UF_long stats [COLAMD_STATS]) ;
+	    colamd_report (int32_t stats [COLAMD_STATS]) ;
+	    colamd_l_report (int64_t stats [COLAMD_STATS]) ;
 
 	Purpose:
 
@@ -591,7 +566,7 @@
 
 	Arguments:
 
-	    int stats [COLAMD_STATS] ;	Input only.  Statistics from colamd.
+	    int32_t stats [COLAMD_STATS] ;	Input only.  Statistics from colamd.
 
 
     ----------------------------------------------------------------------------
@@ -601,8 +576,8 @@
 	C syntax:
 
 	    #include "colamd.h"
-	    symamd_report (int stats [COLAMD_STATS]) ;
-	    symamd_l_report (UF_long stats [COLAMD_STATS]) ;
+	    symamd_report (int32_t stats [COLAMD_STATS]) ;
+	    symamd_l_report (int64_t stats [COLAMD_STATS]) ;
 
 	Purpose:
 
@@ -612,7 +587,7 @@
 
 	Arguments:
 
-	    int stats [COLAMD_STATS] ;	Input only.  Statistics from symamd.
+	    int32_t stats [COLAMD_STATS] ;	Input only.  Statistics from symamd.
 
 
 */
@@ -664,34 +639,21 @@
 /* ========================================================================== */
 
 #include "ngspice/colamd.h"
-#include <limits.h>
-#include <math.h>
-
-#ifdef MATLAB_MEX_FILE
-#include "mex.h"
-#include "matrix.h"
-#endif /* MATLAB_MEX_FILE */
-
-#if !defined (NPRINT) || !defined (NDEBUG)
-#include <stdio.h>
-#endif
 
 #ifndef NULL
 #define NULL ((void *) 0)
 #endif
 
 /* ========================================================================== */
-/* === int or UF_long ======================================================= */
+/* === int32_t or int64_t ============================================== */
 /* ========================================================================== */
-
-/* define UF_long */
-#include "ngspice/UFconfig.h"
 
 #ifdef DLONG
 
-#define Int UF_long
-#define ID  UF_long_id
-#define Int_MAX UF_long_max
+#define Int int64_t
+#define UInt uint64_t
+#define ID  "%" PRId64
+#define Int_MAX INT64_MAX
 
 #define COLAMD_recommended colamd_l_recommended
 #define COLAMD_set_defaults colamd_l_set_defaults
@@ -702,9 +664,10 @@
 
 #else
 
-#define Int int
+#define Int int32_t
+#define UInt uint32_t
 #define ID "%d"
-#define Int_MAX INT_MAX
+#define Int_MAX INT32_MAX
 
 #define COLAMD_recommended colamd_recommended
 #define COLAMD_set_defaults colamd_set_defaults
@@ -776,9 +739,8 @@ typedef struct Colamd_Row_struct
 /* === Definitions ========================================================== */
 /* ========================================================================== */
 
-/* Routines are either PUBLIC (user-callable) or PRIVATE (not user-callable) */
-#define PUBLIC
-#define PRIVATE static
+/* Routines are either user-callable or PRIVATE (not user-callable) */
+#define PRIVATE static 
 
 #define DENSE_DEGREE(alpha,n) \
     ((Int) MAX (16.0, (alpha) * sqrt ((double) (n))))
@@ -789,7 +751,7 @@ typedef struct Colamd_Row_struct
 #define ONES_COMPLEMENT(r) (-(r)-1)
 
 /* -------------------------------------------------------------------------- */
-/* Change for version 2.1:  define TRUE and FALSE only if not yet defined */
+/* Change for version 2.1:  define TRUE and FALSE only if not yet defined */  
 /* -------------------------------------------------------------------------- */
 
 #ifndef TRUE
@@ -834,9 +796,6 @@ typedef struct Colamd_Row_struct
 /* In C, matrices are 0-based and indices are reported as such in *_report */
 #define INDEX(i) (i)
 #endif
-
-/* All output goes through the PRINTF macro.  */
-#define PRINTF(params) { if (colamd_printf != NULL) (void) colamd_printf params ; }
 
 /* ========================================================================== */
 /* === Prototypes of PRIVATE routines ======================================= */
@@ -941,11 +900,11 @@ PRIVATE void print_report
 
 PRIVATE Int colamd_debug = 0 ;	/* debug print level */
 
-#define DEBUG0(params) { PRINTF (params) ; }
-#define DEBUG1(params) { if (colamd_debug >= 1) PRINTF (params) ; }
-#define DEBUG2(params) { if (colamd_debug >= 2) PRINTF (params) ; }
-#define DEBUG3(params) { if (colamd_debug >= 3) PRINTF (params) ; }
-#define DEBUG4(params) { if (colamd_debug >= 4) PRINTF (params) ; }
+#define DEBUG0(params) { SUITESPARSE_PRINTF (params) ; }
+#define DEBUG1(params) { if (colamd_debug >= 1) SUITESPARSE_PRINTF (params) ; }
+#define DEBUG2(params) { if (colamd_debug >= 2) SUITESPARSE_PRINTF (params) ; }
+#define DEBUG3(params) { if (colamd_debug >= 3) SUITESPARSE_PRINTF (params) ; }
+#define DEBUG4(params) { if (colamd_debug >= 4) SUITESPARSE_PRINTF (params) ; }
 
 #ifdef MATLAB_MEX_FILE
 #define ASSERT(expression) (mxAssert ((expression), ""))
@@ -1062,7 +1021,7 @@ static size_t t_mult (size_t a, size_t k, int *ok)
     ((t_mult (t_add (n_row, 1, ok), sizeof (Colamd_Row), ok) / sizeof (Int)))
 
 
-PUBLIC size_t COLAMD_recommended	/* returns recommended value of Alen. */
+size_t COLAMD_recommended	/* returns recommended value of Alen. */
 (
     /* === Parameters ======================================================= */
 
@@ -1084,10 +1043,8 @@ PUBLIC size_t COLAMD_recommended	/* returns recommended value of Alen. */
     s = t_add (s, r, &ok) ;
     s = t_add (s, n_col, &ok) ;	    /* elbow room */
     s = t_add (s, nnz/5, &ok) ;	    /* elbow room */
-    ok = ok && (s < Int_MAX) ;
     return (ok ? s : 0) ;
 }
-
 
 /* ========================================================================== */
 /* === colamd_set_defaults ================================================== */
@@ -1100,7 +1057,7 @@ PUBLIC size_t COLAMD_recommended	/* returns recommended value of Alen. */
 	Colamd: rows with more than max (16, knobs [0] * sqrt (n_col))
 	entries are removed prior to ordering.  Columns with more than
 	max (16, knobs [1] * sqrt (MIN (n_row,n_col))) entries are removed
-	prior to ordering, and placed last in the output column ordering.
+	prior to ordering, and placed last in the output column ordering. 
 
 	Symamd: Rows and columns with more than max (16, knobs [0] * sqrt (n))
 	entries are removed prior to ordering, and placed last in the
@@ -1116,7 +1073,7 @@ PUBLIC size_t COLAMD_recommended	/* returns recommended value of Alen. */
 
 */
 
-PUBLIC void COLAMD_set_defaults
+void COLAMD_set_defaults
 (
     /* === Parameters ======================================================= */
 
@@ -1145,7 +1102,7 @@ PUBLIC void COLAMD_set_defaults
 /* === symamd =============================================================== */
 /* ========================================================================== */
 
-PUBLIC Int SYMAMD_MAIN			/* return TRUE if OK, FALSE otherwise */
+int SYMAMD_MAIN			/* return TRUE if OK, FALSE otherwise */
 (
     /* === Parameters ======================================================= */
 
@@ -1173,7 +1130,7 @@ PUBLIC Int SYMAMD_MAIN			/* return TRUE if OK, FALSE otherwise */
     Int nnz ;			/* number of entries in A */
     Int i ;			/* row index of A */
     Int j ;			/* column index of A */
-    Int k ;			/* row index of M */
+    Int k ;			/* row index of M */ 
     Int mnz ;			/* number of nonzeros in M */
     Int pp ;			/* index into a column of A */
     Int last_row ;		/* last row seen in the current column */
@@ -1465,7 +1422,7 @@ PUBLIC Int SYMAMD_MAIN			/* return TRUE if OK, FALSE otherwise */
     (AQ)'(AQ) = LL' remains sparse.
 */
 
-PUBLIC Int COLAMD_MAIN		/* returns TRUE if successful, FALSE otherwise*/
+int COLAMD_MAIN		/* returns TRUE if successful, FALSE otherwise*/
 (
     /* === Parameters ======================================================= */
 
@@ -1583,7 +1540,7 @@ PUBLIC Int COLAMD_MAIN		/* returns TRUE if successful, FALSE otherwise*/
     need = t_add (need, Col_size, &ok) ;
     need = t_add (need, Row_size, &ok) ;
 
-    if (!ok || need > (size_t) Alen || need > Int_MAX)
+    if (!ok || need > (size_t) Alen)
     {
 	/* not enough space in array A to perform the ordering */
 	stats [COLAMD_STATUS] = COLAMD_ERROR_A_too_small ;
@@ -1625,7 +1582,7 @@ PUBLIC Int COLAMD_MAIN		/* returns TRUE if successful, FALSE otherwise*/
     stats [COLAMD_DENSE_ROW] = n_row - n_row2 ;
     stats [COLAMD_DENSE_COL] = n_col - n_col2 ;
     stats [COLAMD_DEFRAG_COUNT] = ngarbage ;
-    DEBUG0 (("colamd: done.\n")) ;
+    DEBUG0 (("colamd: done.\n")) ; 
     return (TRUE) ;
 }
 
@@ -1634,7 +1591,7 @@ PUBLIC Int COLAMD_MAIN		/* returns TRUE if successful, FALSE otherwise*/
 /* === colamd_report ======================================================== */
 /* ========================================================================== */
 
-PUBLIC void COLAMD_report
+void COLAMD_report
 (
     Int stats [COLAMD_STATS]
 )
@@ -1647,7 +1604,7 @@ PUBLIC void COLAMD_report
 /* === symamd_report ======================================================== */
 /* ========================================================================== */
 
-PUBLIC void SYMAMD_report
+void SYMAMD_report
 (
     Int stats [COLAMD_STATS]
 )
@@ -1687,7 +1644,7 @@ PRIVATE Int init_rows_cols	/* returns TRUE if OK, or FALSE otherwise */
     Colamd_Col Col [],		/* of size n_col+1 */
     Int A [],			/* row indices of A, of size Alen */
     Int p [],			/* pointers to columns in A, of size n_col+1 */
-    Int stats [COLAMD_STATS]	/* colamd statistics */
+    Int stats [COLAMD_STATS]	/* colamd statistics */ 
 )
 {
     /* === Local variables ================================================== */
@@ -2226,7 +2183,7 @@ PRIVATE Int find_ordering	/* return the number of garbage collections */
     Int col ;			/* a column index */
     Int max_score ;		/* maximum possible score */
     Int cur_score ;		/* score of current column */
-    unsigned Int hash ;		/* hash value for supernode detection */
+    UInt hash ;		/* hash value for supernode detection */
     Int head_column ;		/* head of hash bucket */
     Int first_col ;		/* first column in hash bucket */
     Int tag_mark ;		/* marker value for mark array */
@@ -3188,12 +3145,13 @@ PRIVATE void print_report
 
     Int i1, i2, i3 ;
 
-    PRINTF (("\n%s version %d.%d, %s: ", method,
-	    COLAMD_MAIN_VERSION, COLAMD_SUB_VERSION, COLAMD_DATE)) ;
+    SUITESPARSE_PRINTF (("\n%s version %d.%d.%d, %s: ", method,
+            COLAMD_MAIN_VERSION, COLAMD_SUB_VERSION, COLAMD_SUBSUB_VERSION, 
+            COLAMD_DATE)) ;
 
     if (!stats)
     {
-    	PRINTF (("No statistics available.\n")) ;
+        SUITESPARSE_PRINTF (("No statistics available.\n")) ;
 	return ;
     }
 
@@ -3203,11 +3161,11 @@ PRIVATE void print_report
 
     if (stats [COLAMD_STATUS] >= 0)
     {
-    	PRINTF (("OK.  ")) ;
+        SUITESPARSE_PRINTF (("OK.  ")) ;
     }
     else
     {
-    	PRINTF (("ERROR.  ")) ;
+        SUITESPARSE_PRINTF (("ERROR.  ")) ;
     }
 
     switch (stats [COLAMD_STATUS])
@@ -3215,87 +3173,99 @@ PRIVATE void print_report
 
 	case COLAMD_OK_BUT_JUMBLED:
 
-	    PRINTF(("Matrix has unsorted or duplicate row indices.\n")) ;
+            SUITESPARSE_PRINTF((
+                    "Matrix has unsorted or duplicate row indices.\n")) ;
 
-	    PRINTF(("%s: number of duplicate or out-of-order row indices: %d\n",
-	    method, i3)) ;
+            SUITESPARSE_PRINTF((
+                    "%s: number of duplicate or out-of-order row indices: %d\n",
+                    method, i3)) ;
 
-	    PRINTF(("%s: last seen duplicate or out-of-order row index:   %d\n",
-	    method, INDEX (i2))) ;
+            SUITESPARSE_PRINTF((
+                    "%s: last seen duplicate or out-of-order row index:   %d\n",
+                    method, INDEX (i2))) ;
 
-	    PRINTF(("%s: last seen in column:                             %d",
-	    method, INDEX (i1))) ;
+            SUITESPARSE_PRINTF((
+                    "%s: last seen in column:                             %d",
+                    method, INDEX (i1))) ;
 
 	    /* no break - fall through to next case instead */
 
 	case COLAMD_OK:
 
-	    PRINTF(("\n")) ;
+            SUITESPARSE_PRINTF(("\n")) ;
 
- 	    PRINTF(("%s: number of dense or empty rows ignored:           %d\n",
-	    method, stats [COLAMD_DENSE_ROW])) ;
+            SUITESPARSE_PRINTF((
+                    "%s: number of dense or empty rows ignored:           %d\n",
+                    method, stats [COLAMD_DENSE_ROW])) ;
 
-	    PRINTF(("%s: number of dense or empty columns ignored:        %d\n",
-	    method, stats [COLAMD_DENSE_COL])) ;
+            SUITESPARSE_PRINTF((
+                    "%s: number of dense or empty columns ignored:        %d\n",
+                    method, stats [COLAMD_DENSE_COL])) ;
 
-	    PRINTF(("%s: number of garbage collections performed:         %d\n",
-	    method, stats [COLAMD_DEFRAG_COUNT])) ;
+            SUITESPARSE_PRINTF((
+                    "%s: number of garbage collections performed:         %d\n",
+                    method, stats [COLAMD_DEFRAG_COUNT])) ;
 	    break ;
 
 	case COLAMD_ERROR_A_not_present:
 
-	    PRINTF(("Array A (row indices of matrix) not present.\n")) ;
+	    SUITESPARSE_PRINTF((
+                    "Array A (row indices of matrix) not present.\n")) ;
 	    break ;
 
 	case COLAMD_ERROR_p_not_present:
 
-	    PRINTF(("Array p (column pointers for matrix) not present.\n")) ;
+            SUITESPARSE_PRINTF((
+                    "Array p (column pointers for matrix) not present.\n")) ;
 	    break ;
 
 	case COLAMD_ERROR_nrow_negative:
 
-	    PRINTF(("Invalid number of rows (%d).\n", i1)) ;
+            SUITESPARSE_PRINTF(("Invalid number of rows (%d).\n", i1)) ;
 	    break ;
 
 	case COLAMD_ERROR_ncol_negative:
 
-	    PRINTF(("Invalid number of columns (%d).\n", i1)) ;
+            SUITESPARSE_PRINTF(("Invalid number of columns (%d).\n", i1)) ;
 	    break ;
 
 	case COLAMD_ERROR_nnz_negative:
 
-	    PRINTF(("Invalid number of nonzero entries (%d).\n", i1)) ;
+            SUITESPARSE_PRINTF((
+                    "Invalid number of nonzero entries (%d).\n", i1)) ;
 	    break ;
 
 	case COLAMD_ERROR_p0_nonzero:
 
-	    PRINTF(("Invalid column pointer, p [0] = %d, must be zero.\n", i1));
+            SUITESPARSE_PRINTF((
+                    "Invalid column pointer, p [0] = %d, must be zero.\n", i1));
 	    break ;
 
 	case COLAMD_ERROR_A_too_small:
 
-	    PRINTF(("Array A too small.\n")) ;
-	    PRINTF(("        Need Alen >= %d, but given only Alen = %d.\n",
-	    i1, i2)) ;
+            SUITESPARSE_PRINTF(("Array A too small.\n")) ;
+            SUITESPARSE_PRINTF((
+                    "        Need Alen >= %d, but given only Alen = %d.\n",
+                    i1, i2)) ;
 	    break ;
 
 	case COLAMD_ERROR_col_length_negative:
 
-	    PRINTF
-	    (("Column %d has a negative number of nonzero entries (%d).\n",
-	    INDEX (i1), i2)) ;
+            SUITESPARSE_PRINTF
+            (("Column %d has a negative number of nonzero entries (%d).\n",
+            INDEX (i1), i2)) ;
 	    break ;
 
 	case COLAMD_ERROR_row_index_out_of_bounds:
 
-	    PRINTF
-	    (("Row index (row %d) out of bounds (%d to %d) in column %d.\n",
-	    INDEX (i2), INDEX (0), INDEX (i3-1), INDEX (i1))) ;
+            SUITESPARSE_PRINTF
+            (("Row index (row %d) out of bounds (%d to %d) in column %d.\n",
+            INDEX (i2), INDEX (0), INDEX (i3-1), INDEX (i1))) ;
 	    break ;
 
 	case COLAMD_ERROR_out_of_memory:
 
-	    PRINTF(("Out of memory.\n")) ;
+            SUITESPARSE_PRINTF(("Out of memory.\n")) ;
 	    break ;
 
 	/* v2.4: internal-error case deleted */

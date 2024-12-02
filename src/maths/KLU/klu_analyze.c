@@ -1,6 +1,12 @@
-/* ========================================================================== */
-/* === klu_analyze ========================================================== */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// KLU/Source/klu_analyze: symbolic analysis
+//------------------------------------------------------------------------------
+
+// KLU, Copyright (c) 2004-2022, University of Florida.  All Rights Reserved.
+// Authors: Timothy A. Davis and Ekanathan Palamadai.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
 
 /* Order the matrix using BTF (or not), and then AMD, COLAMD, the natural
  * ordering, or the user-provided-function on the blocks.  Does not support
@@ -305,12 +311,6 @@ static KLU_symbolic *order_and_analyze  /* returns NULL if error, or a valid
         KLU_free_symbolic (&Symbolic, Common) ;
         return (NULL) ;
     }
-
-    /* AMD memory management routines */
-    amd_malloc  = Common->malloc_memory ;
-    amd_free    = Common->free_memory ;
-    amd_calloc  = Common->calloc_memory ;
-    amd_realloc = Common->realloc_memory ;
 
     /* ---------------------------------------------------------------------- */
     /* allocate workspace for BTF permutation */

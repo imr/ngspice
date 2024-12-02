@@ -1,6 +1,12 @@
-/* ========================================================================== */
-/* === KLU_kernel =========================================================== */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// KLU/Source/klu_kernel: primary sparse LU factorization kernel
+//------------------------------------------------------------------------------
+
+// KLU, Copyright (c) 2004-2022, University of Florida.  All Rights Reserved.
+// Authors: Timothy A. Davis and Ekanathan Palamadai.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
 
 /* Sparse left-looking LU factorization, with partial pivoting.  Based on
  * Gilbert & Peierl's method, with a non-recursive DFS and with Eisenstat &
@@ -119,15 +125,7 @@ static Int dfs
 
 /* Finds the pattern of x, for the solution of Lx=b */
 
-/* ========================================================================== */
-/* === construct_column ===================================================== */
-/* ========================================================================== */
-
-/* Construct the kth column of A, and the off-diagonal part, if requested.
- * Scatter the numerical values into the workspace X, and construct the
- * corresponding column of the off-diagonal matrix. */
-
-static Int lsolve_symbolic_and_construct_column
+static Int lsolve_symbolic
 (
     /* input, not modified on output: */
     Int n,              /* L is n-by-n, where n >= 0 */
@@ -158,29 +156,11 @@ static Int lsolve_symbolic_and_construct_column
     /* ---- the following are only used in the BTF case --- */
 
     Int k1,             /* the block of A is from k1 to k2-1 */
-    Int PSinv [ ],       /* inverse of P from symbolic factorization */
-
-    /* inputs, not modified on output */
-    Entry Ax [ ],
-
-    /* zero on input, modified on output */
-    Entry X [ ],
-
-    /* ---- the following are only used in the BTF case --- */
-
-    /* inputs, not modified on output */
-    double Rs [ ],  /* scale factors for A */
-    Int scale,      /* 0: no scaling, nonzero: scale the rows with Rs */
-
-    /* inputs, modified on output */
-    Int Offp [ ],   /* off-diagonal matrix (modified by this routine) */
-    Int Offi [ ],
-    Entry Offx [ ]
+    Int PSinv [ ]       /* inverse of P from symbolic factorization */
 )
 {
-    Entry aik ;
     Int *Lik ;
-    Int i, p, pend, oldcol, kglobal, poff, oldrow, top, l_length ;
+    Int i, p, pend, oldcol, kglobal, top, l_length ;
 
     top = n ;
     l_length = 0 ;
@@ -191,24 +171,94 @@ static Int lsolve_symbolic_and_construct_column
     /* ---------------------------------------------------------------------- */
 
     kglobal = k + k1 ;  /* column k of the block is col kglobal of A */
-    poff = Offp [kglobal] ;     /* start of off-diagonal column */
     oldcol = Q [kglobal] ;      /* Q must be present for BTF case */
+    pend = Ap [oldcol+1] ;
+    for (p = Ap [oldcol] ; p < pend ; p++)
+    {
+        i = PSinv [Ai [p]] - k1 ;
+        if (i < 0) continue ;   /* skip entry outside the block */
+
+        /* (i,k) is an entry in the block.  start a DFS at node i */
+        PRINTF (("\n ===== DFS at node %d in b, inew: %d\n", i, Pinv [i])) ;
+        if (Flag [i] != k)
+        {
+            if (Pinv [i] >= 0)
+            {
+                top = dfs (i, k, Pinv, Llen, Lip, Stack, Flag,
+                           Lpend, top, LU, Lik, &l_length, Ap_pos) ;
+            }
+            else
+            {
+                /* i is not pivotal, and not flagged. Flag and put in L */
+                Flag [i] = k ;
+                Lik [l_length] = i ;
+                l_length++;
+            }
+        }
+    }
+
+    /* If Llen [k] is zero, the matrix is structurally singular */
+    Llen [k] = l_length ;
+    return (top) ;
+}
+
+
+/* ========================================================================== */
+/* === construct_column ===================================================== */
+/* ========================================================================== */
+
+/* Construct the kth column of A, and the off-diagonal part, if requested.
+ * Scatter the numerical values into the workspace X, and construct the
+ * corresponding column of the off-diagonal matrix. */
+
+static void construct_column
+(
+    /* inputs, not modified on output */
+    Int k,          /* the column of A (or the column of the block) to get */
+    Int Ap [ ],
+    Int Ai [ ],
+    Entry Ax [ ],
+    Int Q [ ],      /* column pre-ordering */
+
+    /* zero on input, modified on output */
+    Entry X [ ],
+
+    /* ---- the following are only used in the BTF case --- */
+
+    /* inputs, not modified on output */
+    Int k1,         /* the block of A is from k1 to k2-1 */
+    Int PSinv [ ],  /* inverse of P from symbolic factorization */
+    double Rs [ ],  /* scale factors for A */
+    Int scale,      /* 0: no scaling, nonzero: scale the rows with Rs */
+
+    /* inputs, modified on output */
+    Int Offp [ ],   /* off-diagonal matrix (modified by this routine) */
+    Int Offi [ ],
+    Entry Offx [ ]
+)
+{
+    Entry aik ;
+    Int i, p, pend, oldcol, kglobal, poff, oldrow ;
+
+    /* ---------------------------------------------------------------------- */
+    /* Scale and scatter the column into X. */
+    /* ---------------------------------------------------------------------- */
+
+    kglobal = k + k1 ;          /* column k of the block is col kglobal of A */
+    poff = Offp [kglobal] ;     /* start of off-diagonal column */
+    oldcol = Q [kglobal] ;
     pend = Ap [oldcol+1] ;
 
     if (scale <= 0)
     {
+        /* no scaling */
         for (p = Ap [oldcol] ; p < pend ; p++)
         {
             oldrow = Ai [p] ;
             i = PSinv [oldrow] - k1 ;
+            aik = Ax [p] ;
             if (i < 0)
             {
-                /* ---------------------------------------------------------------------- */
-                /* Scatter the column into X. */
-                /* ---------------------------------------------------------------------- */
-
-                aik = Ax [p] ;
-
                 /* this is an entry in the off-diagonal part */
                 Offi [poff] = oldrow ;
                 Offx [poff] = aik ;
@@ -216,31 +266,6 @@ static Int lsolve_symbolic_and_construct_column
             }
             else
             {
-                /* (i,k) is an entry in the block.  start a DFS at node i */
-                PRINTF (("\n ===== DFS at node %d in b, inew: %d\n", i, Pinv [i])) ;
-                if (Flag [i] != k)
-                {
-                    if (Pinv [i] >= 0)
-                    {
-                        top = dfs (i, k, Pinv, Llen, Lip, Stack, Flag,
-                                   Lpend, top, LU, Lik, &l_length, Ap_pos) ;
-                    }
-                    else
-                    {
-                        /* i is not pivotal, and not flagged. Flag and put in L */
-                        Flag [i] = k ;
-                        Lik [l_length] = i ;
-                        l_length++;
-                    }
-                }
-
-                /* ---------------------------------------------------------------------- */
-                /* Scatter the column into X. */
-                /* ---------------------------------------------------------------------- */
-
-                /* no scaling */
-                aik = Ax [p] ;
-
                 /* (i,k) is an entry in the block.  scatter into X */
                 X [i] = aik ;
             }
@@ -248,20 +273,15 @@ static Int lsolve_symbolic_and_construct_column
     }
     else
     {
+        /* row scaling */
         for (p = Ap [oldcol] ; p < pend ; p++)
         {
             oldrow = Ai [p] ;
             i = PSinv [oldrow] - k1 ;
+            aik = Ax [p] ;
+            SCALE_DIV (aik, Rs [oldrow]) ;
             if (i < 0)
             {
-                /* ---------------------------------------------------------------------- */
-                /* Scale and scatter the column into X. */
-                /* ---------------------------------------------------------------------- */
-
-                /* row scaling */
-                aik = Ax [p] ;
-                SCALE_DIV (aik, Rs [oldrow]) ;
-
                 /* this is an entry in the off-diagonal part */
                 Offi [poff] = oldrow ;
                 Offx [poff] = aik ;
@@ -269,32 +289,6 @@ static Int lsolve_symbolic_and_construct_column
             }
             else
             {
-                /* (i,k) is an entry in the block.  start a DFS at node i */
-                PRINTF (("\n ===== DFS at node %d in b, inew: %d\n", i, Pinv [i])) ;
-                if (Flag [i] != k)
-                {
-                    if (Pinv [i] >= 0)
-                    {
-                        top = dfs (i, k, Pinv, Llen, Lip, Stack, Flag,
-                                   Lpend, top, LU, Lik, &l_length, Ap_pos) ;
-                    }
-                    else
-                    {
-                        /* i is not pivotal, and not flagged. Flag and put in L */
-                        Flag [i] = k ;
-                        Lik [l_length] = i ;
-                        l_length++;
-                    }
-                }
-
-                /* ---------------------------------------------------------------------- */
-                /* Scale and scatter the column into X. */
-                /* ---------------------------------------------------------------------- */
-
-                /* row scaling */
-                aik = Ax [p] ;
-                SCALE_DIV (aik, Rs [oldrow]) ;
-
                 /* (i,k) is an entry in the block.  scatter into X */
                 X [i] = aik ;
             }
@@ -302,10 +296,6 @@ static Int lsolve_symbolic_and_construct_column
     }
 
     Offp [kglobal+1] = poff ;   /* start of the next col of off-diag part */
-
-    /* If Llen [k] is zero, the matrix is structurally singular */
-    Llen [k] = l_length ;
-    return (top) ;
 }
 
 
@@ -555,6 +545,7 @@ static void prune
     Int p, i, j, p2, phead, ptail, llen, ulen ;
 
     /* check to see if any column of L can be pruned */
+    /* Ux is set but not used.  This OK. */
     GET_POINTER (LU, Uip, Ulen, Ui, Ux, k, ulen) ;
     for (p = 0 ; p < ulen ; p++)
     {
@@ -818,15 +809,9 @@ size_t KLU_kernel   /* final size of LU on output */
         }
 #endif
 
-        /* Francesco - Compressed 'lsolve_symbolic' and 'cosntruct_column' in one routine */
-        top = lsolve_symbolic_and_construct_column (n, k, Ap, Ai, Q, Pinv, Stack, Flag, Lpend,
-                Ap_pos, LU, lup, Llen, Lip, k1, PSinv, Ax, X, Rs, scale, Offp, Offi, Offx) ;
+        top = lsolve_symbolic (n, k, Ap, Ai, Q, Pinv, Stack, Flag,
+                    Lpend, Ap_pos, LU, lup, Llen, Lip, k1, PSinv) ;
 
-        /* ------------------------------------------------------------------ */
-        /* get the column of the matrix to factorize and scatter into X */
-        /* ------------------------------------------------------------------ */
-
-/*
 #ifndef NDEBUG
         PRINTF (("--- in U:\n")) ;
         for (p = top ; p < n ; p++)
@@ -850,7 +835,13 @@ size_t KLU_kernel   /* final size of LU on output */
             if (Flag [i] == k) p++ ;
         }
 #endif
-*/
+
+        /* ------------------------------------------------------------------ */
+        /* get the column of the matrix to factorize and scatter into X */
+        /* ------------------------------------------------------------------ */
+
+        construct_column (k, Ap, Ai, Ax, Q, X,
+            k1, PSinv, Rs, scale, Offp, Offi, Offx) ;
 
         /* ------------------------------------------------------------------ */
         /* compute the numerical values of the kth column (s = L \ A (:,k)) */

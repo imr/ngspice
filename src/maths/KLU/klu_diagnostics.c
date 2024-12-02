@@ -1,6 +1,12 @@
-/* ========================================================================== */
-/* === KLU_diagnostics ====================================================== */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// KLU/Source/klu_diagnostics: linear algebraic diagnostics
+//------------------------------------------------------------------------------
+
+// KLU, Copyright (c) 2004-2022, University of Florida.  All Rights Reserved.
+// Authors: Timothy A. Davis and Ekanathan Palamadai.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
 
 /* Linear algebraic diagnostics:
  * KLU_rgrowth: reciprocal pivot growth, takes O(|A|+|U|) time
@@ -22,7 +28,7 @@
  *   rgrowth = min (max (abs ((R \ A (p,q)) - F))) ./ max (abs (U)))
  */
 
-Int KLU_rgrowth         /* return TRUE if successful, FALSE otherwise */
+int KLU_rgrowth         /* return TRUE if successful, FALSE otherwise */
 (
     Int *Ap,
     Int *Ai,
@@ -120,6 +126,8 @@ Int KLU_rgrowth         /* return TRUE if successful, FALSE otherwise */
                 }
             }
 
+            /* Ui is set but not used.  This is OK, because otherwise the macro
+               would have to be redesigned. */
             GET_POINTER (LU, Uip, Ulen, Ui, Ux, j, len) ;
             for (k = 0 ; k < len ; k++)
             {
@@ -167,7 +175,7 @@ Int KLU_rgrowth         /* return TRUE if successful, FALSE otherwise */
  * 1-norm pseudospectra, SIAM J. Matrix Anal. Appl., 21(4):1185-1201, 2000.
  */
 
-Int KLU_condest         /* return TRUE if successful, FALSE otherwise */
+int KLU_condest         /* return TRUE if successful, FALSE otherwise */
 (
     Int Ap [ ],
     double Ax [ ],
@@ -178,8 +186,7 @@ Int KLU_condest         /* return TRUE if successful, FALSE otherwise */
 {
     double xj, Xmax, csum, anorm, ainv_norm, est_old, est_new, abs_value ;
     Entry *Udiag, *Aentry, *X, *S ;
-    Int *R ;
-    Int nblocks, i, j, jmax, jnew, pend, n ;
+    Int i, j, jmax, jnew, pend, n ;
 #ifndef COMPLEX
     Int unchanged ;
 #endif
@@ -212,8 +219,6 @@ Int KLU_condest         /* return TRUE if successful, FALSE otherwise */
     /* ---------------------------------------------------------------------- */
 
     n = Symbolic->n ;
-    nblocks = Symbolic->nblocks ;
-    R = Symbolic->R ;
     Udiag = Numeric->Udiag ;
 
     /* ---------------------------------------------------------------------- */
@@ -411,7 +416,7 @@ Int KLU_condest         /* return TRUE if successful, FALSE otherwise */
 
 /* Compute the flop count for the LU factorization (in Common->flops) */
 
-Int KLU_flops           /* return TRUE if successful, FALSE otherwise */
+int KLU_flops           /* return TRUE if successful, FALSE otherwise */
 (
     KLU_symbolic *Symbolic,
     KLU_numeric *Numeric,
@@ -422,7 +427,7 @@ Int KLU_flops           /* return TRUE if successful, FALSE otherwise */
     Int *R, *Ui, *Uip, *Llen, *Ulen ;
     Unit **LUbx ;
     Unit *LU ;
-    Int k, ulen, p, n, nk, block, nblocks, k1 ;
+    Int k, ulen, p, nk, block, nblocks, k1 ;
 
     /* ---------------------------------------------------------------------- */
     /* check inputs */
@@ -444,7 +449,6 @@ Int KLU_flops           /* return TRUE if successful, FALSE otherwise */
     /* get the contents of the Symbolic object */
     /* ---------------------------------------------------------------------- */
 
-    n = Symbolic->n ;
     R = Symbolic->R ;
     nblocks = Symbolic->nblocks ;
 
@@ -494,9 +498,9 @@ Int KLU_flops           /* return TRUE if successful, FALSE otherwise */
 /* Compute a really cheap estimate of the reciprocal of the condition number,
  * condition number, min(abs(diag(U))) / max(abs(diag(U))).  If U has a zero
  * pivot, or a NaN pivot, rcond will be zero.  Takes O(n) time.
- */
+ */   
 
-Int KLU_rcond           /* return TRUE if successful, FALSE otherwise */
+int KLU_rcond           /* return TRUE if successful, FALSE otherwise */
 (
     KLU_symbolic *Symbolic,     /* input, not modified */
     KLU_numeric *Numeric,       /* input, not modified */
