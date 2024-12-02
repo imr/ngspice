@@ -1,6 +1,12 @@
-/* ========================================================================== */
-/* === BTF_MAXTRANS ========================================================= */
-/* ========================================================================== */
+//------------------------------------------------------------------------------
+// BTF/Source/btf_maxtrans: maximum transversal
+//------------------------------------------------------------------------------
+
+// BTF, Copyright (c) 2004-2022, University of Florida.  All Rights Reserved.
+// Author: Timothy A. Davis.
+// SPDX-License-Identifier: LGPL-2.1+
+
+//------------------------------------------------------------------------------
 
 /* Finds a column permutation that maximizes the number of entries on the
  * diagonal of a sparse matrix.  See btf.h for more information.
@@ -40,10 +46,7 @@
  * Thus, for general usage, cs_maxtrans is preferred.  For square matrices that
  * are typically structurally non-singular, maxtrans is preferred.  A partial
  * maxtrans can still be very useful when solving a sparse linear system.
- *
- * Copyright (c) 2004-2007.  Tim Davis, University of Florida,
- * with support from Sandia National Laboratories.  All Rights Reserved.
- */
+ */ 
 
 #include "ngspice/btf.h"
 #include "btf_internal.h"
@@ -59,7 +62,7 @@
  *
  *      * column k is not matched to any row
  *      * entries in the path are nonzero
- *      * the pairs (i1,j1), (i2,j2), (i3,j3) ..., (is,js) have been
+ *      * the pairs (i1,j1), (i2,j2), (i3,j3) ..., (is,js) have been 
  *          previously matched to each other
  *      * (i(s+1), js) is nonzero, and row i(s+1) is not matched to any column
  *
@@ -130,7 +133,7 @@
  * for (p = head ; ...)         DO 90 K=1,JORD
  */
 
-static Int augment
+static int augment
 (
     Int k,              /* which stage of the main loop we're in */
     Int Ap [ ],         /* column pointers, size n+1 */
@@ -314,7 +317,8 @@ Int BTF(maxtrans)   /* returns # of columns in the matching */
 )
 {
     Int *Cheap, *Flag, *Istack, *Jstack, *Pstack ;
-    Int i, j, k, nmatch, work_limit_reached, result ;
+    Int i, j, k, nmatch, work_limit_reached ;
+    int result ;
 
     /* ---------------------------------------------------------------------- */
     /* get workspace and initialize */
@@ -332,7 +336,7 @@ Int BTF(maxtrans)   /* returns # of columns in the matching */
     for (j = 0 ; j < ncol ; j++)
     {
         Cheap [j] = Ap [j] ;
-        Flag [j] = EMPTY ;
+        Flag [j] = EMPTY ; 
     }
 
     /* all rows and columns are currently unmatched */

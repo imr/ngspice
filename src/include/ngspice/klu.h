@@ -834,6 +834,7 @@ void *klu_l_free (void *, size_t, size_t, klu_l_common *) ;
 
 void *klu_l_realloc (size_t, size_t, size_t, void *, klu_l_common *) ;
 
+/* Francesco - Utilities */
 int klu_print
 (
     int *Ap,
@@ -852,6 +853,78 @@ int klu_z_print
     int n,
     int *IntToExtRowMap,
     int *IntToExtColMap
+) ;
+
+int klu_constant_multiply
+(
+    int *Ap,
+    double *Ax,
+    int n,
+    klu_common *Common,
+    double constant
+) ;
+
+int klu_z_constant_multiply
+(
+    int *Ap,
+    double *Ax,
+    int n,
+    klu_common *Common,
+    double constant
+) ;
+
+int klu_matrix_vector_multiply
+(
+    int *Ap,    /* CSR */
+    int *Ai,    /* CSR */
+    double *Ax, /* CSR */
+    double *RHS,
+    double *Solution,
+    int *IntToExtRowMap,
+    int *IntToExtColMap,
+    int n,
+    klu_common *Common
+) ;
+
+int klu_z_matrix_vector_multiply
+(
+    int *Ap,    /* CSR */
+    int *Ai,    /* CSR */
+    double *Ax, /* CSR */
+    double *RHS,
+    double *Solution,
+    double *iRHS,
+    double *iSolution,
+    int *IntToExtRowMap,
+    int *IntToExtColMap,
+    int n,
+    klu_common *Common
+) ;
+
+int klu_convert_matrix_in_CSR
+(
+    int *Ap_CSC,    /* CSC */
+    int *Ai_CSC,    /* CSC */
+    double *Ax_CSC, /* CSC */
+    int *Ap_CSR,    /* CSR */
+    int *Ai_CSR,    /* CSR */
+    double *Ax_CSR, /* CSR */
+    int n,
+    int nz,
+    klu_common *Common
+) ;
+
+int klu_z_convert_matrix_in_CSR
+(
+    int *Ap_CSC,    /* CSC */
+    int *Ai_CSC,    /* CSC */
+    double *Ax_CSC, /* CSC */
+    int *Ap_CSR,    /* CSR */
+    int *Ai_CSR,    /* CSR */
+    double *Ax_CSR, /* CSR */
+    int n,
+    int nz,
+    klu_common *Common
 ) ;
 
 typedef struct sBindElement {

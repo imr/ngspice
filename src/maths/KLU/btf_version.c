@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-#include "ngspice/btf.h"
+#include "btf.h"
 
 void btf_version (int version [3])
 {
