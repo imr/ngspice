@@ -248,6 +248,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         deck.nextcard = deck.actualLine = NULL;
         deck.error = NULL;
         deck.linenum = 0;
+        deck.compmod = 0;
         deck.line = buf;
 
         /*CDHW Delete any previous special task CDHW*/

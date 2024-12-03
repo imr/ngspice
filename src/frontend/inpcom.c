@@ -448,6 +448,7 @@ struct card *insert_new_line(
     x->linenum_orig = linenum_orig;
     x->level = card ? card->level : NULL;
     x->linesource = lineinfo;
+    x->compmod = 0;
 
     if (card)
         card->nextcard = x;
@@ -949,7 +950,7 @@ void inp_get_w_l_x(struct card* card) {
             continue;
         }
         /* only subcircuit invocations */
-        if (*curr_line != 'x' || (!newcompat.hs && !newcompat.spe)) {
+        if (*curr_line != 'x' || (!newcompat.hs && !newcompat.spe) || card->compmod > 0) {
             continue;
         }
 
@@ -1433,7 +1434,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             bool compset = FALSE;
 
             /* special treatment of special .inc commands */
-            if (ciprefix(".incpslt", buffer) || ciprefix(".inchs", buffer)) {
+            if (ciprefix(".incpslt", buffer)) {
                 compset = TRUE;
                 /* save the current compatibility status */
                 tmpcomp.isset = newcompat.isset; /* at least one mode is set */
@@ -1547,10 +1548,15 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             char* tmpstr = copy(nexttok(buffer));
             wl_append_word(&sourceinfo, &sourceinfo, tmpstr);
 
-            /* Add source of netlist data, for use in verbose error messages */
+            /* Add source of netlist data, for use in verbose error messages.
+               Set the compatibility mode flag to 1, if pslt is read. */
             for (tmpcard = newcard; tmpcard; tmpcard = tmpcard->nextcard) {
                 /* skip *include */
                 tmpcard->linesource = tmpstr;
+                if (compset)
+                    tmpcard->compmod = 1;
+                else
+                    tmpcard->compmod = 0;
             }
 
             if (newcard) {
@@ -3762,7 +3768,7 @@ static void inp_fix_for_numparam(
 
         inp_change_quotes(c->line);
 
-        if (!newcompat.hs && !newcompat.s3)
+        if ((!newcompat.hs && !newcompat.s3) || c->compmod > 0)
             if (ciprefix(".subckt", c->line) || ciprefix("x", c->line)) {
                 /* remove params: */
                 char *str_ptr = strstr(c->line, "params:");
@@ -4096,7 +4102,7 @@ static int inp_fix_subckt_multiplier(struct names *subckt_w_params,
         /* no 'm' for model cards */
         if (ciprefix(".model", curr_line))
             continue;
-        if (newcompat.hs) {
+        if (newcompat.hs && card->compmod == 0) {
             /* if there is already an m=xx in the instance line, multiply it with the new m */
             char* mult = strstr(curr_line, " m=");
             if (mult) {

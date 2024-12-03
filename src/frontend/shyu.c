@@ -51,6 +51,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     deck.error        = NULL;
     deck.linenum      = 0;
     deck.linenum_orig = 0;
+    deck.compmod = 0;
     deck.line         = buf;
 
     current = &deck;
