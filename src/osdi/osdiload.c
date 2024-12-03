@@ -43,7 +43,8 @@ OsdiSimParas get_simparams(const CKTcircuit *ckt) {
   double initializeLimiting = (ckt->CKTmode & MODEINITJCT) ? 1 : 0;
 
   double sim_param_vals_[NUM_SIM_PARAMS] = {
-      gdev, gmin, ckt->CKTnomTemp, simulatorVersion, sourceScaleFactor, initializeLimiting, 
+      // Verilog-A tnom is in degrees Celsius
+      gdev, gmin, ckt->CKTnomTemp-CONSTCtoK, simulatorVersion, sourceScaleFactor, initializeLimiting, 
       ckt->CKTepsmin, ckt->CKTreltol, ckt->CKTvoltTol, ckt->CKTabstol };
   memcpy(&sim_param_vals, &sim_param_vals_, sizeof(double) * NUM_SIM_PARAMS);
   OsdiSimParas sim_params_ = {.names = sim_params,
