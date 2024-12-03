@@ -11,6 +11,8 @@
 #ifndef _KLU_VERSION_H
 #define _KLU_VERSION_H
 
+#include "ngspice/klu_ext.h"
+
 #ifdef DLONG
 #define Int int64_t
 #define Int_id "%" PRId64

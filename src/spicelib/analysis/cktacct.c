@@ -19,7 +19,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/spmatrix.h"
 
 #ifdef KLU
-#include "ngspice/klu.h"
+#include <suitesparse/klu.h>
 #endif
 
 /* Francesco Lannutti

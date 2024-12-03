@@ -10,7 +10,7 @@
  */
 
 #include "ngspice/iferrmsg.h"
-#include "ngspice/klu.h"
+#include <suitesparse/klu.h>
 #include "ngspice/memory.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/typedefs.h"

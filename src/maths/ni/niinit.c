@@ -17,7 +17,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/smpdefs.h"
 
 #ifdef KLU
-#include "ngspice/klu.h"
+#include <suitesparse/klu.h>
 #endif
 
 int

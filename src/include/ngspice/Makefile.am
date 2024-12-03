@@ -3,10 +3,8 @@
 noinst_HEADERS = \
 	tclspice.h	\
 	acdefs.h	\
-    amd.h \
 	bdrydefs.h	\
 	bool.h		\
-    btf.h \
 	carddefs.h	\
 	ciderinp.h	\
 	cidersupt.h	\
@@ -16,7 +14,6 @@ noinst_HEADERS = \
 	cm.h		\
 	cmproto.h	\
 	cmtypes.h	\
-    colamd.h \
 	compatmode.h	\
 	complex.h	\
 	const.h		\
@@ -67,7 +64,6 @@ noinst_HEADERS = \
 	ipcproto.h	\
 	ipctiein.h	\
 	jobdefs.h	\
-	klu.h		\
 	klu-binding.h   \
 	logicexp.h  \
 	lsort.h		\
@@ -136,8 +132,7 @@ noinst_HEADERS = \
 	fftext.h	\
 	wallace.h	\
 	wincolornames.h	\
-	wstdio.h	\
-	SuiteSparse_config.h
+	wstdio.h
 
 if SHARED_MODULE
 pkginclude_HEADERS = \

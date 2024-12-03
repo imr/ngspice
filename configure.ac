@@ -304,15 +304,6 @@ if test "x$with_editline" = xyes; then
     fi
 fi
 
-# Add KLU solver to ngspice
-if test "x$enable_klu" = xyes || test "x$enable_klu" = x ; then
-    AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
-    AC_MSG_RESULT([KLU solver enabled])
-else
-    AC_MSG_RESULT([KLU solver disabled!])
-fi
-AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes ||  test "x$enable_klu" = x])
-
 
 # Enable maintainer commands only if requested
 AM_MAINTAINER_MODE([enable])
@@ -934,12 +925,6 @@ AC_MSG_RESULT([Checking mathematical features of the system:])
 # Look for math library:
 AC_CHECK_LIB([m], [sqrt])
 AC_CHECK_HEADERS([float.h limits.h values.h ieeefp.h])
-if test "x$with_fftw3" != xno; then
-    AC_CHECK_HEADERS([fftw3.h])
-    AC_CHECK_LIB([fftw3], [fftw_plan_dft_1d],
-        [AC_DEFINE([HAVE_LIBFFTW3], [], [Have fft routines in libfftw3])
-         LIBS="$LIBS -lfftw3"])
-fi
 
 # Check for a few mathematical functions:
 AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])
@@ -1325,6 +1310,30 @@ fi
 AC_CHECK_HEADERS([ncurses/termcap.h termcap.h])
 AC_CHECK_HEADERS([sys/sysctl.h])
 
+if test "x$with_fftw3" != xno; then
+    AC_CHECK_HEADERS([fftw3.h])
+    AC_CHECK_LIB([fftw3], [fftw_plan_dft_1d],
+        [AC_DEFINE([HAVE_LIBFFTW3], [], [Have fft routines in libfftw3])
+         LIBS="$LIBS -lfftw3"])
+fi
+
+# Add KLU solver to ngspice
+if test "x$enable_klu" = xyes || test "x$enable_klu" = x ; then
+# Check for KLU
+    AC_CHECK_HEADERS([suitesparse/klu.h], [have_klu_h=yes])
+    if test "$have_klu_h" != yes; then
+        AC_MSG_ERROR([Can't find klu.h])
+    else
+        AC_CHECK_LIB([klu], [klu_defaults],
+			[AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
+			LIBS="$LIBS -lklu -lamd -lbtf -lcolamd"])
+
+        AC_MSG_RESULT([KLU solver enabled])
+    fi
+else
+    AC_MSG_RESULT([KLU solver disabled!])
+fi
+AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes ||  test "x$enable_klu" = x])
 
 # --enable-openmp: Use OpenMP on multi-core processors
 AC_ARG_ENABLE([openmp],

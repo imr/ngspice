@@ -1,7 +1,7 @@
 #ifndef _KLU_BINDING_H
 #define _KLU_BINDING_H
 
-#include "ngspice/klu.h"
+#include <suitesparse/klu.h>
 
 #define CREATE_KLU_BINDING_TABLE(ptr, binding, a, b)                             \
     if ((here->a > 0) && (here->b > 0)) {                                        \

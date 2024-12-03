@@ -17,7 +17,8 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 #include "ngspice/material.h"
 
 #ifdef KLU
-#include "ngspice/klu.h"
+#include <suitesparse/klu.h>
+#include "ngspice/klu_ext.h"
 #endif
 
 typedef struct sONEelem {

@@ -19,7 +19,8 @@ Modified: 2000  AlansFixes
 #include "ngspice/complex.h"
 
 #ifdef KLU
-#include "ngspice/klu.h"
+#include <suitesparse/klu.h>
+#include "ngspice/klu_ext.h"
 #include "ngspice/spmatrix.h"
 #endif
 
