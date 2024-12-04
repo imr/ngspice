@@ -1,7 +1,7 @@
 #ifndef ngspice_BOOL_H
 #define ngspice_BOOL_H
 
-#if defined (__MINGW32__) || defined (_MSC_VER)
+#if defined (_MSC_VER)
 #ifndef __cplusplus
 typedef int bool;
 #endif
