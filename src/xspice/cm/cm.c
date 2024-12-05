@@ -420,7 +420,6 @@ int cm_analog_set_temp_bkpt(
 {
     CKTcircuit  *ckt;
 
-
     /* Get the address of the ckt and instance structs from g_mif_info */
     ckt  = g_mif_info.ckt;
 
@@ -436,7 +435,8 @@ int cm_analog_set_temp_bkpt(
          (fabs(time - ckt->CKTbreaks[0]) < ckt->CKTminBreak ||
           fabs(time - ckt->CKTbreaks[1]) < ckt->CKTminBreak)) ||
         fabs(time - ckt->CKTtime) < ckt->CKTminBreak) {
-        return(MIF_OK);
+        g_mif_info.errmsg = "WARNING - time is too close to existing break.";
+        return MIF_ERROR;
     }
 
     /* If < current dynamic breakpoint, make it the current breakpoint */
@@ -445,8 +445,6 @@ int cm_analog_set_temp_bkpt(
 
     return(MIF_OK);
 }
-
-
 
 
 /*
