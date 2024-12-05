@@ -5,7 +5,10 @@
 
 #include <stdlib.h>
 
-#define FACTOR 0.75     // Controls timing of next scheduled call. */
+// Controls for timing of next scheduled call. */
+
+#define FACTOR1 0.75
+#define FACTOR2 0.8
 
 /* PWL table entry. */
 
@@ -65,7 +68,7 @@ void cm_d_osc(ARGS)
 {
     struct pwl   *table;
     struct state *state;
-    double        ctl, delta, when;
+    double        ctl, period, delta, when;
     int           csize, i;
 
     CALLBACK = cm_d_osc_callback;
@@ -122,7 +125,7 @@ void cm_d_osc(ARGS)
             /* Set initial output and state data. */
 
             ctl = INPUT(cntl_in);
-            delta = get_period(ctl, table, csize);
+            period = get_period(ctl, table, csize);
 
             phase = PARAM(init_phase);
             phase /= 360.0;
@@ -131,12 +134,12 @@ void cm_d_osc(ARGS)
 
             /* When would a hypothetical previous transition have been? */
 
-            state->last_time = delta * (1.0 - PARAM(duty_cycle) - phase);
+            state->last_time = period * (1.0 - PARAM(duty_cycle) - phase);
             if (state->last_time < 0.0) {
                 state->last = ONE;
             } else {
                 state->last = ZERO;
-                state->last_time = -delta * phase;
+                state->last_time = -period * phase;
             }
         }
         return;
@@ -149,30 +152,45 @@ void cm_d_osc(ARGS)
      if (TIME == 0.0) {
          OUTPUT_STATE(out) = state->last;
          OUTPUT_STRENGTH(out) = STRONG;
-         return;
      }
 
      /* When is the next transition due? */
 
      ctl = INPUT(cntl_in);
-     delta = get_period(ctl, table, csize);
+     period = get_period(ctl, table, csize);
      if (state->last)
-         delta *= PARAM(duty_cycle);
+         delta = period * PARAM(duty_cycle);
      else
-         delta *= (1.0 - PARAM(duty_cycle));
+         delta = period * (1.0 - PARAM(duty_cycle));
      when = state->last_time + delta;
 
      if (TIME >= when) {
          /* If the frequency rose rapidly, the transition has been missed.
           * Force a shorter time-step and schedule then.
+          * Also some choices of phase and duty cycle may be rounded
+          * to produce an expected transition before time zero.
           */
 
-         cm_analog_set_temp_bkpt(state->last_time + FACTOR * delta);
-         OUTPUT_CHANGED(out) = FALSE;
-         return;
+         if (!cm_analog_set_temp_bkpt(state->last_time + FACTOR2 * delta)) {
+             OUTPUT_CHANGED(out) = FALSE;
+             return;
+         }
+
+         /* Requested breakpoint was in the fixed past, or otherwise ignored:
+          * request it later.
+          */
+
+         if (when > T(1) && !cm_analog_set_temp_bkpt((T(1) + when) / 2)) {
+             OUTPUT_CHANGED(out) = FALSE;
+             return;
+         }
+
+         /* Force output immediately. */
+
+         when = TIME;
      }
 
-     if (TIME >= state->last_time + FACTOR * delta) {
+     if (TIME >= state->last_time + FACTOR1 * delta) {
          /* TIME is reasonably close to transition time.  Request output. */
 
          state->last_time = when;
@@ -180,10 +198,16 @@ void cm_d_osc(ARGS)
          OUTPUT_STATE(out) = state->last;
          OUTPUT_STRENGTH(out) = STRONG;
          OUTPUT_DELAY(out) = when - TIME;
+         if (OUTPUT_DELAY(out) < 0.0)
+             OUTPUT_DELAY(out) = 0.0;
 
          /* Request a call in the next half-cycle. */
 
-         cm_event_queue(when + FACTOR * delta);
+         if (state->last)
+             delta = period * PARAM(duty_cycle);
+         else
+             delta = period * (1.0 - PARAM(duty_cycle));
+         cm_event_queue(state->last_time + FACTOR2 * delta);
      } else {
          OUTPUT_CHANGED(out) = FALSE;
 
@@ -194,7 +218,7 @@ void cm_d_osc(ARGS)
          } else {
              /* Request a call nearer to transition time. */
 
-             cm_event_queue(state->last_time + FACTOR * delta);
+             cm_event_queue(state->last_time + FACTOR2 * delta);
          }
      }
 }

@@ -127,10 +127,23 @@ int EVTload_with_event(
     cm_data.circuit.anal_init = MIF_FALSE;
     cm_data.circuit.anal_type = g_mif_info.circuit.anal_type;
 
-    if(g_mif_info.circuit.anal_type == MIF_TRAN)
+    /* Set simulation times. */
+
+    if (g_mif_info.circuit.anal_type == MIF_TRAN) {
         cm_data.circuit.time = g_mif_info.circuit.evt_step;
-    else
+        if (type == MIF_STEP_PENDING) {
+            cm_data.circuit.t[0] = ckt->CKTtime;
+            cm_data.circuit.t[1] = ckt->CKTtime - ckt->CKTdeltaOld[0];
+        } else {
+            cm_data.circuit.t[0] = ckt->CKTtime + ckt->CKTdelta;
+            cm_data.circuit.t[1] = ckt->CKTtime;
+        }
+        if (cm_data.circuit.t[1] < 0.0)
+              cm_data.circuit.t[1] = 0.0;
+    } else {
         cm_data.circuit.time = 0.0;
+        cm_data.circuit.t[0] = cm_data.circuit.t[1] = 0.0;
+    }
 
     /* Instances that have declared themselves as irreversible
      * are expected to distinguish STEP_PENDING from ordinary events.
