@@ -122,7 +122,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;KLU;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -138,7 +138,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-fftw|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;KLU;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -156,7 +156,7 @@
       <Optimization>Full</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -174,7 +174,7 @@
       <Optimization>Full</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -193,7 +193,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;KLU;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -211,7 +211,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;KLU;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -231,7 +231,7 @@
       <Optimization>Full</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -252,7 +252,7 @@
       <Optimization>Full</Optimization>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\include\;$(ProjectDir)..\..\src\include\;$(ProjectDir)..\..\..\SuiteSparse\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;COMPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -267,23 +267,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\maths\KLU\klu_internal.h" />
-    <ClInclude Include="..\..\src\maths\KLU\klu_proto.h" />
     <ClInclude Include="..\..\src\maths\KLU\klu_version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\maths\KLU\klu.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_diagnostics.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_dump.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_extract.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_factor.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_free_numeric.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_kernel.c" />
     <ClCompile Include="..\..\src\maths\KLU\klu_multiply.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_refactor.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_scale.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_solve.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_sort.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_tsolve.c" />
     <ClCompile Include="..\..\src\maths\KLU\klu_utils.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
