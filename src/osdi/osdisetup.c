@@ -10,7 +10,6 @@
  */
 
 #include "ngspice/iferrmsg.h"
-#include <suitesparse/klu.h>
 #include "ngspice/memory.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/typedefs.h"
@@ -18,6 +17,7 @@
 #include "osdi.h"
 #include "osdidefs.h"
 
+#include <suitesparse/klu.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
