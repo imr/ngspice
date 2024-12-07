@@ -32,7 +32,7 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   int poiEqn, numEqn;
   ONEedge *pEdge;
   ONEnode **nodeArray=NULL;
-  BOOLEAN error = FALSE;
+  bool error = FALSE;
 
 
   /* generate the work array for setting up nodes and elements */
@@ -292,8 +292,8 @@ NBJTjunctions(ONEdevice *pDevice, int *indexEB, int *indexBC)
 {
   int index;
   double conc1, conc2;
-  BOOLEAN findFirstJunction = TRUE;
-  BOOLEAN notFound = TRUE;
+  bool findFirstJunction = TRUE;
+  bool notFound = TRUE;
 
   for (index = 1; (index < pDevice->numNodes) && (notFound); index++) {
     conc1 = pDevice->elemArray[index]->pNodes[0]->netConc;

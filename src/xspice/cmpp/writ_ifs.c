@@ -337,7 +337,7 @@ static int write_pTable(
         }
 
         if(type == CMPP_BOOLEAN) {
-            rc |= fprintf(fp, "IF_FLAG");   /* no BOOLEAN in SPICE3 */
+            rc |= fprintf(fp, "IF_FLAG");   /* no bool in SPICE3 */
         }
         else if(type == CMPP_INTEGER) {
             rc |= fprintf(fp, "IF_INTEGER");
@@ -446,7 +446,7 @@ static int write_mPTable(
         }
 
         if (type == CMPP_BOOLEAN) {
-            rc |= fprintf(fp, "IF_FLAG");   /* no BOOLEAN in SPICE3 */
+            rc |= fprintf(fp, "IF_FLAG");   /* no bool in SPICE3 */
         }
         else if (type == CMPP_INTEGER) {
             rc |= fprintf(fp, "IF_INTEGER");

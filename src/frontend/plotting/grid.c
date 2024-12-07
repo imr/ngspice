@@ -18,7 +18,6 @@ Modified: 2001 AlansFixes
 #include <stdlib.h>
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#undef BOOLEAN
 #include <windows.h>
 #endif
 

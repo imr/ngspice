@@ -95,7 +95,7 @@ nameeq(const char *n1, const char *n2)
     DS_CREATE(ds2, 100);
 
     /* Compare canonical names */
-    const BOOL rc = (BOOL) cieq(canonical_name(n1, &ds1, FALSE),
+    const bool rc = (bool) cieq(canonical_name(n1, &ds1, FALSE),
             canonical_name(n2, &ds2, FALSE));
 
     /* Free the dynamic string buffers */

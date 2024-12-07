@@ -19,7 +19,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 
 
 void
-ONEprnSolution(FILE *file, ONEdevice *pDevice, OUTPcard *output, BOOLEAN asciiSave, char *extra)
+ONEprnSolution(FILE *file, ONEdevice *pDevice, OUTPcard *output, bool asciiSave, char *extra)
 {
   int index, i, ii;
   int numVars = 0;

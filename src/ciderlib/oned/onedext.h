@@ -19,32 +19,32 @@ extern int NUMDadmittance(ONEdevice *, double, SPcomplex *);
 extern int NBJTadmittance(ONEdevice *, double, SPcomplex *,
                           SPcomplex *, SPcomplex *, 
 			  SPcomplex *);
-extern BOOLEAN ONEsorSolve(ONEdevice *, double *, double  *, double omega);
+extern bool ONEsorSolve(ONEdevice *, double *, double  *, double omega);
 extern void NUMDys(ONEdevice *, SPcomplex *, SPcomplex *);
 extern void NBJTys(ONEdevice *,SPcomplex *, SPcomplex *, SPcomplex *, 
                    SPcomplex *, SPcomplex *);
 		   
-extern SPcomplex *computeAdmittance(ONEnode *, BOOLEAN, double *xReal, 
+extern SPcomplex *computeAdmittance(ONEnode *, bool, double *xReal, 
                                     double *,SPcomplex *);
 				    
 /* oneaval.c */
-extern double ONEavalanche(BOOLEAN, ONEdevice *, ONEnode *);
+extern double ONEavalanche(bool, ONEdevice *, ONEnode *);
 
 /* onecond.c */
-extern void NUMDconductance(ONEdevice *, BOOLEAN, double *, double *);
-extern void NBJTconductance(ONEdevice *, BOOLEAN, double *, double *, 
+extern void NUMDconductance(ONEdevice *, bool, double *, double *);
+extern void NBJTconductance(ONEdevice *, bool, double *, double *, 
                             double *, double *, double *);
-extern void NUMDcurrent(ONEdevice *, BOOLEAN, double *, double *);
-extern void NBJTcurrent(ONEdevice *, BOOLEAN, double *, double *, 
+extern void NUMDcurrent(ONEdevice *, bool, double *, double *);
+extern void NBJTcurrent(ONEdevice *, bool, double *, double *, 
                         double *);
 			
 
 /* onecont */
 extern void ONE_jacBuild(ONEdevice *);
-extern void ONE_sysLoad(ONEdevice *, BOOLEAN, ONEtranInfo *);
+extern void ONE_sysLoad(ONEdevice *, bool, ONEtranInfo *);
 extern void ONE_jacLoad(ONEdevice *);
-extern void ONE_rhsLoad(ONEdevice *, BOOLEAN, ONEtranInfo *);
-extern void ONE_commonTerms(ONEdevice *, BOOLEAN, BOOLEAN, ONEtranInfo *);
+extern void ONE_rhsLoad(ONEdevice *, bool, ONEtranInfo *);
+extern void ONE_commonTerms(ONEdevice *, bool, bool, ONEtranInfo *);
 
 
 /* onedest */
@@ -76,7 +76,7 @@ extern void ONEQrhsLoad(ONEdevice *);
 extern void ONEQcommonTerms(ONEdevice *);
 
 /*oneprint.c */
-extern void ONEprnSolution(FILE *, ONEdevice *, OUTPcard *, BOOLEAN, char *);
+extern void ONEprnSolution(FILE *, ONEdevice *, OUTPcard *, bool, char *);
 extern void ONEmemStats(FILE *, ONEdevice *);
 extern void ONEcpuStats(FILE *f, ONEdevice *);
 
@@ -84,8 +84,8 @@ extern void ONEcpuStats(FILE *f, ONEdevice *);
 /* oneproj.c */
 extern void NUMDproject(ONEdevice *, double);
 extern void NBJTproject(ONEdevice *, double, double, double);
-extern void NUMDupdate(ONEdevice *,double, BOOLEAN);
-extern void NBJTupdate(ONEdevice *, double, double, double, BOOLEAN);
+extern void NUMDupdate(ONEdevice *,double, bool);
+extern void NBJTupdate(ONEdevice *, double, double, double, bool);
 extern void NUMDsetBCs(ONEdevice *, double);
 extern void NBJTsetBCs(ONEdevice *, double, double);
 
@@ -98,22 +98,22 @@ extern void ONEsetBCparams(ONEdevice *, BDRYcard *, CONTcard *);
 extern void ONEnormalize(ONEdevice *);
 
 /* onesolve.c */
-extern void ONEdcSolve(ONEdevice *, int, BOOLEAN, BOOLEAN, ONEtranInfo *);
-extern BOOLEAN ONEpsiDeltaConverged(ONEdevice *, int *);
-extern BOOLEAN ONEdeltaConverged(ONEdevice *);
+extern void ONEdcSolve(ONEdevice *, int, bool, bool, ONEtranInfo *);
+extern bool ONEpsiDeltaConverged(ONEdevice *, int *);
+extern bool ONEdeltaConverged(ONEdevice *);
 extern void ONEresetJacobian(ONEdevice *);
 extern void ONEstoreNeutralGuess(ONEdevice *);
 extern void ONEequilSolve(ONEdevice *);
-extern void ONEbiasSolve(ONEdevice *, int, BOOLEAN, ONEtranInfo *);
+extern void ONEbiasSolve(ONEdevice *, int, bool, ONEtranInfo *);
 extern void ONEstoreEquilibGuess(ONEdevice *);
 extern void ONEstoreInitialGuess(ONEdevice *);
-extern int ONEnewDelta(ONEdevice *, BOOLEAN, ONEtranInfo *);
+extern int ONEnewDelta(ONEdevice *, bool, ONEtranInfo *);
 extern double ONEtrunc(ONEdevice *, ONEtranInfo *, double);
 extern void ONEsaveState(ONEdevice *);
 extern double ONEnuNorm(ONEdevice *);
-extern void ONEjacCheck(ONEdevice *, BOOLEAN, ONEtranInfo *);
+extern void ONEjacCheck(ONEdevice *, bool, ONEtranInfo *);
 extern void ONEpredict(ONEdevice *, ONEtranInfo *);
-extern BOOLEAN ONEdeviceConverged(ONEdevice *);
+extern bool ONEdeviceConverged(ONEdevice *);
 
 #ifdef KLU
 void ONEbindCSC (ONEdevice *) ;

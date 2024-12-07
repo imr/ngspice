@@ -1,8 +1,6 @@
 #ifndef file_buffer_h_included
 #define file_buffer_h_included
 
-#include <stdbool.h>
-
 
 /* Null-terminated string prefixed by length excluding null */
 typedef struct Filebuf_len_str {

@@ -8,7 +8,6 @@
 #include "resource.h"
 
 #if defined(_WIN32)
-#undef BOOLEAN
 #include <windows.h>
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))

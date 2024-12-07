@@ -41,7 +41,7 @@ checkElectrodes(TWOelectrode *pElectrode, int idHigh)
 {
   TWOelectrode *pE;
   int id;
-  BOOLEAN error = FALSE;
+  bool error = FALSE;
 
   /*
    * order the electrodes

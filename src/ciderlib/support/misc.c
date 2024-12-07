@@ -20,7 +20,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 /* Used in Solution Projection Calculations */
 double guessNewConc(double conc, double delta)
 {
-    BOOLEAN acceptable = FALSE;
+    bool acceptable = FALSE;
     double fib, newConc, lambda, fibn, fibp;
     lambda = 1.0;
     fibn = 1.0;
@@ -64,7 +64,7 @@ double lookup(double **dataTable, double x)
     double lnconc, lny0, lny1;
 #endif
     int index, numPoints;
-    BOOLEAN done = FALSE;
+    bool done = FALSE;
 
     numPoints = (int)dataTable[ 0 ][ 0 ];
     for( index = 2; index <= numPoints && (!done); index++ ) {
@@ -104,10 +104,10 @@ double lookup(double **dataTable, double x)
 /* Used in admittance calculations */
 /* this function returns TRUE is SOR iteration converges otherwise FALSE */
 
-BOOLEAN hasSORConverged(double *oldSolution, double *newSolution,
+bool hasSORConverged(double *oldSolution, double *newSolution,
                         int numEqns)
 {
-    BOOLEAN converged = TRUE;
+    bool converged = TRUE;
     int index;
     double xOld, xNew, tol;
     double absTol = 1e-12;
@@ -126,10 +126,10 @@ BOOLEAN hasSORConverged(double *oldSolution, double *newSolution,
 }
 
 /* Used to Check Sparse Matrix Errors */
-BOOLEAN
+bool
 foundError(int error)
 {
-    BOOLEAN matrixError;
+    bool matrixError;
 
     switch( error ) {
 	/*  Removed for Spice3e1 Compatibility 
@@ -164,7 +164,7 @@ foundError(int error)
 }
 
 /* Return TRUE if the filetype variable matches the string 's' */
-BOOLEAN compareFiletypeVar(char *s)
+bool compareFiletypeVar(char *s)
 {
 	char buf[BSIZE_SP];
 

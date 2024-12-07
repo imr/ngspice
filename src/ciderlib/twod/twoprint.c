@@ -20,7 +20,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 
 
 void
-TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output, BOOLEAN asciiSave, char *extra)
+TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output, bool asciiSave, char *extra)
 {
   int index, xIndex, yIndex;
   int numVars = 0;
