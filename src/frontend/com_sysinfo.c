@@ -13,7 +13,6 @@
 #include "com_commands.h"
 
 #ifdef _WIN32
-#undef BOOLEAN
 #include <windows.h>
 #include <psapi.h>
 #endif
@@ -876,7 +875,7 @@ static void get_os_info(void)
 
  /* This funtion sets the field storing the number of physical processors
   * in system_info */
-typedef BOOL (WINAPI *glp_t)(LOGICAL_PROCESSOR_RELATIONSHIP,
+typedef bool (WINAPI *glp_t)(LOGICAL_PROCESSOR_RELATIONSHIP,
         PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX, PDWORD);
 static void get_physical_processor_count(void)
 {

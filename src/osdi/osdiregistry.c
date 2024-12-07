@@ -34,7 +34,6 @@
 
 #else /* ifdef HAS_WINGUI */
 
-#undef BOOLEAN
 #include <windows.h>
 #include <shlwapi.h>
 #define OPENLIB(path) LoadLibrary(path)

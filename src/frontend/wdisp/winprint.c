@@ -14,13 +14,12 @@
 #include "ngspice/fteext.h"
 
 /*
- * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
+ * The ngspice.h file included above defines bool (via bool.h) and this
  * clashes with the definition obtained from windows.h (via winnt.h).
- * However, BOOLEAN is not used by this file so we can work round this problem
- * by undefining BOOLEAN before including windows.h
+ * However, bool is not used by this file so we can work round this problem
+ * by undefining bool before including windows.h
  * SJB - May 2005
  */
-#undef BOOLEAN
 
 #define STRICT
 #include <windows.h>
@@ -102,7 +101,7 @@ void WPRINT_PrintInit(HWND hwnd)
 }
 
 /* Abort-Procedur zum Drucken */
-BOOL CALLBACK WPRINT_Abort(HDC hdc, int iError)
+ABORTPROC CALLBACK WPRINT_Abort(HDC hdc, int iError)
 {
     NG_IGNORE(hdc);
     NG_IGNORE(iError);
@@ -111,7 +110,7 @@ BOOL CALLBACK WPRINT_Abort(HDC hdc, int iError)
     WaitForIdle();
 
     /* Warten */
-    return TRUE;
+    return (ABORTPROC)TRUE;
 }
 
 

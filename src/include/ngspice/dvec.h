@@ -6,6 +6,7 @@
 #include "ngspice/grid.h"
 #include "ngspice/sim.h"
 
+#include <stdbool.h>
 
 /* Dvec flags. */
 enum dvec_flags {

@@ -10,7 +10,6 @@
 #include "resource.h"
 
 #if defined(_WIN32)
-#undef BOOLEAN
 #include <windows.h>
 #include <psapi.h>
 

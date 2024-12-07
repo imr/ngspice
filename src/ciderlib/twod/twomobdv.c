@@ -25,7 +25,7 @@ void
 {
   TWOnode *pNode;
   TWOedge *pTEdge, *pBEdge, *pLEdge, *pREdge;
-  BOOLEAN channel = pElem->channel;
+  bool channel = pElem->channel;
   double dx, dy, rDx, rDy;
   double coeffHx, coeffHy, coeffHs = 0.0;
   double coeffVx, coeffVy, coeffVs = 0.0;
@@ -656,7 +656,7 @@ void
 {
   TWOnode *pNode;
   TWOedge *pTEdge, *pBEdge, *pLEdge, *pREdge;
-  BOOLEAN channel = pElem->channel;
+  bool channel = pElem->channel;
   double dx, dy, rDx, rDy;
   double coeffHx, coeffHy, coeffHs = 0.0;
   double coeffVx, coeffVy, coeffVs = 0.0;
@@ -1033,7 +1033,7 @@ void
 {
   TWOnode *pNode;
   TWOedge *pTEdge, *pBEdge, *pLEdge, *pREdge;
-  BOOLEAN channel = pElem->channel;
+  bool channel = pElem->channel;
   double dx, dy, rDx, rDy;
   double coeffHx, coeffHy, coeffHs = 0.0;
   double coeffVx, coeffVy, coeffVs = 0.0;

@@ -450,7 +450,7 @@
 /* Define to 1 if `vfork' works. */
 /* #undef HAVE_WORKING_VFORK */
 
-/* Define to 1 if the system has the type `_Bool'. */
+/* Define to 1 if the system has the type `bool'. */
 /* #undef HAVE__BOOL */
 
 /* Define to 1 if you have the </proc/meminfo> header file. */

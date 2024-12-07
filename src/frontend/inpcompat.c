@@ -457,10 +457,10 @@ static struct card *u_instances(struct card *startcard)
     struct card *newcard = NULL, *last_newcard = NULL;
     int models_ok = 0, models_not_ok = 0;
     int udev_ok = 0, udev_not_ok = 0;
-    BOOL create_called = FALSE, repeat_pass = FALSE;
-    BOOL skip_next = FALSE;
+    bool create_called = FALSE, repeat_pass = FALSE;
+    bool skip_next = FALSE;
     struct card *c = startcard;
-    BOOL insub = FALSE;
+    bool insub = FALSE;
     int ps_global_tmodels = 0;
 
     /* NOTE: PSpice ref. manual Product Version 16.5 page 105.

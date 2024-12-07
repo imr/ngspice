@@ -21,6 +21,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/cktdefs.h"
 
 #include <inttypes.h>
+#include <stdbool.h>
 
 #include "../misc/misc_time.h" /* timediff */
 
@@ -42,13 +43,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define WIN32_LEAN_AND_MEAN
 
 /*
- * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
+ * The ngspice.h file included above defines bool (via bool.h) and this
  * clashes with the definition obtained from windows.h (via winnt.h).
- * However, BOOLEAN is not used by this file so we can work round this problem
- * by undefining BOOLEAN before including windows.h
+ * However, bool is not used by this file so we can work round this problem
+ * by undefining bool before including windows.h
  * SJB - April 2005
  */
-#undef BOOLEAN
+
 #include <windows.h>
 #include <psapi.h>
 

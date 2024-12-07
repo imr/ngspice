@@ -31,16 +31,16 @@ extern IFfrontEnd *SPfrontEnd;
 
 /* The iteration driving loop and convergence check */
 void
-ONEdcSolve(ONEdevice *pDevice, int iterationLimit, BOOLEAN newSolver, 
-           BOOLEAN tranAnalysis, ONEtranInfo *info)
+ONEdcSolve(ONEdevice *pDevice, int iterationLimit, bool newSolver, 
+           bool tranAnalysis, ONEtranInfo *info)
 {
   ONEnode *pNode;
   ONEelem *pElem;
   int index, eIndex, error;
   int timesConverged = 0, negConc = FALSE;
   int size = pDevice->numEqns;
-  BOOLEAN quitLoop;
-  BOOLEAN debug = FALSE;
+  bool quitLoop;
+  bool debug = FALSE;
   double *rhs = pDevice->rhs;
 /*  double *intermediate = pDevice->copiedSolution; */
   double *solution = pDevice->dcSolution;
@@ -295,7 +295,7 @@ ONEdcSolve(ONEdevice *pDevice, int iterationLimit, BOOLEAN newSolver,
  * Fermi levels. In theory, this should work better than the one currently
  * being used since we are always looking at potentials: (psi, phin, phip).
  */
-BOOLEAN
+bool
 ONEpsiDeltaConverged(ONEdevice *pDevice, int *pNegConc)
 {
   int index, nIndex, eIndex;
@@ -304,7 +304,7 @@ ONEpsiDeltaConverged(ONEdevice *pDevice, int *pNegConc)
   double xOld, xNew, xDelta, tol;
   double psi, newPsi, nConc, pConc, newN, newP;
   double phiN, phiP, newPhiN, newPhiP;
-  BOOLEAN converged = TRUE;
+  bool converged = TRUE;
 
   /* Equilibrium solution. */
   if (pDevice->poissonOnly) {
@@ -378,11 +378,11 @@ done:
 /*
  * See if the update to the solution is small enough. Returns TRUE if it is.
  */
-BOOLEAN
+bool
 ONEdeltaConverged(ONEdevice *pDevice)
 {
   int index;
-  BOOLEAN converged = TRUE;
+  bool converged = TRUE;
   double *solution = pDevice->dcSolution;
   double *delta = pDevice->dcDeltaSolution;
   double xOld, xNew, tol;
@@ -404,11 +404,11 @@ ONEdeltaConverged(ONEdevice *pDevice)
  * See if the update to the solution is small enough and the solution is
  * physically reasonable. Returns TRUE if it is.
  */
-BOOLEAN
+bool
 ONEdeviceConverged(ONEdevice *pDevice)
 {
   int index, eIndex;
-  BOOLEAN converged = TRUE;
+  bool converged = TRUE;
   double *solution = pDevice->dcSolution;
   ONEnode *pNode;
   ONEelem *pElem;
@@ -553,7 +553,7 @@ ONEstoreNeutralGuess(ONEdevice *pDevice)
 void
 ONEequilSolve(ONEdevice *pDevice)
 {
-  BOOLEAN newSolver = FALSE;
+  bool newSolver = FALSE;
   int error;
   int nIndex, eIndex;
   ONEelem *pElem;
@@ -707,9 +707,9 @@ ONEequilSolve(ONEdevice *pDevice)
  */
 void
 ONEbiasSolve(ONEdevice *pDevice, int iterationLimit, 
-             BOOLEAN tranAnalysis, ONEtranInfo *info)
+             bool tranAnalysis, ONEtranInfo *info)
 {
-  BOOLEAN newSolver = FALSE;
+  bool newSolver = FALSE;
   int error;
   int index, eIndex;
   double *solution;
@@ -950,11 +950,11 @@ ONEstoreInitialGuess(ONEdevice *pDevice)
 
 
 int
-ONEnewDelta(ONEdevice *pDevice, BOOLEAN tranAnalysis, ONEtranInfo *info)
+ONEnewDelta(ONEdevice *pDevice, bool tranAnalysis, ONEtranInfo *info)
 {
   int index, iterNum;
   double newNorm, fib, lambda, fibn, fibp;
-  BOOLEAN acceptable = FALSE, error = FALSE;
+  bool acceptable = FALSE, error = FALSE;
   iterNum = 0;
   lambda = 1.0;
   fibn = 1.0;
@@ -1172,7 +1172,7 @@ ONEnuNorm(ONEdevice *pDevice)
  * models are being incorporated.
  */
 void
-ONEjacCheck(ONEdevice *pDevice, BOOLEAN tranAnalysis, ONEtranInfo *info)
+ONEjacCheck(ONEdevice *pDevice, bool tranAnalysis, ONEtranInfo *info)
 {
   int index, rIndex;
   double del, diff, tol, *dptr;

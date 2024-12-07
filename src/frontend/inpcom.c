@@ -9,9 +9,10 @@ Author: 1985 Wayne A. Christopher
   Central function is inp_readall()
 */
 
-/* Note: Must include shlwapi.h before ngspice header defining BOOL due
+/* Note: Must include shlwapi.h before ngspice header defining bool due
  * to conflict */
 #include <stdio.h>
+#include <stdbool.h>
 #ifdef _WIN32
 #include <shlwapi.h> /* for definition of PathIsRelativeA() */
 #pragma comment(lib, "Shlwapi.lib")
@@ -1857,7 +1858,6 @@ FILE *inp_pathopen(const char *name, const char *mode)
 /* for MultiByteToWideChar */
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #ifndef EXT_ASC
-#undef BOOLEAN
 #include <windows.h>
 #endif
 #endif

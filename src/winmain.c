@@ -124,7 +124,7 @@ static char CRLF[] = {CR, LF, SE};              /* CR/LF */
 static int RowHeight = 16;             /* Height of line of text */
 static int LineHeight = 25;            /* Height of input line */
 static int VisibleRows = 10;           /* Number of visible lines in text window */
-static BOOL DoUpdate = FALSE;          /* Update text window */
+static bool DoUpdate = FALSE;          /* Update text window */
 static WNDPROC swProc = NULL;          /* original string window procedure */
 static WNDPROC twProc = NULL;          /* original text window procedure */
 static HFONT efont;                    /* Font for element windows */
