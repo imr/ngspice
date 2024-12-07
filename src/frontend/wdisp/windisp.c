@@ -20,14 +20,6 @@
 #include "../plotting/graphdb.h"
 #include "windisp.h"
 
-/*
- * The ngspice.h file included above defines bool (via bool.h) and this
- * clashes with the definition obtained from windows.h (via winnt.h).
- * However, bool is not used by this file so we can work round this problem
- * by undefining bool before including windows.h
- * SJB - May 2005
- */
-
 #define STRICT
 #include <windows.h>
 #include <windowsx.h>
