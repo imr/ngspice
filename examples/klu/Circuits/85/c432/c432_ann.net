@@ -3,7 +3,7 @@
 * by Jingye Xu @ VLSI group, Dept of ECE, UIC
 
 .INCLUDE ../../technology/45nm_HP.pm
-.INCLUDE ../../libraries/iscas_stdcells.lib
+*.INCLUDE ../../libraries/iscas_stdcells.lib
 .OPTIONS GMIN=1e-020 ABSTOL=1e-18 ACCT
 
 **** the input ports: g35_2 g21_1 g18_1 g23_0 g13_1 g2_1 g31_2 g9_2 g17_2 g27_2 g14_3 g36_1 g19_2 g8_0 g3_1 g26_3 g16_2 g11_0 g22_3 g32_2 g30_1 g10_0 g6_3 g1_1 g28_1 g25_0 g4_1 g15_0 g12_2 g29_1 g33_1 g7_1 g24_0 g34_3 g20_2 g5_1 ****
