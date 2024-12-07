@@ -10,6 +10,6 @@
 #define ngspice_BERNOULL_H
 
 extern void bernoulli (double, double *, double *, double *, 
-                       double *, BOOLEAN);
+                       double *, bool);
 
 #endif

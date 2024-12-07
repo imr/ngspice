@@ -38,8 +38,8 @@ NUMD2admittance(TWOdevice *pDevice, double omega, SPcomplex *yd)
   double *solnReal, *solnImag;
   double *rhsReal, *rhsImag;
   SPcomplex yAc, cOmega, *y;
-  BOOLEAN deltaVContact = FALSE;
-  BOOLEAN SORFailed;
+  bool deltaVContact = FALSE;
+  bool SORFailed;
   double startTime;
 
   /* Each time we call this counts as one AC iteration. */
@@ -186,7 +186,7 @@ NBJT2admittance(TWOdevice *pDevice, double omega, SPcomplex *yIeVce,
   double dxdy;
   double *solnReal, *solnImag;
   double *rhsReal, *rhsImag;
-  BOOLEAN SORFailed;
+  bool SORFailed;
   SPcomplex *y;
   SPcomplex pIeVce, pIcVce, pIeVbe, pIcVbe;
   SPcomplex cOmega;
@@ -412,7 +412,7 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
   double dxdy;
   double *solnReal, *solnImag;
   double *rhsReal, *rhsImag;
-  BOOLEAN SORFailed;
+  bool SORFailed;
   SPcomplex *y, cOmega;
   double startTime;
 
@@ -725,7 +725,7 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
   return (AcAnalysisMethod);
 }
 
-BOOLEAN 
+bool 
 TWOsorSolve(TWOdevice *pDevice, double *xReal, double *xImag, 
             double omega)
 {
@@ -733,8 +733,8 @@ TWOsorSolve(TWOdevice *pDevice, double *xReal, double *xImag,
   double wRelax = 1.0;		/* SOR relaxation parameter */
   double *rhsReal = pDevice->rhs;
   double *rhsSOR = pDevice->rhsImag;
-  BOOLEAN SORConverged = FALSE;
-  BOOLEAN SORFailed = FALSE;
+  bool SORConverged = FALSE;
+  bool SORFailed = FALSE;
   int numEqns = pDevice->numEqns;
   int iterationNum;
   int indexN, indexP;
@@ -859,7 +859,7 @@ TWOsorSolve(TWOdevice *pDevice, double *xReal, double *xImag,
 
 
 SPcomplex *
-contactAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
+contactAdmittance(TWOdevice *pDevice, TWOcontact *pContact, bool delVContact,
                   double *xReal, double *xImag, SPcomplex *cOmega)
 {
   TWOnode *pNode, *pHNode = NULL, *pVNode = NULL;
@@ -1061,7 +1061,7 @@ contactAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
 
 
 SPcomplex *
-oxideAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact, 
+oxideAdmittance(TWOdevice *pDevice, TWOcontact *pContact, bool delVContact, 
                 double *xReal, double *xImag, SPcomplex *cOmega)
 {
   TWOnode *pNode, *pHNode = NULL, *pVNode = NULL;
@@ -1148,7 +1148,7 @@ NUMD2ys(TWOdevice *pDevice, SPcomplex *s, SPcomplex *yIn)
   double *solnReal, *solnImag;
   double *rhsReal, *rhsImag;
   SPcomplex yAc, *y;
-  BOOLEAN deltaVContact = FALSE;
+  bool deltaVContact = FALSE;
   SPcomplex temp, cOmega;
 
   /*

@@ -12,13 +12,12 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
 #define WIN32_LEAN_AND_MEAN
  /*
-  * The ngspice.h file included above defines BOOLEAN (via bool.h) and this
+  * The ngspice.h file included above defines bool (via bool.h) and this
   * clashes with the definition obtained from windows.h (via winnt.h).
-  * However, BOOLEAN is not used by this file so we can work round this problem
-  * by undefining BOOLEAN before including windows.h
+  * However, bool is not used by this file so we can work round this problem
+  * by undefining bool before including windows.h
   * SJB - April 2005
   */
-#undef BOOLEAN
 #include <windows.h>
 #ifndef HAVE_GETTIMEOFDAY
 #include <winsock2.h>

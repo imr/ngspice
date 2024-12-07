@@ -17,12 +17,12 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 void 
-   NUMD2conductance(TWOdevice *pDevice, BOOLEAN tranAnalysis, 
+   NUMD2conductance(TWOdevice *pDevice, bool tranAnalysis, 
                     double *intCoeff, double *gd)
 {
   TWOcontact *pContact = pDevice->pFirstContact;
   double *incVpn;
-  BOOLEAN deltaVContact = FALSE;
+  bool deltaVContact = FALSE;
   
   /* 
    * store the new rhs for computing the incremental quantities
@@ -44,7 +44,7 @@ void
 }
 
 void 
-   NBJT2conductance(TWOdevice *pDevice, BOOLEAN tranAnalysis, 
+   NBJT2conductance(TWOdevice *pDevice, bool tranAnalysis, 
                     double *intCoeff, double *dIeDVce, double *dIcDVce, 
 	   	    double *dIeDVbe, double *dIcDVbe)
 {
@@ -94,7 +94,7 @@ void
 }
 
 void 
-   NUMOSconductance(TWOdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff, 
+   NUMOSconductance(TWOdevice *pDevice, bool tranAnalysis, double *intCoeff, 
                     struct mosConductances *dIdV)
 {
   TWOcontact *pDContact = pDevice->pFirstContact;
@@ -236,7 +236,7 @@ double
 
 double 
   oxideCurrent(TWOdevice *pDevice, TWOcontact *pContact, 
-               BOOLEAN tranAnalysis)
+               bool tranAnalysis)
 {
   /* computes the current through the contact given in pContact */
   int index, i, numContactNodes;
@@ -294,8 +294,8 @@ double
 
 double 
    contactConductance(TWOdevice *pDevice, TWOcontact *pContact, 
-                      BOOLEAN delVContact, double *dxDv, 
-	              BOOLEAN tranAnalysis, double *intCoeff)
+                      bool delVContact, double *dxDv, 
+	              bool tranAnalysis, double *intCoeff)
 {
   /* computes the conductance of the contact given in pContact */
   int index, i, numContactNodes;
@@ -457,8 +457,8 @@ double
 
 double 
    oxideConductance(TWOdevice *pDevice, TWOcontact *pContact, 
-                    BOOLEAN delVContact, double *dxDv, 
-	            BOOLEAN tranAnalysis, double *intCoeff)
+                    bool delVContact, double *dxDv, 
+	            bool tranAnalysis, double *intCoeff)
 {
   /* computes the conductance of the contact given in pContact */
   int index, i, numContactNodes;
@@ -528,14 +528,14 @@ double
  */
 
 void 
-   NUMD2current(TWOdevice *pDevice, BOOLEAN tranAnalysis, 
+   NUMD2current(TWOdevice *pDevice, bool tranAnalysis, 
                 double *intCoeff, double *id)
 {
   TWOcontact *pPContact = pDevice->pFirstContact;
 /*  TWOcontact *pNContact = pDevice->pLastContact; */
   double ip, ipPrime, *solution;
 /*  double in;*/
-  BOOLEAN deltaVContact = FALSE;
+  bool deltaVContact = FALSE;
   
   solution = pDevice->dcDeltaSolution;
   ip = contactCurrent( pDevice, pPContact );
@@ -559,7 +559,7 @@ void
 }
 
 void 
-   NBJT2current(TWOdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff, 
+   NBJT2current(TWOdevice *pDevice, bool tranAnalysis, double *intCoeff, 
                 double *ie, double *ic)
 {
   TWOcontact *pEmitContact = pDevice->pLastContact;
@@ -593,7 +593,7 @@ void
 }
 
 void 
-   NUMOScurrent(TWOdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff, 
+   NUMOScurrent(TWOdevice *pDevice, bool tranAnalysis, double *intCoeff, 
                 double *id, double *is, double *ig)
 {
   TWOcontact *pDContact = pDevice->pFirstContact;

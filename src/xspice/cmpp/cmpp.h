@@ -144,7 +144,7 @@ typedef struct {
 
 typedef struct {
 
-    bool        bvalue;         /* For BOOLEAN parameters */
+    bool        bvalue;         /* For bool parameters */
     int         ivalue;         /* For INTEGER parameters */
     double      rvalue;         /* For REAL parameters    */
     Complex_t   cvalue;         /* For COMPLEX parameters */

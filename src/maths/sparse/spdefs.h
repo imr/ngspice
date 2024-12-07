@@ -53,7 +53,7 @@
 /* Begin macros. */
 
 /* Boolean data type */
-#define  BOOLEAN        int
+#define  bool        int
 #define  NO             0
 #define  YES            1
 

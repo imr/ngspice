@@ -16,7 +16,6 @@
 #include "ngspice/fteparse.h"
 #include "gnuplot.h"
 #if defined(__MINGW32__) || defined(_MSC_VER)
-#undef BOOLEAN
 #include <windows.h>
 #else
 #include <unistd.h>

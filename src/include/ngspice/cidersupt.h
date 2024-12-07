@@ -85,8 +85,8 @@ extern int SUPascRead(const char *, float *, float *, int *, int *);
 /* externals for misc.c */
 extern double guessNewConc(double , double );
 extern double lookup(double **, double );
-extern BOOLEAN hasSORConverged(double *, double *, int);
-extern BOOLEAN foundError(int );
-extern BOOLEAN compareFiletypeVar(char *);
+extern bool hasSORConverged(double *, double *, int);
+extern bool foundError(int );
+extern bool compareFiletypeVar(char *);
 
 #endif

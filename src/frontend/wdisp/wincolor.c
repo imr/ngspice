@@ -10,7 +10,6 @@
 #include "ngspice/cpextern.h"
 #include "ngspice/hash.h"
 #include "ngspice/macros.h"
-#undef BOOLEAN
 #include <windows.h>
 #include "ngspice/wincolornames.h"
 #include "ngspice/graph.h"

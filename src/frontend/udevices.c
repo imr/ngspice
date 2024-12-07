@@ -296,8 +296,8 @@ static NAME_ENTRY port_names_list = NULL;
 static NAME_ENTRY xsubckt_names_list = NULL;
 static unsigned int num_name_collisions = 0;
 /* .model d_zero_inv99 d_inverter just once per subckt */
-static BOOL add_zero_delay_inverter_model = FALSE;
-static BOOL add_drive_hilo = FALSE;
+static bool add_zero_delay_inverter_model = FALSE;
+static bool add_drive_hilo = FALSE;
 static char *current_subckt = NULL;
 static unsigned int subckt_msg_count = 0;
 
@@ -365,7 +365,7 @@ static void find_collision(char *name, NAME_ENTRY nelist)
     }
 }
 
-static BOOL there_are_name_collisions(void)
+static bool there_are_name_collisions(void)
 {
     if (new_names_list) {
         NAME_ENTRY x = NULL;
@@ -889,7 +889,7 @@ void u_add_instance(char *str)
     }
 }
 
-static BOOL gen_timing_model(
+static bool gen_timing_model(
     char *tmodel, char *utype, char *xspice, char *newname, Xlatorp xlp);
 
 void u_add_logicexp_model(char *tmodel, char *xspice_gate, char *model_name)
@@ -1026,7 +1026,7 @@ void initialize_udevice(char *subckt_line)
     add_drive_hilo = FALSE;
 }
 
-void cleanup_udevice(BOOL global)
+void cleanup_udevice(bool global)
 {
     if (global) {
         if (global_model_xlatorp) {
@@ -1132,7 +1132,7 @@ static void *insert_global_model_in_table(Xlate_datap x)
     return inserted;
 }
 
-static Xlate_datap find_in_model_xlator(Xlate_datap x, BOOL global)
+static Xlate_datap find_in_model_xlator(Xlate_datap x, bool global)
 {
     Xlate_datap x1 = NULL;
 
@@ -1166,7 +1166,7 @@ static Xlate_datap find_in_model_xlator(Xlate_datap x, BOOL global)
 }
 
 static void add_delays_to_model_xlator(char *delays,
-    char *utype, char *xspice, char *tmodel, BOOL global)
+    char *utype, char *xspice, char *tmodel, bool global)
 {
     /*
       Specify xspice as "d_dlatch" or "d_srlatch" for ugff
@@ -1194,14 +1194,14 @@ static void add_delays_to_model_xlator(char *delays,
 }
 
 /* classify gate variants */
-static BOOL is_tristate_buf_array(char *itype)
+static bool is_tristate_buf_array(char *itype)
 {
     if (eq(itype, "buf3a")) { return TRUE; }
     if (eq(itype, "inv3a")) { return TRUE; }
     return FALSE;
 }
 
-static BOOL is_tristate_xor_array(char *itype)
+static bool is_tristate_xor_array(char *itype)
 {
     /* xor/nxor have vector inputs */
     if (eq(itype, "xor3a")) { return TRUE; }
@@ -1209,7 +1209,7 @@ static BOOL is_tristate_xor_array(char *itype)
     return FALSE;
 }
 
-static BOOL is_tristate_vector_array(char *itype)
+static bool is_tristate_vector_array(char *itype)
 {
     if (eq(itype, "and3a")) { return TRUE; }
     if (eq(itype, "nand3a")) { return TRUE; }
@@ -1218,7 +1218,7 @@ static BOOL is_tristate_vector_array(char *itype)
     return FALSE;
 }
 
-static BOOL is_tristate_array(char *itype)
+static bool is_tristate_array(char *itype)
 {
     if (is_tristate_buf_array(itype)) { return TRUE; }
     if (is_tristate_vector_array(itype)) { return TRUE; }
@@ -1226,14 +1226,14 @@ static BOOL is_tristate_array(char *itype)
     return FALSE;
 }
 
-static BOOL is_buf_tristate(char *itype)
+static bool is_buf_tristate(char *itype)
 {
     if (eq(itype, "buf3")) { return TRUE; }
     if (eq(itype, "inv3")) { return TRUE; }
     return FALSE;
 }
 
-static BOOL is_xor_tristate(char *itype)
+static bool is_xor_tristate(char *itype)
 {
     /* xor/nxor have vector inputs */
     if (eq(itype, "xor3")) { return TRUE; }
@@ -1241,7 +1241,7 @@ static BOOL is_xor_tristate(char *itype)
     return FALSE;
 }
 
-static BOOL is_vector_tristate(char *itype)
+static bool is_vector_tristate(char *itype)
 {
     if (eq(itype, "and3")) { return TRUE; }
     if (eq(itype, "nand3")) { return TRUE; }
@@ -1250,7 +1250,7 @@ static BOOL is_vector_tristate(char *itype)
     return FALSE;
 }
 
-static BOOL is_tristate(char *itype)
+static bool is_tristate(char *itype)
 {
     if (is_buf_tristate(itype)) { return TRUE; }
     if (is_vector_tristate(itype)) { return TRUE; }
@@ -1258,7 +1258,7 @@ static BOOL is_tristate(char *itype)
     return FALSE;
 }
 
-static BOOL is_vector_gate_array(char *itype)
+static bool is_vector_gate_array(char *itype)
 {
     if (eq(itype, "anda")) { return TRUE; }
     if (eq(itype, "nanda")) { return TRUE; }
@@ -1267,14 +1267,14 @@ static BOOL is_vector_gate_array(char *itype)
     return FALSE;
 }
 
-static BOOL is_buf_gate_array(char *itype)
+static bool is_buf_gate_array(char *itype)
 {
     if (eq(itype, "bufa")) { return TRUE; }
     if (eq(itype, "inva")) { return TRUE; }
     return FALSE;
 }
 
-static BOOL is_xor_gate_array(char *itype)
+static bool is_xor_gate_array(char *itype)
 {
     /* xor/nxor have vector inputs */
     if (eq(itype, "xora")) { return TRUE; }
@@ -1282,7 +1282,7 @@ static BOOL is_xor_gate_array(char *itype)
     return FALSE;
 }
 
-static BOOL is_gate_array(char *itype)
+static bool is_gate_array(char *itype)
 {
     if (is_vector_gate_array(itype)) { return TRUE; }
     if (is_buf_gate_array(itype)) { return TRUE; }
@@ -1290,7 +1290,7 @@ static BOOL is_gate_array(char *itype)
     return FALSE;
 }
 
-static BOOL is_vector_gate(char *itype)
+static bool is_vector_gate(char *itype)
 {
     if (eq(itype, "nand")) { return TRUE; }
     if (eq(itype, "and")) { return TRUE; }
@@ -1299,14 +1299,14 @@ static BOOL is_vector_gate(char *itype)
     return FALSE;
 }
 
-static BOOL is_buf_gate(char *itype)
+static bool is_buf_gate(char *itype)
 {
     if (eq(itype, "inv")) { return TRUE; }
     if (eq(itype, "buf")) { return TRUE; }
     return FALSE;
 }
 
-static BOOL is_xor_gate(char *itype)
+static bool is_xor_gate(char *itype)
 {
     /* xor/nxor have vector inputs */
     if (eq(itype, "xor")) { return TRUE; }
@@ -1314,7 +1314,7 @@ static BOOL is_xor_gate(char *itype)
     return FALSE;
 }
 
-static BOOL is_gate(char *itype)
+static bool is_gate(char *itype)
 {
     if (is_vector_gate(itype)) { return TRUE; }
     if (is_buf_gate(itype)) { return TRUE; }
@@ -1322,7 +1322,7 @@ static BOOL is_gate(char *itype)
     return FALSE;
 }
 
-static BOOL is_compound_gate(char *itype)
+static bool is_compound_gate(char *itype)
 {
     if (eq(itype, "aoi")) { return TRUE; }
     if (eq(itype, "ao")) { return TRUE; }
@@ -1331,7 +1331,7 @@ static BOOL is_compound_gate(char *itype)
     return FALSE;
 }
 
-static BOOL has_vector_inputs(char *itype)
+static bool has_vector_inputs(char *itype)
 {
     switch (itype[0]) {
     case 'a': {
@@ -1766,7 +1766,7 @@ static char *new_inverter(char *iname, char *node, Xlatorp xlp)
     return tmp;
 }
 
-static BOOL gen_timing_model(
+static bool gen_timing_model(
     char *tmodel, char *utype, char *xspice, char *newname, Xlatorp xlp)
 {
     /*
@@ -1779,7 +1779,7 @@ static BOOL gen_timing_model(
     */
     Xlate_datap xin = NULL, xout = NULL, newdata;
     char *s1;
-    BOOL retval;
+    bool retval;
 
     if (eq(utype, "ugff")) {
         xin = create_xlate_model("", utype, xspice, tmodel);
@@ -1817,7 +1817,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip, int withinv)
     char *modelnm, *s1;
     Xlatorp xxp = NULL;
     Xlate_datap xdata = NULL;
-    BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
+    bool need_preb_inv = FALSE, need_clrb_inv = FALSE;
     DS_CREATE(tmpdstr, 128);
 
     if (!ip) {
@@ -1929,7 +1929,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip, int withinv)
     char *modelnm, *s1;
     Xlatorp xxp = NULL;
     Xlate_datap xdata = NULL;
-    BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
+    bool need_preb_inv = FALSE, need_clrb_inv = FALSE;
     DS_CREATE(tmpdstr, 128);
 
     if (!ip) {
@@ -2048,7 +2048,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip, int withinv)
     char *modelnm, *s1, *s2, *s3;
     Xlatorp xxp = NULL;
     Xlate_datap xdata = NULL;
-    BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
+    bool need_preb_inv = FALSE, need_clrb_inv = FALSE;
 
     if (!ip) { return NULL; }
     itype = ip->hdrp->instance_type;
@@ -2163,7 +2163,7 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp, int withinv)
     char *modelnm, *s1, *s2, *s3;
     Xlatorp xxp = NULL;
     Xlate_datap xdata = NULL;
-    BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
+    bool need_preb_inv = FALSE, need_clrb_inv = FALSE;
 
     if (!srffp) { return NULL; }
     itype = srffp->hdrp->instance_type;
@@ -2429,17 +2429,17 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
 {
     char **inarr, **outarr, *itype, *iname, *enable, *tmodel;
     char *xspice = NULL, *connector = NULL;
-    BOOL vector = FALSE, tristate_gate = FALSE, simple_gate = FALSE;
-    BOOL tristate_array = FALSE;
-    BOOL add_tristate = FALSE;
+    bool vector = FALSE, tristate_gate = FALSE, simple_gate = FALSE;
+    bool tristate_array = FALSE;
+    bool add_tristate = FALSE;
     char *modelnm = NULL, *startvec = NULL, *endvec = NULL;
     char *instance_name = NULL;
     int i, j, k, width, num_gates, num_ins, num_outs;
     Xlatorp xxp = NULL;
     Xlate_datap xdata = NULL;
     int withinv = ps_with_tri_inverters;
-    BOOL inv3_to_buf3 = FALSE;
-    BOOL inv3a_to_buf3a = FALSE;
+    bool inv3_to_buf3 = FALSE;
+    bool inv3a_to_buf3a = FALSE;
 
     if (!gip) { return NULL; }
     itype = gip->hdrp->instance_type;
@@ -2964,7 +2964,7 @@ static char *select_delay(char *delay1, char *delay2)
     float val1, val2;
     char *units1, *units2;
     char *tmodel = NULL;
-    BOOL warns = FALSE;
+    bool warns = FALSE;
 
     val1 = strtof(delay1, &units1);
     val2 = strtof(delay2, &units2);
@@ -3014,7 +3014,7 @@ static char *get_delays_ugate(char *rem)
 {
     char *rising, *falling, *delays = NULL;
     struct timing_data *tdp1, *tdp2;
-    BOOL has_rising = FALSE, has_falling = FALSE;
+    bool has_rising = FALSE, has_falling = FALSE;
 
     tdp1 = create_min_typ_max("tplh", rem);
     estimate_delay(tdp1);
@@ -3070,8 +3070,8 @@ static char *get_delays_utgate(char *rem)
     struct timing_data *tdp1, *tdp2;
     struct timing_data *tdp3, *tdp4, *tdp5, *tdp6;
     char *tplz, *tphz, *tpzl, *tpzh, *select0, *select1, *select2, *select3;
-    BOOL use_zdelays = FALSE;
-    BOOL has_rising = FALSE, has_falling = FALSE;
+    bool use_zdelays = FALSE;
+    bool has_rising = FALSE, has_falling = FALSE;
 
     tdp1 = create_min_typ_max("tplh", rem);
     estimate_delay(tdp1);
@@ -3340,10 +3340,10 @@ static char *get_current_tmodel(void)
     return current_tmodel;
 }
 
-static BOOL u_process_model(char *nline, char *original, BOOL global)
+static bool u_process_model(char *nline, char *original, bool global)
 {
     char *tok, *remainder, *delays = NULL, *utype, *tmodel;
-    BOOL retval = TRUE;
+    bool retval = TRUE;
 
     /* .model */
     tok = strtok(nline, " \t");
@@ -3435,7 +3435,7 @@ static struct dff_instance *add_dff_inout_timing_model(
     char *name, **arrp;
     int i, num_gates = hdr->num1;
     struct dff_instance *dffip = NULL;
-    BOOL compat = TRUE;
+    bool compat = TRUE;
 
     if (num_gates < 1) { return NULL; }
     dffip = create_dff_instance(hdr);
@@ -3524,7 +3524,7 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     char *name, **arrp;
     int i, num_gates = hdr->num1;
     struct dltch_instance *dlp = NULL;
-    BOOL compat = TRUE;
+    bool compat = TRUE;
 
     if (num_gates < 1) { return NULL; }
     dlp = create_dltch_instance(hdr);
@@ -3613,7 +3613,7 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     char *name, **arrp, **arrpk;
     int i, num_gates = hdr->num1;
     struct jkff_instance *jkffip = NULL;
-    BOOL compat = TRUE;
+    bool compat = TRUE;
 
     if (num_gates < 1) { return NULL; }
     jkffip = create_jkff_instance(hdr);
@@ -3711,7 +3711,7 @@ static struct srff_instance *add_srff_inout_timing_model(
     char *name, **arrp, **arrpr;
     int i, num_gates = hdr->num1;
     struct srff_instance *srffp = NULL;
-    BOOL compat = TRUE;
+    bool compat = TRUE;
 
     if (num_gates < 1) { return NULL; }
     srffp = create_srff_instance(hdr);
@@ -3812,7 +3812,7 @@ static struct compound_instance *add_compound_inout_timing_model(
     int i, j, k, n1 =hdr->num1, n2 = hdr->num2, inwidth, numgates;
     struct compound_instance *compi;
     char **inarr;
-    BOOL first = TRUE;
+    bool first = TRUE;
 
     if (is_compound_gate(itype)) {
         inwidth = n1;
@@ -3873,7 +3873,7 @@ static struct gate_instance *add_array_inout_timing_model(
     struct instance_hdr *hdr, char *start)
 {
     char *tok, *copyline, *itype  = hdr->instance_type;
-    BOOL first = TRUE, tristate = FALSE;
+    bool first = TRUE, tristate = FALSE;
     int i, j, k, n1 =hdr->num1, n2 = hdr->num2, inwidth, numgates;
     struct gate_instance *gip = NULL;
     char **inarr = NULL, **outarr = NULL, *name;
@@ -3977,7 +3977,7 @@ static struct gate_instance *add_gate_inout_timing_model(
 {
     char *tok, *copyline, *itype  = hdr->instance_type;
     int i, n1 = hdr->num1, inwidth;
-    BOOL first = TRUE, tristate = FALSE;
+    bool first = TRUE, tristate = FALSE;
     struct gate_instance *gip = NULL;
     char **inarr = NULL, **outarr = NULL, *name;
 
@@ -4253,7 +4253,7 @@ static Xlatorp translate_gate(struct instance_hdr *hdr, char *start)
     return NULL;
 }
 
-BOOL u_check_instance(char *line)
+bool u_check_instance(char *line)
 {
     /*
      Check to see if the U* instance is a type which can be translated.
@@ -4358,7 +4358,7 @@ static int remove_optional(DSTRING *dstrp, char *line)
        Return 0 when no removal was attempted.
     */
     char *s;
-    BOOL was_space;
+    bool was_space;
     if (!ps_global_tmodels || subcircuit_has_no_optional(line)) {
         return 0;
     }
@@ -4403,13 +4403,13 @@ static int remove_optional(DSTRING *dstrp, char *line)
   a Pspice u* instance statement with all the '+' continuations added
   minus the '+'.
 */
-BOOL u_process_instance(char *nline)
+bool u_process_instance(char *nline)
 {
     /* Return TRUE if ok */
     char *p1, *itype, *xspice;
     struct instance_hdr *hdr = NULL;
     Xlatorp xp = NULL;
-    BOOL behav_ret = TRUE;
+    bool behav_ret = TRUE;
 
 
     if (ciprefix("x", nline)) {
@@ -4536,12 +4536,12 @@ BOOL u_process_instance(char *nline)
   a Pspice .model timing model statement with all the '+' continuations
   added minus the '+'.
 */
-BOOL u_process_model_line(char *line, BOOL global)
+bool u_process_model_line(char *line, bool global)
 {
     /* Translate a .model line to find the delays */
     /* Return TRUE if ok */
     char *newline;
-    BOOL retval;
+    bool retval;
     size_t n = strlen(line) - 1;
 
     if (n > 0 && line[n] == '\n') line[n] = '\0';
