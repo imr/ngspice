@@ -101,7 +101,7 @@ void WPRINT_PrintInit(HWND hwnd)
 }
 
 /* Abort-Procedur zum Drucken */
-ABORTPROC CALLBACK WPRINT_Abort(HDC hdc, int iError)
+bool CALLBACK WPRINT_Abort(HDC hdc, int iError)
 {
     NG_IGNORE(hdc);
     NG_IGNORE(iError);
@@ -110,7 +110,7 @@ ABORTPROC CALLBACK WPRINT_Abort(HDC hdc, int iError)
     WaitForIdle();
 
     /* Warten */
-    return (ABORTPROC)TRUE;
+    return TRUE;
 }
 
 
@@ -225,7 +225,7 @@ int WPRINT_Init(void)
         }
 
         /* Abort-Prozedur setzen */
-        SetAbortProc( PrinterDC, WPRINT_Abort);
+        SetAbortProc( PrinterDC, (ABORTPROC)WPRINT_Abort);
     }
     /* fertig */
     return (0);
