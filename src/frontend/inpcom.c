@@ -12,7 +12,7 @@ Author: 1985 Wayne A. Christopher
 /* Note: Must include shlwapi.h before ngspice header defining bool due
  * to conflict */
 #include <stdio.h>
-#include <stdbool.h>
+
 #ifdef _WIN32
 #include <shlwapi.h> /* for definition of PathIsRelativeA() */
 #pragma comment(lib, "Shlwapi.lib")
