@@ -399,7 +399,7 @@ NBJTload(GENmodel *inModel, CKTcircuit *ckt)
 	    ckt->CKTtroubleElt = (GENinstance *) inst;
 	    return (E_BADMATRIX);
 	  }
-	  devConverged = ONEdeviceConverged(pDevice);
+	  devConverged = (int)ONEdeviceConverged(pDevice);
 	  pDevice->converged = devConverged;
 
 	  /* compute the currents */
