@@ -601,7 +601,7 @@ ONEequilSolve(ONEdevice *pDevice)
 #endif
 
     if (error == spNO_MEMORY) {
-      printf("ONEequilSolve: Out of Memory\n");
+      fprintf(stderr, "Error: ONEequilSolve: Out of Memory\n");
       exit(-1);
     }
     newSolver = TRUE;
@@ -633,7 +633,7 @@ ONEequilSolve(ONEdevice *pDevice)
       pDevice->matrix->SMPkluMatrix->KLUmatrixSymbolic = klu_analyze ((int)pDevice->matrix->SMPkluMatrix->KLUmatrixN, pDevice->matrix->SMPkluMatrix->KLUmatrixAp,
                                                                       pDevice->matrix->SMPkluMatrix->KLUmatrixAi, pDevice->matrix->SMPkluMatrix->KLUmatrixCommon) ;
       if (pDevice->matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
-        printf ("CIDER: KLU Failed\n") ;
+        fprintf (stderr, "Error: CIDER: KLU Failed\n") ;
         if (pDevice->matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
           return ; // Francesco Lannutti - Fix KLU return values
         }
@@ -652,7 +652,7 @@ ONEequilSolve(ONEdevice *pDevice)
     pDevice->solverType = SLV_EQUIL;
     break;
   default:
-    fprintf(stderr, "Panic: Unknown solver type in equil solution.\n");
+    fprintf(stderr, "Error: Panic: Unknown solver type in equil solution.\n");
     exit(-1);
     break;
   }
@@ -694,7 +694,7 @@ ONEequilSolve(ONEdevice *pDevice)
       }
     }
   } else {
-    printf("ONEequilSolve: No Convergence\n");
+    fprintf(stderr, "Error: ONEequilSolve: No Convergence\n");
   }
   miscTime += SPfrontEnd->IFseconds() - startTime;
   pDevice->pStats->setupTime[STAT_SETUP] += setupTime;
@@ -778,7 +778,7 @@ ONEbiasSolve(ONEdevice *pDevice, int iterationLimit,
                                                                       pDevice->matrix->SMPkluMatrix->KLUmatrixAi, pDevice->matrix->SMPkluMatrix->KLUmatrixCommon) ;
       if (pDevice->matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
         if (pDevice->matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
-          printf ("CIDER: KLU failed\n") ;
+          fprintf (stderr, "Error: CIDER: KLU failed\n") ;
           return ; // Francesco Lannutti - Fix KLU return values
         }
       }
@@ -812,7 +812,7 @@ ONEbiasSolve(ONEdevice *pDevice, int iterationLimit,
     pDevice->solverType = SLV_BIAS;
     break;
   default:
-    fprintf(stderr, "Panic: Unknown solver type in bias solution.\n");
+    fprintf(stderr, "Error: Panic: Unknown solver type in bias solution.\n");
     exit(-1);
     break;
   }
