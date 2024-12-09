@@ -52,8 +52,7 @@
 
 /* Begin macros. */
 
-/* Boolean data type */
-#define  bool        int
+/* Boolean data type by stdbool.h */
 #define  NO             0
 #define  YES            1
 
