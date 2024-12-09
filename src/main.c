@@ -135,15 +135,15 @@ double MuLim, MutLim;
 /* Global debug flags from CIDER, soon they will become
  * spice variables :)
  */
-bool ONEacDebug   = FALSE;
-bool ONEdcDebug   = TRUE;
-bool ONEtranDebug = TRUE;
-bool ONEjacDebug  = FALSE;
+int ONEacDebug   = FALSE;
+int ONEdcDebug   = TRUE;
+int ONEtranDebug = TRUE;
+int ONEjacDebug  = FALSE;
 
-bool TWOacDebug   = FALSE;
-bool TWOdcDebug   = TRUE;
-bool TWOtranDebug = TRUE;
-bool TWOjacDebug  = FALSE;
+int TWOacDebug   = FALSE;
+int TWOdcDebug   = TRUE;
+int TWOtranDebug = TRUE;
+int TWOjacDebug  = FALSE;
 
 /* CIDER Global Variable Declarations */
 
