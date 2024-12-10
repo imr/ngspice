@@ -89,7 +89,7 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
                     NevalSrcInstanceTemp(&noizDens[DIORSNOIZ],&lnNdens[DIORSNOIZ],
                         ckt, THERMNOISE, inst->DIOposPrimeNode, inst->DIOposNode,
-                        inst->DIOtConductance * inst->DIOarea * inst->DIOm, dtemp);
+                        inst->DIOtConductance, dtemp);
 
                     NevalSrc(&noizDens[DIOIDNOIZ],&lnNdens[DIOIDNOIZ],
                         ckt, SHOTNOISE, inst->DIOposPrimeNode, inst->DIOnegNode,

@@ -296,8 +296,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->DIOm = 1;
             }
 
-            here->DIOarea = here->DIOarea * here->DIOm;
-            here->DIOpj = here->DIOpj * here->DIOm;
             here->DIOcmetal = 0.0;
             here->DIOcpoly = 0.0;
             if (model->DIOlevel == 3) {
@@ -331,10 +329,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                                   * (wp * scale + model->DIOpolyMaskOffset)
                                   * (lp * scale + model->DIOpolyMaskOffset);
             }
-            here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea;
-            here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea;
-            here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea;
-            here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
+            here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea * here->DIOm;
+            here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea * here->DIOm;
+            here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea * here->DIOm;
+            here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj * here->DIOm;
 
             here->DIOstate = *states;
             *states += DIOnumStates;
