@@ -23,12 +23,15 @@
 #include <string.h>
 #include <sys/types.h>
 
-#define NUM_SIM_PARAMS 5
+#define NUM_SIM_PARAMS 10
 char *sim_params[NUM_SIM_PARAMS + 1] = {
-    "gdev", "gmin", "tnom", "simulatorVersion", "sourceScaleFactor", NULL};
+    "gdev", "gmin", "tnom", 
+    "simulatorVersion", "sourceScaleFactor", "initializeLimiting", 
+    "epsmin", "reltol", "vntol", "abstol", 
+    NULL};
 char *sim_params_str[1] = {NULL};
 
-double sim_param_vals[NUM_SIM_PARAMS] = {0, 0, 0, 0, 0};
+double sim_param_vals[NUM_SIM_PARAMS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /* values returned by $simparam*/
 OsdiSimParas get_simparams(const CKTcircuit *ckt) {
@@ -37,8 +40,12 @@ OsdiSimParas get_simparams(const CKTcircuit *ckt) {
   double sourceScaleFactor = ckt->CKTsrcFact;
   double gmin = ((ckt->CKTgmin) > (ckt->CKTdiagGmin)) ? (ckt->CKTgmin)
                                                       : (ckt->CKTdiagGmin);
+  double initializeLimiting = (ckt->CKTmode & MODEINITJCT) ? 1 : 0;
+
   double sim_param_vals_[NUM_SIM_PARAMS] = {
-      gdev, gmin, ckt->CKTnomTemp, simulatorVersion, sourceScaleFactor};
+      // Verilog-A tnom is in degrees Celsius
+      gdev, gmin, ckt->CKTnomTemp-CONSTCtoK, simulatorVersion, sourceScaleFactor, initializeLimiting, 
+      ckt->CKTepsmin, ckt->CKTreltol, ckt->CKTvoltTol, ckt->CKTabstol };
   memcpy(&sim_param_vals, &sim_param_vals_, sizeof(double) * NUM_SIM_PARAMS);
   OsdiSimParas sim_params_ = {.names = sim_params,
                               .vals = (double *)&sim_param_vals,
