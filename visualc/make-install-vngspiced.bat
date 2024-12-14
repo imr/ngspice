@@ -33,6 +33,10 @@ goto end
 :copy2
 copy %1\ngspice.exe %dst%\bin\
 copy ..\..\fftw-3.3-dll32\libfftw3-3.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libklud.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libamdd.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libbtfd.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libcolamdd.dll %dst%\bin\
 goto end
 
 :b64
@@ -58,11 +62,19 @@ if "%3" == "fftw" goto copy2-64
 
 copy %1\ngspice.exe %dst%\bin\
 copy .\spinitd64 .\spinit
+copy ..\..\SuiteSparse\bin\libklud.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libamdd.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libbtfd.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libcolamdd.dll %dst%\bin\
 goto end
 
 :copy2-64
 copy %1\ngspice.exe %dst%\bin\
 copy ..\..\fftw-3.3-dll64\libfftw3-3.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libklud.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libamdd.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libbtfd.dll %dst%\bin\
+copy ..\..\SuiteSparse\bin\libcolamdd.dll %dst%\bin\
 
 :end
 mkdir %dst%\share\ngspice\scripts\src\ngspice
