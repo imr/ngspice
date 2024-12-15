@@ -22,6 +22,7 @@
 /sharedspice/
 
 /KLU/x64/
+/KLU/Release/
 
 /.vs/
 *.vc.db
