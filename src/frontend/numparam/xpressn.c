@@ -1623,8 +1623,8 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
                 char *kp = jp;
                 ds_clear(&ustr);
 
-                if (alfanum(*kp) || *kp == '.') {
-                    /* number, identifier */
+                if (alfanum(*kp) || *kp == '.' || *kp == '\"') {
+                    /* number, identifier, string */
                     jp = skip_non_ws(kp);
                     pscopy(&ustr, kp, jp);
                 } else if (*kp == '{') {

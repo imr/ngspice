@@ -41,9 +41,14 @@ CAPtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if(!here->CAPdtempGiven)   here->CAPdtemp  = 0.0;
             } else { /* CAPtempGiven */
                 here->CAPdtemp = 0.0;
-                if (here->CAPdtempGiven)
-                    printf("%s: Instance temperature specified, dtemp ignored\n",
+                if (here->CAPdtempGiven &&
+                    ckt->CKTcurJob && ckt->CKTcurJob->JOBtype != 9) {
+                    /* Keep quiet in sensistivity analysis. */
+
+                    printf("%s: Instance temperature specified, "
+                           "dtemp ignored\n",
                            here->CAPname);
+                }
             }
 
             if (!here->CAPwidthGiven) {

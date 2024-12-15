@@ -172,7 +172,7 @@ pertvd:     /* Perturbation of Diode Voltage */
                 *(here->DIOsenCeq + 2)= *(ckt->CKTstate0 + here->DIOcapCurrent);
                 *(ckt->CKTstate0 + here->DIOvoltage) = A0;
             }
-            gspr=here->DIOtConductance*here->DIOarea; 
+            gspr=here->DIOtConductance; 
             geq = *(here->DIOsenGeq + 2);
             xceq = *(here->DIOsenCeq + 2) * ckt->CKTomega;
 

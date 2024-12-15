@@ -256,6 +256,7 @@ inp_getoptsc(char *line, struct card *options)
     next->linenum = 0;
     next->error   = NULL;
     next->actualLine  = NULL;
+    next->compmod = 0;
 
     /* put new line in front */
     next->nextcard = options;

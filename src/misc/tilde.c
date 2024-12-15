@@ -13,7 +13,6 @@ Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 #endif
 
 #ifdef _WIN32
-#undef BOOLEAN
 #include <windows.h> /* win32 functions */
 #include "shlobj.h"  /* SHGetFolderPath */
 #endif

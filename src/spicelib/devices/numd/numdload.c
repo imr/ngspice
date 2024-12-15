@@ -318,7 +318,7 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
 	    return (E_BADMATRIX);
 	  }
 	  
-	   pDevice->converged = devConverged = ONEdeviceConverged(pDevice);
+	   pDevice->converged = devConverged = (int)ONEdeviceConverged(pDevice);
              
 	  /* extract the current and conductance information */
 	  NUMDcurrent(pDevice, TRUE, model->NUMDpInfo->intCoeff, &id);

@@ -1376,13 +1376,21 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         }
         char* begstr = copy_substring(tmpcard->line, instline);
         char* strnode1 = gettok(&instline);
-        char* newnode = tprintf("probe_int_%s_%s_%d", strnode1, instname, nodenum);
+
+        /* node name becomes part of a new v-source name, don't allow / in node name (aka /VT).
+           Replace by _ (_VT).
+           Otherwise the B source function parser fails with i() not found. */
+        char* strnode1name = copy(strnode1);
+        if (strnode1name[0] == '/')
+            strnode1name[0] = '_';
+        char* newnode = tprintf("probe_int_%s_%s_%d", strnode1name, instname, nodenum);
         char nodenumstr[3];
         char *nodename1 = get_terminal_name(instname, itoa10(nodenum, nodenumstr), instances);
 
         if (!nodename1) {
             tfree(begstr);
             tfree(strnode1);
+            tfree(strnode1name);
             ds_free(&BVrefline);
             ds_free(&Bpowerline);
             ds_free(&Bpowersave);
@@ -1391,12 +1399,12 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
 
         newline = tprintf("%s %s %s", begstr, newnode, instline);
 
-        char* vline = tprintf("vcurr_%s:probe_int_%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1, strnode1, newnode);
+        char* vline = tprintf("vcurr_%s:probe_int_%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1name, strnode1, newnode);
 
         tfree(tmpcard->line);
         tmpcard->line = newline;
 
-        card = tmpcard->nextcard;
+        card = tmpcard;
 
         card = insert_new_line(card, vline, 0, card->linenum_orig, card->linesource);
 
@@ -1423,7 +1431,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
             cadd(&Bpowerline, ':');
             sadd(&Bpowerline, nodenumstr);
             cadd(&Bpowerline, '_');
-            sadd(&Bpowerline, strnode1);
+            sadd(&Bpowerline, strnode1name);
             cadd(&Bpowerline, ')');
 
             allsaves = wl_cons(copy(ds_get_buf(&Bpowersave)), allsaves);
@@ -1431,6 +1439,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
 
         tfree(begstr);
         tfree(strnode1);
+        tfree(strnode1name);
         tfree(newnode);
         tfree(nodename1);
     }

@@ -819,7 +819,7 @@ TWONbindCSC (TWOdevice *pDevice)
  */
 
 void 
-  TWONsysLoad(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
+  TWONsysLoad(TWOdevice *pDevice, bool tranAnalysis, TWOtranInfo *info)
 {
   TWOelem *pElem;
   TWOnode *pNode;
@@ -1151,7 +1151,7 @@ void
 
 /* load only the Rhs vector */
 void 
-  TWONrhsLoad(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
+  TWONrhsLoad(TWOdevice *pDevice, bool tranAnalysis, TWOtranInfo *info)
 {
   TWOelem *pElem;
   TWOnode *pNode;
@@ -1267,8 +1267,8 @@ void
  *  mobilities and their derivatives
  */
 void 
-  TWONcommonTerms(TWOdevice *pDevice, BOOLEAN currentOnly, 
-                  BOOLEAN tranAnalysis, TWOtranInfo *info)
+  TWONcommonTerms(TWOdevice *pDevice, bool currentOnly, 
+                  bool tranAnalysis, TWOtranInfo *info)
 {
   TWOelem *pElem;
   TWOedge *pEdge;

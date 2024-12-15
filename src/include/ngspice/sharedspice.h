@@ -167,15 +167,8 @@ struct ngcomplex {
 typedef struct ngcomplex ngcomplex_t;
 #endif
 
-/* NG_BOOL is the boolean variable at the ngspice interface.
-   When ompiling ngspice shared module, typedef to _BOOL, which is boolean in C,
-   when used externally, keep it to be of type bool,
-   as has been available in the past. */
-#ifndef SHARED_MODULE
+/* NG_BOOL is the boolean variable at the ngspice interface.*/
 typedef bool NG_BOOL;
-#else
-typedef _Bool NG_BOOL;
-#endif
 
 /* vector info obtained from any vector in ngspice.dll.
    Allows direct access to the ngspice internal vector structure,

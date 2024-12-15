@@ -13,7 +13,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "oneddefs.h"
 
 double 
-ONEavalanche(BOOLEAN rhsOnly, ONEdevice *pDevice, ONEnode *pNode)
+ONEavalanche(bool rhsOnly, ONEdevice *pDevice, ONEnode *pNode)
 {
   ONEelem *pLElem, *pRElem;
   ONEedge *pLEdge, *pREdge;

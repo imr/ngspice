@@ -45,7 +45,6 @@
 typedef void * funptr_t;
 #define FREE_DLERR_MSG(msg)
 #else /* ifdef HAS_WINGUI */
-#undef BOOLEAN
 #include <windows.h>
 #include <shlwapi.h>
 #include <libloaderapi.h>

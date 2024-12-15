@@ -86,6 +86,7 @@ struct card {
     float w;
     float l;
     float nf;
+    int compmod;
 };
 
 /* structure used to save models in after they are read during pass 1 */

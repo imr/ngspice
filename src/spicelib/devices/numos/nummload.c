@@ -496,7 +496,7 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
 	    ckt->CKTtroubleElt = (GENinstance *) inst;
 	    return (E_BADMATRIX);
 	  }
-	  devConverged = TWOdeviceConverged(pDevice);
+	  devConverged = (int)TWOdeviceConverged(pDevice);
 	  pDevice->converged = devConverged;
 
 	  /* compute the currents and conductances */

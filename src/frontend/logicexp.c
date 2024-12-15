@@ -26,7 +26,7 @@
 static char *get_pindly_instance_name(void);
 static char *get_inst_name(void);
 static char *get_logicexp_tmodel_delays(
-    char *out_name, int gate_op, BOOL isnot, DSTRING *mname);
+    char *out_name, int gate_op, bool isnot, DSTRING *mname);
 
 /* Start of btree symbol table */
 #define SYM_INPUT       1
@@ -235,7 +235,7 @@ static int lex_oper(int c)
     return 0;
 }
 
-static char *lex_gate_name(int c, BOOL not)
+static char *lex_gate_name(int c, bool not)
 {
     /* returns an XSPICE gate model name */
     static char buf[32];
@@ -271,7 +271,7 @@ static char *lex_gate_name(int c, BOOL not)
     return buf;
 }
 
-static char *tmodel_gate_name(int c, BOOL not)
+static char *tmodel_gate_name(int c, bool not)
 {
     /* Returns an XSPICE model name for the case where
        logicexp does not have a corresponding pindly
@@ -353,7 +353,7 @@ static int lexer_scan(LEXER lx)
             return c;
         else if (lex_ident(c)) {
             size_t i = 0;
-            BOOL need_gt1 = FALSE;
+            bool need_gt1 = FALSE;
             if (c == '+') { // an identifier does not begin with '+'
                 lx->lexer_buf[0] = (char) c;
                 lx->lexer_buf[1] = '\0';
@@ -398,7 +398,7 @@ static int lex_scan(void)
     return lexer_scan(parse_lexer);
 }
 
-static BOOL lex_all_digits(char *str)
+static bool lex_all_digits(char *str)
 {
     size_t i, slen;
     if (!str) { return FALSE; }
@@ -482,9 +482,9 @@ struct Stack {
 
 struct gate_data {
     int type;
-    BOOL finished;
-    BOOL is_not;
-    BOOL is_possible;
+    bool finished;
+    bool is_not;
+    bool is_possible;
     char *outp;
     NAME_ENTRY ins;
     NAME_ENTRY last_input;
@@ -991,12 +991,12 @@ err_return:
 
 /* Start of logicexp parser */
 static void aerror(char *s);
-static BOOL amatch(int t);
-static BOOL bparse(char *line, BOOL new_lexer, int optimize);
+static bool amatch(int t);
+static bool bparse(char *line, bool new_lexer, int optimize);
 
 static int lookahead = 0;
 static int number_of_instances = 0;
-static BOOL use_tmodel_delays = FALSE;
+static bool use_tmodel_delays = FALSE;
 
 static void cleanup_parser(void)
 {
@@ -1074,7 +1074,7 @@ static void aerror(char *s)
     cleanup_parser();
 }
 
-static BOOL amatch(int t)
+static bool amatch(int t)
 {
     if (lookahead == t) {
         lookahead = lex_scan();
@@ -1087,14 +1087,14 @@ static BOOL amatch(int t)
     return TRUE;
 }
 
-static BOOL bstmt_postfix(int optimize)
+static bool bstmt_postfix(int optimize)
 {
     /* A stmt is: output_name_id = '{' expr '}' */
     DS_CREATE(lhs, 32);
     DS_CREATE(postfix, 1024);
     DS_CREATE(infix, 1024);
     char *right_bracket = NULL, *rest = NULL;
-    BOOL retval = TRUE;
+    bool retval = TRUE;
 
     if (lookahead == LEX_ID) {
         ds_clear(&lhs);
@@ -1156,7 +1156,7 @@ bail_out:
 }
 
 static char *get_logicexp_tmodel_delays(
-    char *out_name, int gate_op, BOOL isnot, DSTRING *mname)
+    char *out_name, int gate_op, bool isnot, DSTRING *mname)
 {
     ds_clear(mname);
     if (use_tmodel_delays) {
@@ -1182,9 +1182,9 @@ static char *get_logicexp_tmodel_delays(
     return ds_get_buf(mname);
 }
 
-static BOOL bparse(char *line, BOOL new_lexer, int optimize)
+static bool bparse(char *line, bool new_lexer, int optimize)
 {
-    BOOL ret_val = TRUE;
+    bool ret_val = TRUE;
     DS_CREATE(stmt, LEX_BUF_SZ);
 
     if (new_lexer)
@@ -1228,8 +1228,8 @@ static BOOL bparse(char *line, BOOL new_lexer, int optimize)
 */
 static LEXER current_lexer = NULL;
 
-static BOOL expect_token(
-    int tok, int expected_tok, char *expected_str, BOOL msg, int loc)
+static bool expect_token(
+    int tok, int expected_tok, char *expected_str, bool msg, int loc)
 {
     if (tok != expected_tok) {
         if (msg) {
@@ -1259,12 +1259,12 @@ static BOOL expect_token(
     return TRUE;
 }
 
-BOOL f_logicexp(char *line, int optimize)
+bool f_logicexp(char *line, int optimize)
 {
     /* If optimize > 0 then perform optimizations in scan_gates */
     int t, num_ins = 0, num_outs = 0, i;
     char *endp;
-    BOOL ret_val = TRUE;
+    bool ret_val = TRUE;
     char *uname = NULL;
 
     lex_init(line);
@@ -1689,8 +1689,8 @@ static char *mntymx_estimate(char *delay_str, DSTRING *pds)
     return s;
 }
 
-static BOOL extract_delay(
-    LEXER lx, int val, PLINE *pline_arr, int idx, BOOL tri)
+static bool extract_delay(
+    LEXER lx, int val, PLINE *pline_arr, int idx, bool tri)
 {
     /* NOTE: The delays are specified in a DELAY(t1,t2,t3) function.
        Beware if the format of t1, t2, t3 changes!
@@ -1700,9 +1700,9 @@ static BOOL extract_delay(
        x.y represents a decimal number; w is an integer.
        Either numbers can have more that one digit.
     */
-    BOOL in_delay = FALSE, ret_val = TRUE;
+    bool in_delay = FALSE, ret_val = TRUE;
     int i;
-    BOOL shorter = FALSE, update_val = FALSE;
+    bool shorter = FALSE, update_val = FALSE;
     struct udevices_info info = u_get_udevices_info();
     float del_max_val = 0.0, del_val = 0.0, del_min_val = FLT_MAX;
     char *units;
@@ -1807,10 +1807,10 @@ static BOOL extract_delay(
     return ret_val;
 }
 
-static BOOL new_gen_output_models(LEXER lx)
+static bool new_gen_output_models(LEXER lx)
 {
     int val, arrlen = 0, idx = 0, i;
-    BOOL in_pindly = FALSE, in_tristate = FALSE;
+    bool in_pindly = FALSE, in_tristate = FALSE;
     DS_CREATE(enable_name, 64);
     DS_CREATE(last_enable, 64);
     PLINE pline = NULL;
@@ -1874,7 +1874,7 @@ static BOOL new_gen_output_models(LEXER lx)
                 val = lexer_scan(lx);
                 if (val == LEX_ID && (eq(lx->lexer_buf, "hi")
                         || eq(lx->lexer_buf, "lo"))) {
-                    BOOL invert = FALSE;
+                    bool invert = FALSE;
                     if (eq(lx->lexer_buf, "lo"))
                         invert = TRUE;
                     val = lexer_scan(lx);
@@ -1960,7 +1960,7 @@ static char *get_pindly_instance_name(void)
     return pindly_instance_name;
 }
 
-BOOL f_pindly(char *line)
+bool f_pindly(char *line)
 {
     int t, num_ios = 0, num_ena = 0, num_refs = 0, i;
     char *endp;

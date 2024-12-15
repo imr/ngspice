@@ -6,7 +6,7 @@
 #define ngspice_WINPRINT_H
 
 void WPRINT_PrintInit(HWND hwnd);
-BOOL CALLBACK WPRINT_Abort( HDC hdc, int iError);
+bool CALLBACK WPRINT_Abort( HDC hdc, int iError);
 int WPRINT_Init(void);
 int WPRINT_NewViewport( GRAPH * graph);
 int WPRINT_Close(void);

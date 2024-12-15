@@ -9,9 +9,10 @@ Author: 1985 Wayne A. Christopher
   Central function is inp_readall()
 */
 
-/* Note: Must include shlwapi.h before ngspice header defining BOOL due
+/* Note: Must include shlwapi.h before ngspice header defining bool due
  * to conflict */
 #include <stdio.h>
+
 #ifdef _WIN32
 #include <shlwapi.h> /* for definition of PathIsRelativeA() */
 #pragma comment(lib, "Shlwapi.lib")
@@ -448,6 +449,7 @@ struct card *insert_new_line(
     x->linenum_orig = linenum_orig;
     x->level = card ? card->level : NULL;
     x->linesource = lineinfo;
+    x->compmod = 0;
 
     if (card)
         card->nextcard = x;
@@ -949,7 +951,7 @@ void inp_get_w_l_x(struct card* card) {
             continue;
         }
         /* only subcircuit invocations */
-        if (*curr_line != 'x' || (!newcompat.hs && !newcompat.spe)) {
+        if (*curr_line != 'x' || (!newcompat.hs && !newcompat.spe) || card->compmod > 0) {
             continue;
         }
 
@@ -1294,7 +1296,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         add_to_sourcepath(sourcelineinfo, NULL);
     }
 
-    sourceinfo = wl_cons(sourcelineinfo, sourceinfo);
+    wl_append_word(&sourceinfo, &sourceinfo, sourcelineinfo);
 
     /* First read in all lines & put them in the struct cc */
     for (;;) {
@@ -1429,6 +1431,47 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             struct card* newcard;
 
+            struct compat tmpcomp;
+            bool compset = FALSE;
+
+            /* special treatment of special .inc commands */
+            if (ciprefix(".incpslt", buffer)) {
+                compset = TRUE;
+                /* save the current compatibility status */
+                tmpcomp.isset = newcompat.isset; /* at least one mode is set */
+                tmpcomp.hs = newcompat.hs; /* HSPICE */
+                tmpcomp.s3 = newcompat.s3; /* spice3 */
+                tmpcomp.ll = newcompat.ll; /* all */
+                tmpcomp.ps = newcompat.ps; /* PSPICE */
+                tmpcomp.lt = newcompat.lt; /* LTSPICE */
+                tmpcomp.ki = newcompat.ki; /* KiCad */
+                tmpcomp.a = newcompat.a; /* whole netlist */
+                tmpcomp.spe = newcompat.spe; /* spectre */
+                tmpcomp.eg = newcompat.eg; /* EAGLE */
+                tmpcomp.mc = newcompat.mc; /* to be set for 'make check' */
+                tmpcomp.xs = newcompat.xs; /* XSPICE */
+                /* save the new comptmode */
+                newcompat.isset = TRUE; /* at least one mode is set */
+                if (ciprefix(".incpslt", buffer)) {
+                    newcompat.hs = FALSE;
+                    newcompat.ps = TRUE;
+                    newcompat.lt = TRUE;
+                }
+                else {
+                    newcompat.hs = TRUE;
+                    newcompat.ps = FALSE;
+                    newcompat.lt = FALSE;
+                }
+                newcompat.s3 = FALSE;
+                newcompat.ll = FALSE;
+                newcompat.ki = FALSE;
+                newcompat.a = FALSE;
+                newcompat.spe = FALSE;
+                newcompat.eg = FALSE;
+                newcompat.mc = FALSE;
+                newcompat.xs = FALSE;
+            }
+
             inp_stripcomments_line(buffer, FALSE, TRUE);
 
             s = skip_non_ws(buffer); /* advance past non-space chars */
@@ -1506,10 +1549,15 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             char* tmpstr = copy(nexttok(buffer));
             wl_append_word(&sourceinfo, &sourceinfo, tmpstr);
 
-            /* Add source of netlist data, for use in verbose error messages */
+            /* Add source of netlist data, for use in verbose error messages.
+               Set the compatibility mode flag to 1, if pslt is read. */
             for (tmpcard = newcard; tmpcard; tmpcard = tmpcard->nextcard) {
                 /* skip *include */
                 tmpcard->linesource = tmpstr;
+                if (compset)
+                    tmpcard->compmod = 1;
+                else
+                    tmpcard->compmod = 0;
             }
 
             if (newcard) {
@@ -1532,6 +1580,23 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             /* Fix the buffer up a bit. */
             (void)memcpy(buffer + 1, "end of: ", 8);
+
+            if (compset) {
+                /* restore the previous compatibility status */
+                newcompat.isset = tmpcomp.isset; /* at least one mode is set */
+                newcompat.hs = tmpcomp.hs; /* HSPICE */
+                newcompat.s3 = tmpcomp.s3; /* spice3 */
+                newcompat.ll = tmpcomp.ll; /* all */
+                newcompat.ps = tmpcomp.ps; /* PSPICE */
+                newcompat.lt = tmpcomp.lt; /* LTSPICE */
+                newcompat.ki = tmpcomp.ki; /* KiCad */
+                newcompat.a = tmpcomp.a; /* whole netlist */
+                newcompat.spe = tmpcomp.spe; /* spectre */
+                newcompat.eg = tmpcomp.eg; /* EAGLE */
+                newcompat.mc = tmpcomp.mc; /* to be set for 'make check' */
+                newcompat.xs = tmpcomp.xs; /* XSPICE */
+            }
+
         } /*  end of .include handling  */
 
         /* loop through 'buffer' until end is reached. Make all letters lower
@@ -1857,7 +1922,6 @@ FILE *inp_pathopen(const char *name, const char *mode)
 /* for MultiByteToWideChar */
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #ifndef EXT_ASC
-#undef BOOLEAN
 #include <windows.h>
 #endif
 #endif
@@ -3304,7 +3368,12 @@ void inp_casefix(char *string)
             tmpstr = strstr(string, "file=\"");
 
 #endif
-        keepquotes = ciprefix(".param", string); // Allow string params
+        /* Allow string params */
+        keepquotes = ciprefix(".param", string);
+        /* Allow string param in .subckt lines */
+        keepquotes = keepquotes || (ciprefix(".subckt", string) && (strstr(string, "=\"")));
+        /* Keep quoted strings in X lines */
+        keepquotes = keepquotes || (*string == 'x' && strchr(string, '\"'));
 
         while (*string) {
 #ifdef XSPICE
@@ -3699,7 +3768,7 @@ static void inp_fix_for_numparam(
 
         inp_change_quotes(c->line);
 
-        if (!newcompat.hs && !newcompat.s3)
+        if ((!newcompat.hs && !newcompat.s3) || c->compmod > 0)
             if (ciprefix(".subckt", c->line) || ciprefix("x", c->line)) {
                 /* remove params: */
                 char *str_ptr = strstr(c->line, "params:");
@@ -3914,7 +3983,8 @@ static int inp_get_params(
         *end = '\0';
 
         if (*value == '{' || isdigit_c(*value) ||
-                (*value == '.' && isdigit_c(value[1]))) {
+                (*value == '.' && isdigit_c(value[1])) ||
+                (*value == '\"')) {
             value = copy(value);
         }
         else {
@@ -4032,7 +4102,7 @@ static int inp_fix_subckt_multiplier(struct names *subckt_w_params,
         /* no 'm' for model cards */
         if (ciprefix(".model", curr_line))
             continue;
-        if (newcompat.hs) {
+        if (newcompat.hs && card->compmod == 0) {
             /* if there is already an m=xx in the instance line, multiply it with the new m */
             char* mult = strstr(curr_line, " m=");
             if (mult) {
@@ -7123,7 +7193,7 @@ static bool inp_temper_compat(struct card *card)
             continue;
         }
         /* exclude some elements */
-        if (strchr("*vbiegfh", curr_line[0]))
+        if (strchr("*vbiegfhVBIEGFH", curr_line[0]))
             continue;
         /* exclude all dot commands except .model */
         if (curr_line[0] == '.' && !prefix(".model", curr_line))
@@ -8691,9 +8761,7 @@ static void inp_check_syntax(struct card *deck)
     for (card = deck; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".probe", cut_line) && search_plain_identifier(cut_line, "alli")) {
-            int i = 0;
             bool bi = TRUE;
-            cp_vset("auto_bridge", CP_NUM, &i);
             cp_vset("probe_alli_given", CP_BOOL, &bi);
             break;
         }
@@ -9580,9 +9648,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
 /* add path or filepath (without file name) to variable sourcepath */
 int add_to_sourcepath(const char* filepath, const char* path)
 {
-    const char* fpath;
-    char buf[512];
-
+    char* fpath=NULL;
+    wordlist *addwl=NULL, *newwl=NULL, *startwl, *endwl;
 
     if ((filepath && path) || (!filepath && !path))
         return 1;
@@ -9593,29 +9660,35 @@ int add_to_sourcepath(const char* filepath, const char* path)
     else
         fpath = ngdirname(filepath);
 
+    if (fpath)
+        addwl = cp_doglob(cp_lexer(fpath));
+    else
+        return 1;
+
+    startwl = newwl = wl_from_string("sourcepath = ( ");
+    endwl = wl_from_string(" )");
+
     /* add fpath to 'sourcepath' list variable */
     if (cp_getvar("sourcepath", CP_LIST, NULL, 0)) {
-        wordlist* wl;
-        char* toklist;
-        wl = vareval("sourcepath");
-        toklist = wl_flatten(wl);
-        (void)snprintf(buf, 511, "sourcepath = ( %s %s )", toklist, fpath);
-        wl_free(wl);
-        tfree(toklist);
+        wordlist* wl = vareval("sourcepath");
+        wl_append(newwl, wl);
     }
+    /* new sourcepath variable */
     else {
-        (void)snprintf(buf, 511, "sourcepath = ( %s )", fpath);
+        wordlist* wl = wl_from_string(fpath);
+        wl_append(newwl, wl);
     }
+    /* add new entry */
+    if (addwl)
+        wl_append(newwl, addwl);
+    /* add end section */
+    wl_append(newwl, endwl);
 
 //    fprintf(stdout, "Added to variable 'sourcepath':\n  %s\n", fpath);
 
-    {
-        wordlist* wl;
-        wl = cp_doglob(cp_lexer(buf));
-        com_set(wl);
-        wl_free(wl);
-    }
+    com_set(startwl);
 
+    wl_free(startwl);
     tfree(fpath);
     return 0;
 }

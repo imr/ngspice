@@ -1,0 +1,22 @@
+Text over Subcircuit boundary test
+
+V1 i1 0 0
+V2 i2 0 0
+
+X1  i1 i2 in1 in2 subtest infile="my-source.txt"
+
+.subckt subtest ir1 ir2 in1 in2 r1val=1k infile="whatever" r2val=2k
+R1 ir1 in1 'r1val'
+R2 ir2 in2 'r2val'
+afs %vd([in1 0 in2 0]) filesrc
+.model filesrc filesource (file=infile amploffset=[0 0] amplscale=[1 1]
++ timeoffset=0 timescale=1
++ timerelative=false amplstep=false)
+.ends
+
+.control
+tran 0.1u 100u
+plot i(V1) i(V2)
+.endc
+
+.end

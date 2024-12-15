@@ -7,10 +7,10 @@
 
 /* Debug statements */
 
-extern BOOLEAN TWOacDebug;
-extern BOOLEAN TWOdcDebug;
-extern BOOLEAN TWOtranDebug;
-extern BOOLEAN TWOjacDebug;
+extern int TWOacDebug;
+extern int TWOdcDebug;
+extern int TWOtranDebug;
+extern int TWOjacDebug;
 
 /* Now some defines for the two dimensional simulator
  * library.

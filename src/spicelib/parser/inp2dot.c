@@ -7,6 +7,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/ifsim.h"
+#include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
@@ -438,6 +439,7 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
 {
     char *name;			/* the resistor's name */
     int error;			/* error code temporary */
+    int filters, fidx;          /* Filter allocation and index. */
     IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue *parm;		/* a pointer to a value struct for function returns */
     int which;			/* which analysis we are performing */
@@ -446,6 +448,9 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     CKTnode *node1;		/* the first node's node pointer */
     CKTnode *node2;		/* the second node's node pointer */
     char *steptype;		/* ac analysis, type of stepping function */
+    char *cp;                   /* Scan for filters. */
+
+    extern char **Sens_filter;  /* cktsens.c */
 
     which = ft_find_analysis("SENS");
     if (which == -1) {
@@ -456,9 +461,10 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     IFC(newAnalysis, (ckt, which, "Sensitivity Analysis", &foo, task));
 
     /* Format is:
-     *      .sens <output>
+     *      .sens <output> [<filter strings>]
      *      + [ac [dec|lin|oct] <pts> <low freq> <high freq> | dc ]
      */
+
     /* Get the output voltage or current */
     INPgetTok(&line, &name, 0);
     /* name is now either V or I or a serious error */
@@ -495,12 +501,44 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
         return 0;
     }
 
-    INPgetTok(&line, &name, 1);
-    if (name && !strcmp(name, "pct")) {
-        ptemp.iValue = 1;
-        GCA(INPapName, (ckt, which, foo, "pct", &ptemp));
-        INPgetTok(&line, &name, 1);
+    /* Scan for filters for the parameter names to be varied.
+     * INPgetTok() breaks on '*' so scan by hand.
+     */
+
+    if (Sens_filter)
+        FREE(Sens_filter);
+    fidx = 0;
+    filters = -1; // Ensure room for NULL.
+    name = NULL;
+    while (*line && *line > ' ')
+            ++line;
+    for (;;) {
+        int l;
+
+        while (*line && *line <= ' ')
+            ++line;
+        if (!*line)
+            break;
+        cp = line;
+        while (*cp && *cp > ' ')
+            ++cp;
+        l = (int)(cp - line);
+        name = TMALLOC(char, l + 1);
+        strncpy(name, line, l);
+        name[l] = 0;
+        line = cp;
+        if (!strcmp(name, "ac") || !strcmp(name, "dc"))
+            break;
+        if (fidx >= filters)
+            Sens_filter = TREALLOC(char *, Sens_filter, filters + 8);
+        filters += 8;
+        Sens_filter[fidx++] = name;
+        name = NULL;
     }
+    if (Sens_filter) {
+        Sens_filter[fidx] = NULL;
+    }
+
     if (name && !strcmp(name, "ac")) {
         INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
         ptemp.iValue = 1;
@@ -515,9 +553,10 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     } else if (name && *name && strcmp(name, "dc")) {
         /* Bad flag */
         LITERR("Syntax error: 'ac' or 'dc' expected.\n");
-        return 0;
     }
-    return (0);
+    if (name)
+        FREE(name);
+    return 0;
 }
 
 

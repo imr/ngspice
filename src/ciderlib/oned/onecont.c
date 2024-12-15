@@ -359,7 +359,7 @@ ONEbindCSC (ONEdevice *pDevice)
 #endif
 
 void 
-ONE_sysLoad(ONEdevice *pDevice, BOOLEAN tranAnalysis, 
+ONE_sysLoad(ONEdevice *pDevice, bool tranAnalysis, 
             ONEtranInfo *info)
 {
   ONEelem *pElem;
@@ -652,7 +652,7 @@ ONE_jacLoad(ONEdevice *pDevice)
 }
 
 void 
-ONE_rhsLoad(ONEdevice *pDevice, BOOLEAN tranAnalysis,
+ONE_rhsLoad(ONEdevice *pDevice, bool tranAnalysis,
             ONEtranInfo *info)
 {
   ONEelem *pElem;
@@ -766,8 +766,8 @@ ONE_rhsLoad(ONEdevice *pDevice, BOOLEAN tranAnalysis,
 }
 
 void 
-ONE_commonTerms(ONEdevice *pDevice, BOOLEAN currentOnly, 
-                BOOLEAN tranAnalysis, ONEtranInfo *info)
+ONE_commonTerms(ONEdevice *pDevice, bool currentOnly, 
+                bool tranAnalysis, ONEtranInfo *info)
 {
   ONEelem *pElem;
   ONEedge *pEdge;

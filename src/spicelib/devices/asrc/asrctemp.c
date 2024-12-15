@@ -26,8 +26,14 @@ ASRCtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->ASRCdtemp = 0.0;
             } else {
                 here->ASRCdtemp = 0.0;
-                if (here->ASRCdtempGiven)
-                    printf("%s: Instance temperature specified, dtemp ignored\n", here->ASRCname);
+                if (here->ASRCdtempGiven &&
+                    ckt->CKTcurJob && ckt->CKTcurJob->JOBtype != 9) {
+                    /* Keep quiet in sensistivity analysis. */
+
+                    printf("%s: Instance temperature specified, "
+                           "dtemp ignored\n",
+                           here->ASRCname);
+                }
             }
 
         }

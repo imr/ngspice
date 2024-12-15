@@ -30,7 +30,7 @@ int OSDItrunc(GENmodel *in_model, CKTcircuit *ckt, double *timestep) {
         }
       }
 
-      int state = inst->GENstate;
+      int state = inst->GENstate + (int)descr->num_states;
       for (uint32_t i = 0; i < descr->num_nodes; i++) {
         if (descr->nodes[i].react_residual_off != UINT32_MAX) {
           CKTterr(state, ckt, timestep);

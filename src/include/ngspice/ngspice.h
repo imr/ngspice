@@ -185,11 +185,6 @@ extern double x_atanh(double);
 #define popen _popen
 #define pclose _pclose
 
-// undo a #define bool _Bool in MS Visual Studio 2015
-#if defined(bool)
-#undef bool
-#endif
-
 // warning C4127: Bedingter Ausdruck ist konstant
 #pragma warning(disable: 4127)
 #endif

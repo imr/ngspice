@@ -9,14 +9,10 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #include "ngspice/ifsim.h"
 #include "ngspice/sensgen.h"
 
-/* Used by sensitivity code in cktsens.c  */
-
-extern char	*Sfilter;
-
-int set_model(sgen *);
-int set_param(sgen *);
-int set_inst(sgen *);
-int set_dev(sgen *);
+static int set_model(sgen *);
+static int set_param(sgen *);
+static int set_inst(sgen *);
+static int set_dev(sgen *);
 
 sgen *
 sgen_init(CKTcircuit *ckt, int is_dc)
@@ -35,8 +31,6 @@ sgen_init(CKTcircuit *ckt, int is_dc)
 	sg->ptable = NULL;
 	sg->is_dc = is_dc;
 	sg->is_principle = 0;
-	sg->is_q = 0;
-	sg->is_zerook = 0;
 	sg->value = 0.0;
 
 	sgen_next(&sg);	/* get the ball rolling XXX check return val? */
@@ -178,32 +172,29 @@ sgen_next(sgen **xsg)
 	return 1;
 }
 
-int set_inst(sgen *sg)
+static int set_inst(sgen *sg)
 {
 	NG_IGNORE(sg);
 	return 1;
 }
 
-int set_model(sgen *sg)
+static int set_model(sgen *sg)
 {
 	NG_IGNORE(sg);
 	return 1;
 }
 
-int set_dev(sgen *sg)
+static int set_dev(sgen *sg)
 {
 	NG_IGNORE(sg);
 	return 1;
 }
 
-int set_param(sgen *sg)
+static int set_param(sgen *sg)
 {
 	IFvalue	ifval;
 
 	if (!sg->ptable[sg->param].keyword)
-		return 0;
-	if (Sfilter && strncmp(sg->ptable[sg->param].keyword, Sfilter,
-			strlen(Sfilter)))
 		return 0;
 	if ((sg->ptable[sg->param].dataType &
 		(IF_SET|IF_ASK|IF_REAL|IF_VECTOR|IF_REDUNDANT|IF_NONSENSE))
@@ -212,22 +203,9 @@ int set_param(sgen *sg)
 	if (sg->is_dc &&
 		(sg->ptable[sg->param].dataType & (IF_AC | IF_AC_ONLY)))
 		return 0;
-	if ((sg->ptable[sg->param].dataType & IF_CHKQUERY) && !sg->is_q)
-		return 0;
 
 	if (sens_getp(sg, sg->ckt, &ifval))
 		return 0;
-
-	if (fabs(ifval.rValue) < 1e-30) {
-		if (sg->ptable[sg->param].dataType & IF_SETQUERY)
-			sg->is_q = 0;
-
-		if (!sg->is_zerook
-			&& !(sg->ptable[sg->param].dataType & IF_PRINCIPAL))
-			return 0;
-
-	} else if (sg->ptable[sg->param].dataType & (IF_SETQUERY|IF_ORQUERY))
-			sg->is_q = 1;
 
 	if (sg->ptable[sg->param].dataType & IF_PRINCIPAL)
 		sg->is_principle += 1;

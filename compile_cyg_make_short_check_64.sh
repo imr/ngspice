@@ -29,7 +29,7 @@ echo
 cd release64_cyg
 if [ $? -ne 0 ]; then  echo "cd release64_cyg failed"; exit 1 ; fi
 echo
-../configure --with-x=yes --enable-cider --enable-shortcheck CFLAGS="-O2 -m64" LDFLAGS="-s -m64"
+../configure --with-x=yes --enable-cider --enable-shortcheck CFLAGS="-O2 -m64 -Wall -Wextra" LDFLAGS="-s -m64"
 
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 

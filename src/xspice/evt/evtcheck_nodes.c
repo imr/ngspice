@@ -696,6 +696,16 @@ bool Evtcheck_nodes(
     if (!cp_getvar("auto_bridge", CP_NUM, &show, sizeof show))
         show = AB_SILENT;
 
+    /* Check for incompatible command '.probe alli' */
+
+    if (ckt->evt->info.node_list && cp_getvar("probe_alli_given", CP_BOOL, NULL, 0)) {
+        fprintf(stderr,
+            "\nError: Dot command '.probe alli' and "
+            "digital nodes are not compatible.\n");
+        fprintf(stderr, "    Simulation will fail!\n\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
     /* Try to create joining device if any analog node name matches
      * an event node. Failure is fatal.
      */
@@ -707,13 +717,8 @@ bool Evtcheck_nodes(
              analog_node;
              analog_node = analog_node->next) {
              int nl;
-
              if (strcmp(event_node->name, analog_node->name) == 0) {
                  if (show == AB_OFF) {
-                     if (cp_getvar("probe_alli_given", CP_BOOL, NULL, 0))
-                         fprintf(stderr,
-                                 "\nDot command '.probe alli' and "
-                                 "digital nodes are not compatible.\n");
                      FREE(errMsg);
                      errMsg = tprintf("Auto bridging is switched off "
                                       "but node %s is mixed-type.\n",
