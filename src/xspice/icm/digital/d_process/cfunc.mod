@@ -97,6 +97,12 @@ MODIFICATIONS
         Use cm_cexit() to halt simulation after fatal errors.
         Cleanup (terminate) Windows child processes.
 
+    14 December 2024 Brian Taylor
+        In PSpice compatibility mode, after pspice_compat() is called,
+        a | is changed to ||. If this is at the end of the process_file
+        parameter, we need to remove || rather than just a single | when
+        using named pipes (not Windows). Any embedded | within the
+        process_file name must be avoided. Also avoid & characters.
 
 REFERENCED FILES
 
@@ -254,26 +260,58 @@ static int start(char *system_command, char * c_argv[], Process_t * process)
         cm_message_send("ERROR: d_process process_file argument is not given");
         return 1;
     }
+    /* NOTE that if pspice_compat was called it will replace a
+       single | with || in the process_file parameter string.
+       Only deal with trailing |.
+     */
     if (system_command[syscmd_len-1] == '|') {
         char *filename_in = NULL, *filename_out = NULL;
-        filename_in = (char *) malloc(syscmd_len + 5);
-        filename_out = (char *) malloc(syscmd_len + 5);
+        int endpt = 0, err_val = 0;
+        if (syscmd_len < 2) {
+            cm_message_send(
+            "ERROR: d_process process_file argument is not given");
+            return 1;
+        }
+        if (system_command[syscmd_len-2] == '|') {
+            if (syscmd_len < 3) {
+                cm_message_send(
+                "ERROR: d_process process_file argument is not given");
+                return 1;
+            }
+            endpt = 2;
+        } else {
+            endpt = 1;
+        }
+        filename_in = (char *) calloc(1, syscmd_len + 5);
+        if (!filename_in) {
+            cm_message_send("ERROR: No memory");
+            return 1;
+        }
+        filename_out = (char *) calloc(1, syscmd_len + 5);
+        if (!filename_out) {
+            free(filename_in);
+            cm_message_send("ERROR: No memory");
+            return 1;
+        }
         filename_in[0] = '\0';
         filename_out[0] = '\0';
-        strncpy(filename_in, system_command, syscmd_len-1);
-        strcpy(&filename_in[syscmd_len-1], "_in");
-        strncpy(filename_out, system_command, syscmd_len-1);
-        strcpy(&filename_out[syscmd_len-1], "_out");
+        strncpy(filename_in, system_command, syscmd_len - endpt);
+        strcpy(&filename_in[syscmd_len - endpt], "_in");
+        strncpy(filename_out, system_command, syscmd_len - endpt);
+        strcpy(&filename_out[syscmd_len - endpt], "_out");
         if ((process->pipe_to_child = open(filename_in, O_WRONLY)) == -1) {
-            cm_message_send("ERROR: d_process failed to open in fifo");
-            return 1;
+            cm_message_printf(
+            "ERROR: d_process failed to open in fifo %s\n", filename_in);
+            err_val = 1;
         }
         if ((process->pipe_from_child = open(filename_out, O_RDONLY)) == -1) {
-            cm_message_send("ERROR: d_process failed to open out fifo");
-            return 1;
+            cm_message_printf(
+            "ERROR: d_process failed to open out fifo %s\n", filename_out);
+            err_val = 1;
         }
-        if (filename_in) free(filename_in);
-        if (filename_out) free(filename_out);
+        free(filename_in);
+        free(filename_out);
+        if (err_val) return 1;
     }
     else {
         if (pipe(pipe_to_child) || pipe(pipe_from_child) || (pid=fork()) ==-1) {
@@ -347,8 +385,13 @@ void cm_d_process(ARGS)
         clk   = clk_old   = (Digital_State_t *) cm_event_get_ptr(0,0);
         reset = reset_old = (Digital_State_t *) cm_event_get_ptr(1,0);
 
-        STATIC_VAR(process) = calloc(1, sizeof(Process_t));
-        local_process       = STATIC_VAR(process);
+        local_process = calloc(1, sizeof(Process_t));
+        if (!local_process) {
+            cm_message_send("ERROR: No memory");
+            cm_cexit(1);
+            return;
+        }
+        STATIC_VAR(process) = local_process;
         CALLBACK = cm_d_process_callback;
 
         if (!PARAM_NULL(process_params)) {
@@ -425,10 +468,20 @@ void cm_d_process(ARGS)
         if (*clk != *clk_old && ONE == *clk) {
             uint8_t *dout = NULL, *din = NULL;
             uint8_t b;
-            dout = (uint8_t *)malloc(local_process->N_dout * sizeof(uint8_t));
+            dout = (uint8_t *)calloc(1,local_process->N_dout * sizeof(uint8_t));
+            if(!dout) {
+                cm_message_send("ERROR: No memory");
+                cm_cexit(1);
+                return;
+            }
             if (local_process->N_din > 0) {
-                din = (uint8_t *)malloc(local_process->N_din * sizeof(uint8_t));
-                memset(din, 0, local_process->N_din);
+                din = (uint8_t *)calloc(1,local_process->N_din * sizeof(uint8_t));
+                if(!din) {
+                    free(dout);
+                    cm_message_send("ERROR: No memory");
+                    cm_cexit(1);
+                    return;
+                }
             }
 
             for (i=0; i<PORT_SIZE(in); i++) {
