@@ -14,7 +14,6 @@
 # OpenMP has been installed from https://mac.r-project.org/openmp/
 
 # ngspice as shared library:
-# Replace --with-x by --with-ngshared in line ../configure ... .
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 # It might be necessary to uncomment and run ./autogen.sh .
 
@@ -43,13 +42,13 @@ if test "$1" = "d"; then
   echo "configuring for 64 bit debug"
   echo
 
-  ../configure --with-ngshared --enable-cider --with-readline=/opt/homebrew/opt/readline --enable-debug CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include" LDFLAGS="-m64 -g -L/opt/homebrew/opt/readline/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
+  ../configure --with-ngshared --enable-cider --enable-debug CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2" LDFLAGS="-m64 -g -L/opt/X11/lib -L/usr/local/lib -lomp"
 else
    cd release_sh
    if [ $? -ne 0 ]; then  echo "cd release_sh failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-  ../configure --with-ngshared --enable-cider --with-readline=/opt/homebrew/opt/readline CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/ncurses/include" LDFLAGS="-m64 -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/ncurses/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
+  ../configure --with-ngshared --enable-cider CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/ncurses/include" LDFLAGS="-m64  -L/opt/homebrew/opt/ncurses/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
