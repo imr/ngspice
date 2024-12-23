@@ -82,6 +82,9 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTstat->STATdevNum = TMALLOC(STATdevList, DEVmaxnum);
     if(sckt->CKTstat->STATdevNum == NULL)
         return(E_NOMEM);
+    /* Per-device timings */
+    sckt->CKTstat->devTimes = TMALLOC(double, DEVmaxnum+1);
+    sckt->CKTstat->devCounts = TMALLOC(size_t, DEVmaxnum+1);
     sckt->CKTtroubleNode = 0;
     sckt->CKTtroubleElt = NULL;
     sckt->CKTtimePoints = NULL;
