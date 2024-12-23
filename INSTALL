@@ -1,12 +1,9 @@
 Ngspice installation instructions
 =================================
 
-Important notice: If you upgrade from ngspice-38 or older
-there there is an update required for the XSPICE code 
-models (analog.cm etc.). Therefore it
+Important notice: If you upgrade, it
 is not sufficient to only re-make the main executable,
-you will have to compile and install the code models as well,
-e.g. with --enable-xspice.
+you will have to compile and install the code models as well.
 
 Table of contents
 
@@ -87,14 +84,14 @@ This file describes the procedures to install ngspice from sources.
  For compiling ngspice as a shared library, see section 1.4.
 
 
-1.2 Install from tarball (e.g. ngspice-43.tar.gz)
+1.2 Install from tarball (e.g. ngspice-44.tar.gz)
 
  This covers installation from a release distribution (for example
- ngspice-43.tar.gz, the so called tar ball).
+ ngspice-44.tar.gz, the so called tar ball).
 
  After downloading the tar ball to a local directory, unpack it by command:
 
- $ tar -zxvf ngspice-43.tar.gz
+ $ tar -zxvf ngspice-44.tar.gz
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -185,8 +182,11 @@ This file describes the procedures to install ngspice from sources.
 
 1.4 ngspice as a shared library
 
- The relevant configure options for the ngspice shared library are:
- $ --with-ngshared --enable-cider
+ The relevant configure option for the ngspice shared library is:
+ --with-ngshared 
+ (used instead of --with-x)
+ --enable-cider
+ may be selected optionally.
 
  Typically the two aliases libngspice.so, libngspice.so.0 and the compiled
  library libngspice.so.0.0.1 are made. The install locations depend on
@@ -236,7 +236,7 @@ This file describes the procedures to install ngspice from sources.
         device models like BSOMBULK or BSIM_CMG.
         
 
-(the following have to be selected to become available)
+(the following have to be selected explicitely to become available)
 
  --enable-cider
         Cider is a mixed-level simulator that couples Spice3 and DSIM
@@ -489,8 +489,11 @@ This file describes the procedures to install ngspice from sources.
  You will need some enhancements to the standard install (git, autoconf,
  automake, libtool, FLEX and BISON, all available with pacman in MSYSS2).
  Some links are given below which describe the procedures.
+ 
+ Unfortunately compiling with MINGW is slow. Compiling with Visual Studio
+ may be more than 10 times faster!
 
-     Installing from the tarball, e.g. ngspice-43.tar.gz, is simple: After
+     Installing from the tarball, e.g. ngspice-44.tar.gz, is simple: After
  expanding, you may just run ./compile_min.sh from the ngspice directory.
 
      The default installation location of ngspice is the Windows path
@@ -682,17 +685,16 @@ This file describes the procedures to install ngspice from sources.
  $ cd /lib
  $ ln -s libcygwin.a libdl.a.
 
- The procedure of compiling is the same as Linux.
+ The procedure of compiling is the same as with OS Linux.
 
 
 9.4 ngspice console app with MINGW or CYGWIN
 
  Omitting the configure flag --with-wingui will yield a console ngspice.
  You then will not have any graphics interface. In CYGWIN you may add --with-x
- for the X11 graphics (not available in mingw). A typical configure command
+ for the X11 graphics (not available in MINGW). A typical configure command
  may look like
- ./configure --enable-osdi --enable-xspice --enable-cider --enable-openmp
- --disable-debug CFLAGS=-m64 LDFLAGS=-m64 prefix=C:/Spice64
+ ./configure --enable-cider --disable-debug CFLAGS=-m64 LDFLAGS=-m64 prefix=C:/Spice64
 
 
 9.5 cross compiling ngspice for Windows from LINUX
@@ -724,7 +726,7 @@ cross-compile-shared.sh.
     advantage that it supports OpenMP.
  5. Or run the commands manually:  Configure NGSPICE invoking "./configure".
     A complete set of features is:
-      ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no
+      ./configure --with-x --enable-cider --disable-debug
  6. Compile NGSPICE invoking "make -j4"
  7. Install NGSPICE invoking "make install" or "sudo make install"
 
@@ -737,7 +739,7 @@ cross-compile-shared.sh.
  4. Execute this command:
       ./autogen.sh
  5. Configure NGSPICE invoking "./configure". A complete set of feature is:
-      ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --with-readline=yes --enable-debug=no
+      ./configure --enable-cider --disable-debug
  6. Compile NGSPICE invoking "make -j4"
  7. Install NGSPICE invoking "make install" or "sudo make install"
 
