@@ -816,7 +816,7 @@ int
 ngSpice_nospiceinit(void)
 {
     bool t = TRUE;
-    cp_vset("no_spicenit", CP_BOOL, &t);
+    cp_vset("no_spiceinit", CP_BOOL, &t);
     return 0;
 }
 
