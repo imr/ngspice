@@ -256,7 +256,7 @@
 
   The latest version released is:
 
-  ngspice-43 (released on July 14 2024)
+  ngspice-44 (released on January 2 2025)
 
 
  2.2.  What are the latest features in the current release?
@@ -311,8 +311,9 @@
   Ngspice is written in C, C++, and uses some GNU extensions. You may use
   a GNU C/C++ compiler and a LINUX environment to compile it. Ngspice can
   be compiled under Windows using the mingw or cygwin environment as
-  well as MS Visual Studio. It will readily compile on macOS.
-  FreeBSD or Solaris will do, but are not officially supported.
+  well as MS Visual Studio. It will readily compile on macOS, Intel CPUs or
+  Apple M1 - M4. Wasm, FreeBSD or Solaris will do, but are not officially
+  supported.
 
 
  3.2.  I get errors when I try to compile the source code, why?
@@ -356,7 +357,7 @@
 
  4.4.  Disclaimer and Copyright
 
-  Copyright: Holger Vogt, 2024
+  Copyright: Holger Vogt, 2025
   License: Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0.
   This document is provided as is. The information in it is not
   warranted to be correct: you use it at your own risk.
