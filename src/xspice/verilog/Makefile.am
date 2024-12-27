@@ -18,11 +18,11 @@ initdata2_DATA = ../../include/ngspice/cosim.h \
 # Icarus Verilog support: build two shared libraries.
 
 pkglib_LTLIBRARIES = ivlng.la ivlngvpi.la
-ivlng_la_SOURCES = icarus_shim.c icarus_shim.h
+ivlng_la_SOURCES = icarus_shim.c icarus_shim.h coroutine_shim.h
 ivlng_la_CFLAGS = -I../../../../src/include
 ivlng_la_LDFLAGS = -module -shared -avoid-version
 
-ivlngvpi_la_SOURCES = vpi.c icarus_shim.h vpi_user_dummy.h
+ivlngvpi_la_SOURCES = vpi.c icarus_shim.h vpi_user_dummy.h coroutine.h coroutine_cosim.h
 ivlngvpi_la_CFLAGS = -I../../../../src/include
 ivlngvpi_la_LDFLAGS = -module -shared  -avoid-version
 
@@ -32,7 +32,7 @@ ivlngvpi_la_LDFLAGS = -module -shared  -avoid-version
 
 if DLIBS_FULLY_RESOLVED
 pkglib_LTLIBRARIES += libvvp.la
-libvvp_la_SOURCES = vpi_dummy.c vpi_user_dummy.h
+libvvp_la_SOURCES = vpi_dummy.c vpi_user_dummy.h coroutine.h coroutine_cosim.h
 libvvp_la_LDFLAGS = -no-undefined -module -shared -avoid-version
 ivlng_la_LDFLAGS += -no-undefined
 ivlngvpi_la_LIBADD = libvvp.la ivlng.la
