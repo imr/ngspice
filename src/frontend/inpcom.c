@@ -8254,10 +8254,10 @@ static void inp_quote_params(struct card *c, struct card *end_c,
         if (num_terminals <= 0)
             continue;
 
-        /* There are devices that should not get quotes around tokens
-           following after the terminals. These may be model names or control
-           voltages. See bug 384  or Skywater issue 327 */
-        if (strchr("fhmouydqjzsw", *curr_line))
+        /* There are devices that should not get quotes around token directly
+           following the terminals. These may be model names, control voltages
+           or subckt names. See bugs 384, 730 or Skywater issue 327 */
+        if (strchr("fhmouydqjzswx", *curr_line))
             num_terminals++;
 
         for (i = 0; i < num_params; i++) {
