@@ -24,11 +24,14 @@ Table of contents
    3.3 make ngspice with pure CYGWIN
    3.4 ngspice console app with MINGW or CYGWIN
    3.5 cross compiling ngspice for Windows from LINUX
-  4 NGSPICE COMPILATION UNDER macOS
-   4.1 Use precompiled binary package
-   4.2 Compile NGSPICE manually from a tarball
-   4.3 Compile NGSPICE manually from git
-   4.4 About compilers
+  4 NGSPICE COMPILATION UNDER macOS M1 - M4
+   4.1 Prerequisites
+   4.2 Compile scripts for the bash terminal
+  5 NGSPICE COMPILATION UNDER macOS (tested with Intel CPUs)
+   5.1 Use precompiled binary package
+   5.2 Compile NGSPICE manually from a tarball
+   5.3 Compile NGSPICE manually from git
+   5.4 About compilers
 
 This file describes the procedures to install ngspice from sources.
 
@@ -563,17 +566,39 @@ This file describes the procedures to install ngspice from sources.
  cross-compile-shared.sh.
 
 
-4 NGSPICE COMPILATION UNDER macOS
-  ==================================
+4 NGSPICE COMPILATION UNDER macOS M1 - M4
+  =======================================
+  (tested on a mac mini with Sonoma 13.2.1 and M2 CPU)
 
-4.1 Use precompiled binary package
+4.1 Prerequisites
+ 1. Install xcode command line tools
+ 2. Install Homebrew
+    All installs following are via Homebrew (except for OpenMP)
+ 3. Install ngspice (this will add a lot of dependencies useful
+    also for compilation)
+ 4  Install gnuplot (plotting externally, or creating ps or png)
+ 5. Install XQuartz, libtool, autoconf, automake, readline, ncurses
+ 6. Install OpenMP from mac.r-project.org (a sufficiently modern OpenMP,
+    required by the ngspice OSDI interface).
+
+4.2 Compile scripts for the bash terminal
+ 1. standard ngspice executable
+    compile_macos_clang_M2.sh
+ 2. ngspice as a shared library
+    compile_macos_clang_M2_shared.sh
+
+
+5 NGSPICE COMPILATION UNDER macOS (tested with Intel CPUs)
+  ========================================================
+
+5.1 Use precompiled binary package
  1. Install an X11 interface (like Xquartz)
  2. Packages are available from Homebrew or MacPorts
     Install the downloaded NGSPICE package
     It may happen though that a package has been compiled without graphics support
  3. Open a terminal window and start using NGSPICE
 
-4.2 Compile NGSPICE manually from a tarball
+5.2 Compile NGSPICE manually from a tarball
  1. Install an X11 interface (like Xquartz)
  2. Install MacPorts from https://www.macports.org
  3. Execute this command:
@@ -588,7 +613,7 @@ This file describes the procedures to install ngspice from sources.
  6. Compile NGSPICE invoking "make -j4"
  7. Install NGSPICE invoking "make install" or "sudo make install"
 
-4.3 Compile NGSPICE manually from git
+5.3 Compile NGSPICE manually from git
  1. Install an X11 interface (like Xquartz)
  2. Install MacPorts from https://www.macports.org
  3. Execute this command:
@@ -620,7 +645,7 @@ Resulting dependencies of ngspice
     /usr/lib/libSystem.B.dylib
     /usr/local/lib/gcc/11/libgcc_s.1.dylib
 
-4.4 About compilers
+5.4 About compilers
  A compile script compile_macos_clang.sh contains all necessary steps for compiling
  with the Xcode clang/llvm compiler. This compiler however does not support -fopenmp.
  Therefore you may download and install gcc, e.g. from Homebrew and run the new
