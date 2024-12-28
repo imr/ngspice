@@ -1480,6 +1480,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             if (!y) {
                 fprintf(cp_err, "Error: .include filename missing\n");
+                if (sourcelineinfo) {
+                    if (intfile)
+                        fprintf(cp_err, "    While reading the netlist sent by the calling program\n");
+                    else
+                        fprintf(cp_err, "    While reading %s\n", sourcelineinfo);
+                }
                 tfree(buffer); /* was allocated by readline() */
                 controlled_exit(EXIT_FAILURE);
             }
@@ -1495,6 +1501,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     y_resolved = inp_pathresolve_at(y, oldpath);
                     if (!y_resolved) {
                         fprintf(cp_err, "Error: Could not find include file %s\n", y);
+                        if (sourcelineinfo) {
+                            if (intfile)
+                                fprintf(cp_err, "    While reading the netlist sent by the calling program\n");
+                            else
+                                fprintf(cp_err, "    While reading %s\n", sourcelineinfo);
+                        }
                         controlled_exit(EXIT_FAILURE);
                     }
                 }
@@ -1504,6 +1516,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 if (!newfp) {
                     fprintf(cp_err, "Error: .include statement failed.\n"
                                     "Could not open file\n%s\n", y_resolved);
+                    if (sourcelineinfo) {
+                        if (intfile)
+                            fprintf(cp_err, "    While reading the netlist sent by the calling program\n");
+                        else
+                            fprintf(cp_err, "    While reading %s\n", sourcelineinfo);
+                    }
                     tfree(buffer); /* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
                 }
