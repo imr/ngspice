@@ -1,3 +1,30 @@
+Ngspice-44, December 29th, 2024
+============
+- New features:
+    + Add function ngSpice_Reset(void) to completely reset shared ngspice.
+    + Bail out when state file is not found.
+    + Define 1e-12 as a minimum resistor value.
+    + Update VBIC model.
+    + d_cosim supports Icarus Verilog.
+    + Extend bsim4 operating point info list.
+    + Make several error messages more verbose by
+      adding source file name (and line number).
+    + Command 'let' will handle V(/nname).
+    + Enable using fftw3 as a build option of shared ngspice on Windows.
+    + Set lower case for variables or vectors names in command 'echo'.
+    + Add optional series resistance or junction capacitance for diode
+      model, if none is defined in the .model statement.
+    + Allow plotting a single point in an ascii plot.
+    + Bail out when the number of s parameter ports is less than 2.
+    + Add function ngSpice_nospiceinit(void) if you don't want to
+      read .spiceinit (shared ngspice only).
+    + Reorder and renovate timer functions.
+    + Enhance sensitivity analysis with an option to choose the parameters
+      to be varied.  Shell-style wildcards ("*?") are supported.
+    + Enable strings as parameters across subckt boundaries.
+    + Replace all BOOLEAN, BOOL, _Bool by bool.
+
+
 Ngspice-43, July 14th, 2024
 ============
 - New features:
