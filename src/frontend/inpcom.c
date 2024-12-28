@@ -1516,11 +1516,11 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 if (!newfp) {
                     fprintf(cp_err, "Error: .include statement failed.\n"
                                     "Could not open file\n%s\n", y_resolved);
-                    if (sourcelineinfo) {
+                    if (y_resolved) {
                         if (intfile)
                             fprintf(cp_err, "    While reading the netlist sent by the calling program\n");
                         else
-                            fprintf(cp_err, "    While reading %s\n", sourcelineinfo);
+                            fprintf(cp_err, "    While reading %s\n", y_resolved);
                     }
                     tfree(buffer); /* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
@@ -1529,7 +1529,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 y_dir_name = ngdirname(y_resolved);
 
                 newcard = inp_read(
-                    newfp, call_depth + 1, y_dir_name, NULL, FALSE, FALSE)
+                    newfp, call_depth + 1, y_dir_name, y_resolved, FALSE, FALSE)
                     .cc; /* read stuff in include file into
                             netlist */
 
