@@ -1123,7 +1123,11 @@ static int iplot(struct plot *pl, struct dbcomm *db)
             }
         }
     }
+/* iplot on macOS is totally slow, thus unusable, due to problems with
+   repeated calls to XSync. Skipping them still allows iplotting. */
+#if !defined(__APPLE__) || !defined(__MACH__)
     DevUpdate();
+#endif
     return inited;
 }
 
