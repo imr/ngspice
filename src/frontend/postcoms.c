@@ -469,6 +469,7 @@ com_write(wordlist *wl)
             names = ft_getpnames_quotes(&all, TRUE);
 
         if (names == NULL) {
+            fprintf(stderr, "Error during 'write': no writable vector found.\n");
             return;
         }
 
