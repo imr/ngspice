@@ -65,6 +65,7 @@ Table of contents
 13. Verilog-A models
 14. XSPICE code models
 15. Digital Building Blocks (U instances)
+16. Digital Verilog Blocks compiled with Verilator or Icarus Verilog
 
                              ------------------
 
@@ -82,7 +83,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  C
      Level:  1 (and only)
      Dir:    devices/cap
-     Status:
+     Status: active
 
      Enhancements over the original model:
       - Parallel Multiplier
@@ -99,7 +100,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  L
      Level:  1 (and only)
      Dir:    devices/ind
-     Status:
+     Status: active
 
      Enhancements over the original model:
       - Parallel Multiplier
@@ -115,7 +116,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  R
      Level:  1 (and only)
      Dir:    devices/res
-     Status:
+     Status: active
 
      Enhancements over the original model:
       - Parallel Multiplier
@@ -139,7 +140,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  P
      Level:  1 (and only)
      Dir:    devices/cpl
-     Status:
+     Status: active
 
      This model comes from swec and kspice. It is not documented, if
      you have kspice docs, can you write a short description
@@ -159,7 +160,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  O
      Level:  1 (and only)
      Dir:    devices/ltra
-     Status:
+     Status: active
 
      - Original spice model.
      - Does not implement parallel code switches.
@@ -170,7 +171,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  T
      Level:  1 (and only)
      Dir:    devices/tra
-     Status:
+     Status: active
 
     - Original spice model.
     - Does not implement parallel code switches.
@@ -181,7 +182,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  Y
      Level:  1 (and only)
      Dir:    devices/txl
-     Status:
+     Status: active
 
      This model comes from kspice. It is not documented, if
      you have kspice docs, can you write a short description
@@ -199,7 +200,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  U
      Level:  1 (and only)
      Dir:    devices/urc
-     Status:
+     Status: active
 
      - Original spice model.
      - Does not implement parallel code switches.
@@ -213,7 +214,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  B
      Level:  1 (and only)
      Dir:    devices/asrc
-     Status:
+     Status: active
 
  4.2 CCCS - Current Controlled Current Source
 
@@ -231,7 +232,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  H
      Level:  1 (and only)
      Dir:    devices/ccvs
-     Status:
+     Status: active
 
      - Original spice model.
 
@@ -242,7 +243,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  I
      Level:  1 (and only)
      Dir:    devices/isrc
-     Status:
+     Status: active
 
      This is the original spice device improved by Alan Gillespie
      with the following features:
@@ -257,7 +258,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  G
      Level:  1 (and only)
      Dir:    devices/vccs
-     Status:
+     Status: active
 
      - Original spice model.
 
@@ -268,7 +269,7 @@ will be updated every time the device specific code is altered or changed to ref
     Class:  E
     Level:  1 (and only)
     Dir:    devices/vcvs
-    Status:
+    Status: active
 
     - Original spice model.
 
@@ -278,7 +279,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  V
      Level:  1 (and only)
      Dir:    devices/vsrc
-     Status:
+     Status: active
 
      The original spice device improved with the following features:
 
@@ -286,6 +287,7 @@ will be updated every time the device specific code is altered or changed to ref
      - Check for non-monotonic series in PWL
      - Random values
      - White, 1/f, and random telegraph transient noise sources
+     - Port model for S parameter simulation
 
 
 5. Switches
@@ -296,7 +298,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  W
       Level:  1 (and only)
       Dir:    devices/csw
-      Status:
+      Status: active
 
       - This model comes from Jon Engelbert.
 
@@ -307,7 +309,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  S
      Level:  1 (and only)
      Dir:    devices/sw
-     Status:
+     Status: active
 
      - This model comes from Jon Engelbert.
 
@@ -320,7 +322,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  D
      Level:  1 (and only)
      Dir:    devices/dio
-     Status:
+     Status: active
 
      Enhancements over the original model:
      - Parallel Multiplier
@@ -339,7 +341,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  Q
      Level:  1
      Dir:    devices/bjt
-     Status:
+     Status: active
 
      Enhancements over the original model:
      - Parallel Multiplier
@@ -354,7 +356,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  Q
      Level:  4 & 9
      Dir:    devices/vbic
-     Status:
+     Status: active, used by IHP Open Source PDK
 
      This is the Vertical Bipolar InterCompany model in version 1.2. The author
      of VBIC is Colin McAndrew mcandrew@ieee.org.
@@ -370,6 +372,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  Q
      Level:  8
      Dir:    devices/hicum2
+     Status: active
 
      HICUM: HIgh CUrrent Model is a physics-based geometry-scalable compact
      model for homo- and heterojunction bipolar transistors, developed by
@@ -385,7 +388,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  J
      Level:  1
      Dir:    devices/jfet
-     Status:
+     Status: active
 
      This is the original spice JFET model.
 
@@ -400,7 +403,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  J
      Level:  2
      Dir:    devices/jfet2
-     Status:
+     Status: active
 
      This is the Parker Skellern model for MESFETs.
 
@@ -424,7 +427,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  Z
      Level:  5
      Dir:    devices/hfet1
-     Status:
+     Status: active
 
      This is the Heterostructure Field Effect Transistor model from:
      K. Lee, M. Shur, T. A. Fjeldly and T. Ytterdal
@@ -443,7 +446,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  Z
      Level:  6
      Dir:    devices/hfet2
-     Status:
+     Status: active
 
      Simplified version of hfet1
 
@@ -461,7 +464,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  Z
       Level:  1
       Dir:    devices/mes
-      Status:
+      Status: active
 
       This is the original spice3 MESFET model (Statz).
 
@@ -481,7 +484,7 @@ will be updated every time the device specific code is altered or changed to ref
      Class:  Z
      Level:  2,3,4
      Dir:    devices/mesa
-     Status:
+     Status: active
 
      This is a multilevel model. It contains code for mesa levels
      2,3 and 4
@@ -501,7 +504,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  1
       Dir:    devices/mos1
-      Status:
+      Status: Used in subcircuit models, obsolete for CMOS
 
       This is the so-called Schichman-Hodges model.
 
@@ -515,7 +518,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  2
       Dir:    devices/mos2
-      Status:
+      Status: OBSOLETE
 
       This is the so-called  Grove-Frohman model.
 
@@ -530,7 +533,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  3
       Dir:    devices/mos3
-      Status:
+      Status: Used in subcircuit models, obsolete for CMOS
 
       Enhancements over the original model:
       - Parallel multiplier
@@ -543,7 +546,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  6
       Dir:    devices/mos6
-      Status:
+      Status: obsolete
 
       Enhancements over the original model:
       - Parallel multiplier
@@ -556,7 +559,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  9
       Dir:    devices/mos9
-      Status:
+      Status: obsolete
 
       This is a slightly modified Level 3 MOSFET model.
       (Whatever the implementer have had in mind.)
@@ -571,7 +574,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  4
       Dir:    devices/bsim1
-      Status:
+      Status: OBSOLETE
 
       Enhancements over the original model:
       - Parallel multiplier
@@ -590,7 +593,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  5
       Dir:    devices/bsim2
-      Status:
+      Status: OBSOLETE
 
       Enhancements over the original model:
       - Parallel multiplier
@@ -603,7 +606,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  8 & 49, version = 3.0
       Dir:    devices/bsim3v0
-      Status: TO BE TESTED AND IMPROVED
+      Status: OBSOLETE
 
 
  11.9 BSIM3v1 - BSIM model level 3
@@ -612,7 +615,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  8 & 49, version = 3.1
       Dir:    devices/bsim3v1
-      Status: TO BE TESTED AND IMPROVED
+      Status: OBSOLETE
 
        This is the BSIM3v3.1 model modified by Serban Popescu.
        This is level 49 model. It is an implementation that supports
@@ -625,7 +628,7 @@ will be updated every time the device specific code is altered or changed to ref
        Class:  M
        Level:  8 & 49, version = 3.2.2, 3.2.3, 3.2.4
        Dir:    devices/bsim3v32 (level 3.2.4)
-       Status: o.k.
+       Status: active
 
        This is another BSIM3 model from Berkeley Device Group.
        You can find some test netlists with results for this model
@@ -647,7 +650,7 @@ will be updated every time the device specific code is altered or changed to ref
        Class:  M
        Level:  8 & 49, version = 3.3.0
        Dir:    devices/bsim3 (level 3.3.0)
-       Status: o.k.
+       Status: active
 
        This is the actual BSIM3 model from Berkeley Device Group.
        You can find some test netlists with results for this model
@@ -662,6 +665,8 @@ will be updated every time the device specific code is altered or changed to ref
         - NodesetFix
         - Support for Multi-core processors using OpenMP
 
+       BSIM3 models are very stable, they may replace many older models
+       for channel length 0.25u and up.
 
  11.12 BSIM4 - BSIM model level 4
 
@@ -669,7 +674,7 @@ will be updated every time the device specific code is altered or changed to ref
        Class:  M
        Level:  14 & 54, version = 4.5, 4.6, 4.7, 4.8
        Dir:    devices/bsim4 (level 4.8.0)
-       Status: o.k.
+       Status: active
 
        This is the actual BSIM4 model from Berkeley Device Group.
        Test are available on its web site.
@@ -719,7 +724,7 @@ will be updated every time the device specific code is altered or changed to ref
        Class:  M
        Level:  -
        Dir:    devices/vdmos
-       Status: o.k.
+       Status: active
 
        This is a simplified Power MOS model, derived from MOS1 and
        diode, similar to LTSPICE and SuperSpice VDMOS
@@ -754,7 +759,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  56
       Dir:    devices/bsim3soi_dd
-      Status: TO BE TESTED.
+      Status: obsolete
 
       There is a bsim3soidd directory under the
       test hierarchy. Test circuits come from bsim3soi
@@ -769,7 +774,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  57
       Dir:    devices/bsim3soi_pd
-      Status: TO BE TESTED.
+      Status: obsolete
 
       PD model has been integrated. There is a bsim3soipd directory
       under the test hierarchy. Test circuits come from the bsim3soi
@@ -784,7 +789,7 @@ will be updated every time the device specific code is altered or changed to ref
       Class:  M
       Level:  10 & 58
       Dir:    devices/bsim3soi
-      Status: o.k.
+      Status: active
 
       This is the actual version from Berkeley. This version is
       backward compatible with its previous versions BSIMSOI3.x.
@@ -832,11 +837,17 @@ will be updated every time the device specific code is altered or changed to ref
 
  14. XSpice code models
  
-      more than 100 models are available, please see ngspice manual chapt. 8
+      more than 100 models are available, digital, analog, and hybrid.
+      Please see ngspice manual chapt. 8
  
  15. Digital Building Blocks (U instances)
  
       U instances are digital primitives which may be used (in proper combination) to
       model digital devices, e.g. from the 74xx or 40xx families. ngspice maps them
       onto XSPICE models, which allows a fast event based simulation. Please see the
-      ngspice manual, chapter 10.
+      ngspice manual, chapter 10.1 and 10.2.
+      
+ 16. Digital Verilog Blocks compiled with Verilator or Icarus Verilog
+      Verilog digital code may be compiled into a shared library (*.dll, *.so)
+      with Verilator or Icarus Verilog and then directly linked into ngspice via
+      the code model d_cosim. Please see the ngspice manual, chapter 10.3.

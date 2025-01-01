@@ -49,6 +49,7 @@ CODE ORGANIZATION
         misc/ Various math support algorithms
         deriv/ Various partial derivatives used by some device models (bjt, MOS1-9)
         dense/ Matrix operations used by S-parameter simulation
+        KLU/ Alternative fast matrix solver KLU
 
     "src/frontend" contains the code for interfacing ngspice to its input and output.
         Files com_*.c contain the control language commands. outitf.c organizes the

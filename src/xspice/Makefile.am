@@ -2,7 +2,8 @@
 
 EXTRA_DIST = README examples icm xspice.c .gitignore \
              verilog/vlnggen \
-             verilog/verilator_shim.cpp verilog/verilator_main.cpp
+             verilog/verilator_shim.cpp verilog/verilator_main.cpp \
+             verilog/libvvp.def verilog/MSVC.CMD verilog/README.txt
 
 ## This is removed because icm relies upon the existance of all other
 ## libs.  It is currently compiled manually, last.

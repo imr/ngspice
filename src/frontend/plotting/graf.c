@@ -81,7 +81,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         const char *commandline, /* For xi_zoomdata() */
         int prevgraph)                /* plot id, if started from a previous plot*/
 {
-    GRAPH *graph;
+    GRAPH *graph, *pgraph;
     wordlist *wl;
 
     NG_IGNORE(nplots);
@@ -157,11 +157,14 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
 
     graph->plotname = tprintf("%s: %s", pname, plotname);
 
-
     /* restore background color from previous graph, e.g. for zooming,
        it will be used in NewViewport(graph) */
     if (prevgraph > 0) {
-        graph->mgraphid = prevgraph;
+        pgraph = FindGraph(prevgraph);
+        if (pgraph)
+            graph->mgraphid = prevgraph;
+        else
+            prevgraph = graph->mgraphid = 0;
     }
     else {
         graph->mgraphid = 0;
@@ -178,7 +181,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
     /* restore data from previous graph, e.g. for zooming */
     if (prevgraph > 0) {
         int i;
-        GRAPH* pgraph = FindGraph(prevgraph);
+
         /* transmit colors */
         for (i = 0; i < 25; i++) {
             graph->colorarray[i] = pgraph->colorarray[i];

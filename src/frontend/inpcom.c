@@ -1480,6 +1480,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
             if (!y) {
                 fprintf(cp_err, "Error: .include filename missing\n");
+                if (sourcelineinfo) {
+                    if (intfile)
+                        fprintf(cp_err, "    While reading the netlist sent by the calling program\n");
+                    else
+                        fprintf(cp_err, "    While reading %s\n", sourcelineinfo);
+                }
                 tfree(buffer); /* was allocated by readline() */
                 controlled_exit(EXIT_FAILURE);
             }
@@ -1495,6 +1501,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     y_resolved = inp_pathresolve_at(y, oldpath);
                     if (!y_resolved) {
                         fprintf(cp_err, "Error: Could not find include file %s\n", y);
+                        if (sourcelineinfo) {
+                            if (intfile)
+                                fprintf(cp_err, "    While reading the netlist sent by the calling program\n");
+                            else
+                                fprintf(cp_err, "    While reading %s\n", sourcelineinfo);
+                        }
                         controlled_exit(EXIT_FAILURE);
                     }
                 }
@@ -1504,6 +1516,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 if (!newfp) {
                     fprintf(cp_err, "Error: .include statement failed.\n"
                                     "Could not open file\n%s\n", y_resolved);
+                    if (y_resolved) {
+                        if (intfile)
+                            fprintf(cp_err, "    While reading the netlist sent by the calling program\n");
+                        else
+                            fprintf(cp_err, "    While reading %s\n", y_resolved);
+                    }
                     tfree(buffer); /* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
                 }
@@ -1511,7 +1529,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 y_dir_name = ngdirname(y_resolved);
 
                 newcard = inp_read(
-                    newfp, call_depth + 1, y_dir_name, NULL, FALSE, FALSE)
+                    newfp, call_depth + 1, y_dir_name, y_resolved, FALSE, FALSE)
                     .cc; /* read stuff in include file into
                             netlist */
 
@@ -8254,10 +8272,10 @@ static void inp_quote_params(struct card *c, struct card *end_c,
         if (num_terminals <= 0)
             continue;
 
-        /* There are devices that should not get quotes around tokens
-           following after the terminals. These may be model names or control
-           voltages. See bug 384  or Skywater issue 327 */
-        if (strchr("fhmouydqjzsw", *curr_line))
+        /* There are devices that should not get quotes around token directly
+           following the terminals. These may be model names, control voltages
+           or subckt names. See bugs 384, 730 or Skywater issue 327 */
+        if (strchr("fhmouydqjzswx", *curr_line))
             num_terminals++;
 
         for (i = 0; i < num_params; i++) {
