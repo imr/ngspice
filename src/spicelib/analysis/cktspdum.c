@@ -29,6 +29,9 @@ extern double Rn;
 extern cplx   Sopt;
 extern double Fmin;
 
+#ifdef TRACE
+cplx cdet(CMat* M);
+#endif
 
 int CKTmatrixIndex(CKTcircuit* ckt, int source, int dest)
 {
@@ -39,26 +42,42 @@ int CKTspCalcSMatrix(CKTcircuit* ckt)
 {
     CMat* Ainv = cinverse(ckt->CKTAmat);
     if (Ainv == NULL) return (E_NOMEM);
-    cmultiplydest(ckt->CKTBmat, Ainv, ckt->CKTSmat);
+    cmultiplydest(ckt->CKTBmat, Ainv, ckt->CKTSmat); // S = B * A-1
     freecmat(Ainv);
-    // Calculate Y matrix
-    CMat* temp = cmultiply(ckt->CKTSmat, zref);
-    CMat* temp2 = csum(temp, zref);
-    CMat* temp3 = cmultiply(temp2, gn);
-    
-    CMat* temp4 = cminus(eyem, ckt->CKTSmat);
-    CMat* temp5 = cinverse(temp4);
-    
-    cmultiplydest(temp5, temp3, temp);
-    cmultiplydest(gninv, temp, ckt->CKTZmat);
 
-    cinversedest(ckt->CKTZmat, ckt->CKTYmat);
+    // Calculate Z matrix 1. Formula
+    CMat* SxZ0 = cmultiply(ckt->CKTSmat, zref);   // S * Z0
+    CMat* SxZ0pZ0 = csum(SxZ0, zref);             // S * Z0 + Z0
+    CMat* SxZ0pZ0xGn = cmultiply(SxZ0pZ0, gn);    // (S * Z0 + Z0) * Gn
+    CMat* EmS = cminus(eyem, ckt->CKTSmat);       // E - S
+    CMat* EmSinv = cinverse(EmS);                 // (E - S)-1
+    CMat* EmSinvxSxZ0pZ0xGn = cmultiply(EmSinv, SxZ0pZ0xGn); // (E - S)-1 * (S * Z0 + Z0) * Gn
+    cmultiplydest(gninv, EmSinvxSxZ0pZ0xGn, ckt->CKTZmat);   // Z = Gn-1 * (E - S)-1 * (S * Z0 + Z0) * Gn
+#ifdef TRACE
+        cplx de = cdet(ckt->CKTZmat);
+        printf("spCalcSMatrix: CKTZmat det: %g %g\n", de.re, de.im);
+        showcmat(ckt->CKTZmat);
+#endif
+    // Calculate Y matrix 1. Formula
+    CMat* EmSxGn = cmultiply(EmS, gn);                       // (E - S) * Gn
+    CMat* SxZ0pZ0inv = cinverse(SxZ0pZ0);                    // (S * Z0 + Z0)-1
+    CMat* SxZ0pZ0invxEmSxGn = cmultiply(SxZ0pZ0inv, EmSxGn); // (S * Z0 + Z0)-1 * (E - S) * Gn
+    cmultiplydest(gninv, SxZ0pZ0invxEmSxGn, ckt->CKTYmat);   // Y = Gn-1 * (S * Z0 + Z0)-1 * (E - S) * Gn
+#ifdef TRACE
+        de = cdet(ckt->CKTYmat);
+        printf("spCalcSMatrix: CKTYmat det: %g %g\n", de.re, de.im);
+        showcmat(ckt->CKTYmat);
+#endif
 
-    freecmat(temp);
-    freecmat(temp2);
-    freecmat(temp3);
-    freecmat(temp4);
-    freecmat(temp5);        
+    freecmat(SxZ0);
+    freecmat(SxZ0pZ0);
+    freecmat(SxZ0pZ0xGn);
+    freecmat(EmS);
+    freecmat(EmSinv);
+    freecmat(EmSinvxSxZ0pZ0xGn);
+    freecmat(EmSxGn);
+    freecmat(SxZ0pZ0inv);
+    freecmat(SxZ0pZ0invxEmSxGn);
 
     return (OK);
 }
@@ -95,7 +114,6 @@ int CKTspCalcPowerWave(CKTcircuit* ckt)
     }
     return (OK);
 }
-
 
 int
 CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, int doNoise)
