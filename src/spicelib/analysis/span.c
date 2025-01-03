@@ -116,13 +116,23 @@ CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noise
         // Equations from Stephen Maas 'Noise'
         double knorm = 4.0 * CONSTboltz * (ckt->CKTtemp);
         CMat* tempCy = cscalarmultiply(ckt->CKTNoiseCYmat, 1.0 / knorm); // cmultiply(, YConj);
-
-
+#ifdef TRACE
+        printf("spnoise: CKTNoiseCYmat / (4*k*T)\n");
+        showcmat(tempCy);
+#endif
         if (ckt->CKTportCount == 2)
         {
 
             double Y21mod = cmodsqr(ckt->CKTYmat->d[1][0]);
             Rn = (tempCy->d[1][1].re / Y21mod);
+            if (fabs(Rn) < 1e-30)
+                Rn = 1e-30;
+
+            if ((fabs(tempCy->d[1][1].re) < 1e-30) && (fabs(tempCy->d[1][1].im) < 1e-30))
+            {
+                tempCy->d[1][1].re = 1e-30;
+            }
+
             cplx Ycor = csubco(ckt->CKTYmat->d[0][0],
                 cmultco(
                     cdivco(tempCy->d[0][1], tempCy->d[1][1]),
@@ -869,7 +879,12 @@ SPan(CKTcircuit* ckt, int restart)
 
 
         } //active ports cycle
-
+#ifdef TRACE
+        printf("SPan: CKTAmat\n");
+        showcmat(ckt->CKTAmat);
+        printf("SPan: CKTBmat\n");
+        showcmat(ckt->CKTBmat);
+#endif
         // Now we can calculate the full S-Matrix
         CKTspCalcSMatrix(ckt);
 
