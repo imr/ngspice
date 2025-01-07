@@ -894,7 +894,7 @@ int
 X11_Update(void)
 {
     if (X11_Open)
-        XSync(display, 0);
+        XFlush(display);
     return 0;
 }
 
