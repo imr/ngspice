@@ -1222,20 +1222,33 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
                 /*debug: print into file*/
                 struct card *t;
                 fprintf(fd,
-                        "**************** uncommented deck "
+                        "\n\n**************** uncommented deck without source file info "
                         "**************\n\n");
                 /* always print first line */
-                fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
+                fprintf(fd, "%6d  %s\n", cc->linenum,
                         cc->line);
                 /* here without out-commented lines */
                 for (t = cc->nextcard; t; t = t->nextcard) {
                     if (*(t->line) == '*')
                         continue;
-                    fprintf(fd, "%6s  %6d  %6d  %s\n",
-                            t->linesource, t->linenum_orig, t->linenum, t->line);
+                    fprintf(fd, "%6d  %s\n",
+                            t->linenum, t->line);
                 }
                 fprintf(fd,
-                        "\n****************** complete deck "
+                    "\n\n**************** uncommented deck "
+                    "**************\n\n");
+                /* always print first line */
+                fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
+                    cc->line);
+                /* here without out-commented lines */
+                for (t = cc->nextcard; t; t = t->nextcard) {
+                    if (*(t->line) == '*')
+                        continue;
+                    fprintf(fd, "%6s  %6d  %6d  %s\n",
+                        t->linesource, t->linenum_orig, t->linenum, t->line);
+                }
+                fprintf(fd,
+                        "\n\n****************** complete deck "
                         "***************\n\n");
                 /* now completely */
                 for (t = cc; t; t = t->nextcard)
