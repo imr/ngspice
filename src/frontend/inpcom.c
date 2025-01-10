@@ -6687,26 +6687,26 @@ static void inp_compat(struct card *card)
             /* evaluate m */
             char* mstr = eval_mvalue(cut_line, card->line);
 
-            if (strstr(curr_line, "c=")) { /* capacitance formulation */
-                // Exxx  n-aux 0  n2 n1  1
-                ckt_array[0] = tprintf("e%s %s_int1 0 %s %s %s", title_tok,
-                        title_tok, node2, node1, mstr);
-                // Cxxx  n-aux 0  1
-                ckt_array[1] = tprintf("c%s %s_int1 0 1", title_tok, title_tok);
-                // Bxxx  n1 n2  I = i(Exxx) * equation
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
-                                        "%s reciproctc=1",
-                        title_tok, node1, node2, title_tok, equation, tcrstr);
-            } else {                       /* charge formulation */
+            if (strstr(curr_line, "q=")) { /* charge formulation */
                 // Gxxx  n1 n2 n-aux 0  1
                 ckt_array[0] = tprintf("g%s %s %s %s_int1 0 %s",
-                            title_tok, node1, node2, title_tok, mstr);
+                    title_tok, node1, node2, title_tok, mstr);
                 // Lxxx  n-aux 0 1
                 ckt_array[1] = tprintf("l%s %s_int1 0 1", title_tok, title_tok);
                 // Bxxx  0 n-aux I = equation
                 ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s) "
-                                        "%s reciproctc=1",
-                        title_tok, title_tok, equation, tcrstr);
+                    "%s reciproctc=1",
+                    title_tok, title_tok, equation, tcrstr);
+            } else {                       /* capacitance formulation */
+                // Exxx  n-aux 0  n2 n1  1
+                ckt_array[0] = tprintf("e%s %s_int1 0 %s %s %s", title_tok,
+                    title_tok, node2, node1, mstr);
+                // Cxxx  n-aux 0  1
+                ckt_array[1] = tprintf("c%s %s_int1 0 1", title_tok, title_tok);
+                // Bxxx  n1 n2  I = i(Exxx) * equation
+                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
+                    "%s reciproctc=1",
+                    title_tok, node1, node2, title_tok, equation, tcrstr);
             }
             tfree(tcrstr);
             tfree(mstr);
