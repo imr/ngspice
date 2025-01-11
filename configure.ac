@@ -1325,11 +1325,6 @@ fi
 AC_CHECK_HEADERS([ncurses/termcap.h termcap.h])
 AC_CHECK_HEADERS([sys/sysctl.h])
 
-
-# --enable-openmp: Use OpenMP on multi-core processors
-AC_ARG_ENABLE([openmp],
-    [AS_HELP_STRING([--enable-openmp], [Use OpenMP parallel processing])])
-
 # Add OpenMP to ngspice.
 : ${enable_openmp:=yes}
 m4_ifdef([AC_OPENMP], [AC_OPENMP])
