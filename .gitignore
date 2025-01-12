@@ -12,6 +12,7 @@ Makefile.in
 *.lo
 *.la
 .libs
+*.exe
 
 *.orig
 *~
