@@ -1169,6 +1169,9 @@ pvector_info  ngGet_Vec_Info(char* vecname)
 {
     struct dvec* newvec;
 
+    if (ft_ngdebug)
+        fprintf(stdout, "\nGet vector info: searching for vector '%s'\n", vecname);
+
     if (!is_initialized) {
         fprintf(stderr, no_init);
         return NULL;
@@ -1186,11 +1189,11 @@ pvector_info  ngGet_Vec_Info(char* vecname)
     newvec = vec_get(vecname);
 
     if (newvec == NULL) {
-        fprintf(stderr, "Error: vector %s not found!\n", vecname);
+        fprintf(stderr, "Warning: vector %s not or not yet available!\n", vecname);
         return NULL;
     }
     if (newvec->v_numdims > 1) {
-        fprintf(stderr, "Error: vector %s is multidimensional!\n  This is not yet handled\n!", vecname);
+        fprintf(stderr, "Warning: vector %s is multidimensional!\n  This is not yet handled\n!", vecname);
         return NULL;
     }
 
