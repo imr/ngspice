@@ -738,7 +738,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     } /* end if (comfile) */
 
     else {  /* must be regular deck . . . . */
-        /* loop through deck and handle control cards */
+        /* Loop through deck and handle control cards.
+         * Pointer ld refers to the last card processed that has not
+         * been deleted.
+         */
+
         for (dd = deck->nextcard; dd; dd = ld->nextcard) {
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
@@ -781,19 +785,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
                 /* Special control lines outside of .control section? */
 
-                if (prefix("*#", s)) {
+                if (prefix("*#", s))
                     s = skip_ws(s + 2);
-                    if (!*s)
-                        continue;
-                }
-
-                /* assemble all commands starting with pre_ after stripping
-                 * pre_, to be executed before circuit parsing */
 
                 if (ciprefix("pre_", s)) {
+                    /* Assemble all commands starting with pre_ after stripping
+                     * pre_, to be executed before circuit parsing.
+                     */
+
                     s = s + 4;
                     pre_controls = wl_cons(copy(s), pre_controls);
-                } else {
+                } else if (*s) {
                     /* Assemble all other commands to be executed
                      * after circuit parsing */
 
@@ -832,10 +834,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         ld->nextcard = dd->nextcard;
                         line_free(dd, FALSE);
                     } else {
-                        ld = dd;
+                        ld = dd; // Keep this card
                     }
                 } else {
-                    ld = dd;
+                    ld = dd;     // ... and this.
                 }
             }
         }  /* end for (dd = deck->nextcard . . . .  */
