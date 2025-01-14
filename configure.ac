@@ -1287,16 +1287,16 @@ else
                 $with_readline
                 do
                     if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
-                        AC_MSG_RESULT([Checking for readline:])
-                        AC_CHECK_HEADERS([$dir/include/readline/readline.h $dir/include/readline/history.h],
-                            [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
-                            [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-                        AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
-                            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
-                            [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
-                        AC_CHECK_LIB([readline], [readline],
-                            [LIBS="$LIBS -lreadline"],
-                            [AC_MSG_ERROR([Couldn't find readline libraries.])])
+		       if test -f $dir/include/readline/readline.h && test -f $dir/include/readline/history.h ; then
+
+                            AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])
+			    AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+			        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+				[AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
+			    AC_CHECK_LIB([readline], [readline],
+				[LIBS="$LIBS -lreadline"],
+				[AC_MSG_ERROR([Couldn't find readline libraries.])])
+			fi
                     fi
                 done
         fi
