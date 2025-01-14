@@ -7,6 +7,8 @@ Modified: 2000 AlansFixes
 #ifndef ngspice_OPTDEFS_H
 #define ngspice_OPTDEFS_H
 
+#include <stddef.h>
+
     /* structure used to describe the statistics to be collected */
 
 typedef struct sSTATdevList {
@@ -46,6 +48,8 @@ typedef struct {
     double STATacLoadTime;      /* time spent in AC device loading */
     double STATacSyncTime;      /* time spent in transient sync'ing */
     STATdevList *STATdevNum;    /* PN: Number of instances and models for each device */
+    double *devTimes;           /* Per-device load times, last entry is overhead */
+    size_t *devCounts;          /* Per-device load counts, last entry is overhead */
 } STATistics;
 
 enum {

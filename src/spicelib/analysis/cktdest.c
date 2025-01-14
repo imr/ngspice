@@ -98,6 +98,8 @@ CKTdestroy(CKTcircuit *ckt)
 #endif
 
     FREE(ckt->CKTstat->STATdevNum);
+    FREE(ckt->CKTstat->devCounts);
+    FREE(ckt->CKTstat->devTimes);
     FREE(ckt->CKTstat);
     FREE(ckt->CKThead);
 
