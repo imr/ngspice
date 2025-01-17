@@ -4126,13 +4126,25 @@ static int inp_fix_subckt_multiplier(struct names *subckt_w_params,
     for (card = subckt_card->nextcard; card && !ciprefix(".ends", card->line);
             card = card->nextcard) {
         char *curr_line = card->line;
-        /* no 'm' for comment line, B, V, E, H and some others that are not
-         * using 'm' in their model description */
-        if (strchr("*bvehaknopstuwy", curr_line[0]))
+        /* no 'm' for comment line, V, E, H and some others that are not
+           using 'm' in their model description.
+           B source will get 'm' only when it is a current source. */
+        if (strchr("*vehaknopstuwy", curr_line[0]))
             continue;
         /* no 'm' for model cards */
         if (ciprefix(".model", curr_line))
             continue;
+        /* Special treatment for B source:
+           Skip voltage source */
+        if (curr_line[0] == 'b') {
+            char* tmpstr = curr_line;
+            /* Skip Bxxx, node1, node2 */
+            tmpstr = nexttok(tmpstr);
+            tmpstr = nexttok(tmpstr);
+            tmpstr = nexttok(tmpstr);
+            if (ciprefix("v=", tmpstr))
+                continue;
+        }
         if (newcompat.hs && card->compmod == 0) {
             /* if there is already an m=xx in the instance line, multiply it with the new m */
             char* mult = strstr(curr_line, " m=");
