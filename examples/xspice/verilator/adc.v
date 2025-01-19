@@ -3,11 +3,11 @@
 `timescale 100ns/100ns
 
 module adc(Clk, Comp, Start, Sample, Done, Result);
+   parameter		     Bits=6;
+
    input wire                Clk, Comp, Start;
    output reg		     Sample, Done;
    output reg [Bits - 1 : 0] Result;
-
-   parameter		     Bits=6;
 
    reg [Bits - 1 : 0]	     SR;
    reg			     Running;
