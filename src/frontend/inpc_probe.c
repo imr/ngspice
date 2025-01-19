@@ -1399,8 +1399,11 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
 
         newline = tprintf("%s %s %s", begstr, newnode, instline);
 
-        char* vline = tprintf("vcurr_%s:probe_int_%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1name, strnode1, newnode);
-
+        char* vline;
+        if (power)
+            vline= tprintf("vcurr_%s:probe_int_%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1name, strnode1, newnode);
+        else
+            vline= tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1name, strnode1, newnode);
         tfree(tmpcard->line);
         tmpcard->line = newline;
 
