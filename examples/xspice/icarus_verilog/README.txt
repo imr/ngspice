@@ -5,6 +5,10 @@ so that its simulation engine is available as a dynamic library.
 The Verilog source code and included parts of the circuit definitions
 can be found in the adjacent "verilator" directory.
 
+The circuits and steps below are intended to be used from the directory
+containing this file, certainly ouput files from iverilog should be in
+the current directory when simulating.
+
 The example circuits are:
 
 555.cir: The probably familiar NE555 oscillator provides a minimal example
