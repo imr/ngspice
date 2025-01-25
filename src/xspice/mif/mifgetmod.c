@@ -56,6 +56,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/mifproto.h"
 #include "ngspice/mifdefs.h"
+#include "ngspice/mifparse.h"
 #include "ngspice/mifcmdat.h"
 
 #include "ngspice/suffix.h"
@@ -101,8 +102,6 @@ char *MIFgetMod(
     char              *err2;
 
     MIFmodel          *mdfast;
-    /* Mif_Param_Info_t  *param_info;*/
-
 
     /* ===========  First locate the named model in the modtab list ================= */
 
@@ -143,34 +142,46 @@ char *MIFgetMod(
 	/* ==============    and return an appropriate pointer to it ===================== */
 
             /* make sure the type is valid before proceeding */
-	if(modtmp->INPmodType < 0) {
-                /* illegal device type, so can't handle */
-                *model = NULL;
-                return tprintf("MIF: Unknown device type for model %s\n", name);
-            }
+	if (modtmp->INPmodType < 0) {
+            /* illegal device type, so can't handle */
+
+            *model = NULL;
+            return tprintf("MIF: Unknown device type for model %s\n", name);
+        }
 
             /* check to see if this model's parameters have been processed */
-            if(! modtmp->INPmodfast) {
+
+        if (!modtmp->INPmodfast) {
+                struct IFdevice  *device;
+                int               num_pars;
 
                 /* not already processed, so create data struct */
-                error = ft_sim->newModel ( ckt, modtmp->INPmodType,
-                        &(modtmp->INPmodfast), modtmp->INPmodName);
-                if(error)
-                    return(INPerror(error));
 
-                /* gtri modification: allocate and initialize MIF specific model struct items */
+                error = ft_sim->newModel(ckt, modtmp->INPmodType,
+                                         &(modtmp->INPmodfast),
+                                         modtmp->INPmodName);
+                if (error)
+                    return INPerror(error);
+
+                /* Allocate and initialize MIF specific model struct items. */
+
                 mdfast = (MIFmodel*) modtmp->INPmodfast;
-                mdfast->num_param = DEVices[modtmp->INPmodType]->DEVpublic.num_param;
+                mdfast->num_param =
+                    DEVices[modtmp->INPmodType]->DEVpublic.num_param;
                 mdfast->param = TMALLOC(Mif_Param_Data_t *, mdfast->num_param);
-                for(i = 0; i < mdfast->num_param; i++) {
+                for (i = 0; i < mdfast->num_param; i++) {
                     mdfast->param[i] = TMALLOC(Mif_Param_Data_t, 1);
                     mdfast->param[i]->is_null = MIF_TRUE;
                     mdfast->param[i]->size = 0;
                     mdfast->param[i]->element = NULL;
                 }
-                /* remaining initializations will be done by MIFmParam() and MIFsetup() */
+
+                /* Remaining initializations will be done by
+                 * MIFmParam() and MIFsetup().
+                 */
 
                 /* parameter isolation, identification, binding */
+
                 line = modtmp->INPmodLine->line;
                 INPgetTok(&line,&parm,1);     /* throw away '.model' */
                 tfree(parm);
@@ -179,28 +190,37 @@ char *MIFgetMod(
 
                 /* throw away the modtype - we don't treat it as a parameter */
                 /* like SPICE does                                           */
-                INPgetTok(&line,&parm,1);     /* throw away 'modtype' */
+
+                INPgetTok(&line, &parm, 1);     /* throw away 'modtype' */
                 tfree(parm);
 
-                while(*line != '\0') {
-                    INPgetTok(&line,&parm,1);
-                    for(j=0 ; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
-                        if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
-                           /* gtri modification: call MIFgetValue instead of INPgetValue */
+                device = ft_sim->devices[modtmp->INPmodType];
+                num_pars = *device->numModelParms;
+                while (*line != '\0') {
+                    INPgetTok(&line, &parm, 1);
+                    for (j = 0; j < num_pars; j++) {
+                        if (strcmp(parm, device->modelParms[j].keyword) == 0) {
                             err1 = NULL;
-                            val = MIFgetValue(ckt,&line,
-                                    ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType,
+                            val = MIFgetValue(ckt, &line,
+                                    device->modelParms[j].dataType,
                                     tab, &err1);
-                            if(err1) {
-                                err2 = tprintf("MIF-ERROR - model: %s - %s\n", name, err1);
-                                return(err2);
+                            if (err1) {
+                                err2 = tprintf("MIF-ERROR - model: %s - %s\n",
+                                               name, err1);
+                                return err2;
                             }
-                            error = ft_sim->setModelParm (ckt,
-                                    modtmp->INPmodfast,
-                                    ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
-                                    val, NULL);
+
+                            /* Store the parameter value. */
+
+                            error =
+                                ft_sim->setModelParm(ckt,
+                                                     modtmp->INPmodfast,
+                                                     device->modelParms[j].id,
+                                                     val, NULL);
                             /* free val, allocated by MIFgetValue */
-                            int vtype = (ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType & IF_VARTYPES);
+
+                            int vtype =
+                                (device->modelParms[j].dataType & IF_VARTYPES);
                             if (vtype == IF_FLAGVEC || vtype == IF_INTVEC)
                                 tfree(val->v.vec.iVec);
                             if (vtype == IF_REALVEC)
@@ -214,14 +234,16 @@ char *MIFgetMod(
                                     tfree(val->v.vec.sVec[i]);
                                 tfree(val->v.vec.sVec);
                             }
-                            if(error)
-                                return(INPerror(error));
+                            if (error)
+                                return INPerror(error);
                             break;
                         }
                     }
-                    /* gtri modification: processing of special parameter "level" removed */
-                    if(j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
-                        char *temp = tprintf("MIF: unrecognized parameter (%s) - ignored", parm);
+
+                    if (j >= *(device->numModelParms)) {
+                        char *temp = tprintf("MIF: unrecognized parameter "
+                                             "(%s) - ignored",
+                                             parm);
                         err = INPerrCat(err, temp);
                     }
                     FREE(parm);
@@ -230,20 +252,44 @@ char *MIFgetMod(
 
                 modtmp->INPmodLine->error = err;
 
+                /* Make some consistency checks. */
+
+                for (i = 0; i < mdfast->num_param; i++) {
+                    Mif_Param_Info_t *param_info;
+                    char             *emessage;
+
+                    param_info = device->param + i;
+
+                    if (mdfast->param[i]->is_null) {
+                        if (!param_info->null_allowed) {
+                            emessage = tprintf("Null not allowed for "
+                                               "parameter '%s' on model '%s'.",
+                                               param_info->name,
+                                               mdfast->gen.GENmodName);
+                            return emessage;
+                        } else if (param_info->default_value_siz == 0) {
+                            if (param_info->type == MIF_STRING)
+                                continue;   // Allow NULL
+                            emessage = tprintf("Parameter '%s' on model '%s' "
+                                               "has no default.",
+                                               param_info->name,
+                                               mdfast->gen.GENmodName);
+                            return emessage;
+                        }
+                    }
+                }
             }  /* end if model parameters not processed yet */
 
             *model = modtmp;
-            return(NULL);
-
+            return NULL;
         } /* end if name matches */
-
     } /* end for all models in modtab linked list */
 
 
     /* didn't find model - ERROR  - return NULL model */
-    *model = NULL;
-    err = tprintf(" MIF-ERROR - unable to find definition of model %s\n", name);
 
-    return(err);
+    *model = NULL;
+    err = tprintf("MIF-ERROR - unable to find definition of model %s\n", name);
+    return err;
 }
 
