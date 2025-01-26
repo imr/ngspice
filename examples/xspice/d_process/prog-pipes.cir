@@ -13,7 +13,7 @@ a1 1 clk1 d_osc1
 a2 2 clk2 d_osc1 
 
 ap0_4 null clk1 null [q1 q2 q3 q4] proc0
-.model proc0 d_process (process_file="graycode|" process_params=["--pipe"])
+.model proc0 d_process (process_file="graycode|")
 
 ap1_4 [clk2] clk1 null [o1 o2 o3 o4] proc1
 .model proc1 d_process (process_file="prog1in4out" process_params=["opt1", "qwerty"])

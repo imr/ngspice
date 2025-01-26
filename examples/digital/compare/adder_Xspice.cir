@@ -76,11 +76,7 @@ eprvcd 1 2 3 4 5 6 7 8 s0 s1 s2 s3 c3 > adder_x.vcd
 if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
   shell start gtkwave adder_x.vcd --script nggtk.tcl
 else
-  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
-    shell open -a gtkwave adder_x.vcd
-  else ; Linux and others
-    shell gtkwave adder_x.vcd --script nggtk.tcl &
-  end
+  shell gtkwave adder_x.vcd --script nggtk.tcl &
 end
 .endc
 
