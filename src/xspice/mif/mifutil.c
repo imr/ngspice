@@ -47,11 +47,6 @@ NON-STANDARD FEATURES
 #include "ngspice/miftypes.h"
 #include "ngspice/mifproto.h"
 
-/* #include "suffix.h"  */
-
-
-
-
 /*
 
 MIFgettok
@@ -67,8 +62,7 @@ MIFgettok treats ( and ) like whitespace.
 
 char  *MIFgettok(char **s)
 {
-
-    char    *ret_str;   /* storage for returned string */
+    char *ret_str;   /* storage for returned string */
     char *end;
     char *beg;
 
@@ -122,14 +116,12 @@ char  *MIFgettok(char **s)
         /* else, read until the next delimiter */
         else {
             beg = *s;
-            while ((**s != '\0') &&
-                (!(isspace_c(**s) || (**s == '=') || (**s == '%') ||
-                (**s == '(') || (**s == ')') || (**s == ',') ||
-                    (**s == '[') || (**s == ']') ||
-                    (**s == '<') || (**s == '>') || (**s == '~')
-                    ))) {
+            while (**s != '\0' &&
+                   !(isspace_c(**s) || **s == '=' || **s == '%' ||
+                     **s == '(' || **s == ')' || **s == ',' ||
+                     **s == '[' || **s == ']' ||
+                     **s == '<' || **s == '>' || **s == '~'))
                 (*s)++;
-            }
             end = *s;
 
             /* skip over white spaces, '=', '(', ')', and ',' up to next token */
@@ -142,94 +134,6 @@ char  *MIFgettok(char **s)
         break;
     }
 }
-
-#if 0
-/* preliminary fix */
-char  *MIFgettok(char **s)
-{
-
-    char    *buf;       /* temporary storage to copy token into */
-    char    *ret_str;   /* storage for returned string */
-
-    int     i;
-
-    /* allocate space big enough for the whole string */
-
-    buf = TMALLOC(char, strlen(*s) + 2);
-    /* FIXME, not yet understood why +1 leads to spurious crash in tfree, if optimized code for Windows*/
-
-    /* skip over any white space */
-
-    while(isspace_c(**s) || (**s == '=') ||
-          (**s == '(') || (**s == ')') || (**s == ','))
-        (*s)++;
-
-    /* isolate the next token */
-
-    switch(**s) {
-
-    case '\0':
-        FREE(buf);
-        return(NULL);
-
-    case '<':
-    case '>':
-    case '[':
-    case ']':
-    case '~':
-    case '%':
-        buf[0] = **s;
-        buf[1] = '\0';
-        (*s)++;
-        break;
-
-    default:
-        i = 0;
-        /* if first character is a quote, read until the closing */
-        /* quote, or the end of string, discarding the quotes */
-        if(**s == '"') {
-            (*s)++;
-            while( (**s != '\0') && (**s != '"') ) {
-                buf[i] = **s;
-                i++;
-                (*s)++;
-            }
-            if(**s == '"')
-                (*s)++;
-        }
-        /* else, read until the next delimiter */
-        else {
-            while( (**s != '\0') &&
-                   (! ( isspace_c(**s) || (**s == '=') || (**s == '%') ||
-                        (**s == '(') || (**s == ')') || (**s == ',') ||
-                        (**s == '[') || (**s == ']') ||
-                        (**s == '<') || (**s == '>') || (**s == '~')
-                   )  )  ) {
-                buf[i] = **s;
-                i++;
-                (*s)++;
-            }
-        }
-
-        buf[i] = '\0';
-        break;
-    }
-
-    /* skip over white space up to next token */
-
-    while(isspace_c(**s) || (**s == '=') ||
-          (**s == '(') || (**s == ')') || (**s == ','))
-        (*s)++;
-
-    /* make a copy using only the space needed by the string length */
-    /* Changed from copy to MIFcopy by SDB on 6.22.2003             */
-    ret_str = MIFcopy(buf);
-    FREE(buf);
-
-    return(ret_str);
-}
-#endif
-
 
 
 /*
@@ -254,7 +158,6 @@ char  *MIFget_token(
     /* get the token from the input line */
 
     ret_str = MIFgettok(s);
-
 
     /* if no next token, return */
 

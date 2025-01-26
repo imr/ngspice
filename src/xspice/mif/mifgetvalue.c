@@ -62,12 +62,55 @@ static int MIFget_integer(char *token, char **err);
 
 static double MIFget_real(char *token, char **err);
 
-static char *MIFget_string(char *token, char **err);
-
 static IFcomplex MIFget_complex(char *token, Mif_Token_Type_t token_type,
                                 char **line, char **err);
 
 
+
+/* Pull a string from a .model card, like MIFget_token() but do not break
+ * on any special characters except '"' and ']'.
+ */
+
+static char *get_string(char **s, int is_array, Mif_Token_Type_t *token_type)
+{
+    char *ret_str;   /* storage for returned string */
+    char *end;
+    char *beg;
+
+    /* Skip over white space. */
+
+    while (isspace_c(**s))
+        (*s)++;
+    if (!*s) {
+        *token_type = MIF_NO_TOK;
+        return NULL;
+    }
+
+    /* If first character is a quote, read until the closing
+     * quote, or the end of string, discarding the quotes.
+     */
+
+    if (**s == '"') {
+        (*s)++;
+        ret_str = gettok_char(s, '"', FALSE, FALSE);
+        if (**s == '"')
+            (*s)++;
+    } else if (is_array && **s == ']') {
+        *token_type = MIF_RARRAY_TOK;
+        (*s)++;
+        return NULL;
+    } else {
+        /* Read to next white-space, end of line, or end of array. */
+
+        beg = *s;
+        while (**s != '\0' && !(isspace_c(**s) || (is_array && **s == ']')))
+            (*s)++;
+        end = *s;
+        ret_str = copy_substring(beg, end);
+    }
+    *token_type = MIF_STRING;
+    return ret_str;
+}
 
 /*
 MIFgetValue
@@ -94,7 +137,6 @@ MIFgetValue (
     int     btemp;
     int     itemp;
     double  rtemp;
-    char    *stemp;
     IFcomplex   ctemp;
 
     char              *token;
@@ -114,6 +156,7 @@ MIFgetValue (
 
 
     /* initialize stuff if array */
+
     if(is_array) {
         token = MIFget_token(line, &token_type);
         tfree(token);
@@ -129,8 +172,10 @@ MIFgetValue (
     /* now get the values into val */
 
     for (;;) {
-
-        token = MIFget_token(line, &token_type);
+        if ((value_type & ~IF_VECTOR) == IF_STRING)
+            token = get_string(line, is_array, &token_type);
+        else
+            token = MIFget_token(line, &token_type);
 
         /* exit if no more tokens */
         if(token_type == MIF_NO_TOK) {
@@ -163,13 +208,13 @@ MIFgetValue (
             break;
 
         case  IF_STRING:
-            val.sValue = MIFget_string(token, err);
+            val.sValue = token;
+            token = NULL;
             break;
 
         case  IF_COMPLEX:
             val.cValue = MIFget_complex(token, token_type, line, err);
             break;
-
 
         case  IF_FLAGVEC:
             btemp = MIFget_boolean(token, err);
@@ -193,10 +238,10 @@ MIFgetValue (
             break;
 
         case  IF_STRINGVEC:
-            stemp = MIFget_string(token, err);
             val.v.vec.sVec = TREALLOC(char *, val.v.vec.sVec, val.v.numValue + 1);
-            val.v.vec.sVec[val.v.numValue] = stemp;
+            val.v.vec.sVec[val.v.numValue] = token;
             val.v.numValue++;
+            token = NULL;
             break;
 
         case  IF_CPLXVEC:
@@ -220,7 +265,8 @@ MIFgetValue (
         if(! is_array)
             break;
 
-        tfree(token);
+        if (token)
+            tfree(token);
 
     } /* end forever loop */
 
@@ -299,16 +345,6 @@ static double MIFget_real(char *token, char **err)
         *err = "Bad real value";
 
     return(dtemp);
-}
-
-
-/* *************************************************************** */
-
-static char *MIFget_string(char *token, char **err)
-{
-    char* ctoken = MIFcopy(token);
-    *err = NULL;
-    return(ctoken);
 }
 
 
