@@ -1373,12 +1373,17 @@ struct card *pspice_compat(struct card *oldcard)
             for (i = 0; i < 6; i++) {
                 stoks[i] = gettok_node(&cut_line);
                 if (!stoks[i]) {
+                    int ii;
                     fprintf(stderr,
                         "Error: bad syntax in line %d\n  %s\n"
                         "from file\n"
                         "  %s\n",
                         card->linenum_orig, card->line, card->linesource);
                     good = FALSE;
+                    /* null the rest of stoks */
+                    for (ii = i + 1; ii < 6; ii++) {
+                        stoks[ii] = NULL;
+                    }
                     break;
                 }
             }
