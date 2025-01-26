@@ -1,0 +1,10 @@
+Simulation of a switched-capacitor SAR ADC with GHDL and d_cosim.
+
+* Model line for the digital control implemented by GHDL.
+
+.model dut d_cosim simulation="./adc" sim_args=["./adc"]
+
+* The bulk of the circuit is in a shared file.
+
+.include ../verilator/adc.shared
+.end

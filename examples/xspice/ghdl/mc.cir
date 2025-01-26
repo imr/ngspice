@@ -1,0 +1,82 @@
+Simulation of elecric motor and controller in behavioural VHDL.
+
+* Power from a wall socket.
+
+Vmains live 0 SIN 0 250 50
+
+* Behavioral power-line zero-crossing detector,
+
+Bcross cross 0 V=(V(live) > -2 && V(live) < 2) ? 5 : 0
+
+* Motor and its rotor
+
+Xmotor live mt1 tacho 0 motor
+
+* A triac to control the motor is replaced by a voltage-controlled switch
+* to avoid including a manufacurer's triac library.
+
+*Xtriac mt1 gate 0 BTA16-600B
+Striac mt1 0 drive 0 triac off
+.model triac sw vt=1.5 vh=1 roff=1meg
+
+* The controller is implemented as VHDL code.  The argument "-gTarget=5000"
+* in the model line overrides the default target motor speed in the VHDL file.
+* Tuning parameters Full_Band and Dead_band may also be set.
+
+Ademo [ cross tacho ] [ drive ] controller
+.model controller d_cosim simulation="./mc"
++ sim_args=["./mc.so" "-gTarget=4500"]
+
+
+* Motor electrical circuit - inductance, resistance and back-EMF
+* Loosley based on:
+*  https://www.precisionmicrodrives.com/content/ab-025-using-spice-to-model-dc-motors/
+* No resemblance is claimed to any actual motor, living or dead.
+
+.subckt motor live neutral tacho1 tacho2
++ Lm=0.3 Rm=30 BackC=20                      // Electrical
++ TorqueC=30 Linertia=20 Rdrag=20 Load={50}  // Mechanical
+
+* Electrical inductance and resistance of the motor.
+
+Lm live internal {Lm}
+Rm internal back_emf {Rm}
+
+* Back EMF: here I(Bmech) is proportional to speed, I(Bback) is motor current.
+
+Bback back_emf neutral V=-I(Bmech)*I(Bback)*{BackC}
+
+* Mechanical simulation: torque (V), speed (I), inertia (L) and
+* friction/load (R).
+* Series (Universal) motor so torque proportional to current squared.
+
+Bmech torque 0 V=I(Bback)*I(Bback)*{TorqueC} // Motor torque
+Lmech torque inertia {Linertia}
+Rmech inertia load {Rdrag}
+
+* In addition to friction (Rdrag) there is a varying load.
+
+*                            Delay
+*                            |   Rise time
+*                            |   |   Fall time
+*                            |   |   |   Pulse width
+*                            |   |   |   |    Period
+*                            |   |   |   |    |
+*                            V   V   V   V    V
+Vload load 0 PULSE 0 {Load} 1.2 10m 10m 200m 400m
+
+* Tachometer: integrate speed for position and pulse.
+
+Bpos i1 0 I=I(Bmech)
+Cpos i1 0 0.01
+.ic v(i1)=0
+Btach tacho1 tacho2 V=((V(i1) - floor(V(i1)) > 0.5) ? 5 : 0)
+
+.ends
+
+.control
+save drive @b.xmotor.bback[i] @b.xmotor.bmech[i] xmotor.load
+tran 50u 3
+plot @b.xmotor.bback[i] @b.xmotor.bmech[i]*-10 drive xmotor.load/10
+.endc
+.end

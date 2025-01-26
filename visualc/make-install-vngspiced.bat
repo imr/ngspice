@@ -80,3 +80,7 @@ copy xspice\verilog\*.cpp %dst%\share\ngspice\scripts\src
 copy include\ngspice\cosim.h %dst%\share\ngspice\scripts\src\ngspice
 copy include\ngspice\miftypes.h %dst%\share\ngspice\scripts\src\ngspice
 copy include\ngspice\cmtypes.h %dst%\share\ngspice\scripts\src\ngspice
+copy xspice\verilog\coroutine*.h %dst%\share\ngspice\scripts\src\ngspice
+copy xspice\vhdl\ghnggen %dst%\share\ngspice\scripts
+copy xspice\vhdl\ghdl_shim.* %dst%\share\ngspice\scripts\src
+copy xspice\vhdl\ghdl_vpi.c %dst%\share\ngspice\scripts\src
