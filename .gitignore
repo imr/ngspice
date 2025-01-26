@@ -12,6 +12,7 @@ Makefile.in
 *.lo
 *.la
 .libs
+*.exe
 
 *.orig
 *~
@@ -90,3 +91,6 @@ src/spicelib/parser/inpptree-parser.h
 test_cases/diode/__pycache__/*
 test_cases/diode/test_osdi/*
 test_cases/diode/test_built_in/*
+
+build*/
+prof/

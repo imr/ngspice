@@ -19,11 +19,11 @@ initdata2_DATA = ../../include/ngspice/cosim.h \
 
 pkglib_LTLIBRARIES = ivlng.la ivlngvpi.la
 ivlng_la_SOURCES = icarus_shim.c icarus_shim.h coroutine_shim.h
-ivlng_la_CFLAGS = -I../../../../src/include
+ivlng_la_CFLAGS = -I$(top_srcdir)/src/include
 ivlng_la_LDFLAGS = -module -shared -avoid-version
 
 ivlngvpi_la_SOURCES = vpi.c icarus_shim.h vpi_user_dummy.h coroutine.h coroutine_cosim.h
-ivlngvpi_la_CFLAGS = -I../../../../src/include
+ivlngvpi_la_CFLAGS = -I$(top_srcdir)/src/include
 ivlngvpi_la_LDFLAGS = -module -shared  -avoid-version
 
 # On Windows, symbols in DLLs must be fully resolved.

@@ -117,6 +117,12 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                 tmpstr += 2;
                 /* get the complete zzz of v(zzz) */
                 char* tpartoken = tmpstr2 = gettok_char(&tmpstr, ')', FALSE, FALSE);
+                /* Bail out in case of missing closing paren */
+                if (!tpartoken) {
+                    fprintf(stderr, "Error: Missing ')' in token  %s\n", sz);
+                    fprintf(stderr, "    Cannot parse the token!\n");
+                    return NULL;
+                }
                 /* check if this is v(zzz) or v(xx,yy) */
                 char* partoken1 = gettok_char(&tpartoken, ',', FALSE, FALSE);
                 sadd(&ds1, "v(");

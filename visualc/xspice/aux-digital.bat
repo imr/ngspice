@@ -11,7 +11,7 @@ CL.EXE /O2 /LD /EHsc /Feivlng.DLL /I%src% /I%inc% %src%\icarus_shim.c ^
 
 rem Make a dummy libvvp.obj, needed for shim.vpi (to be renamed ivlng.vpi).
 
-lib.exe /def:%src%\libvvp.def /machine:X64
+lib.exe /def:%src%\libvvp.def /machine:%2
 CL.EXE /O2 /LD /EHsc /Feshim.vpi /I. /I%inc% %src%\vpi.c libvvp.lib ivlng.lib /link /DLL /EXPORT:vlog_startup_routines
 dir
 popd

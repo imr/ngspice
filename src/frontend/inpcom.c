@@ -1222,20 +1222,33 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
                 /*debug: print into file*/
                 struct card *t;
                 fprintf(fd,
-                        "**************** uncommented deck "
+                        "\n\n**************** uncommented deck without source file info "
                         "**************\n\n");
                 /* always print first line */
-                fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
+                fprintf(fd, "%6d  %s\n", cc->linenum,
                         cc->line);
                 /* here without out-commented lines */
                 for (t = cc->nextcard; t; t = t->nextcard) {
                     if (*(t->line) == '*')
                         continue;
-                    fprintf(fd, "%6s  %6d  %6d  %s\n",
-                            t->linesource, t->linenum_orig, t->linenum, t->line);
+                    fprintf(fd, "%6d  %s\n",
+                            t->linenum, t->line);
                 }
                 fprintf(fd,
-                        "\n****************** complete deck "
+                    "\n\n**************** uncommented deck "
+                    "**************\n\n");
+                /* always print first line */
+                fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
+                    cc->line);
+                /* here without out-commented lines */
+                for (t = cc->nextcard; t; t = t->nextcard) {
+                    if (*(t->line) == '*')
+                        continue;
+                    fprintf(fd, "%6s  %6d  %6d  %s\n",
+                        t->linesource, t->linenum_orig, t->linenum, t->line);
+                }
+                fprintf(fd,
+                        "\n\n****************** complete deck "
                         "***************\n\n");
                 /* now completely */
                 for (t = cc; t; t = t->nextcard)
@@ -4113,13 +4126,25 @@ static int inp_fix_subckt_multiplier(struct names *subckt_w_params,
     for (card = subckt_card->nextcard; card && !ciprefix(".ends", card->line);
             card = card->nextcard) {
         char *curr_line = card->line;
-        /* no 'm' for comment line, B, V, E, H and some others that are not
-         * using 'm' in their model description */
-        if (strchr("*bvehaknopstuwy", curr_line[0]))
+        /* no 'm' for comment line, V, E, H and some others that are not
+           using 'm' in their model description.
+           B source will get 'm' only when it is a current source. */
+        if (strchr("*vehaknopstuwy", curr_line[0]))
             continue;
         /* no 'm' for model cards */
         if (ciprefix(".model", curr_line))
             continue;
+        /* Special treatment for B source:
+           Skip voltage source */
+        if (curr_line[0] == 'b') {
+            char* tmpstr = curr_line;
+            /* Skip Bxxx, node1, node2 */
+            tmpstr = nexttok(tmpstr);
+            tmpstr = nexttok(tmpstr);
+            tmpstr = nexttok(tmpstr);
+            if (ciprefix("v=", tmpstr))
+                continue;
+        }
         if (newcompat.hs && card->compmod == 0) {
             /* if there is already an m=xx in the instance line, multiply it with the new m */
             char* mult = strstr(curr_line, " m=");
@@ -6687,26 +6712,26 @@ static void inp_compat(struct card *card)
             /* evaluate m */
             char* mstr = eval_mvalue(cut_line, card->line);
 
-            if (strstr(curr_line, "c=")) { /* capacitance formulation */
-                // Exxx  n-aux 0  n2 n1  1
-                ckt_array[0] = tprintf("e%s %s_int1 0 %s %s %s", title_tok,
-                        title_tok, node2, node1, mstr);
-                // Cxxx  n-aux 0  1
-                ckt_array[1] = tprintf("c%s %s_int1 0 1", title_tok, title_tok);
-                // Bxxx  n1 n2  I = i(Exxx) * equation
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
-                                        "%s reciproctc=1",
-                        title_tok, node1, node2, title_tok, equation, tcrstr);
-            } else {                       /* charge formulation */
+            if (strstr(curr_line, "q=")) { /* charge formulation */
                 // Gxxx  n1 n2 n-aux 0  1
                 ckt_array[0] = tprintf("g%s %s %s %s_int1 0 %s",
-                            title_tok, node1, node2, title_tok, mstr);
+                    title_tok, node1, node2, title_tok, mstr);
                 // Lxxx  n-aux 0 1
                 ckt_array[1] = tprintf("l%s %s_int1 0 1", title_tok, title_tok);
                 // Bxxx  0 n-aux I = equation
                 ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s) "
-                                        "%s reciproctc=1",
-                        title_tok, title_tok, equation, tcrstr);
+                    "%s reciproctc=1",
+                    title_tok, title_tok, equation, tcrstr);
+            } else {                       /* capacitance formulation */
+                // Exxx  n-aux 0  n2 n1  1
+                ckt_array[0] = tprintf("e%s %s_int1 0 %s %s %s", title_tok,
+                    title_tok, node2, node1, mstr);
+                // Cxxx  n-aux 0  1
+                ckt_array[1] = tprintf("c%s %s_int1 0 1", title_tok, title_tok);
+                // Bxxx  n1 n2  I = i(Exxx) * equation
+                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
+                    "%s reciproctc=1",
+                    title_tok, node1, node2, title_tok, equation, tcrstr);
             }
             tfree(tcrstr);
             tfree(mstr);

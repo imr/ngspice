@@ -25,8 +25,8 @@
 
 #define NUM_SIM_PARAMS 10
 char *sim_params[NUM_SIM_PARAMS + 1] = {
-    "gdev", "gmin", "tnom", 
-    "simulatorVersion", "sourceScaleFactor", "initializeLimiting", 
+    "iniLim", "gmin", "gdev", "tnom", 
+    "simulatorVersion", "sourceScaleFactor", 
     "epsmin", "reltol", "vntol", "abstol", 
     NULL};
 char *sim_params_str[1] = {NULL};
@@ -44,7 +44,7 @@ OsdiSimParas get_simparams(const CKTcircuit *ckt) {
 
   double sim_param_vals_[NUM_SIM_PARAMS] = {
       // Verilog-A tnom is in degrees Celsius
-      gdev, gmin, ckt->CKTnomTemp-CONSTCtoK, simulatorVersion, sourceScaleFactor, initializeLimiting, 
+      initializeLimiting, gmin, gdev, ckt->CKTnomTemp-CONSTCtoK, simulatorVersion, sourceScaleFactor, 
       ckt->CKTepsmin, ckt->CKTreltol, ckt->CKTvoltTol, ckt->CKTabstol };
   memcpy(&sim_param_vals, &sim_param_vals_, sizeof(double) * NUM_SIM_PARAMS);
   OsdiSimParas sim_params_ = {.names = sim_params,

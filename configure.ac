@@ -14,7 +14,7 @@
 # Ensure a recent version of Autoconf is in use
 # Older versions may not work with this script and this will report the
 # problem to the user.
-AC_PREREQ([2.59])
+AC_PREREQ([2.70])
 
 m4_define([ngspice_major_version], [44+])
 m4_define([ngspice_minor_version], [0])
@@ -967,11 +967,12 @@ fi
 # A trivial AC_CHECK_FUNCS(sigsetjmp) won't do because sigsetjmp() might be a
 # macro declared in <setjmp.h>. (joze)
 AC_MSG_CHECKING([for sigsetjmp])
-AC_TRY_LINK([#include <setjmp.h>],[jmp_buf env; sigsetjmp(env, 1);],
-    [AC_MSG_RESULT([yes])
+AC_LINK_IFELSE(
+     [AC_LANG_PROGRAM([[#include <setjmp.h>]],
+                      [[jmp_buf env; sigsetjmp(env, 1);]])],
+     [AC_MSG_RESULT([yes])
         AC_DEFINE([HAVE_SIGSETJMP], [], [Define if we have sigsetjmp().])],
-    [AC_MSG_RESULT([no])])
-
+     [AC_MSG_RESULT([no])])
 
 # Check for the snprintf function:
 AC_CHECK_FUNCS([snprintf])
@@ -1101,7 +1102,7 @@ AC_PATH_PROG([BISON], [bison])
 AX_PROG_BISON_VERSION([2.7], [],
     [AC_DEFINE([OLD_BISON], [], [Bison is older than 2.7]),
      AC_MSG_WARN([Bison is older than 2.7])])
-AC_PROG_LEX
+AC_PROG_LEX(noyywrap)
 
 AM_CONDITIONAL([CMATHTESTS], [test "x$enable_cmathtests" = xyes])
 
@@ -1183,7 +1184,7 @@ if test "x$enable_osdi" = xno; then
     AC_MSG_RESULT([OSDI interface disabled])
 else
     AC_DEFUN([AX_CHECK_COMPILE_FLAG],
-    [AC_PREREQ(2.64)dnl for _AC_LANG_PREFIX and AS_VAR_IF
+    [AC_PREREQ([2.70])dnl for _AC_LANG_PREFIX and AS_VAR_IF
     AS_VAR_PUSHDEF([CACHEVAR],[ax_cv_check_[]_AC_LANG_ABBREV[]flags_$4_$1])dnl
     AC_CACHE_CHECK([whether _AC_LANG compiler accepts $1], CACHEVAR, [
       ax_check_save_flags=$[]_AC_LANG_PREFIX[]FLAGS
@@ -1286,16 +1287,16 @@ else
                 $with_readline
                 do
                     if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
-                        AC_MSG_RESULT([Checking for readline:])
-                        AC_CHECK_HEADERS([$dir/include/readline/readline.h $dir/include/readline/history.h],
-                            [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
-                            [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-                        AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
-                            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
-                            [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
-                        AC_CHECK_LIB([readline], [readline],
-                            [LIBS="$LIBS -lreadline"],
-                            [AC_MSG_ERROR([Couldn't find readline libraries.])])
+		       if test -f $dir/include/readline/readline.h && test -f $dir/include/readline/history.h ; then
+
+                            AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])
+			    AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+			        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+				[AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
+			    AC_CHECK_LIB([readline], [readline],
+				[LIBS="$LIBS -lreadline"],
+				[AC_MSG_ERROR([Couldn't find readline libraries.])])
+			fi
                     fi
                 done
         fi
@@ -1324,11 +1325,6 @@ fi
 # Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
 AC_CHECK_HEADERS([ncurses/termcap.h termcap.h])
 AC_CHECK_HEADERS([sys/sysctl.h])
-
-
-# --enable-openmp: Use OpenMP on multi-core processors
-AC_ARG_ENABLE([openmp],
-    [AS_HELP_STRING([--enable-openmp], [Use OpenMP parallel processing])])
 
 # Add OpenMP to ngspice.
 : ${enable_openmp:=yes}
