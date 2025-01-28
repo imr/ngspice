@@ -36,6 +36,8 @@ IFparm VBICpTable[] = { /* parameters */
  OPU("baseBPnode",VBIC_QUEST_BASEBPNODE,IF_INTEGER, "Internal base node"),
  OPU("emitEInode",VBIC_QUEST_EMITEINODE,IF_INTEGER, "Internal emitter node"),
  OPU("subsSInode",VBIC_QUEST_SUBSSINODE,IF_INTEGER, "Internal substrate node"),
+ OPU("xf1node", VBIC_QUEST_XF1NODE, IF_INTEGER, "Internal phase node xf1"),
+ OPU("xf2node", VBIC_QUEST_XF2NODE, IF_INTEGER, "Internal phase node xf2"),
  OP("vbe",   VBIC_QUEST_VBE,  IF_REAL, "B-E voltage"),
  OP("vbc",   VBIC_QUEST_VBC,  IF_REAL, "B-C voltage"),
  OP("ic",    VBIC_QUEST_CC,   IF_REAL, "Collector current"),
