@@ -33,8 +33,7 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double delvbcp;
     double ibehat;
     double ibexhat;
-    double itzfhat;
-    double itzrhat;
+    double icieihat;
     double ibchat;
     double ibephat;
     double ircihat;
@@ -43,7 +42,7 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double ibcphat;
     double iccphat;
     double Vbei, Vbex, Vbci, Vbcx, Vbep, Vrci, Vrbi, Vrbp, Vbcp;
-    double Ibe, Ibex, Itzf, Itzr, Ibc, Ibep, Irci, Irbi, Irbp, Ibcp, Iccp;
+    double Ibe, Ibex, Iciei, Ibc, Ibep, Irci, Irbi, Irbp, Ibcp, Iccp;
 
     for( ; model != NULL; model = VBICnextModel(model)) {
         for(here=VBICinstances(model);here!=NULL;here = VBICnextInstance(here)) {
@@ -88,10 +87,8 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
                      *(ckt->CKTstate0 + here->VBICibe_Vbei)*delvbei;
             ibexhat = *(ckt->CKTstate0 + here->VBICibex) + 
                      *(ckt->CKTstate0 + here->VBICibex_Vbex)*delvbex;
-            itzfhat = *(ckt->CKTstate0 + here->VBICitzf) + 
-                     *(ckt->CKTstate0 + here->VBICitzf_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICitzf_Vbci)*delvbci;
-            itzrhat = *(ckt->CKTstate0 + here->VBICitzr) + 
-                     *(ckt->CKTstate0 + here->VBICitzr_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICitzr_Vbci)*delvbci;
+            icieihat = *(ckt->CKTstate0 + here->VBICiciei) + 
+                     *(ckt->CKTstate0 + here->VBICiciei_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICiciei_Vbci)*delvbci;
             ibchat = *(ckt->CKTstate0 + here->VBICibc) + 
                      *(ckt->CKTstate0 + here->VBICibc_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICibc_Vbci)*delvbci;
             ibephat = *(ckt->CKTstate0 + here->VBICibep) + 
@@ -108,8 +105,7 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
                      *(ckt->CKTstate0 + here->VBICiccp_Vbci)*delvbci + *(ckt->CKTstate0 + here->VBICiccp_Vbcp)*delvbcp;
             Ibe  = *(ckt->CKTstate0 + here->VBICibe);
             Ibex = *(ckt->CKTstate0 + here->VBICibex);
-            Itzf = *(ckt->CKTstate0 + here->VBICitzf);
-            Itzr = *(ckt->CKTstate0 + here->VBICitzr);
+            Iciei = *(ckt->CKTstate0 + here->VBICiciei);
             Ibc  = *(ckt->CKTstate0 + here->VBICibc);
             Ibep = *(ckt->CKTstate0 + here->VBICibep);
             Irci = *(ckt->CKTstate0 + here->VBICirci);
@@ -132,60 +128,53 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
                     ckt->CKTtroubleElt = (GENinstance *) here;
                     return(OK); /* no reason to continue - we've failed... */
                 } else {
-                    tol=ckt->CKTreltol*MAX(fabs(itzfhat),fabs(Itzf))+ckt->CKTabstol;
-                    if (fabs(itzfhat-Itzf) > tol) {
+                    tol=ckt->CKTreltol*MAX(fabs(icieihat),fabs(Iciei))+ckt->CKTabstol;
+                    if (fabs(icieihat-Iciei) > tol) {
                         ckt->CKTnoncon++;
                         ckt->CKTtroubleElt = (GENinstance *) here;
                         return(OK); /* no reason to continue - we've failed... */
                     } else {
-                        tol=ckt->CKTreltol*MAX(fabs(itzrhat),fabs(Itzr))+ckt->CKTabstol;
-                        if (fabs(itzrhat-Itzr) > tol) {
+                        tol=ckt->CKTreltol*MAX(fabs(ibchat),fabs(Ibc))+ckt->CKTabstol;
+                        if (fabs(ibchat-Ibc) > tol) {
                             ckt->CKTnoncon++;
                             ckt->CKTtroubleElt = (GENinstance *) here;
                             return(OK); /* no reason to continue - we've failed... */
                         } else {
-                            tol=ckt->CKTreltol*MAX(fabs(ibchat),fabs(Ibc))+ckt->CKTabstol;
-                            if (fabs(ibchat-Ibc) > tol) {
+                            tol=ckt->CKTreltol*MAX(fabs(ibephat),fabs(Ibep))+ckt->CKTabstol;
+                            if (fabs(ibephat-Ibep) > tol) {
                                 ckt->CKTnoncon++;
                                 ckt->CKTtroubleElt = (GENinstance *) here;
                                 return(OK); /* no reason to continue - we've failed... */
                             } else {
-                                tol=ckt->CKTreltol*MAX(fabs(ibephat),fabs(Ibep))+ckt->CKTabstol;
-                                if (fabs(ibephat-Ibep) > tol) {
+                                tol=ckt->CKTreltol*MAX(fabs(ircihat),fabs(Irci))+ckt->CKTabstol;
+                                if (fabs(ircihat-Irci) > tol) {
                                     ckt->CKTnoncon++;
                                     ckt->CKTtroubleElt = (GENinstance *) here;
                                     return(OK); /* no reason to continue - we've failed... */
                                 } else {
-                                    tol=ckt->CKTreltol*MAX(fabs(ircihat),fabs(Irci))+ckt->CKTabstol;
-                                    if (fabs(ircihat-Irci) > tol) {
+                                    tol=ckt->CKTreltol*MAX(fabs(irbihat),fabs(Irbi))+ckt->CKTabstol;
+                                    if (fabs(irbihat-Irbi) > tol) {
                                         ckt->CKTnoncon++;
                                         ckt->CKTtroubleElt = (GENinstance *) here;
                                         return(OK); /* no reason to continue - we've failed... */
                                     } else {
-                                        tol=ckt->CKTreltol*MAX(fabs(irbihat),fabs(Irbi))+ckt->CKTabstol;
-                                        if (fabs(irbihat-Irbi) > tol) {
+                                        tol=ckt->CKTreltol*MAX(fabs(irbphat),fabs(Irbp))+ckt->CKTabstol;
+                                        if (fabs(irbphat-Irbp) > tol) {
                                             ckt->CKTnoncon++;
                                             ckt->CKTtroubleElt = (GENinstance *) here;
                                             return(OK); /* no reason to continue - we've failed... */
                                         } else {
-                                            tol=ckt->CKTreltol*MAX(fabs(irbphat),fabs(Irbp))+ckt->CKTabstol;
-                                            if (fabs(irbphat-Irbp) > tol) {
+                                            tol=ckt->CKTreltol*MAX(fabs(ibcphat),fabs(Ibcp))+ckt->CKTabstol;
+                                            if (fabs(ibcphat-Ibcp) > tol) {
                                                 ckt->CKTnoncon++;
                                                 ckt->CKTtroubleElt = (GENinstance *) here;
                                                 return(OK); /* no reason to continue - we've failed... */
                                             } else {
-                                                tol=ckt->CKTreltol*MAX(fabs(ibcphat),fabs(Ibcp))+ckt->CKTabstol;
-                                                if (fabs(ibcphat-Ibcp) > tol) {
+                                                tol=ckt->CKTreltol*MAX(fabs(iccphat),fabs(Iccp))+ckt->CKTabstol;
+                                                if (fabs(iccphat-Iccp) > tol) {
                                                     ckt->CKTnoncon++;
                                                     ckt->CKTtroubleElt = (GENinstance *) here;
                                                     return(OK); /* no reason to continue - we've failed... */
-                                                } else {
-                                                    tol=ckt->CKTreltol*MAX(fabs(iccphat),fabs(Iccp))+ckt->CKTabstol;
-                                                    if (fabs(iccphat-Iccp) > tol) {
-                                                        ckt->CKTnoncon++;
-                                                        ckt->CKTtroubleElt = (GENinstance *) here;
-                                                        return(OK); /* no reason to continue - we've failed... */
-                                                    }
                                                 }
                                             }
                                         }
