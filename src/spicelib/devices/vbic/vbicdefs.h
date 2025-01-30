@@ -312,6 +312,8 @@ typedef struct sVBICinstance {
     double VBICith_Vre;
     double VBICith_Vrs;
 
+    double VBICpower;
+
     int VBIC_selfheat;    /* self-heating enabled  */
     int VBIC_excessPhase; /* excess phase enabled  */
 
@@ -933,8 +935,7 @@ enum {
 
 /* device questions */
 enum {
-    VBIC_QUEST_FT = 221,
-    VBIC_QUEST_COLLNODE,
+    VBIC_QUEST_COLLNODE = 221,
     VBIC_QUEST_BASENODE,
     VBIC_QUEST_EMITNODE,
     VBIC_QUEST_SUBSNODE,
@@ -945,39 +946,27 @@ enum {
     VBIC_QUEST_BASEBPNODE,
     VBIC_QUEST_EMITEINODE,
     VBIC_QUEST_SUBSSINODE,
-    VBIC_QUEST_XF1NODE,
-    VBIC_QUEST_XF2NODE,
     VBIC_QUEST_VBE,
     VBIC_QUEST_VBC,
     VBIC_QUEST_CC,
     VBIC_QUEST_CB,
     VBIC_QUEST_CE,
     VBIC_QUEST_CS,
+    VBIC_QUEST_POWER,
+    VBIC_QUEST_BETA,
     VBIC_QUEST_GM,
     VBIC_QUEST_GO,
     VBIC_QUEST_GPI,
     VBIC_QUEST_GMU,
     VBIC_QUEST_GX,
-    VBIC_QUEST_QBE,
-    VBIC_QUEST_CQBE,
-    VBIC_QUEST_QBC,
-    VBIC_QUEST_CQBC,
-    VBIC_QUEST_QBX,
-    VBIC_QUEST_CQBX,
-    VBIC_QUEST_QBCP,
-    VBIC_QUEST_CQBCP,
-    VBIC_QUEST_CEXBC,
-    VBIC_QUEST_GEQCB,
-    VBIC_QUEST_GCSUB,
-    VBIC_QUEST_GDSUB,
-    VBIC_QUEST_GEQBX,
     VBIC_QUEST_CBE,
     VBIC_QUEST_CBEX,
     VBIC_QUEST_CBC,
     VBIC_QUEST_CBCX,
     VBIC_QUEST_CBEP,
     VBIC_QUEST_CBCP,
-    VBIC_QUEST_POWER,
+    VBIC_QUEST_QBE,
+    VBIC_QUEST_QBC,
 };
 
 /* model questions */
