@@ -59,7 +59,7 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = VBICnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for( here = VBICinstances(model); here!= NULL; 
+        for( here = VBICinstances(model); here!= NULL;
                 here = VBICnextInstance(here)) {
 
             Ibe_Vbei   = *(ckt->CKTstate0 + here->VBICibe_Vbei);
@@ -129,7 +129,7 @@ c           Stamp element: Iciei
             *(here->VBICemitEIEmitEIPtr) +=  Iciei_Vbei;
             *(here->VBICemitEIBaseBIPtr) += -Iciei_Vbci;
             *(here->VBICemitEICollCIPtr) +=  Iciei_Vbci;
-            if (here->VBIC_excessPhase) { 
+            if (here->VBIC_excessPhase) {
                 *(here->VBICcollCIXf2Ptr) +=  Iciei_Vxf2;
                 *(here->VBICemitEIXf2Ptr) += -Iciei_Vxf2;
             }
@@ -251,7 +251,6 @@ c           Stamp element: Rs
 
                 Ibe_Vrth   = here->VBICibe_Vrth;
                 Ibex_Vrth  = here->VBICibex_Vrth;
-                Iciei_Vrth = here->VBICiciei_Vrth;
                 Ibc_Vrth   = here->VBICibc_Vrth;
                 Ibep_Vrth  = here->VBICibep_Vrth;
                 Ircx_Vrth  = here->VBICircx_Vrth;
@@ -391,7 +390,7 @@ c               Stamp element: Ith
                 *(here->VBICtempSubsPtr)   += -Ith_Vrs;
                 *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
             }
-            if (here->VBIC_excessPhase) { 
+            if (here->VBIC_excessPhase) {
                 //Ixf1
                 *(here->VBICxf1BaseBIPtr)  += +Ixf1_Vbei;
                 *(here->VBICxf1EmitEIPtr)  += -Ixf1_Vbei;
@@ -518,10 +517,10 @@ c   Stamp element: Qbco
                 *(here->VBICbaseBPtempPtr + 1) += -XQbep_Vrth;
                 *(here->VBICsubsSItempPtr + 1) +=  XQbcp_Vrth;
                 *(here->VBICbaseBPtempPtr + 1) += -XQbcp_Vrth;
-                if (here->VBIC_excessPhase) { 
-//                  Stamp element: Ixf1    f_xf1 = +   
+                if (here->VBIC_excessPhase) {
+//                  Stamp element: Ixf1    f_xf1 = +
                     *(here->VBICxf1TempPtr)    +=  Ixf1_Vrth;
-//                  Stamp element: Ixf2    f_xf2 = +   
+//                  Stamp element: Ixf2    f_xf2 = +
                     *(here->VBICxf2TempPtr)    +=  Ixf2_Vrth;
                 }
             }
