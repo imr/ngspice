@@ -710,6 +710,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 ,&Tf, &Tf_Vbei, &Tf_Vbci, &Tf_Vrth
                 ,&SCALE);
 
+            here->VBICpower = Ith;
+
             // Excess Phase calculation
             if (here->VBIC_excessPhase) {
                 Ixf1      = (Vxf2-Itzf)/Tf*model->VBICdelayTimeF;
