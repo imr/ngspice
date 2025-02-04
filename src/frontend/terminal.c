@@ -26,8 +26,8 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <curses.h>
 #include <term.h>
 #elif defined(HAVE_NCURSES_CURSES_H)
-#include <ncurses/curses.h>
-#include <ncurses/term.h>
+#include <ncursesw/curses.h>
+#include <ncursesw/term.h>
 #endif
 #endif
 
@@ -35,7 +35,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifdef HAVE_TERMCAP_H
 #include <termcap.h>
 #elif HAVE_NCURSES_TERMCAP_H
-#include <ncurses/termcap.h>
+#include <ncursesw/termcap.h>
 #endif
 
 #include "ngspice/cpdefs.h"
