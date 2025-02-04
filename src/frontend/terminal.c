@@ -25,19 +25,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <sys/ioctl.h>
 #endif
 
-
-#ifdef HAVE_TERMCAP
-#include <curses.h>
-#include <term.h>
-#endif
-
-
-#ifdef HAVE_TERMCAP_H
-#include <termcap.h>
-#elif HAVE_NCURSES_TERMCAP_H
-#include <ncurses/termcap.h>
-#endif
-
 #include "ngspice/cpdefs.h"
 
 #include "variable.h"
@@ -48,6 +35,22 @@ bool out_moremode = FALSE;
 bool out_isatty = TRUE;
 
 #if !defined (TCL_MODULE) && !defined (SHARED_MODULE)
+
+#ifdef HAVE_TERMCAP
+/* The tputs() function was found in a library, but there are several
+ * candidates for the header file location.
+ */
+
+#if HAVE_TERM_H
+#include <term.h>
+#elif HAVE_TERMCAP_H
+#include <termcap.h>
+#elif HAVE_NCURSES_TERMCAP_H
+#include <ncurses/termcap.h>
+#else
+#undef HAVE_TERMCAP
+#endif
+#endif
 
 #ifdef HAVE_TERMCAP
 static char *motion_chars;
