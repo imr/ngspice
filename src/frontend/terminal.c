@@ -12,7 +12,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include <stdarg.h>
 
-
 #ifdef HAVE_SGTTY_H
 #include <sgtty.h>
 #endif
@@ -23,8 +22,13 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 
 #ifdef HAVE_TERMCAP
+#ifdef HAVE_CURSES_H
 #include <curses.h>
 #include <term.h>
+#elif defined(HAVE_NCURSES_CURSES_H)
+#include <ncurses/curses.h>
+#include <ncurses/term.h>
+#endif
 #endif
 
 

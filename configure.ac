@@ -1274,12 +1274,30 @@ else
                 AC_CHECK_HEADERS([readline/readline.h readline/history.h],
                     [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
                     [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-                AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+                AC_CHECK_HEADER([curses.h],
+                     [AC_DEFINE([HAVE_CURSES_H], [], [Define if we have curses header in include])],
+                     [AC_CHECK_HEADER([ncurses/curses.h],
+                         [AC_DEFINE([HAVE_NCURSES_CURSES_H], [], [Define if we have curses.h in include/ncurses])],
+                         [AC_MSG_ERROR([Couldn't find curses.h.])])])
+                AC_SEARCH_LIBS([tputs], [ncursesw tinfo termcap],
                     [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
                     [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
                 AC_CHECK_LIB([readline], [readline],
                     [LIBS="$LIBS -lreadline"],
                     [AC_MSG_ERROR([Couldn't find readline libraries.])])
+                AC_CHECK_LIB([ncursesw], [tputs],
+                    [LIBS="$LIBS -lncurses"],
+                    [AC_MSG_ERROR([Couldn't find ncurses libraries.])])
+#                PKG_CHECK_MODULES([NCURSES], [ncursesw], [
+#                        AC_SUBST([CURSES_CFLAGS], ["$NCURSES_CFLAGS"])
+#                        AC_SUBST([CURSES_LIBS], ["$NCURSES_LIBS"])
+#                        AC_DEFINE([HAVE_CURSES_H], [1], [Define if curses.h is available])
+#                        CPPFLAGS="$CPPFLAGS $NCURSES_CFLAGS"
+#                ])
+                # Now check for curses.h using the updated CPPFLAGS
+                AC_CHECK_HEADERS([curses.h], [], [
+                    AC_MSG_WARN([curses.h not found.])
+                ])
             fi
         else
     # Especially defined for macOS (Big Sur), with readline installed from Brew
