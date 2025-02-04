@@ -12,6 +12,10 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include <stdarg.h>
 
+/* temporarily exclude code from compiling with MINGW */
+#ifdef __MINGW32__
+#undef HAVE_TERMCAP
+#endif
 
 #ifdef HAVE_SGTTY_H
 #include <sgtty.h>
