@@ -62,7 +62,6 @@ typedef struct sVBICinstance {
     int VBICsubsSINode; /* number of internal substrate node */
     int VBICxf1Node;    /* number of internal excess phase 1 node itf */
     int VBICxf2Node;    /* number of internal excess phase 2 node itf */
-    int VBICbrEq;    /* number of the branch equation added for current */
 
     double VBICarea;     /* area factor for the vbic */
     double VBICicVBE;    /* initial condition voltage B-E*/
@@ -241,26 +240,22 @@ typedef struct sVBICinstance {
     double *VBICtempTempPtr;
 
     /* excess phase */
-    double *VBICtempXf2Ptr;
-    double *VBICxf1TempPtr;
-
     double *VBICxf1Xf1Ptr;
-    double *VBICxf1Xf2Ptr;
-    double *VBICxf1CollCIPtr;
+    double *VBICxf1TempPtr;
     double *VBICxf1BaseBIPtr;
     double *VBICxf1EmitEIPtr;
+    double *VBICxf1CollCIPtr;
+    double *VBICxf1Xf2Ptr;
 
-    double *VBICxf2Xf2Ptr;
     double *VBICxf2Xf1Ptr;
-    double *VBICcollCIXf2Ptr;
-    double *VBICbaseBIXf2Ptr;
+    double *VBICxf2TempPtr;
+    double *VBICxf2BaseBIPtr;
+    double *VBICxf2EmitEIPtr;
+    double *VBICxf2CollCIPtr;
+    double *VBICxf2Xf2Ptr;
+    double *VBICemitXf2Ptr;
     double *VBICemitEIXf2Ptr;
-
-    double *VBICxf1IbrPtr;
-    double *VBICxf2IbrPtr;
-    double *VBICibrXf1Ptr;
-    double *VBICibrXf2Ptr;
-    double *VBICibrIbrPtr;
+    double *VBICcollCIXf2Ptr;
 
     unsigned VBICareaGiven   :1; /* flag to indicate area was specified */
     unsigned VBICoff         :1; /* 'off' flag for vbic */
@@ -287,8 +282,6 @@ typedef struct sVBICinstance {
 
     double VBICibe_Vrth;
     double VBICibex_Vrth;
-    double VBICitzf_vrth;
-    double VBICitzr_Vrth;
     double VBICibc_Vrth;
     double VBICibep_Vrth;
     double VBICircx_Vrth;
@@ -319,8 +312,7 @@ typedef struct sVBICinstance {
     double VBICith_Vre;
     double VBICith_Vrs;
 
-    double VBICindInduct;
-    double VBICcapQcxf;
+    double VBICpower;
 
     int VBIC_selfheat;    /* self-heating enabled  */
     int VBIC_excessPhase; /* excess phase enabled  */
@@ -411,24 +403,21 @@ typedef struct sVBICinstance {
     BindElement *VBICtempSubsSIBinding ;
     BindElement *VBICtempTempBinding ;
 
-    BindElement *VBICtempXf2Binding ;
-    BindElement *VBICxf1TempBinding ;
+    BindElement *VBICcollCIXf2Binding ;
+    BindElement *VBICemitEIXf2Binding ;
 
+    BindElement *VBICxf1BaseBIBinding ;
+    BindElement *VBICxf1CollCIBinding ;
+    BindElement *VBICxf1EmitEIBinding ;
+    BindElement *VBICxf1TempBinding ;
     BindElement *VBICxf1Xf1Binding ;
     BindElement *VBICxf1Xf2Binding ;
-    BindElement *VBICxf1CollCIBinding ;
-    BindElement *VBICxf1BaseBIBinding ;
-    BindElement *VBICxf1EmitEIBinding ;
-    BindElement *VBICxf2Xf2Binding ;
+    BindElement *VBICxf2BaseBIBinding ;
+    BindElement *VBICxf2CollCIBinding ;
+    BindElement *VBICxf2EmitEIBinding ;
+    BindElement *VBICxf2TempBinding ;
     BindElement *VBICxf2Xf1Binding ;
-    BindElement *VBICcollCIXf2Binding ;
-    BindElement *VBICbaseBIXf2Binding ;
-    BindElement *VBICemitEIXf2Binding ;
-    BindElement *VBICxf1IbrBinding ;
-    BindElement *VBICxf2IbrBinding ;
-    BindElement *VBICibrXf2Binding ;
-    BindElement *VBICibrXf1Binding ;
-    BindElement *VBICibrIbrBinding ;
+    BindElement *VBICxf2Xf2Binding ;
 #endif
 
 } VBICinstance ;
@@ -444,21 +433,20 @@ typedef struct sVBICinstance {
 #define VBICvrbi  VBICstate+6
 #define VBICvrbp  VBICstate+7
 #define VBICvbcp  VBICstate+8
+#define VBICvxf1  VBICstate+9
+#define VBICvxf2  VBICstate+10
 
-#define VBICibe       VBICstate+9
-#define VBICibe_Vbei  VBICstate+10
+#define VBICibe       VBICstate+11
+#define VBICibe_Vbei  VBICstate+12
 
-#define VBICibex      VBICstate+11
-#define VBICibex_Vbex VBICstate+12
+#define VBICibex      VBICstate+13
+#define VBICibex_Vbex VBICstate+14
 
-#define VBICitzf      VBICstate+13
-#define VBICitzf_Vbei VBICstate+14
-#define VBICitzf_Vbci VBICstate+15
-#define VBICitzf_Vrth VBICstate+16
-
-#define VBICitzr      VBICstate+17
-#define VBICitzr_Vbci VBICstate+18
-#define VBICitzr_Vbei VBICstate+19
+#define VBICiciei      VBICstate+15
+#define VBICiciei_Vbei VBICstate+16
+#define VBICiciei_Vbci VBICstate+17
+#define VBICiciei_Vrth VBICstate+18
+#define VBICiciei_Vxf2 VBICstate+19
 
 #define VBICibc       VBICstate+20
 #define VBICibc_Vbci  VBICstate+21
@@ -481,7 +469,6 @@ typedef struct sVBICinstance {
 #define VBICirbp_Vrbp VBICstate+34
 #define VBICirbp_Vbep VBICstate+35
 #define VBICirbp_Vbci VBICstate+36
-
 
 #define VBICqbe    VBICstate+37
 #define VBICcqbe   VBICstate+38
@@ -534,24 +521,27 @@ typedef struct sVBICinstance {
 #define VBICcqcxf     VBICstate+72
 #define VBICgqcxf     VBICstate+73
 
-#define VBICibc_Vrxf  VBICstate+74
+#define VBICqxf1      VBICstate+74
+#define VBICcqxf1     VBICstate+75
+#define VBICgqxf1     VBICstate+76
+#define VBICixf1      VBICstate+77
+#define VBICixf1_Vbei VBICstate+78
+#define VBICixf1_Vbci VBICstate+79
+#define VBICixf1_Vxf2 VBICstate+80
+#define VBICixf1_Vxf1 VBICstate+81
+#define VBICixf1_Vrth VBICstate+82
 
-#define VBICixzf      VBICstate+75
-#define VBICixzf_Vbei VBICstate+76
-#define VBICixzf_Vbci VBICstate+77
-#define VBICixzf_Vrth VBICstate+78
+#define VBICqxf2      VBICstate+83
+#define VBICcqxf2     VBICstate+84
+#define VBICgqxf2     VBICstate+85
+#define VBICixf2      VBICstate+86
+#define VBICixf2_Vbei VBICstate+87
+#define VBICixf2_Vbci VBICstate+88
+#define VBICixf2_Vxf1 VBICstate+89
+#define VBICixf2_Vxf2 VBICstate+90
+#define VBICixf2_Vrth VBICstate+91
 
-#define VBICixxf      VBICstate+79
-#define VBICixxf_Vrxf VBICstate+80
-
-#define VBICitxf      VBICstate+81
-#define VBICitxf_Vrxf VBICstate+82
-#define VBICith_Vrxf  VBICstate+83
-
-#define VBICindFlux   VBICstate+84
-#define VBICindVolt   VBICstate+85
-
-#define VBICnumStates 86
+#define VBICnumStates 92
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
@@ -945,8 +935,7 @@ enum {
 
 /* device questions */
 enum {
-    VBIC_QUEST_FT = 221,
-    VBIC_QUEST_COLLNODE,
+    VBIC_QUEST_COLLNODE = 221,
     VBIC_QUEST_BASENODE,
     VBIC_QUEST_EMITNODE,
     VBIC_QUEST_SUBSNODE,
@@ -963,31 +952,21 @@ enum {
     VBIC_QUEST_CB,
     VBIC_QUEST_CE,
     VBIC_QUEST_CS,
+    VBIC_QUEST_POWER,
+    VBIC_QUEST_BETA,
     VBIC_QUEST_GM,
     VBIC_QUEST_GO,
     VBIC_QUEST_GPI,
     VBIC_QUEST_GMU,
     VBIC_QUEST_GX,
-    VBIC_QUEST_QBE,
-    VBIC_QUEST_CQBE,
-    VBIC_QUEST_QBC,
-    VBIC_QUEST_CQBC,
-    VBIC_QUEST_QBX,
-    VBIC_QUEST_CQBX,
-    VBIC_QUEST_QBCP,
-    VBIC_QUEST_CQBCP,
-    VBIC_QUEST_CEXBC,
-    VBIC_QUEST_GEQCB,
-    VBIC_QUEST_GCSUB,
-    VBIC_QUEST_GDSUB,
-    VBIC_QUEST_GEQBX,
     VBIC_QUEST_CBE,
     VBIC_QUEST_CBEX,
     VBIC_QUEST_CBC,
     VBIC_QUEST_CBCX,
     VBIC_QUEST_CBEP,
     VBIC_QUEST_CBCP,
-    VBIC_QUEST_POWER,
+    VBIC_QUEST_QBE,
+    VBIC_QUEST_QBC,
 };
 
 /* model questions */

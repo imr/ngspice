@@ -42,6 +42,10 @@ IFparm VBICpTable[] = { /* parameters */
  OP("ib",    VBIC_QUEST_CB,   IF_REAL, "Base current"),
  OP("ie",    VBIC_QUEST_CE,   IF_REAL, "Emitter current"),
  OP("is",    VBIC_QUEST_CS,   IF_REAL, "Substrate current"),
+ OP("p",     VBIC_QUEST_POWER,IF_REAL, "Power dissipation"),
+ OPR("power",VBIC_QUEST_POWER,IF_REAL, "Power dissipation"),
+ OP("beta",  VBIC_QUEST_BETA, IF_REAL, "CE current gain DC"),
+ OPR("betad",VBIC_QUEST_BETA, IF_REAL, "CE current gain DC"),
  OP("gm",    VBIC_QUEST_GM,   IF_REAL, "Small signal transconductance dIc/dVbe"),
  OP("go",    VBIC_QUEST_GO,   IF_REAL, "Small signal output conductance dIc/dVbc"),
  OP("gpi",   VBIC_QUEST_GPI,  IF_REAL, "Small signal input conductance dIb/dVbe"),
@@ -53,15 +57,8 @@ IFparm VBICpTable[] = { /* parameters */
  OP("cbcx",  VBIC_QUEST_CBCX, IF_REAL, "External Base to collector capacitance"),
  OP("cbep",  VBIC_QUEST_CBEP, IF_REAL, "Parasitic Base to emitter capacitance"),
  OP("cbcp",  VBIC_QUEST_CBCP, IF_REAL, "Parasitic Base to collector capacitance"),
- OP("p",     VBIC_QUEST_POWER,IF_REAL, "Power dissipation"),
- OPU("geqcb",VBIC_QUEST_GEQCB,IF_REAL, "Internal C-B-base cap. equiv. cond."),
- OPU("geqbx",VBIC_QUEST_GEQBX,IF_REAL, "External C-B-base cap. equiv. cond."),
  OPU("qbe",  VBIC_QUEST_QBE,  IF_REAL, "Charge storage B-E junction"),
- OPU("cqbe", VBIC_QUEST_CQBE, IF_REAL, "Cap. due to charge storage in B-E jct."),
  OPU("qbc",  VBIC_QUEST_QBC,  IF_REAL, "Charge storage B-C junction"),
- OPU("cqbc", VBIC_QUEST_CQBC, IF_REAL, "Cap. due to charge storage in B-C jct."),
- OPU("qbx",  VBIC_QUEST_QBX,  IF_REAL, "Charge storage B-X junction"),
- OPU("cqbx", VBIC_QUEST_CQBX, IF_REAL, "Cap. due to charge storage in B-X jct.")
 };
 
 IFparm VBICmPTable[] = { /* model parameters */
