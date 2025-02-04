@@ -2,6 +2,10 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
+# Libs for Ngspice are irrelevant here.
+
+LIBS =
+
 # Verilator support: files installed to script directory and below.
 
 initdatadir = $(pkgdatadir)/scripts
