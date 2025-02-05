@@ -1,0 +1,34 @@
+* SkyWater PDK
+* simple inverter
+
+* Path to the PDK, to be set by you, the user
+*.include "D:\Spice_general\skywater-pdk\libraries\sky130_fd_pr\latest\models\corners/tt.spice"
+*.lib "D:\Spice_general\skywater-pdk\libraries\sky130_fd_pr\latest\models\sky130.lib.spice" tt
+.lib D:\Spice_general\open_pdks\sky130\sky130A\libs.tech\combined\sky130.lib.spice tt
+
+* the voltage sources: 
+Vdd vdd gnd DC 1.8
+V1 in gnd pulse(0 1.8 0p 200p 100p 1n 2n)
+
+* calling the inverter subcircuit
+Xnot1 in vdd gnd out not1
+
+.subckt not1 a vdd vss z
+xm01   z a     vdd     vdd sky130_fd_pr__pfet_01v8_hvt  l=0.15  w=0.99  as=0.26235  ad=0.26235  ps=2.51   pd=2.51
+xm02   z a     vss     vss sky130_fd_pr__nfet_01v8  l=0.15  w=0.495 as=0.131175 ad=0.131175 ps=1.52   pd=1.52
+c3  a     vss   0.384f
+c2  z     vss   0.576f
+.ends
+
+* simulation command: 
+.tran 1ps 10ns 0 10p
+
+.control
+run
+rusage time
+set xbrushwidth=3
+plot in out
+*gnuplot interm in out
+.endc
+
+.end
