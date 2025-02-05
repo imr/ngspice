@@ -1285,9 +1285,6 @@ else
                 AC_CHECK_LIB([readline], [readline],
                     [LIBS="$LIBS -lreadline"],
                     [AC_MSG_ERROR([Couldn't find readline libraries.])])
-                AC_CHECK_LIB([ncursesw], [tputs],
-                    [LIBS="$LIBS -lncursesw"],
-                    [AC_MSG_ERROR([Couldn't find ncurses libraries.])])
             fi
         else
     # Especially defined for macOS (Big Sur), with readline installed from Brew
