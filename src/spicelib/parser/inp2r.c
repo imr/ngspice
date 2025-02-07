@@ -169,11 +169,8 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
           INPinsert(&model, tab);
           current->error = INPgetMod(ckt, model, &thismodel, tab);
           if (thismodel != NULL) {
-            if ((INPtypelook("Resistor") != thismodel->INPmodType)
-#ifdef ADMS
-               && (INPtypelook("r2_cmc") != thismodel->INPmodType)
-#endif
-            ) {
+            if (INPtypelook("Resistor") != thismodel->INPmodType)
+            {
                 LITERR("incorrect model type for resistor");
                 return;
             }

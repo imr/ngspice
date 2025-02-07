@@ -256,9 +256,6 @@ com_version(wordlist *wl)
 #ifdef NGDEBUG
             fprintf(cp_out, "** Debugging option (-g) enabled\n");
 #endif
-#ifdef ADMS
-            fprintf(cp_out, "** Adms interface enabled\n");
-#endif
 #ifdef USE_OMP
             fprintf(cp_out, "** OpenMP multithreading for BSIM3, BSIM4 enabled\n");
 #endif

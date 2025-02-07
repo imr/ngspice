@@ -137,8 +137,6 @@ libdev_la_SOURCES =	\
 	cktsoachk.c	\
 	limit.c
 
-EXTRA_DIST = adms/admst
-
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 AM_CFLAGS = $(STATIC)
 

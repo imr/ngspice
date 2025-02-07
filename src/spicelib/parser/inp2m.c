@@ -31,14 +31,6 @@ model_numnodes(int type)
         return 6;
     }
 
-#ifdef ADMS
-    if (type == INPtypelook("BSIMBULK") ||  /* bsimbulk.va */
-        type == INPtypelook("BSIMCMG"))     /* bsimcmg.va */
-    {
-        return 5;
-    }
-#endif
-
     if (type == INPtypelook("VDMOS"))       /* 3 ; VDMOSnames */
     {
         return 5;
@@ -141,13 +133,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         thismodel->INPmodType != INPtypelook("SOI3") &&
 #ifdef CIDER
         thismodel->INPmodType != INPtypelook("NUMOS") &&
-#endif
-#ifdef ADMS
-        thismodel->INPmodType != INPtypelook("ekv") &&
-        thismodel->INPmodType != INPtypelook("psp102") &&
-        thismodel->INPmodType != INPtypelook("psp103") &&
-        thismodel->INPmodType != INPtypelook("bsimbulk") &&
-        thismodel->INPmodType != INPtypelook("bsimcmg") &&
 #endif
         thismodel->INPmodType != INPtypelook("HiSIM2") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV1") &&
