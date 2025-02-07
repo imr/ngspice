@@ -38,10 +38,6 @@
 #define CIDER 1
 /* don't undef CIDER, otherwise compilation will fail */
 
-/* Support for Verilog-A(MS) models */
-/* #undef ADMS */
-/* ADMS compilation is not supported with MS Visual Studio */
-
 /* Define if we want debug sensitivity analysis */
 /* #undef ASDEBUG */
 
