@@ -36,9 +36,7 @@ int vbic_4T_et_cf_fj(
     double *,double *,double *,double *,double *,double *,double *,
     double *,double *,double *,double *,double *,double *,double *,
     double *,double *,double *,double *,double *,double *,double *,
-    double *,
-    double *, double *, double *, double *,
-    double *);
+    double *,double *);
 
 int
 VBICload(GENmodel *inModel, CKTcircuit *ckt)
@@ -66,9 +64,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Qbcp_Vbcp=0.0,Irth,Irth_Vrth=0.0,Ith=0.0,Ith_Vrth=0.0,Ith_Vbei=0.0,Ith_Vbci=0.0
     ,Ith_Vcei=0.0,Ith_Vbex=0.0,Ith_Vbep=0.0,Ith_Vrs=0.0,Ith_Vbcp=0.0,Ith_Vcep=0.0,Ith_Vrcx=0.0
     ,Ith_Vrci=0.0,Ith_Vbcx=0.0,Ith_Vrbx=0.0,Ith_Vrbi=0.0,Ith_Vre=0.0,Ith_Vrbp=0.0,Qcth=0.0
-    ,Qcth_Vrth=0.0
-    ,Tf=0.0, Tf_Vbei=0.0, Tf_Vbci=0.0, Tf_Vrth=0.0
-    ,SCALE;
+    ,Qcth_Vrth=0.0,SCALE;
 
     int iret;
     double Vce;
@@ -104,9 +100,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     double Iciei, Iciei_Vbei, Iciei_Vbci, Iciei_Vrth, Iciei_Vxf2;
 //NQS
     double Ixf1=0.0, Ixf2=0.0, Qxf1=0.0, Qxf2=0.0, Qxf1_Vxf1=0.0, Qxf2_Vxf2=0.0;
-    double Ixf1_Vxf1=0.0, Ixf1_Vxf2=0.0, Ixf1_ditf=0.0, Ixf1_dTf=0.0, Ixf1_Vbei=0.0, Ixf1_Vbci=0.0, Ixf1_Vrth=0.0;
-    double Ixf2_Vxf1=0.0, Ixf2_Vbei=0.0, Ixf2_Vbci=0.0, Ixf2_Vrth=0.0;
-    double Ixf2_Vxf2=0.0, Ixf2_dTf=0.0;
+    double Ixf1_Vxf1=0.0, Ixf1_Vxf2=0.0, Ixf1_ditf=0.0, Ixf1_Vbei=0.0, Ixf1_Vbci=0.0, Ixf1_Vrth=0.0;
+    double Ixf2_Vxf1=0.0;
+    double Ixf2_Vxf2=0.0;
     double Itxf=0.0;
     double Itxf_Vxf2=0.0, Itxf_Vbci=0.0, Itxf_Vbei=0.0, Itxf_Vrth=0.0;
     double Vxf1=0.0, Vxf2=0.0;
@@ -409,13 +405,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0+here->VBICqxf2)=*(ckt->CKTstate1+here->VBICqxf2);
                         *(ckt->CKTstate0+here->VBICcqxf2)=*(ckt->CKTstate1+here->VBICcqxf2);
                         *(ckt->CKTstate0+here->VBICgqxf2)=*(ckt->CKTstate1+here->VBICgqxf2);
-                        *(ckt->CKTstate0+here->VBICixf2_Vbei)=*(ckt->CKTstate1+here->VBICixf2_Vbei);
-                        *(ckt->CKTstate0+here->VBICixf2_Vbci)=*(ckt->CKTstate1+here->VBICixf2_Vbci);
                         *(ckt->CKTstate0+here->VBICixf2_Vxf1)=*(ckt->CKTstate1+here->VBICixf2_Vxf1);
                         *(ckt->CKTstate0+here->VBICixf2_Vxf2)=*(ckt->CKTstate1+here->VBICixf2_Vxf2);
                         if (here->VBIC_selfheat) {
                             *(ckt->CKTstate0+here->VBICixf1_Vrth)=*(ckt->CKTstate1+here->VBICixf1_Vrth);
-                            *(ckt->CKTstate0+here->VBICixf2_Vrth)=*(ckt->CKTstate1+here->VBICixf2_Vrth);
                         }
                     }
                 } else {
@@ -453,8 +446,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     if (here->VBIC_selfheat)
                         Vrth = *(ckt->CKTrhsOld + here->VBICtempNode);
                     if (here->VBIC_excessPhase) {
-                        // not needed because convergence in NQS network is not checked here
-                        //Vxf1  = *(ckt->CKTrhsOld + here->VBICxf1Node);
                         Vxf2  = *(ckt->CKTrhsOld + here->VBICxf2Node);
                     }
 #ifndef PREDICTOR
@@ -653,11 +644,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         Ixf1_Vxf1 = *(ckt->CKTstate0 + here->VBICixf1_Vxf1);
                         Ixf1_Vrth = *(ckt->CKTstate0 + here->VBICixf1_Vrth);
                         Ixf2      = *(ckt->CKTstate0 + here->VBICixf2);
-                        Ixf2_Vbei = *(ckt->CKTstate0 + here->VBICixf2_Vbei);
-                        Ixf2_Vbci = *(ckt->CKTstate0 + here->VBICixf2_Vbci);
                         Ixf2_Vxf1 = *(ckt->CKTstate0 + here->VBICixf2_Vxf1);
                         Ixf2_Vxf2 = *(ckt->CKTstate0 + here->VBICixf2_Vxf2);
-                        Ixf2_Vrth = *(ckt->CKTstate0 + here->VBICixf2_Vrth);
                     }
                     goto load;
                 }
@@ -706,30 +694,24 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 ,&Iccp_Vbci, &Iccp_Vbcp, &Irs, &Irs_Vrs, &Irs_Vrth, &Qbcp, &Qbcp_Vrth
                 ,&Qbcp_Vbcp, &Irth, &Irth_Vrth, &Ith, &Ith_Vrth, &Ith_Vbei, &Ith_Vbci
                 ,&Ith_Vcei, &Ith_Vbex, &Ith_Vbep, &Ith_Vrs, &Ith_Vbcp, &Ith_Vcep, &Ith_Vrcx
-                ,&Ith_Vrci, &Ith_Vbcx, &Ith_Vrbx, &Ith_Vrbi, &Ith_Vre, &Ith_Vrbp, &Qcth, &Qcth_Vrth
-                ,&Tf, &Tf_Vbei, &Tf_Vbci, &Tf_Vrth
-                ,&SCALE);
+                ,&Ith_Vrci, &Ith_Vbcx, &Ith_Vrbx, &Ith_Vrbi, &Ith_Vre, &Ith_Vrbp, &Qcth
+                ,&Qcth_Vrth, &SCALE);
 
             here->VBICpower = Ith;
 
             // Excess Phase calculation
             if (here->VBIC_excessPhase) {
-                Ixf1      = (Vxf2-Itzf)/Tf*model->VBICdelayTimeF;
+                Ixf1      = Vxf2-Itzf;
                 Ixf1_Vxf1 =  0.0;
-                Ixf1_Vxf2 =  1.0/Tf*model->VBICdelayTimeF;
-                Ixf1_ditf = -Ixf1_Vxf2;
-                Ixf1_dTf  = -Ixf1/Tf;
-                Ixf1_Vbei = Ixf1_ditf*Itzf_Vbei + Ixf1_dTf*Tf_Vbei;
-                Ixf1_Vbci = Ixf1_ditf*Itzf_Vbci + Ixf1_dTf*Tf_Vbci;
-                Ixf1_Vrth = Ixf1_ditf*Itzf_Vrth + Ixf1_dTf*Tf_Vrth;
+                Ixf1_Vxf2 =  1.0;
+                Ixf1_ditf = -1.0;
+                Ixf1_Vbei = Ixf1_ditf*Itzf_Vbei;
+                Ixf1_Vbci = Ixf1_ditf*Itzf_Vbci;
+                Ixf1_Vrth = Ixf1_ditf*Itzf_Vrth;
 
-                Ixf2      = (Vxf2-Vxf1)/Tf*model->VBICdelayTimeF;
-                Ixf2_Vxf2 = 1.0/Tf*model->VBICdelayTimeF;
-                Ixf2_Vxf1 = -Ixf2_Vxf2;
-                Ixf2_dTf  = -Ixf2/Tf;
-                Ixf2_Vbei = Ixf2_dTf*Tf_Vbei;
-                Ixf2_Vbci = Ixf2_dTf*Tf_Vbci;
-                Ixf2_Vrth = Ixf2_dTf*Tf_Vrth;
+                Ixf2      = Vxf2-Vxf1;
+                Ixf2_Vxf2 =  1.0;
+                Ixf2_Vxf1 = -1.0;
 
                 Qxf1      = model->VBICdelayTimeF*Vxf1;
                 Qxf1_Vxf1 = model->VBICdelayTimeF;
@@ -737,35 +719,32 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 Qxf2_Vxf2 = model->VBICdelayTimeF/3;
 
                 Itxf      = Vxf2;
-                Itxf_Vbei = 0;
-                Itxf_Vbci = 0;
-                Itxf_Vrth = 0;
+                Itxf_Vbei = 0.0;
+                Itxf_Vbci = 0.0;
+                Itxf_Vrth = 0.0;
                 Itxf_Vxf2 = 1.0;
             } else {
                 Ixf1      = Vxf1;
                 Ixf1_Vxf1 = 1.0;
-                Ixf1_Vxf2 = 0;
-                Ixf1_Vbei = 0;
-                Ixf1_Vbci = 0;
-                Ixf1_Vrth = 0;
+                Ixf1_Vxf2 = 0.0;
+                Ixf1_Vbei = 0.0;
+                Ixf1_Vbci = 0.0;
+                Ixf1_Vrth = 0.0;
 
                 Ixf2      = Vxf2;
                 Ixf2_Vxf2 = 1.0;
-                Ixf2_Vxf1 = 0;
-                Ixf2_Vbei = 0;
-                Ixf2_Vbci = 0;
-                Ixf2_Vrth = 0;
+                Ixf2_Vxf1 = 0.0;
 
-                Qxf1      = 0;
-                Qxf1_Vxf1 = 0;
-                Qxf2      = 0;
-                Qxf2_Vxf2 = 0;
+                Qxf1      = 0.0;
+                Qxf1_Vxf1 = 0.0;
+                Qxf2      = 0.0;
+                Qxf2_Vxf2 = 0.0;
 
                 Itxf      = Itzf;
                 Itxf_Vbei = Itzf_Vbei;
                 Itxf_Vbci = Itzf_Vbci;
                 Itxf_Vrth = Itzf_Vrth;
-                Itxf_Vxf2 = 0;
+                Itxf_Vxf2 = 0.0;
             }
 
             Iciei      = Itxf      - Itzr;
@@ -1049,11 +1028,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->VBICixf1_Vrth)  = Ixf1_Vrth;
 
             *(ckt->CKTstate0 + here->VBICixf2)       = Ixf2;
-            *(ckt->CKTstate0 + here->VBICixf2_Vbei)  = Ixf2_Vbei;
-            *(ckt->CKTstate0 + here->VBICixf2_Vbci)  = Ixf2_Vbci;
             *(ckt->CKTstate0 + here->VBICixf2_Vxf1)  = Ixf2_Vxf1;
             *(ckt->CKTstate0 + here->VBICixf2_Vxf2)  = Ixf2_Vxf2;
-            *(ckt->CKTstate0 + here->VBICixf2_Vrth)  = Ixf2_Vrth;
 
             if (here->VBIC_selfheat)
             {
@@ -1145,7 +1121,7 @@ c           Stamp element: Ibex
 /*
 c           Stamp element: Iciei
 */
-            rhs_current = model->VBICtype * (Iciei - Iciei_Vbei*Vbei - Iciei_Vbci*Vbci - Iciei_Vxf2*Vxf2);
+            rhs_current = model->VBICtype * (Iciei - Iciei_Vbei*Vbei - Iciei_Vbci*Vbci);
             *(ckt->CKTrhs + here->VBICcollCINode) += -rhs_current;
             *(here->VBICcollCIBaseBIPtr) +=  Iciei_Vbei;
             *(here->VBICcollCIEmitEIPtr) += -Iciei_Vbei;
@@ -1157,6 +1133,9 @@ c           Stamp element: Iciei
             *(here->VBICemitEIBaseBIPtr) += -Iciei_Vbci;
             *(here->VBICemitEICollCIPtr) +=  Iciei_Vbci;
             if (here->VBIC_excessPhase) {
+                rhs_current = model->VBICtype * (-Iciei_Vxf2*Vxf2);
+                *(ckt->CKTrhs + here->VBICcollCINode) += -rhs_current;
+                *(ckt->CKTrhs + here->VBICemitEINode) +=  rhs_current;
                 // with respect to Vxf2
                 *(here->VBICcollCIXf2Ptr) +=  Iciei_Vxf2;
                 *(here->VBICemitEIXf2Ptr) += -Iciei_Vxf2;
@@ -1300,7 +1279,7 @@ c           Stamp element: Rs
             if (here->VBIC_excessPhase) {
 //              Branch: xf1-ground, Stamp element: Ixf1   f_xf1=+
                 rhs_current                         = Ixf1 - Ixf1_Vbci*Vbci - Ixf1_Vbei*Vbei -Ixf1_Vxf1*Vxf1 - Ixf1_Vxf2*Vxf2;
-                *(ckt->CKTrhs + here->VBICxf1Node) += -rhs_current; // rhs_current; // into xf1 node
+                *(ckt->CKTrhs + here->VBICxf1Node) += -rhs_current; // into xf1 node
                 *(here->VBICxf1BaseBIPtr)          += +Ixf1_Vbei;
                 *(here->VBICxf1EmitEIPtr)          += -Ixf1_Vbei;
                 *(here->VBICxf1BaseBIPtr)          += +Ixf1_Vbci;
@@ -1309,12 +1288,8 @@ c           Stamp element: Rs
                 *(here->VBICxf1Xf1Ptr)             += +Ixf1_Vxf1;
 
 //              Branch: xf2-ground, Stamp element: Ixf2   f_xf2=+
-                rhs_current                         = Ixf2 - Ixf2_Vbci*Vbci - Ixf2_Vbei*Vbei - Ixf2_Vxf1*Vxf1 - Ixf2_Vxf2*Vxf2;
-                *(ckt->CKTrhs + here->VBICxf2Node) += -rhs_current; // rhs_current; // into xf2 node
-                *(here->VBICxf2BaseBIPtr)          += +Ixf2_Vbei;
-                *(here->VBICxf2EmitEIPtr)          += -Ixf2_Vbei;
-                *(here->VBICxf2BaseBIPtr)          += +Ixf2_Vbci;
-                *(here->VBICxf2CollCIPtr)          += -Ixf2_Vbci;
+                rhs_current                         = Ixf2 - Ixf2_Vxf1*Vxf1 - Ixf2_Vxf2*Vxf2;
+                *(ckt->CKTrhs + here->VBICxf2Node) += -rhs_current; // into xf2 node
                 *(here->VBICxf2Xf2Ptr)             += +Ixf2_Vxf2;
                 *(here->VBICxf2Xf1Ptr)             += +Ixf2_Vxf1;
             }
@@ -1493,12 +1468,6 @@ c               Stamp element: Ith
                     *(ckt->CKTrhs + here->VBICxf1Node) += -rhs_current;
                     // with respect to Potential Vxf1
                     *(here->VBICxf1TempPtr)            +=  Ixf1_Vrth;
-
-//                  Stamp element: Ixf2    f_xf2 = +
-                    rhs_current = -Ixf2_Vrth*Vrth;
-                    *(ckt->CKTrhs + here->VBICxf2Node) += -rhs_current;
-                    // with respect to Potential Vxf2
-                    *(here->VBICxf2TempPtr)            +=  Ixf2_Vrth;
                 }
             }
         }
@@ -1524,9 +1493,8 @@ int vbic_4T_et_cf_fj(double *p
     ,double *Iccp_Vbci, double *Iccp_Vbcp, double *Irs, double *Irs_Vrs, double *Irs_Vrth, double *Qbcp, double *Qbcp_Vrth
     ,double *Qbcp_Vbcp, double *Irth, double *Irth_Vrth, double *Ith, double *Ith_Vrth, double *Ith_Vbei, double *Ith_Vbci
     ,double *Ith_Vcei, double *Ith_Vbex, double *Ith_Vbep, double *Ith_Vrs, double *Ith_Vbcp, double *Ith_Vcep, double *Ith_Vrcx
-    ,double *Ith_Vrci, double *Ith_Vbcx, double *Ith_Vrbx, double *Ith_Vrbi, double *Ith_Vre, double *Ith_Vrbp, double *Qcth, double *Qcth_Vrth
-    ,double *tff, double *tff_Vbei, double *tff_Vbci, double *tff_Vrth
-    ,double *SCALE)
+    ,double *Ith_Vrci, double *Ith_Vbcx, double *Ith_Vrbx, double *Ith_Vrbi, double *Ith_Vre, double *Ith_Vrbp, double *Qcth
+    ,double *Qcth_Vrth, double *SCALE)
 {
 double Tini,Tdev,Tdev_Vrth,Vtv,Vtv_Tdev,Vtv_Vrth,rT;
 double rT_Tdev,rT_Vrth,dT,dT_Tdev,dT_Vrth,xvar1,xvar1_rT;
@@ -1611,13 +1579,12 @@ double derf_IVO,derf_Vrth,derf_RCIatT,derf_Iohm,derf_Vrci,derf_Vbci,derf_Vbcx;
 double Irci_Iohm,Irci_derf,Irbx_RBXatT,Irbi_qb,Irbi_RBIatT,Ire_REatT,Irbp_qbp;
 double Irbp_RBPatT,argn_Vbcp,expn_Vbcp,Ibcp_IBCIPatT,Ibcp_expi,Ibcp_IBCNPatT,Ibcp_expn;
 double Irs_RSatT,sgIf,rIf,rIf_Ifi,rIf_Vrth,rIf_Vbei,mIf;
-double mIf_rIf,mIf_Vrth,mIf_Vbei,tff_q1;
-double tff_xvar2,tff_mIf,Qbe_CJEatT,Qbe_qdbe,Qbe_tff,Qbe_Ifi;
+double mIf_rIf,mIf_Vrth,mIf_Vbei,tff,tff_q1,tff_Vrth,tff_Vbei;
+double tff_Vbci,tff_xvar2,tff_mIf,Qbe_CJEatT,Qbe_qdbe,Qbe_tff,Qbe_Ifi;
 double Qbe_qb,Qbex_CJEatT,Qbex_qdbex,Qbc_CJCatT,Qbc_qdbc,Qbc_Iri,Qbc_Kbci;
 double Qbcx_Kbcx,Qbep_CJEPatT,Qbep_qdbep,Qbep_Ifp,Qbcp_CJCPatT,Qbcp_qdbcp,Ith_Ibe;
 double Ith_Ibc,Ith_Itzf,Ith_Itzr,Ith_Ibex,Ith_Ibep,Ith_Irs,Ith_Ibcp;
 double Ith_Iccp,Ith_Ircx,Ith_Irci,Ith_Irbx,Ith_Irbi,Ith_Ire,Ith_Irbp;
-//double  tff, tff_Vbei, tff_Vbci, tff_Vrth;
 
 /*  Function and derivative code */
 
@@ -3891,28 +3858,28 @@ double Ith_Iccp,Ith_Ircx,Ith_Irci,Ith_Irbx,Ith_Irbi,Ith_Ire,Ith_Irbp;
     xvar2=exp(xvar1);
     xvar2_xvar1=xvar2;
     xvar2_Vbci=xvar2_xvar1*xvar1_Vbci;
-    *tff=p[56]*(1.0+p[57]*q1)*(1.0+p[58]*xvar2*(slTF+mIf*mIf)*sgIf);
+    tff=p[56]*(1.0+p[57]*q1)*(1.0+p[58]*xvar2*(slTF+mIf*mIf)*sgIf);
     tff_q1=p[57]*p[56]*(sgIf*(slTF+(mIf*mIf))*p[58]*xvar2+1.0);
     tff_xvar2=(q1*p[57]+1.0)*sgIf*(slTF+(mIf*mIf))*p[56]*p[58];
     tff_mIf=2.0*mIf*(q1*p[57]+1.0)*sgIf*p[56]*p[58]*xvar2;
-    *tff_Vrth=tff_q1*q1_Vrth;
-    *tff_Vbei=tff_q1*q1_Vbei;
-    *tff_Vbci=tff_q1*q1_Vbci;
-    *tff_Vbci=*tff_Vbci+tff_xvar2*xvar2_Vbci;
-    *tff_Vrth=*tff_Vrth+tff_mIf*mIf_Vrth;
-    *tff_Vbei=*tff_Vbei+tff_mIf*mIf_Vbei;
-    (*Qbe)=CJEatT*qdbe*p[32]+*tff*Ifi/qb;
+    tff_Vrth=tff_q1*q1_Vrth;
+    tff_Vbei=tff_q1*q1_Vbei;
+    tff_Vbci=tff_q1*q1_Vbci;
+    tff_Vbci=tff_Vbci+tff_xvar2*xvar2_Vbci;
+    tff_Vrth=tff_Vrth+tff_mIf*mIf_Vrth;
+    tff_Vbei=tff_Vbei+tff_mIf*mIf_Vbei;
+    (*Qbe)=CJEatT*qdbe*p[32]+tff*Ifi/qb;
     Qbe_CJEatT=qdbe*p[32];
     Qbe_qdbe=CJEatT*p[32];
     Qbe_tff=Ifi/qb;
-    Qbe_Ifi=*tff/qb;
-    Qbe_qb=-Ifi* *tff/(qb*qb);
+    Qbe_Ifi=tff/qb;
+    Qbe_qb=-Ifi*tff/(qb*qb);
     *Qbe_Vrth=Qbe_CJEatT*CJEatT_Vrth;
     *Qbe_Vrth=(*Qbe_Vrth)+Qbe_qdbe*qdbe_Vrth;
     *Qbe_Vbei=Qbe_qdbe*qdbe_Vbei;
-    *Qbe_Vrth=(*Qbe_Vrth)+Qbe_tff* *tff_Vrth;
-    *Qbe_Vbei=(*Qbe_Vbei)+Qbe_tff* *tff_Vbei;
-    *Qbe_Vbci=Qbe_tff* *tff_Vbci;
+    *Qbe_Vrth=(*Qbe_Vrth)+Qbe_tff*tff_Vrth;
+    *Qbe_Vbei=(*Qbe_Vbei)+Qbe_tff*tff_Vbei;
+    *Qbe_Vbci=Qbe_tff*tff_Vbci;
     *Qbe_Vrth=(*Qbe_Vrth)+Qbe_Ifi*Ifi_Vrth;
     *Qbe_Vbei=(*Qbe_Vbei)+Qbe_Ifi*Ifi_Vbei;
     *Qbe_Vrth=(*Qbe_Vrth)+Qbe_qb*qb_Vrth;

@@ -49,11 +49,8 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double Ixf1_Vxf1;
     double Ixf1_Vrth;
 
-    double Ixf2_Vbei;
-    double Ixf2_Vbci;
     double Ixf2_Vxf2;
     double Ixf2_Vxf1;
-    double Ixf2_Vrth;
 
     /*  loop through all the models */
     for( ; model != NULL; model = VBICnextModel(model)) {
@@ -91,15 +88,12 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             Ixf1_Vbei  = *(ckt->CKTstate0 + here->VBICixf1_Vbei);
             Ixf1_Vbci  = *(ckt->CKTstate0 + here->VBICixf1_Vbci);
-            Ixf1_Vxf2  = *(ckt->CKTstate0 + here->VBICixf1_Vxf2);
             Ixf1_Vxf1  = *(ckt->CKTstate0 + here->VBICixf1_Vxf1);
+            Ixf1_Vxf2  = *(ckt->CKTstate0 + here->VBICixf1_Vxf2);
             Ixf1_Vrth  = *(ckt->CKTstate0 + here->VBICixf1_Vrth);
 
-            Ixf2_Vbei  = *(ckt->CKTstate0 + here->VBICixf2_Vbei);
-            Ixf2_Vbci  = *(ckt->CKTstate0 + here->VBICixf2_Vbci);
-            Ixf2_Vxf2  = *(ckt->CKTstate0 + here->VBICixf2_Vxf2);
             Ixf2_Vxf1  = *(ckt->CKTstate0 + here->VBICixf2_Vxf1);
-            Ixf2_Vrth  = *(ckt->CKTstate0 + here->VBICixf2_Vrth);
+            Ixf2_Vxf2  = *(ckt->CKTstate0 + here->VBICixf2_Vxf2);
 
 /*
 c           The real part
@@ -247,6 +241,19 @@ c           Stamp element: Rs
             *(here->VBICsubsSISubsPtr)   += -Irs_Vrs;
             *(here->VBICsubsSubsSIPtr)   += -Irs_Vrs;
 
+            if (here->VBIC_excessPhase) {
+                //Ixf1
+                *(here->VBICxf1BaseBIPtr)  += +Ixf1_Vbei;
+                *(here->VBICxf1EmitEIPtr)  += -Ixf1_Vbei;
+                *(here->VBICxf1BaseBIPtr)  += +Ixf1_Vbci;
+                *(here->VBICxf1CollCIPtr)  += -Ixf1_Vbci;
+                *(here->VBICxf1Xf2Ptr)     += +Ixf1_Vxf2;
+                *(here->VBICxf1Xf1Ptr)     += +Ixf1_Vxf1;
+                //Ixf2
+                *(here->VBICxf2Xf2Ptr)     += +Ixf2_Vxf2;
+                *(here->VBICxf2Xf1Ptr)     += +Ixf2_Vxf1;
+            }
+
             if (here->VBIC_selfheat) {
 
                 Ibe_Vrth   = here->VBICibe_Vrth;
@@ -350,6 +357,11 @@ c               Stamp element: Rs
 */
                 *(here->VBICsubsTempPtr)   +=  Irs_Vrth;
                 *(here->VBICsubsSItempPtr) += -Irs_Vrth;
+
+                if (here->VBIC_excessPhase) {
+//                  Stamp element: Ixf1    f_xf1 = +
+                    *(here->VBICxf1TempPtr)    +=  Ixf1_Vrth;
+                }
 /*
 c               Stamp element: Rth
 */
@@ -389,22 +401,6 @@ c               Stamp element: Ith
                 *(here->VBICtempEmitEIPtr) += +Ith_Vre;
                 *(here->VBICtempSubsPtr)   += -Ith_Vrs;
                 *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
-            }
-            if (here->VBIC_excessPhase) {
-                //Ixf1
-                *(here->VBICxf1BaseBIPtr)  += +Ixf1_Vbei;
-                *(here->VBICxf1EmitEIPtr)  += -Ixf1_Vbei;
-                *(here->VBICxf1BaseBIPtr)  += +Ixf1_Vbci;
-                *(here->VBICxf1CollCIPtr)  += -Ixf1_Vbci;
-                *(here->VBICxf1Xf2Ptr)     += +Ixf1_Vxf2;
-                *(here->VBICxf1Xf1Ptr)     += +Ixf1_Vxf1;
-                //Ixf2
-                *(here->VBICxf2BaseBIPtr)  += +Ixf2_Vbei;
-                *(here->VBICxf2EmitEIPtr)  += -Ixf2_Vbei;
-                *(here->VBICxf2BaseBIPtr)  += +Ixf2_Vbci;
-                *(here->VBICxf2CollCIPtr)  += -Ixf2_Vbci;
-                *(here->VBICxf2Xf2Ptr)     += +Ixf2_Vxf2;
-                *(here->VBICxf2Xf1Ptr)     += +Ixf2_Vxf1;
             }
 
 /*
@@ -517,12 +513,6 @@ c   Stamp element: Qbco
                 *(here->VBICbaseBPtempPtr + 1) += -XQbep_Vrth;
                 *(here->VBICsubsSItempPtr + 1) +=  XQbcp_Vrth;
                 *(here->VBICbaseBPtempPtr + 1) += -XQbcp_Vrth;
-                if (here->VBIC_excessPhase) {
-//                  Stamp element: Ixf1    f_xf1 = +
-                    *(here->VBICxf1TempPtr)    +=  Ixf1_Vrth;
-//                  Stamp element: Ixf2    f_xf2 = +
-                    *(here->VBICxf2TempPtr)    +=  Ixf2_Vrth;
-                }
             }
 
         }

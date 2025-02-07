@@ -412,10 +412,6 @@ typedef struct sVBICinstance {
     BindElement *VBICxf1TempBinding ;
     BindElement *VBICxf1Xf1Binding ;
     BindElement *VBICxf1Xf2Binding ;
-    BindElement *VBICxf2BaseBIBinding ;
-    BindElement *VBICxf2CollCIBinding ;
-    BindElement *VBICxf2EmitEIBinding ;
-    BindElement *VBICxf2TempBinding ;
     BindElement *VBICxf2Xf1Binding ;
     BindElement *VBICxf2Xf2Binding ;
 #endif
@@ -517,31 +513,26 @@ typedef struct sVBICinstance {
 #define VBICvrth      VBICstate+69
 #define VBICicth_Vrth VBICstate+70
 
-#define VBICqcxf      VBICstate+71
-#define VBICcqcxf     VBICstate+72
-#define VBICgqcxf     VBICstate+73
+#define VBICqxf1      VBICstate+71
+#define VBICcqxf1     VBICstate+72
+#define VBICgqxf1     VBICstate+73
 
-#define VBICqxf1      VBICstate+74
-#define VBICcqxf1     VBICstate+75
-#define VBICgqxf1     VBICstate+76
-#define VBICixf1      VBICstate+77
-#define VBICixf1_Vbei VBICstate+78
-#define VBICixf1_Vbci VBICstate+79
-#define VBICixf1_Vxf2 VBICstate+80
-#define VBICixf1_Vxf1 VBICstate+81
-#define VBICixf1_Vrth VBICstate+82
+#define VBICixf1      VBICstate+74
+#define VBICixf1_Vbei VBICstate+75
+#define VBICixf1_Vbci VBICstate+76
+#define VBICixf1_Vxf1 VBICstate+77
+#define VBICixf1_Vxf2 VBICstate+78
+#define VBICixf1_Vrth VBICstate+79
 
-#define VBICqxf2      VBICstate+83
-#define VBICcqxf2     VBICstate+84
-#define VBICgqxf2     VBICstate+85
-#define VBICixf2      VBICstate+86
-#define VBICixf2_Vbei VBICstate+87
-#define VBICixf2_Vbci VBICstate+88
-#define VBICixf2_Vxf1 VBICstate+89
-#define VBICixf2_Vxf2 VBICstate+90
-#define VBICixf2_Vrth VBICstate+91
+#define VBICqxf2      VBICstate+80
+#define VBICcqxf2     VBICstate+81
+#define VBICgqxf2     VBICstate+82
 
-#define VBICnumStates 92
+#define VBICixf2      VBICstate+83
+#define VBICixf2_Vxf1 VBICstate+84
+#define VBICixf2_Vxf2 VBICstate+85
+
+#define VBICnumStates 86
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */

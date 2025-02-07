@@ -606,7 +606,6 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VBICtempSubsSIPtr,VBICtempNode,VBICsubsSINode);
                 TSTALLOC(VBICtempTempPtr,VBICtempNode,VBICtempNode);
                 if (here->VBIC_excessPhase) {
-                    TSTALLOC(VBICxf2TempPtr  ,VBICxf2Node   ,VBICtempNode);
                     TSTALLOC(VBICxf1TempPtr  ,VBICxf1Node   ,VBICtempNode);
                 }
             }
@@ -619,9 +618,6 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VBICxf1Xf2Ptr   ,VBICxf1Node   ,VBICxf2Node);
 
                 TSTALLOC(VBICxf2Xf1Ptr   ,VBICxf2Node   ,VBICxf1Node);
-                TSTALLOC(VBICxf2BaseBIPtr,VBICxf2Node   ,VBICbaseBINode);
-                TSTALLOC(VBICxf2EmitEIPtr,VBICxf2Node   ,VBICemitEINode);
-                TSTALLOC(VBICxf2CollCIPtr,VBICxf2Node   ,VBICcollCINode);
                 TSTALLOC(VBICxf2Xf2Ptr   ,VBICxf2Node   ,VBICxf2Node);
                 TSTALLOC(VBICemitEIXf2Ptr,VBICemitEINode,VBICxf2Node);
                 TSTALLOC(VBICcollCIXf2Ptr,VBICcollCINode,VBICxf2Node);
@@ -686,8 +682,8 @@ VBICunsetup(
                 if(here->VBICxf2Node > 0)
                     CKTdltNNum(ckt, here->VBICxf2Node);
                 here->VBICxf2Node = 0;
-
             }
+
         }
     }
     return OK;

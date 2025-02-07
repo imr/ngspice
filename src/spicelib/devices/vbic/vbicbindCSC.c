@@ -104,7 +104,6 @@ VBICbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 CREATE_KLU_BINDING_TABLE(VBICtempSubsSIPtr, VBICtempSubsSIBinding, VBICtempNode, VBICsubsSINode);
                 CREATE_KLU_BINDING_TABLE(VBICtempTempPtr, VBICtempTempBinding, VBICtempNode, VBICtempNode);
                 if (here->VBIC_excessPhase) {
-                    CREATE_KLU_BINDING_TABLE(VBICxf2TempPtr, VBICxf2TempBinding, VBICxf2Node, VBICtempNode);
                     CREATE_KLU_BINDING_TABLE(VBICxf1TempPtr, VBICxf1TempBinding, VBICxf1Node, VBICtempNode);
                 }
             }
@@ -117,9 +116,6 @@ VBICbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 CREATE_KLU_BINDING_TABLE(VBICxf1Xf2Ptr, VBICxf1Xf2Binding, VBICxf1Node, VBICxf2Node);
 
                 CREATE_KLU_BINDING_TABLE(VBICxf2Xf1Ptr, VBICxf2Xf1Binding, VBICxf2Node, VBICxf1Node);
-                CREATE_KLU_BINDING_TABLE(VBICxf2BaseBIPtr, VBICxf2BaseBIBinding, VBICxf2Node, VBICbaseBINode);
-                CREATE_KLU_BINDING_TABLE(VBICxf2EmitEIPtr, VBICxf2EmitEIBinding, VBICxf2Node, VBICemitEINode);
-                CREATE_KLU_BINDING_TABLE(VBICxf2CollCIPtr, VBICxf2CollCIBinding, VBICxf2Node, VBICcollCINode);
                 CREATE_KLU_BINDING_TABLE(VBICxf2Xf2Ptr, VBICxf2Xf2Binding, VBICxf2Node, VBICxf2Node);
                 CREATE_KLU_BINDING_TABLE(VBICemitEIXf2Ptr, VBICemitEIXf2Binding, VBICemitEINode, VBICxf2Node);
                 CREATE_KLU_BINDING_TABLE(VBICcollCIXf2Ptr, VBICcollCIXf2Binding, VBICcollCINode, VBICxf2Node);
@@ -222,7 +218,6 @@ VBICbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempSubsSIPtr, VBICtempSubsSIBinding, VBICtempNode, VBICsubsSINode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempTempPtr, VBICtempTempBinding, VBICtempNode, VBICtempNode);
                 if (here->VBIC_excessPhase) {
-                    CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2TempPtr, VBICxf2TempBinding, VBICxf2Node, VBICtempNode);
                     CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf1TempPtr, VBICxf1TempBinding, VBICxf1Node, VBICtempNode);
                 }
             }
@@ -234,9 +229,6 @@ VBICbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf1Xf2Ptr, VBICxf1Xf2Binding, VBICxf1Node, VBICxf2Node);
 
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2Xf1Ptr, VBICxf2Xf1Binding, VBICxf2Node, VBICxf1Node);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2BaseBIPtr, VBICxf2BaseBIBinding, VBICxf2Node, VBICbaseBINode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2EmitEIPtr, VBICxf2EmitEIBinding, VBICxf2Node, VBICemitEINode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2CollCIPtr, VBICxf2CollCIBinding, VBICxf2Node, VBICcollCINode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2Xf2Ptr, VBICxf2Xf2Binding, VBICxf2Node, VBICxf2Node);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICemitEIXf2Ptr, VBICemitEIXf2Binding, VBICemitEINode, VBICxf2Node);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICcollCIXf2Ptr, VBICcollCIXf2Binding, VBICcollCINode, VBICxf2Node);
@@ -338,7 +330,6 @@ VBICbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempSubsSIPtr, VBICtempSubsSIBinding, VBICtempNode, VBICsubsSINode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempTempPtr, VBICtempTempBinding, VBICtempNode, VBICtempNode);
                 if (here->VBIC_excessPhase) {
-                    CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2TempPtr, VBICxf2TempBinding, VBICxf2Node, VBICtempNode);
                     CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf1TempPtr, VBICxf1TempBinding, VBICxf1Node, VBICtempNode);
                 }
             }
@@ -351,9 +342,6 @@ VBICbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf1Xf2Ptr, VBICxf1Xf2Binding, VBICxf1Node, VBICxf2Node);
 
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2Xf1Ptr, VBICxf2Xf1Binding, VBICxf2Node, VBICxf1Node);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2BaseBIPtr, VBICxf2BaseBIBinding, VBICxf2Node, VBICbaseBINode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2EmitEIPtr, VBICxf2EmitEIBinding, VBICxf2Node, VBICemitEINode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2CollCIPtr, VBICxf2CollCIBinding, VBICxf2Node, VBICcollCINode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICxf2Xf2Ptr, VBICxf2Xf2Binding, VBICxf2Node, VBICxf2Node);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICemitEIXf2Ptr, VBICemitEIXf2Binding, VBICemitEINode, VBICxf2Node);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICcollCIXf2Ptr, VBICcollCIXf2Binding, VBICcollCINode, VBICxf2Node);

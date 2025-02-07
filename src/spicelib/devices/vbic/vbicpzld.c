@@ -49,11 +49,8 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double Ixf1_Vxf1;
     double Ixf1_Vrth;
 
-    double Ixf2_Vbei;
-    double Ixf2_Vbci;
     double Ixf2_Vxf2;
     double Ixf2_Vxf1;
-    double Ixf2_Vrth;
 
     /*  loop through all the models */
     for( ; model != NULL; model = VBICnextModel(model)) {
@@ -95,11 +92,8 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             Ixf1_Vxf1   = *(ckt->CKTstate0 + here->VBICixf1_Vxf1);
             Ixf1_Vrth   = *(ckt->CKTstate0 + here->VBICixf1_Vrth);
 
-            Ixf2_Vbei  = *(ckt->CKTstate0 + here->VBICixf2_Vbei);
-            Ixf2_Vbci  = *(ckt->CKTstate0 + here->VBICixf2_Vbci);
             Ixf2_Vxf2   = *(ckt->CKTstate0 + here->VBICixf2_Vxf2);
             Ixf2_Vxf1   = *(ckt->CKTstate0 + here->VBICixf2_Vxf1);
-            Ixf2_Vrth   = *(ckt->CKTstate0 + here->VBICixf2_Vrth);
 
 /*
 c           The real part
@@ -400,10 +394,6 @@ c               Stamp element: Ith
                 *(here->VBICxf1Xf2Ptr)                += +Ixf1_Vxf2;
                 *(here->VBICxf1Xf1Ptr)                += +Ixf1_Vxf1;
                 //Ixf2
-                *(here->VBICxf2BaseBIPtr)             += +Ixf2_Vbei;
-                *(here->VBICxf2EmitEIPtr)             += -Ixf2_Vbei;
-                *(here->VBICxf2BaseBIPtr)             += +Ixf2_Vbci;
-                *(here->VBICxf2CollCIPtr)             += -Ixf2_Vbci;
                 *(here->VBICxf2Xf2Ptr)                += +Ixf2_Vxf2;
                 *(here->VBICxf2Xf1Ptr)                += +Ixf2_Vxf1;
             }
@@ -576,8 +566,6 @@ c   Stamp element: Qbco
                 if (here->VBIC_excessPhase) {
 //                  Stamp element: Ixf1    f_xf1 = +
                     *(here->VBICxf1TempPtr)    +=  Ixf1_Vrth;
-//                  Stamp element: Ixf2    f_xf2 = +
-                    *(here->VBICxf2TempPtr)    +=  Ixf2_Vrth;
                 }
             }
 
