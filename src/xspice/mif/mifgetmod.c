@@ -198,6 +198,8 @@ char *MIFgetMod(
                 num_pars = *device->numModelParms;
                 while (*line != '\0') {
                     INPgetTok(&line, &parm, 1);
+                    if (!parm || !*parm) // May be closing ')'.
+                        break;
                     for (j = 0; j < num_pars; j++) {
                         if (strcmp(parm, device->modelParms[j].keyword) == 0) {
                             err1 = NULL;
