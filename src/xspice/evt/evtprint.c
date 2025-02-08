@@ -55,6 +55,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/fteext.h"
 
+#include <math.h>
 #include <time.h>
 #include <locale.h>
 
@@ -511,7 +512,7 @@ static double get_real(int index, double when, struct reals *ctx)
 {
     struct dvec *dv;
 
-    if (index < ctx->last_i) {
+    if (index <= ctx->last_i) {
         /* Starting a new pass. */
 
         if (!ctx->time) {
@@ -568,11 +569,9 @@ static double get_real(int index, double when, struct reals *ctx)
 /*
  * A simple vcd file printer.
  * command 'eprvcd a0 a1 a2 b0 b1 b2 clk > myvcd.vcd'
- *   prints the event nodes listed to file myvcd.vcd
- *   which then may be viewed with an vcd viewer,
- *     for example 'gtkwave'
- * Still missing:
- *   hierarchy, vector variables
+ *   prints the event nodes and vector expressions listed to file myvcd.vcd
+ *   which then may be viewed with an vcd viewer, for example 'gtkwave'.
+ * Still missing: hierarchy, bit vectors.
  */
 
 void
@@ -587,7 +586,6 @@ EVTprintvcd(wordlist *wl)
     struct reals ctx;
 
     double out_time, last_out_time;
-
 
     char        *node_name[EPRINT_MAXARGS];
     int          node_index[EPRINT_MAXARGS];
@@ -621,8 +619,9 @@ EVTprintvcd(wordlist *wl)
                 double input;
                 int error = 0;
                 char* inword = wl->wl_word;
+
                 input = INPevaluate(&inword, &error, 0);
-                tspower = (int)ceil(- 1. * log10(input));
+                tspower = (int)ceil(-log10(input));
                 if (tspower < 0)
                     tspower = 0;
             }
@@ -654,7 +653,7 @@ EVTprintvcd(wordlist *wl)
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return;
     }
-    if (!ckt->evt->data.node) {
+    if (!ckt->evt->data.node && !timesteps) {
       fprintf(cp_err, "ERROR - No node data: simulation not yet run?\n");
       return;
     }
@@ -866,7 +865,7 @@ EVTprintvcd(wordlist *wl)
              (timesteps && !more))) {
 
             /* Analogue output at each time step, skipping if they would
-             * appear simulataneous in the output.
+             * appear simultaneous in the output.
              */
 
             out_time = ctx.time->v_realdata[ctx.v_index + 1];
@@ -919,7 +918,6 @@ EVTprintvcd(wordlist *wl)
 
                     out_printf("#%lld\n",
                                (unsigned long long)(out_time * scale));
-                    last_out_time = out_time;;
                     got_one = 1;
                 }
 
@@ -942,6 +940,7 @@ EVTprintvcd(wordlist *wl)
                 tfree(buf);
             }
         }
+        last_out_time = out_time;
     } /* end while there is more data */
 
     out_printf("\n\n");
