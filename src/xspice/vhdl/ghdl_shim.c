@@ -204,8 +204,8 @@ void *run_ghdl(void *arg)
 
     /* Determing the file name for our VPI module. */
 
-    if (pinfo->lib_argc >= 2 && pinfo->lib_argv[1][0]) // Explicit VPI file.
-        file = pinfo->lib_argv[1];
+    if (pinfo->lib_argc >= 1 && pinfo->lib_argv[0][0]) // Explicit VPI file.
+        file = pinfo->lib_argv[0];
     else
         file = "./ghdlng.vpi";
 
