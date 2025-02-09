@@ -1231,8 +1231,15 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
                 for (t = cc->nextcard; t; t = t->nextcard) {
                     if (*(t->line) == '*')
                         continue;
-                    fprintf(fd, "%6d  %s\n",
+                    /* Only truncated .model lines */
+                    if (ciprefix(".model", t->line)) {
+                        fprintf(fd, "%6d  %.100s ...\n",
                             t->linenum, t->line);
+                    }
+                    else {
+                        fprintf(fd, "%6d  %s\n",
+                            t->linenum, t->line);
+                    }
                 }
                 fprintf(fd,
                     "\n\n**************** uncommented deck "

@@ -973,6 +973,26 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 FILE *fdo = fopen("debug-out2.txt", "w");
                 if (fdo) {
                     struct card *tc = NULL;
+                    fprintf(fdo,
+                        "\n\n**************** uncommented deck without source file info "
+                        "**************\n\n");
+                    /* always print first line */
+                    fprintf(fdo, "%6d  %s\n", deck->linenum,
+                        deck->line);
+                    /* here without out-commented lines */
+                    for (tc = deck->nextcard; tc; tc = tc->nextcard) {
+                        if (*(tc->line) == '*')
+                            continue;
+                        /* Only truncated .model lines */
+                        if (ciprefix(".model", tc->line)) {
+                            fprintf(fdo, "%6d  %.100s ...\n",
+                                tc->linenum, tc->line);
+                        }
+                        else {
+                            fprintf(fdo, "%6d  %s\n",
+                                tc->linenum, tc->line);
+                        }
+                    }
                     fprintf(fdo, "**************** uncommented deck **************\n\n");
                     /* always print first line */
                     fprintf(fdo, "%6s  %6d  %6d  %s\n", deck->linesource, deck->linenum_orig, deck->linenum, deck->line);
