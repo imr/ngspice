@@ -1,0 +1,188 @@
+*ng_script_with_params
+// This Ngspice interpreter script accepts arbitrary arguments to
+// the GHDL compiler (VHDL to LLVM) and builds a shared library
+// or DLL that can be loaded by the d_cosim XSPICE code model.
+// Instances of the model are then digital circuit elements whose
+// behaviour is controlled by the Verilog source.
+
+set bad=0
+if $?argc = 0
+   set bad=1
+end
+
+if $argc <= 0
+   set bad=1
+end
+
+if $bad
+   echo Arguments acceptable to GHDL are required.
+   quit
+end
+
+// Disable special processing of '{'.
+
+set noglob
+
+if $oscompiled = 2 | $oscompiled = 3 | $oscompiled = 8 // Windows
+    set windows=1
+    set dirsep1="\\"
+    set dirsep2="/"
+else
+    set windows=0
+    set dirsep1="/"
+    if $oscompiled = 7 // MacOS needs an option to allow undefined symbols.
+        setcs ld_magic="-Wl,-undefined,dynamic_lookup"
+    else
+        set ld_magic=""
+    end
+end
+
+// Is there a "-top" option first?
+
+strcmp top "$argv[1]" "-top"
+if $top = 0
+    if $argc < 3
+        echo There must be at least one source file!
+        quit
+    end
+    set base = "$argv[2]" // The top entity name for "ghdl -e".
+    shift
+    shift
+else
+    // Loop through the arguments to find GHDL source: some_path/xxxx.vhd
+    // or similar.  The output file will have the same base name.
+
+    let index=1
+    set off=1                        // Avoid error in dowhile
+    repeat $argc
+        set base="$argv[$&index]"
+        let index = index + 1
+        strstr l "$base" "-"         // Is it an option?
+        if $l = 0
+            continue
+        end
+
+        strstr l "$base" ""          // Get string length
+        dowhile $off >= 0            // Strip leading directories
+            strstr off "$base" "$dirsep1"
+            if $windows
+                if $off < 0
+                    strstr off "$base" "$dirsep2"
+                end
+            end
+            if $off >= 0
+                let off=$off+1
+                strslice base "$base" $&off $l
+            end
+        end
+
+        strstr off "$base" "."		// Strip any file type suffix.
+        if $off >= 0
+	    strslice base "$base" 0 $off
+        end
+
+	    strstr l "$base" ""         // Check for zero-length string
+        if $l > 0
+            break
+        end
+    end
+
+    if index - 1 > $argc
+        echo No file for top-level entity was found.
+        quit
+    end
+end
+
+// Default base name of output file.
+
+if $windows
+   setcs tail=".DLL"
+else
+   setcs tail=".so"
+end
+setcs soname="$base$tail"
+
+// The shared library/DLL contains some ngspice source code as
+// well as that created by GHDL.  Find it by scanning $sourcepath.
+
+set shimfile=ghdl_shim.c
+set shimobj=ghdl_shim.o
+set srcdir=src
+set hfile="cmtypes.h"
+set hpath="ngspice$dirsep1$hfile"
+set silent_fileio // Silences fopen complaints
+
+let i=1
+repeat $#sourcepath
+  set stem="$sourcepath[$&i]"
+  let i = i + 1
+  set fn="$stem$dirsep1$shimfile"
+  fopen fh "$fn"
+  if $fh < 0
+    // Look in any "src" subdirectory (probably in installed tree).
+    set stem="$stem$dirsep1$srcdir"
+    set fn="$stem$dirsep1$shimfile"
+    fopen fh $fn
+  end
+  if $fh > 0
+    // Found ghdl_shim.c, but it needs header files on relative path.
+    fclose $fh
+    set hn="$stem$dirsep1$hpath"
+    fopen fh "$hn"
+    if $fh > 0
+      break
+    end
+    echo Ignoring source file "$fn" as "$hn" was not found.
+  end
+end
+
+if $fh > 0
+   fclose $fh
+else
+   echo Can not find C source file $shimfile
+   quit
+end
+
+// Some header files are with the source.
+
+strstr off "$stem" "."
+if $off <> 0
+  setcs include="-I$stem"
+else
+  setcs include="-I..$dirsep1$stem" // Relative path
+end
+
+// Check for ghdl_shim.o in the current directory. If not present, build it.
+
+set silent_fileio
+fopen fh ghdl_shim.o
+if $fh < 0
+    shell clang  -c -g -fPIC $include -o ghdl_shim.o $stem/ghdl_shim.c
+else
+    fclose $fh
+end
+unset silent_fileio
+
+// Compile the VHDL code.
+
+shell ghdl -a $argv
+strcmp bad "$shellstatus" "0"
+if $bad = 0
+   shell ghdl -e -shared "-Wl,ghdl_shim.o" $base
+else
+   quit
+end
+
+// Check for ghdlng.vpi in the current directory. If not present, build it.
+
+set silent_fileio
+fopen fh ghdlng.vpi
+if $fh < 0
+    shell ghdl --vpi-compile clang -g -c -fdeclspec -Wno-ignored-attributes $include $stem/ghdl_vpi.c -o ghdl_vpi.o
+    shell ghdl --vpi-link clang $ld_magic ghdl_vpi.o -o ghdlng.vpi -lm -lpthread
+else
+    fclose $fh
+end
+unset silent_fileio
+
+quit

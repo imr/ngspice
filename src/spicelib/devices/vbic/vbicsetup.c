@@ -483,7 +483,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 model->VBICthermalCapacitance = 1e-12;
 
             if((model->VBICdelayTimeFGiven) && (model->VBICdelayTimeF > 0.0)) {
-                here->VBICindInduct = model->VBICdelayTimeF / 3.0 / here->VBICm;
                 here->VBIC_excessPhase = 1;
             } else {
                 here->VBIC_excessPhase = 0;
@@ -517,11 +516,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     error = CKTmkVolt(ckt, &tmp, here->VBICname, "xf2");
                     if(error) return(error);
                     here->VBICxf2Node = tmp->number;
-                }
-                if(here->VBICbrEq == 0) {
-                    error = CKTmkCur(ckt,&tmp,here->VBICname,"branch");
-                    if(error) return(error);
-                    here->VBICbrEq = tmp->number;
                 }
             } else {
                 here->VBICxf1Node = 0;
@@ -612,27 +606,21 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VBICtempSubsSIPtr,VBICtempNode,VBICsubsSINode);
                 TSTALLOC(VBICtempTempPtr,VBICtempNode,VBICtempNode);
                 if (here->VBIC_excessPhase) {
-                    TSTALLOC(VBICtempXf2Ptr, VBICtempNode, VBICxf2Node);
-                    TSTALLOC(VBICxf1TempPtr, VBICxf1Node ,VBICtempNode);
+                    TSTALLOC(VBICxf1TempPtr  ,VBICxf1Node   ,VBICtempNode);
                 }
             }
 
             if (here->VBIC_excessPhase) {
-                TSTALLOC(VBICxf1Xf1Ptr   , VBICxf1Node   , VBICxf1Node);
-                TSTALLOC(VBICxf1Xf2Ptr   , VBICxf1Node   , VBICxf2Node);
-                TSTALLOC(VBICxf1CollCIPtr, VBICxf1Node   , VBICcollCINode);
-                TSTALLOC(VBICxf1BaseBIPtr, VBICxf1Node   , VBICbaseBINode);
-                TSTALLOC(VBICxf1EmitEIPtr, VBICxf1Node   , VBICemitEINode);
-                TSTALLOC(VBICxf2Xf2Ptr   , VBICxf2Node   , VBICxf2Node);
-                TSTALLOC(VBICxf2Xf1Ptr   , VBICxf2Node   , VBICxf1Node);
-                TSTALLOC(VBICcollCIXf2Ptr, VBICcollCINode, VBICxf2Node);
-                TSTALLOC(VBICbaseBIXf2Ptr, VBICbaseBINode, VBICxf2Node);
-                TSTALLOC(VBICemitEIXf2Ptr, VBICemitEINode, VBICxf2Node);
-                TSTALLOC(VBICxf1IbrPtr, VBICxf1Node, VBICbrEq);
-                TSTALLOC(VBICxf2IbrPtr, VBICxf2Node, VBICbrEq);
-                TSTALLOC(VBICibrXf2Ptr, VBICbrEq,    VBICxf2Node);
-                TSTALLOC(VBICibrXf1Ptr, VBICbrEq,    VBICxf1Node);
-                TSTALLOC(VBICibrIbrPtr, VBICbrEq,    VBICbrEq);
+                TSTALLOC(VBICxf1Xf1Ptr   ,VBICxf1Node   ,VBICxf1Node);
+                TSTALLOC(VBICxf1BaseBIPtr,VBICxf1Node   ,VBICbaseBINode);
+                TSTALLOC(VBICxf1EmitEIPtr,VBICxf1Node   ,VBICemitEINode);
+                TSTALLOC(VBICxf1CollCIPtr,VBICxf1Node   ,VBICcollCINode);
+                TSTALLOC(VBICxf1Xf2Ptr   ,VBICxf1Node   ,VBICxf2Node);
+
+                TSTALLOC(VBICxf2Xf1Ptr   ,VBICxf2Node   ,VBICxf1Node);
+                TSTALLOC(VBICxf2Xf2Ptr   ,VBICxf2Node   ,VBICxf2Node);
+                TSTALLOC(VBICemitEIXf2Ptr,VBICemitEINode,VBICxf2Node);
+                TSTALLOC(VBICcollCIXf2Ptr,VBICcollCINode,VBICxf2Node);
             }
 
         }
@@ -694,11 +682,8 @@ VBICunsetup(
                 if(here->VBICxf2Node > 0)
                     CKTdltNNum(ckt, here->VBICxf2Node);
                 here->VBICxf2Node = 0;
-
-                if (here->VBICbrEq > 0)
-                    CKTdltNNum(ckt, here->VBICbrEq);
-                here->VBICbrEq = 0;
             }
+
         }
     }
     return OK;

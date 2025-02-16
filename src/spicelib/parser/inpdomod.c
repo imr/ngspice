@@ -63,22 +63,6 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 					    "Device type VBIC not available in this binary\n");
 				}
 				break;
-#ifdef ADMS
-				case 6:
-					 type = INPtypelook("bjt504t");
-				if(type < 0) {
-				    err = INPmkTemp(
-					    "Device type MEXTRAM not available in this binary\n");
-				}
-				break;
-				case 7:
-					 type = INPtypelook("hicum0");
-				if(type < 0) {
-				    err = INPmkTemp(
-					    "Device type HICUM0 not available in this binary\n");
-				}
-				break;
-#endif
 				case 8:
 					 type = INPtypelook("hicum2");
 				if(type < 0) {
@@ -87,13 +71,8 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 				}
 				break;
 				default: /* placeholder; use level 4 for the next model */
-#ifdef ADMS
-				err = INPmkTemp(
-				  "Only BJT levels 1-2, 4, 6-9 are supported in this binary\n");
-#else
 				err = INPmkTemp(
 				  "Only BJT levels 1-2, 4, 8, 9 are supported in this binary\n");
-#endif
 				break;
 
 			}
@@ -341,48 +320,6 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 				    ("Device type BSIM5 not available in this binary\n");
 			    }
 			    break;
-#ifdef ADMS
-			case 16:
-			case 77:
-			    type = INPtypelook("BSIMBULK");
-			    if (type < 0) {
-				    err =
-				    INPmkTemp
-				    ("Device type BSIMBULK not available in this binary\n");}
-			    break;
-			case 17:
-			case 72:
-			    type = INPtypelook("BSIMCMG");
-			    if (type < 0) {
-				    err =
-				    INPmkTemp
-				    ("Device type BSIMCMG not available in this binary\n");}
-			    break;
-			case 44:
-				type = INPtypelook("ekv");
-				if (type < 0) {
-				    err =
-				    INPmkTemp
-				    ("Device type EKV not available in this binary\n");
-			    }
-			    break;
-			case 45:
-				type = INPtypelook("psp102");
-				if (type < 0) {
-				    err =
-				    INPmkTemp
-				    ("Device type PSP102 not available in this binary\n");
-			    }
-				break;
-			case 69:
-				type = INPtypelook("psp103");
-				if (type < 0) {
-				    err =
-				    INPmkTemp
-				    ("Device type PSP103 not available in this binary\n");
-			    }
-				break;
-#endif
 			case 55:
 			    type = INPtypelook("B3SOIFD");
 			    if (type < 0) {
@@ -444,13 +381,8 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    }
 			    break;
 			default:		/* placeholder; use level xxx for the next model */
-#ifdef ADMS
-			    err = INPmkTemp
-				("Only MOS device levels 1-6,8-10,14,16,17,44,45,49,54-58,60,68,72,73,77 are supported in this binary\n");
-#else
 			    err = INPmkTemp
 				("Only MOS device levels 1-6,8-10,14,49,54-58,60,68,73 are supported in this binary\n");
-#endif
 			    break;
 			}
 			INPmakeMod(modname, type, image);
@@ -481,15 +413,6 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 						("Device type Resistor not available in this binary\n");
 					}
 				break;
-#ifdef ADMS
-				case 2:
-					type = INPtypelook("r2_cmc");
-					if (type < 0) {
-			  		  err = INPmkTemp(
-			  			  "Device type R2_CMC not available in this binary\n");
-					}
-				break;
-#endif
 			}
 			INPmakeMod(modname, type, image);
     }

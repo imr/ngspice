@@ -18,11 +18,6 @@ model_max_numnodes(int type)
     if (type == INPtypelook("VBIC") ||
         type == INPtypelook("hicum2"))
         return 5;
-#ifdef ADMS
-    if (type == INPtypelook("hicum0") ||
-        type == INPtypelook("bjt504t"))
-        return 5;
-#endif
     return 4;
 }
 
@@ -96,10 +91,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
 #ifdef CIDER
         thismodel->INPmodType != INPtypelook("NBJT") &&
         thismodel->INPmodType != INPtypelook("NBJT2") &&
-#endif
-#ifdef ADMS
-        thismodel->INPmodType != INPtypelook("hicum0") &&
-        thismodel->INPmodType != INPtypelook("bjt504t") &&
 #endif
         thismodel->INPmodType != INPtypelook("hicum2") &&
         thismodel->INPmodType != INPtypelook("VBIC"))

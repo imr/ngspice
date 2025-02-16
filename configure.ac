@@ -1274,7 +1274,7 @@ else
                 AC_CHECK_HEADERS([readline/readline.h readline/history.h],
                     [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
                     [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-                AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+                AC_SEARCH_LIBS([tputs], [tinfo termcap ncurses],
                     [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
                     [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
                 AC_CHECK_LIB([readline], [readline],
@@ -1290,7 +1290,7 @@ else
 		       if test -f $dir/include/readline/readline.h && test -f $dir/include/readline/history.h ; then
 
                             AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])
-			    AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+			    AC_SEARCH_LIBS([tputs], [tinfo termcap ncurses],
 			        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
 				[AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
 			    AC_CHECK_LIB([readline], [readline],
@@ -1312,7 +1312,7 @@ else
         AC_CHECK_HEADERS([editline/readline.h],
             [AC_DEFINE([HAVE_BSDEDITLINE], [1], [Define to enable BSD editline])],
             [AC_MSG_ERROR([Couldn't find BSD editline headers.])])
-        AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+        AC_SEARCH_LIBS([tputs], [tinfo termcap ncurses],
             [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
             [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
         AC_CHECK_LIB([edit], [readline],
@@ -1323,7 +1323,7 @@ else
 fi
 
 # Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
-AC_CHECK_HEADERS([ncurses/termcap.h termcap.h])
+AC_CHECK_HEADERS([ncurses/termcap.h termcap.h term.h])
 AC_CHECK_HEADERS([sys/sysctl.h])
 
 # Add OpenMP to ngspice.
@@ -1443,6 +1443,7 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
                  src/xspice/verilog/Makefile
+                 src/xspice/vhdl/Makefile
                  src/osdi/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile

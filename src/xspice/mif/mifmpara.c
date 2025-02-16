@@ -36,13 +36,9 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
-/*  #include "prefix.h"  */
 #include "ngspice/ngspice.h"
 #include <stdio.h>
-//#include "CONST.h"
-//#include "util.h"
 #include "ngspice/ifsim.h"
-//#include "resdefs.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
@@ -53,8 +49,48 @@ NON-STANDARD FEATURES
 #include "ngspice/mifdefs.h"
 #include "ngspice/mifcmdat.h"
 
-/* #include "suffix.h"  */
+/* Check value constraints from IFS file. */
 
+static int check_int(int v, Mif_Param_Info_t *param_info, const char *name)
+{
+    if (param_info->has_lower_limit && v < param_info->lower_limit.ivalue) {
+        fprintf(stderr,
+                "Value %d below limit %d for parameter '%s' of model '%s'.\n",
+                v, param_info->lower_limit.ivalue,
+                param_info->name, name);
+        v = param_info->lower_limit.ivalue;
+    } else if (param_info->has_upper_limit &&
+               v > param_info->upper_limit.ivalue) {
+        fprintf(stderr,
+                "Value %d exceeds limit %d for parameter '%s' of "
+                "model '%s'.\n",
+                v, param_info->upper_limit.ivalue,
+                param_info->name, name);
+        v = param_info->upper_limit.ivalue;
+    }
+    return v;
+}
+
+static double check_double(double v, Mif_Param_Info_t *param_info,
+                           const char *name)
+{
+    if (param_info->has_lower_limit && v < param_info->lower_limit.rvalue) {
+        fprintf(stderr,
+                "Value %g below limit %g for parameter '%s' of model '%s'.\n",
+                v, param_info->lower_limit.rvalue,
+                param_info->name, name);
+        v = param_info->lower_limit.rvalue;
+    } else if (param_info->has_upper_limit &&
+               v > param_info->upper_limit.rvalue) {
+        fprintf(stderr,
+                "Value %g exceeds limit %g for parameter '%s' of "
+                "model '%s'.\n",
+                v, param_info->upper_limit.rvalue,
+                param_info->name, name);
+        v = param_info->upper_limit.rvalue;
+    }
+    return v;
+}
 
 /*
 MIFmParam
@@ -76,139 +112,152 @@ int MIFmParam(
     GENmodel *inModel)      /* The model structure on which to set the value */
 {
 
-    MIFmodel    *model;
-    int         mod_type;
-    int         value_type;
-    int         i;
+    MIFmodel         *model;
+    Mif_Value_t      *target;
+    Mif_Param_Info_t *param_info;
+    int               mod_type;
+    int               value_type;
+    int               size, i;
 
-    Mif_Boolean_t  is_array;
+    Mif_Boolean_t     is_array;
 
 
     /* Arrange for access to MIF specific data in the model */
     model = (MIFmodel *) inModel;
 
+    /* Check parameter index for validity */
+    if ((param_index < 0) || (param_index >= model->num_param))
+        return(E_BADPARM);
 
-    /* Get model type */
+    /* Get model type and XSPICE parameter info. */
     mod_type = model->MIFmodType;
     if((mod_type < 0) || (mod_type >= DEVmaxnum))
         return(E_BADPARM);
-
-
-    /* Check parameter index for validity */
-    if((param_index < 0) || (param_index >= model->num_param))
-        return(E_BADPARM);
+    param_info = DEVices[mod_type]->DEVpublic.param + param_index;
 
     /* get value type to know which members of unions to access */
+
     value_type = DEVices[mod_type]->DEVpublic.modelParms[param_index].dataType;
     value_type &= IF_VARTYPES;
-
 
     /* determine if the parameter is an array or not */
     is_array = value_type & IF_VECTOR;
 
-    /* initialize the parameter is_null and size elements and allocate elements */
+    /* Initialize the parameter is_null. */
+
     model->param[param_index]->is_null = MIF_FALSE;
+
     /* element may exist already, if called from 'altermod' */
-    FREE(model->param[param_index]->element);
-    if(is_array) {
-        model->param[param_index]->size = value->v.numValue;
-        model->param[param_index]->element = TMALLOC(Mif_Value_t, value->v.numValue);
-    }
-    else {
-        model->param[param_index]->size = 1;
-        model->param[param_index]->element = TMALLOC(Mif_Value_t, 1);
+    target = model->param[param_index]->element;
+
+    if (is_array) {
+        size = value->v.numValue;
+        if (param_info->has_lower_bound && size < param_info->lower_bound) {
+            fprintf(stderr,
+                    "Too few values for parameter '%s' of model '%s': %s.\n",
+                    param_info->name,
+                    inModel->GENmodName,
+                    target ? "overwriting" : "fatal");
+            if (!target)
+                 return E_BADPARM;
+        } else if (param_info->has_upper_bound &&
+                   size > param_info->upper_bound) {
+            fprintf(stderr,
+                    "Too many values for parameter '%s' of model '%s': "
+                    "truncating.\n",
+                    param_info->name,
+                    inModel->GENmodName);
+            size = param_info->upper_bound;
+        }
+    } else {
+        size = 1;
     }
 
+    if (size > model->param[param_index]->size) {
+        /* Update element count and allocate. */
 
-    /* Transfer the values from the SPICE3C1 value union to the param elements */
+        model->param[param_index]->size = size;
+        FREE(target);
+        target = TMALLOC(Mif_Value_t, size);
+        model->param[param_index]->element = target;
+    }
+
+    /* Copy the values from the SPICE3C1 value union to the param elements */
     /* This is analagous to what SPICE3 does with other device types */
 
+    if (!is_array) {
+       switch(value_type) {
+       case  IF_FLAG:
+           target[0].bvalue = value->iValue;
+           break;
 
-    if(! is_array) {
+       case  IF_INTEGER:
+           target[0].ivalue = check_int(value->iValue,
+                                        param_info, inModel->GENmodName);
+           break;
 
-        switch(value_type) {
+       case  IF_REAL:
+           target[0].rvalue = check_double(value->rValue,
+                                           param_info, inModel->GENmodName);
+           break;
 
-        case  IF_FLAG:
-            model->param[param_index]->element[0].bvalue = value->iValue;
-            model->param[param_index]->eltype = IF_FLAG;
-            break;
+       case  IF_STRING:
+           /* we don't trust the caller to keep the string alive, so copy it */
+           target[0].svalue =
+               TMALLOC(char, 1 + strlen(value->sValue));
+           strcpy(target[0].svalue, value->sValue);
+           break;
 
-        case  IF_INTEGER:
-            model->param[param_index]->element[0].ivalue = value->iValue;
-            model->param[param_index]->eltype = IF_INTEGER;
-            break;
+       case  IF_COMPLEX:
+           /* we don't trust the caller to have a parallel complex structure */
+           /* so copy the real and imaginary parts explicitly                */
 
-        case  IF_REAL:
-            model->param[param_index]->element[0].rvalue = value->rValue;
-            model->param[param_index]->eltype = IF_REAL;
-            break;
-
-        case  IF_STRING:
-            /* we don't trust the caller to keep the string alive, so copy it */
-            model->param[param_index]->element[0].svalue =
-                                       TMALLOC(char, 1 + strlen(value->sValue));
-            strcpy(model->param[param_index]->element[0].svalue, value->sValue);
-            model->param[param_index]->eltype = IF_STRING;
-            break;
-
-        case  IF_COMPLEX:
-            /* we don't trust the caller to have a parallel complex structure */
-            /* so copy the real and imaginary parts explicitly                */
-            model->param[param_index]->element[0].cvalue.real = value->cValue.real;
-            model->param[param_index]->element[0].cvalue.imag = value->cValue.imag;
-            model->param[param_index]->eltype = IF_COMPLEX;
-            break;
+           target[0].cvalue.real = value->cValue.real;
+           target[0].cvalue.imag = value->cValue.imag;
+           break;
 
         default:
-            return(E_BADPARM);
+            return E_BADPARM;
 
-        }
-    }
-    else {   /* it is an array */
-
-        for(i = 0; i < value->v.numValue; i++) {
-
+       }
+    } else {
+        for (i = 0; i < size; i++) {
             switch(value_type) {
-
             case  IF_FLAGVEC:
-                model->param[param_index]->element[i].bvalue = value->v.vec.iVec[i];
-                model->param[param_index]->eltype = IF_FLAGVEC;
+                target[i].ivalue = value->v.vec.iVec[i];
                 break;
 
             case  IF_INTVEC:
-                model->param[param_index]->element[i].ivalue = value->v.vec.iVec[i];
-                model->param[param_index]->eltype = IF_INTVEC;
+                target[i].bvalue = check_int(value->v.vec.iVec[i],
+                                             param_info, inModel->GENmodName);
                 break;
 
             case  IF_REALVEC:
-                model->param[param_index]->element[i].rvalue = value->v.vec.rVec[i];
-                model->param[param_index]->eltype = IF_REALVEC;
+                target[i].rvalue = check_double(value->v.vec.rVec[i],
+                                                param_info,
+                                                inModel->GENmodName);
                 break;
 
             case  IF_STRINGVEC:
-                /* we don't trust the caller to keep the string alive, so copy it */
-                model->param[param_index]->element[i].svalue =
-                                           TMALLOC(char, 1 + strlen(value->v.vec.sVec[i]));
-                strcpy(model->param[param_index]->element[i].svalue, value->v.vec.sVec[i]);
-                model->param[param_index]->eltype = IF_STRINGVEC;
+                /* Don't trust the caller to keep the string alive, copy it */
+                target[i].svalue =
+                    TMALLOC(char, 1 + strlen(value->v.vec.sVec[i]));
+                strcpy(target[i].svalue, value->v.vec.sVec[i]);
                 break;
 
             case  IF_CPLXVEC:
-                /* we don't trust the caller to have a parallel complex structure */
-                /* so copy the real and imaginary parts explicitly                */
-                model->param[param_index]->element[i].cvalue.real = value->v.vec.cVec[i].real;
-                model->param[param_index]->element[i].cvalue.imag = value->v.vec.cVec[i].imag;
-                model->param[param_index]->eltype = IF_CPLXVEC;
+                /* Don't trust the caller to have a parallel complex structure,
+                 * so copy the real and imaginary parts explicitly.
+                 */
+                target[i].cvalue.real = value->v.vec.cVec[i].real;
+                target[i].cvalue.imag = value->v.vec.cVec[i].imag;
                 break;
 
             default:
-                return(E_BADPARM);
-
-            } /* end switch */
-
-        } /* end for number of elements of vector */
-
-    } /* end else */
-
-    return(OK);
+                return E_BADPARM;
+            }
+        }
+    }
+    model->param[param_index]->eltype = value_type;
+    return OK;
 }

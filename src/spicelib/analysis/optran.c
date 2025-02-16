@@ -88,7 +88,7 @@ void com_optran(wordlist* wl) {
         return;
     }
     else if (!ft_curckt && !dataset && wl == NULL) {
-        fprintf(stderr, "Error: syntax error with command 'optran'!\n");
+        fprintf(stderr, "Warning: syntax error with command 'optran'!\n");
         fprintf(stderr, "    Command ingnored\n");
         return;
     }
@@ -169,7 +169,8 @@ void com_optran(wordlist* wl) {
         goto bugquit;
     }
     if (opstepsize > opfinaltime/50.) {
-        fprintf(stderr, "Warning: Optran step size potentially too large.\n");
+        opstepsize = opfinaltime / 50.;
+        fprintf(stdout, "Note: Optran step size set to %e, (stepsize = finaltime / 50).\n", opstepsize);
     }
     if (opramptime > opfinaltime) {
         fprintf(stderr, "Error: Optran ramp time larger than final time.\n");

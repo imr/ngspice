@@ -16,6 +16,7 @@ IFparm DIOpTable[] = { /* parameters */
  IOPAU("ic",   DIO_IC,    IF_REAL, "Initial device voltage"),
  IOPU("area",  DIO_AREA,  IF_REAL, "Area factor"),
  IOPU("pj",    DIO_PJ,    IF_REAL, "Perimeter factor"),
+ IOPUR("perim", DIO_PJ,    IF_REAL, "Perimeter factor"),
  IOPU("w",     DIO_W,     IF_REAL, "Diode width"),
  IOPU("l",     DIO_L,     IF_REAL, "Diode length"),
  IOPU("m",     DIO_M,     IF_REAL, "Multiplier"),
@@ -49,6 +50,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP(  "is",  DIO_MOD_IS,  IF_REAL, "Saturation current"),
  IOPR( "js",  DIO_MOD_IS,  IF_REAL, "Saturation current"),
  IOP( "jsw", DIO_MOD_JSW,  IF_REAL, "Sidewall Saturation current"),
+ IOPR( "isw", DIO_MOD_JSW,  IF_REAL, "Sidewall Saturation current"),
 
  IOPU( "tnom",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
  IOPUR("tref",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
@@ -73,6 +75,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "cjp", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOPR( "cjsw", DIO_MOD_CJSW, IF_REAL, "Sidewall junction capacitance"),
  IOP( "php",  DIO_MOD_VJSW,  IF_REAL, "Sidewall junction potential"),
+ IOPR( "vjsw", DIO_MOD_VJSW,  IF_REAL, "Sidewall junction potential"),
  IOP( "mjsw",  DIO_MOD_MJSW,   IF_REAL, "Sidewall Grading coefficient"),
  IOP( "ikf",  DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
  IOPR( "ik",  DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),

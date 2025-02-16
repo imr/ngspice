@@ -570,39 +570,23 @@ MIF_INP2A (
         }
     }
 
-    /* check model parameter constraints */
-    /* some of these should probably be done in MIFgetMod() */
-    /* to prevent multiple error messages                   */
+    /* Check model parameter constraints. */
 
     for(i = 0; i < DEVices[type]->DEVpublic.num_param; i++) {
+        char* emessage = NULL;
 
         param_info = &(DEVices[type]->DEVpublic.param[i]);
-
-        if (mdfast->param[i]->is_null) {
-            char* emessage = NULL;
-
-            if (!param_info->null_allowed) {
-                emessage = tprintf("Null not allowed for parameter %s "
-                                   "on model %s.",
-                                   param_info->name, mdfast->gen.GENmodName);
-            } else if (param_info->default_value_siz == 0) {
-                if (param_info->type == MIF_STRING)
-                    continue;   // Allow NULL
-                emessage = tprintf("Parameter %s on model %s has no default",
-                                   param_info->name, mdfast->gen.GENmodName);
-            }
-
-            if (emessage) {
-                LITERR(emessage);
-                tfree(emessage);
-                gc_end();
-                return;
-            }
-        } else if (param_info->is_array && param_info->has_conn_ref &&
+        if (!mdfast->param[i]->is_null &&
+                   param_info->is_array && param_info->has_conn_ref &&
                    fast->conn[param_info->conn_ref]->size !=
                        fast->param[i]->size) {
-            LITERR("Array parameter size on model does not match "
-                   "connection size");
+             emessage = tprintf("Size of array parameter %s on model %s "
+                                "does not match connection size",
+                                 param_info->name, mdfast->gen.GENmodName);
+        }
+        if (emessage) {
+            LITERR(emessage);
+            tfree(emessage);
             gc_end();
             return;
         }
@@ -1081,7 +1065,3 @@ copy_gc(char* in)
     alltokens[curtoknr++] = newtok;
     return newtok;
 }
-
-
-
-

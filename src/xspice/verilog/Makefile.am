@@ -2,6 +2,10 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
+# Libs for Ngspice are irrelevant here.
+
+LIBS =
+
 # Verilator support: files installed to script directory and below.
 
 initdatadir = $(pkgdatadir)/scripts
@@ -13,7 +17,8 @@ initdata1_DATA = verilator_shim.cpp verilator_main.cpp
 initdata2dir = $(pkgdatadir)/scripts/src/ngspice
 initdata2_DATA = ../../include/ngspice/cosim.h \
 		 ../../include/ngspice/miftypes.h \
-                 ../../include/ngspice/cmtypes.h
+                 ../../include/ngspice/cmtypes.h \
+		 ./coroutine.h ./coroutine_cosim.h ./coroutine_shim.h
 
 # Icarus Verilog support: build two shared libraries.
 
