@@ -164,6 +164,7 @@ if_inpdeck(struct card *deck, INPtables **tab)
     /* Parse the .model lines. Enter the model into the global model table modtab. */
     modtab = NULL;
     modtabhash = NULL;
+    /* Parse .model lines, put them into 'tab' */
     INPpas1(ckt, deck->nextcard, *tab);
     /* store the new model table in the current circuit */
     ft_curckt->ci_modtab = modtab;
