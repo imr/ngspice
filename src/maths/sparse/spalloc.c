@@ -129,7 +129,7 @@ spCreate(int Size, int Complex, int *pError)
     /* Test for valid size. */
 #if EXPANDABLE
     if (Size < 0) {
-	*pError = spPANIC;
+        *pError = spPANIC;
         return NULL;
     }
 #else
@@ -153,8 +153,8 @@ spCreate(int Size, int Complex, int *pError)
     SizePlusOne = (unsigned)(AllocatedSize + 1);
 
     if ((Matrix = SP_MALLOC(struct MatrixFrame, 1)) == NULL) {
-	*pError = spNO_MEMORY;
-	return NULL;
+        *pError = spNO_MEMORY;
+        return NULL;
     }
 
     /* Initialize matrix */
@@ -237,7 +237,7 @@ spCreate(int Size, int Complex, int *pError)
     /* Initialize MapIntToExt vectors. */
     for (I = 1; I <= AllocatedSize; I++)
     {
-	Matrix->IntToExtRowMap[I] = I;
+        Matrix->IntToExtRowMap[I] = I;
         Matrix->IntToExtColMap[I] = I;
     }
 
@@ -252,8 +252,8 @@ spCreate(int Size, int Complex, int *pError)
 
     /* Initialize MapExtToInt vectors. */
     for (I = 1; I <= AllocatedSize; I++) {
-	Matrix->ExtToIntColMap[I] = -1;
-	Matrix->ExtToIntRowMap[I] = -1;
+        Matrix->ExtToIntColMap[I] = -1;
+        Matrix->ExtToIntRowMap[I] = -1;
     }
     Matrix->ExtToIntColMap[0] = 0;
     Matrix->ExtToIntRowMap[0] = 0;
@@ -317,7 +317,7 @@ spcGetElement(MatrixPtr Matrix)
 #if !COMBINE || STRIP || LINT
     /* Allocate block of MatrixElements if necessary. */
     if (Matrix->ElementsRemaining == 0) {
-	pElements = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
+        pElements = SP_MALLOC(struct MatrixElement, ELEMENTS_PER_ALLOCATION);
         RecordAllocation( Matrix, pElements );
         if (Matrix->Error == spNO_MEMORY) return NULL;
         Matrix->ElementsRemaining = ELEMENTS_PER_ALLOCATION;
@@ -422,7 +422,7 @@ InitializeElementBlocks(MatrixPtr Matrix, int InitialNumberOfElements,
 
     Matrix->FirstElementListNode->pElementList = pElement;
     Matrix->FirstElementListNode->NumberOfElementsInList =
-	    InitialNumberOfElements;
+        InitialNumberOfElements;
     Matrix->FirstElementListNode->Next = NULL;
 
     /* Allocate block of MatrixElements for fill-ins. */
@@ -548,15 +548,15 @@ RecordAllocation(MatrixPtr Matrix, void *AllocatedPtr )
     /* If Allocated pointer is NULL, assume that tmalloc returned a
      * NULL pointer, which indicates a spNO_MEMORY error.  */
     if (AllocatedPtr == NULL) {
-	Matrix->Error = spNO_MEMORY;
+        Matrix->Error = spNO_MEMORY;
         return;
     }
 
     /* Allocate block of MatrixElements if necessary. */
     if (Matrix->RecordsRemaining == 0) {
-	AllocateBlockOfAllocationList( Matrix );
+        AllocateBlockOfAllocationList( Matrix );
         if (Matrix->Error == spNO_MEMORY) {
-	    SP_FREE(AllocatedPtr);
+            SP_FREE(AllocatedPtr);
             return;
         }
     }
