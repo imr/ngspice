@@ -94,7 +94,7 @@ inchar(FILE *fp)
     }
 
     return (int) c;
-#elif
+#else
 
     return getc(fp);
 #endif    
