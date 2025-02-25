@@ -12,4 +12,7 @@ void SetGraphContext(int graphid);
 void PushGraphContext(GRAPH *graph);
 void PopGraphContext(void);
 
+/* Global variable to indicate that at least one graph exits. Ugly but fast. */
+
+extern bool Have_graph;
 #endif
