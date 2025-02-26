@@ -5248,9 +5248,7 @@ int get_number_terminals(char *c)
             return i - 2;
             break;
         }
-        case 'p': /* recognition of up to 100 cpl nodes */
-            /* find the last token in the line*/
-
+        case 'p': /* Recognition of up to 100 cpl nodes */
             for (i = j = 0; (i < 100) && (*c != '\0'); ++i) {
                 inst = gettok_instance(&c);
                 if (strchr(inst, '='))
@@ -5326,27 +5324,21 @@ int get_number_terminals(char *c)
             break;
         }
 #ifdef OSDI
-        case 'n': /* Recognize an unknown number of nodes by stopping at tokens with '=' */
-        {
-            char* cc, * ccfree;
+        case 'n':
+            /* Find the last non-parameter token in the line. */
 
-            cc = copy(c);
-            /* required to make m= 1 a single token m=1 */
-            ccfree = cc = inp_remove_ws(cc);
-
-            /* Find the first token with "off", "tnodeout", "thermal" or "=" */
-            for (i = 0; (i < 20) && (*cc != '\0'); ++i) {
-                inst = gettok_instance(&cc);
-                if (i > 2 && (strchr(inst, '='))) {
-                    txfree(inst);
+            for (i = 0; *c != '\0' && *c != '='; ++i) {
+                inst = gettok_instance(&c);
+                if (strchr(inst, '=')) {
+                    tfree(inst);
                     break;
                 }
-                txfree(inst);
+                tfree(inst);
             }
-            tfree(ccfree);
+            if (*c == '=')
+                --i;    // Counted a parameter name.
             return i - 2;
             break;
-        }
 #endif
         default:
             return 0;
