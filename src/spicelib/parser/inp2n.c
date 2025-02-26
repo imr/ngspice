@@ -22,79 +22,96 @@ void INP2N(CKTcircuit *ckt, INPtables *tab, struct card *current) {
    *       [IC=<val>,<val>,<val>]
    */
 
-  int type;   /* the type the model says it is */
-  char *line; /* the part of the current line left to parse */
-  char *name; /* the resistor's name */
-  // limit to at most 20 nodes
-  const int max_i = 20;
-  CKTnode *node[20];
-  int error;         /* error code temporary */
-  int numnodes;      /* flag indicating 4 or 5 (or 6 or 7) nodes */
-  GENinstance *fast; /* pointer to the actual instance */
-  int waslead;    /* flag to indicate that funny unlabeled number was found */
-  double leadval; /* actual value of unlabeled number */
-  INPmodel *thismodel; /* pointer to model description for user's model */
-  GENmodel *mdfast;    /* pointer to the actual model */
-  int i;
+  int          type;      /* Model type. */
+  char        *line;      /* Unparsed part of the current line. */
+  char        *name;      /* Device instance name. */
+  int          error;     /* Temporary error code. */
+  int          numnodes;  /* Flag indicating 4 or 5 (or 6 or 7) nodes. */
+  GENinstance *fast;      /* Pointer to the actual instance. */
+  int          waslead;   /* Funny unlabeled number was found. */
+  double       leadval;   /* Value of unlabeled number. */
+  INPmodel    *thismodel; /* Pointer to model description for user's model. */
+  GENmodel    *mdfast;    /* Pointer to the actual model. */
+  IFdevice    *dev;
+  CKTnode     *node;
+  char        *c, *token = NULL, *prev = NULL, *pprev = NULL;
+  int          i;
 
   line = current->line;
-
   INPgetNetTok(&line, &name, 1);
   INPinsert(&name, tab);
 
-  for (i = 0;; i++) {
-    char *token;
-    INPgetNetTok(&line, &token, 1);
+  /* Find the last non-parameter token in the line. */
 
-    /* We have single terminal Verilog-A modules */
-    if (i >= 1) {
-      txfree(INPgetMod(ckt, token, &thismodel, tab));
+  c = line;
+  for (i = 0; *c != '\0'; ++i) {
+      tfree(pprev);
+      pprev = prev;
+      prev = token;
+      token = gettok_instance(&c);
+      if (strchr(token, '='))
+          break;
+  }
+  if (*c) {
+      tfree(token); // A parameter or starts with '='.
+      if (*c == '=') {
+          /* Now prev points to a parameter pprev is the model. */
 
-      /* /1* check if using model binning -- pass in line since need 'l' and 'w' *1/ */
-      /* if (!thismodel) */
-      /*   txfree(INPgetModBin(ckt, token, &thismodel, tab, line)); */
-
-      if (thismodel) {
-        INPinsert(&token, tab);
-        break;
+          --i;
+          token = pprev;
+          tfree(prev);
+      } else {
+          token = prev;
+          tfree(pprev);
       }
-    }
-    if (i >= max_i) {
-      LITERR("could not find a valid modelname");
-      return;
-    }
-    INPtermInsert(ckt, &token, tab, &node[i]);
   }
 
+  /* We have single terminal Verilog-A modules */
+
+  if (i >= 2) {
+      c = INPgetMod(ckt, token, &thismodel, tab);
+      if (c) {
+          LITERR(c);
+          tfree(c);
+          tfree(token);
+          return;
+      }
+  }
+  tfree(token);
+  if (i < 2 || !thismodel) {
+      LITERR("could not find a valid modelname");
+      return;
+  }
   type = thismodel->INPmodType;
   mdfast = thismodel->INPmodfast;
-  IFdevice *dev = ft_sim->devices[type];
+  dev = ft_sim->devices[type];
 
   if (!dev->registry_entry) {
     LITERR("incorrect model type! Expected OSDI device");
     return;
   }
 
-  if (i == 0) {
-    LITERR("not enough nodes");
-    return;
-  }
-
-  if (i > *dev->terms) {
+  numnodes = i - 1;
+  if (numnodes > *dev->terms) {
     LITERR("too many nodes connected to instance");
     return;
   }
 
-  numnodes = i;
-
   IFC(newInstance, (ckt, mdfast, &fast, name));
 
-  for (i = 0; i < *dev->terms; i++)
-    if (i < numnodes)
-      IFC(bindNode, (ckt, fast, i + 1, node[i]));
-    else
-      GENnode(fast)[i] = -1;
+  /* Rescan to process nodes. */
 
+  for (i = 0; i < *dev->terms; i++) {
+      if (i < numnodes) {
+          token = gettok_instance(&line);
+          INPtermInsert(ckt, &token, tab, &node); // Consumes token
+          IFC(bindNode, (ckt, fast, i + 1, node));
+      } else {
+          GENnode(fast)[i] = -1;
+      }
+  }
+  token = gettok_instance(&line); // Eat model name.
+  tfree(token);
   PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
   if (waslead)
     LITERR(" error:  no unlabeled parameter permitted on osdi devices\n");
