@@ -55,20 +55,21 @@ VDMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
              *    load matrix
              */
 
-            *(here->VDMOSGgPtr   ) += (xgd+xgs)*s->real;
-            *(here->VDMOSGgPtr +1) += (xgd+xgs)*s->imag;
+            *(here->VDMOSGPgpPtr   ) += (xgd+xgs)*s->real;
+            *(here->VDMOSGPgpPtr +1) += (xgd+xgs)*s->imag;
             *(here->VDMOSDPdpPtr   ) += (xgd)*s->real;
             *(here->VDMOSDPdpPtr +1) += (xgd)*s->imag;
             *(here->VDMOSSPspPtr   ) += (xgs)*s->real;
             *(here->VDMOSSPspPtr +1) += (xgs)*s->imag;
-            *(here->VDMOSGdpPtr   ) -= xgd*s->real;
-            *(here->VDMOSGdpPtr +1) -= xgd*s->imag;
-            *(here->VDMOSGspPtr   ) -= xgs*s->real;
-            *(here->VDMOSGspPtr +1) -= xgs*s->imag;
-            *(here->VDMOSDPgPtr   ) -= xgd*s->real;
-            *(here->VDMOSDPgPtr +1) -= xgd*s->imag;
-            *(here->VDMOSSPgPtr   ) -= xgs*s->real;
-            *(here->VDMOSSPgPtr +1) -= xgs*s->imag;
+            *(here->VDMOSGPdpPtr   ) -= xgd*s->real;
+            *(here->VDMOSGPdpPtr +1) -= xgd*s->imag;
+            *(here->VDMOSGPspPtr   ) -= xgs*s->real;
+            *(here->VDMOSGPspPtr +1) -= xgs*s->imag;
+            *(here->VDMOSDPgpPtr   ) -= xgd*s->real;
+            *(here->VDMOSDPgpPtr +1) -= xgd*s->imag;
+            *(here->VDMOSSPgpPtr   ) -= xgs*s->real;
+            *(here->VDMOSSPgpPtr +1) -= xgs*s->imag;
+
             *(here->VDMOSDdPtr) += here->VDMOSdrainConductance;
             *(here->VDMOSSsPtr) += here->VDMOSsourceConductance;
             *(here->VDMOSDPdpPtr) += here->VDMOSdrainConductance+

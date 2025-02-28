@@ -171,10 +171,6 @@ typedef struct sVDMOSinstance {
                                        (source prime node,source prime node) */
     double *VDMOSDdpPtr;     /* pointer to sparse matrix element at
                                        (drain node,drain prime node) */
-    double *VDMOSGdpPtr;     /* pointer to sparse matrix element at
-                                       (gate node,drain prime node) */
-    double *VDMOSGspPtr;     /* pointer to sparse matrix element at
-                                       (gate node,source prime node) */
     double *VDMOSSspPtr;     /* pointer to sparse matrix element at
                                        (source node,source prime node) */
     double *VDMOSDPspPtr;    /* pointer to sparse matrix element at
