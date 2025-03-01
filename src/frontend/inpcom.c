@@ -134,7 +134,6 @@ static void expand_section_references(struct card *deck,
 static void inp_grab_func(struct function_env *, struct card *deck);
 static void inp_fix_inst_calls_for_numparam(
         struct names *subckt_w_params, struct card *deck);
-static void inp_replace_param_by_func(struct card* deck);
 static void inp_expand_macros_in_func(struct function_env *);
 static struct card *inp_expand_macros_in_deck(
         struct function_env *, struct card *deck);
@@ -1125,7 +1124,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         subckt_params_to_param(working);
 
         rv.line_number = inp_split_multi_param_lines(working, rv.line_number);
-        inp_replace_param_by_func(working);
+
         inp_fix_macro_param_func_paren_io(working);
 
         static char *statfcn[] = {
@@ -1444,6 +1443,16 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 memcpy(buffer, ".inc", 4);
             }
 
+        if (ciprefix(".hdl", buffer)) {
+            fprintf(cp_err, "Warning: Dot command .hdl is not supported, ingnored\n");
+            tfree(buffer);
+            continue;
+        }
+        if (ciprefix(".biaschk", buffer)) {
+            fprintf(cp_err, "Warning: Dot command .biaschk is not supported, ingnored\n");
+            tfree(buffer);
+            continue;
+        }
         /* now handle .include statements */
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
 
@@ -2830,6 +2839,7 @@ static void inp_fix_macro_param_func_paren_io(struct card *card)
                 str_ptr[3] = 'c';
                 str_ptr[4] = ' ';
             }
+            fprintf(stdout, "%s\n", card->line);
         }
     }
 }
@@ -7988,73 +7998,6 @@ static void inp_fix_temper_in_param(struct card *deck)
     inp_delete_funcs(funcs);
 }
 
-/* Convert .param lines containing user defined functions
- * into .func lines:
- * .param xxx1(x,y) = '2*x+y'  --->  .func xxx1(x,y) ''2*x+y''
-  */
-
-static void inp_replace_param_by_func(struct card* deck)
-{
-    int skip_control = 0;
-    struct card* card;
-
-    for (card = deck; card; card = card->nextcard) {
-
-        char* curr_line = card->line;
-
-        if (*curr_line == '*')
-            continue;
-
-        /* exclude any command inside .control ... .endc */
-        if (ciprefix(".control", curr_line)) {
-            skip_control++;
-            continue;
-        }
-        else if (ciprefix(".endc", curr_line)) {
-            skip_control--;
-            continue;
-        }
-        else if (skip_control > 0) {
-            continue;
-        }
-
-        if (ciprefix(".para", curr_line)) {
-
-            char *fcn, *equal_ptr, *tmpstr;
-            bool found = FALSE;
-
-            fcn = nexttok(curr_line); // skip .param
-
-            if (!fcn)
-                continue;
-
-            equal_ptr = find_assignment(curr_line);
-
-            if (!equal_ptr)
-                continue;
-
-            tmpstr = equal_ptr;
-            while (tmpstr > curr_line) {
-                tmpstr--;
-                if (*tmpstr == ')') {
-                    found = TRUE;
-                    break;
-                }
-            }
-            if (!found)
-                continue;
-
-            *equal_ptr = ' ';
-            curr_line[0] = ' ';
-            curr_line[1] = '.';
-            curr_line[2] = 'f';
-            curr_line[3] = 'u';
-            curr_line[4] = 'n';
-            curr_line[5] = 'c';
-            fprintf(stdout, "%s\n", curr_line);
-        }
-    }
-}
 
 /* Convert .param lines containing function 'agauss' and others
  *  (function name handed over by *fcn),  into .func lines:
