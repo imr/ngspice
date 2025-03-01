@@ -1006,11 +1006,18 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             ((oldstate == S_atom) && (state == S_binop)) ||
             ((oldstate != S_atom) && (state != S_binop));
 
-        if (oldstate == S_binop && state == S_binop && c == '-') {
-            ok = 1;
-            negate = 1;
-            continue;
-        }
+        /* c is a sign, + or - are allowed */
+        if (oldstate == S_binop && state == S_binop)
+            if (c == '-') {
+                ok = 1;
+                negate = 1;
+                continue;
+            }
+            else if (c == '+') {
+                ok = 1;
+                negate = 0;
+                continue;
+            }
 
         if (!ok)
             error = message(dico, " Misplaced operator\n");
