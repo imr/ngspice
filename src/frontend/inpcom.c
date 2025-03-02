@@ -5156,10 +5156,10 @@ static int inp_get_param_level(
    the first letter of its instance line. Returns 0 upon error. */
 int get_number_terminals(char *c)
 {
-    int i, j, k;
+    int   i, j, k;
+    char *inst;
     char *name[12];
-    char nam_buf[128];
-    bool area_found = FALSE;
+    bool  area_found = FALSE;
 
     if (!c)
         return 0;
@@ -5181,28 +5181,31 @@ int get_number_terminals(char *c)
                but still allow self heating diode with ngspice syntax. */
             if (newcompat.ps && !search_plain_identifier(c, "thermal"))
                 return 2;
-            i = 0;
+
             /* find the first token with "off" or "=" in the line*/
-            while ((i < 10) && (*c != '\0')) {
-                char *inst = gettok_instance(&c);
-                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
-                txfree(inst);
-                if ( i > 3 && (search_plain_identifier(nam_buf, "off") || search_plain_identifier(nam_buf, "thermal") || strchr(nam_buf, '=')))
+            for (i = 0; (i < 10) && (*c != '\0'); ++i) {
+                inst = gettok_instance(&c);
+                if (i > 3 && (search_plain_identifier(inst, "off") ||
+                              search_plain_identifier(inst, "thermal") ||
+                              strchr(inst, '='))) {
+                    txfree(inst);
                     break;
-                i++;
+                }
+                txfree(inst);
             }
             return i - 2;
             break;
         case 'x':
-            i = 0;
             /* find the first token with "params:" or "=" in the line*/
-            while ((i < 100) && (*c != '\0')) {
-                char *inst = gettok_instance(&c);
-                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
-                txfree(inst);
-                if (search_plain_identifier(nam_buf, "params:") || strchr(nam_buf, '='))
+
+            for (i = 0; (i < 100) && (*c != '\0'); ++i) {
+                inst = gettok_instance(&c);
+                if (search_plain_identifier(inst, "params:") ||
+                    strchr(inst, '=')) {
+                    txfree(inst);
                     break;
-                i++;
+                }
+                txfree(inst);
             }
             return i - 2;
             break;
@@ -5223,34 +5226,34 @@ int get_number_terminals(char *c)
         case 'm': /* recognition of 4, 5, 6, or 7 nodes for SOI devices needed
                    */
         {
-            i = 0;
             char* cc, * ccfree;
+
             cc = copy(c);
             /* required to make m= 1 a single token m=1 */
             ccfree = cc = inp_remove_ws(cc);
             /* find the first token with "off", "tnodeout", "thermal" or "=" in the line*/
-            while ((i < 20) && (*cc != '\0')) {
-                char* inst = gettok_instance(&cc);
-                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
-                txfree(inst);
-                if ( i > 4 && (search_plain_identifier(nam_buf, "off") || strchr(nam_buf, '=') ||
-                    search_plain_identifier(nam_buf, "tnodeout") || search_plain_identifier(nam_buf, "thermal")))
+            for (i = 0; (i < 20) && (*cc != '\0'); ++i) {
+                inst = gettok_instance(&cc);
+                if ( i > 4 &&
+                     (search_plain_identifier(inst, "off") ||
+                      strchr(inst, '=') ||
+                      search_plain_identifier(inst, "tnodeout") ||
+                      search_plain_identifier(inst, "thermal"))) {
+                    txfree(inst);
                     break;
-                i++;
+                }
+                txfree(inst);
             }
             tfree(ccfree);
             return i - 2;
             break;
         }
-        case 'p': /* recognition of up to 100 cpl nodes */
-            i = j = 0;
-            /* find the last token in the line*/
-            while ((i < 100) && (*c != '\0')) {
-                char *tmp_inst = gettok_instance(&c);
-                strncpy(nam_buf, tmp_inst, 32);
-                tfree(tmp_inst);
-                if (strchr(nam_buf, '='))
+        case 'p': /* Recognition of up to 100 cpl nodes */
+            for (i = j = 0; (i < 100) && (*c != '\0'); ++i) {
+                inst = gettok_instance(&c);
+                if (strchr(inst, '='))
                     j++;
+                tfree(inst);
                 i++;
             }
             if (i == 100)
@@ -5263,21 +5266,27 @@ int get_number_terminals(char *c)
             /* 12 tokens maximum */
         {
             char* cc, * ccfree;
-            i = j = 0;
+
             cc = copy(c);
             /* required to make m= 1 a single token m=1 */
             ccfree = cc = inp_remove_ws(cc);
-            while ((i < 12) && (*cc != '\0')) {
+            for (i = j = 0; (i < 12) && (*cc != '\0'); ++i) {
                 char* comma;
+
                 name[i] = gettok_instance(&cc);
-                if (search_plain_identifier(name[i], "off") || strchr(name[i], '='))
+                if (search_plain_identifier(name[i], "off") ||
+                    strchr(name[i], '=')) {
                     j++;
+                }
 #ifdef CIDER
-                if (search_plain_identifier(name[i], "save") || search_plain_identifier(name[i], "print"))
+                if (search_plain_identifier(name[i], "save") ||
+                    search_plain_identifier(name[i], "print")) {
                     j++;
+                }
 #endif
-                /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc
-                 * j */
+                /* If we have IC=VBE, VCE instead of IC=VBE,VCE
+                 *  we need to increment j.
+                 */
                 if ((comma = strchr(name[i], ',')) != NULL &&
                         (*(++comma) == '\0'))
                     j++;
@@ -5285,14 +5294,14 @@ int get_number_terminals(char *c)
                  */
                 if (eq(name[i], ","))
                     j++;
-                i++;
             }
-            tfree(ccfree);
             i--;
+            tfree(ccfree);
             area_found = FALSE;
             for (k = i; k > i - j - 1; k--) {
                 bool only_digits = TRUE;
                 char* nametmp = name[k];
+
                 /* MNAME has to contain at least one alpha character. AREA may
                    be assumed if we have a token with only digits, and where
                    the previous token does not end with a ',' */
@@ -5315,26 +5324,21 @@ int get_number_terminals(char *c)
             break;
         }
 #ifdef OSDI
-        case 'n': /* Recognize an unknown number of nodes by stopping at tokens with '=' */
-        {
-            i = 0;
-            char* cc, * ccfree;
-            cc = copy(c);
-            /* required to make m= 1 a single token m=1 */
-            ccfree = cc = inp_remove_ws(cc);
-            /* find the first token with "off", "tnodeout", "thermal" or "=" in the line*/
-            while ((i < 20) && (*cc != '\0')) {
-                char* inst = gettok_instance(&cc);
-                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
-                txfree(inst);
-                if (i > 2 && (strchr(nam_buf, '=')))
+        case 'n':
+            /* Find the last non-parameter token in the line. */
+
+            for (i = 0; *c != '\0' && *c != '='; ++i) {
+                inst = gettok_instance(&c);
+                if (strchr(inst, '=')) {
+                    tfree(inst);
                     break;
-                i++;
+                }
+                tfree(inst);
             }
-            tfree(ccfree);
+            if (*c == '=')
+                --i;    // Counted a parameter name.
             return i - 2;
             break;
-        }
 #endif
         default:
             return 0;

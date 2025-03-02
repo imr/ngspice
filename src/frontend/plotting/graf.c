@@ -868,7 +868,6 @@ static int iplot(struct plot *pl, struct dbcomm *db)
     bool           changed = FALSE;
     int            id, yt;
     double         xlims[2], ylims[2];
-    static REQUEST reqst = { checkup_option, NULL };
     int            inited = 0;
     int            n_vec_plot = 0;
 
@@ -958,16 +957,12 @@ static int iplot(struct plot *pl, struct dbcomm *db)
         inited = 1;
 
     } else {
-        /* plot the last points and resize if needed */
-
-        Input(&reqst, NULL);
-
-        /* Window was closed? */
-
-        if (!currentgraph)
+        if (!currentgraph)        /* Window was closed? */
             return 0;
 
-        /* First see if we have to make the screen bigger */
+        /* Plot the latest points and resize if needed.
+         * First see if we have to make the screen bigger.
+         */
 
         dy = (isreal(xs) ? xs->v_realdata[len - 1] :
               realpart(xs->v_compdata[len - 1]));
@@ -1194,9 +1189,16 @@ void reset_trace(void)
 
 void gr_iplot(struct plot *plot)
 {
-    struct dbcomm *db;
-    int dontpop;        /* So we don't pop w/o push. */
-    char buf[30];
+    static REQUEST reqst = { checkup_option, NULL };
+    struct dbcomm *db, *dc;
+    int            dontpop;        /* So we don't pop w/o push. */
+    char           buf[30];
+
+    if (Have_graph) {
+        /* There is at least one graph.  Process input on graph windows. */
+
+        Input(&reqst, NULL);
+    }
 
     hit = 0;
     for (db = dbs; db; db = db->db_next) {

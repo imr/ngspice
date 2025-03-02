@@ -1252,11 +1252,30 @@ int main(int argc, char **argv)
     else {
         if (readinit) {
             /* load user's initialisation file
-              try accessing the initialisation file .spiceinit in a user provided
-              path read from environmental variable SPICE_USERINIT_DIR,
-              if that fails try the alternate name spice.rc, then look into
-              the current directory, then the HOME directory, then into USERPROFILE */
+              try accessing the initialisation file .spiceinit
+              (If it fails, try the alternate name spice.rc):
+              - in the directory from where the netlist has been loaded
+              - in a user provided path read from environmental variable SPICE_USERINIT_DIR,
+              - in the current directory,
+              - in the the HOME directory,
+              - in the USERPROFILE directory. */
             do {
+                {
+                    if (optind <= argc) {
+                        char* inpath = ngdirname(argv[optind]);
+                        if (inpath) {
+                            if (read_initialisation_file(inpath, INITSTR) != FALSE) {
+                                FREE(inpath);
+                                break;
+                            }
+                            if (read_initialisation_file(inpath, ALT_INITSTR) != FALSE) {
+                                FREE(inpath);
+                                break;
+                            }
+                            FREE(inpath);
+                        }
+                    }
+                }
                 {
                     const char* const userinit = getenv("SPICE_USERINIT_DIR");
                     if (userinit) {

@@ -41,6 +41,10 @@ typedef struct gbucket {
 
 static GBUCKET GBucket[NUMGBUCKETS];
 
+/* Global variable to indicate that at least one graph exits. Ugly but fast. */
+
+bool Have_graph;
+
 /* note: Zero is not a valid id.  This is used in plot() in graf.c. */
 static int RunningId = 1;
 
@@ -81,7 +85,7 @@ GRAPH *NewGraph(void)
     }
 
     RunningId++;
-
+    Have_graph = TRUE;
     return pgraph;
 } /* end of function NewGraph */
 
@@ -106,7 +110,6 @@ GRAPH *FindGraph(int id)
         return (GRAPH *) NULL;
     }
 } /* end of function FindGraph */
-
 
 
 GRAPH *CopyGraph(GRAPH *graph)
@@ -235,7 +238,15 @@ int DestroyGraph(int id)
                 lastlist->next = list->next;
             }
             else { /* at front */
+                int i;
+
                 GBucket[index].list = list->next;
+                for (i = 0; i < NUMGBUCKETS; ++i) {
+                    if (GBucket[i].list)
+                        break;
+                }
+                if (i >= NUMGBUCKETS)
+                    Have_graph = FALSE;
             }
 
             /* Run through and de-allocate dynamically allocated keyed list */
@@ -307,6 +318,7 @@ void FreeGraphs(void)
             txfree(deadl);
         }
     }
+    Have_graph = FALSE;
 } /* end of functdion FreeGraphs */
 
 

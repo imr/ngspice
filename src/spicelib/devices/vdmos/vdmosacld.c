@@ -96,8 +96,8 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSDPgpPtr +1) -= xgd;
             *(here->VDMOSSPgpPtr +1) -= xgs;
 
-            *(here->VDMOSDdPtr) += here->VDMOSdrainConductance;
-            *(here->VDMOSSsPtr) += here->VDMOSsourceConductance;
+            *(here->VDMOSDdPtr) += here->VDMOSdrainConductance + here->VDMOSdsConductance;
+            *(here->VDMOSSsPtr) += here->VDMOSsourceConductance + here->VDMOSdsConductance;
             *(here->VDMOSDPdpPtr) += here->VDMOSdrainConductance+
                     here->VDMOSgds+xrev*(here->VDMOSgm);
             *(here->VDMOSSPspPtr) += here->VDMOSsourceConductance+
@@ -110,6 +110,8 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSSPgpPtr) -= (xnrm-xrev)*here->VDMOSgm;
             *(here->VDMOSSPsPtr) -= here->VDMOSsourceConductance;
             *(here->VDMOSSPdpPtr) -= here->VDMOSgds+xrev*(here->VDMOSgm);
+            *(here->VDMOSDsPtr) += (-here->VDMOSdsConductance);
+            *(here->VDMOSSdPtr) += (-here->VDMOSdsConductance);
             /* gate resistor */
             *(here->VDMOSGgPtr) += (here->VDMOSgateConductance);
             *(here->VDMOSGPgpPtr) += (here->VDMOSgateConductance);
