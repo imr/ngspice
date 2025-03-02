@@ -2846,7 +2846,7 @@ static void inp_fix_macro_param_func_paren_io(struct card *card)
                 str_ptr[3] = 'c';
                 str_ptr[4] = ' ';
             }
-            fprintf(stdout, "%s\n", card->line);
+//            fprintf(stdout, "%s\n", card->line);
         }
     }
 }
