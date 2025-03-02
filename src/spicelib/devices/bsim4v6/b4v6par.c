@@ -149,6 +149,14 @@ IFvalue *select)
             here->BSIM4v6ngcon = value->rValue;
             here->BSIM4v6ngconGiven = TRUE;
             break;
+        case BSIM4v6_TEMP:
+            here->BSIM4v6temp = value->rValue;
+            here->BSIM4v6tempGiven = TRUE;
+            return(OK);
+        case BSIM4v6_DTEMP:
+            here->BSIM4v6dtemp = value->rValue;
+            here->BSIM4v6dtempGiven = TRUE;
+            return(OK);
         case BSIM4v6_TRNQSMOD:
             here->BSIM4v6trnqsMod = value->iValue;
             here->BSIM4v6trnqsModGiven = TRUE;

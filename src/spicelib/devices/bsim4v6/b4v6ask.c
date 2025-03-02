@@ -114,6 +114,12 @@ BSIM4v6instance *here = (BSIM4v6instance*)inst;
         case BSIM4v6_MULU0:
             value->rValue = here->BSIM4v6mulu0;
             return(OK);
+        case BSIM4v6_TEMP:
+            value->rValue = here->BSIM4v6temp;
+            return(OK);
+        case BSIM4v6_DTEMP:
+            value->rValue = here->BSIM4v6dtemp;
+            return(OK);
         case BSIM4v6_XGW:
             value->rValue = here->BSIM4v6xgw;
             return(OK);

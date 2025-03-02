@@ -2105,7 +2105,10 @@ BSIM4v6instance **InstArray;
                 here->BSIM4v6xgw = model->BSIM4v6xgw;
             if (!here->BSIM4v6ngconGiven)
                 here->BSIM4v6ngcon = model->BSIM4v6ngcon;
-
+            if (!here->BSIM4v6tempGiven)
+                here->BSIM4v6temp = 27;
+            if (!here->BSIM4v6dtempGiven)
+                here->BSIM4v6dtemp = 0;
                     
             /* Process instance model selectors, some
              * may override their global counterparts
