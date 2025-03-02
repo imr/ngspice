@@ -66,12 +66,9 @@ tree and code models as created above.
 If you want to add fftw support for the fft commands, download
 the Windows variant of fftw from
 http://www.fftw.org/install/windows.html.
-Create the directories
-  ../../fftw-3.3.4-dll32
+Create the directory
   ../../fftw-3.3.4-dll64
 relative from this directory right here, and unzip there the
-32 bit and 64 bit downloads.
-Visual Studio is stated by double click on vngspice-fftw.sln.
-The following procedure is the same as cited above.
+64 bit downloads.
 
 

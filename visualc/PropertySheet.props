@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup>
+    <!-- Check, if FFTW-Folder exist -->
+    <FFTWFOLDER Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">1</FFTWFOLDER>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  
+    <ClCompile>
+      <!-- Additional preprozessor definition, if FFTW-Folder exist -->
+      <PreprocessorDefinitions Condition="'$(FFTWFOLDER)'=='1'">HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+      <!-- Additional include directories, if FFTW-Folder exist -->
+      <AdditionalIncludeDirectories Condition="'$(FFTWFOLDER)'=='1'">
+        $(ProjectDir)..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+
+    <Link>
+      <!-- Extend library path -->
+      <AdditionalLibraryDirectories Condition="'$(FFTWFOLDER)'=='1'">
+        $(ProjectDir)..\..\fftw-3.3-dll64;%(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+
+      <!-- Insert additional library -->
+      <AdditionalDependencies Condition="'$(FFTWFOLDER)'=='1'">
+        libfftw3-3.lib;%(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
+
+  </ItemDefinitionGroup>
+</Project>
