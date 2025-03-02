@@ -1305,6 +1305,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
     static int is_control = 0; /* We are reading from a .control section */
 
     bool found_end = FALSE, shell_eol_continuation = FALSE;
+    static bool biaswarn = FALSE;
 #ifdef CIDER
     static int in_cider_model = 0;
 #endif
@@ -1445,11 +1446,17 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
         if (ciprefix(".hdl", buffer)) {
             fprintf(cp_err, "Warning: Dot command .hdl is not supported, ingnored\n");
+            fprintf(cp_err, "    line no. %d, %s", line_number, buffer);
+            fprintf(cp_err, "    file %s\n\n", file_name);
             tfree(buffer);
             continue;
         }
         if (ciprefix(".biaschk", buffer)) {
-            fprintf(cp_err, "Warning: Dot command .biaschk is not supported, ingnored\n");
+            if (!biaswarn) {
+                fprintf(cp_err, "Warning: Dot command .biaschk is not supported, ingnored\n");
+                fprintf(cp_err, "    This message will be posted only once!\n\n");
+                biaswarn = TRUE;
+            }
             tfree(buffer);
             continue;
         }
