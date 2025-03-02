@@ -18,14 +18,9 @@
     </ClCompile>
 
     <Link>
-      <!-- Extend library path -->
-      <AdditionalLibraryDirectories Condition="'$(FFTWFOLDER)'=='1'">
-        $(ProjectDir)..\..\fftw-3.3-dll64;%(AdditionalLibraryDirectories)
-      </AdditionalLibraryDirectories>
-
       <!-- Insert additional library -->
       <AdditionalDependencies Condition="'$(FFTWFOLDER)'=='1'">
-        libfftw3-3.lib;%(AdditionalDependencies)
+        $(IntDir)libfftw3-3.lib;%(AdditionalDependencies)
       </AdditionalDependencies>
     </Link>
 

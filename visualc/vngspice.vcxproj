@@ -124,6 +124,9 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <!-- Check, if FFTW-Folder exist -->
+      <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
+        lib /machine:x64 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -179,6 +182,9 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <!-- Check, if FFTW-Folder exist -->
+      <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
+        lib /machine:x64 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -242,6 +248,9 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <!-- Check, if FFTW-Folder exist -->
+      <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
+        lib /machine:x64 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -297,6 +306,9 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <!-- Check, if FFTW-Folder exist -->
+      <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
+        lib /machine:x64 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -358,6 +370,9 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <!-- Check, if FFTW-Folder exist -->
+      <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
+        lib /machine:x64 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -423,6 +438,9 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <!-- Check, if FFTW-Folder exist -->
+      <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
+        lib /machine:x64 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
