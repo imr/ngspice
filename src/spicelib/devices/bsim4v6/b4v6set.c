@@ -2106,7 +2106,7 @@ BSIM4v6instance **InstArray;
             if (!here->BSIM4v6ngconGiven)
                 here->BSIM4v6ngcon = model->BSIM4v6ngcon;
             if (!here->BSIM4v6tempGiven)
-                here->BSIM4v6temp = 27;
+                here->BSIM4v6temp = ckt->CKTtemp + here->BSIM4v6dtemp;
             if (!here->BSIM4v6dtempGiven)
                 here->BSIM4v6dtemp = 0;
                     
