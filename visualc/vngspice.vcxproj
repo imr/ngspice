@@ -424,10 +424,10 @@
     <PostBuildEvent>
       <!-- Check, if FFTW-Folder exist -->
       <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
-        make-install-vngspice.bat $(OutDir) fftw
+        make-install-vngspice.bat $(OutDir) fftw omp
       </Command>
       <Command Condition="!Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
-        make-install-vngspice.bat $(OutDir)
+        make-install-vngspice.bat $(OutDir) omp
       </Command>
     </PostBuildEvent>
     <Manifest>
@@ -490,10 +490,10 @@
     <PostBuildEvent>
       <!-- Check, if FFTW-Folder exist -->
       <Command Condition="Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
-        make-install-vngspice.bat $(OutDir) fftw
+        make-install-vngspice.bat $(OutDir) fftw omp
       </Command>
       <Command Condition="!Exists('$(ProjectDir)..\..\fftw-3.3-dll64')">
-        make-install-vngspice.bat $(OutDir)
+        make-install-vngspice.bat $(OutDir) omp
       </Command>
     </PostBuildEvent>
     <Manifest>

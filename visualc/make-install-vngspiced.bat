@@ -10,7 +10,12 @@ set cmsrc=.\codemodels\x64\Debug
 mkdir %dst%\bin
 mkdir %dst%\lib\ngspice
 
-copy "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\debug_nonredist\x64\Microsoft.VC143.OpenMP.LLVM\libomp140d.x86_64.dll" %dst%\bin\
+if "%2" == "omp" (
+    copy "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\debug_nonredist\x64\Microsoft.VC143.OpenMP.LLVM\libomp140.x86_64.dll" %dst%\bin\
+)
+if "%3" == "omp" (
+    copy "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\debug_nonredist\x64\Microsoft.VC143.OpenMP.LLVM\libomp140.x86_64.dll" %dst%\bin\
+)
 copy %cmsrc%\analog64.cm %dst%\lib\ngspice\analog.cm
 copy %cmsrc%\digital64.cm %dst%\lib\ngspice\digital.cm
 copy %cmsrc%\table64.cm %dst%\lib\ngspice\table.cm
