@@ -1,19 +1,26 @@
 @echo off
 
-REM copy ngspice.exe, codemodels *.cm to C:\Spice or Spice64
+REM copy ngspice.exe, codemodels *.cm to Spice64
 REM arguments to make-install-vngspice:
-REM %1: path to ngspice.exe, %2: fftw
+REM %1: path to ngspice.exe, %2: release/debug %3: fftw, %4: omp
 
-set dst=c:\Spice64
-set cmsrc=.\codemodels\x64\Release
+if "%2" == "release" (
+    set dst=c:\Spice64
+    set cmsrc=.\codemodels\x64\Release
+)
+if "%2" == "debug" (
+    set dst=c:\Spice64d
+    set cmsrc=.\codemodels\x64\Debug
+    copy .\spinitd64 .\spinit
+)
 
 mkdir %dst%\bin
 mkdir %dst%\lib\ngspice
 
-if "%2" == "omp" (
+if "%3" == "omp" (
     copy "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\debug_nonredist\x64\Microsoft.VC143.OpenMP.LLVM\libomp140.x86_64.dll" %dst%\bin\
 )
-if "%3" == "omp" (
+if "%4" == "omp" (
     copy "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.42.34433\debug_nonredist\x64\Microsoft.VC143.OpenMP.LLVM\libomp140.x86_64.dll" %dst%\bin\
 )
 copy %cmsrc%\analog64.cm %dst%\lib\ngspice\analog.cm
@@ -25,19 +32,19 @@ copy %cmsrc%\spice2poly64.cm %dst%\lib\ngspice\spice2poly.cm
 copy xspice\verilog\ivlng.dll %dst%\lib\ngspice\ivlng.dll
 copy xspice\verilog\shim.vpi %dst%\lib\ngspice\ivlng.vpi
 
-if "%2" == "fftw" goto copy2-64
+if "%3" == "fftw" goto copy-fftw
 
 copy %1\ngspice.exe %dst%\bin\
-copy .\spinitr64 .\spinit
 goto end
 
-:copy2-64
+:copy-fftw
 copy %1\ngspice.exe %dst%\bin\
 copy ..\..\fftw-3.3-dll64\libfftw3-3.dll %dst%\bin\
 
 :end
 mkdir %dst%\share\ngspice\scripts\src\ngspice
 copy .\spinit_all %dst%\share\ngspice\scripts\spinit
+
 cd ..\src
 copy ciderinit %dst%\share\ngspice\scripts
 copy devaxis %dst%\share\ngspice\scripts
