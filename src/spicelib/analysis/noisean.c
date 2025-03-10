@@ -411,6 +411,65 @@ NOISEan(CKTcircuit* ckt, int restart)
             job->NsavInoise = data->inNoise;
             return (E_PAUSE);
         }
+
+        /* Update opertating point, if variable 'hertz' is given */
+        if (ckt->CKTvarHertz) {
+
+#ifdef KLU
+            if (ckt->CKTmatrix->CKTkluMODE)
+            {
+                /* Conversion from Complex Matrix to Real Matrix */
+                for (i = 0; i < DEVmaxnum; i++)
+                    if (DEVices[i] && DEVices[i]->DEVbindCSCComplexToReal && ckt->CKThead[i])
+                        DEVices[i]->DEVbindCSCComplexToReal(ckt->CKThead[i], ckt);
+
+                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal;
+            }
+#endif
+
+#ifdef XSPICE
+            /* Call EVTop if event-driven instances exist */
+
+            if (ckt->evt->counts.num_insts != 0) {
+                error = EVTop(ckt,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                    ckt->CKTdcMaxIter,
+                    MIF_TRUE);
+                EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+                EVTop_save(ckt, MIF_TRUE, 0.0);
+            }
+            else
+#endif 
+                // If no event-driven instances, do what SPICE normally does
+                error = CKTop(ckt,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                    ckt->CKTdcMaxIter);
+
+            if (error) {
+                fprintf(stderr, "\nError: AC operating point with variable 'Hertz' for noise sim failed -\n");
+                CKTncDump(ckt);
+                return(error);
+            }
+            ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
+            error = CKTload(ckt);
+            if (error) return(error);
+
+#ifdef KLU
+            if (ckt->CKTmatrix->CKTkluMODE)
+            {
+                /* Conversion from Real Matrix to Complex Matrix */
+                for (i = 0; i < DEVmaxnum; i++)
+                    if (DEVices[i] && DEVices[i]->DEVbindCSCComplex && ckt->CKThead[i])
+                        DEVices[i]->DEVbindCSCComplex(ckt->CKThead[i], ckt);
+
+                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex;
+            }
+#endif
+
+        }
+
         ckt->CKTomega = 2.0 * M_PI * data->freq;
         ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEAC | MODEACNOISE;
         ckt->noise_input = inst;
