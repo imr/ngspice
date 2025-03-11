@@ -149,12 +149,18 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
             if (p) {
                 char *value;
-                INPgetTok(&line, &value, 1);
 
-                modtmp->INPmodfast->defaults =
-                    wl_cons(copy(parm),
-                            wl_cons(value,
-                                    modtmp->INPmodfast->defaults));
+                INPgetTok(&line, &value, 1);
+                if (p->dataType & IF_SET) {
+                    modtmp->INPmodfast->defaults =
+                        wl_cons(copy(parm),
+                                wl_cons(value, modtmp->INPmodfast->defaults));
+                } else {
+                    fprintf(stderr,
+                            "Ignoring attempt to set a default "
+                            "for read-only instance parameter %s in:\n  %s\n",
+                            p->keyword, modtmp->INPmodLine->line);
+                }
             } else {
 
                 double dval;
