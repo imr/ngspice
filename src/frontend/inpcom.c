@@ -1283,6 +1283,13 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
     return cc;
 }
 
+static char *skip_token(char *s)
+{
+    s = skip_ws(s);      /* Advance past space chars. */
+    s = skip_non_ws(s);  /* Skip over token. */
+    return skip_ws(s);
+}
+
 
 static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
     const char* file_name, bool comfile, bool intfile)
@@ -1420,8 +1427,8 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         /* now handle .title statement */
         if (ciprefix(".title", buffer)) {
             char* s;
-            s = skip_non_ws(buffer); /* skip over .title */
-            s = skip_ws(s); /* advance past space chars */
+
+            s = skip_token(buffer);
 
             /* only the last title line remains valid */
             tfree(new_title);
@@ -2800,13 +2807,11 @@ static void inp_fix_macro_param_func_paren_io(struct card *card)
 
         if (ciprefix(".subckt", card->line) || ciprefix("x", card->line)) {
             /* remove () */
-            str_ptr = skip_non_ws(card->line);
-                                        // skip over .subckt, instance name
-            str_ptr = skip_ws(str_ptr);
-            if (ciprefix(".subckt", card->line)) {
-                str_ptr = skip_non_ws(str_ptr); // skip over subckt name
-                str_ptr = skip_ws(str_ptr);
-            }
+
+            str_ptr = skip_token(card->line);     // Skip over .subckt.
+            if (ciprefix(".subckt", card->line))
+                str_ptr = skip_token(str_ptr);    // Skip over subckt name.
+
             if (*str_ptr == '(') {
                 *str_ptr = ' ';
                 while (*str_ptr != '\0') {
@@ -2824,8 +2829,8 @@ static void inp_fix_macro_param_func_paren_io(struct card *card)
 
         if (ciprefix(".para", card->line)) {
             bool is_func = FALSE;
-            str_ptr = skip_non_ws(card->line); // skip over .param
-            str_ptr = skip_ws(str_ptr);
+
+            str_ptr = skip_token(card->line); // skip over .param
             while (!isspace_c(*str_ptr) && *str_ptr != '=') {
                 if (*str_ptr == '(')
                     is_func = TRUE;
@@ -2874,13 +2879,8 @@ static char *get_subckt_model_name(char *line)
 {
     char *name, *end_ptr;
 
-    name = skip_non_ws(line); // eat .subckt|.model
-    name = skip_ws(name);
-
-    
-
+    name = skip_token(line); // Eat .subckt or .model
     end_ptr = skip_non_ws(name);
-
     return copy_substring(name, end_ptr);
 }
 
@@ -2890,23 +2890,16 @@ static char *get_model_name(char *line, int num_terminals)
     char *beg_ptr, *end_ptr;
     int i = 0;
 
-    beg_ptr = skip_non_ws(line); /* eat device name */
-    beg_ptr = skip_ws(beg_ptr);
-
-    for (i = 0; i < num_terminals; i++) { /* skip the terminals */
-        beg_ptr = skip_non_ws(beg_ptr);
-        beg_ptr = skip_ws(beg_ptr);
-    }
+    beg_ptr = skip_token(line); // Eat device name.
+    for (i = 0; i < num_terminals; i++)
+        beg_ptr = skip_token(beg_ptr); // Eat terminal.
 
     if (*line == 'r') /* special dealing for r models */
         if ((*beg_ptr == '+') || (*beg_ptr == '-') ||
                 isdigit_c(*beg_ptr)) { /* looking for a value before model */
-            beg_ptr = skip_non_ws(beg_ptr); /* skip the value */
-            beg_ptr = skip_ws(beg_ptr);
+            beg_ptr = skip_token(beg_ptr); /* Skip the value, */
         }
-
     end_ptr = skip_non_ws(beg_ptr);
-
     return copy_substring(beg_ptr, end_ptr);
 }
 
@@ -2918,12 +2911,8 @@ static char *get_model_type(char *line)
     if (!ciprefix(".model", line))
         return NULL;
 
-    beg_ptr = skip_non_ws(line); /* eat .model */
-    beg_ptr = skip_ws(beg_ptr);
-
-    beg_ptr = skip_non_ws(beg_ptr); /* eat model name */
-    beg_ptr = skip_ws(beg_ptr);
-
+    beg_ptr = skip_token(line);    /* Eat .model */
+    beg_ptr = skip_token(beg_ptr); /* Eat model name. */
     return gettok_noparens(&beg_ptr);
 }
 
@@ -3655,8 +3644,8 @@ static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
     if (equal &&
         (!strstr(s, "params:") || !isspace_c(s[-1]))) {
         /* get subckt name (ptr1 will point to name) */
-        ptr1 = skip_non_ws(s);
-        ptr1 = skip_ws(ptr1);
+
+        ptr1 = skip_token(s);
         for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2);
                 ptr2++)
             ;
@@ -4275,8 +4264,8 @@ static void inp_fix_inst_calls_for_numparam(
                     continue;
                 if (d) {
                     char *subckt_line = d->line;
-                    subckt_line = skip_non_ws(subckt_line);
-                    subckt_line = skip_ws(subckt_line);
+
+                    subckt_line = skip_token(subckt_line);
 
                     int num_subckt_params = inp_get_params(subckt_line,
                             subckt_param_names, subckt_param_values);
@@ -4385,8 +4374,7 @@ static void inp_get_func_from_line(struct function_env *env, char *line)
     struct function *function;
 
     /* skip `.func' */
-    line = skip_non_ws(line);
-    line = skip_ws(line);
+    line = skip_token(line);
 
     /* get function name */
     end = line;
@@ -5501,8 +5489,7 @@ static void inp_add_params_to_subckt(
         if (!strstr(subckt_line, "params:")) {
             new_line = tprintf("%s params: %s", subckt_line, param_ptr);
 
-            subckt_name = skip_non_ws(subckt_line);
-            subckt_name = skip_ws(subckt_name);
+            subckt_name = skip_token(subckt_line);
             end_ptr = skip_non_ws(subckt_name);
             add_name(subckt_w_params, copy_substring(subckt_name, end_ptr));
         }
@@ -7867,9 +7854,7 @@ static void inp_fix_temper_in_param(struct card *deck)
                 controlled_exit(EXIT_FAILURE);
             }
 
-            lhs_b = skip_non_ws(curr_line); // eat .param
-            lhs_b = skip_ws(lhs_b);
-
+            lhs_b = skip_token(curr_line); // Eat .param.
             lhs_e = skip_back_ws(equal_ptr, curr_line);
 
             /* skip if this is a function already */
@@ -8094,9 +8079,7 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
                 controlled_exit(EXIT_FAILURE);
             }
 
-            lhs_b = skip_non_ws(curr_line); // eat .param
-            lhs_b = skip_ws(lhs_b);
-
+            lhs_b = skip_token(curr_line); // Eat .param.
             lhs_e = skip_back_ws(equal_ptr, curr_line);
 
             /* skip if this is a function already */
@@ -8332,10 +8315,8 @@ static void inp_quote_params(struct card *c, struct card *end_c,
 
             char *s = curr_line;
 
-            for (j = 0; j < num_terminals + 1; j++) {
-                s = skip_non_ws(s);
-                s = skip_ws(s);
-            }
+            for (j = 0; j < num_terminals + 1; j++)
+                s = skip_token(s);
 
             while ((s = ya_search_identifier(
                             s, deps[i].param_name, curr_line)) != NULL) {
@@ -8403,7 +8384,6 @@ static void inp_quote_params(struct card *c, struct card *end_c,
     }
 }
 
-
 /* VDMOS special:
    Check for 'vdmos' in .model line.
    check if 'pchan', then add p to vdmos and ignore 'pchan'.
@@ -8429,15 +8409,16 @@ static int inp_vdmos_model(struct card *deck)
         curr_line = card->line;
 
         if (ciprefix(".model", curr_line)) {
-            cut_line = search_plain_identifier(curr_line, "vdmos");
-            if (cut_line) {
+            cut_line = skip_token(curr_line);
+            cut_line = skip_token(cut_line);
+            if (!strncmp(cut_line, "vdmos", 5)) {
+                /* A VDMOS model line, may be vdmosn or vdmosp if re-input. */
+
                 wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
                 wlb = wl;
-                if (search_plain_identifier(cut_line, "pchan")) {
+                if (search_plain_identifier(cut_line, "pchan") ||
+                    cut_line[5] == 'p') {
                     wl_append_word(NULL, &wl, copy("vdmosp ("));
-                }
-                else if (search_plain_identifier(cut_line, "nchan")) {
-                    wl_append_word(NULL, &wl, copy("vdmosn ("));
                 }
                 else {
                     wl_append_word(NULL, &wl, copy("vdmosn ("));
@@ -9199,9 +9180,10 @@ static struct modellist *inp_find_model_1(
         struct nscope *scope, const char *name)
 {
     struct modellist *p = scope->models;
-    for (; p; p = p->next)
+    for (; p; p = p->next) {
         if (model_name_match(name, p->modelname))
             break;
+    }
     return p;
 }
 
