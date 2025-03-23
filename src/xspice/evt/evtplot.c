@@ -45,14 +45,77 @@ NON-STANDARD FEATURES
 #include "ngspice/mif.h"
 #include "ngspice/mifproto.h"
 
-/*saj for output */
 #include "ngspice/sim.h"
 #include "ngspice/dvec.h"
-//#include "ftedata.h"
-//#include "fteconstant.h"
-//#include "util.h"
 #include "ngspice/cpstd.h"
 
+
+/* Parse member qualifier from node name and find node index.
+ * The node name may be qualified by a member name for nodes with
+ * composite values such as Digital_t, as in "node_name(state)".
+ */
+
+int Evt_Parse_Node(const char *node, struct node_parse *result)
+{
+    Evt_Ckt_Data_t   *evt;
+    CKTcircuit       *ckt;
+    Evt_Node_Info_t **node_table;
+    char             *name, *ptr;
+    int               i, num_nodes;
+
+    ckt = g_mif_info.ckt;
+    if (!ckt)
+        return -1;
+    evt = ckt->evt;
+    if (!evt)
+        return -1;
+    if (!evt->info.node_table)
+        return -1;
+    if (evt->counts.num_nodes == 0)
+        return -1;
+
+    /* Make a copy of the node name.  Do not free this string. */
+
+    name = MIFcopy((char *)node);
+
+    /* Convert to all lower case */
+
+    strtolower(name);
+
+    /* Divide into the node name and member name */
+
+    result->node = name;
+    for (ptr = name; *ptr != '\0'; ptr++)
+        if (*ptr == '(')
+            break;
+
+    if (*ptr == '(') {
+        *ptr = '\0';
+        ptr++;
+        result->member = ptr;
+        for( ; *ptr != '\0'; ptr++)
+            if (*ptr == ')')
+                break;
+        *ptr = '\0';
+    } else {
+        result->member = NULL;
+    }
+
+    /* Look for node name in the event-driven node list */
+
+    node_table = evt->info.node_table;
+    num_nodes = evt->counts.num_nodes;
+
+    for (i = 0; i < num_nodes; i++) {
+        if (cieq(name, node_table[i]->name))
+            break;
+    }
+    if (i >= num_nodes) {
+        tfree(name);
+        return -1;
+    }
+    return i;
+}
 
 /*
 
@@ -79,21 +142,17 @@ keyword "all" is supplied to the plot_val routine for the member name.
 struct dvec *EVTfindvec(
     char *node)  /* The node name (and optional member name) */
 {
-  char *name;
-  char *member = "all";
-  char *ptr;
+  char              *name;
+  struct node_parse  result;
+  int                index, i;
+  int                udn_index;
+  int                num_events;
 
-  int  i;
-  int  num_nodes;
-  int  udn_index;
-  int  num_events;
-
-  Mif_Boolean_t     found;
-  Evt_Ckt_Data_t   *evt;
-  CKTcircuit       *ckt;
-  Evt_Node_Info_t **node_table;
-  Evt_Node_t       *head;
-  Evt_Node_t       *event;
+  Evt_Ckt_Data_t    *evt;
+  CKTcircuit        *ckt;
+  Evt_Node_Info_t   *node_info;
+  Evt_Node_t        *head;
+  Evt_Node_t        *event;
  
   double *anal_point_vec;
   double *value_vec;
@@ -105,67 +164,26 @@ struct dvec *EVTfindvec(
   /* Exit immediately if event-driven stuff not allocated yet, */
   /* or if number of event nodes is zero. */
 
+  index = Evt_Parse_Node(node, &result);
+  if (index < 0)
+      return NULL;
+  name = result.node;
   ckt = g_mif_info.ckt;
-  if(! ckt)
-    return(NULL);
   evt = ckt->evt;
-  if(! evt)
-    return(NULL);
-  if(! evt->info.node_table)
-    return(NULL);
-  if(evt->counts.num_nodes == 0)
-    return(NULL);
 
-  /* Make a copy of the node name. */
-  /* Do not free this string.  It is assigned into the dvec structure below. */
-  name = MIFcopy(node);
-
-  /* Convert to all lower case */
-  strtolower(name);
-
-  /* Divide into the node name and member name */
-  for(ptr = name; *ptr != '\0'; ptr++)
-    if(*ptr == '(')
-      break;
-
-  if(*ptr == '(') {
-    *ptr = '\0';
-    ptr++;
-    member = ptr;
-    for( ; *ptr != '\0'; ptr++)
-      if(*ptr == ')')
-        break;
-    *ptr = '\0';
-  }
-
-  /* Look for node name in the event-driven node list */
-  num_nodes = evt->counts.num_nodes;
-  node_table = evt->info.node_table;
-
-  for(i = 0, found = MIF_FALSE; i < num_nodes; i++) {
-    if(cieq(name, node_table[i]->name)) {
-      found = MIF_TRUE;
-      break;
-    }
-  }
-
-  if(! found) {
+  if (!evt->data.node) {
     tfree(name);
-    return(NULL);
+    return NULL;
   }
 
   /* Get the UDN type index */
-  udn_index = node_table[i]->udn_index;
 
-  if (!evt->data.node) {
-//    fprintf(stderr, "Warning: No event data available! \n   Simulation not yet run?\n");
-    tfree(name);
-    return(NULL);
-  }
+  node_info = evt->info.node_table[index];
+  udn_index = node_info->udn_index;
 
   /* Count the number of events */
-  head = evt->data.node->head[i];
 
+  head = evt->data.node->head[index];
   for(event = head, num_events = 0; event; event = event->next)
     num_events++;
 
@@ -187,9 +205,9 @@ struct dvec *EVTfindvec(
 
     /* Get the next value by calling the appropriate UDN plot_val function */
     value = 0.0;
-    g_evt_udn_info[udn_index]->plot_val (event->node_value,
-                                              member,
-                                              &value);
+    g_evt_udn_info[udn_index]->plot_val(event->node_value,
+                                        result.member ? result.member : "all",
+                                        &value);
 
     /* Put the first value of the horizontal line in the vector */
     anal_point_vec[i] = event->step;
@@ -206,8 +224,7 @@ struct dvec *EVTfindvec(
   /* Allocate dvec structures and assign the vectors into them. */
   /* See FTE/OUTinterface.c:plotInit() for initialization example. */
 
-  ptr = tprintf("%s_steps", name);
-  scale = dvec_alloc(ptr,
+  scale = dvec_alloc(tprintf("%s_steps", name),
                      SV_TIME,
                      (VF_REAL | VF_EVENT_NODE) & ~VF_PERMANENT,
                      i, anal_point_vec);

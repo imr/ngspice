@@ -136,6 +136,28 @@ bool Evtcheck_nodes(
     struct INPtables   *stab);           /* Symbol table. */
 
 struct dvec *EVTfindvec(char *node);
+
+/* Set and remove call-backs on new node values. */
+
+Mif_Boolean_t EVTnew_value_call(const char         *node,
+                                Evt_New_Value_Cb_t  fn,
+                                Evt_Node_Cb_Type_t  type,
+                                void               *ctx);
+
+void EVTcancel_value_call(const char         *node,
+                          Evt_New_Value_Cb_t  fn,
+                          void               *ctx);
+
+/* Internal utility functions. */
+
 void Evt_purge_free_outputs(void);
 
+/* Parse a node name with member and find the node index. */
+
+struct node_parse {
+    char            *node;
+    char            *member;
+};
+
+int Evt_Parse_Node(const char *node, struct node_parse *result);
 #endif

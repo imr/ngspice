@@ -167,10 +167,12 @@ Evt_Node_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Node_Data_t *node_data)
 
     for (i = 0; i < evt->counts.num_nodes; i++) {
         Evt_Node_Info_t *info = evt->info.node_table[i];
-        Evt_Node_t *node;
+        Evt_Node_t      *node;
+
         node = node_data->head[i];
         while (node) {
             Evt_Node_t *next = node->next;
+
             Evt_Node_destroy(info, node);
             tfree(node);
             node = next;
@@ -178,6 +180,7 @@ Evt_Node_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Node_Data_t *node_data)
         node = node_data->free[i];
         while (node) {
             Evt_Node_t *next = node->next;
+
             Evt_Node_destroy(info, node);
             tfree(node);
             node = next;
@@ -193,6 +196,7 @@ Evt_Node_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Node_Data_t *node_data)
 
     for (i = 0; i < evt->counts.num_nodes; i++) {
         Evt_Node_Info_t *info = evt->info.node_table[i];
+
         Evt_Node_destroy(info, &(node_data->rhs[i]));
         Evt_Node_destroy(info, &(node_data->rhsold[i]));
     }
@@ -287,6 +291,7 @@ static void
 Evt_Info_destroy(Evt_Info_t *info)
 {
     Evt_Inst_Info_t *inst = info->inst_list;
+
     while (inst) {
         Evt_Inst_Info_t *next_inst = inst->next;
         tfree(inst);
@@ -295,14 +300,24 @@ Evt_Info_destroy(Evt_Info_t *info)
     tfree(info->inst_table);
 
     Evt_Node_Info_t *nodei = info->node_list;
+
     while (nodei) {
         Evt_Node_Info_t *next_nodei = nodei->next;
+        Evt_Node_Cb_t   *cb, *cb_next;
+
         tfree(nodei->name);
+        for (cb = nodei->cbs; cb; cb = cb_next) {
+            cb_next = cb->next;
+            if (cb->member)
+                txfree(cb->member);
+            tfree(cb);
+        }
 
         Evt_Inst_Index_t *p = nodei->inst_list;
+
         while (p) {
             Evt_Inst_Index_t *next_p = p->next;
-            tfree(p);
+            txfree(p);
             p = next_p;
         }
 

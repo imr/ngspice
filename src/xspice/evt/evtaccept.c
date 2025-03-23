@@ -45,6 +45,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/mif.h"
 #include "ngspice/evt.h"
+#include "ngspice/evtudn.h"
 #include "ngspice/evtproto.h"
 
 
@@ -160,10 +161,54 @@ void EVTaccept(
     num_modified = node_data->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
+        Evt_Node_t      *this;
+        Evt_Node_Info_t *node_info;
+        Evt_Node_Cb_t   *cb, **cbpp;
+        int              udn_index;
+
         /* Get the index of the node modified */
         index = node_data->modified_index[i];
         /* Reset the modified flag */
         node_data->modified[index] = MIF_FALSE;
+
+        /* Call any value-change functions registered for this node. */
+
+        node_info = node_table[index];
+        udn_index = node_info->udn_index;
+
+        cbpp = &node_info->cbs;
+        for (;;) {
+            Mif_Value_t val;
+
+            cb = *cbpp;
+            if (cb == NULL)
+                break;
+
+            for (this = *node_data->last_step[index];
+                 this;
+                 this = this->next) {
+                switch (cb->type) {
+                case Evt_Cbt_Raw:
+                    val.pvalue = this->node_value;
+                    break;
+                case Evt_Cbt_Plot:
+                    g_evt_udn_info[udn_index]->plot_val(this->node_value,
+                                                        (char *)cb->member,
+                                                        &val.rvalue);
+                    break;
+                }
+
+                if ((*cb->fn)(this->step, &val, cb->ctx, !this->next)) {
+                    /* Remove callback from chain. */
+
+                    *cbpp = cb->next;
+                    txfree(cb);
+                    break;
+                }
+            }
+            if (this == NULL)   // Normal loop exit.
+                cbpp = &cb->next;
+        }
 
         /* Optionally store node values for later examination.
          * The test of CKTtime here is copied from dctran.c.
@@ -171,7 +216,7 @@ void EVTaccept(
          * command or card.
          */
 
-        if (node_table[index]->save && ckt->CKTtime >= ckt->CKTinitTime &&
+        if (node_info->save && ckt->CKTtime >= ckt->CKTinitTime &&
             (ckt->CKTtime > 0 || !(ckt->CKTmode & MODEUIC))) {
             /* Update last_step for this index */
             node_data->last_step[index] = node_data->tail[index];
@@ -239,3 +284,77 @@ void EVTaccept(
 } /* EVTaccept */
 
 
+/* Functions to set-up and cancel value-changed callbacks. */
+
+Mif_Boolean_t EVTnew_value_call(const char         *node,
+                                Evt_New_Value_Cb_t  fn,
+                                Evt_Node_Cb_Type_t  type,
+                                void               *ctx)
+{
+    struct node_parse  result;
+    int                index;
+
+    Evt_Ckt_Data_t    *evt;
+    CKTcircuit        *ckt;
+    Evt_Node_Info_t   *node_info;
+    Evt_Node_Cb_t     *cb;
+
+    index = Evt_Parse_Node(node, &result);
+    if (index < 0)
+        return MIF_FALSE;
+    ckt = g_mif_info.ckt;
+    evt = ckt->evt;
+    node_info = evt->info.node_table[index];
+    cb = tmalloc(sizeof *cb);
+    cb->next = node_info->cbs;
+    node_info->cbs = cb;
+    cb->fn = fn;
+    cb->type = type;
+    cb->member = copy(result.member);
+    cb->ctx = ctx;
+    txfree(result.node);
+    return MIF_TRUE;
+}
+
+void EVTcancel_value_call(const char         *node,
+                          Evt_New_Value_Cb_t  fn,
+                          void               *ctx)
+{
+    Evt_Ckt_Data_t    *evt;
+    CKTcircuit        *ckt;
+    Evt_Node_Info_t  **node_table, *node_info;
+    Evt_Node_Cb_t    **cbpp, *cb;
+    int                i, num_nodes;
+
+    ckt = g_mif_info.ckt;
+    if (!ckt)
+        return;
+    evt = ckt->evt;
+    if (!evt)
+        return;
+
+    /* Look for node name in the event-driven node list */
+
+    node_table = evt->info.node_table;
+    num_nodes = evt->counts.num_nodes;
+
+    for (i = 0; i < num_nodes; i++) {
+        if (cieq(node, node_table[i]->name))
+            break;
+    }
+    if (i >= num_nodes)
+        return;
+
+    node_info = node_table[i];
+    cbpp = &node_info->cbs;
+    cb = node_info->cbs;
+    while (cb) {
+        if (cb->fn == fn && cb->ctx == ctx) {
+            *cbpp = cb->next;
+            tfree(cb);
+        } else {
+            cbpp = &cb->next;
+        }
+        cb = *cbpp;
+    }
+}

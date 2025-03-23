@@ -330,6 +330,7 @@ static void EVTnode_insert(
         node->name = MIFcopy(node_name);
         node->udn_index = udn_index;
         node->save = MIF_TRUE; /* Backward compatible behaviour: save all. */
+        node->cbs = NULL;
         index = ckt->evt->counts.num_nodes;
         (ckt->evt->counts.num_nodes)++;
     }
