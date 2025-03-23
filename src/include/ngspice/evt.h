@@ -78,6 +78,14 @@ struct Evt_Inst_Index {
     int                      index;     /* the value of the index */
 };
 
+struct Evt_Node_Cb {
+    struct Evt_Node_Cb  *next;
+    Evt_New_Value_Cb_t   fn;           /* Function to be called. */
+    Evt_Node_Cb_Type_t   type;         /* Data type to pass to fn. */
+    const char          *member;       /* For event data type's plot fn. */
+    void                *ctx;
+};
+
 struct Evt_Node_Info {
     Evt_Node_Info_t   *next;           /* the next in the linked list */
     char              *name;           /* Name of node in deck */
@@ -88,6 +96,7 @@ struct Evt_Node_Info {
     int               num_outputs;     /* Number of outputs connected to this node */
     int               num_insts;       /* The number of insts receiving node as input */
     Evt_Inst_Index_t  *inst_list;      /* Linked list of indexes of these instances */
+    Evt_Node_Cb_t     *cbs;            /* New value callbacks. */
 };
 
 struct Evt_Inst_Info {
@@ -195,8 +204,6 @@ struct Evt_Queue {
 /* ************** */
 
 
-
-
 struct Evt_Node {
     Evt_Node_t       *next;           /* pointer to next in linked list */
     Mif_Boolean_t    op;              /* true if computed from op analysis */
@@ -204,6 +211,7 @@ struct Evt_Node {
     void             **output_value;  /* Array of outputs posted to this node */
     void             *node_value;     /* Resultant computed from output values */
     void             *inverted_value; /* Inverted copy of node_value */
+
 };
 
 struct Evt_Node_Data {
@@ -361,7 +369,5 @@ struct Evt_Ckt_Data {
     Evt_Job_t       jobs;           /* Data held from multiple job runs */
     Evt_Option_t    options;        /* Data input on .options cards */
 };
-
-
 
 #endif
