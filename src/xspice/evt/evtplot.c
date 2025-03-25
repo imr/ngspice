@@ -114,6 +114,7 @@ int Evt_Parse_Node(const char *node, struct node_parse *result)
         tfree(name);
         return -1;
     }
+    result->udn_index = node_table[i]->udn_index;
     return i;
 }
 

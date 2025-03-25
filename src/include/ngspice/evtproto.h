@@ -148,16 +148,18 @@ void EVTcancel_value_call(const char         *node,
                           Evt_New_Value_Cb_t  fn,
                           void               *ctx);
 
-/* Internal utility functions. */
-
-void Evt_purge_free_outputs(void);
-
-/* Parse a node name with member and find the node index. */
+/* Parse a node name with member and return the node index and type. */
 
 struct node_parse {
     char            *node;
     char            *member;
+    int              udn_index;
 };
 
 int Evt_Parse_Node(const char *node, struct node_parse *result);
+
+/* Internal utility functions. */
+
+void Evt_purge_free_outputs(void);
+
 #endif
