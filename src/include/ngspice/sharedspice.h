@@ -357,6 +357,18 @@ typedef int (SendInitEvtData)(int, int, char*, char*, int, void*);
    int         identification number of calling ngspice shared lib
    void*       return pointer received from caller
 */
+
+/* Upon time step finished, all events that occurred on a node.
+ * A non-zero return value cancels further reports for tis node.
+ */
+
+typedef int (SendRawEvtData)(double, void *, void *, int);
+/*
+   double      event time
+   void*       pointer to the node's value (a Digital_t for digital nodes)
+   void*       return pointer received from caller
+   int         zero if another event report for the same node follows
+*/
 #endif
 
 /* ngspice initialization,
@@ -415,6 +427,32 @@ userData: pointer to user-defined data, will not be modified, but
 handed over back to caller during Callback, e.g. address of calling object */
 IMPEXP
 int  ngSpice_Init_Evt(SendEvtData* sevtdata, SendInitEvtData* sinitevtdata, void* userData);
+
+/* Request callback for every event on a specific XSPICE event node.
+ * A single callback function pointer is stored, with all calls directed
+ * to the function specified last.
+ * The return value identifies the node data type or is -1 on error.
+ *
+ *  node        name of an event node.
+ *  srawevt     pointer to callback function.
+ *  userData    pointer to user-defined data.
+ */
+
+IMPEXP
+int ngSpice_Raw_Evt(const char* node, SendRawEvtData* srawevt, void* userData);
+
+/* Decode raw event node data.  Return 0 on success.
+ *  evt         pointer to event data (a reported node value).
+ *  type        node type index, return value from ngSpice_Raw_Evt().
+ *  pplotval    pointer to a double, the "plotting value" is returned. NULL OK.
+ *  printval    pointer to a char pointer that is updated to point to a
+ *              readonly string describing the value. If evt is NULL, a string
+ *              identifying the node data type is returned.  NULL is OK.
+ */
+
+IMPEXP
+int ngSpice_Decode_Evt(void* evt, int type,
+                       double *pplotval, const char **pprintval);
 #endif
 
 
