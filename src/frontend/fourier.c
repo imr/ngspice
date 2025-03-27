@@ -50,6 +50,7 @@ fourier(wordlist *wl, struct plot *current_plot)
     char xbuf[20];
     int shift;
     int rv = 1;
+    bool foursave = TRUE;
 
     struct dvec *n;
     int newveccount = 1;
@@ -71,6 +72,8 @@ fourier(wordlist *wl, struct plot *current_plot)
         polydegree = 1;
     if (!cp_getvar("fourgridsize", CP_NUM, &fourgridsize, 0) || fourgridsize < 1)
         fourgridsize = DEF_FOURGRIDSIZE;
+    if (cp_getvar("fournosave", CP_BOOL, NULL, 0))
+        foursave = FALSE;
 
     time = current_plot->pl_scale;
     if (!isreal(time)) {
@@ -188,34 +191,48 @@ fourier(wordlist *wl, struct plot *current_plot)
             }
             fputs("\n", cp_out);
 
-            /* create and assign a new vector n */
-            /* with size 3 * nfreqs in current plot */
-            /* generate name for new vector, using vec->name */
-            n = dvec_alloc(tprintf("fourier%d%d", callstof, newveccount),
-                           SV_NOTYPE,
-                           VF_REAL | VF_PERMANENT,
-                           3 * nfreqs, NULL);
+            if (foursave) {
+                /* create a vector for THD */
+                n = dvec_alloc(tprintf("thd%d%d", callstof, newveccount),
+                    SV_NOTYPE,
+                    VF_REAL | VF_PERMANENT,
+                    1, NULL);
 
-            n->v_numdims = 2;
-            n->v_dims[0] = 3;
-            n->v_dims[1] = nfreqs;
+                n->v_numdims = 1;
 
-            vec_new(n);
+                vec_new(n);
 
-            /* store data in vector: freq, mag, phase */
-            for (i = 0; i < nfreqs; i++) {
-                n->v_realdata[i] = freq[i];
-                n->v_realdata[i + nfreqs] = mag[i];
-                n->v_realdata[i + 2 * nfreqs] = phase[i];
+                n->v_realdata[0] = thd;
+
+                /* create and assign a new vector n */
+                /* with size 3 * nfreqs in current plot */
+                /* generate name for new vector, using vec->name */
+                n = dvec_alloc(tprintf("fourier%d%d", callstof, newveccount),
+                    SV_NOTYPE,
+                    VF_REAL | VF_PERMANENT,
+                    3 * nfreqs, NULL);
+
+                n->v_numdims = 2;
+                n->v_dims[0] = 3;
+                n->v_dims[1] = nfreqs;
+
+                vec_new(n);
+
+                /* store data in vector: freq, mag, phase */
+                for (i = 0; i < nfreqs; i++) {
+                    n->v_realdata[i] = freq[i];
+                    n->v_realdata[i + nfreqs] = mag[i];
+                    n->v_realdata[i + 2 * nfreqs] = phase[i];
+                }
+                newveccount++;
+
+                if (polydegree) {
+                    tfree(timescale);
+                    tfree(data);
+                }
+                timescale = NULL;
+                data = NULL;
             }
-            newveccount++;
-
-            if (polydegree) {
-                tfree(timescale);
-                tfree(data);
-            }
-            timescale = NULL;
-            data = NULL;
         }
     }
 

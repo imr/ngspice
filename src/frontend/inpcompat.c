@@ -751,9 +751,9 @@ struct card *pspice_compat(struct card *oldcard)
 
     /* .model xxx NMOS/PMOS level=6 --> level = 8,  version=3.2.4
        .model xxx NMOS/PMOS level=7 --> level = 8,  version=3.2.4
-       .model xxx NMOS/PMOS level=5 --> level = 44
+       .model xxx NMOS/PMOS level=5 --> only available per Veriloga, OpenVAF and OSDI
        .model xxx NMOS/PMOS level=8 --> level = 14, version=4.5.0
-       .model xxx NPN/PNP   level=2 --> level = 6
+       .model xxx NPN/PNP   level=2 --> only available per Veriloga, OpenVAF and OSDI
        .model xxx LPNP      level=n --> level = 1 subs=-1
        Remove any Monte - Carlo variation parameters from .model cards.*/
     for (card = newcard; card; card = card->nextcard) {
@@ -783,10 +783,11 @@ struct card *pspice_compat(struct card *oldcard)
                     switch (ll) {
                     case 5:
                         {
-                        /* EKV 2.6 in the adms branch */
-                        char* newline = tprintf(".model %s %s level=44 %s", modname, modtype, lv);
-                        tfree(card->line);
-                        card->line = curr_line = newline;
+                        /* EKV 2.6 only per OSDI and OpenVAF */
+                        fprintf(stderr, "Error: MOS model level 5, EKV 2.6, is not available as an intrinsic model.\n");
+                        fprintf(stderr, "    Please consider using a Verilog-A model, OpenVAF compilation,\n");
+                        fprintf(stderr, "    and the ngspice OSDI interface (see ngspice manual chapter 9).\n");
+                        controlled_exit(EXIT_BAD);
                         }
                         break;
                     case 6:
@@ -822,10 +823,11 @@ struct card *pspice_compat(struct card *oldcard)
                     switch (ll) {
                     case 2:
                         {
-                        /* MEXTRAM 504.12.1 in the adms branch */
-                        char* newline = tprintf(".model %s %s level=6 %s", modname, modtype, lv);
-                        tfree(card->line);
-                        card->line = curr_line = newline;
+                        /* MEXTRAM 504.12.1 only per OSDI and OpenVAF */
+                        fprintf(stderr, "Error: Bipolar model level 2, MEXTRAM 504.12.1, is not available as an intrinsic model.\n");
+                        fprintf(stderr, "    Please consider using a Verilog-A model, OpenVAF compilation,\n");
+                        fprintf(stderr, "    and the ngspice OSDI interface (see ngspice manual chapter 9).\n");
+                        controlled_exit(EXIT_BAD);
                         }
                         break;
                     default:
