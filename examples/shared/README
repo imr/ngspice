@@ -1,0 +1,93 @@
+This directory contains the source code (shx.c) for a simple utility
+for exercising the Ngspice shared library API.  The path to the ngspice
+include file directory must be specified when compiling.  When compiling
+in a complete source tree:
+
+cc -I../../src/include/ngspice -o shx shx.c
+
+or for Windows with VisualC++:
+
+CL.EXE /O2 /I..\..\src\include\ngspice shx.c
+
+If a shared library binary package is installed, the inclusion option
+may be unnecessary.
+
+When run, the program dynamically loads the shared library.  It is assumed to
+be located in the current directory (./libngspice.so or libngspice.DLL).
+The full path to the library may be specified by the "-l" option, so if the
+library was built by the usual method:
+
+./shx -l ../../releasesh/src/.libs/libngspice.so
+
+or
+
+shx -l ..\..\visualc\sharedspice\Release.x64\ngspice.dll
+
+If the '-a" option is given, the program exercises some example circuits
+and exits.  That assumes that the current directory is the one containing this
+file.  Otherwise the program is interactive and prompts for a command.
+If the input line starts with "/" an internal command for exercising the API
+will be executed.  Other lines are passed to the shared library's command
+interpreter.
+
+These internal commands are available:
+
+  /avec <plot_name>
+    Lists the vectors in the named plot, using ngSpice_AllVecs().
+  /aevt
+    Lists all XSPICE event nodes, using ngSpice_AllEvtNodes().
+  /aplot
+    Lists all plot names, using ngSpice_AllPlots().
+  /bgr
+    Shows the state of the background thread, using ngSpice_running().
+  /cplot
+    Show the name of the current plot, using ngSpice_CurPlot().
+  /dlim <limit>
+    To reduce repetitive output, this command sets a limit for the number
+    of SendData callbacks that will be reported.  The parameter should be
+    a positive integer, 0 to report all, or -1 for unlimited output.
+    The initial value is 10.
+  /elim <limit>
+    Like /dlim but for XSPICE event data callbacks.
+  /help
+    Shows a summary of minternal commands.
+  /lvals
+    Toggles a flag that causes all node values to be listed for
+      SendData callbacks.
+  /reset
+    Resets Ngspice (call to ngSpice_Reset()) and internal variables.
+  /sask
+    Toggles a flag that control interactive prompting for
+    EXTERNAL source values.  As a special case, the /sask command
+    is accepted at the prompt.
+  /slim <limit>
+    Like /dlim, but sets an independent limit for reporting callbacks that
+      request an new value for EXTERNAL sources.
+  /sramp [new_val] [interval end_val]
+    Stores data used to genarate an automatic response to EXTERNAL queries.
+      A single parameter sets a new value for the future (step change),
+      two values define a ramp to a specified value at a future time,
+      three values do both.  If there is more than one such source, the same
+      value is used for all.
+  /vec <vector>
+    Query a spacific data vector, using ngSpice_GVI().
+  /xnode <node ...>
+    Requests raw event callbacks for an event node. That reports all node
+      events, not just the value when a timestep ends.  Uses ngSpice_Raw_Evt().
+
+
+Also found here are an example circuit, t.cir, with analog and event nodes
+and an EXTERNAL voltage source.  File t.shx contains inputs to shx that
+run the circuit and use most of the internal commands.  Run as:
+
+./shx < t.shx
+
+or for Windows
+
+shx < t.txt
+
+To view the results, run Ngspice as a program and enter:
+
+ load t.raw
+ plot v(ctl) v(div)
+
