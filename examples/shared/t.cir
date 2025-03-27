@@ -1,0 +1,34 @@
+Simple test circuit for shx program.
+* A typical command sequence in shx:
+*  t1.cir
+*  /lvals
+*  /aevt
+*  /elim 20
+*  /dlim 20
+*  /slim 20
+*  /xnode clk div
+*  run
+
+* d_osc controlled by EXTERNAL source
+
+vext ctl 0 0 external
+aosc ctl clk osc
+.model osc d_osc cntl_array = [0 20] freq_array = [ 100k 1meg ]
+
+# Divide  by three so there will be multiple transitions, reported by /aevt
+# within each time-step.
+
+adiv clk div div
+.model div d_fdiv div_factor = 3
+
+* Add a resistor to convert to analogue and force breakpoints.
+
+r div 0 100
+
+* Use .tran so that /xnode commands can be given after loading.
+* Set maximum time step above div cycle time, so breakpoints control
+* time steps.  Long run time to overcome the 50 steps minimum.
+
+.tran 4u 201u
+
+.end
