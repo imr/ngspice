@@ -146,6 +146,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     bool saveall  = TRUE;
     bool savealli = FALSE;
     bool savenosub = FALSE;
+    bool savenointernals = FALSE;
     char *an_name;
     int initmem;
     /*to resume a run saj
@@ -223,6 +224,13 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     saves[i].used = 1;
                     continue;
                 }
+
+                if (cieq(saves[i].name, "nointernals")) {
+                    savenointernals = TRUE;
+                    savesused[i] = TRUE;
+                    saves[i].used = 1;
+                    continue;
+                }
 #ifdef SHARED_MODULE
                 /* this may happen if shared ngspice*/
                 if (cieq(saves[i].name, "none")) {
@@ -255,7 +263,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
 
         /* Pass 1. */
-        if (numsaves && !saveall && !savenosub) {
+        if (numsaves && !saveall && !savenosub && !savenointernals) {
             for (i = 0; i < numsaves; i++) {
                 if (!savesused[i]) {
                     for (j = 0; j < numNames; j++) {
@@ -278,15 +286,20 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         } else {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
-                    /*  Save the node as long as it's not an internal device node  */
-                    if (!(savenosub && strchr(dataNames[i], '.')) && /* don't save subckt nodes */
+                    /*  Save the node (with restrictions) */
+                        /* don't save subckt nodes */
+                    if (!(savenosub && strchr(dataNames[i], '.')) &&
+                        /* no internals at all, but still #branch */
+                        (!(savenointernals && strstr(dataNames[i], "#")) || strstr(dataNames[i], "#branch")) &&
+                        /* created by .probe */
+                        !strstr(dataNames[i], "probe_int_") &&
+                        /* don't save internal device nodes */
                         !strstr(dataNames[i], "#internal") &&
                         !strstr(dataNames[i], "#source") &&
                         !strstr(dataNames[i], "#drain") &&
                         !strstr(dataNames[i], "#collector") &&
                         !strstr(dataNames[i], "#collCX") &&
                         !strstr(dataNames[i], "#emitter") &&
-                        !strstr(dataNames[i], "probe_int_") && /* created by .probe */
                         !strstr(dataNames[i], "#base"))
                     {
                         addDataDesc(run, dataNames[i], dataType, i, initmem);
