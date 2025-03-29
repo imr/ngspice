@@ -2471,8 +2471,14 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
                step if return value from getsync is 1. */
             int retval = getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
             /* never move beyond final time */
-            if (*pckttime + *pcktdelta > finalt)
-                *pcktdelta = finalt - *pckttime - 1.1 * delmin;
+            if (*pckttime + *pcktdelta > finalt) {
+                double newdelta;
+
+                newdelta = finalt - *pckttime - 1.1 * delmin;
+                if (newdelta <= 0.0)
+                    newdelta = finalt - *pckttime;
+                *pcktdelta = newdelta;
+            }
 
             /* user has decided to redo the step, ignoring redostep being set to 0
             by ngspice. */
