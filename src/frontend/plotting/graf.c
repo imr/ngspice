@@ -162,7 +162,6 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
 
     /* restore background color from previous graph, e.g. for zooming,
        it will be used in NewViewport(graph) */
-
     if (prevgraph > 0) {
         pgraph = FindGraph(prevgraph);
         if (pgraph)
@@ -958,7 +957,7 @@ static int iplot(struct plot *pl, struct dbcomm *db)
         for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (v->v_flags & VF_PLOT) {
                 gr_start_internal(v, FALSE);
-                ft_graf(v, xs, TRUE);
+                ft_graf(v, v->v_scale ? v->v_scale : xs, TRUE);
             }
         }
         inited = 1;
@@ -1119,7 +1118,7 @@ static int iplot(struct plot *pl, struct dbcomm *db)
                         last = v->v_length - 1;
 
                         if (len > 2 &&
-                            v->v_scale->v_realdata[last] <
+                            v->v_scale->v_realdata[last] <=
                                 xs->v_realdata[len - 1]) {
                             /* No recent additions to this vector:
                              * draw/extend horizontal line showing last value.
@@ -1202,16 +1201,22 @@ static void setflag(struct plot *plot, struct dbcomm *db,
     }
 
     for (dc = db; dc; dc = dc->db_also) {
-        if (dc->db_nodename1 == NULL)
-            continue;
-        v = vec_fromplot(dc->db_nodename1, plot);
-        if (!v || v->v_plot != plot) {
-            if (!eq(dc->db_nodename1, "0") && value) {
-                fprintf(cp_err, "Warning: node %s non-existent in %s.\n",
-                        dc->db_nodename1, plot->pl_name);
-                /* note: XXX remove it from dbs, so won't get further errors */
+        if (db->db_type == DB_IPLOT) { /* Vector cached in db_nodename2. */
+            v = (struct dvec *)dc->db_nodename2;
+            if (!v)
+                continue;
+        } else {
+            if (dc->db_nodename1 == NULL)
+                continue;
+            v = vec_fromplot(dc->db_nodename1, plot);
+            if (!v || v->v_plot != plot) {
+                if (!eq(dc->db_nodename1, "0") && value) {
+                    fprintf(cp_err, "Warning: node %s non-existent in %s.\n",
+                            dc->db_nodename1, plot->pl_name);
+                    /* note: XXX remove it from dbs, so no further errors. */
+                }
+                continue;
             }
-            continue;
         }
         if (value)
             v->v_flags |= mode;
@@ -1258,13 +1263,12 @@ static Mif_Boolean_t new_event(double when, Mif_Value_t *val,
 {
     struct dbcomm *db = (struct dbcomm *)ctx;
     struct dvec   *v;
+    double         value;
     int            last;
 
     if (db->db_type == DB_DEADIPLOT)
         return MIF_TRUE;
-    v = vec_fromplot(db->db_nodename1, plot_cur);
-    if (!v || !v->v_scale)
-        return MIF_TRUE;
+    v = (struct dvec *)db->db_nodename2;        // Struct member re-use.
 
     /* Extend vectors. */
 
@@ -1272,7 +1276,8 @@ static Mif_Boolean_t new_event(double when, Mif_Value_t *val,
     AddRealValueToVector(v->v_scale, when);
     AddRealValueToVector(v->v_scale, when);
     AddRealValueToVector(v, v->v_realdata[last]);
-    AddRealValueToVector(v, val->rvalue);
+    value = val->rvalue + db->db_value2;        // Apply any plotting offset.
+    AddRealValueToVector(v, value);
 
     if (db->db_graphid) {
         GRAPH *gr;
@@ -1286,20 +1291,21 @@ static Mif_Boolean_t new_event(double when, Mif_Value_t *val,
             gr_point(v, when, v->v_realdata[last],
                      v->v_scale->v_realdata[last], v->v_realdata[last],
                      last > 0);
-            gr_point(v, when, val->rvalue, when, v->v_realdata[last], 1);
+            gr_point(v, when, value, when, v->v_realdata[last], 1);
             if (is_last) {
                 struct dvec *xs;
 
                 /* Extend horizontally to the end of the time-step. */
 
                 xs = v->v_plot->pl_scale;
-                gr_point(v, xs->v_realdata[xs->v_length - 1], val->rvalue,
-                         when, val->rvalue, 1);
+                gr_point(v, xs->v_realdata[xs->v_length - 1], value,
+                         when, value, 1);
             }
             LC_flush();
 #ifdef LINE_COMPRESSION_CHECKS
             LC.dv = NULL;  // ... and suppress warnings.
 #endif
+            DevUpdate();
             PopGraphContext();
         }
     }
@@ -1324,18 +1330,35 @@ void gr_iplot(struct plot *plot)
     for (db = dbs; db; db = db->db_next) {
         if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
 #ifdef XSPICE
-            if (db->db_iteration == 0) {
+            if (db->db_iteration > 0) {
+                double         event_node_offset = 0, event_node_spacing;
                 struct dvec   *v;
 
-                /* First call: find any XSPICE event nodes in the node
+                /* First call: set up event nodes spacing. */
+
+                if (db->db_iteration == DB_AUTO_OFFSET) {
+                    /* Magic value: automatically offset traces for
+                     *event nodes.
+                     */
+
+                    if (!cp_getvar("event_node_spacing", CP_REAL,
+                                   &event_node_spacing, 0)) {
+                        event_node_spacing = 1.5;
+                    }
+                } else {
+                    event_node_spacing = 0;
+                }
+
+                /* Find any XSPICE event nodes in the node
                  * list and set up plotting.  There is a parallel path
                  * for pushing new event values into their corresponding
                  * vectors and plotting them.
                  */
 
                 for (dc = db; dc; dc = dc->db_also) {
-                    struct dbcomm *dd;
-                    int            dup = 0;
+                    struct  dbcomm *dd;
+                    char   *offp, save_sign;
+                    int     dup = 0;
 
                     if (dc->db_nodename1 == NULL)
                         continue;
@@ -1351,14 +1374,62 @@ void gr_iplot(struct plot *plot)
                     if (dup)
                         continue;
 
+                    /* Check for a nodename that is an expression. */
+
+                    offp = strchr(dc->db_nodename1, '+');
+                    if (!offp)
+                        offp = strchr(dc->db_nodename1, '-');
+                    if (offp > dc->db_nodename1) {
+                        save_sign = *offp;
+                        *offp = '\0';               // Trim to bare name.
+                    }
+
                     v = vec_fromplot(dc->db_nodename1, plot);
-                    if (!v) {
+                    if (v) {
+                        dc->db_nodename2 = (char *)v; // Save link to vector.
+                    } else {
                         fprintf(cp_err,
                                 "Warning: node %s non-existent in %s.\n",
                                 dc->db_nodename1, plot->pl_name);
                     }
 
                     if (v && (v->v_flags & VF_EVENT_NODE)) {
+                        /* Ask event simulator to call back with new values. */
+
+                        EVTnew_value_call(dc->db_nodename1, new_event,
+                                          Evt_Cbt_Plot, dc);
+
+                        if (offp > dc->db_nodename1) {
+                            *offp = save_sign;
+                            dc->db_value2 = atof(offp);  // Offset to value.
+                            event_node_offset =          // New auto-offset.
+                                dc->db_value2 + event_node_spacing;
+                        } else if (event_node_spacing) {
+                            char new_name[256];
+
+                            /* Add offset to vector names.
+                             * Ugly, but only here can event nodes
+                             * be identified.
+                             */
+
+                            snprintf(new_name, sizeof new_name, "%s+%g",
+                                     dc->db_nodename1, event_node_offset);
+                            tfree(v->v_name);
+                            v->v_name = copy(new_name);
+
+                            dc->db_value2 = event_node_offset;
+                            event_node_offset += event_node_spacing;
+                        }
+
+                        if (dc->db_value2) {
+                            int i;
+
+                            /* Adjust existing values. */
+
+                            for (i = 0; i < v->v_length; ++i)
+                                v->v_realdata[i] += dc->db_value2;
+                        }
+
                         if ((v->v_flags & VF_PERMANENT) == 0) {
                             vec_new(v);
                             v->v_flags |= VF_PERMANENT; // Make it findable.
@@ -1367,11 +1438,13 @@ void gr_iplot(struct plot *plot)
                                 vec_new(v->v_scale);
                             }
                         }
-                        EVTnew_value_call(dc->db_nodename1, new_event,
-                                          Evt_Cbt_Plot, dc);
+                    } else if (offp) {
+                        fprintf(stderr,
+                                "Offset (%s) ignored for analog node %s\n",
+                                offp, dc->db_nodename1);
                     }
                 }
-                db->db_iteration = 1;
+                db->db_iteration = 0;
             }
 #endif
             if (db->db_graphid) {
@@ -1486,6 +1559,7 @@ void gr_end_iplot(void)
 
     prev = NULL;
     for (db = dbs; db; prev = db, db = next) {
+        db->db_nodename2 = NULL; // Forget link.
         next = db->db_next;
         if (db->db_type == DB_DEADIPLOT) {
             if (db->db_graphid) {
@@ -1498,12 +1572,12 @@ void gr_end_iplot(void)
             }
         }
         else if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
-            db->db_iteration = 0; // Reset XSPICE event plotting
+            db->db_iteration = DB_NORMAL; // Reset XSPICE event plotting
             if (db->db_graphid) {
 
                 /* get private copy of dvecs */
-
                 graph = FindGraph(db->db_graphid);
+
                 link = graph->plotdata;
 
                 while (link) {
