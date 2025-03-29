@@ -854,11 +854,15 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
 
     /* Add n * spacing (e.g. 1.5) to digital event node based vectors */
     if (digitop) {
-        double spacing = 1.5;
+        double spacing;
         double nn = 0.;
         int ii = 0, jj = 0;
 
-        for (d = vecs; d; d = d->v_link2) {
+         if (!cp_getvar("plot_auto_spacing", CP_REAL, &spacing, 0) ||
+            spacing < 0.0) {
+            spacing = 1.5;
+        }
+       for (d = vecs; d; d = d->v_link2) {
             if ((d->v_flags & VF_EVENT_NODE) &&
                 !(d->v_flags & VF_PERMANENT) &&
                 d->v_scale && (d->v_scale->v_flags & VF_EVENT_NODE) &&
@@ -878,11 +882,11 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         if (!ylim) {
             ylim = TMALLOC(double, 2);
             ylim[0] = 0;
-            /* make ylim[1] a multiple of 2*1.5 */
+            /* make ylim[1] a multiple of 2 * spacing. */
             if (jj % 2 == 0)
                 ylim[1] = nn;
             else
-                ylim[1] = nn + 1.5;
+                ylim[1] = nn + spacing;
         }
         /* re-scaled plot */
         else {
