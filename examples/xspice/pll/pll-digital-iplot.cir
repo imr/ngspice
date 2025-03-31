@@ -1,0 +1,20 @@
+* pll circuit using xspice code models: version with iplot including
+* digital nodes.
+
+.include shared-pll-xspice.cir
+
+* An additional node to scale the analog signal.
+
+bdisplay controlX4 0 v=v(cont)*4
+
+.control
+save cont controlX4 s1 s2 u1n d1 v.xlf.vdd#branch; to save memory
+iplot -o controlx4 d_d+4.5 d_u
+tran 0.1n $&simtime uic
+rusage
+plot cont s1 s2+1.2 u1n+2.4 d1+3.6 xlimit 4u 5u
+plot v.xlf.vdd#branch xlimit 4u 5u ylimit -8m 2m
+*plot cont
+.endc
+
+.end
