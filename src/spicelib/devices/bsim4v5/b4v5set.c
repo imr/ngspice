@@ -1751,6 +1751,8 @@ BSIM4v5instance **InstArray;
                 here->BSIM4v5xgw = model->BSIM4v5xgw;
             if (!here->BSIM4v5ngconGiven)
                 here->BSIM4v5ngcon = model->BSIM4v5ngcon;
+            if (!here->BSIM4v5dtempGiven)
+                here->BSIM4v5dtemp = 0;
 
                     
             /* Process instance model selectors, some

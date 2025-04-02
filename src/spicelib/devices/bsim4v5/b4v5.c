@@ -49,6 +49,7 @@ IOPR( "delvt0", BSIM4v5_DELVTO,  IF_REAL   , "Zero bias threshold voltage variat
 IOP( "mulu0", BSIM4v5_MULU0, IF_REAL, "Low field mobility multiplier"),
 IOP( "xgw",  BSIM4v5_XGW, IF_REAL, "Distance from gate contact center to device edge"),
 IOP( "ngcon", BSIM4v5_NGCON, IF_REAL, "Number of gate contacts"),
+IOPU("dtemp", BSIM4v5_DTEMP, IF_REAL,    "Instance temperature difference"),
 
 
 IOP( "trnqsmod", BSIM4v5_TRNQSMOD, IF_INTEGER, "Transient NQS model selector"),
