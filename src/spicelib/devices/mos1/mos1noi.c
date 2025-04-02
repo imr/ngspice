@@ -145,9 +145,9 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                         N_GAIN, inst->MOS1dNodePrime, inst->MOS1sNodePrime,
                         (double) 0.0);
                     if (newcompat.s3) {
-                        noizDens[MOS1FLNOIZ] *= model->MOS1fNcoef *
+                        noizDens[MOS1FLNOIZ] *= inst->MOS1m * model->MOS1fNcoef *
                             exp(model->MOS1fNexp *
-                                log(MAX(fabs(inst->MOS1cd), N_MINLOG))) /
+                                log(MAX(fabs(inst->MOS1cd / inst->MOS1m), N_MINLOG))) /
                             (data->freq *
                                 inst->MOS1w *
                                 (inst->MOS1l - 2 * model->MOS1latDiff) *
@@ -155,18 +155,18 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                     } else {
                         switch (model->MOS1nlev) {
                         case 0:
-                            noizDens[MOS1FLNOIZ] *= model->MOS1fNcoef *
+                            noizDens[MOS1FLNOIZ] *= inst->MOS1m * model->MOS1fNcoef *
                                 exp(model->MOS1fNexp *
-                                    log(MAX(fabs(inst->MOS1cd), N_MINLOG))) /
+                                    log(MAX(fabs(inst->MOS1cd / inst->MOS1m), N_MINLOG))) /
                                 (data->freq *
                                     (inst->MOS1l - 2 * model->MOS1latDiff) *
                                     (inst->MOS1l - 2 * model->MOS1latDiff) *
                                     sqrt(coxSquared));
                             break;
                         case 1:
-                            noizDens[MOS1FLNOIZ] *= model->MOS1fNcoef *
+                            noizDens[MOS1FLNOIZ] *= inst->MOS1m * model->MOS1fNcoef *
                                 exp(model->MOS1fNexp *
-                                    log(MAX(fabs(inst->MOS1cd), N_MINLOG))) /
+                                    log(MAX(fabs(inst->MOS1cd / inst->MOS1m), N_MINLOG))) /
                                 (data->freq *
                                     inst->MOS1w *
                                     (inst->MOS1l - 2 * model->MOS1latDiff) *
@@ -174,7 +174,7 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                             break;
                         case 2: case 3:
                             noizDens[MOS1FLNOIZ] *= model->MOS1fNcoef *
-                                inst->MOS1gm * inst->MOS1gm /
+                                inst->MOS1gm * inst->MOS1gm / inst->MOS1m /
                                 (pow(data->freq, model->MOS1fNexp) *
                                     inst->MOS1w *
                                     (inst->MOS1l - 2 * model->MOS1latDiff) *
