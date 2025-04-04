@@ -1359,6 +1359,16 @@ int main(int argc, char **argv)
 #elif defined(WaGauss)
         initw();
 #endif
+        /* write out the ngspice start command */
+        if (ft_ngdebug)
+        {
+            int ni;
+            fprintf(stdout, "\nNote: ngspice start command line:\n");
+            for (ni = 0; ni < argc; ni++) {
+                fprintf(stdout, " %s", argv[ni]);
+            }
+            fprintf(stdout, "\n\n");
+        }
 
         if (!ft_servermode) {
 
@@ -1558,8 +1568,9 @@ int main(int argc, char **argv)
         }
         else {
             fprintf(stderr,
-                    "Note: No \".plot\", \".print\", or \".fourier\" lines; "
-                    "no simulations run\n");
+                    "Error: incomplete or empty netlist\n"
+                    "       or no \".plot\", \".print\", or \".fourier\" lines in batch mode;\n"
+                    "no simulations run!\n");
             sp_shutdown(EXIT_BAD);
         }
 
