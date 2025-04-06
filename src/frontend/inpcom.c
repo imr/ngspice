@@ -9722,8 +9722,8 @@ int add_to_sourcepath(const char* filepath, const char* path)
     else
         return 1;
 
-    startwl = newwl = wl_from_string("sourcepath = ( ");
-    endwl = wl_from_string(" )");
+    startwl = newwl = wl_from_string("sourcepath=(");
+    endwl = wl_from_string(")");
 
     /* add fpath to 'sourcepath' list variable */
     if (cp_getvar("sourcepath", CP_LIST, NULL, 0)) {
