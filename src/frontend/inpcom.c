@@ -8988,7 +8988,10 @@ static void inp_check_syntax(struct card *deck)
     if (check_subs != 0) {
         fprintf(cp_err,
                 "\nError: Mismatch of .subckt ... .ends statements!\n");
-        fprintf(stderr, "    in file %s\n", bugcard->linesource);
+        if (eq("circbyline", bugcard->linesource))
+            fprintf(stderr, "in the netlist received from the calling program\n");
+        else
+            fprintf(stderr, "    in file %s\n", bugcard->linesource);
         fprintf(cp_err, "    This will cause subsequent errors.\n\n");
         if (ends > 0)
             fprintf(cp_err, "Check .ends in line number %d\n", ends);
