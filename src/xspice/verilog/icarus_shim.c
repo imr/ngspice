@@ -4,7 +4,7 @@
  * an Icarus Verilog simulation (libvvp.so).
  * Licensed on the same terms as Ngspice.
  *
- * Copyright (c) 2024 Giles Atkinson
+ * Copyright (c) 2024-2025 Giles Atkinson
  */
 
 #include <stdio.h>
@@ -18,6 +18,7 @@
 
 #include "coroutine_shim.h"
 
+#include "ngspice/config.h"  // For NGSPICELIBDIR
 #include "ngspice/cmtypes.h" // For Digital_t
 #include "ngspice/cosim.h"
 
