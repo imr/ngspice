@@ -198,6 +198,10 @@ static void utf8_syntax_check(struct card *deck);
 
 int add_to_sourcepath(const char* filepath, const char* path);
 
+#if defined(_WIN32)
+static char* get_windows_canonical_path(const char* input_path);
+#endif
+
 struct inp_read_t {
     struct card *cc;
     int line_number;
@@ -1969,19 +1973,20 @@ FILE *inp_pathopen(const char *name, const char *mode)
   if the file isn't in . and it isn't an abs path name.
   *-------------------------------------------------------------------------*/
 
-char *inp_pathresolve(const char *name)
+char *inp_pathresolve(const char *cname)
 {
     struct variable *v;
     struct stat st;
+    char* name;
 
 #if defined(_WIN32)
 
     /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
     if (cp_getvar("mingwpath", CP_BOOL, NULL, 0) &&
-            name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) &&
-            name[2] == DIR_TERM_LINUX) {
+            cname[0] == DIR_TERM_LINUX && isalpha_c(cname[1]) &&
+            cname[2] == DIR_TERM_LINUX) {
         DS_CREATE(ds, 100);
-        if (ds_cat_str(&ds, name) != 0) {
+        if (ds_cat_str(&ds, cname) != 0) {
             fprintf(stderr, "Error: Unable to copy string while resolving path");
             controlled_exit(EXIT_FAILURE);
         }
@@ -1993,27 +1998,33 @@ char *inp_pathresolve(const char *name)
         return resolved_path;
     }
 
+    /* Try to overcome MAX_PATH path length limit by removing '/..' */
+    name = get_windows_canonical_path(cname);
+#else
+    name = copy(cname);
 #endif
 
     /* just try it */
     if (stat(name, &st) == 0)
-        return copy(name);
-	
+        return name;
+
 #if !defined(EXT_ASC) && (defined(__MINGW32__) || defined(_MSC_VER))
     wchar_t wname[BSIZE_SP];
     if (MultiByteToWideChar(CP_UTF8, 0, name, -1, wname, 2 * (int)strlen(name) + 1) == 0) {
         fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
         fprintf(stderr, "%s could not be converted\n", name);
+        tfree(name);
         return NULL;
     }
     if (_waccess(wname, 0) == 0)
-        return copy(name);
-#endif	
+        return name;
+#endif
 
     /* fail if this was an absolute filename or if there is no sourcepath var
      */
     if (is_absolute_pathname(name) ||
             !cp_getvar("sourcepath", CP_LIST, &v, 0)) {
+        tfree(name);
         return (char *) NULL;
     }
 
@@ -2040,12 +2051,14 @@ char *inp_pathresolve(const char *name)
                     fprintf(stderr,
                             "ERROR: enumeration value `CP_BOOL' or `CP_LIST' "
                             "not handled in inp_pathresolve\nAborting...\n");
+                    tfree(name);
                     controlled_exit(EXIT_FAILURE);
             }
 
             if (rc_ds != 0) { /* unable to build string */
                 (void) fprintf(cp_err,
                         "Error: Unable to build path name in inp_pathresolve");
+                tfree(name);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -2056,6 +2069,7 @@ char *inp_pathresolve(const char *name)
                     char * const buf_cpy = dup_string(
                             buf, ds_get_length(&ds));
                     ds_free(&ds);
+                    tfree(name);
                     return buf_cpy;
                 }
                 /* Else contiue with next attempt */
@@ -2063,7 +2077,7 @@ char *inp_pathresolve(const char *name)
         } /* end of loop over linked variables */
         ds_free(&ds);
     } /* end of block trying to find a valid name */
-
+    tfree(name);
     return (char *) NULL;
 } /* end of function inp_pathresolve */
 
@@ -9749,3 +9763,134 @@ int add_to_sourcepath(const char* filepath, const char* path)
     tfree(fpath);
     return 0;
 }
+
+
+#if defined(_WIN32)
+
+
+/**
+ * @brief Resolves a Windows path to its canonical, absolute form using GetFullPathNameW.
+ *
+ * This function takes a path string (assumed to be UTF-8), converts it to
+ * UTF-16, calls the Windows API GetFullPathNameW to resolve '..' and '.'
+ * components and make the path absolute, and then converts the result back
+ * to a newly allocated UTF-8 string.
+ *
+ * It handles potential failures during conversion or path resolution.
+ * It does NOT automatically add the '\\?\' prefix for long paths, but
+ * GetFullPathNameW can produce paths longer than MAX_PATH. The caller
+ * might need to add the prefix separately if using the result in APIs
+ * that require it for long path support.
+ *
+ * @param input_path The input path string (UTF-8 encoded). Can be relative or
+ *                   absolute, may contain '.' or '..'.
+ * @return char* A newly allocated UTF-8 string containing the canonical absolute
+ *               path, or NULL on failure. The caller is responsible for
+ *               calling free() on the returned string. On failure, errno is
+ *               set to indicate the error (e.g., ENOMEM, EINVAL, ENOENT).
+ */
+char* get_windows_canonical_path(const char* input_path) {
+    wchar_t* wPathInput = NULL;
+    wchar_t* wPathOutput = NULL;
+    char* utf8PathOutput = NULL;
+    DWORD    inputLenW = 0;
+    DWORD    outputLenW = 0;
+    DWORD    resultLenW = 0;
+    int      inputLenMB = 0;
+    int      outputLenMB = 0;
+    int      original_errno = errno;
+
+    if (input_path == NULL) {
+        errno = EINVAL;
+        return NULL;
+    }
+
+    inputLenMB = (int)strlen(input_path);
+
+    if (inputLenMB == 0) {
+        inputLenW = 1;
+    }
+    else {
+        inputLenW = MultiByteToWideChar(CP_UTF8, 0, input_path, inputLenMB, NULL, 0);
+        if (inputLenW == 0) {
+            errno = EINVAL;
+            return NULL;
+        }
+        inputLenW++;
+    }
+
+    wPathInput = TMALLOC(wchar_t, inputLenW * sizeof(wchar_t));
+    if (!wPathInput) {
+        errno = ENOMEM;
+        return NULL;
+    }
+
+    if (MultiByteToWideChar(CP_UTF8, 0, input_path, inputLenMB + 1, wPathInput, inputLenW) == 0) {
+        tfree(wPathInput);
+        errno = EINVAL;
+        return NULL;
+    }
+
+    errno = original_errno;
+    outputLenW = GetFullPathNameW(wPathInput, 0, NULL, NULL);
+    if (outputLenW == 0) {
+        DWORD dwError = GetLastError();
+        if (dwError == ERROR_FILE_NOT_FOUND || dwError == ERROR_PATH_NOT_FOUND)
+            errno = ENOENT;
+        else if (dwError == ERROR_ACCESS_DENIED)
+            errno = EACCES;
+        else
+            errno = EINVAL;
+        tfree(wPathInput);
+        return NULL;
+    }
+
+    wPathOutput = (wchar_t*)malloc(outputLenW * sizeof(wchar_t));
+    if (!wPathOutput) {
+        tfree(wPathInput);
+        errno = ENOMEM;
+        return NULL;
+    }
+
+    errno = original_errno;
+    resultLenW = GetFullPathNameW(wPathInput, outputLenW, wPathOutput, NULL);
+    free(wPathInput);
+
+    if (resultLenW == 0 || resultLenW >= outputLenW) {
+        DWORD dwError = GetLastError();
+        if (dwError == ERROR_FILE_NOT_FOUND || dwError == ERROR_PATH_NOT_FOUND)
+            errno = ENOENT;
+        else if (dwError == ERROR_ACCESS_DENIED)
+            errno = EACCES;
+        else
+            errno = EINVAL;
+        tfree(wPathOutput);
+        return NULL;
+    }
+
+    outputLenMB = WideCharToMultiByte(CP_UTF8, 0, wPathOutput, -1, NULL, 0, NULL, NULL);
+    if (outputLenMB == 0) {
+        tfree(wPathOutput);
+        errno = EINVAL;
+        return NULL;
+    }
+
+    utf8PathOutput = (char*)malloc(outputLenMB);
+    if (!utf8PathOutput) {
+        tfree(wPathOutput);
+        errno = ENOMEM;
+        return NULL;
+    }
+
+    if (WideCharToMultiByte(CP_UTF8, 0, wPathOutput, -1, utf8PathOutput, outputLenMB, NULL, NULL) == 0) {
+        tfree(wPathOutput);
+        tfree(utf8PathOutput);
+        errno = EINVAL;
+        return NULL;
+    }
+
+    tfree(wPathOutput);
+    errno = original_errno;
+    return utf8PathOutput;
+}
+#endif
