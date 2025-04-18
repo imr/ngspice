@@ -342,7 +342,7 @@ else
    if $fh > 0
      fclose $fh
    else
-      echo Can not find bulid file $msvcfile
+      echo Can not find build file $msvcfile
       quit
    end
 
