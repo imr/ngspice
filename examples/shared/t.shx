@@ -1,0 +1,23 @@
+# Input file running shx with t.cir
+# An externally controlled source is set to 0.5V from prompted input,
+# then prompting is disabled and the source value is ramped after a stop
+#
+# The result may be plotted with
+# load t.raw
+# plot v(ctl) v(div)
+#
+t.cir
+/lvals
+/aevt
+/elim 20
+/dlim 20
+/slim 20
+/xnode clk div
+/sask
+stop when time = 50u
+run
+0.5
+/sask
+/sram 1 0.0001 20
+resume
+write t.raw

@@ -228,8 +228,15 @@ int DestroyGraph(int id)
 
             if (db && (db->db_type == DB_IPLOT ||
                     db->db_type == DB_IPLOTALL)) {
-                db->db_type = DB_DEADIPLOT;
-                /* Delete this later */
+                /* Delete this later, after marking as dead.
+                 * Entries on the node mlist are marked to terminate
+                 * any XSPICE callbacks for event nodes.
+                 */
+
+                do {
+                    db->db_type = DB_DEADIPLOT;
+                    db = db->db_also;
+                } while (db);
                 return 0;
             }
 
@@ -370,6 +377,3 @@ void PopGraphContext(void)
     gcstacktop = gcstacktop->next;
     txfree(dead); /* free allocation */
 } /* end of function PopGraphContext */
-
-
-

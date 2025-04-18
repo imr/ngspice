@@ -34,7 +34,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define DBC_GTE  5   /* >= (ge) */
 #define DBC_LTE  6   /* <= (le) */
 
-/* Below, members db_op and db_value1 are re-purposed by iplot options. */
+/* Below, members db_nodename2, db_op, db_iteration and db_value1/2
+ * are re-purposed by iplot optionsf.
+ * These definitions are used for db_iteration:
+ */
+
+#define DB_NORMAL      1
+#define DB_AUTO_OFFSET 2
 
 struct dbcomm {
     int db_number;    /* The number of this debugging command. */

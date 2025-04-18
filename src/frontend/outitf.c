@@ -146,6 +146,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     bool saveall  = TRUE;
     bool savealli = FALSE;
     bool savenosub = FALSE;
+    bool savenointernals = FALSE;
     char *an_name;
     int initmem;
     /*to resume a run saj
@@ -223,6 +224,13 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     saves[i].used = 1;
                     continue;
                 }
+
+                if (cieq(saves[i].name, "nointernals")) {
+                    savenointernals = TRUE;
+                    savesused[i] = TRUE;
+                    saves[i].used = 1;
+                    continue;
+                }
 #ifdef SHARED_MODULE
                 /* this may happen if shared ngspice*/
                 if (cieq(saves[i].name, "none")) {
@@ -255,7 +263,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
 
         /* Pass 1. */
-        if (numsaves && !saveall && !savenosub) {
+        if (numsaves && !saveall && !savenosub && !savenointernals) {
             for (i = 0; i < numsaves; i++) {
                 if (!savesused[i]) {
                     for (j = 0; j < numNames; j++) {
@@ -278,15 +286,20 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         } else {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
-                    /*  Save the node as long as it's not an internal device node  */
-                    if (!(savenosub && strchr(dataNames[i], '.')) && /* don't save subckt nodes */
+                    /*  Save the node (with restrictions) */
+                        /* don't save subckt nodes */
+                    if (!(savenosub && strchr(dataNames[i], '.')) &&
+                        /* no internals at all, but still #branch */
+                        (!(savenointernals && strstr(dataNames[i], "#")) || strstr(dataNames[i], "#branch")) &&
+                        /* created by .probe */
+                        !strstr(dataNames[i], "probe_int_") &&
+                        /* don't save internal device nodes */
                         !strstr(dataNames[i], "#internal") &&
                         !strstr(dataNames[i], "#source") &&
                         !strstr(dataNames[i], "#drain") &&
                         !strstr(dataNames[i], "#collector") &&
                         !strstr(dataNames[i], "#collCX") &&
                         !strstr(dataNames[i], "#emitter") &&
-                        !strstr(dataNames[i], "probe_int_") && /* created by .probe */
                         !strstr(dataNames[i], "#base"))
                     {
                         addDataDesc(run, dataNames[i], dataType, i, initmem);
@@ -610,6 +623,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif
     /* interpolated batch mode output to file/plot in transient analysis */
     if (interpolated && run->circuit->CKTcurJob->JOBtype == 4) {
+        /* JOBtype == 4 means Transient Analysis.  FIX ME */
+
         if (run->writeOut) { /* To file */
             InterpFileAdd(run, refValue, valuePtr);
         }
@@ -617,10 +632,9 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             InterpPlotAdd(run, refValue, valuePtr);
         }
         return OK;
-    }
+    } else if (run->writeOut) {
+        /* standard batch mode output to file */
 
-    /* standard batch mode output to file */
-    else if (run->writeOut) {
         if (run->pointCount == 1) {
             fileInit_pass2(run);
         }
@@ -724,7 +738,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #ifdef TCL_MODULE
             blt_add(i, valuePtr->v.vec.rVec [run->data[i].outIndex]);
 #endif
-
         }
 
         fileEndPoint(run->fp, run->binary);
@@ -1218,12 +1231,9 @@ vlength2delta(int len)
         return 1024;
 }
 
-
-static void
-plotAddRealValue(dataDesc *desc, double value)
+void
+AddRealValueToVector(struct dvec *v, double value)
 {
-    struct dvec *v = desc->vec;
-
 #ifdef SHARED_MODULE
     if (savenone)
         /* always save new data to same location */
@@ -1245,6 +1255,11 @@ plotAddRealValue(dataDesc *desc, double value)
     v->v_dims[0] = v->v_length; /* va, must be updated */
 }
 
+static void
+plotAddRealValue(dataDesc *desc, double value)
+{
+    AddRealValueToVector(desc->vec, value);
+}
 
 static void
 plotAddComplexValue(dataDesc *desc, IFcomplex value)

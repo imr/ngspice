@@ -182,6 +182,8 @@ typedef void (*sighandler)(int);
 
 #ifdef XSPICE
 #include "ngspice/evtshared.h"
+#include "ngspice/evtproto.h"
+#include "ngspice/evtudn.h"
 extern bool wantevtdata;
 #endif
 
@@ -222,7 +224,7 @@ extern struct comm spcp_coms[];
 struct comm* cp_coms = spcp_coms;
 
 /* Main options */
-static bool ft_servermode = FALSE;
+
 bool ft_batchmode = FALSE;
 bool ft_pipemode = FALSE;
 bool rflag = FALSE; /* has rawfile */
@@ -341,6 +343,8 @@ void sh_delete_myvec(void);
 #ifdef XSPICE
 void shared_send_event(int, double, double, char *, void *, int, int);
 void shared_send_dict(int, int, char*, char*);
+
+static int evt_shim(double time, Mif_Value_t *vp, void *ctx, int last);
 #endif
 
 #if !defined(low_latency)
@@ -397,6 +401,7 @@ static int intermj = 1;
 #ifdef XSPICE
 static SendInitEvtData* sendinitevt;
 static SendEvtData* sendevt;
+static SendRawEvtData *sendrawevt;
 #endif
 static void* euserptr;
 static wordlist *shcontrols;
@@ -1387,6 +1392,41 @@ int  ngSpice_Init_Evt(SendEvtData* sevtdata, SendInitEvtData* sinitevtdata, void
     return(TRUE);
 }
 
+/* Set callback address for raw XSPICE events.
+ * The return value identifies the node data type or is -1 on error.
+ */
+
+IMPEXP
+int  ngSpice_Raw_Evt(const char* node, SendRawEvtData* srawevt, void* userData)
+{
+    struct node_parse np;
+
+    if (Evt_Parse_Node(node, &np) < 0 || np.member)
+        return -1; // Invalid node name.
+    sendrawevt = srawevt;
+    EVTnew_value_call(node, evt_shim, Evt_Cbt_Raw, userData);
+    return np.udn_index;
+}
+
+IMPEXP
+int ngSpice_Decode_Evt(void* evt, int type,
+                        double *pplotval, const char **ppprintval)
+{
+    if (type >= g_evt_num_udn_types)
+        return 1;
+    if (!evt) {
+        if (!ppprintval)
+            return 2;
+        *ppprintval = g_evt_udn_info[type]->name;
+        return 0;
+    }
+    if (pplotval)
+        g_evt_udn_info[type]->plot_val(evt, "", pplotval);
+    if (ppprintval)
+        g_evt_udn_info[type]->print_val(evt, "", (char **)ppprintval);
+    return 0;
+}
+
 /* Get info about the event node vector.
 If node_name is NULL, just delete previous data */
 IMPEXP
@@ -1467,7 +1507,7 @@ sh_vfprintf(FILE *f, const char *fmt, va_list args)
 {
     char buf[1024];
     char *p/*, *s*/;
-    int nchars, /*escapes,*/ result;
+    int nchars;
     size_t size;
 
 
@@ -1547,7 +1587,7 @@ sh_vfprintf(FILE *f, const char *fmt, va_list args)
        Spice_Init() from caller of ngspice.dll */
 
 
-    result = sh_fputs(p, f);
+    sh_fputs(p, f);
 
     if (p != buf)
         tfree(p);
@@ -1929,7 +1969,6 @@ void SetAnalyse(
 || defined (HAVE_FTIME)
     PerfTime timenow;               /* actual time stamp */
     int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
-    int result;                     /* return value from callback function */
     char* s;                        /* outputs to callback function */
     int OldPercent;                 /* Previous progress value */
     char OldAn[128];                /* Previous analysis type */
@@ -1994,7 +2033,7 @@ void SetAnalyse(
     if (!strcmp(Analyse, "tran")) {
         if (ckt && (ckt->CKTtime > ckt->CKTfinalTime - ckt->CKTmaxStep)) {
            sprintf(s, "--ready--");
-           result = statfcn(s, ng_ident, userptr);
+           statfcn(s, ng_ident, userptr);
            tfree(s);
            return;
         }
@@ -2007,7 +2046,7 @@ void SetAnalyse(
             return;
         }
         sprintf( s, "--ready--");
-        result = statfcn(s, ng_ident, userptr);
+        statfcn(s, ng_ident, userptr);
         tfree(s);
         return;
     }
@@ -2056,7 +2095,7 @@ void SetAnalyse(
         }
         /* ouput only after a change */
         if (strcmp(olds, s))
-            result = statfcn(s, ng_ident, userptr);
+            statfcn(s, ng_ident, userptr);
         if(thread1)
             strcpy(olds1, s);
         else
@@ -2065,11 +2104,10 @@ void SetAnalyse(
     tfree(s);
 #else
     char* s;
-    int result;
     static bool havesent = FALSE;
     if (!havesent) {
         s = copy("No usage info available");
-        result = statfcn(s, ng_ident, userptr);
+        statfcn(s, ng_ident, userptr);
         tfree(s);
         havesent = TRUE;
     }
@@ -2433,8 +2471,14 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
                step if return value from getsync is 1. */
             int retval = getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
             /* never move beyond final time */
-            if (*pckttime + *pcktdelta > finalt)
-                *pcktdelta = finalt - *pckttime - 1.1 * delmin;
+            if (*pckttime + *pcktdelta > finalt) {
+                double newdelta;
+
+                newdelta = finalt - *pckttime - 1.1 * delmin;
+                if (newdelta <= 0.0)
+                    newdelta = finalt - *pckttime;
+                *pcktdelta = newdelta;
+            }
 
             /* user has decided to redo the step, ignoring redostep being set to 0
             by ngspice. */
@@ -2459,6 +2503,13 @@ void shared_send_dict(int index, int no_of_nodes, char* name, char*type)
 {
     if (sendinitevt)
         sendinitevt(index, no_of_nodes, name, type, ng_ident, euserptr);
+}
+
+static int evt_shim(double time, Mif_Value_t *vp, void *ctx, int last)
+{
+    if (sendrawevt)
+        return sendrawevt(time, vp->pvalue, ctx, last);  // Strip Mif_value.
+    return 1;
 }
 #endif
 

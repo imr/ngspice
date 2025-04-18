@@ -1,6 +1,6 @@
 #ifndef ngspice_EVTTYPES_H
 #define ngspice_EVTTYPES_H
-
+#include "miftypes.h"
 
 typedef struct Evt_Output_Info Evt_Output_Info_t;
 typedef struct Evt_Port_Info Evt_Port_Info_t;
@@ -28,6 +28,11 @@ typedef struct Evt_Limit Evt_Limit_t;
 typedef struct Evt_Job Evt_Job_t;
 typedef struct Evt_Option Evt_Option_t;
 typedef struct Evt_Ckt_Data Evt_Ckt_Data_t;
+typedef struct Evt_Node_Cb Evt_Node_Cb_t;
 
+typedef Mif_Boolean_t (*Evt_New_Value_Cb_t)(double when, Mif_Value_t *val_p,
+                                            void *ctx, int is_last);
+
+typedef enum Evt_Node_Cb_Type { Evt_Cbt_Raw, Evt_Cbt_Plot} Evt_Node_Cb_Type_t;
 
 #endif
