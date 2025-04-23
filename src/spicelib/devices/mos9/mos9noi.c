@@ -94,12 +94,11 @@ MOS9noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 		    NevalSrc(&noizDens[MOS9FLNOIZ], NULL, ckt,
 				 N_GAIN,inst->MOS9dNodePrime, inst->MOS9sNodePrime,
 				 (double)0.0);
-		    noizDens[MOS9FLNOIZ] *= model->MOS9fNcoef * 
+		    noizDens[MOS9FLNOIZ] *= inst->MOS9m * model->MOS9fNcoef * 
 				 exp(model->MOS9fNexp *
-				 log(MAX(fabs(inst->MOS9cd),N_MINLOG))) /
+				 log(MAX(fabs(inst->MOS9cd / inst->MOS9m),N_MINLOG))) /
 				 (data->freq *
 				 (inst->MOS9w - 2*model->MOS9widthNarrow) *
-                                 inst->MOS9m *
 				 (inst->MOS9l - 2*model->MOS9latDiff) *
 				 model->MOS9oxideCapFactor * model->MOS9oxideCapFactor);
 		    lnNdens[MOS9FLNOIZ] = 
