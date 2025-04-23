@@ -34,7 +34,7 @@ MOS2load(GENmodel *inModel, CKTcircuit *ckt)
     double GateBulkOverlapCap;
     double GateDrainOverlapCap;
     double GateSourceOverlapCap;
-    double OxideCap;
+    double OxideCap, unscaledOxideCap;
     double SourceSatCur;
     double arg;
     double cbhat;
@@ -144,8 +144,8 @@ MOS2load(GENmodel *inModel, CKTcircuit *ckt)
                     here->MOS2m * EffectiveLength;
             Beta = here->MOS2tTransconductance * here->MOS2w *
                     here->MOS2m/EffectiveLength;
-            OxideCap = model->MOS2oxideCapFactor * EffectiveLength * 
-                    here->MOS2m * here->MOS2w;
+            unscaledOxideCap = model->MOS2oxideCapFactor * EffectiveLength * here->MOS2w;
+            OxideCap = unscaledOxideCap*here->MOS2m;
 
 
             if(SenCond){
@@ -599,7 +599,7 @@ next1:      if(vbs <= -3*vt) {
 
             /*XXX constant per device */
             factor = 0.125*model->MOS2narrowFactor*2.0*M_PI*EPSSIL/
-                OxideCap*EffectiveLength;
+                unscaledOxideCap*EffectiveLength;
             /*XXX constant per device */
             eta = 1.0+factor;
             vbin = here->MOS2tVbi*model->MOS2type+factor*phiMinVbs;
@@ -664,7 +664,7 @@ next1:      if(vbs <= -3*vt) {
                     1e4 /*(cm**2/m**2)*/;
                 cdonco = -(gamasd*dsrgdb+dgddvb*sarg1)+factor;
                 
-                xn = 1.0+cfs/OxideCap*here->MOS2m*
+                xn = 1.0+cfs/unscaledOxideCap* 
                       here->MOS2w*EffectiveLength+cdonco;
                 
                 tmp = vt*xn;
