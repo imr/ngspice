@@ -12,15 +12,15 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 
 /* ARGSUSED */
 int
-CKTdltNod(CKTcircuit *ckt, CKTnode *node)
+CKTdltNod(CKTcircuit* ckt, CKTnode* node)
 {
     return CKTdltNNum(ckt, node->number);
 }
 
 int
-CKTdltNNum(CKTcircuit *ckt, int num)
+CKTdltNNum(CKTcircuit* ckt, int num)
 {
-    CKTnode *n, *prev, *node, *sprev;
+    CKTnode* n, * prev, * node, * sprev;
     int	error;
 
     if (!ckt->prev_CKTlastNode->number || num <= ckt->prev_CKTlastNode->number) {
@@ -28,32 +28,33 @@ CKTdltNNum(CKTcircuit *ckt, int num)
         controlled_exit(EXIT_FAILURE);
     }
 
-    prev  = NULL;
-    node  = NULL;
+    prev = NULL;
+    node = NULL;
     sprev = NULL;
 
     for (n = ckt->CKTnodes; n; n = n->next) {
-	if (n->number == num) {
-	    node = n;
-	    sprev = prev;
-	}
-	prev = n;
+        if (n->number == num) {
+            node = n;
+            sprev = prev;
+        }
+        prev = n;
     }
 
     if (!node)
-	return OK;
+        return OK;
 
     ckt->CKTmaxEqNum -= 1;
 
     if (!sprev) {
-	ckt->CKTnodes = node->next;
-    } else {
-	sprev->next = node->next;
+        ckt->CKTnodes = node->next;
+    }
+    else {
+        sprev->next = node->next;
     }
     if (node == ckt->CKTlastNode)
-	ckt->CKTlastNode = sprev;
+        ckt->CKTlastNode = sprev;
 
-    error = SPfrontEnd->IFdelUid (ckt, node->name, UID_SIGNAL);
+    error = SPfrontEnd->IFdelUid(ckt, node->name, UID_SIGNAL);
     tfree(node);
 
     return error;
