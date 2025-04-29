@@ -18,7 +18,12 @@
 
 #include "coroutine_shim.h"
 
+#ifdef _MSC_VER
+#include "../../../visualc/src/include/ngspice/config.h"
+#else
 #include "ngspice/config.h"  // For NGSPICELIBDIR
+#endif
+
 #include "ngspice/cmtypes.h" // For Digital_t
 #include "ngspice/cosim.h"
 
