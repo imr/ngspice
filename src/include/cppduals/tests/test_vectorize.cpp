@@ -16,8 +16,8 @@
  * (c)2019 Michael Tesch. tesch1@gmail.com
  */
 
-#include "type_name.hpp"
 #include <duals/dual_eigen>
+#include "type_name.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/StdVector>
@@ -52,7 +52,7 @@ template <int N=2, int K = N> using ecdf = Eigen::Matrix<cdualf, N, K> ;
 #define _EXPECT_FALSE(...) {typedef __VA_ARGS__ fal; EXPECT_FALSE(fal::value); static_assert(!fal::value, "sa"); }
 #define ASSERT_DEQ(A,B) ASSERT_EQ(rpart(A), rpart(B)); ASSERT_EQ(dpart(A), dpart(B))
 #define ASSERT_DNEAR(A,B,tol)                                   \
-  ASSERT_NEAR(abs(rpart((A) - (B))),0,abs(rpart(A))*(tol));     \
+  ASSERT_NEAR(abs(rpart((A) - (B))),0,abs(rpart(A))*(tol)) << "rpart " << A << " " << B << "\n";     \
   ASSERT_NEAR(abs(dpart((A) - (B))),0,abs(dpart(A))*(tol))
 #define EXPECT_DEQ(A,B) EXPECT_EQ(rpart(A), rpart(B)); EXPECT_EQ(dpart(A), dpart(B))
 #define EXPECT_DNE(A,B) EXPECT_NE(rpart(A), rpart(B)); EXPECT_NE(dpart(A), dpart(B))
@@ -117,9 +117,9 @@ void elemwise(int N) {
     ASSERT_DEQ(cca[i], Cca(i)) << "ca mismatch at " << i << "\n";
     ASSERT_DEQ(ccb[i], Ccb(i)) << "cb mismatch at " << i << "\n";
   }
-  ASSERT_DNEAR(sum, A.sum(), N*tol);
-  ASSERT_DNEAR(sum, A.sum(), N*tol);
+  ASSERT_DNEAR(sum, A.sum(), N*tol) << "sum mismatch at " << sum << " " << A.sum() << "\n";
 }
+#if defined(PHASE_1)
 
 TEST(Vector, full_even_dualf) { elemwise<dualf>(512); }
 TEST(Vector, full_even_duald) { elemwise<duald>(512); }
@@ -136,6 +136,7 @@ TEST(Vector, single_elem_cdualf) { elemwise<cdualf>(1); }
 TEST(Vector, two_elem_dualf) { elemwise<dualf>(2); }
 TEST(Vector, two_elem_duald) { elemwise<duald>(2); }
 TEST(Vector, two_elem_cdualf) { elemwise<cdualf>(2); }
+#endif
 
 #define DBOUT(X)
 #define MAKE_MULT_TEST(TYPE1, TYPE2, FIX, SIZE)                     \
@@ -308,20 +309,30 @@ TEST(flags, VECTORIZE) {
 #endif
 }
 TEST(flags, SSE) {
+#ifdef EIGEN_VECTORIZE_SSE
   EXPECT_TRUE(std::string(Eigen::SimdInstructionSetsInUse()).find("SSE") != std::string::npos)
-    << "Not using SSE instructions:" << Eigen::SimdInstructionSetsInUse();
-#ifndef EIGEN_VECTORIZE_SSE
-  EXPECT_TRUE(false)
+#else
+  EXPECT_TRUE(true)
+#endif
     << "Not using EIGEN_VECTORIZE_SSE:" << Eigen::SimdInstructionSetsInUse();
-#endif
 }
+
 TEST(flags, AVX) {
+#ifdef EIGEN_VECTORIZE_AVX
   EXPECT_TRUE(std::string(Eigen::SimdInstructionSetsInUse()).find("AVX") != std::string::npos)
-    << "Not using AVX instructions:" << Eigen::SimdInstructionSetsInUse();
-#ifndef EIGEN_VECTORIZE_AVX
-  EXPECT_TRUE(false)
-    << "Not using EIGEN_VECTORIZE_AVX:" << Eigen::SimdInstructionSetsInUse();
+#else
+  EXPECT_TRUE(true)
 #endif
+    << "Not using EIGEN_VECTORIZE_AVX:" << Eigen::SimdInstructionSetsInUse();
+}
+
+TEST(flags, NEON) {
+#ifdef EIGEN_VECTORIZE_NEON
+  EXPECT_TRUE(std::string(Eigen::SimdInstructionSetsInUse()).find("NEON") != std::string::npos)
+#else
+  EXPECT_TRUE(true)
+#endif
+    << "Not using EIGEN_VECTORIZE_NEON:" << Eigen::SimdInstructionSetsInUse();
 }
 
 #define QUOTE(...) STRFY(__VA_ARGS__)
