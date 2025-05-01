@@ -141,7 +141,6 @@ namespace Eigen {
 template<typename T>
 struct NumTraits<duals::dual<T> > : GenericNumTraits<T>
 {
-  typedef typename NumTraits<T>::Real ReallyReal;
   typedef duals::dual<T> Real;
   typedef duals::dual<T> Literal;
   typedef duals::dual<T> Nested;
@@ -159,13 +158,13 @@ struct NumTraits<duals::dual<T> > : GenericNumTraits<T>
   EIGEN_DEVICE_FUNC
   static inline Real epsilon()        { return Real(NumTraits<T>::epsilon()); }
   EIGEN_DEVICE_FUNC
-  static inline ReallyReal dummy_precision()  { return NumTraits<T>::dummy_precision(); }
+  static inline Real dummy_precision()  { return NumTraits<T>::dummy_precision(); }
   EIGEN_DEVICE_FUNC
-  static inline ReallyReal highest()  { return NumTraits<T>::highest(); }
+  static inline Real highest()  { return NumTraits<T>::highest(); }
   EIGEN_DEVICE_FUNC
-  static inline ReallyReal lowest()   { return NumTraits<T>::lowest(); }
+  static inline Real lowest()   { return NumTraits<T>::lowest(); }
   EIGEN_DEVICE_FUNC
-  static inline ReallyReal digits10() { return NumTraits<T>::digits10(); }
+  static inline int digits10() { return NumTraits<T>::digits10(); }
 };
 
 #if !defined(CPPDUALS_NO_EIGEN_PROMOTION)
@@ -218,6 +217,20 @@ using duals::dconj;
 
 namespace internal {
 
+#if 0
+// For MatrixExponential.h to treat duals::dual<T> as a known type and compile it
+template<typename T> struct is_exp_known_type;
+template<typename MatrixType, typename T> struct matrix_exp_computeUV;
+template<typename T> struct is_exp_known_type<duals::dual<T>> : is_exp_known_type<T> {};
+template <typename MatrixType, typename T>
+struct matrix_exp_computeUV<MatrixType, duals::dual<T> > : matrix_exp_computeUV<MatrixType, T>
+{
+  typedef typename NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;
+};
+#endif
+
+#if 1
+// this is used by the packet math for SSE to copy raw duals around.
 template<typename T>
 struct real_impl<duals::dual<T> >
 {
@@ -250,7 +263,44 @@ struct real_ref_retval<duals::dual<Scalar>>
 {
   typedef typename NumTraits<Scalar>::Real & type;
 };
+  
+#else ////
 
+template<typename T>
+struct real_impl<duals::dual<T> >
+{
+  typedef duals::dual<T> RealScalar;
+  EIGEN_DEVICE_FUNC
+  static inline RealScalar run(const duals::dual<T>& x)
+  {
+    return x;
+  }
+};
+
+template<typename Scalar>
+struct real_ref_impl<duals::dual<Scalar>>
+{
+  typedef typename NumTraits<duals::dual<Scalar> >::Real RealScalar;
+  EIGEN_DEVICE_FUNC
+  static inline RealScalar & run(duals::dual<Scalar> & x)
+  {
+    return reinterpret_cast<RealScalar*>(&x)[0];
+  }
+  EIGEN_DEVICE_FUNC
+  static inline const RealScalar & run(const duals::dual<Scalar> & x)
+  {
+    return reinterpret_cast<const RealScalar *>(&x)[0];
+  }
+};
+
+template<typename Scalar>
+struct real_ref_retval<duals::dual<Scalar>>
+{
+  typedef typename NumTraits<duals::dual<Scalar>>::Real & type;
+};
+
+#endif /// 0
+  
 template<typename T> struct scalar_random_op<duals::dual<T>>
 {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_random_op)
@@ -384,7 +434,8 @@ template<typename RealScalar,bool Conj> struct dconj_helper<RealScalar, duals::d
 #elif defined(EIGEN_VECTORIZE_ALTIVEC) || defined(EIGEN_VECTORIZE_VSX)
 //  #include "duals/arch/AltiVec/Dual.h" // TODO
 #elif defined EIGEN_VECTORIZE_NEON
-//#include "duals/arch/NEON/Dual.h" // TODO
+  #include "duals/arch/NEON/Dual.h"
+  #include "duals/arch/NEON/ComplexDual.h"
 #elif defined EIGEN_VECTORIZE_ZVECTOR
 //  #include "duals/arch/ZVector/Dual.h" // TODO
 #endif

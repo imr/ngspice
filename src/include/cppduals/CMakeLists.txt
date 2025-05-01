@@ -1,14 +1,17 @@
 #
 # CMake for cppduals
 #
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.14)
 project (cppduals
-  VERSION 0.3.1
+  VERSION 0.6.2
   LANGUAGES C CXX
   )
 include (GNUInstallDirs)
 
-set (CMAKE_CXX_STANDARD 11 CACHE STRING "Which C++ standard to test against.")
+if (NOT CMAKE_CXX_STANDARD)
+  set (CMAKE_CXX_STANDARD 17 CACHE STRING "Which C++ standard to test against.")
+endif()
+message (STATUS "CXX_STANDARD: ${CMAKE_CXX_STANDARD}")
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
@@ -38,11 +41,11 @@ if (CPPDUALS_STANDALONE AND
   message (STATUS "No install prefix specified; using '${CMAKE_INSTALL_PREFIX}'")
 endif ()
 
-set_property (CACHE CMAKE_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
+#set_property (CACHE CMAKE_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
+set_property (CACHE CMAKE_CXX_STANDARD PROPERTY STRINGS 20)
 
 option (CPPDUALS_TESTING "Enable testing" OFF)
 option (CPPDUALS_BENCHMARK "Enable benchmarking" OFF)
-option (CPPDUALS_EIGEN_LATEST "Eigen latest" OFF)
 option (CPPDUALS_USE_LIBCXX "When testing use flags for libc++" OFF)
 set (EIGEN3_INCLUDE_DIRS "" CACHE PATH "Path to Eigen includes" )
 
@@ -91,7 +94,7 @@ add_library (cppduals::duals ALIAS cppduals_duals)
 #
 if (CPPDUALS_TESTING)
 
-  cmake_minimum_required (VERSION 3.10) # need gtest_discover_tests
+  cmake_minimum_required (VERSION 3.14) # need gtest_discover_tests
   file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/thirdparty")
 
   # generator name
@@ -109,7 +112,6 @@ if (CPPDUALS_TESTING)
                              "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                              "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}"
                              "-DCPPDUALS_BENCHMARK=${CPPDUALS_BENCHMARK}"
-                             "-DCPPDUALS_EIGEN_LATEST=${CPPDUALS_EIGEN_LATEST}"
                              "-DCPPDUALS_USE_LIBCXX=${CPPDUALS_USE_LIBCXX}"
                              "${PROJECT_SOURCE_DIR}/thirdparty"
     RESULT_VARIABLE DEPS_CONFIG_RESULT
@@ -144,18 +146,27 @@ endif ()
 # Code Coverage Configuration
 #
 add_library (cppduals_coverage_config INTERFACE)
-option (CODE_COVERAGE "Enable coverage reporting" OFF)
-if (CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-  # Add required flags (GCC & LLVM/Clang)
-  target_compile_options (cppduals_coverage_config INTERFACE
-    -O0        # no optimization
-    -g         # generate debug info
-    --coverage # sets all required flags
+option (CPPDUALS_CODE_COVERAGE "Enable coverage reporting" OFF)
+if (CPPDUALS_CODE_COVERAGE AND NOT CPPDUALS_TESTING)
+  message(FATAL_ERROR "CPPDUALS_CODE_COVERAGE requires CPPDUALS_TESTING to be enabled")
+endif()
+if (CPPDUALS_CODE_COVERAGE)
+  if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    message(STATUS "Enabling coverage reporting")
+    # Add required flags (GCC & LLVM/Clang)
+    target_compile_options (cppduals_coverage_config INTERFACE
+      -O0        # no optimization
+      -g         # generate debug info
+      --coverage # sets all required flags
+      -fprofile-arcs 
+      -ftest-coverage
     )
-  if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
-    target_link_options (cppduals_coverage_config INTERFACE --coverage)
-  else ()
-    target_link_libraries (cppduals_coverage_config INTERFACE --coverage)
+    target_link_options (cppduals_coverage_config INTERFACE 
+      --coverage
+    )
+  else()
+    # error out if coverage is enabled but compiler is not supported
+    message(FATAL_ERROR "Coverage reporting is disabled for unknown compilers.")
   endif ()
 endif ()
 
@@ -221,3 +232,8 @@ if (ETAGS)
     COMMAND ${ETAGS} --language=c++ --append `find ${PROJECT_BINARY_DIR}/thirdparty/eigenX/src/eigenX -type f`
     )
 endif (ETAGS)
+
+#
+# Packaging
+#
+include (CPack)

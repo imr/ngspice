@@ -96,25 +96,6 @@ to specify library dependencies:
   target_link_libraries (your_target PRIVATE cppduals::duals)
 ```
 
-Older versions of CMake can achieve a similar result using the ``ExternalProject``
-family of commands and modifying the global preprocessor search path:
-
-```cmake
-  include(ExternalProject)
-
-  # Have CMake download the library headers only
-  set (CPPDUALS_TAG v0.4.1)
-  set (CPPDUALS_MD5 7efe49496b8d0e3d3ffbcd3c68f542f3)
-  ExternalProject_Add (cppduals
-    URL https://gitlab.com/tesch1/cppduals/-/archive/${CPPDUALS_TAG}/cppduals-${CPPDUALS_TAG}.tar.bz2
-    URL_HASH MD5=${CPPDUALS_MD5}
-    CONFIGURE_COMMAND "" BUILD_COMMAND "" INSTALL_COMMAND "" )
-
-  # Make include directory globally visible
-  ExternalProject_Get_Property (cppduals source_dir)
-  include_directories (${source_dir}/)
-```
-
 Alternatively, `cppduals` supports installation and discovery via the
 `find_package` utility. First, download and install the library to a
 location of your choosing:
@@ -299,6 +280,50 @@ thus licensed under [MPL-2](http://www.mozilla.org/MPL/2.0/FAQ.html) .
 ChangeLog
 =========
 
+v0.6.0
+======
+
+- target at least c++17.
+- tested with eigen 3.3.7 & 3.3.8.
+- rearrange how we're (illegally using/abusing) std:: by moving many implementation details
+  into duals::detail tricks - makes everything work with LIBCPP on osx now (as of Sequoia 15.2).
+- upgrade google test & benchmark libraries.
+- update to more modern cmake, at least 3.14 required now.
+- dont try to use Eigen's .exp() with duals, not supported.
+
+Known Issues
+- fmt library support is very out of date - should update to support std::format.
+- coverage is not working.
+- SSE/AVX not working - open to fixes but dont have a machine to test on at the moment.
+
+v0.5.4
+======
+
+- upgrade google test library
+
+v0.5.3
+======
+
+- fix some problem with pow()
+
+v0.5.2
+======
+
+- change optional libfmt print support to fmt 7.1.3 (from 6.x)
+- change default build standard to c++14.
+
+v0.5.1
+======
+
+- packaging cleanup
+
+v0.5.0
+======
+
+- added ARM NEON support.  tested on apple M1 - note apple's BLAS gemm
+  is ~2x faster than Eigen-generated matrix mul :(
+- fixed atan2 and pow
+
 v0.4.1
 ======
 
@@ -351,4 +376,4 @@ Todo
 - Add multi-variate differentiation capability.
 - Non-x86_64 (CUDA/AltiVec/HIP/NEON/...) vectorization.
 - Higher-order derivatives.
-
+- finish NEON (is why clang failing on osx?  or just make it faster!)

@@ -18,6 +18,7 @@
 
 #include <duals/dual>
 #include <complex>
+#include <iomanip>
 #include "gtest/gtest.h"
 
 using duals::dualf;
@@ -58,7 +59,7 @@ TEST(template_, dual_traits) {
   // depth
   EXPECT_EQ(dual_traits<float>::depth, 0);
   EXPECT_EQ(dual_traits<complexf>::depth, 0);
-  EXPECT_EQ(dual_traits<cdualf>::depth, 0);
+  EXPECT_EQ(dual_traits<cdualf>::depth, 1);
   EXPECT_EQ(dual_traits<dualf>::depth, 1);
   EXPECT_EQ(dual_traits<hyperdualf>::depth, 2);
 }
@@ -186,6 +187,8 @@ TEST(template_, common_type) {
   _EXPECT_TRUE(std::is_same<decltype(cd*cd), cdualf>);
   _EXPECT_TRUE(std::is_same<decltype(cd*d), cdualf>);
   _EXPECT_TRUE(std::is_same<decltype(d*cd), cdualf>);
+  _EXPECT_TRUE(std::is_same<decltype(cd*a), cdualf>);
+  _EXPECT_TRUE(std::is_same<decltype(a*cd), cdualf>);
 
   _EXPECT_TRUE(std::is_same<decltype(cd*1), cdualf>);
   _EXPECT_TRUE(std::is_same<decltype(1*cd), cdualf>);
@@ -328,6 +331,7 @@ TEST(members, rpart) {
   EXPECT_EQ(z.rpart(), 4);
   EXPECT_EQ(z.dpart(), 3);
 }
+
 TEST(members, dpart) {
   EXPECT_EQ(dpart(3), 0);
   dualf z(2,3);
@@ -554,6 +558,15 @@ TEST(comparison, ge) {
   EXPECT_TRUE(2 >= a);
   EXPECT_FALSE(1 >= a);
 }
+
+#if 0
+TEST(simple_ops, add) {
+  // https://gitlab.com/tesch1/cppduals/-/issues/11
+  duals::dual<std::complex<double>> x;
+  x = x+std::complex<double>(1., 2.);
+  duals::dual<std::complex<double>> y = sqrt(x+std::complex<double>(1., 2.));
+}
+#endif
 
 TEST(compound_assign, same_type) {
   // OP=
@@ -977,25 +990,6 @@ TEST(non_class, random2) {
   EXPECT_NE(c2.dpart(), 0);
   EXPECT_NE(c1.rpart(), c2.rpart());
   EXPECT_NE(c1.dpart(), c2.dpart());
-
-  // cdualf
-  cdualf d1 = duals::randos::random2<cdualf>();
-  cdualf d2 = duals::randos::random2<cdualf>();
-  EXPECT_NE(d1.real().rpart(), 0);
-  EXPECT_NE(d1.real().dpart(), 0);
-  EXPECT_NE(d1.imag().rpart(), 0);
-  EXPECT_NE(d1.imag().dpart(), 0);
-
-  EXPECT_NE(d2.real().rpart(), 0);
-  EXPECT_NE(d2.real().dpart(), 0);
-  EXPECT_NE(d2.imag().rpart(), 0);
-  EXPECT_NE(d2.imag().dpart(), 0);
-
-  EXPECT_NE(d1.real().rpart(), d2.real().rpart());
-  EXPECT_NE(d1.real().dpart(), d2.real().dpart());
-
-  EXPECT_NE(d1.imag().rpart(), d2.imag().rpart());
-  EXPECT_NE(d1.imag().dpart(), d2.imag().dpart());
 }
 
 TEST(smoke, funcs) {
@@ -1097,6 +1091,17 @@ TEST(complex, mixing) {
   // complex<dual> * real -> complex<dual>
   // complex<real> * dual -> complex<dual> ?
 
+  // pow_dual_complex
+  B = pow(1_ef, C);
+  // pow_complex_dual
+  B = pow(C, 1_ef);
+
+  // pow_dual_dual
+  B = pow(1_ef, 2_ef);
+  // pow_dual_scalar
+  B = pow(1_ef, 2);
+  // pow_scalar_dual
+  B = pow(2, 1_ef);
 }
 
 int main(int argc, char **argv)

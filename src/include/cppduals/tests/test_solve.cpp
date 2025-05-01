@@ -16,8 +16,8 @@
  * (c)2019 Michael Tesch. tesch1@gmail.com
  */
 
-#include "type_name.hpp"
 #include <duals/dual_eigen>
+#include "type_name.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/StdVector>
@@ -78,7 +78,10 @@ void solveLu() {
   emtx<DT,NN> B = b + DT(0,1) * emtx<T,NN>::Random();
   emtx<DT,NN> C,D,E;
   C = A * B;
-  D = A.lu().solve(C);
+  // D = A.lu().solve(C);
+  // D = A.colPivHouseholderQr().solve(C);
+  // D = A.bdcSvd().solve(C);
+  D = A.fullPivLu().solve(C);
   EXPECT_LT(rpart(B - D).norm(), tol);
   EXPECT_LT(dpart(B - D).norm(), tol);
 }
