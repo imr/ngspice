@@ -12,12 +12,12 @@
  * (c)2019 Michael Tesch. tesch1@gmail.com
  */
 
+#include <duals/dual_eigen>
 #include <math.h>
 #include <iostream>
 #include <iomanip>
 
 #include "type_name.hpp"
-#include <duals/dual_eigen>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -60,13 +60,45 @@ template <class T>
 struct common_type<Rando<T>,T> { typedef Rando<T> type; };
 }
 
-#if 0
+#if EIGEN_ARCH_ARM64
 
 int main(int argc, char * argv[])
 {
   emtx<cduald,50> A,B,C;
   //emtx<complexd,50> A,B,C;
   C = A * B;
+
+  //
+  using namespace Eigen::internal;
+  float32x4_t a, b, v3;
+  float32x2_t f2;
+  float32x4x2_t yy;
+  float ff[] = {1., 2., 3., 4.};
+  duals::dual<double> x;
+  const uint64x2_t maskq = {0, (uint64_t)-1};
+  const uint64x2_t imaskq = {(uint64_t)-1, 0};
+
+  std::cout << "a:" << std::hex << maskq[0] << "\n";
+  std::cout << "b:" << maskq[1] << "\n";
+
+  std::cout << "v3=" << v3[0] << ", " << v3[1] << ", " << v3[2] << ", " << v3[3] << "\n";
+  std::cout << "f2=" << f2[0] << ", " << f2[1] << "\n";
+
+  std::cout << ff[0] << ", " << ff[1] << ", " << ff[2] << ", " << ff[3] << "\n";
+#ifdef __ARM_NEON
+  std::cout << "__ARM_NEON:" << __ARM_NEON << "\n";
+#endif
+#ifdef __ARM_NEON_FP
+  std::cout << "__ARM_NEON_FP:" << __ARM_NEON_FP << "\n";
+#endif
+#ifdef __ARM_ARCH
+  std::cout << "__ARM_ARCH:" << __ARM_ARCH << "\n";
+#endif
+#ifdef __ARM_BIG_ENDIAN
+  std::cout << "__ARM_BIG_ENDIAN:" << __ARM_BIG_ENDIAN << "\n";
+#endif
+
+  return 0;
 }
 
 #elif 0

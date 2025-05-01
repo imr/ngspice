@@ -10,6 +10,7 @@
 
 #ifndef EIGEN_DUAL_SSE_H
 #define EIGEN_DUAL_SSE_H
+#include <pmmintrin.h> // SSE3
 
 namespace Eigen {
 
@@ -150,17 +151,9 @@ template<> EIGEN_STRONG_INLINE void prefetch<duals::dual<float> >(const duals::d
 
 template<> EIGEN_STRONG_INLINE duals::dual<float>  pfirst<Packet2df>(const Packet2df& a)
 {
-  #if EIGEN_GNUC_AT_MOST(4,3)
-  // Workaround gcc 4.2 ICE - this is not performance wise ideal, but who cares...
-  // This workaround also fix invalid code generation with gcc 4.3
-  EIGEN_ALIGN16 duals::dual<float> res[2];
-  _mm_store_ps((float*)res, a.v);
-  return res[0];
-  #else
   duals::dual<float> res;
   _mm_storel_pi((__m64*)&res, a.v);
   return res;
-  #endif
 }
 
 template<> EIGEN_STRONG_INLINE Packet2df preverse(const Packet2df& a)

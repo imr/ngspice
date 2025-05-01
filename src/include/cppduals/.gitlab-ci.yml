@@ -1,5 +1,4 @@
-#image: ubuntu:19.04
-image: fedora:30
+image: fedora:41
 
 variables:
   GIT_DEPTH: 3
@@ -9,79 +8,105 @@ stages:
 - build
 - test
 - cover
-- publish
-
-before_script:
-#- apt-get update --yes
-#- apt-get install --yes cmake g++ git doxygen lcov graphviz
-- dnf install -y gcc-c++ make cmake git doxygen lcov graphviz
+- pages
+- upload
+- release
 
 build:
   stage: build
-#  variables:
-#    CC: clang
-#    CXX: clang++
   script:
+  - dnf install -y gcc-c++ make cmake git doxygen lcov graphviz
   - echo $CXX
-  - cmake -Bbuild -H. -DCPPDUALS_TESTING=ON
+  - gcc -march=native -dM -E - </dev/null | grep -i sse
+  - cmake -Bbuild -H. -DCPPDUALS_TESTING=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
   - cmake --build build
-  - cmake -Bbuild-latest -H. -DCPPDUALS_TESTING=ON -DCPPDUALS_EIGEN_LATEST=ON
-  - cmake --build build-latest
   artifacts:
     expire_in: 1 week
     paths:
-    - build
-    - build-latest
+    - build/
+  only:
+  - merge_requests
+  - master
 
 test:
   stage: test
   script:
+  - dnf install -y gcc-c++ make cmake git doxygen lcov graphviz
   - cmake --build build --target test
-  - cmake --build build-latest --target test
   dependencies:
   - build
+  only:
+  - merge_requests
+  - master
 
 cover:
+  stage: cover
   script:
-  - cmake -Bbuild-cov -H. -DCODE_COVERAGE=ON -DCPPDUALS_TESTING=ON
+  - dnf install -y gcc-c++ make cmake git doxygen lcov graphviz
+  - cmake -Bbuild-cov -H. -DCPPDUALS_TESTING=ON -DCPPDUALS_CODE_COVERAGE=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
   - cmake --build build-cov --target cov
   - cmake --build build-cov --target cov-html
-  coverage: '/Total:|\w*\d+\.\d+/'
+  coverage: "/Total:|\\w*\\d+\\.\\d+/"
   artifacts:
-    expire_in: 1 day
+    expire_in: 1 week
     paths:
-    - build-cov
+    - build-cov/
   only:
   - merge_requests
 
 pages:
   script:
-  - cmake -Bbuild -H. -DCODE_COVERAGE=ON -DCPPDUALS_TESTING=ON
-  - cmake --build build --target cppduals_docs
-  - cmake --build build --target cov-html
-  - mv build/docs public/
-  - mv build/coverage public/
-  coverage: '/Total:|\w*\d+\.\d+/'
+  - dnf install -y gcc-c++ make cmake git doxygen lcov graphviz
+  - cmake -Bbuild-cov -H. -DCODE_COVERAGE=ON -DCPPDUALS_TESTING=ON
+  - cmake --build build-cov --target cov-html
+  - cmake --build build-cov --target cppduals_docs
+  - mv build-cov/coverage public/
+  - mv build-cov/docs public/
+  coverage: "/Total:|\\w*\\d+\\.\\d+/"
   artifacts:
     paths:
-    - public
+    - public/
   only:
   - master
 
-publish:
-  stage: publish
-  dependencies:
-  - build
-  environment:
-    name: publish
-  only:
-  - /^v\d+\.\d+\.\d+$/
-  except:
-  - branches
-  before_script:
-  - dnf install -y python3-requests
+variables:
+  # Package version can only contain numbers (0-9), and dots (.).
+  # Must be in the format of X.Y.Z, i.e. should match /\A\d+\.\d+\.\d+\z/ regular expresion.
+  # See https://docs.gitlab.com/ee/user/packages/generic_packages/#publish-a-package-file
+  PACKAGE_VERSION: $CI_COMMIT_TAG
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/release/${PACKAGE_VERSION}"
+  HEADER_ONLY_PACKAGE: "cppduals-h-${CI_COMMIT_TAG#v}.tgz"
+
+upload:
+  stage: upload
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_TAG
   script:
-#  - ln -s cppduals-h-${CI_BUILD_TAG#v} .
-#  - tar czvhf cppduals-h-${CI_BUILD_TAG#v}.tgz cppduals-h-${CI_BUILD_TAG#v}/duals cppduals-h-${CI_BUILD_TAG#v}/CMakeLists.txt
-  - tar czvf cppduals-h-${CI_BUILD_TAG#v}.tgz duals CMakeLists.txt
-  - ./doc/gitlab-release --message "Release ${CI_BUILD_TAG}" cppduals-h-${CI_BUILD_TAG#v}.tgz
+    - |
+      tar czvf ${HEADER_ONLY_PACKAGE} duals/
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+        --upload-file ${HEADER_ONLY_PACKAGE} \
+                      ${PACKAGE_REGISTRY_URL}/${HEADER_ONLY_PACKAGE}
+
+release:
+  # Caution, as of 2021-02-02 these assets links require a login, see:
+  # https://gitlab.com/gitlab-org/gitlab/-/issues/299384
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - |
+      release-cli create \
+        --name "Release $CI_COMMIT_TAG" \
+        --tag-name $CI_COMMIT_TAG \
+        --assets-link "{\"name\":\"${HEADER_ONLY_PACKAGE}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${HEADER_ONLY_PACKAGE}\"}"
+
+sast:
+  variables:
+    SAST_DEFAULT_ANALYZERS: flawfinder
+  stage: test
+
+include:
+- template: Security/SAST.gitlab-ci.yml

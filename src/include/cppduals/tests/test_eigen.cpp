@@ -16,11 +16,12 @@
  * (c)2019 Michael Tesch. tesch1@gmail.com
  */
 
-#include "type_name.hpp"
 #include <duals/dual_eigen>
+#include "type_name.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/StdVector>
+
 #include <unsupported/Eigen/MatrixFunctions>
 //#include <unsupported/Eigen/AutoDiff>
 #include "eexpokit/padm.hpp"
@@ -39,10 +40,13 @@ using duals::is_complex;
 using duals::dual_traits;
 using namespace duals::literals;
 
-typedef std::complex<double> complexd;
+typedef long double ldouble;
 typedef std::complex<float> complexf;
-typedef std::complex<duald> cduald;
+typedef std::complex<double> complexd;
+typedef std::complex<long double> complexld;
 typedef std::complex<dualf> cdualf;
+typedef std::complex<duald> cduald;
+typedef std::complex<dualld> cdualld;
 
 template <class eT, int N=Eigen::Dynamic, int K = N> using emtx = Eigen::Matrix<eT, N, K>;
 template <class eT> using smtx = Eigen::SparseMatrix<eT>;
@@ -60,49 +64,6 @@ template <int N=2, int K = N> using ecdf = Eigen::Matrix<cdualf, N, K> ;
   EXPECT_NEAR(rpart(A), rpart(B),tol);             \
   EXPECT_NEAR(dpart(A), dpart(B),tol)
 
-/// Simple taylor series, truncated when |S| is "small enough"
-template <class DerivedA, typename ReturnT = typename DerivedA::PlainObject>
-ReturnT
-expm4(const Eigen::EigenBase<DerivedA> & A_,
-      typename DerivedA::RealScalar mn = std::numeric_limits<typename DerivedA::RealScalar>::epsilon() * 1000)
-{
-  //std::cerr << "do    PO:" << type_name<typename DerivedA::PlainObject>() << "\n";
-  typedef typename DerivedA::RealScalar Real;
-  using std::isfinite;
-  const DerivedA & A = A_.derived();
-  int maxt = std::numeric_limits<Real>::digits;
-  int s = log2(rpart(A.derived().norm())) + 1;
-  s = std::max(0, s);
-
-  auto B = A * pow(Real(2), -s);
-  ReturnT R(A.rows(), A.cols());
-  R.setIdentity();
-  R += B;
-  ReturnT S = B;
-  for (int ii = 2; ii < maxt; ii++) {
-    S = S * B * Real(1.0/ii);
-    R += S;
-    auto Sn = S.norm();
-    if (!isfinite(Sn)) {
-      std::cout << "expm() non-finite norm:" << Sn << " at " << ii << "\n";
-      std::cout << " |R| = " << R.norm() << " s=" << s << "\n"
-                << " |A| = " << rpart(A.real().norm()) << "\n"
-                << " |A/2^s|=" << rpart(A.real().norm()/pow(2,s)) << "\n";
-      break;
-    }
-    // converged yet?
-    if (Sn < mn)
-      break;
-    if (ii == maxt - 1) {
-      std::cout << "expm() didn't converge in " << maxt << " |S| = " << Sn << "\n";
-      throw std::invalid_argument("no converge");
-    }
-  }
-
-  for (; s; s--)
-    R = R * R;
-  return R;
-}
 
 TEST(Eigen, NumTraits) {
   //::testing::StaticAssertTypeEq<Eigen::NumTraits<duals::dual<float>>::Real, float>();
@@ -448,11 +409,12 @@ TEST(measure, norm) {
   b = 3;
   Rt d(1);
   MatrixD x;
-  x << d;
+  x.array() = d;
   MatrixD a = (MatrixD() << 1,2,3, 4,5+5_ef,6, 7,8,9).finished();
   //typename MatrixD::Index index;
 
   EXPECT_EQ(a.sum(), 45 + 5_ef);
+  EXPECT_EQ(x.sum(), 9);
   EXPECT_NEAR(rpart(a.norm()), 16.8819430161341337282, 1e-5);
   EXPECT_NEAR(rpart(a.mean()), 5, 1e-5);
   EXPECT_NEAR(dpart(a.mean()), 0.555555555555555, 1e-5);
@@ -510,31 +472,49 @@ TEST(dpart, matrix) {
   EXPECT_EQ((dpart(AA) - CC).norm(),0);
 }
 
-TEST(func, expm) {
-  typedef float T;
-  typedef dual<T> dualt;
-  typedef std::complex<dual<T>> cdualt;
-#define NN 3
-#define N2 6
-  emtx<dualt, NN> a,b;
-  a = emtx<dualt, NN>::Random();
-  a.array() += 1.1 + 2.2_ef;
-  a.setZero();
-  a = eexpokit::padm(a);
-  EXPECT_LT((a - emtx<dualt, NN>::Identity()).norm(), 1e-6) << "a=" << a << "\n";
-  a *= 1+2_e;
-  EXPECT_LT((a - emtx<dualt, NN>::Identity()).norm(), 1e-6) << "a=" << a << "\n";
+TEST(eigen, exp_typechecks) {
+  typedef emtx<dualf,3> Mat;
+  typedef emtx<duald,3> Matd;
+  EXPECT_FALSE(Eigen::internal::is_exp_known_type<typename Mat::Scalar>::value);
+  EXPECT_FALSE(Eigen::internal::is_exp_known_type<typename Matd::Scalar>::value);
 
-  emtx<cdualt, NN> c;
-  //b = a + 1_e * emtx<cdualf, 3>::Random();
-  c.setZero();
-  c = c.exp();
-  //c = expm4(c);
-  EXPECT_LT((c - emtx<cdualf, NN>::Identity()).norm(), 1e-6) << "b=" << b << "\n";
-  #undef NN
-  #undef N2
+  typedef emtx<cdualf,3> Matc;
+  typedef emtx<cduald,3> Matcd;
+  EXPECT_FALSE(Eigen::internal::is_exp_known_type<typename Matc::Scalar>::value);
+  EXPECT_FALSE(Eigen::internal::is_exp_known_type<typename Matcd::Scalar>::value);
 }
 
+const bool _exp = true;
+const bool _padm = false;
+
+#define TEST_EXP(SCALAR_T, SIDE, EXP_OR_PADM) \
+  TEST(func, exp_##SCALAR_T##_##SIDE##EXP_OR_PADM) { \
+    emtx<SCALAR_T, SIDE> a,b; \
+    a = emtx<SCALAR_T, SIDE>::Random(); \
+    a.setZero(); \
+    if (EXP_OR_PADM == _exp) a = a.exp(); \
+    else a = eexpokit::padm(a); \
+    EXPECT_LT((a - emtx<SCALAR_T, SIDE>::Identity()).norm(), 1e-6) << "a=" << a << "\n"; \
+}
+
+#define TEST_EXP_SIZES(SCALAR_T, EXP_OR_PADM) \
+  TEST_EXP(SCALAR_T, 3, EXP_OR_PADM) \
+  TEST_EXP(SCALAR_T, 4, EXP_OR_PADM) \
+  TEST_EXP(SCALAR_T, 17, EXP_OR_PADM)
+
+#define TEST_EXP_SIZES_EOP(SCALAR_T) \
+  TEST_EXP_SIZES(SCALAR_T, _padm) \
+  TEST_EXP_SIZES(SCALAR_T, _exp)
+
+// just make sure padm is working
+TEST_EXP_SIZES_EOP(float)
+TEST_EXP_SIZES_EOP(double)
+TEST_EXP_SIZES_EOP(ldouble)
+TEST_EXP_SIZES_EOP(complexf)
+TEST_EXP_SIZES_EOP(complexd)
+TEST_EXP_SIZES_EOP(complexld)
+
+/* testing engine */
 #define QUOTE(...) STRFY(__VA_ARGS__)
 #define STRFY(...) #__VA_ARGS__
 
