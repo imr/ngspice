@@ -20,7 +20,7 @@ CKTdltNod(CKTcircuit* ckt, CKTnode* node)
 int
 CKTdltNNum(CKTcircuit* ckt, int num)
 {
-    CKTnode* n, * prev, * node, * sprev;
+    CKTnode* n, * prev, * node;
     int	error;
 
     if (!ckt->prev_CKTlastNode->number || num <= ckt->prev_CKTlastNode->number) {
@@ -30,12 +30,11 @@ CKTdltNNum(CKTcircuit* ckt, int num)
 
     prev = NULL;
     node = NULL;
-    sprev = NULL;
 
     for (n = ckt->CKTnodes; n; n = n->next) {
         if (n->number == num) {
             node = n;
-            sprev = prev;
+            break;
         }
         prev = n;
     }
@@ -45,14 +44,14 @@ CKTdltNNum(CKTcircuit* ckt, int num)
 
     ckt->CKTmaxEqNum -= 1;
 
-    if (!sprev) {
+    if (!prev) {
         ckt->CKTnodes = node->next;
     }
     else {
-        sprev->next = node->next;
+        prev->next = node->next;
     }
     if (node == ckt->CKTlastNode)
-        ckt->CKTlastNode = sprev;
+        ckt->CKTlastNode = prev;
 
     error = SPfrontEnd->IFdelUid(ckt, node->name, UID_SIGNAL);
     tfree(node);
