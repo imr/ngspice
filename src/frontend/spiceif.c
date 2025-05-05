@@ -81,8 +81,7 @@ extern bool ft_batchmode;
 
 static struct variable *parmtovar(IFvalue *pv, IFparm *opt,
                                   int use_description);
-static IFparm *parmlookup(IFdevice *dev, GENinstance **inptr, char *param,
-                           int do_model, int inout);
+static IFparm *parmlookup(IFdevice *dev, char *param, int do_model, int inout);
 static IFvalue *doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod,
                        IFparm *opt, int ind);
 static int doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod,
@@ -745,7 +744,7 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
             return (NULL);
         }
         device = ft_sim->devices[typecode];
-        opt = parmlookup(device, &dev, param, modelo_dispositivo, 0);
+        opt = parmlookup(device, param, modelo_dispositivo, 0);
         if (!opt) {
             fprintf(cp_err, "Error: no such parameter %s.\n", param);
             return (NULL);
@@ -822,7 +821,7 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
             return (NULL);
         }
         device = ft_sim->devices[typecode];
-        opt = parmlookup(device, &dev, param, do_model, 0);
+        opt = parmlookup(device, param, do_model, 0);
         if (!opt) {
             fprintf(cp_err, "Error: no such parameter %s.\n", param);
             return (NULL);
@@ -947,7 +946,7 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
         return;
     }
     device = ft_sim->devices[typecode];
-    opt = parmlookup(device, &dev, param, do_model, 1);
+    opt = parmlookup(device, param, do_model, 1);
     if (!opt) {
         if (param)
             fprintf(cp_err, "Error: no such parameter %s.\n", param);
@@ -1074,13 +1073,12 @@ parmtovar(IFvalue *pv, IFparm *opt, int use_description)
  */
 
 static IFparm *
-parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int inout)
+parmlookup(IFdevice *dev, char *param, int do_model, int inout)
 {
     int i;
 
-    NG_IGNORE(inptr);
-
     /* First try the device questions... */
+
     if (!do_model && dev->numInstanceParms) {
         for (i = 0; i < *(dev->numInstanceParms); i++) {
             if (!param && (dev->instanceParms[i].dataType & IF_PRINCIPAL))
@@ -1103,7 +1101,7 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
         for (i = 0; i < *(dev->numModelParms); i++)
             if ((((dev->modelParms[i].dataType & IF_SET) && inout == 1) ||
                  ((dev->modelParms[i].dataType & IF_ASK) && inout == 0)) &&
-                eq(dev->modelParms[i].keyword, param))
+                cieq(dev->modelParms[i].keyword, param))
             {
                 while ((dev->modelParms[i].dataType & IF_REDUNDANT) && (i > 0))
                     i--;
