@@ -344,7 +344,7 @@ static void EVTcreate_state(
     state_data = ckt->evt->data.state;
 
     /* Exit immediately if no states on this instance */
-    if(state_data->desc[inst_index] == NULL)
+    if (!state_data || state_data->desc[inst_index] == NULL)
         return;
 
     /* Get size of state block to be allocated */

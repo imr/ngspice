@@ -1,0 +1,30 @@
+/* Hack XSPICE device allow altering arbirary parameter during simulation. */
+
+NAME_TABLE:
+
+Spice_Model_Name:      spider
+C_Function_Name:       ucm_spider
+Description:           "Parameter tweaker"
+
+PORT_TABLE:
+
+Port_Name:             value
+Description:           "input"
+Direction:             in
+Default_Type:          v
+Allowed_Types:         [v, vd, i, id]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        parameter
+Description:           "Name of parameter to be varied"
+Data_Type:             string
+Default_Value:         -
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no

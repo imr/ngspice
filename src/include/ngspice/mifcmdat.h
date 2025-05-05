@@ -406,6 +406,12 @@ struct Mif_Private {
     Mif_Inst_Var_Data_t    **inst_var;    /* Information about each inst variable */
     Mif_Callback_t         *callback;     /* Callback function */
 
+    // Rude hack here!
+
+    CKTcircuit             *ckt;
+    struct SPICEdev       **sdevs;
+    struct IFdevice       **ifdevs;
+    unsigned int            devices;      /* Size of device table in *ckt. */
 };
 
 

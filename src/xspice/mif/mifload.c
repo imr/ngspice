@@ -50,6 +50,7 @@ NON-STANDARD FEATURES
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
+#include "ngspice/fteext.h"
 
 #include "ngspice/evt.h"
 
@@ -172,6 +173,11 @@ MIFload(
     /* *********************************************************************** */
     /* Setup the circuit data in the structure to be passed to the code models */
     /* *********************************************************************** */
+
+    cm_data.ckt = ckt;
+    cm_data.sdevs = DEVices;
+    cm_data.ifdevs = ft_sim->devices;
+    cm_data.devices = ft_sim->numDevices;
 
     /* anal_init is set if this is the first iteration at any step in */
     /* an analysis */
