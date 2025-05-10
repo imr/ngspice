@@ -1774,15 +1774,16 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             }
 #endif
             /* no lower case letters for lines beginning with: */
-            else if (!ciprefix("write", buffer) &&
-                    !ciprefix("wrdata", buffer) &&
-                    !ciprefix(".lib", buffer) && !ciprefix(".inc", buffer) &&
-                    !ciprefix("codemodel", buffer) &&
-                    !ciprefix("osdi", buffer) &&
-                    !ciprefix("pre_osdi", buffer) &&
-                    !ciprefix("echo", buffer) && !ciprefix("shell", buffer) &&
-                    !ciprefix("source", buffer) && !ciprefix("cd ", buffer) &&
-                    !ciprefix("load", buffer) && !ciprefix("setcs", buffer)) {
+            else if (!(ciprefix(".lib", buffer) || ciprefix(".inc", buffer) ||
+                (is_control && (
+                    ciprefix("write", buffer) ||
+                    ciprefix("wrdata", buffer) ||
+                    ciprefix("codemodel", buffer) ||
+                    ciprefix("osdi", buffer) ||
+                    ciprefix("pre_osdi", buffer) ||
+                    ciprefix("echo", buffer) || ciprefix("shell", buffer) ||
+                    ciprefix("source", buffer) ||ciprefix("cd ", buffer) ||
+                    ciprefix("load", buffer) || ciprefix("setcs", buffer))))) {
                 /* lower case for all other lines */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     *s = tolower_c(*s);
@@ -1793,39 +1794,41 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 for (s = buffer; *s && (*s != '\n'); s++)
                     ;
             }
-            /* lower case for variables or vectors in command 'echo'  */
-            if (ciprefix("echo", buffer)) {
-                char* p = buffer, *tmpstr;
-                while (p && *p != '\n' &&  *p != '\0') {
-                    p = nexttok(p);
-                    /* vectors or variables start with $ */
-                    if (p && *p == '$') {
-                        for (tmpstr = p; *tmpstr && !isspace_c(*tmpstr); tmpstr++)
-                            *tmpstr = tolower_c(*tmpstr);
-                        p = tmpstr;
+            if (is_control) {
+                /* lower case for variables or vectors in command 'echo'  */
+                if (ciprefix("echo", buffer)) {
+                    char* p = buffer, * tmpstr;
+                    while (p && *p != '\n' && *p != '\0') {
+                        p = nexttok(p);
+                        /* vectors or variables start with $ */
+                        if (p && *p == '$') {
+                            for (tmpstr = p; *tmpstr && !isspace_c(*tmpstr); tmpstr++)
+                                *tmpstr = tolower_c(*tmpstr);
+                            p = tmpstr;
+                        }
                     }
                 }
-            }
-            /* add Inp_Path to buffer while keeping the sourcepath variable contents */
-            if (ciprefix("set", buffer)) {
-                char *p;
+                /* add Inp_Path to buffer while keeping the sourcepath variable contents */
+                if (ciprefix("set", buffer)) {
+                    char* p;
 
-                p = skip_ws(buffer + 3); // Next word
-                if (strncmp(p, "sourcepath", 10) == 0 &&
-                    skip_non_ws(p) == p + 10) {
-                    p = strchr(buffer, ')');
-                    if (p) {
-                        *p = 0; // clear ) and insert Inp_Path in between
-                        p = tprintf("%s %s ) %s", buffer,
+                    p = skip_ws(buffer + 3); // Next word
+                    if (strncmp(p, "sourcepath", 10) == 0 &&
+                        skip_non_ws(p) == p + 10) {
+                        p = strchr(buffer, ')');
+                        if (p) {
+                            *p = 0; // clear ) and insert Inp_Path in between
+                            p = tprintf("%s %s ) %s", buffer,
                                 Inp_Path ? Inp_Path : "", p + 1);
-                        tfree(buffer);
-                        buffer = p;
-                        /* s points to end of buffer */
-                        for (s = buffer; *s && (*s != '\n'); s++)
-                            ;
-                    }
-                    else {
-                        fprintf(stderr, "Warning: no closing parens found in 'set sourcepath' statement\n");
+                            tfree(buffer);
+                            buffer = p;
+                            /* s points to end of buffer */
+                            for (s = buffer; *s && (*s != '\n'); s++)
+                                ;
+                        }
+                        else {
+                            fprintf(stderr, "Warning: no closing parens found in 'set sourcepath' statement\n");
+                        }
                     }
                 }
             }
@@ -8306,6 +8309,9 @@ static void inp_quote_params(struct card *c, struct card *end_c,
     bool in_control = FALSE;
 
     if (ft_skywaterpdk)
+        return;
+
+    if (newcompat.hs)
         return;
 
     for (; c && c != end_c; c = c->nextcard) {
