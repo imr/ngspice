@@ -298,6 +298,7 @@ static char *two2three_translate(
     char  **out_conn;
     char  **in_conn;
     char  **coef;
+    char* multibeg, *multiend, *val;
 
     char  *card;
 
@@ -309,6 +310,20 @@ static char *two2three_translate(
 
     /* Put the first character into local storage for checking type */
     type = *orig_card;
+
+    /* There may be a multiplier m=val 
+       Remove it here, add it later */
+    multibeg = strstr(orig_card, " m=");
+    if (multibeg) {
+        *multibeg = '\0';
+        /*
+        multiend = multibeg + 3;
+        while (*multiend == ' ')
+            multiend++;
+        while (*multiend && *multiend != ' ')
+            multiend++;
+         */
+    }
 
     /* Count the number of tokens for use in parsing */
     num_tokens = count_tokens(orig_card);
