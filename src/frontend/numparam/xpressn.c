@@ -224,14 +224,16 @@ message(dico_t *dico, const char *fmt, ...)
         if (ft_ngdebug) {
             fprintf
             (stderr,
-                "Netlist line no. %d, new internal line no. %d:\n",
-                dico->oldline, dico->srcline);
+                "Error in netlist line no. %d, new internal line no. %d:\n"
+                "%s\n\n",
+                dico->srcline, dico->oldline, dico->cardline);
         }
         else {
             fprintf
             (stderr,
-                "Netlist line no. %d:\n",
-                dico->oldline);
+                "Error in netlist line no. %d:\n"
+                "%s\n\n",
+                dico->srcline, dico->oldline);
         }
     }
     va_start(ap, fmt);
@@ -268,6 +270,7 @@ initdico(dico_t *dico)
         dico->hs_compatibility = 1;
     else
         dico->hs_compatibility = 0;
+    dico->cardline = NULL;
 }
 
 
