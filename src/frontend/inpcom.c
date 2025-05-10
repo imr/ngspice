@@ -7161,7 +7161,7 @@ static void replace_token(
         count++;
     }
     /* If total number of tokens correct */
-    if (count == total) {
+    if (count >= total) {
         actstring = string;
         for (i = 1; i < wherereplace; i++)
             actstring = nexttok(actstring);
