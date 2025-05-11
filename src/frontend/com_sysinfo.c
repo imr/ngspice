@@ -399,6 +399,7 @@ static void set_static_system_info(void)
 /* Get memory information */
 static int get_sysmem(struct sys_memory *memall)
 {
+    NG_IGNORE(memall);
     fprintf(stderr, "System memory info is not available\n");
     return -1;
 }
