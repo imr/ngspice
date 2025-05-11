@@ -2256,8 +2256,9 @@ BSIM4v7instance **InstArray;
                 here->BSIM4v7xgw = model->BSIM4v7xgw;
             if (!here->BSIM4v7ngconGiven)
                 here->BSIM4v7ngcon = model->BSIM4v7ngcon;
+            if (!here->BSIM4v7dtempGiven)
+                here->BSIM4v7dtemp = 0;
 
-                    
             /* Process instance model selectors, some
              * may override their global counterparts
              */
