@@ -2573,7 +2573,7 @@ static void replace_freq(struct card *c, int *line_number)
             ++keywd;
         cp = key;
         while (*keywd && !isspace_c(*keywd) && *keywd != '}' &&
-               cp - key < sizeof key - 1) {
+               cp - key < (long)(sizeof key - 1)) {
             *cp++ = *keywd++;
         }
         *cp = 0;
@@ -6826,7 +6826,7 @@ static void inp_compat(struct card *card)
            K13 L2 L3 1
          */
         else if (*curr_line == 'k') {
-            int tokcount = 0;
+            int tokcount = 0, idx1, idx2;
             char* kinst, **ltok, *couple;
             cut_line = curr_line;
             /* get number of tokens */
@@ -6841,20 +6841,20 @@ static void inp_compat(struct card *card)
                 cut_line = curr_line;
                 kinst = gettok(&cut_line);
                 ltok = TMALLOC(char*, tokcount);
-                for (i = 0; i < tokcount; i++) {
-                    ltok[i] = gettok(&cut_line);
+                for (idx1 = 0; idx1 < tokcount; idx1++) {
+                    ltok[idx1] = gettok(&cut_line);
                 }
                 couple = gettok(&cut_line);
                 *curr_line = '*';
-                for (i = 0; i < tokcount - 1; i++)
-                    for (ii = i + 1; ii < tokcount; ii++) {
-                        char* newline = tprintf("%s_%d_%d %s %s %s", kinst, (int)i + 1, (int)ii + 1, ltok[i], ltok[ii], couple);
-                        card = insert_new_line(card, newline, (int)i + 1, currlinenumber, card->linesource);
+                for (idx1 = 0; idx1 < tokcount - 1; idx1++)
+                    for (idx2 = idx1 + 1; idx2 < tokcount; idx2++) {
+                        char* newline = tprintf("%s_%d_%d %s %s %s", kinst, idx1 + 1, idx2 + 1, ltok[idx1], ltok[idx2], couple);
+                        card = insert_new_line(card, newline, idx1 + 1, currlinenumber, card->linesource);
                     }
                 tfree(kinst);
                 tfree(couple);
-                for (i = 0; i < tokcount; i++) {
-                    tfree(ltok[i]);
+                for (idx1 = 0; idx1 < tokcount; idx1++) {
+                    tfree(ltok[idx1]);
                 }
             }
         }
