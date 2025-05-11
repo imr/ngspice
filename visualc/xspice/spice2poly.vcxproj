@@ -210,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\xspice\icm\spice2poly\icm_spice2poly\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\spice2poly\icm_spice2poly\ifspec.ifs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
