@@ -65,7 +65,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             && here->VSRCcoeffs[4] != 0.0
                             ? here->VSRCcoeffs[4] : ckt->CKTstep;
                         PW = here->VSRCfunctionOrder > 5
-                            && here->VSRCcoeffs[5] != 0.0
+                            && here->VSRCcoeffs[5] >= 0.0
                             ? here->VSRCcoeffs[5] : ckt->CKTfinalTime;
                         PER = here->VSRCfunctionOrder > 6
                             && here->VSRCcoeffs[6] != 0.0

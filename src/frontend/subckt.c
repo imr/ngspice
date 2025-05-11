@@ -583,11 +583,18 @@ doit(struct card *deck, wordlist *modnames) {
         scale = 1;
 
     error = 0;
-    /* Second pass: do the replacements. */
+    /* Second pass: do the replacements.
+       Check if binning is used for .model inside of the subcircuit.
+       Reduce .model lines to the one with appropriate w and l.
+       (Inspired by Skywater PDK with excessive use of binning (161 bins)
+       in the subcircuit referencing a MOS device) */
     do {                    /*  while (!error && numpasses-- && gotone)  */
         struct card *c = deck;
         struct card *prev_of_c = NULL;
+        bool foundmodel = FALSE;
+
         gotone = FALSE;
+
         for (; c; prev_of_c = c, c = c->nextcard) {
             if (ciprefix(invoke, c->line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
 
@@ -597,16 +604,13 @@ doit(struct card *deck, wordlist *modnames) {
                 gotone = TRUE;
                 t = tofree = s = copy(c->line);       /*  s & t hold copy of component line  */
 
-                /*  make scname point to first non-whitepace chars after refdes invocation
-                 * e.g. if invocation is Xreference, *scname = reference
-                 */
+                /* scname contains the refdes Xname */
                 tofree2 = scname = gettok(&s);
-                /*scname += strlen(invoke);   */
                 while ((*scname == ' ') || (*scname == '\t') || (*scname == ':'))
                     scname++;
 
-                /*  Now set s to point to last non-space chars in line (i.e.
-                 *   the name of the model invoked
+                /*  Now set s to point to last non-space chars in the x line (i.e.
+                 *  the name of the model invoked)
                  */
                 while (*s)
                     s++;
@@ -617,38 +621,47 @@ doit(struct card *deck, wordlist *modnames) {
                     s--;
                 s++;
 
-                /* iterate through .subckt list and look for .subckt name invoked */
+                /* Iterate through .subckt list and look for .subckt name
+                   corresponding to the subckt name extracted from the x line */
                 for (sss = subs; sss; sss = sss->su_next)
                     if (eq(sss->su_name, s))
                         break;
 
-
-                /* At this point, sss points to the .subckt invoked,
-                 * and scname points to the netnames
-                 * involved.
+                /* At this point,
+                 * c is the card with the x line.
+                 * scname points to the netname of the x line involved.
+                 * s is the subckt name extracted from the x line.
+                 * sss points to the subcircuit referenced by the x line
+                 * sss->su_def is the contents of the subcircuit.
                  */
-
 
                 /* If no .subckt is found, don't complain -- this might be an
                  * instance of a subckt that is defined above at higher level.
                  */
                 if (sss) {
 //                    tprint(sss->su_def);
+
+                    /* copy of the contents between .subckt and .ends */
                     struct card *su_deck = inp_deckcopy(sss->su_def);
                     /* If we have modern PDKs, we have to reduce the amount of memory required.
                        We try to reduce the models to the one really used.
-                       Otherwise su_deck is full of unused binning models.*/
+                       Otherwise su_deck is full of unused binning models.
+                       c->w > 0 and c->l > 0 point to an x line with given w and l
+                       (typically a call to a MOS device). */
                     if ((newcompat.hs || newcompat.spe) && c->w > 0 && c->l > 0) {
                         /* extract wmin, wmax, lmin, lmax */
-                        struct card* new_deck = su_deck;
+                        struct card* enter_su_deck = su_deck;
                         struct card* prev = NULL;
                         while (su_deck) {
+                            /* find a .model line */
                             if (!ciprefix(".model", su_deck->line)) {
                                 prev = su_deck;
                                 su_deck = su_deck->nextcard;
                                     continue;
                             }
-
+                            /* check if line contains wmin, wmax, lmin, lmax
+                               if available, extract its values,
+                               if not, go to next line */
                             char* curr_line = su_deck->line;
                             float fwmin, fwmax, flmin, flmax;
                             char *wmin = strstr(curr_line, " wmin=");
@@ -716,31 +729,38 @@ doit(struct card *deck, wordlist *modnames) {
                                 su_deck = su_deck->nextcard;
                                 continue;
                             }
-
+                            /* check if x line's w and l are withing the limites of wmin, wmax, lmin, lmax */
                             float csl = (float)scale * c->l;
                             /* scale by nf */
                             float csw = (float)scale * c->w / c->nf;
                             /*fprintf(stdout, "Debug: nf = %f\n", c->nf);*/
                             if (csl >= flmin && csl < flmax && csw >= fwmin && csw < fwmax) {
-                                /* use the current .model card */
+                                /* if within the limits, use the current .model card */
                                 prev = su_deck;
                                 su_deck = su_deck->nextcard;
+                                foundmodel = TRUE;
                                 continue;
                             }
                             else {
+                                /* if not within the limits,
+                                   delete the .model line not fitting the device */
                                 struct card* tmpcard = su_deck->nextcard;
                                 line_free_x(prev->nextcard, FALSE);
                                 su_deck = prev->nextcard = tmpcard;
                             }
                         }
-                        su_deck = new_deck;
+                        /* go back to the first card of su_deck */
+                        su_deck = enter_su_deck;
                     }
 
-                    if (!su_deck) {
-                        fprintf(stderr, "\nError: Could not find a model for device %s in subcircuit %s\n",
-                            scname, sss->su_name);
+                    if (!foundmodel && (newcompat.hs || newcompat.spe) && c->w > 0 && c->l > 0) {
+                        fprintf(stderr, "\nError: Could not find a model\n"
+                            "    for device %s in transistor subcircuit %s\n", scname, sss->su_name);
+                        fprintf(stderr, "    with w = %.3g and l = %.3g\n\n", c->w, c->l);
                         controlled_exit(1);
                     }
+
+                    foundmodel = FALSE;
 
                     struct card *rest_of_c = c->nextcard;
 
@@ -782,8 +802,8 @@ doit(struct card *deck, wordlist *modnames) {
 
                 tfree(tofree);
                 tfree(tofree2);
-            }
-        }
+            } /* if (ciprefix(invoke, c->line)) */
+        }  /* for (; c; prev_of_c = c, c = c->nextcard) */
     } while (!error && numpasses-- && gotone);
 
 

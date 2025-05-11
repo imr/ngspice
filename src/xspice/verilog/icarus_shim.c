@@ -4,7 +4,7 @@
  * an Icarus Verilog simulation (libvvp.so).
  * Licensed on the same terms as Ngspice.
  *
- * Copyright (c) 2024 Giles Atkinson
+ * Copyright (c) 2024-2025 Giles Atkinson
  */
 
 #include <stdio.h>
@@ -17,6 +17,12 @@
 /* The VVP code runs on its own stack, handled by cr_xxx() functions. */
 
 #include "coroutine_shim.h"
+
+#ifdef _MSC_VER
+#include "../../../visualc/src/include/ngspice/config.h"
+#else
+#include "ngspice/config.h"  // For NGSPICELIBDIR
+#endif
 
 #include "ngspice/cmtypes.h" // For Digital_t
 #include "ngspice/cosim.h"

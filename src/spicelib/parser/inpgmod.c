@@ -149,12 +149,18 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
             if (p) {
                 char *value;
-                INPgetTok(&line, &value, 1);
 
-                modtmp->INPmodfast->defaults =
-                    wl_cons(copy(parm),
-                            wl_cons(value,
-                                    modtmp->INPmodfast->defaults));
+                INPgetTok(&line, &value, 1);
+                if (p->dataType & IF_SET) {
+                    modtmp->INPmodfast->defaults =
+                        wl_cons(copy(parm),
+                                wl_cons(value, modtmp->INPmodfast->defaults));
+                } else {
+                    fprintf(stderr,
+                            "Ignoring attempt to set a default "
+                            "for read-only instance parameter %s in:\n  %s\n",
+                            p->keyword, modtmp->INPmodLine->line);
+                }
             } else {
 
                 double dval;
@@ -286,6 +292,7 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
 
     for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
+        /* exact: 1, with binning extension .[0-9]: 2*/
         if (model_name_match(name, modtmp->INPmodName) < 2)
             continue;
 
@@ -328,8 +335,8 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
             *model = modtmp;
             return NULL;
         }
+        fprintf(stderr, "Warning: no model found for w=%.3e and l=%.3e\n", w, l);
     }
-
     return NULL;
 }
 
