@@ -47,7 +47,7 @@ required syntax.
 This model may also be called directly as follows:
 
         a1 [ <input(s)> ] <output> xxx
-        .model xxx spice2poly ( coef = [ <list of 2G6 compatible coefficients> ] )
+        .model xxx spice2poly ( coef = [ <list of 2G6 compatible coefficients> ] [m = val] )
 
 Refer to the 2G6 User Guide for an explanation of the coefficients.
 
@@ -102,11 +102,13 @@ void spice2poly (ARGS)
     double      sum;          /* Temporary for accumulating sum of terms */
     double      product;      /* Temporary for accumulating product */
 
-
+    double      mult;         /* multplicator for G and F sources */
 
     /* Get number of input values */
 
     num_inputs = PORT_SIZE(in);
+
+    mult =  PARAM(m);
 
     /* If this is the first call to the model, allocate the static variable */
     /* array */
@@ -165,7 +167,7 @@ void spice2poly (ARGS)
         /* Add the product times the appropriate coefficient into the sum */
         sum += coef[i] * product;
     }
-    OUTPUT(out) = sum;
+    OUTPUT(out) = sum * mult;
 
 
     /* Compute and output the partials for each input */
@@ -201,13 +203,13 @@ void spice2poly (ARGS)
             sum += coef[j] * product;
         }
 
-        PARTIAL(out,in[i]) = sum;
+        PARTIAL(out,in[i]) = sum * mult;
 
         /* If this is DC analysis, save the partial for use as AC gain */
         /* value in an AC analysis */
 
         if(ANALYSIS == MIF_DC)
-            STATIC_VAR(acgains[i]) = sum;
+            STATIC_VAR(acgains[i]) = sum * mult;
     }
 
     /* Free the allocated items and return */

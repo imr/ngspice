@@ -16,7 +16,8 @@ AUTHORS
 
 MODIFICATIONS
 
-    <date> <person name> <nature of modifications>
+    11/05/2025 Holger Vogt
+    new parameter m (multiplicator)
 
 SUMMARY
 
@@ -66,6 +67,17 @@ Limits:                -
 Vector:                yes
 Vector_Bounds:         [2 -]
 Null_Allowed:          no
+
+PARAMETER_TABLE:
+
+Parameter_Name:        m
+Description:           "multiplicator"
+Data_Type:             real
+Default_Value:         1
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
 
 
 STATIC_VAR_TABLE:
