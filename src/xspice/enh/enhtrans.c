@@ -480,6 +480,12 @@ static char *two2three_translate(
         tfree(multi);
     }
 
+    if (multi && (type == 'e' || type == 'E' || type == 'h' || type == 'H')) {
+        fprintf(stderr, "Warning: multiplier m not available for E and H poly sources, ignored as\n"
+            "    %s\n", orig_card);
+        tfree(multi);
+    }
+
 #ifdef TRACE
     /* SDB debug statement */
     printf("In two2three_translate, translated statements:\n%s \n%s \n", *inst_card, *mod_card);
