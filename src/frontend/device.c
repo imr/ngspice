@@ -1641,11 +1641,13 @@ check_ifparm_compare(const void *a, const void *b)
 }
 
 
+#ifdef HAVE_TDESTROY
 static void
 check_ifparm_freenode(void *node)
 {
     NG_IGNORE(node);
 }
+#endif
 
 
 static void
