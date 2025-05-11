@@ -372,7 +372,7 @@ INPevaluateRKM_R(char** line, int* error, int gobble)
             int num;
             char ch;
             if (sscanf(here + 1, "%i%c", &num, &ch) == 1) {
-                expo1 = expo1;
+                //expo1 = expo1;
                 hasmulti = TRUE;
             }
             else {
@@ -612,7 +612,7 @@ INPevaluateRKM_C(char** line, int* error, int gobble)
     case 'r':
     case 'R':
 
-        expo1 = expo1;
+        //expo1 = expo1;
         hasmulti = TRUE;
         break;
     case 'n':
@@ -850,7 +850,7 @@ INPevaluateRKM_L(char** line, int* error, int gobble)
     case 'r':
     case 'R':
 
-        expo1 = expo1;
+        //expo1 = expo1;
         hasmulti = TRUE;
         break;
     case 'n':
