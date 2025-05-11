@@ -315,7 +315,6 @@ static char *two2three_translate(
        Remove it here, add it later */
     multibeg = strstr(orig_card, " m=");
     if (multibeg) {
-//        *multibeg = '\0';
         multiend = multibeg + 3;
         while (*multiend == ' ')
             multiend++;
