@@ -187,6 +187,19 @@ com_stop(wordlist *wl)
         (void) sprintf(buf, "%d", debugnumber);
         cp_addkword(CT_DBNUMS, buf);
         debugnumber++;
+        /* If com_stop is called after tran simulation has already started, set a breakpoint
+           if not in the past */
+        if ((thisone->db_type == DB_STOPWHEN) && cieq(thisone->db_nodename1, "time")) {
+            if (thisone->db_value2 > ft_curckt->ci_ckt->CKTtime) {
+                CKTsetBreak(ft_curckt->ci_ckt, thisone->db_value2);
+                if (ft_ngdebug)
+                    printf("breakpoint set to time = %g\n", thisone->db_value2);
+            }
+            else {
+                fprintf(stderr, "\nWarning: command 'stop' would set breakpoint in the past, ignored!\n"
+                    "    time: %g, bkpt: %e\n\n", ft_curckt->ci_ckt->CKTtime, thisone->db_value2);
+            }
+        }
     }
 
     return;
