@@ -5256,7 +5256,6 @@ int get_number_terminals(char *c)
                 if (strchr(inst, '='))
                     j++;
                 tfree(inst);
-                i++;
             }
             if (i == 100)
                 return 0;
