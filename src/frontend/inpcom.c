@@ -5251,12 +5251,11 @@ int get_number_terminals(char *c)
             break;
         }
         case 'p': /* Recognition of up to 100 cpl nodes */
-            for (i = j = 0; (i < 100) && (*c != '\0'); ++i) {
+            for (i = j = 0; (i < 100) && (*c != '\0'); i = i + 2) {
                 inst = gettok_instance(&c);
                 if (strchr(inst, '='))
                     j++;
                 tfree(inst);
-                i++;
             }
             if (i == 100)
                 return 0;
