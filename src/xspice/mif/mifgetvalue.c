@@ -108,7 +108,7 @@ static char *get_string(char **s, int is_array, Mif_Token_Type_t *token_type)
         end = *s;
         ret_str = copy_substring(beg, end);
     }
-    *token_type = MIF_STRING;
+    *token_type = MIF_STRING_TOK;
     return ret_str;
 }
 

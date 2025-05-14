@@ -550,6 +550,7 @@ static int get_sysmem(struct sys_mem *memall)
 #else
 
 
+#  ifdef notdef
 #include <signal.h>
 #include <setjmp.h>
 
@@ -625,6 +626,7 @@ baseaddr(void)
 
 #endif
 }
+#endif
 
 
 #endif
