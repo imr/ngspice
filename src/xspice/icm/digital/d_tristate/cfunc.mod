@@ -238,10 +238,12 @@ void cm_d_tristate(ARGS)
             if (idp[1].when <= TIME) {
                 if (str == out->strength) {
                     s_ctl = Idle;
-                    idp[1].prev = str;
+                    // quietly rude
+                    idp[1].prev = (Digital_State_t)str;
                 } else {
                     s_ctl = Normal;
-                    idp[1].prev = out->strength;
+                    // quietly rude
+                    idp[1].prev = (Digital_State_t)out->strength;
                     idp[1].when = TIME + OUTPUT_DELAY(out);
                 }
             } else {
