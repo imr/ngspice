@@ -56,7 +56,7 @@ NIpzMuller(PZtrial **set, PZtrial *newtry)
 	}
     }
 
-    magx = total / j;
+    magx = (j != 0) ? (total / j) : total;
     if (magx < min)
 	magx = min;
 
