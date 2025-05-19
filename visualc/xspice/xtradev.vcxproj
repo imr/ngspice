@@ -248,6 +248,10 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\memristor\memristor-ifspec.c" />
+    <ClCompile Include="icm\xtradev\seegenerator\seegenerator-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\xtradev\seegenerator\seegenerator-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +279,8 @@
     <None Include="..\..\src\xspice\icm\xtradev\zener\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\xtradev\memristor\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\xtradev\memristor\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtradev\seegenerator\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtradev\seegenerator\ifspec.ifs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
