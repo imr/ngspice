@@ -103,7 +103,7 @@ NON-STANDARD FEATURES
 
 ==============================================================================*/
 
-/*=== CM_ILIMIT ROUTINE ===*/
+/*=== CM_SEEGEN ROUTINE ===*/
 
 void cm_seegen(ARGS)  /* structure holding parms, 
                                        inputs, outputs, etc.     */
@@ -115,9 +115,6 @@ void cm_seegen(ARGS)  /* structure holding parms,
     double out;
     double tcurr = TIME;
 
-    Mif_Complex_t ac_gain;
-
-
 
     /* Retrieve frequently used parameters... */
 
@@ -126,7 +123,10 @@ void cm_seegen(ARGS)  /* structure holding parms,
     tdelay = PARAM(tdelay);
     inull = PARAM(inull);
 
-    out = inull * (exp(-(tcurr-tdelay)/talpha) - exp(-(tcurr-tdelay)/tbeta));
+    if (tcurr < tdelay)
+        out = 0;
+    else
+        out = inull * (exp(-(tcurr-tdelay)/talpha) - exp(-(tcurr-tdelay)/tbeta));
 
     OUTPUT(out) = out;
 }

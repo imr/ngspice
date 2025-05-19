@@ -30,13 +30,13 @@ Description:           "single event effect generator"
 
 PORT_TABLE:
 
-Port_Name:               out                 
+Port_Name:               out
 Description:             "output" 
-Direction:               out     
-Default_Type:          i 
+Direction:               out
+Default_Type:          i
 Allowed_Types:         [i,id]
 Vector:                 no
-Vector_Bounds:          - 
+Vector_Bounds:          -
 Null_Allowed:          no
 
 
