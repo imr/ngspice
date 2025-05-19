@@ -60,7 +60,23 @@ NON-STANDARD FEATURES
   
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
-
+static void
+cm_seegen_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            double *last_t_value = STATIC_VAR (last_t_value);
+            if (last_t_value)
+                free(last_t_value);
+            STATIC_VAR (last_t_value) = NULL;
+            int *pulse_number = STATIC_VAR (pulse_number);
+            if (pulse_number)
+                free(pulse_number);
+            STATIC_VAR (pulse_number) = NULL;
+            break;
+        }
+    }
+}
     
            
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
@@ -108,12 +124,15 @@ NON-STANDARD FEATURES
 void cm_seegen(ARGS)  /* structure holding parms, 
                                        inputs, outputs, etc.     */
 {
-    double talpha;
-    double tbeta;
-    double tdelay;
-    double inull;
-    double out;
-    double tcurr = TIME;
+    double talpha;           /* parameter alpha */
+    double tbeta;            /* parameter beta */
+    double tdelay;           /* delay until first pulse */
+    double inull;            /* max. current of pulse */
+    double tperiod;          /* pulse repetition period */
+    double out;              /* output current */
+    double *last_t_value;    /* static storage of next pulse time */
+    int *pulse_number;       /* static storage of next pulse time */
+    double tcurr = TIME;     /* current simulation time */
 
 
     /* Retrieve frequently used parameters... */
@@ -121,14 +140,35 @@ void cm_seegen(ARGS)  /* structure holding parms,
     talpha = PARAM(talpha);
     tbeta = PARAM(tbeta);
     tdelay = PARAM(tdelay);
+    tperiod = PARAM(tperiod);
     inull = PARAM(inull);
 
-    if (tcurr < tdelay)
-        out = 0;
-    else
-        out = inull * (exp(-(tcurr-tdelay)/talpha) - exp(-(tcurr-tdelay)/tbeta));
+    if (INIT==1) {
+        /* Allocate storage for last_t_value */
+        STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
+        last_t_value = (double *) STATIC_VAR(last_t_value);
+        *last_t_value = tdelay;
+        STATIC_VAR(pulse_number) = (int *) malloc(sizeof(int));
+        pulse_number = (int *) STATIC_VAR(pulse_number);
+        *pulse_number = 1;
+    }
+    else {
 
-    OUTPUT(out) = out;
+        last_t_value = (double *) STATIC_VAR(last_t_value);
+        pulse_number = (int *) STATIC_VAR(pulse_number);
+
+        if (tcurr < *last_t_value)
+            out = 0;
+        else
+            out = inull * (exp(-(tcurr-*last_t_value)/talpha) - exp(-(tcurr-*last_t_value)/tbeta));
+
+        if (tcurr > *last_t_value + tperiod * 0.9) {
+            *last_t_value = *last_t_value + tperiod;
+            (*pulse_number)++;
+        }
+        if (*pulse_number - 1 < PORT_SIZE(out))
+           OUTPUT(out[*pulse_number - 1]) = out;
+    }
 }
 
 

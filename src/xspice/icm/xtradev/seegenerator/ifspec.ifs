@@ -30,13 +30,13 @@ Description:           "single event effect generator"
 
 PORT_TABLE:
 
-Port_Name:               out
-Description:             "output" 
-Direction:               out
+Port_Name:             out
+Description:          "output" 
+Direction:             out
 Default_Type:          i
 Allowed_Types:         [i,id]
-Vector:                 no
-Vector_Bounds:          -
+Vector:                yes
+Vector_Bounds:         [1 -]
 Null_Allowed:          no
 
 
@@ -44,23 +44,46 @@ PARAMETER_TABLE:
 
 Parameter_Name:     talpha                   tbeta
 Description:        "alpha"                 "beta"
-Data_Type:          real                        real
+Data_Type:          real                     real
 Default_Value:      500e-12                  10e-12
-Limits:             -                           -
-Vector:              no                          no
-Vector_Bounds:       -                           -
-Null_Allowed:       yes                         yes
+Limits:             -                        -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                      yes
 
 
 PARAMETER_TABLE:
 
-
 Parameter_Name:     tdelay                inull
 Description:        "pulse delay"         "max current"
-Data_Type:          real                   real   
-Default_Value:      0                      200e-6   
-Limits:             -                        -       
-Vector:              no                          no     
-Vector_Bounds:       -                           -      
-Null_Allowed:       yes                         yes    
+Data_Type:          real                   real
+Default_Value:      0                      200e-6
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:       -                      -
+Null_Allowed:       yes                    yes
 
+PARAMETER_TABLE:
+
+Parameter_Name:     tperiod
+Description:        "pulse repetition"
+Data_Type:          real
+Default_Value:      0
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    last_t_value
+Data_Type:          pointer
+Vector:              no
+Description:        "next pulse start time"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    pulse_number
+Data_Type:          pointer
+Vector:              no
+Description:        "number of pulse"
