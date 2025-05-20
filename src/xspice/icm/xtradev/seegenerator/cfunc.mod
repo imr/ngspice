@@ -28,9 +28,6 @@ INTERFACES
 
     FILE                 ROUTINE CALLED     
 
-    CMutil.c             void cm_smooth_corner(); 
-                         void cm_smooth_discontinuity();
-                         void cm_climit_fcn()
 
 REFERENCED FILES
 
@@ -74,6 +71,10 @@ cm_seegen_callback(ARGS, Mif_Callback_Reason_t reason)
                 free(pulse_number);
             STATIC_VAR (pulse_number) = NULL;
             break;
+            double *last_ctrl = STATIC_VAR (last_ctrl);
+            if (last_ctrl)
+                free(last_ctrl);
+            STATIC_VAR (last_ctrl) = NULL;
         }
     }
 }
@@ -129,9 +130,11 @@ void cm_seegen(ARGS)  /* structure holding parms,
     double tdelay;           /* delay until first pulse */
     double inull;            /* max. current of pulse */
     double tperiod;          /* pulse repetition period */
+    double ctrl;             /* control input */
     double out;              /* output current */
     double *last_t_value;    /* static storage of next pulse time */
     int *pulse_number;       /* static storage of next pulse time */
+    double *last_ctrl;       /* static storage of last ctrl value */
     double tcurr = TIME;     /* current simulation time */
 
 
@@ -143,6 +146,11 @@ void cm_seegen(ARGS)  /* structure holding parms,
     tperiod = PARAM(tperiod);
     inull = PARAM(inull);
 
+    if (PORT_NULL(ctrl))
+        ctrl = 1;
+    else
+        ctrl = INPUT(ctrl);
+
     if (INIT==1) {
         /* Allocate storage for last_t_value */
         STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
@@ -151,11 +159,20 @@ void cm_seegen(ARGS)  /* structure holding parms,
         STATIC_VAR(pulse_number) = (int *) malloc(sizeof(int));
         pulse_number = (int *) STATIC_VAR(pulse_number);
         *pulse_number = 1;
+        STATIC_VAR(last_ctrl) = (double *) malloc(sizeof(double));
+        last_ctrl = (double *) STATIC_VAR(last_ctrl);
+        *last_ctrl = ctrl;
     }
     else {
 
         last_t_value = (double *) STATIC_VAR(last_t_value);
         pulse_number = (int *) STATIC_VAR(pulse_number);
+        last_ctrl = (double *) STATIC_VAR(last_ctrl);
+
+        if (*last_ctrl < 0.5 && ctrl >= 0.5) {
+            *last_t_value = *last_t_value + tcurr;
+            *last_ctrl = ctrl;
+        }
 
         if (tcurr < *last_t_value)
             out = 0;

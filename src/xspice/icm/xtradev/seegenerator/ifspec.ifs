@@ -30,14 +30,14 @@ Description:           "single event effect generator"
 
 PORT_TABLE:
 
-Port_Name:             out
-Description:          "output" 
-Direction:             out
-Default_Type:          i
-Allowed_Types:         [i,id]
-Vector:                yes
-Vector_Bounds:         [1 -]
-Null_Allowed:          no
+Port_Name:             ctrl                 out
+Description:          "control input"       "output"
+Direction:             in                   out
+Default_Type:          v                    i
+Allowed_Types:         [v,vd,i,id]          [i,id]
+Vector:                no                   yes
+Vector_Bounds:         -                    [1 -]
+Null_Allowed:          yes                  no
 
 
 PARAMETER_TABLE:
@@ -45,7 +45,7 @@ PARAMETER_TABLE:
 Parameter_Name:     talpha                   tbeta
 Description:        "alpha"                 "beta"
 Data_Type:          real                     real
-Default_Value:      500e-12                  10e-12
+Default_Value:      500e-12                  20e-12
 Limits:             -                        -
 Vector:              no                      no
 Vector_Bounds:       -                       -
@@ -87,3 +87,10 @@ Static_Var_Name:    pulse_number
 Data_Type:          pointer
 Vector:              no
 Description:        "number of pulse"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    last_ctrl
+Data_Type:          pointer
+Vector:              no
+Description:        "last control value"
