@@ -130,6 +130,7 @@ void cm_seegen(ARGS)  /* structure holding parms,
     double tdelay;           /* delay until first pulse */
     double inull;            /* max. current of pulse */
     double tperiod;          /* pulse repetition period */
+    double ctrlthres;        /* control voltage threshold */
     double ctrl;             /* control input */
     double out;              /* output current */
     double *last_t_value;    /* static storage of next pulse time */
@@ -145,6 +146,7 @@ void cm_seegen(ARGS)  /* structure holding parms,
     tdelay = PARAM(tdelay);
     tperiod = PARAM(tperiod);
     inull = PARAM(inull);
+    ctrlthres = PARAM(ctrlthres);
 
     if (PORT_NULL(ctrl))
         ctrl = 1;
@@ -169,7 +171,7 @@ void cm_seegen(ARGS)  /* structure holding parms,
         pulse_number = (int *) STATIC_VAR(pulse_number);
         last_ctrl = (double *) STATIC_VAR(last_ctrl);
 
-        if (*last_ctrl < 0.5 && ctrl >= 0.5) {
+        if (*last_ctrl < ctrlthres && ctrl >= ctrlthres) {
             *last_t_value = *last_t_value + tcurr;
             *last_ctrl = ctrl;
         }

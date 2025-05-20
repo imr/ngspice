@@ -65,14 +65,14 @@ Null_Allowed:       yes                    yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     tperiod
-Description:        "pulse repetition"
-Data_Type:          real
-Default_Value:      0
-Limits:             -
-Vector:              no
-Vector_Bounds:       -
-Null_Allowed:       yes
+Parameter_Name:     tperiod                ctrlthres
+Description:        "pulse repetition"     "control voltage threshold"
+Data_Type:          real                   real
+Default_Value:      0                      0.5
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
 
 STATIC_VAR_TABLE:
 
