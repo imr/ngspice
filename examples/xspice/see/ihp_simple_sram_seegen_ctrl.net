@@ -23,7 +23,7 @@ Vctrl ctrl 0 pulse (0 1 10n 1n 1n 1 1)
 
 * Eponential current source with control input
 aseegen1 ctrl [%id(n1 m1) %id(n2 m2) %id(n1 m1) %id(n2 m2)] seemod1
-.model seemod1 seegen (tdelay = 8n tperiod=25n)
+.model seemod1 seegen (tdelay = 8n tperiod=20n)
 
 Xnot1 n1 vdd vss n2 not1
 Xnot2 n2 vdd vss n1 not1
