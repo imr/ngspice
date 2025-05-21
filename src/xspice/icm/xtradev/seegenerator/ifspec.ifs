@@ -22,7 +22,6 @@ SUMMARY
  
 NAME_TABLE:
 
-
 C_Function_Name:       cm_seegen
 Spice_Model_Name:      seegen
 Description:           "single event effect generator"
