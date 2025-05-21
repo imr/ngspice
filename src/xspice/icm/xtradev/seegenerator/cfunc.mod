@@ -183,9 +183,8 @@ void cm_seegen(ARGS)  /* structure holding parms,
 
         if (tcurr > *last_t_value + tperiod * 0.9) {
             /* return some info */
-            char msg[1000];
-            cm_message_printf(msg, "port no.: %d, port name: %s, time: %e",
-                *pulse_number, cm_get_node_name("", *pulse_number - 1), *last_t_value);
+            cm_message_printf("port no.: %d, port name: %s, time: %e",
+                *pulse_number, cm_get_node_name("out", *pulse_number - 1), *last_t_value);
             /* set the time for the next pulse */
             *last_t_value = *last_t_value + tperiod;
             (*pulse_number)++;
