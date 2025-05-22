@@ -25,6 +25,7 @@ if $?xspice_enabled
 @XSPICEINIT@ codemodel @pkglibdir@/xtradev.cm
 @XSPICEINIT@ codemodel @pkglibdir@/xtraevt.cm
 @XSPICEINIT@ codemodel @pkglibdir@/table.cm
+@XSPICEINIT@ codemodel @pkglibdir@/tlines.cm
 
 end
 
