@@ -1,0 +1,216 @@
+/* ===========================================================================
+FILE    ifspec.ifs
+
+(c) vadim Kuznetsov 2025
+
+=========================================================================== */
+
+/* Ports connection
+    4 --||||||-- 3
+
+    1 --||||||-- 2
+*/
+
+NAME_TABLE:
+
+Spice_Model_Name:      cpmlin
+C_Function_Name:       cm_cpmline
+Description:           "Generic transmission line"
+
+
+PORT_TABLE:
+Port_Name:             p1
+Description:           "Terminals Line1"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p2
+Description:           "Terminals Line1"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p3
+Description:           "Terminals Line2"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p4
+Description:           "Terminals Line2"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p1s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p2s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p3s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p4s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+Parameter_Name:        l
+Description:           "length"
+Data_Type:             real
+Default_Value:         1.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        w
+Description:           "width"
+Data_Type:             real
+Default_Value:         1e-3
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        s
+Description:           "gap"
+Data_Type:             real
+Default_Value:         1e-3
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+
+PARAMETER_TABLE:
+Parameter_Name:        model
+Description:           "Model type"
+Data_Type:             int
+Default_Value:         0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+PARAMETER_TABLE:
+Parameter_Name:        disp
+Description:           "Dispersion type"
+Data_Type:             int
+Default_Value:         0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        er
+Description:           "Substrate dielectric permittivity"
+Data_Type:             real
+Default_Value:         9.8
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        h
+Description:           "Substrate thickness"
+Data_Type:             real
+Default_Value:         1e-3
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        t
+Description:           "Metal strip thickness"
+Data_Type:             real
+Default_Value:         35e-6
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        tand
+Description:           "Substrate dielectric loss"
+Data_Type:             real
+Default_Value:         2e-4
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+PARAMETER_TABLE:
+Parameter_Name:        rho
+Description:           "Metal resistance"
+Data_Type:             real
+Default_Value:         0.022e-6
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        d
+Description:           "RMS Substrate roughness"
+Data_Type:             real
+Default_Value:         0.15e-6
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+

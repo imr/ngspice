@@ -7,11 +7,11 @@ include makedefs
 
 
 # The codemodels to make
-CMDIRS = spice2poly digital analog xtradev xtraevt table
+CMDIRS = spice2poly digital analog xtradev xtraevt table tlines
 
 
 #Invoke $(MAKE) for each of the CMDDIRS
-all: dstring.o # One common dstring object file for all code modules
+all: dstring.o msline_common.o tline_common.o# Common object files for all code modules
 	for cm in $(CMDIRS) ; do \
 		$(MAKE) cm=$$cm $$cm/$$cm.cm \
 		|| exit 1; \
@@ -36,6 +36,8 @@ uninstall:
 
 clean:
 	rm -f dstring.o
+	rm -f msline_common.o
+	rm -f tline_common.o
 	for cm in $(CMDIRS) ; do \
 		$(MAKE) cm=$$cm cm-clean \
 		|| exit 1; \
@@ -48,6 +50,12 @@ NGSRCBUILDDIR = $(CURDIR)/../..
 
 dstring.o: $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
 	$(CC) $(CFLAGS) -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include -fPIC -o $@ -c $<
+
+msline_common.o: $(srcdir)/../tlines/msline_common.c $(srcdir)/../tlines/msline_common.h
+	$(CC) $(CFLAGS) -I$(srcdir)/../tlines -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include -fPIC -o $@ -c $<
+
+tline_common.o: $(srcdir)/../tlines/tline_common.c $(srcdir)/../tlines/tline_common.h
+	$(CC) $(CFLAGS) -I$(srcdir)/../tlines -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include -fPIC -o $@ -c $<
 
 ifdef cm
 
@@ -70,6 +78,8 @@ cm-gens := \
 cm-objs := \
 	$(cm)/dlmain.o \
 	dstring.o \
+	tline_common.o \
+	msline_common.o \
 	$(modlst:%=$(cm)/%/cfunc.o) \
 	$(modlst:%=$(cm)/%/ifspec.o) \
 	$(udnlst:%=$(cm)/%/udnfunc.o)
@@ -160,11 +170,11 @@ $(cm)/dlmain.o : $(srcdir)/dlmain.c $(cm-descr)
 	$(do-deps)
 
 $(cm)/%/cfunc.o : $(cm)/%/cfunc.c
-	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D) -o $@ -c $<
+	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D) -I$(srcdir)/../tlines -o $@ -c $<
 	$(do-deps)
 
 $(cm)/%/ifspec.o : $(cm)/%/ifspec.c
-	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D) -o $@ -c $<
+	$(COMPILE) $(gen_pp) -I$(srcdir)/$(<D) -I$(srcdir)/../tlines -o $@ -c $<
 	$(do-deps)
 
 $(cm)/%/udnfunc.o : $(srcdir)/$(cm)/%/udnfunc.c
