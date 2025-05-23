@@ -292,7 +292,6 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
 
     for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
-        /* exact: 1, with binning extension .[0-9]: 2*/
         if (model_name_match(name, modtmp->INPmodName) < 2)
             continue;
 
@@ -335,8 +334,8 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
             *model = modtmp;
             return NULL;
         }
-        fprintf(stderr, "Warning: no model found for w=%.3e and l=%.3e\n", w, l);
     }
+
     return NULL;
 }
 
