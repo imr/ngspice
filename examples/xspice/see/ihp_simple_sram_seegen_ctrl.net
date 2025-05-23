@@ -1,29 +1,26 @@
+* Simple SRAM cell in a subcircuit, double exponential current pulses
+* control volate
 * IHP Open PDK
-* simple SRAM cell, exponential current pulses
 
 * Path to the PDK
-*.include "D:\Spice_general\skywater-pdk\libraries\sky130_fd_pr\latest\models\corners/tt.spice"
 .lib "D:\Spice_general\IHP-Open-PDK\ihp-sg13g2\libs.tech\ngspice\models\cornerMOSlv.lib" mos_tt
-*.include lib_out1.lib
 
 .param vdd = 1.2
-.param deltat=11n deltat2=27n
+.param deltat=11n deltat2=25n
 .param tochar = 1e-13
-.param talpha = 500p tbeta=10p
+.param talpha = 500p tbeta=20p
 .param Inull = 'tochar/(talpha-tbeta)'
 
 * the voltage sources: 
 Vdd vd gnd DC 'vdd'
-Vwl wl 0 0 PULSE 0 'vdd' 45n 1n 1n 7n 1
+Vwl wl 0 0 PULSE 0 'vdd' 50n 1n 1n 7n 1
 Vbl bl 0 'vdd'
 Vbln bln 0 0
 Vctrl ctrl 0 pulse (0 1 10n 1n 1n 1 1)
 
-*V1 in gnd pulse(0 'vdd' 0p 200p 100p 5n 10n)
-
-* Eponential current source with control input
+* Exponential current source with control input
 aseegen1 ctrl [%id(n1 m1) %id(n2 m2) %id(n1 m1) %id(n2 m2)] seemod1
-.model seemod1 seegen (tdelay = 8n tperiod=20n)
+.model seemod1 seegen (tdelay = 8n tperiod=25n)
 
 Xnot1 n1 vdd vss n2 not1
 Xnot2 n2 vdd vss n1 not1
@@ -46,11 +43,12 @@ c2  z     vss   0.576f
 .ic v(n2)=0 v(n1)='vdd'
 
 * simulation command: 
-.tran 100ps 100ns ; 0 10p
+.tran 100ps 120ns
 
 .options method=gear
 
 .control
+pre_osdi C:\Spice64\lib\ngspice\psp103_nqs.osdi
 run
 rusage
 *set nolegend
