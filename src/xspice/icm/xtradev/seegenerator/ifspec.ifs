@@ -7,16 +7,16 @@ Universty Duisburg-Essen
 Duisburg, Germany
 Project Flowspace
 
-AUTHORS                      
+AUTHORS
 
-    19 May 2025
+Holger Vogt    19 May 2025
 
 
 
 SUMMARY
 
     This file contains the interface specification file for the 
-    analog ilimit code model.
+    analog seegen code model.
 
 ===============================================================================*/
  
@@ -72,6 +72,17 @@ Limits:             -                      -
 Vector:              no                    no
 Vector_Bounds:      -                      -
 Null_Allowed:       yes                    yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     perlim
+Description:        "pulse repetition limited"
+Data_Type:          boolean
+Default_Value:      TRUE
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 STATIC_VAR_TABLE:
 

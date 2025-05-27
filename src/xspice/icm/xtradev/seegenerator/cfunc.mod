@@ -176,6 +176,7 @@ void cm_seegen(ARGS)  /* structure holding parms,
             *last_ctrl = ctrl;
         }
 
+        /* the double exponential current pulse function */
         if (tcurr < *last_t_value)
             out = 0;
         else
@@ -188,6 +189,12 @@ void cm_seegen(ARGS)  /* structure holding parms,
             /* set the time for the next pulse */
             *last_t_value = *last_t_value + tperiod;
             (*pulse_number)++;
+            if (*pulse_number > PORT_SIZE(out)) {
+                if (PARAM(perlim) == FALSE)
+                    *pulse_number = 1;
+                else
+                    *last_t_value = 1e12; /* stop any output */
+            }
         }
         if (*pulse_number - 1 < PORT_SIZE(out))
            OUTPUT(out[*pulse_number - 1]) = out;
