@@ -44,6 +44,7 @@ Vector:              no                    no
 Vector_Bounds:       -                      -
 Null_Allowed:       yes                    yes
 
+
 PARAMETER_TABLE:
 
 Parameter_Name:     tperiod                ctrlthres
@@ -54,6 +55,19 @@ Limits:             -                      -
 Vector:              no                    no
 Vector_Bounds:      -                      -
 Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     perlim
+Description:        "pulse repetition limited"
+Data_Type:          boolean
+Default_Value:      TRUE
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
 
 STATIC_VAR_TABLE:
 
@@ -82,9 +96,13 @@ i(t) = inull * (exp(-(t-tdelay)/talpha) - (exp(-(t-tdelay)/tbeta) for t > tdelay
 i(t) = 0       for t < tdelay
 Minimum is one pulse output (a node pair, or a single node with the other grounded).
 Several output node pairs may be defined per code model instance. Parameter tperiod
-may then be used to create pulses in sequence. The first pulse is issued in the first
-node pair of the node list in the vector [], the second (after time tperiod has elapsed), is injected by the
-second node (pair) of the list and so on. The control input ctrl (voltage or current) may be used
+may then be used to create pulses in sequence. Per default only one sequence is running.
+Parameter perlim, set to FALSE, allows running and repeating the sequence until
+the end of the simulation. The first pulse is issued in the first
+node pair of the node list in the vector [], the second (after time tperiod has elapsed), 
+is injected by the second node (pair) of the list and so on. When the sequence is repeated, 
+again the output starts pulsing at port (node pair) number 1.
+The control input ctrl (voltage or current) may be used
 to start or repeat the whole sequence, depending on the circuit status. A rising voltage
 at ctrl, when crossing the threshold given by ctrlthres, will initiate the sequence (including
 tdelay and tperiod).
@@ -99,4 +117,4 @@ aseegen1 ctrl [%id(n1 m1) %id(n2 m2) %id(n1 m1) %id(n2 m2)] seemod1
 Example ngspice usage (without control, parameters as offered by default)
 
 aseegen2 NULL [%id(n1 m1) %id(n5 n6) %id(n6 n7) %i(isingle) ] seemod2
-.model seemod2 seegen (tdelay = 0 tperiod=0 ctrlthres=0.5 inull=200u talpha=500p tbeta=20p)
+.model seemod2 seegen (tdelay = 0 tperiod=0 ctrlthres=0.5 inull=200u talpha=500p tbeta=20p perlim=FALSE)
