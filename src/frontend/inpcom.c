@@ -1138,12 +1138,12 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
             inp_fix_agauss_in_param(working, statfcn[ii]);
 
         inp_fix_temper_in_param(working);
-
+//        tprint(working);
         inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
-//        tprint(working);
+
         /* Special handling for large PDKs: We need to know W and L of
            transistor subcircuits by checking their x invocation */
         inp_get_w_l_x(working);
@@ -1179,6 +1179,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
             inp_repair_dc_ps(working);
         }
         bool expr_w_temper = FALSE;
+
         if (!newcompat.s3) {
             /* Do all the compatibility stuff here */
             working = cc->nextcard;
@@ -7698,6 +7699,10 @@ void tprint(struct card *t)
     npr++;
     /*debug: print into file*/
     FILE *fd = fopen(outfile, "w");
+    if (!fd) {
+        fprintf(stderr, "Warning: cannot open debug output file tprint-outxx.txt\n");
+        return;
+    }
     for (tmp = t; tmp; tmp = tmp->nextcard)
         if (*(tmp->line) != '*')
             fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum,
