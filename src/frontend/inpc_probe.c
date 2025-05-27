@@ -332,7 +332,7 @@ void inp_probe(struct card* deck)
                     /* special for KiCad: add shunt resistor if thisnode contains 'unconnected' */
                     if (*instname == 'x' && strstr(thisnode, "unconnected")) {
                         /* nn makes the resistor name unique for a device with multiple unconnected nodes */
-                        char *rline = tprintf("R%s%d %s 0 1e15", thisnode, nn++, thisnode);
+                        char *rline = tprintf("r%s%d %s 0 1e15", thisnode, nn++, thisnode);
                         card = insert_new_line(card, rline, 0, card->linenum_orig, card->linesource);
                     }
                     char* nodesaves = tprintf("%s:%s#branch", instname, nodename);
@@ -398,7 +398,7 @@ void inp_probe(struct card* deck)
                         if (!strnode2) {
                         }
                         else {
-                            newline = tprintf("Ediff%d_nodes vd_%s:%s 0 %s %s 1", ee, strnode1, strnode2, strnode1, strnode2);
+                            newline = tprintf("ediff%d_nodes vd_%s:%s 0 %s %s 1", ee, strnode1, strnode2, strnode1, strnode2);
 
                             char* nodesaves = tprintf("vd_%s:%s", strnode1, strnode2);
                             allsaves = wl_cons(nodesaves, allsaves);
@@ -434,7 +434,7 @@ void inp_probe(struct card* deck)
                         tfree(strnode2);
                         continue;
                     }
-                    newline = tprintf("Ediff%d_%s vd_%s 0 %s %s 1", ee, instname1, instname1, strnode1, strnode2);
+                    newline = tprintf("ediff%d_%s vd_%s 0 %s %s 1", ee, instname1, instname1, strnode1, strnode2);
 
                     char* nodesaves = tprintf("vd_%s", instname1);
                     allsaves = wl_cons(nodesaves, allsaves);
@@ -590,7 +590,7 @@ void inp_probe(struct card* deck)
                             }
                             nodename2 = get_terminal_name(instname2, node2, instances);
                         }
-                        char *newline = tprintf("Ediff%d_%s_%s vd_%s:%s_%s:%s 0 %s %s 1", ee, instname1, instname2, instname1, nodename1, instname2, nodename2, strnode1, strnode2);
+                        char *newline = tprintf("ediff%d_%s_%s vd_%s:%s_%s:%s 0 %s %s 1", ee, instname1, instname2, instname1, nodename1, instname2, nodename2, strnode1, strnode2);
                         char* nodesaves = tprintf("vd_%s:%s_%s:%s", instname1, nodename1, instname2, nodename2);
                         allsaves = wl_cons(nodesaves, allsaves);
                         tmpcard1 = insert_new_line(tmpcard1, newline, 0, tmpcard1->linenum_orig, tmpcard1->linesource);
@@ -712,7 +712,7 @@ void inp_probe(struct card* deck)
                             }
                             nodename2 = get_terminal_name(instname1, node2, instances);
                         }
-                        char* newline = tprintf("Ediff%d_%s vd_%s:%s:%s 0 %s %s 1", ee, instname1, instname1, nodename1, nodename2, strnode1, strnode2);
+                        char* newline = tprintf("ediff%d_%s vd_%s:%s:%s 0 %s %s 1", ee, instname1, instname1, nodename1, nodename2, strnode1, strnode2);
                         char* nodesaves = tprintf("vd_%s:%s:%s", instname1, nodename1, nodename2);
                         allsaves = wl_cons(nodesaves, allsaves);
                         tmpcard1 = insert_new_line(tmpcard1, newline, 0, tmpcard1->linenum_orig, tmpcard1->linesource);
@@ -1335,22 +1335,22 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
     DS_CREATE(Bpowersave, 200);
 
     if (power) {
-        /* For example: Bq1Vref q1Vref 0 V = 1/3*( */
+        /* For example: bq1vref q1vref 0 v = 1/3*( */
         char numbuf[3];
-        sadd(&BVrefline, "Bprobe_int_");
+        sadd(&BVrefline, "bprobe_int_");
         sadd(&BVrefline, instname);
-        sadd(&BVrefline, "Vref ");
+        sadd(&BVrefline, "vref ");
         sadd(&BVrefline, instname);
-        sadd(&BVrefline, "probe_int_Vref 0 V = 1/");
+        sadd(&BVrefline, "probe_int_vref 0 v = 1/");
         sadd(&BVrefline, itoa10(numnodes, numbuf));
         sadd(&BVrefline, "*(");
-        /* For example: Bq1power q1:power 0 V = */
-        sadd(&Bpowerline, "Bprobe_int_");
+        /* For example: bq1power q1:power 0 v = */
+        sadd(&Bpowerline, "bprobe_int_");
         sadd(&Bpowerline, instname);
         sadd(&Bpowerline, "power ");
         sadd(&Bpowerline, instname);
         cadd(&Bpowerline, ':');
-        sadd(&Bpowerline, "power 0 V = 0+"); /*FIXME 0+ required to suppress adding {} and numparam failure*/
+        sadd(&Bpowerline, "power 0 v = 0+"); /*FIXME 0+ required to suppress adding {} and numparam failure*/
         /* For example: q1:power */
         sadd(&Bpowersave, instname);
         cadd(&Bpowersave, ':');
@@ -1414,20 +1414,20 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         if (power) {
             /* For example V(1)+V(2)+V(3)*/
             if (nodenum == 1)
-               sadd(&BVrefline, "V(");
+               sadd(&BVrefline, "v(");
             else
-               sadd(&BVrefline, "+V(");
+               sadd(&BVrefline, "+v(");
             sadd(&BVrefline, newnode);
             cadd(&BVrefline, ')');
             /*For example: (V(node1)-V(q1probe_int_Vref))*node1#branch+(V(node2)-V(q1Vref))*node2#branch */
             if (nodenum == 1)
-               sadd(&Bpowerline, "(V(");
+               sadd(&Bpowerline, "(v(");
             else
-               sadd(&Bpowerline, "+(V(");
+               sadd(&Bpowerline, "+(v(");
             sadd(&Bpowerline, newnode);
-            sadd(&Bpowerline, ")-V(");
+            sadd(&Bpowerline, ")-v(");
             sadd(&Bpowerline, instname);
-            sadd(&Bpowerline, "probe_int_Vref))*i(vcurr_");
+            sadd(&Bpowerline, "probe_int_vref))*i(vcurr_");
             sadd(&Bpowerline, instname);
             sadd(&Bpowerline, ":probe_int_");
             sadd(&Bpowerline, nodename1);
