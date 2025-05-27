@@ -138,6 +138,9 @@ void cm_seegen(ARGS)  /* structure holding parms,
     double *last_ctrl;       /* static storage of last ctrl value */
     double tcurr = TIME;     /* current simulation time */
 
+    if (ANALYSIS == MIF_AC) {
+        return;
+    }
 
     /* Retrieve frequently used parameters... */
 
