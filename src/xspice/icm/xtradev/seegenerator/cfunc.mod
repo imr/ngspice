@@ -188,6 +188,8 @@ void cm_seegen(ARGS)  /* structure holding parms,
                 *pulse_number, cm_get_node_name("out", *pulse_number - 1), *last_t_value);
             /* set the time for the next pulse */
             *last_t_value = *last_t_value + tperiod;
+            /* set breakpoint at new pulse start time */
+            cm_analog_set_perm_bkpt(*last_t_value);
             (*pulse_number)++;
             if (*pulse_number > PORT_SIZE(out)) {
                 if (PARAM(perlim) == FALSE)
