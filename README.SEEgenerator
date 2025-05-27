@@ -107,7 +107,8 @@ to start or repeat the whole sequence, depending on the circuit status. A rising
 at ctrl, when crossing the threshold given by ctrlthres, will initiate the sequence (including
 tdelay and tperiod).
 
-This model will work in transient analysis.
+This model will work in transient analysis. The time step TSEP should be chosen to be not
+larger than than tbeta.
 
 Example ngspice usage (with control)
 
