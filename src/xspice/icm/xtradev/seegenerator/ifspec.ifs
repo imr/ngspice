@@ -41,8 +41,8 @@ Null_Allowed:          yes                  no
 
 PARAMETER_TABLE:
 
-Parameter_Name:     talpha                   tbeta
-Description:        "alpha"                 "beta"
+Parameter_Name:     tfall                    trise
+Description:        "pulse fall time"        "pulse rise time"
 Data_Type:          real                     real
 Default_Value:      500e-12                  20e-12
 Limits:             -                        -
@@ -53,14 +53,15 @@ Null_Allowed:       yes                      yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     tdelay                inull
-Description:        "pulse delay"         "max current"
+Parameter_Name:     tdelay                 inull
+Description:        "pulse delay"          "max current"
 Data_Type:          real                   real
-Default_Value:      0                      200e-6
+Default_Value:      0                      0
 Limits:             -                      -
 Vector:              no                    no
 Vector_Bounds:       -                      -
 Null_Allowed:       yes                    yes
+
 
 PARAMETER_TABLE:
 
@@ -73,16 +74,29 @@ Vector:              no                    no
 Vector_Bounds:      -                      -
 Null_Allowed:       yes                    yes
 
+
 PARAMETER_TABLE:
 
-Parameter_Name:     perlim
-Description:        "pulse repetition limited"
-Data_Type:          boolean
-Default_Value:      TRUE
-Limits:             -
-Vector:             no
-Vector_Bounds:      -
-Null_Allowed:       yes
+Parameter_Name:     let                    cdepth
+Description:        "lin energy transfer"  "charge collection depth"
+Data_Type:          real                   real
+Default_Value:      10                     1
+Limits:             -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     angle                  perlim
+Description:        "particle angle"       "pulse repetition"
+Data_Type:          real                   boolean
+Default_Value:      0                      TRUE
+Limits:             [0 1.57079]            -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
 
 STATIC_VAR_TABLE:
 

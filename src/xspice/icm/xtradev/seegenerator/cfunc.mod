@@ -125,10 +125,13 @@ NON-STANDARD FEATURES
 void cm_seegen(ARGS)  /* structure holding parms, 
                                        inputs, outputs, etc.     */
 {
-    double talpha;           /* parameter alpha */
-    double tbeta;            /* parameter beta */
+    double tfall;            /* pulse fall time */
+    double trise;            /* pulse rise time */
     double tdelay;           /* delay until first pulse */
     double inull;            /* max. current of pulse */
+    double let;              /* linear energy transfer */
+    double cdepth;           /* charge collection depth */
+    double angle;            /* particle entrance angle */
     double tperiod;          /* pulse repetition period */
     double ctrlthres;        /* control voltage threshold */
     double ctrl;             /* control input */
@@ -144,11 +147,14 @@ void cm_seegen(ARGS)  /* structure holding parms,
 
     /* Retrieve frequently used parameters... */
 
-    talpha = PARAM(talpha);
-    tbeta = PARAM(tbeta);
+    tfall = PARAM(tfall);
+    trise = PARAM(trise);
     tdelay = PARAM(tdelay);
     tperiod = PARAM(tperiod);
     inull = PARAM(inull);
+    let = PARAM(let);
+    cdepth = PARAM(cdepth);
+    angle = PARAM(angle);
     ctrlthres = PARAM(ctrlthres);
 
     if (PORT_NULL(ctrl))
@@ -182,9 +188,14 @@ void cm_seegen(ARGS)  /* structure holding parms,
         /* the double exponential current pulse function */
         if (tcurr < *last_t_value)
             out = 0;
-        else
-            out = inull * (exp(-(tcurr-*last_t_value)/talpha) - exp(-(tcurr-*last_t_value)/tbeta));
-
+        else {
+            if (inull == 0) {
+                double LETeff = let/cos(angle);
+                double Qc = 1.035e-14 * LETeff * cdepth;
+                inull = Qc / (tfall - trise);
+            }
+            out = inull * (exp(-(tcurr-*last_t_value)/tfall) - exp(-(tcurr-*last_t_value)/trise));
+        }
         if (tcurr > *last_t_value + tperiod * 0.9) {
             /* return some info */
             cm_message_printf("port no.: %d, port name: %s, time: %e",

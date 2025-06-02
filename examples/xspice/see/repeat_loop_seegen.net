@@ -1,10 +1,8 @@
 * Repeat loop, double exponential current pulses
 
-
-.param tochar = 1e-13  ; tochar dependency on LET not yet defined
-.csparam tochar = 'tochar'
-.param talpha = 500p tbeta=20p  ; tau in exponent for pulse
-.param Inull = 'tochar/(talpha-tbeta)'
+.param let = 10.5 cdepth = 1.2
+.csparam let = 'let'
+.param tfall = 500p trise = 20p  ; tau in exponent for pulse
 
 R1 n1 0 1e4
 R2 n2 0 1e4
@@ -14,7 +12,7 @@ R4 n4 0 1e4
 
 ****  SEE generator without control input, double exponential current sources
 aseegen1 NULL [%id(n1 0) %id(n2 0) %id(n3 0) %id(n4 0)] seemod1
-.model seemod1 seegen (tdelay = 11n tperiod=25n inull='Inull' talpha='talpha' tbeta='tbeta')
+.model seemod1 seegen (tdelay = 11n tperiod=25n let='let' cdepth='cdepth' trise='trise' tfall='tfall')
 * alternative syntax, if no current measurement required and reference nodes are GND
 *aseegen1 NULL [%i(n1) %i(n2) %i(n3) %i(n4)] seemod1
 
@@ -29,12 +27,12 @@ aseegen1 NULL [%id(n1 0) %id(n2 0) %id(n3 0) %id(n4 0)] seemod1
 set xbrushwidth=3
 *run
 *plot n1 n2+2 n3+4 n4+6
-let newchar = tochar
+let newlet = let
 repeat 10
   run
-  plot n1 n2+2 n3+4 n4+6
-  let newchar = newchar - 5e-15
-  alterparam tochar = $&newchar
+  plot n1 n2+2 n3+4 n4+6 ylimit -3 7
+  let newlet = newlet - 0.5
+  alterparam let = $&newlet
   reset
 end
 rusage
