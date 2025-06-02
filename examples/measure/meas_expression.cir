@@ -14,6 +14,19 @@ run
 ** evaluate '0.9*v(2)' in control language command
 let vint = 0.9*v(2)
 meas tran yeval2 FIND v(2) WHEN v(1)= vint
+unlet vint
+
+* new expression evaluation
+meas tran yeval3 FIND v(2) WHEN v(1)= 0.9*v(2)
+
+* standard meas with val being a number:
+meas tran tdiff1 TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=3
+
+* expression evaluation with vector of length 1 only:
+let onevec = 1
+meas tran tdiff2 TRIG v(1) VAL=onevec-0.5 RISE=1 TARG v(1) VAL=onevec/2 RISE=3
+
+
 plot V(1) v(2)
 .endc
 

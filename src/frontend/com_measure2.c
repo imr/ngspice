@@ -64,7 +64,7 @@ is_arith_char2(char c)
     return c != '\0' && strchr("*/<>?:|&^!%\\", c);
 }
 
-static bool
+bool
 str_has_arith_char2(char* s)
 {
     if (*s == '+' || *s == '-')

@@ -147,6 +147,7 @@ static void inp_compat(struct card *deck);
 static void inp_bsource_compat(struct card *deck);
 static bool inp_temper_compat(struct card *card);
 static void inp_meas_current(struct card *card);
+static void inp_meas_control(struct card *card);
 static void inp_dot_if(struct card *deck);
 static char *inp_modify_exp(char *expression);
 static struct func_temper *inp_new_func(char *funcname, char *funcbody,
@@ -1191,6 +1192,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
             inp_bsource_compat(working);
             inp_dot_if(working);
             expr_w_temper = inp_temper_compat(working);
+            /* check for expressions in meas command */
+            inp_meas_control(working);
         }
         if (expr_w_temper_p)
             *expr_w_temper_p = expr_w_temper;
@@ -9748,6 +9751,71 @@ int add_to_sourcepath(const char* filepath, const char* path)
     wl_free(startwl);
     tfree(fpath);
     return 0;
+}
+
+/* if there is an expression in FIND ... WHEN etc in a .control section,
+   use a vector with this expression:
+   meas tran yeval2 FIND v(2) WHEN v(1)= 0.9*v(2)
+   will become
+   let vexprint1 = 0.9*v(2)
+   meas tran yeval2 FIND v(2) WHEN v(1)=vexprint1
+   unlet vint 
+*/
+static void inp_meas_control(struct card* card)
+{
+    int is_control = 0;
+    static int replaceno = 1;
+    struct card* prevcard;
+
+    for (; card; prevcard = card, card = card->nextcard) {
+
+        char* equal_ptr = NULL;
+        char* curr_line = card->line;
+        char* newcurrline = card->line;
+        int currlinenumber = card->linenum_orig;
+
+        /* only commands inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            is_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            is_control--;
+            continue;
+        }
+        else if (is_control < 1) {
+            continue;
+        }
+        curr_line = skip_ws(curr_line);
+        if (ciprefix("meas", curr_line) && (equal_ptr = find_assignment(curr_line)) != NULL) {
+            curr_line = equal_ptr + 1;
+            while (*curr_line != '\0' && equal_ptr) {
+                char* token = gettok(&curr_line);
+                if (str_has_arith_char(token)) {
+                    char* newtok = tprintf("=vexprint%d", replaceno++);
+                    char* begstr = copy_substring(newcurrline, equal_ptr);
+                    char* endstr = copy(curr_line);
+                    char* newline = tprintf("%s%s %s", begstr, newtok, endstr);
+                    char* letline = tprintf("let %s=%s", newtok + 1, token);
+                    char* unletline = tprintf("unlet %s", newtok + 1);
+                    tfree(newtok);
+                    tfree(begstr);
+                    tfree(endstr);
+                    prevcard = insert_new_line(prevcard, letline, 0, currlinenumber, card->linesource);
+                    card = prevcard->nextcard;
+                    tfree(card->line);
+                    card->line = newline;
+                    newcurrline = curr_line = card->line;
+                    card = insert_new_line(card, unletline, 0, currlinenumber, card->linesource);
+                }
+                tfree(token);
+                /* next equal sign in line */
+                equal_ptr = find_assignment(curr_line);
+                if (equal_ptr)
+                    curr_line = equal_ptr + 1;
+            }
+        }
+    }
 }
 
 
