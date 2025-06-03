@@ -117,8 +117,8 @@ GLOBAL VARIABLES
 NON-STANDARD FEATURES
 
     model source: 
-    Ygor Quadros de Aguiar, Frédéric Wrobel. Jean-Luc Autran, Rubén García Alía
-    Single-Event Effects, from Space to Accelerator Environments
+    Ygor Quadros de Aguiar, Frédéric Wrobel. Jean-Luc Autran, Rubén García Alía
+    Single-Event Effects, from Space to Accelerator Environments
     Springer 2025
 
 ==============================================================================*/
