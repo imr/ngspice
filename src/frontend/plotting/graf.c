@@ -1329,10 +1329,10 @@ void gr_iplot(struct plot *plot)
     hit = 0;
     for (db = dbs; db; db = db->db_next) {
         if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
-#ifdef XSPICE
             if (db->db_iteration > 0) {
-                double         event_node_offset = 0, event_node_spacing;
                 struct dvec   *v;
+#ifdef XSPICE
+                double         event_node_offset = 0, event_node_spacing;
 
                 /* First call: set up event nodes spacing. */
 
@@ -1348,7 +1348,7 @@ void gr_iplot(struct plot *plot)
                 } else {
                     event_node_spacing = 0;
                 }
-
+#endif
                 /* Find any XSPICE event nodes in the node
                  * list and set up plotting.  There is a parallel path
                  * for pushing new event values into their corresponding
@@ -1356,9 +1356,11 @@ void gr_iplot(struct plot *plot)
                  */
 
                 for (dc = db; dc; dc = dc->db_also) {
-                    struct  dbcomm *dd;
-                    char   *offp, save_sign;
-                    int     dup = 0;
+                    struct dbcomm *dd;
+                    int            dup = 0;
+#ifdef XSPICE
+                    char          *offp, save_sign;
+#endif
 
                     if (dc->db_nodename1 == NULL)
                         continue;
@@ -1374,6 +1376,7 @@ void gr_iplot(struct plot *plot)
                     if (dup)
                         continue;
 
+#ifdef XSPICE
                     /* Check for a nodename that is an expression. */
 
                     offp = strchr(dc->db_nodename1, '+');
@@ -1383,7 +1386,7 @@ void gr_iplot(struct plot *plot)
                         save_sign = *offp;
                         *offp = '\0';               // Trim to bare name.
                     }
-
+#endif
                     v = vec_fromplot(dc->db_nodename1, plot);
                     if (v) {
                         dc->db_nodename2 = (char *)v; // Save link to vector.
@@ -1393,6 +1396,7 @@ void gr_iplot(struct plot *plot)
                                 dc->db_nodename1, plot->pl_name);
                     }
 
+#ifdef XSPICE
                     if (v && (v->v_flags & VF_EVENT_NODE)) {
                         /* Ask event simulator to call back with new values. */
 
@@ -1443,10 +1447,11 @@ void gr_iplot(struct plot *plot)
                                 "Offset (%s) ignored for analog node %s\n",
                                 offp, dc->db_nodename1);
                     }
+#endif
                 }
                 db->db_iteration = 0;
             }
-#endif
+
             if (db->db_graphid) {
                 GRAPH *gr;
 
