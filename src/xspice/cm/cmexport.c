@@ -60,6 +60,7 @@ struct coreInfo_t  coreInfo =
   cm_netlist_get_l,
   cm_irreversible,
   cm_get_node_name,
+  cm_get_neg_node_name,
   cm_probe_node,
   cm_schedule_output,
   cp_getvar,

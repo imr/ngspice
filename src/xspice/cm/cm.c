@@ -40,6 +40,7 @@ INTERFACES
 
     cm_irreversible()
     cm_get_node_name()
+    cm_get_neg_node_name()
     cm_probe_node()
 
 REFERENCED FILES
@@ -851,6 +852,33 @@ const char *cm_get_node_name(const char *port_name, unsigned int index)
     }
     return NULL;
 }
+
+/* Get the neg name of a circuit node connected to a port. */
+
+const char* cm_get_neg_node_name(const char* port_name, unsigned int index)
+{
+    MIFinstance* instance;
+    Mif_Conn_Data_t* conn;
+    Mif_Port_Data_t* port;
+    int               i;
+
+    instance = g_mif_info.instance;
+    for (i = 0; i < instance->num_conn; ++i) {
+        conn = instance->conn[i];
+        if (!strcmp(port_name, conn->name)) {
+            if (index >= (unsigned int)conn->size)
+                return NULL;
+            port = conn->port[index];
+            if (port->type == MIF_DIGITAL || port->type == MIF_USER_DEFINED) {
+                /* Event node, no name in port data. */
+                return NULL;
+            }
+            return port->neg_node_str;
+        }
+    }
+    return NULL;
+}
+
 
 /* Test the resolved value of a connected Digital/UDN node, given
  * an assumed value for a particular port.
