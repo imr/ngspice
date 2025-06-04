@@ -14,6 +14,7 @@ Vmeas3 p3 0 0
 
 .control
 tran 10p 35n
+rusage time
 set xbrushwidth=3
 plot i(Vmeas1) i(Vmeas2)+200u i(Vmeas3)+400u
 .endc
