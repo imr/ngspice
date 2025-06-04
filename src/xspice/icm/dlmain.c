@@ -350,6 +350,10 @@ const char *cm_get_node_name(const char *port, unsigned int index) {
     return coreitf->dllitf_cm_get_node_name(port, index);
 }
 
+const char *cm_get_neg_node_name(const char *port, unsigned int index) {
+    return coreitf->dllitf_cm_get_neg_node_name(port, index);
+}
+
 bool cm_probe_node(unsigned int  conn_index,
                    unsigned int  port_index,
                    void         *value) {

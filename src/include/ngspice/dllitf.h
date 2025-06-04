@@ -61,6 +61,7 @@ struct coreInfo_t {
 	double    ((*dllitf_cm_netlist_get_l)(void));
         void      ((*dllitf_cm_irreversible)(unsigned int));
     const char *  ((*dllitf_cm_get_node_name)(const char *, unsigned int));
+	const char* ((*dllitf_cm_get_neg_node_name)(const char*, unsigned int));
     bool          ((*dllitf_cm_probe_node)(unsigned int, unsigned int,
                                            void *));
         bool      ((*dllitf_cm_schedule_output)(unsigned int, unsigned int,
