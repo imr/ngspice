@@ -293,7 +293,11 @@ com_iplot(wordlist *wl)
         d = TMALLOC(struct dbcomm, 1);
         d->db_analysis = NULL;
         d->db_number = debugnumber++;
+#ifdef XSPICE
         d->db_iteration = event_auto_incr ? DB_AUTO_OFFSET : DB_NORMAL;
+#else
+        d->db_iteration = DB_NORMAL;
+#endif
         d->db_op = initial_steps;       // Field re-use
         d->db_value1 = window;          // Field re-use
 
