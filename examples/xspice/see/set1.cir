@@ -1,0 +1,23 @@
+SET pulse test
+
+.param alpha = 100p beta = 500p deltat = 1n
+
+* Arbitrary currnt source with expression
+Bset1 1 0 I = ternary_fcn(TIME < 'deltat', 0, 2.5m * (exp(-(TIME-'deltat')/'alpha')-exp(-(TIME-'deltat')/'beta')))
+R1 1 11 1
+Vmeas 11 0 0
+
+* Eponential current source
+Iset 2 0 EXP(0 -2.5m 'deltat' 'alpha' 'deltat' 'beta')
+R2 2 22 1
+Vmeas2 22 0 0
+
+
+.control
+tran 1p 10n
+set xbrushwidth=2
+plot I(Vmeas)-I(Vmeas2)
+plot I(Vmeas) I(Vmeas2)
+.endc
+
+.end

@@ -1,0 +1,120 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Public Domain
+
+
+Universty Duisburg-Essen
+Duisburg, Germany
+Project Flowspace
+
+AUTHORS
+
+Holger Vogt    19 May 2025
+
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog seegen code model.
+
+===============================================================================*/
+ 
+NAME_TABLE:
+
+C_Function_Name:       cm_seegen
+Spice_Model_Name:      seegen
+Description:           "single event effect generator"
+
+
+PORT_TABLE:
+
+Port_Name:             ctrl                 out
+Description:          "control input"       "output"
+Direction:             in                   out
+Default_Type:          v                    i
+Allowed_Types:         [v,vd,i,id]          [i,id]
+Vector:                no                   yes
+Vector_Bounds:         -                    [1 -]
+Null_Allowed:          yes                  no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     tfall                    trise
+Description:        "pulse fall time"        "pulse rise time"
+Data_Type:          real                     real
+Default_Value:      500e-12                  20e-12
+Limits:             -                        -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                      yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     tdelay                 inull
+Description:        "pulse delay"          "max current"
+Data_Type:          real                   real
+Default_Value:      0                      0
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:       -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     tperiod                ctrlthres
+Description:        "pulse repetition"     "control voltage threshold"
+Data_Type:          real                   real
+Default_Value:      0                      0.5
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     let                    cdepth
+Description:        "lin energy transfer"  "charge collection depth"
+Data_Type:          real                   real
+Default_Value:      10                     1
+Limits:             -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     angle                  perlim
+Description:        "particle angle"       "pulse repetition"
+Data_Type:          real                   boolean
+Default_Value:      0                      TRUE
+Limits:             [0 1.57079]            -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    last_t_value
+Data_Type:          pointer
+Vector:              no
+Description:        "next pulse start time"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    pulse_number
+Data_Type:          pointer
+Vector:              no
+Description:        "number of pulse"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    last_ctrl
+Data_Type:          pointer
+Vector:              no
+Description:        "last control value"

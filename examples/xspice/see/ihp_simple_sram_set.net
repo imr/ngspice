@@ -1,0 +1,64 @@
+* IHP Open PDK
+* simple SRAM cell, exponential current pulses
+
+* Path to the PDK
+*.include "D:\Spice_general\skywater-pdk\libraries\sky130_fd_pr\latest\models\corners/tt.spice"
+.lib "D:\Spice_general\IHP-Open-PDK\ihp-sg13g2\libs.tech\ngspice\models\cornerMOSlv.lib" mos_tt
+*.include lib_out1.lib
+
+.param vdd = 1.2
+.param deltat=11n deltat2=27n
+.param tochar = 1e-13
+.param talpha = 500p tbeta=10p
+.param Inull = 'tochar/(talpha-tbeta)'
+
+* the voltage sources: 
+Vdd vd gnd DC 'vdd'
+Vwl wl 0 0 PULSE 0 'vdd' 45n 1n 1n 7n 1
+Vbl bl 0 'vdd'
+Vbln bln 0 0
+
+*V1 in gnd pulse(0 'vdd' 0p 200p 100p 5n 10n)
+
+* Eponential current source
+Iset1 n1 m1 EXP(0 'Inull' 'deltat' 'tbeta' 'deltat' 'talpha')
+Iset2 n2 m2 EXP(0 'Inull' 'deltat2' 'tbeta' 'deltat2' 'talpha')
+Iset3 n1 m1 EXP(0 'Inull' 'deltat+50n' 'tbeta' 'deltat+50n' 'talpha')
+Iset4 n2 m2 EXP(0 'Inull' 'deltat2+50n' 'tbeta' 'deltat2+50n' 'talpha')
+*Cset out 0 10f
+
+Xnot1 n1 vdd vss n2 not1
+Xnot2 n2 vdd vss n1 not1
+xmo02   n2 wl bl   vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+xmo01   n1 wl bln  vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+
+Vmeasvss vss 0 0
+Vmeasvdd vd vdd 0
+Vm1 m1 0 0
+Vm2 m2 0 0
+
+.subckt not1 a vdd vss z
+xm01   z a     vdd     vdd sg13_lv_pmos  l=0.15u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+xm02   z a     vss     vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+c3  a     vss   0.384f
+c2  z     vss   0.576f
+.ends
+
+* starting condition for SRAM cell
+.ic v(n2)=0 v(n1)='vdd'
+
+* simulation command: 
+.tran 100ps 100ns ; 0 10p
+
+.options method=gear
+
+.control
+run
+rusage
+*set nolegend
+set xbrushwidth=3
+plot i(Vmeasvss) i(Vmeasvdd)
+plot n1 n2+2 wl+4 i(vm1)*10000+6 i(vm2)*10000+8
+.endc
+
+.end
