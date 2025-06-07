@@ -12,7 +12,8 @@ Author: 1987 Thomas L. Quarles
 IFparm MESpTable[] = { /* parameters */ 
  OPU("off",  MES_OFF,    IF_FLAG   ,"Device initially off"),
  IOPU("area", MES_AREA,   IF_REAL   ,"Area factor"),
- IOPUR("m",   MES_AREA,   IF_REAL   ,"Parallel Multiplier"),
+ IOPUR("m",   MES_M,   IF_REAL   ,"Parallel Multiplier"),
+ IOPAU("ic",         MES_IC,             IF_REALVEC,"Initial VDS,VGS vector"),
  IOPAU("icvds",  MES_IC_VDS, IF_REAL   ,"Initial D-S voltage"),
  IOPAU("icvgs",  MES_IC_VGS, IF_REAL   ,"Initial G-S voltage"),
  OPU("dnode", MES_DRAINNODE, IF_INTEGER,"Number of drain node"),
