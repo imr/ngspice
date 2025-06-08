@@ -29,14 +29,26 @@ Description:           "single event effect generator"
 
 PORT_TABLE:
 
-Port_Name:             ctrl                 out
-Description:          "control input"       "output"
+Port_Name:             ctrl                 mon
+Description:          "control input"       "monitor"
 Direction:             in                   out
-Default_Type:          v                    i
-Allowed_Types:         [v,vd,i,id]          [i,id]
-Vector:                no                   yes
-Vector_Bounds:         -                    [1 -]
-Null_Allowed:          yes                  no
+Default_Type:          v                    v
+Allowed_Types:         [v,vd,i,id]          [v]
+Vector:                no                   no
+Vector_Bounds:         -                    -
+Null_Allowed:          yes                  yes
+
+
+PORT_TABLE:
+
+Port_Name:             out
+Description:           "output"
+Direction:             out
+Default_Type:          i
+Allowed_Types:         [i,id]
+Vector:                yes
+Vector_Bounds:         [1 -]
+Null_Allowed:          no
 
 
 PARAMETER_TABLE:

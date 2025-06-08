@@ -7,7 +7,7 @@ XMN9 Vbias Vbias 0 0 NCH W=5u L=1.4u
 V5 in+ 0 DC 1.65 
 R1 out in- 100k
 R2 in in- 20k
-V4 in 0 DC 1.65 SIN( 1.65 100m 1k 0 0 0 ) AC 1
+V4 in 0 DC 1.65 SIN( 1.65 100m 20k 0 0 0 ) AC 1
 XMN3 out Vbias 0 0 NCH W=17.4u L=1.4u
 C2 out 0 2p
 XMP2 out VGP2 Vcc Vcc PCH W=14.5u L=1.4u
@@ -23,7 +23,7 @@ XMP8 VGP2 VGP4P8 Vcc Vcc PCH W=2.8u L=1.4u
 set xbrushwidth=2
 
 tran 20n 2m
-plot v(VGP4P8)
+plot v(VGP4P8) v(xu1.mon)*5000+3
 plot in out
 
 ac dec 10 1 1Meg

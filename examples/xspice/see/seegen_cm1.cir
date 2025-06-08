@@ -1,6 +1,6 @@
 Test of seegen code model
 
-aseegen1 NULL [%id(n1 p1) %id(n2 p2) %id(n3 p3)] seemod1
+aseegen1 NULL mon [%id(n1 p1) %id(n2 p2) %id(n3 p3)] seemod1
 .model seemod1 seegen (tdelay = 5n tperiod=4.5n)
 
 Rsee1 n1 0 1
