@@ -169,7 +169,11 @@ void cm_seegen(ARGS)  /* structure holding parms,
         /* Allocate storage for last_t_value */
         STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
         last_t_value = (double *) STATIC_VAR(last_t_value);
-        *last_t_value = tdelay;
+        /* no start if ctrl is set */
+        if (PORT_NULL(ctrl))
+            *last_t_value = tdelay;
+        else
+            *last_t_value = 1e12;
         STATIC_VAR(pulse_number) = (int *) malloc(sizeof(int));
         pulse_number = (int *) STATIC_VAR(pulse_number);
         *pulse_number = 1;
@@ -187,10 +191,12 @@ void cm_seegen(ARGS)  /* structure holding parms,
         pulse_number = (int *) STATIC_VAR(pulse_number);
         last_ctrl = (double *) STATIC_VAR(last_ctrl);
 
+        /* reset the pulse sequence, to start anew upon a rising ctrl */
         if (*last_ctrl < ctrlthres && ctrl >= ctrlthres) {
-            *last_t_value = *last_t_value + tcurr;
-            *last_ctrl = ctrl;
+            *last_t_value = tcurr + tdelay;
+            *pulse_number = 1;
         }
+        *last_ctrl = ctrl;
 
         /* the double exponential current pulse function */
         if (tcurr < *last_t_value)
