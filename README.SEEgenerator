@@ -14,14 +14,18 @@ Set up the SEEgenerator by adding for example
 .param d = 1
 * LET (linear energy transfer) in MeV*cm²/mg
 .param let = 12
-aseegen1 NULL [%id(xcell.n1 m1) %id(xcell.n2 m2) %id(xcell.n1 m1) %id(xcell.n2 m2)] seemod1
+aseegen1 NULL mon [%id(xcell.n1 m1) %id(xcell.n2 m2) %id(xcell.n1 m1) %id(xcell.n2 m2)] seemod1
 .model seemod1 seegen (tdelay = 11n tperiod=25n let='let' cdepth='d')
 
 to the netlist. 
 
-Each sensitive node from the (flattend) netlist may be added to assegen1, together with its 
-reference node, for example GND for NMOS, nwell potential for PMOS. This procedure is
-currently to be done manually, an automated setup is in preparation.
+Each sensitive node from the (flattend) netlist may be added to the output vector of assegen1
+(in brackets [...]), together with its reference node, for example GND for NMOS, nwell potential
+for PMOS. This procedure is currently to be done manually, a semi-automated setup using
+a GUI is in preparation.
+
+Instead of NULL, one may give a control signal to aseegen1, to start the pulse sequence. 
+'mon' is a monitoring output, showing each pulse as a voltage equivalent to the current.
 
 After a transient simulation, plotting the data output versus a non-radiated device
 may reveal the SEE influence.
@@ -45,14 +49,26 @@ Description:           "single event effect generator"
 
 PORT_TABLE:
 
-Port_Name:             ctrl                 out
-Description:          "control input"       "output"
+Port_Name:             ctrl                 mon
+Description:          "control input"       "monitor"
 Direction:             in                   out
-Default_Type:          v                    i
-Allowed_Types:         [v,vd,i,id]          [i,id]
-Vector:                no                   yes
-Vector_Bounds:         -                    [1 -]
-Null_Allowed:          yes                  no
+Default_Type:          v                    v
+Allowed_Types:         [v,vd,i,id]          [v]
+Vector:                no                   no
+Vector_Bounds:         -                    -
+Null_Allowed:          yes                  yes
+
+
+PORT_TABLE:
+
+Port_Name:             out
+Description:           "output"
+Direction:             out
+Default_Type:          i
+Allowed_Types:         [i,id]
+Vector:                yes
+Vector_Bounds:         [1 -]
+Null_Allowed:          no
 
 
 PARAMETER_TABLE:
@@ -158,16 +174,19 @@ again the output starts pulsing at port (node pair) number 1.
 The control input ctrl (voltage or current) may be used
 to start or repeat the whole sequence, depending on the circuit status. A rising voltage
 at ctrl, when crossing the threshold given by ctrlthres, will initiate the sequence (including
-tdelay and tperiod).
+tdelay and tperiod). If set to NULL, the pulse (sequence) will start immediately after tdelay.
+
+'mon' is a monitoring output, showing each pulse as a voltage equivalent to the current. It
+may be used just for plotting, or for re-triggering an action.
 
 This model will work in transient analysis.
 
 Example ngspice usage (with control)
 
-aseegen1 ctrl [%id(n1 m1) %id(n2 m2) %id(n1 m1) %id(n2 m2)] seemod1
+aseegen1 ctrl mon [%id(n1 m1) %id(n2 m2) %id(n1 m1) %id(n2 m2)] seemod1
 .model seemod1 seegen (tdelay = 8n tperiod=25n)
 
 Example ngspice usage (without control, ctrl replaced by NULL, parameters as offered by default)
 
-aseegen2 NULL [%id(n1 m1) %id(n5 n6) %id(n6 n7) %i(isingle) ] seemod2
+aseegen2 NULL mon [%id(n1 m1) %id(n5 n6) %id(n6 n7) %i(isingle) ] seemod2
 .model seemod2 seegen (tdelay = 0 tperiod=0 ctrlthres=0.5 inull=0 tfall=500p trise=20p perlim=FALSE)
