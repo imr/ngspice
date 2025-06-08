@@ -222,8 +222,10 @@ void cm_seegen(ARGS)  /* structure holding parms,
                     *last_t_value = 1e12; /* stop any output */
             }
         }
-        if (*pulse_number - 1 < PORT_SIZE(out))
-           OUTPUT(out[*pulse_number - 1]) = out;
+        if (*pulse_number - 1 < PORT_SIZE(out)) {
+            OUTPUT(out[*pulse_number - 1]) = out;
+            OUTPUT(mon) = out;
+        }
     }
 }
 

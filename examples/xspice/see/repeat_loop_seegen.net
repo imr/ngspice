@@ -11,10 +11,10 @@ R4 n4 0 1e4
 
 
 ****  SEE generator without control input, double exponential current sources
-aseegen1 NULL [%id(n1 0) %id(n2 0) %id(n3 0) %id(n4 0)] seemod1
+aseegen1 NULL mon [%id(n1 0) %id(n2 0) %id(n3 0) %id(n4 0)] seemod1
 .model seemod1 seegen (tdelay = 11n tperiod=25n let='let' cdepth='cdepth' trise='trise' tfall='tfall')
 * alternative syntax, if no current measurement required and reference nodes are GND
-*aseegen1 NULL [%i(n1) %i(n2) %i(n3) %i(n4)] seemod1
+*aseegen1 NULL mon [%i(n1) %i(n2) %i(n3) %i(n4)] seemod1
 
 
 
