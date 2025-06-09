@@ -1,0 +1,22 @@
+* MLIN test
+
+V1 1 0 AC 1 DC 1
+R1 in 1 50.0
+R2 out 0 1000.1
+A1 %hd(in 0) %hd(out 0) %vd(in 0) %vd(out 0) MLIN1
+.MODEL MLIN1 MLIN(w=1e-3 l=10e-3 er=9.8 h=1e-3 t=35e-6 tand=1e-3 rho=0.022e-6 d=0.15e-6 model=0 disp=0)
+
+.control
+
+op
+print all
+
+ac LIN 200 1e9 12e9
+
+let z = v(in)/-i(v1)
+let y = imag(z)
+let r = real(z)
+plot abs(z) ylog
+plot y r
+
+.endc
