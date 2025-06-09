@@ -31,8 +31,8 @@ JFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->JFET2tempGiven = TRUE;
             break;
         case JFET2_DTEMP:
-            here->JFET2temp = value->rValue;
-            here->JFET2tempGiven = TRUE;
+            here->JFET2dtemp = value->rValue;
+            here->JFET2dtempGiven = TRUE;
             break;
         case JFET2_AREA:
             here->JFET2area = value->rValue;
