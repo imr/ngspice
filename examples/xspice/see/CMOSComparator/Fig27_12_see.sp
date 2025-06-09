@@ -55,7 +55,7 @@ MSU2	Vsur	Vsur	VDD	VDD	P_1u L=100 W=10
 MSU3	Vbiasp	Vsur	Vbiasn	0	N_1u L=1   W=10
 .ends
 
-.include cmosedu_models.txt 
+.include cmosedu_models.txt
 
 
 .param d = 1
@@ -68,11 +68,10 @@ aseegen2 ct mon [ %id(vdd vbiasp) %id(vdd vop) %id(vdd vom) %id(vdd vopb) %id(vd
 
 .control
 run
+rusage time
 set xbrushwidth=2
 plot mon
 plot out vp ct mon*5000+6
-
 .endc
 
 .end
-      
