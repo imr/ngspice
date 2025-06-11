@@ -21,12 +21,14 @@
 #include "msline_common.h"
 #include "tline_common.h"
 
-static tline_state_t *sim_points = NULL;
+//static tline_state_t *sim_points = NULL;
 
+static void cm_tline_callback(ARGS, Mif_Callback_Reason_t reason);
 
 void cm_tline (ARGS)
 {
 	Complex_t   z11, z21;
+    void **sim_points;
 
 
 	/* how to get properties of this component, e.g. L, W */
@@ -39,7 +41,8 @@ void cm_tline (ARGS)
 
 	/* Initialize/access instance specific storage for capacitor voltage */
 	if(INIT) {
-
+        CALLBACK = cm_tline_callback;
+        STATIC_VAR(sim_points_data) = NULL;
 	}
 
 	/* Compute the output */
@@ -72,15 +75,26 @@ void cm_tline (ARGS)
 		AC_GAIN(in,out) = z21; AC_GAIN(out,in) = z21;
 	}
 	else if(ANALYSIS == TRANSIENT) {
+        sim_points = &(STATIC_VAR(sim_points_data));
 		double t = TIME;
 		double V1 = INPUT(V1sens);
 		double V2 = INPUT(V2sens);
 		double I1 = INPUT(in);
 		double I2 = INPUT(out);
 		double delay = l/(C0);
-		append_state(&sim_points, t, V1, V2, I1, I2, 1.2*delay);
+
+        tline_state_t *last = get_tline_last_state(*(tline_state_t **)sim_points);
+        double last_time = 0;
+        if (last != NULL) last_time = last->time;
+
+        if (TIME < last_time) {
+            //fprintf(stderr,"Rollback time=%g\n",TIME);
+			delete_tline_last_state((tline_state_t **)sim_points);
+		}
+
+		append_state((tline_state_t **)sim_points, t, V1, V2, I1, I2, 1.2*delay);
 		if (t > delay) {
-			tline_state_t *pp = get_state(sim_points, t - delay);
+			tline_state_t *pp = get_state(*(tline_state_t **)sim_points, t - delay);
 			if (pp != NULL) {
 				double V2out = pp->V1 + z*(pp->I1);
 				double V1out = pp->V2 + z*(pp->I2);
@@ -98,3 +112,13 @@ void cm_tline (ARGS)
 	}
 }
 
+
+static void cm_tline_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY:
+            delete_tline_states((tline_state_t **)&(STATIC_VAR(sim_points_data)));
+            break;
+        default: break;
+    }
+}

@@ -61,6 +61,47 @@ tline_state_t *get_state(tline_state_t *first, double time)
     return pp;
 }
 
+tline_state_t *get_tline_last_state(tline_state_t *first)
+{
+    tline_state_t *pp = first;
+	if (first == NULL) return NULL;
+    while (pp->next != NULL) {
+        pp = pp->next;
+    }
+    return pp;
+}
+
+
+void delete_tline_last_state(tline_state_t **first)
+{
+	tline_state_t *pn  = *first;
+	if (*first == NULL) return;
+
+	if ((*first)->next == NULL) {
+		free (*first);
+		*first = NULL;
+		return;
+	}
+
+	while (pn->next->next != NULL) {
+		pn = pn->next;
+	}
+	free(pn->next);
+	pn->next = NULL;
+}
+
+void delete_tline_states(tline_state_t **first)
+{
+	if (*first == NULL) return;
+	tline_state_t *pn;
+	tline_state_t *pc = *first;
+	while (pc != NULL) {
+		pn = pc->next;
+		free (pc);
+		pc = pn;
+	}
+	*first = NULL;
+}
 
 void append_cpline_state(cpline_state_t **first, double time, double *Vp, double *Ip, double tmax)
 {
@@ -98,4 +139,47 @@ cpline_state_t *find_cpline_state(cpline_state_t *first, double time)
     }
     return pp;
 }
+
+cpline_state_t *get_cpline_last_state(cpline_state_t *first)
+{
+    cpline_state_t *pp = first;
+	if (first == NULL) return NULL;
+    while (pp->next != NULL) {
+        pp = pp->next;
+    }
+    return pp;
+}
+
+
+void delete_cpline_last_state(cpline_state_t **first)
+{
+	cpline_state_t *pn  = *first;
+	if (*first == NULL) return;
+
+	if ((*first)->next == NULL) {
+		free (*first);
+		*first = NULL;
+		return;
+	}
+
+	while (pn->next->next != NULL) {
+		pn = pn->next;
+	}
+	free(pn->next);
+	pn->next = NULL;
+}
+
+void delete_cpline_states(cpline_state_t **first)
+{
+	if (*first == NULL) return;
+	cpline_state_t *pn;
+	cpline_state_t *pc = *first;
+	while (pc != NULL) {
+		pn = pc->next;
+		free (pc);
+		pc = pn;
+	}
+	*first = NULL;
+}
+
 

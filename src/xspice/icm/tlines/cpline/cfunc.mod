@@ -30,8 +30,9 @@ static void copy_complex(double complex s, Complex_t *d)
 	d->imag = cimag(s);
 }
 
-cpline_state_t *sim_points = NULL;
+//cpline_state_t *sim_points = NULL;
 
+static void cm_cpline_callback(ARGS, Mif_Callback_Reason_t reason);
 
 void cm_cpline (ARGS)
 {
@@ -49,7 +50,8 @@ void cm_cpline (ARGS)
 	ao = pow(10, 0.05*ao);
 
 	if(INIT) {
-
+        CALLBACK = cm_cpline_callback;
+        STATIC_VAR(sim_points_data) = NULL;
 	}
 
 	/* Compute the output */
@@ -121,9 +123,19 @@ void cm_cpline (ARGS)
 		Ip[2] = INPUT(p3);
 		Ip[3] = INPUT(p4);
 		double delay = l/(C0);
-		append_cpline_state(&sim_points, t, Vp, Ip, 1.2*delay);
+
+        void **sim_points = &(STATIC_VAR(sim_points_data));
+
+        cpline_state_t *last = get_cpline_last_state(*(cpline_state_t **)sim_points);
+        double last_time = 0;
+        if (last != NULL) last_time = last->time;
+
+		if (TIME < last_time) {
+			delete_cpline_last_state((cpline_state_t **)sim_points);
+		}
+		append_cpline_state((cpline_state_t **)sim_points, t, Vp, Ip, 1.2*delay);
 		if (t > delay) {
-			cpline_state_t *pp = find_cpline_state(sim_points, t - delay);
+			cpline_state_t *pp = find_cpline_state(*(cpline_state_t **)sim_points, t - delay);
 			if (pp != NULL) {
 
 				double J1e = 0.5*(Ip[3] + Ip[0]);
@@ -165,3 +177,12 @@ void cm_cpline (ARGS)
 	}
 }
 
+static void cm_cpline_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY:
+            delete_cpline_states((cpline_state_t **)&(STATIC_VAR(sim_points_data)));
+            break;
+        default: break;
+    }
+}

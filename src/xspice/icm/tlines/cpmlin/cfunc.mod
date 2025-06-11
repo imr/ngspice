@@ -33,7 +33,8 @@ static void copy_complex(double complex s, Complex_t *d)
 }
 
 
-static cpline_state_t *state = NULL;
+//static cpline_state_t *state = NULL;
+static void cm_cpmline_callback(ARGS, Mif_Callback_Reason_t reason);
 
 static void analyseQuasiStatic (double W, double h, double s,
 				   double t, double er,
@@ -377,6 +378,7 @@ void cm_cpmline (ARGS)
 	double s = PARAM(s);
 	int SModel = PARAM(model);
 	int DModel = PARAM(disp);
+    int TModel = PARAM(tranmodel);
 
 	/* how to get properties of the substrate, e.g. Er, H */
 	double er    = PARAM(er);
@@ -386,6 +388,10 @@ void cm_cpmline (ARGS)
 	double rho   = PARAM(rho);
 	double D     = PARAM(d);
 
+    if(INIT) {
+        CALLBACK = cm_cpmline_callback;
+        STATIC_VAR(sim_points_data) = NULL;
+	}
 
 
 	/* Compute the output */
@@ -459,9 +465,19 @@ void cm_cpmline (ARGS)
 		Ip[2] = INPUT(p3);
 		Ip[3] = INPUT(p4);
 		double delay = l/(C0);
-		append_cpline_state(&state, t, Vp, Ip, 1.2*delay);
-		if (t > delay) {
-			cpline_state_t *pp = find_cpline_state(state, t - delay);
+        void **sim_points = &(STATIC_VAR(sim_points_data));
+		if (TModel == TRAN_FULL) {
+			cpline_state_t *last = get_cpline_last_state(*(cpline_state_t **)sim_points);
+			double last_time = 0;
+			if (last != NULL) last_time = last->time;
+
+            if (TIME < last_time) {
+				delete_cpline_last_state((cpline_state_t **)sim_points);
+			}
+			append_cpline_state((cpline_state_t **)sim_points, t, Vp, Ip, 1.2*delay);
+		}
+        if (t > delay && TModel == TRAN_FULL) {
+			cpline_state_t *pp = find_cpline_state(*(cpline_state_t **)sim_points, t - delay);
 			if (pp != NULL) {
 
 				double J1e = 0.5*(Ip[3] + Ip[0]);
@@ -498,8 +514,28 @@ void cm_cpmline (ARGS)
 			}
 			cm_analog_auto_partial();
 		} else {
+		    double z = sqrt(ze*zo);
+			double V2out = Vp[0] + z*Ip[0];
+			double V1out = Vp[1] + z*Ip[1];
+			OUTPUT(p1) = V1out + Ip[0]*z;
+			OUTPUT(p2) = V2out + Ip[1]*z;
+
+			double V3out = Vp[3] + z*Ip[3];
+			double V4out = Vp[2] + z*Ip[2];
+			OUTPUT(p3) = V3out + Ip[2]*z;
+			OUTPUT(p4) = V4out + Ip[3]*z;
+
 			cm_analog_auto_partial();
 		}
 	}
 }
 
+static void cm_cpmline_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY:
+            delete_cpline_states((cpline_state_t **)&(STATIC_VAR(sim_points_data)));
+            break;
+        default: break;
+    }
+}
