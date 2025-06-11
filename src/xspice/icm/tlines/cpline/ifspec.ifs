@@ -183,3 +183,9 @@ Vector_Bounds:         -
 Null_Allowed:          yes
 
 
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    sim_points_data
+Description:        "local static data"
+Data_Type:          pointer
+

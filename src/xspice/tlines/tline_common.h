@@ -59,6 +59,10 @@ void append_state(tline_state_t **first, double time, double V1, double V2,
 
 tline_state_t *get_state(tline_state_t *first, double time);
 
+void delete_tline_states(tline_state_t **first);
+void delete_tline_last_state(tline_state_t **first);
+tline_state_t *get_tline_last_state(tline_state_t *first);
+
 #define PORT_NUM 4
 
 typedef struct cpline_state {
@@ -74,5 +78,8 @@ void append_cpline_state(cpline_state_t **first, double time, double *Vp, double
 cpline_state_t *find_cpline_state(cpline_state_t *first, double time);
 
 
+void delete_cpline_states(cpline_state_t **first);
+void delete_cpline_last_state(cpline_state_t **first);
+cpline_state_t *get_cpline_last_state(cpline_state_t *first);
 
 #endif

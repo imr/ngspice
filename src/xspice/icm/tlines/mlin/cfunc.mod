@@ -22,9 +22,11 @@
 
 #include "msline_common.h"
 
-static tline_state_t *sim_points = NULL;
+//static tline_state_t *sim_points = NULL;
 
 static double zl, alpha, beta, ereff;
+
+static void cm_mline_callback(ARGS, Mif_Callback_Reason_t reason);
 
 static void calcPropagation (double W, int SModel, int DModel,
                              double er, double h, double t, double tand, double rho, double D,
@@ -56,6 +58,7 @@ static void calcPropagation (double W, int SModel, int DModel,
 void cm_mlin (ARGS)
 {
 	Complex_t   z11, z21;
+    void **sim_points;
 
 
 	/* how to get properties of this component, e.g. L, W */
@@ -77,7 +80,8 @@ void cm_mlin (ARGS)
 
 	/* Initialize/access instance specific storage for capacitor voltage */
 	if(INIT) {
-
+        CALLBACK = cm_mline_callback;
+        STATIC_VAR(sim_points_data) = NULL;
 	}
 
 	/* Compute the output */
@@ -111,6 +115,7 @@ void cm_mlin (ARGS)
 	}
 	else if(ANALYSIS == TRANSIENT) {
 		calcPropagation(W,SModel,DModel,er,h,t,tand,rho,D,0);
+        sim_points = &(STATIC_VAR(sim_points_data));
         double t = TIME;
 		double V1 = INPUT(V1sens);
 		double V2 = INPUT(V2sens);
@@ -118,10 +123,19 @@ void cm_mlin (ARGS)
 		double I2 = INPUT(port2);
 		double delay = l/(C0) * sqrt(ereff);
 		if (TModel == TRAN_FULL) {
-		    append_state(&sim_points, t, V1, V2, I1, I2, 1.2*delay);
+
+            tline_state_t *last = get_tline_last_state(*(tline_state_t **)sim_points);
+			double last_time = 0;
+			if (last != NULL) last_time = last->time;
+
+			if (TIME < last_time) {
+                //fprintf(stderr,"Rollbacki time=%g\n",TIME);
+				delete_tline_last_state((tline_state_t **)sim_points);
+			}
+			append_state((tline_state_t **)sim_points, t, V1, V2, I1, I2, 1.2*delay);
 		}
 		if (t > delay && TModel == TRAN_FULL) {
-			tline_state_t *pp = get_state(sim_points, t - delay);
+			tline_state_t *pp = get_state(*(tline_state_t **)sim_points, t - delay);
 			if (pp != NULL) {
 				double V2out = pp->V1 + zl*(pp->I1);
 				double V1out = pp->V2 + zl*(pp->I2);
@@ -138,5 +152,15 @@ void cm_mlin (ARGS)
 		}
 
 	}
+}
+
+static void cm_mline_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY:
+            delete_tline_states((tline_state_t **)&(STATIC_VAR(sim_points_data)));
+            break;
+        default: break;
+    }
 }
 
