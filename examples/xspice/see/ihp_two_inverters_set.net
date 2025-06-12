@@ -41,6 +41,8 @@ run
 rusage
 *set nolegend
 set xbrushwidth=3
+set xgridwidth=2
+set color0=white
 plot i(Vmeasvss) i(Vmeasvdd)
 plot in out1+2 out+4
 .endc

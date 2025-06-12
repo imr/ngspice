@@ -61,7 +61,10 @@ pre_osdi C:\Spice64\lib\ngspice\psp103_nqs.osdi
 run
 rusage
 *set nolegend
+set color0=white
+set color5=orange
 set xbrushwidth=3
+set xgridwidth=2
 plot i(Vmeasvss) i(Vmeasvdd)
 plot xcell.n1 xcell.n2+2 wl+4 i(vm1)*10000+6 i(vm2)*10000+8
 .endc
