@@ -44,7 +44,9 @@ _LIBCPP_END_NAMESPACE_STD
 /// Configure whether system has POSIX extern int signgam;
 #ifndef CPPDUALS_HAVE_SIGNGAM
 #ifndef _WIN32
+#ifndef __CYGWIN__
 #define CPPDUALS_HAVE_SIGNGAM 1
+#endif
 #endif
 #endif
 namespace duals {
