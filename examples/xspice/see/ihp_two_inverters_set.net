@@ -1,5 +1,4 @@
-* IHP Open PDK
-* simple inverter
+* simple inverter, IHP Open PDK
 
 * Path to the PDK
 *.include "D:\Spice_general\skywater-pdk\libraries\sky130_fd_pr\latest\models\corners/tt.spice"
@@ -11,7 +10,7 @@
 
 * the voltage sources: 
 Vdd vd gnd DC 'vdd'
-V1 in gnd pulse(0 'vdd' 0p 200p 100p 5n 10n)
+V1 in gnd pulse(0 'vdd' 0p 200p 100p 5n 10.1n)
 
 * Eponential current source
 Iset1 out1 0 EXP(0 250u 'deltat' 10p 'deltat' 500p)
@@ -19,7 +18,7 @@ Iset2 out1 0 EXP(0 250u 'deltat2' 10p 'deltat2' 500p)
 *Cset out 0 10f
 
 Xnot1 in vdd vss out1 not1
-Xnot2 out1 vdd vss out not1
+Xnot2 out1 vdd vss out2 not1
 
 Vmeasvss vss 0 0
 Vmeasvdd vd vdd 0
@@ -42,7 +41,7 @@ rusage
 *set nolegend
 set xbrushwidth=3
 plot i(Vmeasvss) i(Vmeasvdd)
-plot in out1+2 out+4
+plot in out1+2 out2+4
 .endc
 
 .end
