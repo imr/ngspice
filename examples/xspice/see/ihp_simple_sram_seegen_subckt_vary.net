@@ -9,7 +9,7 @@
 *.param tochar = 1e-13  ; tochar dependency on LET not yet defined
 
 .param d = 1
-.param let = 12
+.param let = 8
 
 .param tochar = 1.035e-14 * let * d 
 .csparam let = 'let' ; send param value to .control section
@@ -71,7 +71,7 @@ repeat 5
   print newlet
   run
   plot xcell.n1 xcell.n2+2 wl+4 i(vm1)*10000+6 i(vm2)*10000+8 ylimit -1 10
-  let newlet = newlet - 1
+  let newlet = newlet + 1
   alterparam let = $&newlet
   reset
 end
