@@ -3645,74 +3645,76 @@ static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str;
 
     equal = strchr(s, '=');
-    if (equal &&
-        (!strstr(s, "params:") || !isspace_c(s[-1]))) {
-        /* get subckt name (ptr1 will point to name) */
+    if (equal) {
+        char* paramstr = strstr(s, "params:");
+        if (!paramstr || !isspace_c(paramstr[-1])) {
 
-        ptr1 = skip_token(s);
-        for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2);
+            /* get subckt name (ptr1 will point to name) */
+            ptr1 = skip_token(s);
+            for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2);
                 ptr2++)
-            ;
+                ;
 
-        add_name(subckt_w_params, copy_substring(ptr1, ptr2));
+            add_name(subckt_w_params, copy_substring(ptr1, ptr2));
 
-        /* go to beginning of first parameter word  */
-        /* s    will contain only subckt definition */
-        /* beg  will point to start of param list   */
-        beg = skip_back_ws(equal, s);
-        beg = skip_back_non_ws(beg, s);
-        beg[-1] = '\0'; /* fixme can be < s */
+            /* go to beginning of first parameter word  */
+            /* s    will contain only subckt definition */
+            /* beg  will point to start of param list   */
+            beg = skip_back_ws(equal, s);
+            beg = skip_back_non_ws(beg, s);
+            beg[-1] = '\0'; /* fixme can be < s */
 
-        head = insert_new_line(NULL, NULL, 0, 0, "internal");
-        /* create list of parameters that need to get sorted */
-        first_param_card = c = NULL;
-        while ((ptr1 = strchr(beg, '=')) != NULL) {
-            ptr2 = skip_ws(ptr1 + 1);
-            ptr1 = skip_back_ws(ptr1, beg);
-            ptr1 = skip_back_non_ws(ptr1, beg);
-            /* ptr1 points to beginning of parameter */
+            head = insert_new_line(NULL, NULL, 0, 0, "internal");
+            /* create list of parameters that need to get sorted */
+            first_param_card = c = NULL;
+            while ((ptr1 = strchr(beg, '=')) != NULL) {
+                ptr2 = skip_ws(ptr1 + 1);
+                ptr1 = skip_back_ws(ptr1, beg);
+                ptr1 = skip_back_non_ws(ptr1, beg);
+                /* ptr1 points to beginning of parameter */
 
-            if (*ptr2 == '{')
-                ptr2 = inp_spawn_brace(ptr2);
-            else
-                ptr2 = skip_non_ws(ptr2);
+                if (*ptr2 == '{')
+                    ptr2 = inp_spawn_brace(ptr2);
+                else
+                    ptr2 = skip_non_ws(ptr2);
 
-            if (!ptr2) {
-                fprintf(stderr, "Error: Missing } in line %s\n", s);
-                controlled_exit(EXIT_FAILURE);
+                if (!ptr2) {
+                    fprintf(stderr, "Error: Missing } in line %s\n", s);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                beg = ptr2;
+
+                c = insert_new_line(c, copy_substring(ptr1, ptr2), 0, 0, "internal");
+
+                if (!first_param_card)
+                    first_param_card = c;
             }
+            /* now sort parameters in order of dependencies */
+            inp_sort_params(first_param_card, head, NULL, NULL);
 
-            beg = ptr2;
+            /* create new ordered parameter string for subckt call */
+            new_str = NULL;
+            for (c = head->nextcard; c; c = c->nextcard)
+                if (new_str == NULL) {
+                    new_str = copy(c->line);
+                }
+                else {
+                    char* x = tprintf("%s %s", new_str, c->line);
+                    tfree(new_str);
+                    new_str = x;
+                }
 
-            c = insert_new_line(c, copy_substring(ptr1, ptr2), 0, 0, "internal");
+            line_free_x(head, TRUE);
 
-            if (!first_param_card)
-                first_param_card = c;
+            /* create buffer and insert params: */
+            buffer = tprintf("%s params: %s", s, new_str);
+
+            tfree(s);
+            tfree(new_str);
+
+            s = buffer;
         }
-        /* now sort parameters in order of dependencies */
-        inp_sort_params(first_param_card, head, NULL, NULL);
-
-        /* create new ordered parameter string for subckt call */
-        new_str = NULL;
-        for (c = head->nextcard; c; c = c->nextcard)
-            if (new_str == NULL) {
-                new_str = copy(c->line);
-            }
-            else {
-                char *x = tprintf("%s %s", new_str, c->line);
-                tfree(new_str);
-                new_str = x;
-            }
-
-        line_free_x(head, TRUE);
-
-        /* create buffer and insert params: */
-        buffer = tprintf("%s params: %s", s, new_str);
-
-        tfree(s);
-        tfree(new_str);
-
-        s = buffer;
     }
 
     return s;
