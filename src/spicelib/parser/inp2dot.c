@@ -313,6 +313,8 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     if (*line == '\0')
         return 1;
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vinc1 */
+        if (parm->rValue == 0)
+            return 1;
     GCA(INPapName, (ckt, which, foo, "step1", parm));
     if (*line) {
         INPgetTok(&line, &name, 1);
@@ -330,6 +332,8 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
             return 1;
         GCA(INPapName, (ckt, which, foo, "stop2", parm));
         parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vinc2 */
+        if (parm->rValue == 0)
+            return 1;
         GCA(INPapName, (ckt, which, foo, "step2", parm));
     }
     return 0;
