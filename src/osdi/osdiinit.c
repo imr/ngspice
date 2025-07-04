@@ -188,6 +188,7 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   OSDIinfo->DEVparam = OSDIparam;
   OSDIinfo->DEVmodParam = OSDImParam;
   OSDIinfo->DEVask = OSDIask;
+  OSDIinfo->DEVmodAsk = OSDImAsk;
   OSDIinfo->DEVsetup = OSDIsetup;
   OSDIinfo->DEVpzSetup = OSDIsetup;
   OSDIinfo->DEVtemperature = OSDItemp;

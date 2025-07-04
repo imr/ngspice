@@ -162,3 +162,21 @@ extern int OSDIask(CKTcircuit *ckt, GENinstance *instPtr, int id,
   void *src = descr->access(inst, model, (uint32_t)id, flags);
   return osdi_read_param(src, value, id, descr);
 }
+
+extern int OSDImAsk(CKTcircuit *ckt, GENmodel *modelPtr, int id,
+                   IFvalue *value) {
+
+  NG_IGNORE(ckt);
+
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(modelPtr);
+  const OsdiDescriptor *descr = entry->descriptor;
+
+  void *model = osdi_model_data(modelPtr);
+
+  if (id >= (int)(descr->num_params)) {
+    return (E_BADPARM);
+  }
+
+  void *src = descr->access(NULL, model, (uint32_t)id, ACCESS_FLAG_READ);
+  return osdi_read_param(src, value, id, descr);
+}
