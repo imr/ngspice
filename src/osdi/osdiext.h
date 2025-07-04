@@ -22,6 +22,7 @@ extern int OSDIparam(int, IFvalue *, GENinstance *, IFvalue *);
 extern int OSDIsetup(SMPmatrix *, GENmodel *, CKTcircuit *, int *);
 extern int OSDIunsetup(GENmodel *, CKTcircuit *);
 extern int OSDIask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
+extern int OSDImAsk(CKTcircuit *, GENmodel *, int, IFvalue *);
 extern int OSDIload(GENmodel *, CKTcircuit *);
 extern int OSDItemp(GENmodel *, CKTcircuit *);
 extern int OSDIacLoad(GENmodel *, CKTcircuit *);
@@ -39,5 +40,4 @@ extern int OSDIbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt);
 /* extern int OSDIconvTest(GENmodel*,CKTcircuit*); */
 /* extern int OSDImDelete(GENmodel*); */
 /* extern int OSDIgetic(GENmodel*,CKTcircuit*); */
-/* extern int OSDImAsk(CKTcircuit*,GENmodel*,int,IFvalue*); */
 /* extern int OSDIsoaCheck(CKTcircuit *, GENmodel *); */
