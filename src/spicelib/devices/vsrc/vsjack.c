@@ -114,6 +114,8 @@ int openfile_sf(int d, char* filename) {
     rabbit[d] = src_new(SRC_SINC_BEST_QUALITY, m_channels[d], &(rabbit_err[d]));
     src_set_ratio(rabbit[d], SRC_RATIO);
     src_reset(rabbit[d]);
+    output_frames_generated[d] = 0;
+    input_frames_used[d] = 0;
 
 #endif
     nframes = sf_readf_float(m_sndfile[d], (interleaved[d]), nframes);
