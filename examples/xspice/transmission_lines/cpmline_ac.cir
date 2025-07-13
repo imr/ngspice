@@ -1,0 +1,18 @@
+* Coupled lines SP
+
+V1 p1 0 dc 0 ac 1 portnum 1 z0 50
+V2 p2 0 dc 0 ac 1 portnum 2 z0 50
+V3 p3 0 dc 0 ac 1 portnum 3 z0 50
+V4 p4 0 dc 0 ac 1 portnum 4 z0 50
+
+A1 %hd(p1 0) %hd(p2 0) %hd(p3 0) %hd(p4 0) %vd(p1 0) %vd(p2 0) %vd(p3 0) %vd(p4 0) CPMLIN1
+.MODEL CPMLIN1 CPMLIN(w=1e-3 l=20e-3 s=0.3e-3 er=9.8 h=1e-3 t=35e-6 tand=1e-3 rho=0.022e-6 d1=0.15e-6 model=0 disp=0)
+
+.control
+
+sp lin 100 0.2e9 4.2e9
+
+plot abs(s_1_1) abs(s_3_1) abs(s_2_1) abs(s_4_1)
+plot abs(s_3_1)
+
+.endc
