@@ -295,18 +295,25 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         break;
 
         case VSRC_SOUND: {
+            int id, channel;
+            double oversampling;
             here->VSRCfunctionType = SOUND;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
             here->VSRCcoeffsGiven = TRUE;
-            vsjack_open(-1); // initialize
-            if (jfile) {
-                vsjack_set_file((int)rint(here->VSRCcoeffs[0]), jfile);
-                tfree(jfile);
+            if (!jfile) {
+                fprintf(stderr, "Warning! Need filename for sound input");
+                return(E_BADPARM);
             }
-            if (value->v.numValue != 6)
+            if (value->v.numValue != 6) {
                 fprintf(stderr, "Warning! invalid jack args: %i\nFormat: jack(id v_off v_mult t_off channel oversampling)", value->v.numValue);
-            vsjack_open((int)rint(here->VSRCcoeffs[0]));
+                return (E_BADPARM);
+            }
+            id = (int)rint(here->VSRCcoeffs[0]);
+            channel = (int)rint(here->VSRCcoeffs[4]);
+            oversampling = here->VSRCcoeffs[5];
+            vsjack_open(id, jfile, channel, oversampling);
+            tfree(jfile);
         }
         break;
 

@@ -1,4 +1,3 @@
 
-double vsjack_get_value (int, double, double, int, double);
-int vsjack_open (int);
-void vsjack_set_file (int, char*);
+double vsjack_get_value (int, double time, double time_offset);
+int vsjack_open (int, char *file, int channel, double oversampling);
