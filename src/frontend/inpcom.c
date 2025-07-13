@@ -9057,7 +9057,8 @@ static void rem_mfg_from_models(struct card *deck)
                     }
             }
             start = search_plain_identifier(curr_line, "type");
-            if (start && start[4] == '=') {
+            /* still retain type=0, type=1, type=+1, or type=-1 */
+            if (start && start[4] == '=' && !isdigit_c(start[5]) && !((start[5] == '-' || start[5] == '+') && isdigit_c(start[6]))) {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
