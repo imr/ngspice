@@ -425,7 +425,7 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                     break;
 
                     case SOUND: {
-                        value = here->VSRCcoeffs[2] * vsjack_get_value((int)here->VSRCcoeffs[0], time, here->VSRCcoeffs[3], (int)rint(here->VSRCcoeffs[4]), rint(here->VSRCcoeffs[5]));
+                        value = here->VSRCcoeffs[2] * vsjack_get_value((int)here->VSRCcoeffs[0], time, here->VSRCcoeffs[3]);
                         value += here->VSRCcoeffs[1];
                     }
                     break;
