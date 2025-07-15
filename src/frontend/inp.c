@@ -1779,7 +1779,7 @@ com_alterparam(wordlist *wl)
         /* alterparam subcktname pname=vpval
            Parameters from within subcircuit are no longer .param lines, but have been added to
            the .subckt line as pname=paval and to the x line as pval. pval in the x line takes
-           precedence when subciruit is called, so has to be replaced here.
+           precedence when subcircuit is called, so has to be replaced here.
            Find subcircuit with subcktname.
            After params: Count the number of parameters (notok) until parameter pname is found.
            When found, search for x-line with subcktname.

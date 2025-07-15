@@ -1,29 +1,25 @@
 /* ******************************************************************************
-   *  BSIM4 4.8.2 released by Chetan Kumar Dabhi 01/01/2020                     *
+   *  BSIM4 4.8.3 released on 05/19/2025                                        *
    *  BSIM4 Model Equations                                                     *
    ******************************************************************************
 
    ******************************************************************************
-   *  Copyright (c) 2020 University of California                               *
+   *  Copyright (c) 2025 University of California                               *
    *                                                                            *
-   *  Project Director: Prof. Chenming Hu.                                      *
-   *  Current developers: Chetan Kumar Dabhi   (Ph.D. student, IIT Kanpur)      *
-   *                      Prof. Yogesh Chauhan (IIT Kanpur)                     *
-   *                      Dr. Pragya Kushwaha  (Postdoc, UC Berkeley)           *
-   *                      Dr. Avirup Dasgupta  (Postdoc, UC Berkeley)           *
-   *                      Ming-Yen Kao         (Ph.D. student, UC Berkeley)     *
-   *  Authors: Gary W. Ng, Weidong Liu, Xuemei Xi, Mohan Dunga, Wenwei Yang     *
-   *           Ali Niknejad, Chetan Kumar Dabhi, Yogesh Singh Chauhan,          *
-   *           Sayeef Salahuddin, Chenming Hu                                   * 
+   *  Project Directors: Prof. Sayeef Salahuddin and Prof. Chenming Hu          *
+   *  Developers list: https://www.bsim.berkeley.edu/models/bsim4/auth_bsim4/   *
    ******************************************************************************/
 
 /*
 Licensed under Educational Community License, Version 2.0 (the "License"); you may
 not use this file except in compliance with the License. You may obtain a copy of the license at
 http://opensource.org/licenses/ECL-2.0
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
 under the License.
+
+BSIM4 model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc
 */
 
 #include "ngspice/ngspice.h"
@@ -80,9 +76,9 @@ BSIM4instance **InstArray;
     for( ; model != NULL; model = BSIM4nextModel(model))
     {   /* process defaults of model parameters */
         if (!model->BSIM4typeGiven)
-            model->BSIM4type = NMOS;     
+            model->BSIM4type = NMOS;
 
-        if (!model->BSIM4mobModGiven) 
+        if (!model->BSIM4mobModGiven)
             model->BSIM4mobMod = 0;
         else if ((model->BSIM4mobMod != 0) && (model->BSIM4mobMod != 1)&& (model->BSIM4mobMod != 2)&& (model->BSIM4mobMod != 3)
                  && (model->BSIM4mobMod != 4) && (model->BSIM4mobMod != 5) && (model->BSIM4mobMod != 6)) /* Synopsys 08/30/2013 modify */
@@ -90,9 +86,9 @@ BSIM4instance **InstArray;
             printf("Warning: mobMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4binUnitGiven) 
+        if (!model->BSIM4binUnitGiven)
             model->BSIM4binUnit = 1;
-        if (!model->BSIM4paramChkGiven) 
+        if (!model->BSIM4paramChkGiven)
             model->BSIM4paramChk = 1;
 
         if (!model->BSIM4dioModGiven)
@@ -103,9 +99,9 @@ BSIM4instance **InstArray;
             printf("Warning: dioMod has been set to its default value: 1.\n");
         }
 
-        if (!model->BSIM4cvchargeModGiven) 
+        if (!model->BSIM4cvchargeModGiven)
             model->BSIM4cvchargeMod = 0;
-        if (!model->BSIM4capModGiven) 
+        if (!model->BSIM4capModGiven)
             model->BSIM4capMod = 2;
         else if ((model->BSIM4capMod != 0) && (model->BSIM4capMod != 1)
             && (model->BSIM4capMod != 2))
@@ -144,13 +140,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4geoModGiven)
             model->BSIM4geoMod = 0;
 
-        if (!model->BSIM4rgeoModGiven)
-            model->BSIM4rgeoMod = 0;
-        else if ((model->BSIM4rgeoMod != 0) && (model->BSIM4rgeoMod != 1))
-        {   model->BSIM4rgeoMod = 1;
-            printf("Warning: rgeoMod has been set to its default value: 1.\n");
-        }
-        if (!model->BSIM4fnoiModGiven) 
+        if (!model->BSIM4fnoiModGiven)
             model->BSIM4fnoiMod = 1;
         else if ((model->BSIM4fnoiMod != 0) && (model->BSIM4fnoiMod != 1))
         {   model->BSIM4fnoiMod = 1;
@@ -164,7 +154,7 @@ BSIM4instance **InstArray;
         }
 
         if (!model->BSIM4trnqsModGiven)
-            model->BSIM4trnqsMod = 0; 
+            model->BSIM4trnqsMod = 0;
         else if ((model->BSIM4trnqsMod != 0) && (model->BSIM4trnqsMod != 1))
         {   model->BSIM4trnqsMod = 0;
             printf("Warning: trnqsMod has been set to its default value: 0.\n");
@@ -176,14 +166,14 @@ BSIM4instance **InstArray;
             printf("Warning: acnqsMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4mtrlModGiven)   
+        if (!model->BSIM4mtrlModGiven)
             model->BSIM4mtrlMod = 0;
         else if((model->BSIM4mtrlMod != 0) && (model->BSIM4mtrlMod != 1))
         {
             model->BSIM4mtrlMod = 0;
             printf("Warning: mtrlMod has been set to its default value: 0.\n");
         }
-        if (!model->BSIM4mtrlCompatModGiven)   
+        if (!model->BSIM4mtrlCompatModGiven)
             model->BSIM4mtrlCompatMod = 0;
         else if((model->BSIM4mtrlCompatMod != 0) && (model->BSIM4mtrlCompatMod != 1))
         {
@@ -194,7 +184,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4igcModGiven)
             model->BSIM4igcMod = 0;
         else if ((model->BSIM4igcMod != 0) && (model->BSIM4igcMod != 1)
-                  && (model->BSIM4igcMod != 2))
+          && (model->BSIM4igcMod != 2))
         {   model->BSIM4igcMod = 0;
             printf("Warning: igcMod has been set to its default value: 0.\n");
         }
@@ -206,14 +196,13 @@ BSIM4instance **InstArray;
         }
         if (!model->BSIM4tempModGiven)
             model->BSIM4tempMod = 0;
-        else if ((model->BSIM4tempMod != 0) && (model->BSIM4tempMod != 1) 
-                  && (model->BSIM4tempMod != 2) && (model->BSIM4tempMod != 3))
+        else if ((model->BSIM4tempMod != 0) && (model->BSIM4tempMod != 1)
+          && (model->BSIM4tempMod != 2) && (model->BSIM4tempMod != 3))
         {   model->BSIM4tempMod = 0;
             printf("Warning: tempMod has been set to its default value: 0.\n");
         }
-
-        if (!model->BSIM4versionGiven) 
-            model->BSIM4version = copy("4.8.2");
+        if (!model->BSIM4versionGiven)
+           model->BSIM4version = copy("4.8.3");
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)
@@ -225,7 +214,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4leffeotGiven)
             model->BSIM4leffeot = 1;
         if (!model->BSIM4weffeotGiven)
-            model->BSIM4weffeot = 10;        
+            model->BSIM4weffeot = 10;
         if (!model->BSIM4adosGiven)
             model->BSIM4ados = 1.0;
         if (!model->BSIM4bdosGiven)
@@ -240,11 +229,10 @@ BSIM4instance **InstArray;
             model->BSIM4dtox = 0.0;
         if (!model->BSIM4epsroxGiven)
             model->BSIM4epsrox = 3.9;
-
         if (!model->BSIM4cdscGiven)
             model->BSIM4cdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->BSIM4cdscbGiven)
-            model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */    
+            model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM4cdscdGiven)
             model->BSIM4cdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM4citGiven)
@@ -254,11 +242,11 @@ BSIM4instance **InstArray;
         if (!model->BSIM4xjGiven)
             model->BSIM4xj = .15e-6;
         if (!model->BSIM4vsatGiven)
-            model->BSIM4vsat = 8.0e4;    /* unit m/s */ 
+            model->BSIM4vsat = 8.0e4;    /* unit m/s */
         if (!model->BSIM4atGiven)
-            model->BSIM4at = 3.3e4;    /* unit m/s */ 
+            model->BSIM4at = 3.3e4;    /* unit m/s */
         if (!model->BSIM4a0Given)
-            model->BSIM4a0 = 1.0;  
+            model->BSIM4a0 = 1.0;
         if (!model->BSIM4agsGiven)
             model->BSIM4ags = 0.0;
         if (!model->BSIM4a1Given)
@@ -267,24 +255,26 @@ BSIM4instance **InstArray;
             model->BSIM4a2 = 1.0;
         if (!model->BSIM4ketaGiven)
             model->BSIM4keta = -0.047;    /* unit  / V */
+        if (!model->BSIM4ketacGiven)
+            model->BSIM4ketac = model->BSIM4keta;    /* unit  / V */
         if (!model->BSIM4nsubGiven)
             model->BSIM4nsub = 6.0e16;   /* unit 1/cm3 */
         if (!model->BSIM4phigGiven)
-            model->BSIM4phig = 4.05;  
+            model->BSIM4phig = 4.05;
         if (!model->BSIM4epsrgateGiven)
-            model->BSIM4epsrgate = 11.7;  
+            model->BSIM4epsrgate = 11.7;
         if (!model->BSIM4easubGiven)
-            model->BSIM4easub = 4.05;  
+            model->BSIM4easub = 4.05;
         if (!model->BSIM4epsrsubGiven)
-            model->BSIM4epsrsub = 11.7; 
+            model->BSIM4epsrsub = 11.7;
         if (!model->BSIM4ni0subGiven)
             model->BSIM4ni0sub = 1.45e10;   /* unit 1/cm3 */
         if (!model->BSIM4bg0subGiven)
             model->BSIM4bg0sub =  1.16;     /* unit eV */
         if (!model->BSIM4tbgasubGiven)
-            model->BSIM4tbgasub = 7.02e-4;  
+            model->BSIM4tbgasub = 7.02e-4;
         if (!model->BSIM4tbgbsubGiven)
-            model->BSIM4tbgbsub = 1108.0;  
+            model->BSIM4tbgbsub = 1108.0;
         if (!model->BSIM4ndepGiven)
             model->BSIM4ndep = 1.7e17;   /* unit 1/cm3 */
         if (!model->BSIM4nsdGiven)
@@ -304,20 +294,20 @@ BSIM4instance **InstArray;
         if (!model->BSIM4kt2Given)
             model->BSIM4kt2 = 0.022;      /* No unit */
         if (!model->BSIM4k3Given)
-            model->BSIM4k3 = 80.0;      
+            model->BSIM4k3 = 80.0;
         if (!model->BSIM4k3bGiven)
-            model->BSIM4k3b = 0.0;      
+            model->BSIM4k3b = 0.0;
         if (!model->BSIM4w0Given)
-            model->BSIM4w0 = 2.5e-6;    
+            model->BSIM4w0 = 2.5e-6;
         if (!model->BSIM4lpe0Given)
-            model->BSIM4lpe0 = 1.74e-7;     
+            model->BSIM4lpe0 = 1.74e-7;
         if (!model->BSIM4lpebGiven)
             model->BSIM4lpeb = 0.0;
         if (!model->BSIM4dvtp0Given)
             model->BSIM4dvtp0 = 0.0;
         if (!model->BSIM4dvtp1Given)
             model->BSIM4dvtp1 = 0.0;
-        if (!model->BSIM4dvtp2Given)        /* New DIBL/Rout */
+        if (!model->BSIM4dvtp2Given)    /* New DIBL/Rout */
             model->BSIM4dvtp2 = 0.0;
         if (!model->BSIM4dvtp3Given)
             model->BSIM4dvtp3 = 0.0;
@@ -326,23 +316,23 @@ BSIM4instance **InstArray;
         if (!model->BSIM4dvtp5Given)
             model->BSIM4dvtp5 = 0.0;
         if (!model->BSIM4dvt0Given)
-            model->BSIM4dvt0 = 2.2;    
+            model->BSIM4dvt0 = 2.2;
         if (!model->BSIM4dvt1Given)
-            model->BSIM4dvt1 = 0.53;      
+            model->BSIM4dvt1 = 0.53;
         if (!model->BSIM4dvt2Given)
-            model->BSIM4dvt2 = -0.032;   /* unit 1 / V */     
+            model->BSIM4dvt2 = -0.032;   /* unit 1 / V */
 
         if (!model->BSIM4dvt0wGiven)
-            model->BSIM4dvt0w = 0.0;    
+            model->BSIM4dvt0w = 0.0;
         if (!model->BSIM4dvt1wGiven)
-            model->BSIM4dvt1w = 5.3e6;    
+            model->BSIM4dvt1w = 5.3e6;
         if (!model->BSIM4dvt2wGiven)
-            model->BSIM4dvt2w = -0.032;   
+            model->BSIM4dvt2w = -0.032;
 
         if (!model->BSIM4droutGiven)
-            model->BSIM4drout = 0.56;     
+            model->BSIM4drout = 0.56;
         if (!model->BSIM4dsubGiven)
-            model->BSIM4dsub = model->BSIM4drout;     
+            model->BSIM4dsub = model->BSIM4drout;
         if (!model->BSIM4vth0Given)
             model->BSIM4vth0 = (model->BSIM4type == NMOS) ? 0.7 : -0.7;
         if (!model->BSIM4vfbGiven)
@@ -351,26 +341,28 @@ BSIM4instance **InstArray;
             model->BSIM4eu = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
         if (!model->BSIM4ucsGiven)
             model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
+
         if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) &&
-            (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)))
-        {  /* check only for version <= 4.80 */
-            if (!model->BSIM4uaGiven)
+            (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)) &&
+            (strcmp(model->BSIM4version, "4.8.3")) && (strncmp(model->BSIM4version, "4.83", 4)))
+        {
+                if (!model->BSIM4uaGiven)
                 model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
-            if (!model->BSIM4ucGiven)
-                model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;   
-            if (!model->BSIM4uc1Given)
-                model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;   
+                if (!model->BSIM4ucGiven)
+                model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;
+                if (!model->BSIM4uc1Given)
+                model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;
         }
         else
         {
-            if (!model->BSIM4uaGiven)
+                if (!model->BSIM4uaGiven)
                 model->BSIM4ua = ((model->BSIM4mobMod == 2 || model->BSIM4mobMod == 6)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
-            /*printf("warning:ua=%g",model->BSIM4ua);*/
-            if (!model->BSIM4ucGiven)
+                if (!model->BSIM4ucGiven)
                 model->BSIM4uc = (model->BSIM4mobMod == 1 || model->BSIM4mobMod == 5) ? -0.0465 : -0.0465e-9;
-            if (!model->BSIM4uc1Given)
+                if (!model->BSIM4uc1Given)
                 model->BSIM4uc1 = (model->BSIM4mobMod == 1 || model->BSIM4mobMod == 5) ? -0.056 : -0.056e-9;
         }
+
         if (!model->BSIM4ua1Given)
             model->BSIM4ua1 = 1.0e-9;      /* unit m/V */
         if (!model->BSIM4ubGiven)
@@ -380,15 +372,15 @@ BSIM4instance **InstArray;
         if (!model->BSIM4udGiven)
             model->BSIM4ud = 0.0;     /* unit m**(-2) */
         if (!model->BSIM4ud1Given)
-            model->BSIM4ud1 = 0.0;     
+            model->BSIM4ud1 = 0.0;
         if (!model->BSIM4upGiven)
-            model->BSIM4up = 0.0;     
+            model->BSIM4up = 0.0;
         if (!model->BSIM4lpGiven)
-            model->BSIM4lp = 1.0e-8;     
+            model->BSIM4lp = 1.0e-8;
         if (!model->BSIM4u0Given)
             model->BSIM4u0 = (model->BSIM4type == NMOS) ? 0.067 : 0.025;
         if (!model->BSIM4uteGiven)
-            model->BSIM4ute = -1.5; 
+            model->BSIM4ute = -1.5;
         if (!model->BSIM4ucsteGiven)
             model->BSIM4ucste = -4.775e-3;
         if (!model->BSIM4voffGiven)
@@ -409,7 +401,7 @@ BSIM4instance **InstArray;
             model->BSIM4pditsd = 0.0;
         if (!model->BSIM4pditslGiven)
             model->BSIM4pditsl = 0.0;
-        if (!model->BSIM4deltaGiven)  
+        if (!model->BSIM4deltaGiven)
            model->BSIM4delta = 0.01;
         if (!model->BSIM4rdswminGiven)
             model->BSIM4rdswmin = 0.0;
@@ -418,7 +410,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4rswminGiven)
             model->BSIM4rswmin = 0.0;
         if (!model->BSIM4rdswGiven)
-            model->BSIM4rdsw = 200.0; /* in ohm*um */     
+            model->BSIM4rdsw = 200.0; /* in ohm*um */
         if (!model->BSIM4rdwGiven)
             model->BSIM4rdw = 100.0;
         if (!model->BSIM4rswGiven)
@@ -426,45 +418,45 @@ BSIM4instance **InstArray;
         if (!model->BSIM4prwgGiven)
             model->BSIM4prwg = 1.0; /* in 1/V */
         if (!model->BSIM4prwbGiven)
-            model->BSIM4prwb = 0.0;      
+            model->BSIM4prwb = 0.0;
         if (!model->BSIM4prtGiven)
-            model->BSIM4prt = 0.0;      
+            model->BSIM4prt = 0.0;
         if (!model->BSIM4eta0Given)
-            model->BSIM4eta0 = 0.08;      /* no unit  */ 
+            model->BSIM4eta0 = 0.08;      /* no unit  */
         if (!model->BSIM4etabGiven)
-            model->BSIM4etab = -0.07;      /* unit  1/V */ 
+            model->BSIM4etab = -0.07;      /* unit  1/V */
         if (!model->BSIM4pclmGiven)
-            model->BSIM4pclm = 1.3;      /* no unit  */ 
+            model->BSIM4pclm = 1.3;      /* no unit  */
         if (!model->BSIM4pdibl1Given)
             model->BSIM4pdibl1 = 0.39;    /* no unit  */
         if (!model->BSIM4pdibl2Given)
-            model->BSIM4pdibl2 = 0.0086;    /* no unit  */ 
+            model->BSIM4pdibl2 = 0.0086;    /* no unit  */
         if (!model->BSIM4pdiblbGiven)
-            model->BSIM4pdiblb = 0.0;    /* 1/V  */ 
+            model->BSIM4pdiblb = 0.0;    /* 1/V  */
         if (!model->BSIM4pscbe1Given)
-            model->BSIM4pscbe1 = 4.24e8;     
+            model->BSIM4pscbe1 = 4.24e8;
         if (!model->BSIM4pscbe2Given)
-            model->BSIM4pscbe2 = 1.0e-5;    
+            model->BSIM4pscbe2 = 1.0e-5;
         if (!model->BSIM4pvagGiven)
-            model->BSIM4pvag = 0.0;     
-        if (!model->BSIM4wrGiven)  
+            model->BSIM4pvag = 0.0;
+        if (!model->BSIM4wrGiven)
             model->BSIM4wr = 1.0;
-        if (!model->BSIM4dwgGiven)  
+        if (!model->BSIM4dwgGiven)
             model->BSIM4dwg = 0.0;
-        if (!model->BSIM4dwbGiven)  
+        if (!model->BSIM4dwbGiven)
             model->BSIM4dwb = 0.0;
         if (!model->BSIM4b0Given)
             model->BSIM4b0 = 0.0;
-        if (!model->BSIM4b1Given)  
+        if (!model->BSIM4b1Given)
             model->BSIM4b1 = 0.0;
-        if (!model->BSIM4alpha0Given)  
+        if (!model->BSIM4alpha0Given)
             model->BSIM4alpha0 = 0.0;
         if (!model->BSIM4alpha1Given)
             model->BSIM4alpha1 = 0.0;
-        if (!model->BSIM4beta0Given)  
+        if (!model->BSIM4beta0Given)
             model->BSIM4beta0 = 0.0;
         if (!model->BSIM4gidlModGiven)
-            model->BSIM4gidlMod = 0;         /* v4.7 New GIDL/GISL */
+            model->BSIM4gidlMod = 0;    /* v4.7 New GIDL/GISL */
         if (!model->BSIM4agidlGiven)
             model->BSIM4agidl = 0.0;
         if (!model->BSIM4bgidlGiven)
@@ -473,11 +465,11 @@ BSIM4instance **InstArray;
             model->BSIM4cgidl = 0.5; /* V^3 */
         if (!model->BSIM4egidlGiven)
             model->BSIM4egidl = 0.8; /* V */
-        if (!model->BSIM4rgidlGiven)          /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4rgidlGiven)    /* v4.7 New GIDL/GISL */
             model->BSIM4rgidl = 1.0;
-        if (!model->BSIM4kgidlGiven)          /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4kgidlGiven)    /* v4.7 New GIDL/GISL */
             model->BSIM4kgidl = 0.0;
-        if (!model->BSIM4fgidlGiven)          /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4fgidlGiven)    /* v4.7 New GIDL/GISL */
         /*model->BSIM4fgidl = 0.0;*/
         /* Default value of fgdil set to 1 in BSIM4.8.0*/
             model->BSIM4fgidl = 1.0;
@@ -529,12 +521,13 @@ BSIM4instance **InstArray;
            model->BSIM4cgisl = model->BSIM4cgidl;
         if (!model->BSIM4egislGiven)
            model->BSIM4egisl = model->BSIM4egidl;
-        if (!model->BSIM4rgislGiven)          /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4rgislGiven)    /* v4.7 New GIDL/GISL */
             model->BSIM4rgisl = model->BSIM4rgidl;
-        if (!model->BSIM4kgislGiven)          /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4kgislGiven)    /* v4.7 New GIDL/GISL */
             model->BSIM4kgisl = model->BSIM4kgidl;
-        if (!model->BSIM4fgislGiven)          /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4fgislGiven)    /* v4.7 New GIDL/GISL */
             model->BSIM4fgisl = model->BSIM4fgidl;
+
         if (!model->BSIM4aigcGiven)
             model->BSIM4aigc = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
         if (!model->BSIM4bigcGiven)
@@ -625,9 +618,9 @@ BSIM4instance **InstArray;
             model->BSIM4rnoia = 0.577;
         if (!model->BSIM4rnoibGiven)
             model->BSIM4rnoib = 0.5164;
-        if (!model->BSIM4gidlclampGiven)
+    if (!model->BSIM4gidlclampGiven)
             model->BSIM4gidlclamp = -1e-5;
-        if (!model->BSIM4idovvdscGiven)
+    if (!model->BSIM4idovvdscGiven)
             model->BSIM4idovvdsc = 1e-9;
         if (!model->BSIM4rnoicGiven)
             model->BSIM4rnoic = 0.395;
@@ -636,26 +629,26 @@ BSIM4instance **InstArray;
         if (!model->BSIM4lambdaGiven)
             model->BSIM4lambda = 0.0;
         if (!model->BSIM4vtlGiven)
-            model->BSIM4vtl = 2.0e5;    /* unit m/s */ 
+            model->BSIM4vtl = 2.0e5;    /* unit m/s */
         if (!model->BSIM4xnGiven)
-            model->BSIM4xn = 3.0;   
+            model->BSIM4xn = 3.0;
         if (!model->BSIM4lcGiven)
-            model->BSIM4lc = 5.0e-9;   
-        if (!model->BSIM4vfbsdoffGiven)  
-            model->BSIM4vfbsdoff = 0.0;  /* unit v */  
+            model->BSIM4lc = 5.0e-9;
+        if (!model->BSIM4vfbsdoffGiven)
+            model->BSIM4vfbsdoff = 0.0;  /* unit v */
         if (!model->BSIM4tvfbsdoffGiven)
-            model->BSIM4tvfbsdoff = 0.0;  
+            model->BSIM4tvfbsdoff = 0.0;
         if (!model->BSIM4tvoffGiven)
-            model->BSIM4tvoff = 0.0;  
-        if (!model->BSIM4tnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4tnfactor = 0.0;  
-        if (!model->BSIM4teta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4teta0 = 0.0;  
-        if (!model->BSIM4tvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4tvoffcv = 0.0;  
- 
+            model->BSIM4tvoff = 0.0;
+        if (!model->BSIM4tnfactorGiven)     /* v4.7 temp dep of leakage current  */
+            model->BSIM4tnfactor = 0.0;
+        if (!model->BSIM4teta0Given)        /* v4.7 temp dep of leakage current  */
+            model->BSIM4teta0 = 0.0;
+        if (!model->BSIM4tvoffcvGiven)      /* v4.7 temp dep of leakage current  */
+            model->BSIM4tvoffcv = 0.0;
+
         if (!model->BSIM4lintnoiGiven)
-            model->BSIM4lintnoi = 0.0;  /* unit m */  
+            model->BSIM4lintnoi = 0.0;  /* unit m */
 
         if (!model->BSIM4xjbvsGiven)
             model->BSIM4xjbvs = 1.0; /* no unit */
@@ -738,19 +731,19 @@ BSIM4instance **InstArray;
         if (!model->BSIM4rbsdbynfGiven)
             model->BSIM4rbsdbynf = 0.0;
 
-        if (!model->BSIM4cgslGiven)  
+        if (!model->BSIM4cgslGiven)
             model->BSIM4cgsl = 0.0;
-        if (!model->BSIM4cgdlGiven)  
+        if (!model->BSIM4cgdlGiven)
             model->BSIM4cgdl = 0.0;
-        if (!model->BSIM4ckappasGiven)  
+        if (!model->BSIM4ckappasGiven)
             model->BSIM4ckappas = 0.6;
         if (!model->BSIM4ckappadGiven)
             model->BSIM4ckappad = model->BSIM4ckappas;
-        if (!model->BSIM4clcGiven)  
+        if (!model->BSIM4clcGiven)
             model->BSIM4clc = 0.1e-6;
-        if (!model->BSIM4cleGiven)  
+        if (!model->BSIM4cleGiven)
             model->BSIM4cle = 0.6;
-        if (!model->BSIM4vfbcvGiven)  
+        if (!model->BSIM4vfbcvGiven)
             model->BSIM4vfbcv = -1.0;
         if (!model->BSIM4acdeGiven)
             model->BSIM4acde = 1.0;
@@ -789,7 +782,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4tpbswgGiven)
             model->BSIM4tpbswg = 0.0;
 
-        /* Length dependence */
+    /* Length dependence */
         if (!model->BSIM4lcdscGiven)
             model->BSIM4lcdsc = 0.0;
         if (!model->BSIM4lcdscbGiven)
@@ -807,7 +800,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4latGiven)
             model->BSIM4lat = 0.0;
         if (!model->BSIM4la0Given)
-            model->BSIM4la0 = 0.0; 
+            model->BSIM4la0 = 0.0;
         if (!model->BSIM4lagsGiven)
             model->BSIM4lags = 0.0;
         if (!model->BSIM4la1Given)
@@ -816,6 +809,8 @@ BSIM4instance **InstArray;
             model->BSIM4la2 = 0.0;
         if (!model->BSIM4lketaGiven)
             model->BSIM4lketa = 0.0;
+        if (!model->BSIM4lketacGiven)
+            model->BSIM4lketac = model->BSIM4lketa;
         if (!model->BSIM4lnsubGiven)
             model->BSIM4lnsub = 0.0;
         if (!model->BSIM4lndepGiven)
@@ -827,13 +822,13 @@ BSIM4instance **InstArray;
         if (!model->BSIM4lngateGiven)
             model->BSIM4lngate = 0.0;
         if (!model->BSIM4lvbmGiven)
-            model->BSIM4lvbm = 0.0;
+        model->BSIM4lvbm = 0.0;
         if (!model->BSIM4lxtGiven)
-            model->BSIM4lxt = 0.0;
+        model->BSIM4lxt = 0.0;
         if (!model->BSIM4lk1Given)
             model->BSIM4lk1 = 0.0;
         if (!model->BSIM4lkt1Given)
-            model->BSIM4lkt1 = 0.0; 
+            model->BSIM4lkt1 = 0.0;
         if (!model->BSIM4lkt1lGiven)
             model->BSIM4lkt1l = 0.0;
         if (!model->BSIM4lkt2Given)
@@ -841,20 +836,20 @@ BSIM4instance **InstArray;
         if (!model->BSIM4lk2Given)
             model->BSIM4lk2 = 0.0;
         if (!model->BSIM4lk3Given)
-            model->BSIM4lk3 = 0.0;      
+            model->BSIM4lk3 = 0.0;
         if (!model->BSIM4lk3bGiven)
-            model->BSIM4lk3b = 0.0;      
+            model->BSIM4lk3b = 0.0;
         if (!model->BSIM4lw0Given)
-            model->BSIM4lw0 = 0.0;    
+            model->BSIM4lw0 = 0.0;
         if (!model->BSIM4llpe0Given)
             model->BSIM4llpe0 = 0.0;
         if (!model->BSIM4llpebGiven)
-            model->BSIM4llpeb = 0.0; 
+            model->BSIM4llpeb = 0.0;
         if (!model->BSIM4ldvtp0Given)
             model->BSIM4ldvtp0 = 0.0;
         if (!model->BSIM4ldvtp1Given)
             model->BSIM4ldvtp1 = 0.0;
-        if (!model->BSIM4ldvtp2Given)        /* New DIBL/Rout */
+        if (!model->BSIM4ldvtp2Given)   /* New DIBL/Rout */
             model->BSIM4ldvtp2 = 0.0;
         if (!model->BSIM4ldvtp3Given)
             model->BSIM4ldvtp3 = 0.0;
@@ -863,19 +858,19 @@ BSIM4instance **InstArray;
         if (!model->BSIM4ldvtp5Given)
             model->BSIM4ldvtp5 = 0.0;
         if (!model->BSIM4ldvt0Given)
-            model->BSIM4ldvt0 = 0.0;    
+            model->BSIM4ldvt0 = 0.0;
         if (!model->BSIM4ldvt1Given)
-            model->BSIM4ldvt1 = 0.0;      
+            model->BSIM4ldvt1 = 0.0;
         if (!model->BSIM4ldvt2Given)
             model->BSIM4ldvt2 = 0.0;
         if (!model->BSIM4ldvt0wGiven)
-            model->BSIM4ldvt0w = 0.0;    
+            model->BSIM4ldvt0w = 0.0;
         if (!model->BSIM4ldvt1wGiven)
-            model->BSIM4ldvt1w = 0.0;      
+            model->BSIM4ldvt1w = 0.0;
         if (!model->BSIM4ldvt2wGiven)
             model->BSIM4ldvt2w = 0.0;
         if (!model->BSIM4ldroutGiven)
-            model->BSIM4ldrout = 0.0;     
+            model->BSIM4ldrout = 0.0;
         if (!model->BSIM4ldsubGiven)
             model->BSIM4ldsub = 0.0;
         if (!model->BSIM4lvth0Given)
@@ -903,9 +898,9 @@ BSIM4instance **InstArray;
         if (!model->BSIM4lu0Given)
             model->BSIM4lu0 = 0.0;
         if (!model->BSIM4luteGiven)
-            model->BSIM4lute = 0.0;  
-          if (!model->BSIM4lucsteGiven)
-            model->BSIM4lucste = 0.0;                 
+            model->BSIM4lute = 0.0;
+        if (!model->BSIM4lucsteGiven)
+            model->BSIM4lucste = 0.0;
         if (!model->BSIM4lvoffGiven)
             model->BSIM4lvoff = 0.0;
         if (!model->BSIM4lminvGiven)
@@ -918,7 +913,7 @@ BSIM4instance **InstArray;
             model->BSIM4lpdits = 0.0;
         if (!model->BSIM4lpditsdGiven)
             model->BSIM4lpditsd = 0.0;
-        if (!model->BSIM4ldeltaGiven)  
+        if (!model->BSIM4ldeltaGiven)
             model->BSIM4ldelta = 0.0;
         if (!model->BSIM4lrdswGiven)
             model->BSIM4lrdsw = 0.0;
@@ -937,7 +932,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4letabGiven)
             model->BSIM4letab = -0.0;
         if (!model->BSIM4lpclmGiven)
-            model->BSIM4lpclm = 0.0; 
+            model->BSIM4lpclm = 0.0;
         if (!model->BSIM4lpdibl1Given)
             model->BSIM4lpdibl1 = 0.0;
         if (!model->BSIM4lpdibl2Given)
@@ -949,22 +944,22 @@ BSIM4instance **InstArray;
         if (!model->BSIM4lpscbe2Given)
             model->BSIM4lpscbe2 = 0.0;
         if (!model->BSIM4lpvagGiven)
-            model->BSIM4lpvag = 0.0;     
-        if (!model->BSIM4lwrGiven)  
+            model->BSIM4lpvag = 0.0;
+        if (!model->BSIM4lwrGiven)
             model->BSIM4lwr = 0.0;
-        if (!model->BSIM4ldwgGiven)  
+        if (!model->BSIM4ldwgGiven)
             model->BSIM4ldwg = 0.0;
-        if (!model->BSIM4ldwbGiven)  
+        if (!model->BSIM4ldwbGiven)
             model->BSIM4ldwb = 0.0;
         if (!model->BSIM4lb0Given)
             model->BSIM4lb0 = 0.0;
-        if (!model->BSIM4lb1Given)  
+        if (!model->BSIM4lb1Given)
             model->BSIM4lb1 = 0.0;
-        if (!model->BSIM4lalpha0Given)  
+        if (!model->BSIM4lalpha0Given)
             model->BSIM4lalpha0 = 0.0;
         if (!model->BSIM4lalpha1Given)
             model->BSIM4lalpha1 = 0.0;
-        if (!model->BSIM4lbeta0Given)  
+        if (!model->BSIM4lbeta0Given)
             model->BSIM4lbeta0 = 0.0;
         if (!model->BSIM4lagidlGiven)
             model->BSIM4lagidl = 0.0;
@@ -974,11 +969,11 @@ BSIM4instance **InstArray;
             model->BSIM4lcgidl = 0.0;
         if (!model->BSIM4legidlGiven)
             model->BSIM4legidl = 0.0;
-        if (!model->BSIM4lrgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4lrgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4lrgidl = 0.0;
-        if (!model->BSIM4lkgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4lkgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4lkgidl = 0.0;
-        if (!model->BSIM4lfgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4lfgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4lfgidl = 0.0;
         /*if (!model->BSIM4lagislGiven)
         {
@@ -1006,7 +1001,7 @@ BSIM4instance **InstArray;
             if (model->BSIM4legidlGiven)
                 model->BSIM4legisl = model->BSIM4legidl;
             else
-                model->BSIM4legisl = 0.0; 
+                model->BSIM4legisl = 0.0;
         }*/
         /*if (!model->BSIM4lrgislGiven)
         {
@@ -1033,11 +1028,11 @@ BSIM4instance **InstArray;
            model->BSIM4lcgisl = model->BSIM4lcgidl;
         if (!model->BSIM4legislGiven)
            model->BSIM4legisl = model->BSIM4legidl;
-        if (!model->BSIM4lrgislGiven) 	/* v4.7 New GIDL/GISL */
+        if (!model->BSIM4lrgislGiven)   /* v4.7 New GIDL/GISL */
            model->BSIM4lrgisl = model->BSIM4lrgidl;
-        if (!model->BSIM4lkgislGiven)	/* v4.7 New GIDL/GISL */
+        if (!model->BSIM4lkgislGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4lkgisl = model->BSIM4lkgidl;
-        if (!model->BSIM4lfgislGiven)	/* v4.7 New GIDL/GISL */
+        if (!model->BSIM4lfgislGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4lfgisl = model->BSIM4lfgidl;
 
         if (!model->BSIM4laigcGiven)
@@ -1055,9 +1050,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4laigsdGiven)
-               model->BSIM4laigsd = 0.0;
-           model->BSIM4laigs = model->BSIM4laigd = model->BSIM4laigsd;
+            if (!model->BSIM4laigsdGiven)
+                model->BSIM4laigsd = 0.0;
+            model->BSIM4laigs = model->BSIM4laigd = model->BSIM4laigsd;
         }
         if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
         {
@@ -1068,9 +1063,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4lbigsdGiven)
-               model->BSIM4lbigsd = 0.0;
-           model->BSIM4lbigs = model->BSIM4lbigd = model->BSIM4lbigsd;
+            if (!model->BSIM4lbigsdGiven)
+                model->BSIM4lbigsd = 0.0;
+            model->BSIM4lbigs = model->BSIM4lbigd = model->BSIM4lbigsd;
         }
         if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
         {
@@ -1081,9 +1076,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4lcigsdGiven)
-               model->BSIM4lcigsd = 0.0;
-           model->BSIM4lcigs = model->BSIM4lcigd = model->BSIM4lcigsd;
+            if (!model->BSIM4lcigsdGiven)
+                model->BSIM4lcigsd = 0.0;
+            model->BSIM4lcigs = model->BSIM4lcigd = model->BSIM4lcigsd;
         }
         if (!model->BSIM4laigbaccGiven)
             model->BSIM4laigbacc = 0.0;
@@ -1117,45 +1112,45 @@ BSIM4instance **InstArray;
             model->BSIM4lxrcrg2 = 0.0;
         if (!model->BSIM4leuGiven)
             model->BSIM4leu = 0.0;
-                if (!model->BSIM4lucsGiven)
+        if (!model->BSIM4lucsGiven)
             model->BSIM4lucs = 0.0;
         if (!model->BSIM4lvfbGiven)
             model->BSIM4lvfb = 0.0;
         if (!model->BSIM4llambdaGiven)
             model->BSIM4llambda = 0.0;
         if (!model->BSIM4lvtlGiven)
-            model->BSIM4lvtl = 0.0;  
+            model->BSIM4lvtl = 0.0;
         if (!model->BSIM4lxnGiven)
-            model->BSIM4lxn = 0.0;  
+            model->BSIM4lxn = 0.0;
         if (!model->BSIM4lvfbsdoffGiven)
-            model->BSIM4lvfbsdoff = 0.0;   
+            model->BSIM4lvfbsdoff = 0.0;
         if (!model->BSIM4ltvfbsdoffGiven)
-            model->BSIM4ltvfbsdoff = 0.0;  
+            model->BSIM4ltvfbsdoff = 0.0;
         if (!model->BSIM4ltvoffGiven)
-            model->BSIM4ltvoff = 0.0;  
-        if (!model->BSIM4ltnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4ltnfactor = 0.0;  
-        if (!model->BSIM4lteta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4lteta0 = 0.0;  
-        if (!model->BSIM4ltvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4ltvoffcv = 0.0;  
+            model->BSIM4ltvoff = 0.0;
+        if (!model->BSIM4ltnfactorGiven)    /* v4.7 temp dep of leakage current  */
+            model->BSIM4ltnfactor = 0.0;
+        if (!model->BSIM4lteta0Given)       /* v4.7 temp dep of leakage current  */
+            model->BSIM4lteta0 = 0.0;
+        if (!model->BSIM4ltvoffcvGiven)     /* v4.7 temp dep of leakage current  */
+            model->BSIM4ltvoffcv = 0.0;
 
 
-        if (!model->BSIM4lcgslGiven)  
+        if (!model->BSIM4lcgslGiven)
             model->BSIM4lcgsl = 0.0;
-        if (!model->BSIM4lcgdlGiven)  
+        if (!model->BSIM4lcgdlGiven)
             model->BSIM4lcgdl = 0.0;
-        if (!model->BSIM4lckappasGiven)  
+        if (!model->BSIM4lckappasGiven)
             model->BSIM4lckappas = 0.0;
         if (!model->BSIM4lckappadGiven)
             model->BSIM4lckappad = 0.0;
-        if (!model->BSIM4lclcGiven)  
+        if (!model->BSIM4lclcGiven)
             model->BSIM4lclc = 0.0;
-        if (!model->BSIM4lcleGiven)  
+        if (!model->BSIM4lcleGiven)
             model->BSIM4lcle = 0.0;
-        if (!model->BSIM4lcfGiven)  
+        if (!model->BSIM4lcfGiven)
             model->BSIM4lcf = 0.0;
-        if (!model->BSIM4lvfbcvGiven)  
+        if (!model->BSIM4lvfbcvGiven)
             model->BSIM4lvfbcv = 0.0;
         if (!model->BSIM4lacdeGiven)
             model->BSIM4lacde = 0.0;
@@ -1166,11 +1161,11 @@ BSIM4instance **InstArray;
         if (!model->BSIM4lvoffcvGiven)
             model->BSIM4lvoffcv = 0.0;
 
-        /* Width dependence */
+    /* Width dependence */
         if (!model->BSIM4wcdscGiven)
             model->BSIM4wcdsc = 0.0;
         if (!model->BSIM4wcdscbGiven)
-            model->BSIM4wcdscb = 0.0;  
+            model->BSIM4wcdscb = 0.0;
         if (!model->BSIM4wcdscdGiven)
             model->BSIM4wcdscd = 0.0;
         if (!model->BSIM4wcitGiven)
@@ -1184,7 +1179,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4watGiven)
             model->BSIM4wat = 0.0;
         if (!model->BSIM4wa0Given)
-            model->BSIM4wa0 = 0.0; 
+            model->BSIM4wa0 = 0.0;
         if (!model->BSIM4wagsGiven)
             model->BSIM4wags = 0.0;
         if (!model->BSIM4wa1Given)
@@ -1193,6 +1188,8 @@ BSIM4instance **InstArray;
             model->BSIM4wa2 = 0.0;
         if (!model->BSIM4wketaGiven)
             model->BSIM4wketa = 0.0;
+        if (!model->BSIM4wketacGiven)
+            model->BSIM4wketac = model->BSIM4wketa;
         if (!model->BSIM4wnsubGiven)
             model->BSIM4wnsub = 0.0;
         if (!model->BSIM4wndepGiven)
@@ -1210,7 +1207,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wk1Given)
             model->BSIM4wk1 = 0.0;
         if (!model->BSIM4wkt1Given)
-            model->BSIM4wkt1 = 0.0; 
+            model->BSIM4wkt1 = 0.0;
         if (!model->BSIM4wkt1lGiven)
             model->BSIM4wkt1l = 0.0;
         if (!model->BSIM4wkt2Given)
@@ -1218,20 +1215,20 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wk2Given)
             model->BSIM4wk2 = 0.0;
         if (!model->BSIM4wk3Given)
-            model->BSIM4wk3 = 0.0;      
+            model->BSIM4wk3 = 0.0;
         if (!model->BSIM4wk3bGiven)
-            model->BSIM4wk3b = 0.0;      
+            model->BSIM4wk3b = 0.0;
         if (!model->BSIM4ww0Given)
-            model->BSIM4ww0 = 0.0;    
+            model->BSIM4ww0 = 0.0;
         if (!model->BSIM4wlpe0Given)
             model->BSIM4wlpe0 = 0.0;
         if (!model->BSIM4wlpebGiven)
-            model->BSIM4wlpeb = 0.0; 
+            model->BSIM4wlpeb = 0.0;
         if (!model->BSIM4wdvtp0Given)
             model->BSIM4wdvtp0 = 0.0;
         if (!model->BSIM4wdvtp1Given)
             model->BSIM4wdvtp1 = 0.0;
-        if (!model->BSIM4wdvtp2Given)        /* New DIBL/Rout */
+        if (!model->BSIM4wdvtp2Given)   /* New DIBL/Rout */
             model->BSIM4wdvtp2 = 0.0;
         if (!model->BSIM4wdvtp3Given)
             model->BSIM4wdvtp3 = 0.0;
@@ -1240,23 +1237,23 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wdvtp5Given)
             model->BSIM4wdvtp5 = 0.0;
         if (!model->BSIM4wdvt0Given)
-            model->BSIM4wdvt0 = 0.0;    
+            model->BSIM4wdvt0 = 0.0;
         if (!model->BSIM4wdvt1Given)
-            model->BSIM4wdvt1 = 0.0;      
+            model->BSIM4wdvt1 = 0.0;
         if (!model->BSIM4wdvt2Given)
             model->BSIM4wdvt2 = 0.0;
         if (!model->BSIM4wdvt0wGiven)
-            model->BSIM4wdvt0w = 0.0;    
+            model->BSIM4wdvt0w = 0.0;
         if (!model->BSIM4wdvt1wGiven)
-            model->BSIM4wdvt1w = 0.0;      
+            model->BSIM4wdvt1w = 0.0;
         if (!model->BSIM4wdvt2wGiven)
             model->BSIM4wdvt2w = 0.0;
         if (!model->BSIM4wdroutGiven)
-            model->BSIM4wdrout = 0.0;     
+            model->BSIM4wdrout = 0.0;
         if (!model->BSIM4wdsubGiven)
             model->BSIM4wdsub = 0.0;
         if (!model->BSIM4wvth0Given)
-           model->BSIM4wvth0 = 0.0;
+            model->BSIM4wvth0 = 0.0;
         if (!model->BSIM4wuaGiven)
             model->BSIM4wua = 0.0;
         if (!model->BSIM4wua1Given)
@@ -1280,11 +1277,11 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wu0Given)
             model->BSIM4wu0 = 0.0;
         if (!model->BSIM4wuteGiven)
-                model->BSIM4wute = 0.0; 
+            model->BSIM4wute = 0.0;
         if (!model->BSIM4wucsteGiven)
-                model->BSIM4wucste = 0.0;                 
+            model->BSIM4wucste = 0.0;
         if (!model->BSIM4wvoffGiven)
-                model->BSIM4wvoff = 0.0;
+            model->BSIM4wvoff = 0.0;
         if (!model->BSIM4wminvGiven)
             model->BSIM4wminv = 0.0;
         if (!model->BSIM4wminvcvGiven)
@@ -1295,7 +1292,7 @@ BSIM4instance **InstArray;
             model->BSIM4wpdits = 0.0;
         if (!model->BSIM4wpditsdGiven)
             model->BSIM4wpditsd = 0.0;
-        if (!model->BSIM4wdeltaGiven)  
+        if (!model->BSIM4wdeltaGiven)
             model->BSIM4wdelta = 0.0;
         if (!model->BSIM4wrdswGiven)
             model->BSIM4wrdsw = 0.0;
@@ -1314,7 +1311,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wetabGiven)
             model->BSIM4wetab = 0.0;
         if (!model->BSIM4wpclmGiven)
-            model->BSIM4wpclm = 0.0; 
+            model->BSIM4wpclm = 0.0;
         if (!model->BSIM4wpdibl1Given)
             model->BSIM4wpdibl1 = 0.0;
         if (!model->BSIM4wpdibl2Given)
@@ -1326,22 +1323,22 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wpscbe2Given)
             model->BSIM4wpscbe2 = 0.0;
         if (!model->BSIM4wpvagGiven)
-            model->BSIM4wpvag = 0.0;     
-        if (!model->BSIM4wwrGiven)  
+            model->BSIM4wpvag = 0.0;
+        if (!model->BSIM4wwrGiven)
             model->BSIM4wwr = 0.0;
-        if (!model->BSIM4wdwgGiven)  
+        if (!model->BSIM4wdwgGiven)
             model->BSIM4wdwg = 0.0;
-        if (!model->BSIM4wdwbGiven)  
+        if (!model->BSIM4wdwbGiven)
             model->BSIM4wdwb = 0.0;
         if (!model->BSIM4wb0Given)
             model->BSIM4wb0 = 0.0;
-        if (!model->BSIM4wb1Given)  
+        if (!model->BSIM4wb1Given)
             model->BSIM4wb1 = 0.0;
-        if (!model->BSIM4walpha0Given)  
+        if (!model->BSIM4walpha0Given)
             model->BSIM4walpha0 = 0.0;
         if (!model->BSIM4walpha1Given)
             model->BSIM4walpha1 = 0.0;
-        if (!model->BSIM4wbeta0Given)  
+        if (!model->BSIM4wbeta0Given)
             model->BSIM4wbeta0 = 0.0;
         if (!model->BSIM4wagidlGiven)
             model->BSIM4wagidl = 0.0;
@@ -1351,13 +1348,12 @@ BSIM4instance **InstArray;
             model->BSIM4wcgidl = 0.0;
         if (!model->BSIM4wegidlGiven)
             model->BSIM4wegidl = 0.0;
-        if (!model->BSIM4wrgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4wrgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4wrgidl = 0.0;
-        if (!model->BSIM4wkgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4wkgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4wkgidl = 0.0;
-        if (!model->BSIM4wfgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4wfgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4wfgidl = 0.0;
-
         /*if (!model->BSIM4wagislGiven)
         {
             if (model->BSIM4wagidlGiven)
@@ -1384,7 +1380,7 @@ BSIM4instance **InstArray;
             if (model->BSIM4wegidlGiven)
                 model->BSIM4wegisl = model->BSIM4wegidl;
             else
-                model->BSIM4wegisl = 0.0; 
+                model->BSIM4wegisl = 0.0;
         }*/
         /*if (!model->BSIM4wrgislGiven)
         {
@@ -1404,18 +1400,18 @@ BSIM4instance **InstArray;
 
         /*Default value of wagisl, wbgisl, wcgisl, wegisl, wrgisl, wkgisl, and wfgisl are set as follows */
         if (!model->BSIM4wagislGiven)
-           model->BSIM4wagisl = model->BSIM4wagidl;
+            model->BSIM4wagisl = model->BSIM4wagidl;
         if (!model->BSIM4wbgislGiven)
            model->BSIM4wbgisl = model->BSIM4wbgidl;
         if (!model->BSIM4wcgislGiven)
            model->BSIM4wcgisl = model->BSIM4wcgidl;
         if (!model->BSIM4wegislGiven)
            model->BSIM4wegisl = model->BSIM4wegidl;
-        if (!model->BSIM4wrgislGiven) 	/* v4.7 New GIDL/GISL */
+        if (!model->BSIM4wrgislGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4wrgisl = model->BSIM4wrgidl;
-        if (!model->BSIM4wkgislGiven)	/* v4.7 New GIDL/GISL */
+        if (!model->BSIM4wkgislGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4wkgisl = model->BSIM4wkgidl;
-        if (!model->BSIM4wfgislGiven)	/* v4.7 New GIDL/GISL */
+        if (!model->BSIM4wfgislGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4wfgisl = model->BSIM4wfgidl;
 
         if (!model->BSIM4waigcGiven)
@@ -1433,9 +1429,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4waigsdGiven)
-               model->BSIM4waigsd = 0.0;
-           model->BSIM4waigs = model->BSIM4waigd = model->BSIM4waigsd;
+            if (!model->BSIM4waigsdGiven)
+                model->BSIM4waigsd = 0.0;
+            model->BSIM4waigs = model->BSIM4waigd = model->BSIM4waigsd;
         }
         if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
         {
@@ -1446,9 +1442,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4wbigsdGiven)
-               model->BSIM4wbigsd = 0.0;
-           model->BSIM4wbigs = model->BSIM4wbigd = model->BSIM4wbigsd;
+            if (!model->BSIM4wbigsdGiven)
+                model->BSIM4wbigsd = 0.0;
+            model->BSIM4wbigs = model->BSIM4wbigd = model->BSIM4wbigsd;
         }
         if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
         {
@@ -1459,9 +1455,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4wcigsdGiven)
-               model->BSIM4wcigsd = 0.0;
-           model->BSIM4wcigs = model->BSIM4wcigd = model->BSIM4wcigsd;
+            if (!model->BSIM4wcigsdGiven)
+                model->BSIM4wcigsd = 0.0;
+            model->BSIM4wcigs = model->BSIM4wcigd = model->BSIM4wcigsd;
         }
         if (!model->BSIM4waigbaccGiven)
             model->BSIM4waigbacc = 0.0;
@@ -1502,37 +1498,37 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wlambdaGiven)
             model->BSIM4wlambda = 0.0;
         if (!model->BSIM4wvtlGiven)
-            model->BSIM4wvtl = 0.0;  
+            model->BSIM4wvtl = 0.0;
         if (!model->BSIM4wxnGiven)
-            model->BSIM4wxn = 0.0;  
+            model->BSIM4wxn = 0.0;
         if (!model->BSIM4wvfbsdoffGiven)
-            model->BSIM4wvfbsdoff = 0.0;   
+            model->BSIM4wvfbsdoff = 0.0;
         if (!model->BSIM4wtvfbsdoffGiven)
-            model->BSIM4wtvfbsdoff = 0.0;  
+            model->BSIM4wtvfbsdoff = 0.0;
         if (!model->BSIM4wtvoffGiven)
-            model->BSIM4wtvoff = 0.0;  
-        if (!model->BSIM4wtnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4wtnfactor = 0.0;  
-        if (!model->BSIM4wteta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4wteta0 = 0.0;  
-        if (!model->BSIM4wtvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4wtvoffcv = 0.0;  
+            model->BSIM4wtvoff = 0.0;
+        if (!model->BSIM4wtnfactorGiven)    /* v4.7 temp dep of leakage current  */
+            model->BSIM4wtnfactor = 0.0;
+        if (!model->BSIM4wteta0Given)       /* v4.7 temp dep of leakage current  */
+            model->BSIM4wteta0 = 0.0;
+        if (!model->BSIM4wtvoffcvGiven)     /* v4.7 temp dep of leakage current  */
+            model->BSIM4wtvoffcv = 0.0;
 
-        if (!model->BSIM4wcgslGiven)  
+        if (!model->BSIM4wcgslGiven)
             model->BSIM4wcgsl = 0.0;
-        if (!model->BSIM4wcgdlGiven)  
+        if (!model->BSIM4wcgdlGiven)
             model->BSIM4wcgdl = 0.0;
-        if (!model->BSIM4wckappasGiven)  
+        if (!model->BSIM4wckappasGiven)
             model->BSIM4wckappas = 0.0;
         if (!model->BSIM4wckappadGiven)
             model->BSIM4wckappad = 0.0;
-        if (!model->BSIM4wcfGiven)  
+        if (!model->BSIM4wcfGiven)
             model->BSIM4wcf = 0.0;
-        if (!model->BSIM4wclcGiven)  
+        if (!model->BSIM4wclcGiven)
             model->BSIM4wclc = 0.0;
-        if (!model->BSIM4wcleGiven)  
+        if (!model->BSIM4wcleGiven)
             model->BSIM4wcle = 0.0;
-        if (!model->BSIM4wvfbcvGiven)  
+        if (!model->BSIM4wvfbcvGiven)
             model->BSIM4wvfbcv = 0.0;
         if (!model->BSIM4wacdeGiven)
             model->BSIM4wacde = 0.0;
@@ -1543,11 +1539,11 @@ BSIM4instance **InstArray;
         if (!model->BSIM4wvoffcvGiven)
             model->BSIM4wvoffcv = 0.0;
 
-        /* Cross-term dependence */
+    /* Cross-term dependence */
         if (!model->BSIM4pcdscGiven)
             model->BSIM4pcdsc = 0.0;
         if (!model->BSIM4pcdscbGiven)
-            model->BSIM4pcdscb = 0.0;   
+            model->BSIM4pcdscb = 0.0;
         if (!model->BSIM4pcdscdGiven)
             model->BSIM4pcdscd = 0.0;
         if (!model->BSIM4pcitGiven)
@@ -1561,8 +1557,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4patGiven)
             model->BSIM4pat = 0.0;
         if (!model->BSIM4pa0Given)
-            model->BSIM4pa0 = 0.0; 
-            
+            model->BSIM4pa0 = 0.0;
         if (!model->BSIM4pagsGiven)
             model->BSIM4pags = 0.0;
         if (!model->BSIM4pa1Given)
@@ -1571,6 +1566,8 @@ BSIM4instance **InstArray;
             model->BSIM4pa2 = 0.0;
         if (!model->BSIM4pketaGiven)
             model->BSIM4pketa = 0.0;
+        if (!model->BSIM4pketacGiven)
+            model->BSIM4pketac = model->BSIM4pketa;
         if (!model->BSIM4pnsubGiven)
             model->BSIM4pnsub = 0.0;
         if (!model->BSIM4pndepGiven)
@@ -1588,7 +1585,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4pk1Given)
             model->BSIM4pk1 = 0.0;
         if (!model->BSIM4pkt1Given)
-            model->BSIM4pkt1 = 0.0; 
+            model->BSIM4pkt1 = 0.0;
         if (!model->BSIM4pkt1lGiven)
             model->BSIM4pkt1l = 0.0;
         if (!model->BSIM4pk2Given)
@@ -1596,11 +1593,11 @@ BSIM4instance **InstArray;
         if (!model->BSIM4pkt2Given)
             model->BSIM4pkt2 = 0.0;
         if (!model->BSIM4pk3Given)
-            model->BSIM4pk3 = 0.0;      
+            model->BSIM4pk3 = 0.0;
         if (!model->BSIM4pk3bGiven)
-            model->BSIM4pk3b = 0.0;      
+            model->BSIM4pk3b = 0.0;
         if (!model->BSIM4pw0Given)
-            model->BSIM4pw0 = 0.0;    
+            model->BSIM4pw0 = 0.0;
         if (!model->BSIM4plpe0Given)
             model->BSIM4plpe0 = 0.0;
         if (!model->BSIM4plpebGiven)
@@ -1609,7 +1606,7 @@ BSIM4instance **InstArray;
             model->BSIM4pdvtp0 = 0.0;
         if (!model->BSIM4pdvtp1Given)
             model->BSIM4pdvtp1 = 0.0;
-        if (!model->BSIM4pdvtp2Given)        /* New DIBL/Rout */
+        if (!model->BSIM4pdvtp2Given)   /* New DIBL/Rout */
             model->BSIM4pdvtp2 = 0.0;
         if (!model->BSIM4pdvtp3Given)
             model->BSIM4pdvtp3 = 0.0;
@@ -1618,19 +1615,19 @@ BSIM4instance **InstArray;
         if (!model->BSIM4pdvtp5Given)
             model->BSIM4pdvtp5 = 0.0;
         if (!model->BSIM4pdvt0Given)
-            model->BSIM4pdvt0 = 0.0;    
+            model->BSIM4pdvt0 = 0.0;
         if (!model->BSIM4pdvt1Given)
-            model->BSIM4pdvt1 = 0.0;      
+            model->BSIM4pdvt1 = 0.0;
         if (!model->BSIM4pdvt2Given)
             model->BSIM4pdvt2 = 0.0;
         if (!model->BSIM4pdvt0wGiven)
-            model->BSIM4pdvt0w = 0.0;    
+            model->BSIM4pdvt0w = 0.0;
         if (!model->BSIM4pdvt1wGiven)
-            model->BSIM4pdvt1w = 0.0;      
+            model->BSIM4pdvt1w = 0.0;
         if (!model->BSIM4pdvt2wGiven)
             model->BSIM4pdvt2w = 0.0;
         if (!model->BSIM4pdroutGiven)
-            model->BSIM4pdrout = 0.0;     
+            model->BSIM4pdrout = 0.0;
         if (!model->BSIM4pdsubGiven)
             model->BSIM4pdsub = 0.0;
         if (!model->BSIM4pvth0Given)
@@ -1658,9 +1655,9 @@ BSIM4instance **InstArray;
         if (!model->BSIM4pu0Given)
             model->BSIM4pu0 = 0.0;
         if (!model->BSIM4puteGiven)
-            model->BSIM4pute = 0.0;  
-     if (!model->BSIM4pucsteGiven)
-            model->BSIM4pucste = 0.0;                 
+            model->BSIM4pute = 0.0;
+        if (!model->BSIM4pucsteGiven)
+            model->BSIM4pucste = 0.0;
         if (!model->BSIM4pvoffGiven)
             model->BSIM4pvoff = 0.0;
         if (!model->BSIM4pminvGiven)
@@ -1673,7 +1670,7 @@ BSIM4instance **InstArray;
             model->BSIM4ppdits = 0.0;
         if (!model->BSIM4ppditsdGiven)
             model->BSIM4ppditsd = 0.0;
-        if (!model->BSIM4pdeltaGiven)  
+        if (!model->BSIM4pdeltaGiven)
             model->BSIM4pdelta = 0.0;
         if (!model->BSIM4prdswGiven)
             model->BSIM4prdsw = 0.0;
@@ -1692,7 +1689,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4petabGiven)
             model->BSIM4petab = 0.0;
         if (!model->BSIM4ppclmGiven)
-            model->BSIM4ppclm = 0.0; 
+            model->BSIM4ppclm = 0.0;
         if (!model->BSIM4ppdibl1Given)
             model->BSIM4ppdibl1 = 0.0;
         if (!model->BSIM4ppdibl2Given)
@@ -1704,22 +1701,22 @@ BSIM4instance **InstArray;
         if (!model->BSIM4ppscbe2Given)
             model->BSIM4ppscbe2 = 0.0;
         if (!model->BSIM4ppvagGiven)
-            model->BSIM4ppvag = 0.0;     
-        if (!model->BSIM4pwrGiven)  
+            model->BSIM4ppvag = 0.0;
+        if (!model->BSIM4pwrGiven)
             model->BSIM4pwr = 0.0;
-        if (!model->BSIM4pdwgGiven)  
+        if (!model->BSIM4pdwgGiven)
             model->BSIM4pdwg = 0.0;
-        if (!model->BSIM4pdwbGiven)  
+        if (!model->BSIM4pdwbGiven)
             model->BSIM4pdwb = 0.0;
         if (!model->BSIM4pb0Given)
             model->BSIM4pb0 = 0.0;
-        if (!model->BSIM4pb1Given)  
+        if (!model->BSIM4pb1Given)
             model->BSIM4pb1 = 0.0;
-        if (!model->BSIM4palpha0Given)  
+        if (!model->BSIM4palpha0Given)
             model->BSIM4palpha0 = 0.0;
         if (!model->BSIM4palpha1Given)
             model->BSIM4palpha1 = 0.0;
-        if (!model->BSIM4pbeta0Given)  
+        if (!model->BSIM4pbeta0Given)
             model->BSIM4pbeta0 = 0.0;
         if (!model->BSIM4pagidlGiven)
             model->BSIM4pagidl = 0.0;
@@ -1729,11 +1726,11 @@ BSIM4instance **InstArray;
             model->BSIM4pcgidl = 0.0;
         if (!model->BSIM4pegidlGiven)
             model->BSIM4pegidl = 0.0;
-        if (!model->BSIM4prgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4prgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4prgidl = 0.0;
-        if (!model->BSIM4pkgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4pkgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4pkgidl = 0.0;
-        if (!model->BSIM4pfgidlGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4pfgidlGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4pfgidl = 0.0;
 
         /*if (!model->BSIM4pagislGiven)
@@ -1762,7 +1759,7 @@ BSIM4instance **InstArray;
             if (model->BSIM4pegidlGiven)
                 model->BSIM4pegisl = model->BSIM4pegidl;
             else
-                model->BSIM4pegisl = 0.0; 
+                model->BSIM4pegisl = 0.0;
         }*/
 
         /*if (!model->BSIM4prgislGiven)
@@ -1796,6 +1793,7 @@ BSIM4instance **InstArray;
             model->BSIM4pkgisl = model->BSIM4pkgidl;
         if (!model->BSIM4pfgislGiven)   /* v4.7 New GIDL/GISL */
             model->BSIM4pfgisl = model->BSIM4pfgidl;
+
         if (!model->BSIM4paigcGiven)
             model->BSIM4paigc = 0.0;
         if (!model->BSIM4pbigcGiven)
@@ -1811,9 +1809,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4paigsdGiven)
-               model->BSIM4paigsd = 0.0;
-           model->BSIM4paigs = model->BSIM4paigd = model->BSIM4paigsd;
+            if (!model->BSIM4paigsdGiven)
+                model->BSIM4paigsd = 0.0;
+            model->BSIM4paigs = model->BSIM4paigd = model->BSIM4paigsd;
         }
         if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
         {
@@ -1824,9 +1822,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4pbigsdGiven)
-               model->BSIM4pbigsd = 0.0;
-           model->BSIM4pbigs = model->BSIM4pbigd = model->BSIM4pbigsd;
+            if (!model->BSIM4pbigsdGiven)
+                model->BSIM4pbigsd = 0.0;
+            model->BSIM4pbigs = model->BSIM4pbigd = model->BSIM4pbigsd;
         }
         if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
         {
@@ -1837,9 +1835,9 @@ BSIM4instance **InstArray;
         }
         else
         {
-           if (!model->BSIM4pcigsdGiven)
-               model->BSIM4pcigsd = 0.0;
-           model->BSIM4pcigs = model->BSIM4pcigd = model->BSIM4pcigsd;
+            if (!model->BSIM4pcigsdGiven)
+                model->BSIM4pcigsd = 0.0;
+            model->BSIM4pcigs = model->BSIM4pcigd = model->BSIM4pcigsd;
         }
         if (!model->BSIM4paigbaccGiven)
             model->BSIM4paigbacc = 0.0;
@@ -1873,44 +1871,43 @@ BSIM4instance **InstArray;
             model->BSIM4pxrcrg2 = 0.0;
         if (!model->BSIM4peuGiven)
             model->BSIM4peu = 0.0;
-                if (!model->BSIM4pucsGiven)
+        if (!model->BSIM4pucsGiven)
             model->BSIM4pucs = 0.0;
         if (!model->BSIM4pvfbGiven)
             model->BSIM4pvfb = 0.0;
         if (!model->BSIM4plambdaGiven)
             model->BSIM4plambda = 0.0;
         if (!model->BSIM4pvtlGiven)
-            model->BSIM4pvtl = 0.0;  
+            model->BSIM4pvtl = 0.0;
         if (!model->BSIM4pxnGiven)
-            model->BSIM4pxn = 0.0;  
+            model->BSIM4pxn = 0.0;
         if (!model->BSIM4pvfbsdoffGiven)
-            model->BSIM4pvfbsdoff = 0.0;   
+            model->BSIM4pvfbsdoff = 0.0;
         if (!model->BSIM4ptvfbsdoffGiven)
-            model->BSIM4ptvfbsdoff = 0.0;  
+            model->BSIM4ptvfbsdoff = 0.0;
         if (!model->BSIM4ptvoffGiven)
-            model->BSIM4ptvoff = 0.0;  
-        if (!model->BSIM4ptnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4ptnfactor = 0.0;  
-        if (!model->BSIM4pteta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4pteta0 = 0.0;  
-        if (!model->BSIM4ptvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4ptvoffcv = 0.0;  
-
-        if (!model->BSIM4pcgslGiven)  
+            model->BSIM4ptvoff = 0.0;
+        if (!model->BSIM4ptnfactorGiven)    /* v4.7 temp dep of leakage current  */
+            model->BSIM4ptnfactor = 0.0;
+        if (!model->BSIM4pteta0Given)       /* v4.7 temp dep of leakage current  */
+            model->BSIM4pteta0 = 0.0;
+        if (!model->BSIM4ptvoffcvGiven)     /* v4.7 temp dep of leakage current  */
+            model->BSIM4ptvoffcv = 0.0;
+        if (!model->BSIM4pcgslGiven)
             model->BSIM4pcgsl = 0.0;
-        if (!model->BSIM4pcgdlGiven)  
+        if (!model->BSIM4pcgdlGiven)
             model->BSIM4pcgdl = 0.0;
-        if (!model->BSIM4pckappasGiven)  
+        if (!model->BSIM4pckappasGiven)
             model->BSIM4pckappas = 0.0;
         if (!model->BSIM4pckappadGiven)
             model->BSIM4pckappad = 0.0;
-        if (!model->BSIM4pcfGiven)  
+        if (!model->BSIM4pcfGiven)
             model->BSIM4pcf = 0.0;
-        if (!model->BSIM4pclcGiven)  
+        if (!model->BSIM4pclcGiven)
             model->BSIM4pclc = 0.0;
-        if (!model->BSIM4pcleGiven)  
+        if (!model->BSIM4pcleGiven)
             model->BSIM4pcle = 0.0;
-        if (!model->BSIM4pvfbcvGiven)  
+        if (!model->BSIM4pvfbcvGiven)
             model->BSIM4pvfbcv = 0.0;
         if (!model->BSIM4pacdeGiven)
             model->BSIM4pacde = 0.0;
@@ -1920,7 +1917,6 @@ BSIM4instance **InstArray;
             model->BSIM4pnoff = 0.0;
         if (!model->BSIM4pvoffcvGiven)
             model->BSIM4pvoffcv = 0.0;
-
         if (!model->BSIM4gamma1Given)
             model->BSIM4gamma1 = 0.0;
         if (!model->BSIM4lgamma1Given)
@@ -1947,67 +1943,67 @@ BSIM4instance **InstArray;
             model->BSIM4pvbx = 0.0;
 
         /* unit degree celcius */
-        if (!model->BSIM4tnomGiven)  
-            model->BSIM4tnom = ckt->CKTnomTemp; 
-        if (!model->BSIM4LintGiven)  
+        if (!model->BSIM4tnomGiven)
+        model->BSIM4tnom = ckt->CKTnomTemp;
+        if (!model->BSIM4LintGiven)
            model->BSIM4Lint = 0.0;
-        if (!model->BSIM4LlGiven)  
+        if (!model->BSIM4LlGiven)
            model->BSIM4Ll = 0.0;
         if (!model->BSIM4LlcGiven)
            model->BSIM4Llc = model->BSIM4Ll;
-        if (!model->BSIM4LlnGiven)  
+        if (!model->BSIM4LlnGiven)
            model->BSIM4Lln = 1.0;
-        if (!model->BSIM4LwGiven)  
+        if (!model->BSIM4LwGiven)
            model->BSIM4Lw = 0.0;
         if (!model->BSIM4LwcGiven)
            model->BSIM4Lwc = model->BSIM4Lw;
-        if (!model->BSIM4LwnGiven)  
+        if (!model->BSIM4LwnGiven)
            model->BSIM4Lwn = 1.0;
-        if (!model->BSIM4LwlGiven)  
+        if (!model->BSIM4LwlGiven)
            model->BSIM4Lwl = 0.0;
         if (!model->BSIM4LwlcGiven)
            model->BSIM4Lwlc = model->BSIM4Lwl;
-        if (!model->BSIM4LminGiven)  
+        if (!model->BSIM4LminGiven)
            model->BSIM4Lmin = 0.0;
-        if (!model->BSIM4LmaxGiven)  
+        if (!model->BSIM4LmaxGiven)
            model->BSIM4Lmax = 1.0;
-        if (!model->BSIM4WintGiven)  
+        if (!model->BSIM4WintGiven)
            model->BSIM4Wint = 0.0;
-        if (!model->BSIM4WlGiven)  
+        if (!model->BSIM4WlGiven)
            model->BSIM4Wl = 0.0;
         if (!model->BSIM4WlcGiven)
            model->BSIM4Wlc = model->BSIM4Wl;
-        if (!model->BSIM4WlnGiven)  
+        if (!model->BSIM4WlnGiven)
            model->BSIM4Wln = 1.0;
-        if (!model->BSIM4WwGiven)  
+        if (!model->BSIM4WwGiven)
            model->BSIM4Ww = 0.0;
         if (!model->BSIM4WwcGiven)
            model->BSIM4Wwc = model->BSIM4Ww;
-        if (!model->BSIM4WwnGiven)  
+        if (!model->BSIM4WwnGiven)
            model->BSIM4Wwn = 1.0;
-        if (!model->BSIM4WwlGiven)  
+        if (!model->BSIM4WwlGiven)
            model->BSIM4Wwl = 0.0;
         if (!model->BSIM4WwlcGiven)
            model->BSIM4Wwlc = model->BSIM4Wwl;
-        if (!model->BSIM4WminGiven)  
+        if (!model->BSIM4WminGiven)
            model->BSIM4Wmin = 0.0;
-        if (!model->BSIM4WmaxGiven)  
+        if (!model->BSIM4WmaxGiven)
            model->BSIM4Wmax = 1.0;
-        if (!model->BSIM4dwcGiven)  
+        if (!model->BSIM4dwcGiven)
            model->BSIM4dwc = model->BSIM4Wint;
-        if (!model->BSIM4dlcGiven)  
+        if (!model->BSIM4dlcGiven)
            model->BSIM4dlc = model->BSIM4Lint;
-        if (!model->BSIM4xlGiven)  
+        if (!model->BSIM4xlGiven)
            model->BSIM4xl = 0.0;
-        if (!model->BSIM4xwGiven)  
+        if (!model->BSIM4xwGiven)
            model->BSIM4xw = 0.0;
         if (!model->BSIM4dlcigGiven)
            model->BSIM4dlcig = model->BSIM4Lint;
         if (!model->BSIM4dlcigdGiven)
         {
-           if (model->BSIM4dlcigGiven) 
+           if (model->BSIM4dlcigGiven)
                model->BSIM4dlcigd = model->BSIM4dlcig;
-           else             
+            else
                model->BSIM4dlcigd = model->BSIM4Lint;
         }
         if (!model->BSIM4dwjGiven)
@@ -2085,8 +2081,8 @@ BSIM4instance **InstArray;
             model->BSIM4jtsswgs = 0.0;
         if (!model->BSIM4jtsswgdGiven)
             model->BSIM4jtsswgd = model->BSIM4jtsswgs;
-                if (!model->BSIM4jtweffGiven)
-                    model->BSIM4jtweff = 0.0;
+        if (!model->BSIM4jtweffGiven)
+            model->BSIM4jtweff = 0.0;
         if (!model->BSIM4njtsGiven)
             model->BSIM4njts = 20.0;
         if (!model->BSIM4njtsswGiven)
@@ -2098,21 +2094,21 @@ BSIM4instance **InstArray;
             if (model->BSIM4njtsGiven)
                 model->BSIM4njtsd =  model->BSIM4njts;
             else
-              model->BSIM4njtsd = 20.0;
+                model->BSIM4njtsd = 20.0;
         }
         if (!model->BSIM4njtsswdGiven)
         {
             if (model->BSIM4njtsswGiven)
                 model->BSIM4njtsswd =  model->BSIM4njtssw;
             else
-              model->BSIM4njtsswd = 20.0;
+                model->BSIM4njtsswd = 20.0;
         }
         if (!model->BSIM4njtsswgdGiven)
         {
             if (model->BSIM4njtsswgGiven)
                 model->BSIM4njtsswgd =  model->BSIM4njtsswg;
             else
-              model->BSIM4njtsswgd = 20.0;
+                model->BSIM4njtsswgd = 20.0;
         }
         if (!model->BSIM4xtssGiven)
             model->BSIM4xtss = 0.02;
@@ -2137,21 +2133,21 @@ BSIM4instance **InstArray;
             if (model->BSIM4tnjtsGiven)
                 model->BSIM4tnjtsd =  model->BSIM4tnjts;
             else
-              model->BSIM4tnjtsd = 0.0;
+                model->BSIM4tnjtsd = 0.0;
         }
         if (!model->BSIM4tnjtsswdGiven)
         {
             if (model->BSIM4tnjtsswGiven)
                 model->BSIM4tnjtsswd =  model->BSIM4tnjtssw;
             else
-              model->BSIM4tnjtsswd = 0.0;
+                model->BSIM4tnjtsswd = 0.0;
         }
         if (!model->BSIM4tnjtsswgdGiven)
         {
             if (model->BSIM4tnjtsswgGiven)
                 model->BSIM4tnjtsswgd =  model->BSIM4tnjtsswg;
-            else
-              model->BSIM4tnjtsswgd = 0.0;
+        else
+                model->BSIM4tnjtsswgd = 0.0;
         }
         if (!model->BSIM4vtssGiven)
             model->BSIM4vtss = 10.0;
@@ -2167,13 +2163,15 @@ BSIM4instance **InstArray;
             model->BSIM4vtsswgd = model->BSIM4vtsswgs;
 
         if (!model->BSIM4oxideTrapDensityAGiven)
-        {   if (model->BSIM4type == NMOS)
+        {
+            if (model->BSIM4type == NMOS)
                 model->BSIM4oxideTrapDensityA = 6.25e41;
             else
                 model->BSIM4oxideTrapDensityA= 6.188e40;
         }
         if (!model->BSIM4oxideTrapDensityBGiven)
-        {   if (model->BSIM4type == NMOS)
+        {
+            if (model->BSIM4type == NMOS)
                 model->BSIM4oxideTrapDensityB = 3.125e26;
             else
                 model->BSIM4oxideTrapDensityB = 1.5e25;
@@ -2256,39 +2254,39 @@ BSIM4instance **InstArray;
         if (!model->BSIM4lodeta0Given)
             model->BSIM4lodeta0 = 1.0;
 
-        /* Well Proximity Effect  */
+    /* Well Proximity Effect  */
         if (!model->BSIM4webGiven)
-            model->BSIM4web = 0.0; 
+            model->BSIM4web = 0.0;
         if (!model->BSIM4wecGiven)
             model->BSIM4wec = 0.0;
         if (!model->BSIM4kvth0weGiven)
-            model->BSIM4kvth0we = 0.0; 
+            model->BSIM4kvth0we = 0.0;
         if (!model->BSIM4k2weGiven)
-            model->BSIM4k2we = 0.0; 
+            model->BSIM4k2we = 0.0;
         if (!model->BSIM4ku0weGiven)
-            model->BSIM4ku0we = 0.0; 
+            model->BSIM4ku0we = 0.0;
         if (!model->BSIM4screfGiven)
             model->BSIM4scref = 1.0E-6; /* m */
         if (!model->BSIM4wpemodGiven)
-            model->BSIM4wpemod = 0; 
+            model->BSIM4wpemod = 0;
         else if ((model->BSIM4wpemod != 0) && (model->BSIM4wpemod != 1))
         {   model->BSIM4wpemod = 0;
             printf("Warning: wpemod has been set to its default value: 0.\n");
         }
         if (!model->BSIM4lkvth0weGiven)
-            model->BSIM4lkvth0we = 0; 
+            model->BSIM4lkvth0we = 0;
         if (!model->BSIM4lk2weGiven)
             model->BSIM4lk2we = 0;
         if (!model->BSIM4lku0weGiven)
             model->BSIM4lku0we = 0;
         if (!model->BSIM4wkvth0weGiven)
-            model->BSIM4wkvth0we = 0; 
+            model->BSIM4wkvth0we = 0;
         if (!model->BSIM4wk2weGiven)
             model->BSIM4wk2we = 0;
         if (!model->BSIM4wku0weGiven)
             model->BSIM4wku0we = 0;
         if (!model->BSIM4pkvth0weGiven)
-            model->BSIM4pkvth0we = 0; 
+            model->BSIM4pkvth0we = 0;
         if (!model->BSIM4pk2weGiven)
             model->BSIM4pk2we = 0;
         if (!model->BSIM4pku0weGiven)
@@ -2305,11 +2303,9 @@ BSIM4instance **InstArray;
 
         for (here = BSIM4instances(model); here != NULL ;
              here=BSIM4nextInstance(here)) 
-        {
-            /* allocate a chunk of the state vector */
+        {   /* allocate a chunk of the state vector */
             here->BSIM4states = *states;
             *states += BSIM4numStates;
-
             /* perform the parameter defaulting */
             if (!here->BSIM4lGiven)
                 here->BSIM4l = 5.0e-6;
@@ -2317,6 +2313,12 @@ BSIM4instance **InstArray;
                 here->BSIM4w = 5.0e-6;
             if (!here->BSIM4mGiven)
                 here->BSIM4m = 1.0;
+            if (!here->BSIM4mult_iGiven)
+                here->BSIM4mult_i = 1.0;
+            if (!here->BSIM4mult_qGiven)
+                here->BSIM4mult_q = 1.0;
+            if (!here->BSIM4mult_fnGiven)
+                here->BSIM4mult_fn = here->BSIM4mult_i;
             if (!here->BSIM4nfGiven)
                 here->BSIM4nf = 1.0;
             if (!here->BSIM4minGiven)
@@ -2352,29 +2354,30 @@ BSIM4instance **InstArray;
                 here->BSIM4rbpd = model->BSIM4rbpd;
             if (!here->BSIM4delvtoGiven)
                 here->BSIM4delvto = 0.0;
-            if (!here->BSIM4mulu0Given)
-                here->BSIM4mulu0 = 1.0;
             if (!here->BSIM4xgwGiven)
                 here->BSIM4xgw = model->BSIM4xgw;
             if (!here->BSIM4ngconGiven)
                 here->BSIM4ngcon = model->BSIM4ngcon;
 
-                    
+            here->BSIM4mult_i = here->BSIM4mult_i * here->BSIM4m;
+            here->BSIM4mult_q = here->BSIM4mult_q * here->BSIM4m;
+            here->BSIM4mult_fn = here->BSIM4mult_fn * here->BSIM4m;
+
             /* Process instance model selectors, some
              * may override their global counterparts
-             */
+            */
             if (!here->BSIM4rbodyModGiven)
                 here->BSIM4rbodyMod = model->BSIM4rbodyMod;
             else if ((here->BSIM4rbodyMod != 0) && (here->BSIM4rbodyMod != 1) && (here->BSIM4rbodyMod != 2))
             {   here->BSIM4rbodyMod = model->BSIM4rbodyMod;
                 printf("Warning: rbodyMod has been set to its global value %d.\n",
-                model->BSIM4rbodyMod);
+            model->BSIM4rbodyMod);
             }
 
             if (!here->BSIM4rgateModGiven)
                 here->BSIM4rgateMod = model->BSIM4rgateMod;
             else if ((here->BSIM4rgateMod != 0) && (here->BSIM4rgateMod != 1)
-                && (here->BSIM4rgateMod != 2) && (here->BSIM4rgateMod != 3))
+            && (here->BSIM4rgateMod != 2) && (here->BSIM4rgateMod != 3))
             {   here->BSIM4rgateMod = model->BSIM4rgateMod;
                 printf("Warning: rgateMod has been set to its global value %d.\n",
                 model->BSIM4rgateMod);
@@ -2382,15 +2385,8 @@ BSIM4instance **InstArray;
 
             if (!here->BSIM4geoModGiven)
                 here->BSIM4geoMod = model->BSIM4geoMod;
-
             if (!here->BSIM4rgeoModGiven)
-                here->BSIM4rgeoMod = model->BSIM4rgeoMod;
-            else if ((here->BSIM4rgeoMod != 0) && (here->BSIM4rgeoMod != 1))
-            {   here->BSIM4rgeoMod = model->BSIM4rgeoMod;
-                printf("Warning: rgeoMod has been set to its global value %d.\n",
-                model->BSIM4rgeoMod);
-            }
-
+                here->BSIM4rgeoMod = 0;
             if (!here->BSIM4trnqsModGiven)
                 here->BSIM4trnqsMod = model->BSIM4trnqsMod;
             else if ((here->BSIM4trnqsMod != 0) && (here->BSIM4trnqsMod != 1))
@@ -2439,7 +2435,7 @@ BSIM4instance **InstArray;
                      } else if (!here->BSIM4drainSquaresGiven
                                        && (here->BSIM4rgeoMod != 0))
                      {
-                          BSIM4RdseffGeo(here->BSIM4nf*here->BSIM4m, here->BSIM4geoMod,
+                          BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
                                   here->BSIM4rgeoMod, here->BSIM4min,
                                   here->BSIM4w, model->BSIM4sheetResistance,
                                   DMCGeff, DMCIeff, DMDGeff, 0, &Rtot);
@@ -2447,8 +2443,7 @@ BSIM4instance **InstArray;
                              createNode = 1;
                      }
             }
-            if ( createNode != 0 )
-            {   if ( here->BSIM4dNodePrime == 0 )
+            if ( createNode != 0  && (here->BSIM4dNodePrime == 0))
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"drain");
                 if(error) return(error);
                 here->BSIM4dNodePrime = tmp->number;
@@ -2463,11 +2458,10 @@ BSIM4instance **InstArray;
                   }
                 }
             }
-            }
             else
             {   here->BSIM4dNodePrime = here->BSIM4dNode;
             }
-            
+
             /* process source series resistance */
             createNode = 0;
             if ( (model->BSIM4rdsMod != 0)
@@ -2475,7 +2469,7 @@ BSIM4instance **InstArray;
             {
                createNode = 1;
             } else if (model->BSIM4sheetResistance > 0)
-            {
+                {
                      if (here->BSIM4sourceSquaresGiven
                                         && here->BSIM4sourceSquares > 0)
                      {
@@ -2483,16 +2477,15 @@ BSIM4instance **InstArray;
                      } else if (!here->BSIM4sourceSquaresGiven
                                         && (here->BSIM4rgeoMod != 0))
                      {
-                          BSIM4RdseffGeo(here->BSIM4nf*here->BSIM4m, here->BSIM4geoMod,
+                          BSIM4RdseffGeo(here->BSIM4nf, here->BSIM4geoMod,
                                   here->BSIM4rgeoMod, here->BSIM4min,
                                   here->BSIM4w, model->BSIM4sheetResistance,
                                   DMCGeff, DMCIeff, DMDGeff, 1, &Rtot);
                           if(Rtot > 0)
                              createNode = 1;
                      }
-            }
-            if ( createNode != 0 )
-            {   if ( here->BSIM4sNodePrime == 0 )
+                }
+            if ( createNode != 0  && here->BSIM4sNodePrime == 0)
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"source");
                 if(error) return(error);
                 here->BSIM4sNodePrime = tmp->number;
@@ -2507,12 +2500,10 @@ BSIM4instance **InstArray;
                   }
                 }
             }
-            }
             else
                 here->BSIM4sNodePrime = here->BSIM4sNode;
 
-            if ( here->BSIM4rgateMod > 0 )
-            {   if ( here->BSIM4gNodePrime == 0 )
+            if ((here->BSIM4rgateMod > 0) && (here->BSIM4gNodePrime == 0))
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"gate");
                 if(error) return(error);
                    here->BSIM4gNodePrime = tmp->number;
@@ -2527,20 +2518,17 @@ BSIM4instance **InstArray;
                   }
                 }
             }
-            }
             else
                 here->BSIM4gNodePrime = here->BSIM4gNodeExt;
 
-            if ( here->BSIM4rgateMod == 3 )
-            {   if ( here->BSIM4gNodeMid == 0 )
+            if ((here->BSIM4rgateMod == 3) && (here->BSIM4gNodeMid == 0))
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"midgate");
                 if(error) return(error);
                    here->BSIM4gNodeMid = tmp->number;
             }
-            }
             else
                 here->BSIM4gNodeMid = here->BSIM4gNodeExt;
-            
+
 
             /* internal body nodes for body resistance model */
             if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
@@ -2571,23 +2559,20 @@ BSIM4instance **InstArray;
                 }
             }
             else
-                here->BSIM4dbNode = here->BSIM4bNodePrime = here->BSIM4sbNode
-                                  = here->BSIM4bNode;
+            here->BSIM4dbNode = here->BSIM4bNodePrime = here->BSIM4sbNode
+                  = here->BSIM4bNode;
 
             /* NQS node */
-            if ( here->BSIM4trnqsMod )
-            {   if ( here->BSIM4qNode == 0 ) 
+            if ((here->BSIM4trnqsMod) && (here->BSIM4qNode == 0))
             {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"charge");
                 if(error) return(error);
                 here->BSIM4qNode = tmp->number;
             }
-            }
-            else 
+            else
                 here->BSIM4qNode = 0;
-      
 
-/* set Sparse Matrix Pointers 
- * macro to make elements with built-in out-of-memory test */
+/* set Sparse Matrix Pointers
+* macro to make elements with built-in out-of-memory test */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
@@ -2619,7 +2604,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
             TSTALLOC(BSIM4SPdpPtr, BSIM4sNodePrime, BSIM4dNodePrime);
 
             TSTALLOC(BSIM4QqPtr, BSIM4qNode, BSIM4qNode);
-            TSTALLOC(BSIM4QbpPtr, BSIM4qNode, BSIM4bNodePrime) ;
+            TSTALLOC(BSIM4QbpPtr, BSIM4qNode, BSIM4bNodePrime);
             TSTALLOC(BSIM4QdpPtr, BSIM4qNode, BSIM4dNodePrime);
             TSTALLOC(BSIM4QspPtr, BSIM4qNode, BSIM4sNodePrime);
             TSTALLOC(BSIM4QgpPtr, BSIM4qNode, BSIM4gNodePrime);
@@ -2645,7 +2630,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
                 TSTALLOC(BSIM4GEgmPtr, BSIM4gNodeExt, BSIM4gNodeMid);
                 TSTALLOC(BSIM4SPgmPtr, BSIM4sNodePrime, BSIM4gNodeMid);
                 TSTALLOC(BSIM4BPgmPtr, BSIM4bNodePrime, BSIM4gNodeMid);
-            }        
+            }
 
             if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
             {   TSTALLOC(BSIM4DPdbPtr, BSIM4dNodePrime, BSIM4dbNode);
@@ -2718,14 +2703,13 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 #endif
 
     return(OK);
-}  
+}
 
 int
 BSIM4unsetup(
-GENmodel *inModel,
-CKTcircuit *ckt)
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     BSIM4model *model;
     BSIM4instance *here;
 
@@ -2780,6 +2764,5 @@ CKTcircuit *ckt)
             here->BSIM4dNodePrime = 0;
         }
     }
-#endif
     return OK;
 }

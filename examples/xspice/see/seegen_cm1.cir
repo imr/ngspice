@@ -1,0 +1,22 @@
+Test of seegen code model
+
+aseegen1 NULL mon [%id(n1 p1) %id(n2 p2) %id(n3 p3)] seemod1
+.model seemod1 seegen (tdelay = 5n tperiod=4.5n)
+
+Rsee1 n1 0 1
+Vmeas1 p1 0 0
+
+Rsee2 n2 0 1
+Vmeas2 p2 0 0
+
+Rsee3 n3 0 1
+Vmeas3 p3 0 0
+
+.control
+tran 10p 35n
+rusage time
+set xbrushwidth=3
+plot i(Vmeas1) i(Vmeas2)+200u i(Vmeas3)+400u
+.endc
+
+.end

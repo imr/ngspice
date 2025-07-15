@@ -11,13 +11,13 @@
 // (c)2019 Michael Tesch. tesch1@gmail.com
 //
 
+#include <duals/dual_eigen>
 #include <iostream>
 #include <fstream>
 #include <complex>
 #include <memory>
 
 #include "type_name.hpp"
-#include <duals/dual_eigen>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
@@ -30,67 +30,6 @@
 using namespace duals;
 
 template< class T > struct type_identity { typedef T type; };
-
-namespace Eigen {
-namespace internal {
-template<typename T> struct is_exp_known_type;
-template<typename T> struct is_exp_known_type<std::complex<T>> : is_exp_known_type<T> {};
-#if 0
-template <typename RealScalar> struct MatrixExponentialScalingOp;
-template <typename RealScalar>
-struct MatrixExponentialScalingOp<duals::dual<RealScalar>>
-{
-  MatrixExponentialScalingOp(int squarings) : m_squarings(squarings) { }
-  inline const duals::dual<RealScalar> operator() (const duals::dual<RealScalar> & x) const
-  {
-    using std::ldexp;
-    return ldexp(x, -m_squarings);
-  }
-  typedef std::complex<duals::dual<RealScalar>> ComplexScalar;
-  inline const ComplexScalar operator() (const ComplexScalar& x) const
-  {
-    using std::ldexp;
-    return ComplexScalar(ldexp(x.real(), -m_squarings), ldexp(x.imag(), -m_squarings));
-  }
-
-  private:
-    int m_squarings;
-};
-#endif
-}}
-#include <unsupported/Eigen/MatrixFunctions>
-
-namespace Eigen {
-namespace internal {
-template <typename MatrixType, typename T>
-struct matrix_exp_computeUV<MatrixType, duals::dual<T> >
-{
-  typedef typename NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;
-  template <typename ArgType>
-  static void run(const ArgType& arg, MatrixType& U, MatrixType& V, int& squarings)
-  {
-    using std::frexp;
-    using std::pow;
-    const RealScalar l1norm = arg.cwiseAbs().colwise().sum().maxCoeff();
-    squarings = 0;
-    if (l1norm < 1.495585217958292e-002) {
-      matrix_exp_pade3(arg, U, V);
-    } else if (l1norm < 2.539398330063230e-001) {
-      matrix_exp_pade5(arg, U, V);
-    } else if (l1norm < 9.504178996162932e-001) {
-      matrix_exp_pade7(arg, U, V);
-    } else if (l1norm < 2.097847961257068e+000) {
-      matrix_exp_pade9(arg, U, V);
-    } else {
-      const RealScalar maxnorm = 5.371920351148152;
-      frexp(l1norm / maxnorm, &squarings);
-      if (squarings < 0) squarings = 0;
-      MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<RealScalar>(squarings));
-      matrix_exp_pade13(A, U, V);
-    }
-  }
-};
-}}
 
 /* encode the type into an integer for benchmark output */
 template<typename Tp> struct type_num { /* should fail */ };
@@ -271,87 +210,6 @@ template <class Rt, class U> void B_MatVec(benchmark::State& state) {
   state.SetComplexityN(state.range(0));
 }
 
-template <class Rt> void B_Expm(benchmark::State& state)
-{
-  int N = state.range(0);
-  //Rt S(1);
-  MatrixX<Rt> A = MatrixX<Rt>::Random(N, N);
-  MatrixX<Rt> B = MatrixX<Rt>::Zero(N, N);
-  //A = S * A / A.norm();
-
-  for (auto _ : state) {
-    B = A.exp();
-    benchmark::ClobberMemory();
-  }
-
-  state.counters["type"] = type_num<Rt>::id;
-  state.SetComplexityN(state.range(0));
-}
-
-template <class Rt> void B_ExpPadm(benchmark::State& state)
-{
-  int N = state.range(0);
-  //Rt S(1);
-  MatrixX<Rt> A = MatrixX<Rt>::Random(N, N);
-  MatrixX<Rt> B = MatrixX<Rt>::Zero(N, N);
-  //A = S * A / A.norm();
-
-  for (auto _ : state) {
-    B = eexpokit::padm(A);
-    benchmark::ClobberMemory();
-  }
-
-  state.counters["type"] = type_num<Rt>::id;
-  state.SetComplexityN(state.range(0));
-}
-
-template <class Rt> void B_ExpExpv(benchmark::State& state)
-{
-  int N = state.range(0);
-  //Rt S(1);
-  MatrixX<Rt> A = MatrixX<Rt>::Zero(N, N);
-  MatrixX<Rt> b = MatrixX<Rt>::Ones(N, 1);
-  MatrixX<Rt> c = MatrixX<Rt>::Zero(N, 1);
-  //A = S * A / A.norm();
-
-  // sparse random fill
-  for (int i = 0; i < 4*N; i++)
-    A((int)duals::randos::random(0.,N-1.),
-      (int)duals::randos::random(0.,N-1.)) = duals::randos::random2<Rt>();
-
-  for (auto _ : state) {
-    auto ret = eexpokit::expv(1,A,b);
-    if (ret.err > 1) {
-      std::ofstream f("fail.m");
-      f << "A=" << A.format(eexpokit::OctaveFmt) << "\n";
-      break;
-    }
-    // c = ret.w
-    benchmark::ClobberMemory();
-  }
-
-  state.counters["type"] = type_num<Rt>::id;
-  state.SetComplexityN(state.range(0));
-}
-
-template <class Rt> void B_ExpChbv(benchmark::State& state)
-{
-  int N = state.range(0);
-  //Rt S(1);
-  MatrixX<Rt> A = MatrixX<Rt>::Random(N, N);
-  MatrixX<Rt> b = MatrixX<Rt>::Zero(N, 1);
-  MatrixX<Rt> c = MatrixX<Rt>::Zero(N, 1);
-  //A = S * A / A.norm();
-
-  for (auto _ : state) {
-    c = eexpokit::chbv(A,b);
-    benchmark::ClobberMemory();
-  }
-
-  state.counters["type"] = type_num<Rt>::id;
-  state.SetComplexityN(state.range(0));
-}
-
 #define MAKE_BM_SIMPLE(TYPE1,TYPE2,NF)                                  \
   BENCHMARK_TEMPLATE(B_VecVecAdd, TYPE1,TYPE2) V_RANGE(4,NF);           \
   BENCHMARK_TEMPLATE(B_VecVecSub, TYPE1,TYPE2) V_RANGE(4,NF);           \
@@ -359,11 +217,7 @@ template <class Rt> void B_ExpChbv(benchmark::State& state)
   BENCHMARK_TEMPLATE(B_VecVecDiv, TYPE1,TYPE2) V_RANGE(4,NF);           \
   BENCHMARK_TEMPLATE(B_MatVec, TYPE1,TYPE2) V_RANGE(4,NF);              \
   BENCHMARK_TEMPLATE(B_MatMat, TYPE1,TYPE2) V_RANGE(1,NF);              \
-  BENCHMARK_TEMPLATE(B_MatDiv, TYPE1,TYPE2) V_RANGE(1,NF);              \
-  BENCHMARK_TEMPLATE(B_Expm, TYPE1) V_RANGE(1,NF);                      \
-  BENCHMARK_TEMPLATE(B_ExpPadm, TYPE1) V_RANGE(1,NF);                   \
-  BENCHMARK_TEMPLATE(B_ExpChbv, TYPE1) V_RANGE(1,NF);                   \
-  BENCHMARK_TEMPLATE(B_ExpExpv, TYPE1) V_RANGE(1,NF)
+  BENCHMARK_TEMPLATE(B_MatDiv, TYPE1,TYPE2) V_RANGE(1,NF)
 
 #define MAKE_BENCHMARKS(TYPE1,TYPE2,NF)                                 \
   MAKE_BM_SIMPLE(TYPE1,TYPE2,NF)
@@ -389,7 +243,7 @@ MAKE_BM_SIMPLE(cduald, cduald,4);
 int main(int argc, char** argv)
 {
 #ifndef EIGEN_VECTORIZE
-  static_assert(false, "no vectorization?");
+  //static_assert(false, "no vectorization?");
 #endif
   std::cout << "OPT_FLAGS=" << QUOTE(OPT_FLAGS) << "\n";
   std::cout << "INSTRUCTIONSET=" << Eigen::SimdInstructionSetsInUse() << "\n";

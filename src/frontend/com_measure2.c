@@ -64,7 +64,7 @@ is_arith_char2(char c)
     return c != '\0' && strchr("*/<>?:|&^!%\\", c);
 }
 
-static bool
+bool
 str_has_arith_char2(char* s)
 {
     if (*s == '+' || *s == '-')
@@ -717,7 +717,10 @@ measure_at(
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
             else
                 value = d->v_realdata[i];
-            svalue = dScale->v_realdata[i];
+            if (dScale->v_compdata) // .sp, s-param.
+                svalue = dScale->v_compdata[i].cx_real;
+            else // fft
+                svalue = dScale->v_realdata[i];
         } else {
             value = d->v_realdata[i];
             svalue = dScale->v_realdata[i];

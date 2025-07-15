@@ -16,8 +16,8 @@
  * (c)2019 Michael Tesch. tesch1@gmail.com
  */
 
-#include "type_name.hpp"
 #include <duals/dual_eigen>
+#include "type_name.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/StdVector>
@@ -60,6 +60,7 @@ template <int N=2, int K = N> using ecdf = Eigen::Matrix<cdualf, N, K> ;
 
 #if !defined(CPPDUALS_DONT_VECTORIZE) && !defined(EIGEN_DONT_VECTORIZE)
 
+#ifdef EIGEN_VECTORIZE_SSE
 TEST(Packet1cdf, pload_pstore) {
   using namespace Eigen::internal;
   cdualf cd1 = cdualf(1+2_ef,3+4_ef);
@@ -68,6 +69,7 @@ TEST(Packet1cdf, pload_pstore) {
   pstore(&cd2, p1);
   EXPECT_DEQ(cd1, cd2);
 }
+#endif
 
 using duals::randos::random2;
 
@@ -89,11 +91,11 @@ using duals::randos::random2;
     pstore(cd3.data(), p3);                                             \
     for (int i = 0; i < N; i++) {                                       \
       EXPECT_DNEAR(cd3[i], cd1[i] op cd2[i], tol)                       \
-        << cd1[i] << ',' << cd2[i] << " fail at " << i;                 \
+        << cd1[i] << #op << cd2[i] << "=" << cd3[i] << "!=" << (cd1[i] op cd2[i]) << " fail at " << i << "/" << N; \
     }                                                                   \
   }
 
-#define GEN_PACKET_TEST_UN(PTYPE,pop,op) TEST(PTYPE,pop) {      \
+#define GEN_PACKET_TEST_UN(PTYPE,pop,op) TEST(PTYPE,pop) {              \
     using namespace Eigen::internal;                                    \
     typedef unpacket_traits<PTYPE>::type DTYPE;                         \
     const static int N = unpacket_traits<PTYPE>::size;                  \
@@ -112,7 +114,7 @@ using duals::randos::random2;
     }                                                                   \
   }
 
-#define GEN_PACKET_TEST_RD(PTYPE,pop,op) TEST(PTYPE,pop) {      \
+#define GEN_PACKET_TEST_RD(PTYPE,pop,op) TEST(PTYPE,pop) {              \
     using namespace Eigen::internal;                                    \
     typedef unpacket_traits<PTYPE>::type DTYPE;                         \
     const static int N = unpacket_traits<PTYPE>::size;                  \
@@ -131,7 +133,7 @@ using duals::randos::random2;
       << acc << " " << p2 << " fail.";                                  \
   }
 
-#define GEN_PACKET_TEST_REVERSE(PTYPE) TEST(PTYPE,preverse) {   \
+#define GEN_PACKET_TEST_REVERSE(PTYPE) TEST(PTYPE,preverse) {           \
     using namespace Eigen::internal;                                    \
     typedef unpacket_traits<PTYPE>::type DTYPE;                         \
     const static int N = unpacket_traits<PTYPE>::size;                  \
@@ -149,7 +151,7 @@ using duals::randos::random2;
     }                                                                   \
   }
 
-#define GEN_PACKET_TEST_FIRST(PTYPE) TEST(PTYPE,pfirst) {       \
+#define GEN_PACKET_TEST_FIRST(PTYPE) TEST(PTYPE,pfirst) {               \
     using namespace Eigen::internal;                                    \
     typedef unpacket_traits<PTYPE>::type DTYPE;                         \
     const static int N = unpacket_traits<PTYPE>::size;                  \
@@ -323,13 +325,11 @@ using duals::randos::random2;
   GEN_PACKET_TEST_UN(PTYPE,pconj,conj)
 
 // TODO:
-//pcplxflip
 //preduxp
 //pand
 //por
 //pxor
 //andnot
-//pbroadcast4
 //ploadquad (for packets w/ size==8)
 //pgather
 //pscatter
@@ -345,7 +345,7 @@ GEN_CPACKET_TESTS(Packet2cf)
 GEN_CPACKET_TESTS(Packet4cf)
 #endif
 
-#ifdef EIGEN_VECTORIZE_SSE
+#if defined(EIGEN_VECTORIZE_SSE) || defined(EIGEN_VECTORIZE_NEON)
 GEN_PACKET_TESTS(Packet2df)
 GEN_PACKET_TESTS(Packet1dd)
 GEN_CPACKET_TESTS(Packet1cdf)
@@ -368,20 +368,28 @@ TEST(compile, VECTORIZE) {
 #endif
 }
 TEST(compile, SSE) {
+#ifdef EIGEN_VECTORIZE_SSE
   EXPECT_TRUE(std::string(Eigen::SimdInstructionSetsInUse()).find("SSE") != std::string::npos)
-    << "Not using SSE instructions:" << Eigen::SimdInstructionSetsInUse();
-#ifndef EIGEN_VECTORIZE_SSE
-  EXPECT_TRUE(false)
-    << "Not using EIGEN_VECTORIZE_SSE:" << Eigen::SimdInstructionSetsInUse();
+#else
+  EXPECT_TRUE(true)
 #endif
+    << "Not using EIGEN_VECTORIZE_SSE:" << Eigen::SimdInstructionSetsInUse();
 }
 TEST(compile, AVX) {
+#ifdef EIGEN_VECTORIZE_AVX
   EXPECT_TRUE(std::string(Eigen::SimdInstructionSetsInUse()).find("AVX") != std::string::npos)
-    << "Not using AVX instructions:" << Eigen::SimdInstructionSetsInUse();
-#ifndef EIGEN_VECTORIZE_AVX
-  EXPECT_TRUE(false)
-    << "Not using EIGEN_VECTORIZE_AVX:" << Eigen::SimdInstructionSetsInUse();
+#else
+  EXPECT_TRUE(true)
 #endif
+    << "Not using EIGEN_VECTORIZE_AVX:" << Eigen::SimdInstructionSetsInUse();
+}
+TEST(compile, NEON) {
+#ifdef EIGEN_VECTORIZE_NEON
+  EXPECT_TRUE(std::string(Eigen::SimdInstructionSetsInUse()).find("NEON") != std::string::npos)
+#else
+  EXPECT_TRUE(true)
+#endif
+    << "Not using EIGEN_VECTORIZE_NEON:" << Eigen::SimdInstructionSetsInUse();
 }
 
 #define QUOTE(...) STRFY(__VA_ARGS__)

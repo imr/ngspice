@@ -34,7 +34,7 @@ void INP2N(CKTcircuit *ckt, INPtables *tab, struct card *current) {
   GENmodel    *mdfast;    /* Pointer to the actual model. */
   IFdevice    *dev;
   CKTnode     *node;
-  char        *c, *token = NULL, *prev = NULL, *pprev = NULL;
+  char        *c, *token = NULL, *prev = NULL, *pprev = NULL, *eqp;
   int          i;
 
   line = current->line;
@@ -44,15 +44,16 @@ void INP2N(CKTcircuit *ckt, INPtables *tab, struct card *current) {
   /* Find the last non-parameter token in the line. */
 
   c = line;
-  for (i = 0; *c != '\0'; ++i) {
+  for (i = 0, eqp = NULL; *c != '\0'; ++i) {
       tfree(pprev);
       pprev = prev;
       prev = token;
       token = gettok_instance(&c);
-      if (strchr(token, '='))
+      eqp = strchr(token, '=');
+      if (eqp)
           break;
   }
-  if (*c) {
+  if (eqp) {
       tfree(token); // A parameter or starts with '='.
       if (*c == '=') {
           /* Now prev points to a parameter pprev is the model. */

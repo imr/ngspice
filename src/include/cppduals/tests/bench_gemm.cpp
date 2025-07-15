@@ -6,12 +6,14 @@
 //
 // (c)2019 Michael Tesch. tesch1@gmail.com
 //
+#include <duals/dual>
+
 #if defined(__APPLE__) && defined(__clang__)
 #include <Accelerate/Accelerate.h>
 
 #else
 
-#ifdef EIGEN_LAPACKE
+#if defined(EIGEN_LAPACKE) || defined(__APPLE__)
 #include <Eigen/src/misc/lapacke.h>
 #else
 #include <lapacke.h>
@@ -24,13 +26,13 @@ extern "C" {
 }
 #endif // defined(__APPLE__) && defined(__clang__)
 
+#include <duals/dual_eigen>
 #include <iostream>
 #include <fstream>
 #include <complex>
 #include <memory>
 
 #include "type_name.hpp"
-#include <duals/dual_eigen>
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
@@ -80,6 +82,59 @@ template <class T, class U> void B_MatMat(benchmark::State& state) {
   state.SetComplexityN(state.range(0));
 }
 
+// Helper templates to select correct BLAS routine
+template <typename U>
+struct blas_gemm;
+
+#define TRANSPOSE(X) ((X) ? CblasTrans : CblasNoTrans)
+
+template <>
+struct blas_gemm<float> {
+  static void call(bool tA, bool tB, int m, int n, int k, float alpha, float *A,
+                   int lda, float *B, int ldb, float beta, float *C, int ldc)
+  {
+    cblas_sgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB), m, n, k, alpha, A,
+                lda, B, ldb, beta, C, ldc);
+  }
+};
+
+template <>
+struct blas_gemm<double> {
+  static void call(bool tA, bool tB, int m, int n, int k, double alpha,
+                   double *A, int lda, double *B, int ldb, double beta,
+                   double *C, int ldc)
+  {
+    cblas_dgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB), m, n, k, alpha, A,
+                lda, B, ldb, beta, C, ldc);
+  }
+};
+
+template <>
+struct blas_gemm<std::complex<float>> {
+  static void call(bool tA, bool tB, int m, int n, int k,
+                   std::complex<float> alpha, std::complex<float> *A, int lda,
+                   std::complex<float> *B, int ldb, std::complex<float> beta,
+                   std::complex<float> *C, int ldc)
+  {
+    cblas_cgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB), m, n, k, &alpha, A,
+                lda, B, ldb, &beta, C, ldc);
+  }
+};
+
+template <>
+struct blas_gemm<std::complex<double>> {
+  static void call(bool tA, bool tB, int m, int n, int k,
+                   std::complex<double> alpha, std::complex<double> *A, int lda,
+                   std::complex<double> *B, int ldb, std::complex<double> beta,
+                   std::complex<double> *C, int ldc)
+  {
+    cblas_zgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB), m, n, k, &alpha, A,
+                lda, B, ldb, &beta, C, ldc);
+  }
+};
+
+#undef TRANSPOSE
+
 template <class T, typename std::enable_if<!duals::is_dual<T>::value>::type* = nullptr>
 void matrix_multiplcation(T *A, int Awidth, int Aheight,
                           T *B, int Bwidth, int Bheight,
@@ -99,30 +154,11 @@ void matrix_multiplcation(T *A, int Awidth, int Aheight,
   assert(A_width == B_height);
   int lda = tA ? m : k;
   int ldb = tB ? k : n;
-#define TRANSPOSE(X) ((X) ? CblasTrans : CblasNoTrans)
-  // http://www.netlib.org/lapack/explore-html/d7/d2b/dgemm_8f.html
-  if (!is_complex<T>::value) {
-    if (sizeof(T) == sizeof(float))
-      cblas_sgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB),
-                  m, n, k, 1.0, (float *)A, lda, (float *)B, ldb,
-                  std::real(beta), (float *)AB, n);
-    else
-      cblas_dgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB),
-                  m, n, k, 1.0, (double *)A, lda, (double *)B, ldb,
-                  std::real(beta), (double *)AB, n);
-  }
-  else {
-    std::complex<float> alphaf(1,0);
-    std::complex<double> alpha(1,0);
-    if (Eigen::NumTraits<T>::digits10() < 10)
-      cblas_cgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB),
-                  m, n, k, &alphaf, A, lda, B, ldb, &beta, AB, n);
-    else
-      cblas_zgemm(CblasColMajor, TRANSPOSE(tA), TRANSPOSE(tB),
-                  m, n, k, &alpha, A, lda, B, ldb, &beta, AB, n);
-  }
-#undef TRANSPOSE
+
+  // Call the appropriate BLAS routine based on type T
+  blas_gemm<T>::call(tA, tB, m, n, k, T(1), A, lda, B, ldb, beta, AB, n);
 }
+
 
 template <class T, typename std::enable_if<duals::is_dual<T>::value>::type* = nullptr>
 void matrix_multiplcation(T *A, int Awidth, int Aheight,
@@ -232,10 +268,10 @@ MAKE_BM_SIMPLE(cduald, cduald,4);
 int main(int argc, char** argv)
 {
 #ifndef EIGEN_VECTORIZE
-  static_assert(false, "no vectorization?");
+  //static_assert(false, "no vectorization?");
 #endif
 #ifndef NDEBUG
-  static_assert(false, "NDEBUG to benchmark?");
+  //static_assert(false, "NDEBUG to benchmark?");
 #endif
   std::cout << "OPT_FLAGS=" << QUOTE(OPT_FLAGS) << "\n";
   std::cout << "INSTRUCTIONSET=" << Eigen::SimdInstructionSetsInUse() << "\n";

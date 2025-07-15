@@ -1,29 +1,25 @@
 /* ******************************************************************************
-   *  BSIM4 4.8.2 released by Chetan Kumar Dabhi 01/01/2020                     *
+   *  BSIM4 4.8.3 released on 05/19/2025                                        *
    *  BSIM4 Model Equations                                                     *
    ******************************************************************************
 
    ******************************************************************************
-   *  Copyright (c) 2020 University of California                               *
+   *  Copyright (c) 2025 University of California                               *
    *                                                                            *
-   *  Project Director: Prof. Chenming Hu.                                      *
-   *  Current developers: Chetan Kumar Dabhi   (Ph.D. student, IIT Kanpur)      *
-   *                      Prof. Yogesh Chauhan (IIT Kanpur)                     *
-   *                      Dr. Pragya Kushwaha  (Postdoc, UC Berkeley)           *
-   *                      Dr. Avirup Dasgupta  (Postdoc, UC Berkeley)           *
-   *                      Ming-Yen Kao         (Ph.D. student, UC Berkeley)     *
-   *  Authors: Gary W. Ng, Weidong Liu, Xuemei Xi, Mohan Dunga, Wenwei Yang     *
-   *           Ali Niknejad, Chetan Kumar Dabhi, Yogesh Singh Chauhan,          *
-   *           Sayeef Salahuddin, Chenming Hu                                   * 
+   *  Project Directors: Prof. Sayeef Salahuddin and Prof. Chenming Hu          *
+   *  Developers list: https://www.bsim.berkeley.edu/models/bsim4/auth_bsim4/   *
    ******************************************************************************/
 
 /*
 Licensed under Educational Community License, Version 2.0 (the "License"); you may
 not use this file except in compliance with the License. You may obtain a copy of the license at
 http://opensource.org/licenses/ECL-2.0
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
 under the License.
+
+BSIM4 model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc
 */
 
 #ifndef BSIM4
@@ -95,6 +91,7 @@ typedef struct sBSIM4instance
 
     double BSIM4l;
     double BSIM4w;
+    double BSIM4m;
     double BSIM4drainArea;
     double BSIM4sourceArea;
     double BSIM4drainSquares;
@@ -103,7 +100,8 @@ typedef struct sBSIM4instance
     double BSIM4sourcePerimeter;
     double BSIM4sourceConductance;
     double BSIM4drainConductance;
-     /* stress effect instance param */
+
+    /* stress effect instance param */
     double BSIM4sa;
     double BSIM4sb;
     double BSIM4sd;
@@ -119,12 +117,11 @@ typedef struct sBSIM4instance
     double BSIM4rbpd;
 
     double BSIM4delvto;
-    double BSIM4mulu0;
-    int BSIM4wnflag;
     double BSIM4xgw;
     double BSIM4ngcon;
 
-     /* added here to account stress effect instance dependence */
+    /* added here to account stress effect instance dependence */
+
     double BSIM4u0temp;
     double BSIM4vsattemp;
     double BSIM4vth0;
@@ -142,9 +139,12 @@ typedef struct sBSIM4instance
     double BSIM4icVDS;
     double BSIM4icVGS;
     double BSIM4icVBS;
-    double BSIM4m;
+    double BSIM4mult_i;
+    double BSIM4mult_q;
+    double BSIM4mult_fn;
     double BSIM4nf;
     int BSIM4off;
+
     int BSIM4mode;
     int BSIM4trnqsMod;
     int BSIM4acnqsMod;
@@ -286,6 +286,9 @@ typedef struct sBSIM4instance
     unsigned BSIM4lGiven :1;
     unsigned BSIM4wGiven :1;
     unsigned BSIM4mGiven :1;
+    unsigned BSIM4mult_iGiven :1;
+    unsigned BSIM4mult_qGiven :1;
+    unsigned BSIM4mult_fnGiven :1;
     unsigned BSIM4nfGiven :1;
     unsigned BSIM4minGiven :1;
     unsigned BSIM4drainAreaGiven :1;
@@ -307,8 +310,6 @@ typedef struct sBSIM4instance
     unsigned BSIM4rbpdGiven   :1;
     unsigned BSIM4rbpsGiven   :1;
     unsigned BSIM4delvtoGiven   :1;
-    unsigned BSIM4mulu0Given   :1;
-    unsigned BSIM4wnflagGiven   :1;
     unsigned BSIM4xgwGiven   :1;
     unsigned BSIM4ngconGiven   :1;
     unsigned BSIM4icVDSGiven :1;
@@ -680,6 +681,7 @@ struct bsim4SizeDependParam
     double BSIM4a1;
     double BSIM4a2;
     double BSIM4keta;
+    double BSIM4ketac;
     double BSIM4nsub;
     double BSIM4ndep;
     double BSIM4nsd;
@@ -703,7 +705,7 @@ struct bsim4SizeDependParam
     double BSIM4w0;
     double BSIM4dvtp0;
     double BSIM4dvtp1;
-    double BSIM4dvtp2;	/* New DIBL/Rout */
+    double BSIM4dvtp2;  /* New DIBL/Rout */
     double BSIM4dvtp3;
     double BSIM4dvtp4;
     double BSIM4dvtp5;
@@ -730,14 +732,14 @@ struct bsim4SizeDependParam
     double BSIM4lp;
     double BSIM4u0;
     double BSIM4eu;
-  	double BSIM4ucs;
+    double BSIM4ucs;
     double BSIM4ute;
-	  double BSIM4ucste;
+    double BSIM4ucste;
     double BSIM4voff;
     double BSIM4tvoff;
-    double BSIM4tnfactor; 	/* v4.7 Temp dep of leakage current */
-    double BSIM4teta0;   	/* v4.7 temp dep of leakage current */
-    double BSIM4tvoffcv;	/* v4.7 temp dep of leakage current */
+    double BSIM4tnfactor;   /* v4.7 Temp dep of leakage current */
+    double BSIM4teta0;      /* v4.7 temp dep of leakage current */
+    double BSIM4tvoffcv;    /* v4.7 temp dep of leakage current */
     double BSIM4minv;
     double BSIM4minvcv;
     double BSIM4vfb;
@@ -872,7 +874,7 @@ struct bsim4SizeDependParam
     double BSIM4theta0vb0;
     double BSIM4thetaRout;
     double BSIM4mstar;
-	  double BSIM4VgsteffVth;
+    double BSIM4VgsteffVth;
     double BSIM4mstarcv;
     double BSIM4voffcbn;
     double BSIM4voffcbncv;
@@ -927,7 +929,6 @@ typedef struct sBSIM4model
     int    BSIM4rgateMod;
     int    BSIM4perMod;
     int    BSIM4geoMod;
-    int    BSIM4rgeoMod;
     int    BSIM4mtrlMod;
     int    BSIM4mtrlCompatMod; /* v4.7 */
     int    BSIM4gidlMod; /* v4.7 New GIDL/GISL */
@@ -936,12 +937,12 @@ typedef struct sBSIM4model
     int    BSIM4tempMod;
     int    BSIM4binUnit;
     int    BSIM4paramChk;
-    char   *BSIM4version;
+    char *BSIM4version;
     double BSIM4eot;
     double BSIM4vddeot;
-  	double BSIM4tempeot;
-  	double BSIM4leffeot;
-  	double BSIM4weffeot;
+    double BSIM4tempeot;
+    double BSIM4leffeot;
+    double BSIM4weffeot;
     double BSIM4ados;
     double BSIM4bdos;
     double BSIM4toxe;
@@ -962,6 +963,7 @@ typedef struct sBSIM4model
     double BSIM4a1;
     double BSIM4a2;
     double BSIM4keta;
+    double BSIM4ketac;
     double BSIM4nsub;
     double BSIM4phig;
     double BSIM4epsrgate;
@@ -990,7 +992,7 @@ typedef struct sBSIM4model
     double BSIM4w0;
     double BSIM4dvtp0;
     double BSIM4dvtp1;
-    double BSIM4dvtp2;	/* New DIBL/Rout */
+    double BSIM4dvtp2;  /* New DIBL/Rout */
     double BSIM4dvtp3;
     double BSIM4dvtp4;
     double BSIM4dvtp5;
@@ -1006,7 +1008,7 @@ typedef struct sBSIM4model
     double BSIM4dsub;
     double BSIM4vth0;
     double BSIM4eu;
-  	double BSIM4ucs;
+    double BSIM4ucs;
     double BSIM4ua;
     double BSIM4ua1;
     double BSIM4ub;
@@ -1019,12 +1021,12 @@ typedef struct sBSIM4model
     double BSIM4lp;
     double BSIM4u0;
     double BSIM4ute;
-  	double BSIM4ucste;
+    double BSIM4ucste;
     double BSIM4voff;
     double BSIM4tvoff;
-    double BSIM4tnfactor; 	/* v4.7 Temp dep of leakage current */
-    double BSIM4teta0;   	/* v4.7 temp dep of leakage current */
-    double BSIM4tvoffcv;	/* v4.7 temp dep of leakage current */
+    double BSIM4tnfactor;   /* v4.7 Temp dep of leakage current */
+    double BSIM4teta0;      /* v4.7 temp dep of leakage current */
+    double BSIM4tvoffcv;    /* v4.7 temp dep of leakage current */
     double BSIM4minv;
     double BSIM4minvcv;
     double BSIM4voffl;
@@ -1247,6 +1249,7 @@ typedef struct sBSIM4model
     double BSIM4la1;
     double BSIM4la2;
     double BSIM4lketa;
+    double BSIM4lketac;
     double BSIM4lnsub;
     double BSIM4lndep;
     double BSIM4lnsd;
@@ -1267,7 +1270,7 @@ typedef struct sBSIM4model
     double BSIM4lw0;
     double BSIM4ldvtp0;
     double BSIM4ldvtp1;
-    double BSIM4ldvtp2;        /* New DIBL/Rout */
+    double BSIM4ldvtp2; /* New DIBL/Rout */
     double BSIM4ldvtp3;
     double BSIM4ldvtp4;
     double BSIM4ldvtp5;
@@ -1299,9 +1302,9 @@ typedef struct sBSIM4model
     double BSIM4lucste;
     double BSIM4lvoff;
     double BSIM4ltvoff;
-    double BSIM4ltnfactor;         /* v4.7 Temp dep of leakage current */
-    double BSIM4lteta0;           /* v4.7 temp dep of leakage current */
-    double BSIM4ltvoffcv;        /* v4.7 temp dep of leakage current */
+    double BSIM4ltnfactor;  /* v4.7 Temp dep of leakage current */
+    double BSIM4lteta0;     /* v4.7 temp dep of leakage current */
+    double BSIM4ltvoffcv;   /* v4.7 temp dep of leakage current */
     double BSIM4lminv;
     double BSIM4lminvcv;
     double BSIM4ldelta;
@@ -1407,6 +1410,7 @@ typedef struct sBSIM4model
     double BSIM4wa1;
     double BSIM4wa2;
     double BSIM4wketa;
+    double BSIM4wketac;
     double BSIM4wnsub;
     double BSIM4wndep;
     double BSIM4wnsd;
@@ -1427,7 +1431,7 @@ typedef struct sBSIM4model
     double BSIM4ww0;
     double BSIM4wdvtp0;
     double BSIM4wdvtp1;
-    double BSIM4wdvtp2;        /* New DIBL/Rout */
+    double BSIM4wdvtp2; /* New DIBL/Rout */
     double BSIM4wdvtp3;
     double BSIM4wdvtp4;
     double BSIM4wdvtp5;
@@ -1459,9 +1463,9 @@ typedef struct sBSIM4model
     double BSIM4wucste;
     double BSIM4wvoff;
     double BSIM4wtvoff;
-    double BSIM4wtnfactor;         /* v4.7 Temp dep of leakage current */
-    double BSIM4wteta0;           /* v4.7 temp dep of leakage current */
-    double BSIM4wtvoffcv;        /* v4.7 temp dep of leakage current */
+    double BSIM4wtnfactor;  /* v4.7 Temp dep of leakage current */
+    double BSIM4wteta0;     /* v4.7 temp dep of leakage current */
+    double BSIM4wtvoffcv;   /* v4.7 temp dep of leakage current */
     double BSIM4wminv;
     double BSIM4wminvcv;
     double BSIM4wdelta;
@@ -1567,6 +1571,7 @@ typedef struct sBSIM4model
     double BSIM4pa1;
     double BSIM4pa2;
     double BSIM4pketa;
+    double BSIM4pketac;
     double BSIM4pnsub;
     double BSIM4pndep;
     double BSIM4pnsd;
@@ -1587,7 +1592,7 @@ typedef struct sBSIM4model
     double BSIM4pw0;
     double BSIM4pdvtp0;
     double BSIM4pdvtp1;
-    double BSIM4pdvtp2;        /* New DIBL/Rout */
+    double BSIM4pdvtp2; /* New DIBL/Rout */
     double BSIM4pdvtp3;
     double BSIM4pdvtp4;
     double BSIM4pdvtp5;
@@ -1619,9 +1624,9 @@ typedef struct sBSIM4model
     double BSIM4pucste;
     double BSIM4pvoff;
     double BSIM4ptvoff;
-    double BSIM4ptnfactor;         /* v4.7 Temp dep of leakage current */
-    double BSIM4pteta0;           /* v4.7 temp dep of leakage current */
-    double BSIM4ptvoffcv;        /* v4.7 temp dep of leakage current */
+    double BSIM4ptnfactor;  /* v4.7 Temp dep of leakage current */
+    double BSIM4pteta0;     /* v4.7 temp dep of leakage current */
+    double BSIM4ptvoffcv;   /* v4.7 temp dep of leakage current */
     double BSIM4pminv;
     double BSIM4pminvcv;
     double BSIM4pdelta;
@@ -1823,6 +1828,7 @@ typedef struct sBSIM4model
 
 /* Pre-calculated constants
  * move to size-dependent param */
+
     double BSIM4Eg0;
     double BSIM4vtm;
     double BSIM4vtm0;
@@ -1872,6 +1878,7 @@ typedef struct sBSIM4model
     double BSIM4vgbrMax;
     double BSIM4vbsrMax;
     double BSIM4vbdrMax;
+
     double BSIM4gidlclamp;
     double BSIM4idovvdsc;
     struct bsim4SizeDependParam *pSizeDependParamKnot;
@@ -1892,7 +1899,6 @@ typedef struct sBSIM4model
     unsigned  BSIM4rgateModGiven :1;
     unsigned  BSIM4perModGiven :1;
     unsigned  BSIM4geoModGiven :1;
-    unsigned  BSIM4rgeoModGiven :1;
     unsigned  BSIM4paramChkGiven :1;
     unsigned  BSIM4trnqsModGiven :1;
     unsigned  BSIM4acnqsModGiven :1;
@@ -1932,6 +1938,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4a1Given   :1;
     unsigned  BSIM4a2Given   :1;
     unsigned  BSIM4ketaGiven   :1;
+    unsigned  BSIM4ketacGiven   :1;
     unsigned  BSIM4nsubGiven   :1;
     unsigned  BSIM4phigGiven   :1;
     unsigned  BSIM4epsrgateGiven   :1;
@@ -1960,7 +1967,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4w0Given   :1;
     unsigned  BSIM4dvtp0Given :1;
     unsigned  BSIM4dvtp1Given :1;
-    unsigned  BSIM4dvtp2Given :1;        /* New DIBL/Rout */
+    unsigned  BSIM4dvtp2Given :1;   /* New DIBL/Rout */
     unsigned  BSIM4dvtp3Given :1;
     unsigned  BSIM4dvtp4Given :1;
     unsigned  BSIM4dvtp5Given :1;
@@ -1992,9 +1999,9 @@ typedef struct sBSIM4model
     unsigned  BSIM4ucsteGiven :1;
     unsigned  BSIM4voffGiven   :1;
     unsigned  BSIM4tvoffGiven   :1;
-    unsigned  BSIM4tnfactorGiven  :1;         /* v4.7 Temp dep of leakage current */
-    unsigned  BSIM4teta0Given   :1;           /* v4.7 temp dep of leakage current */
-    unsigned  BSIM4tvoffcvGiven   :1;        /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4tnfactorGiven  :1;   /* v4.7 Temp dep of leakage current */
+    unsigned  BSIM4teta0Given   :1;     /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4tvoffcvGiven   :1;   /* v4.7 temp dep of leakage current */
     unsigned  BSIM4vofflGiven  :1;
     unsigned  BSIM4voffcvlGiven  :1;
     unsigned  BSIM4minvGiven   :1;
@@ -2084,7 +2091,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4jtsswdGiven   :1;
     unsigned  BSIM4jtsswgsGiven   :1;
     unsigned  BSIM4jtsswgdGiven   :1;
-        unsigned  BSIM4jtweffGiven    :1;
+    unsigned  BSIM4jtweffGiven    :1;
     unsigned  BSIM4njtsGiven   :1;
     unsigned  BSIM4njtsswGiven   :1;
     unsigned  BSIM4njtsswgGiven   :1;
@@ -2217,6 +2224,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4la1Given   :1;
     unsigned  BSIM4la2Given   :1;
     unsigned  BSIM4lketaGiven   :1;
+    unsigned  BSIM4lketacGiven   :1;
     unsigned  BSIM4lnsubGiven   :1;
     unsigned  BSIM4lndepGiven   :1;
     unsigned  BSIM4lnsdGiven    :1;
@@ -2237,7 +2245,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4lw0Given   :1;
     unsigned  BSIM4ldvtp0Given :1;
     unsigned  BSIM4ldvtp1Given :1;
-    unsigned  BSIM4ldvtp2Given :1;        /* New DIBL/Rout */
+    unsigned  BSIM4ldvtp2Given :1;  /* New DIBL/Rout */
     unsigned  BSIM4ldvtp3Given :1;
     unsigned  BSIM4ldvtp4Given :1;
     unsigned  BSIM4ldvtp5Given :1;
@@ -2264,14 +2272,14 @@ typedef struct sBSIM4model
     unsigned  BSIM4llpGiven     :1;
     unsigned  BSIM4lu0Given   :1;
     unsigned  BSIM4leuGiven   :1;
-        unsigned  BSIM4lucsGiven   :1;
+    unsigned  BSIM4lucsGiven   :1;
     unsigned  BSIM4luteGiven   :1;
-        unsigned  BSIM4lucsteGiven  :1;
+    unsigned  BSIM4lucsteGiven  :1;
     unsigned  BSIM4lvoffGiven   :1;
     unsigned  BSIM4ltvoffGiven   :1;
-    unsigned  BSIM4ltnfactorGiven  :1;         /* v4.7 Temp dep of leakage current */
-    unsigned  BSIM4lteta0Given   :1;           /* v4.7 temp dep of leakage current */
-    unsigned  BSIM4ltvoffcvGiven   :1;        /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4ltnfactorGiven  :1;  /* v4.7 Temp dep of leakage current */
+    unsigned  BSIM4lteta0Given   :1;    /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4ltvoffcvGiven   :1;  /* v4.7 temp dep of leakage current */
     unsigned  BSIM4lminvGiven   :1;
     unsigned  BSIM4lminvcvGiven   :1;
     unsigned  BSIM4lrdswGiven   :1;
@@ -2377,6 +2385,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4wa1Given   :1;
     unsigned  BSIM4wa2Given   :1;
     unsigned  BSIM4wketaGiven   :1;
+    unsigned  BSIM4wketacGiven   :1;
     unsigned  BSIM4wnsubGiven   :1;
     unsigned  BSIM4wndepGiven   :1;
     unsigned  BSIM4wnsdGiven    :1;
@@ -2397,7 +2406,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4ww0Given   :1;
     unsigned  BSIM4wdvtp0Given :1;
     unsigned  BSIM4wdvtp1Given :1;
-    unsigned  BSIM4wdvtp2Given :1;        /* New DIBL/Rout */
+    unsigned  BSIM4wdvtp2Given :1;  /* New DIBL/Rout */
     unsigned  BSIM4wdvtp3Given :1;
     unsigned  BSIM4wdvtp4Given :1;
     unsigned  BSIM4wdvtp5Given :1;
@@ -2424,14 +2433,14 @@ typedef struct sBSIM4model
     unsigned  BSIM4wlpGiven     :1;
     unsigned  BSIM4wu0Given   :1;
     unsigned  BSIM4weuGiven   :1;
-        unsigned  BSIM4wucsGiven  :1;
+    unsigned  BSIM4wucsGiven  :1;
     unsigned  BSIM4wuteGiven   :1;
-        unsigned  BSIM4wucsteGiven  :1;
+    unsigned  BSIM4wucsteGiven  :1;
     unsigned  BSIM4wvoffGiven   :1;
     unsigned  BSIM4wtvoffGiven   :1;
-    unsigned  BSIM4wtnfactorGiven  :1;         /* v4.7 Temp dep of leakage current */
-    unsigned  BSIM4wteta0Given   :1;           /* v4.7 temp dep of leakage current */
-    unsigned  BSIM4wtvoffcvGiven   :1;        /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4wtnfactorGiven  :1;  /* v4.7 Temp dep of leakage current */
+    unsigned  BSIM4wteta0Given   :1;    /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4wtvoffcvGiven   :1;  /* v4.7 temp dep of leakage current */
     unsigned  BSIM4wminvGiven   :1;
     unsigned  BSIM4wminvcvGiven   :1;
     unsigned  BSIM4wrdswGiven   :1;
@@ -2537,6 +2546,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4pa1Given   :1;
     unsigned  BSIM4pa2Given   :1;
     unsigned  BSIM4pketaGiven   :1;
+    unsigned  BSIM4pketacGiven   :1;
     unsigned  BSIM4pnsubGiven   :1;
     unsigned  BSIM4pndepGiven   :1;
     unsigned  BSIM4pnsdGiven    :1;
@@ -2557,7 +2567,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4pw0Given   :1;
     unsigned  BSIM4pdvtp0Given :1;
     unsigned  BSIM4pdvtp1Given :1;
-    unsigned  BSIM4pdvtp2Given :1;        /* New DIBL/Rout */
+    unsigned  BSIM4pdvtp2Given :1;  /* New DIBL/Rout */
     unsigned  BSIM4pdvtp3Given :1;
     unsigned  BSIM4pdvtp4Given :1;
     unsigned  BSIM4pdvtp5Given :1;
@@ -2584,14 +2594,14 @@ typedef struct sBSIM4model
     unsigned  BSIM4plpGiven     :1;
     unsigned  BSIM4pu0Given   :1;
     unsigned  BSIM4peuGiven   :1;
-        unsigned  BSIM4pucsGiven   :1;
+    unsigned  BSIM4pucsGiven   :1;
     unsigned  BSIM4puteGiven   :1;
-        unsigned  BSIM4pucsteGiven  :1;
+    unsigned  BSIM4pucsteGiven  :1;
     unsigned  BSIM4pvoffGiven   :1;
     unsigned  BSIM4ptvoffGiven   :1;
-    unsigned  BSIM4ptnfactorGiven  :1;         /* v4.7 Temp dep of leakage current */
-    unsigned  BSIM4pteta0Given   :1;           /* v4.7 temp dep of leakage current */
-    unsigned  BSIM4ptvoffcvGiven   :1;        /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4ptnfactorGiven  :1;  /* v4.7 Temp dep of leakage current */
+    unsigned  BSIM4pteta0Given   :1;    /* v4.7 temp dep of leakage current */
+    unsigned  BSIM4ptvoffcvGiven   :1;  /* v4.7 temp dep of leakage current */
     unsigned  BSIM4pminvGiven   :1;
     unsigned  BSIM4pminvcvGiven   :1;
     unsigned  BSIM4prdswGiven   :1;
@@ -2705,7 +2715,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4SbulkJctGateSideGradingCoeffGiven   :1;
     unsigned  BSIM4SunitLengthGateSidewallJctCapGiven   :1;
     unsigned  BSIM4SjctEmissionCoeffGiven :1;
-    unsigned  BSIM4SjctTempExponentGiven        :1;
+    unsigned  BSIM4SjctTempExponentGiven    :1;
 
     unsigned  BSIM4DjctSatCurDensityGiven   :1;
     unsigned  BSIM4DjctSidewallSatCurDensityGiven   :1;
@@ -2807,7 +2817,6 @@ typedef struct sBSIM4model
     unsigned  BSIM4pku0weGiven   :1;
     unsigned  BSIM4gidlclampGiven   :1;
     unsigned  BSIM4idovvdscGiven   :1;
-
 } BSIM4model;
 
 
@@ -2855,35 +2864,40 @@ typedef struct sBSIM4model
 #define BSIM4_SCC                 36
 #define BSIM4_SC                  37
 #define BSIM4_M                   38
-#define BSIM4_MULU0               39
-#define BSIM4_WNFLAG              40
+
+#define BSIM4_VGSTEFF             40
+#define BSIM4_VDSEFF              41
+#define BSIM4_CGSO                42
+#define BSIM4_CGDO                43
+#define BSIM4_CGBO                44
+#define BSIM4_WEFF                45
+#define BSIM4_LEFF                46
 
 /* Global parameters */
-#define BSIM4_MOD_TEMPEOT         65
-#define BSIM4_MOD_LEFFEOT         66
-#define BSIM4_MOD_WEFFEOT         67
-#define BSIM4_MOD_UCSTE           68
-#define BSIM4_MOD_LUCSTE          69
-#define BSIM4_MOD_WUCSTE          70
-#define BSIM4_MOD_PUCSTE          71
-#define BSIM4_MOD_UCS             72
-#define BSIM4_MOD_LUCS            73
-#define BSIM4_MOD_WUCS            74
-#define BSIM4_MOD_PUCS            75
-#define BSIM4_MOD_CVCHARGEMOD     76
-#define BSIM4_MOD_ADOS            77
-#define BSIM4_MOD_BDOS            78
-#define BSIM4_MOD_TEMPMOD         79
-#define BSIM4_MOD_MTRLMOD         80
-#define BSIM4_MOD_IGCMOD          81
-#define BSIM4_MOD_IGBMOD          82
-#define BSIM4_MOD_ACNQSMOD        83
-#define BSIM4_MOD_FNOIMOD         84
-#define BSIM4_MOD_RDSMOD          85
-#define BSIM4_MOD_DIOMOD          86
-#define BSIM4_MOD_PERMOD          87
-#define BSIM4_MOD_GEOMOD          88
-#define BSIM4_MOD_RGEOMOD         89
+#define BSIM4_MOD_TEMPEOT         66
+#define BSIM4_MOD_LEFFEOT         67
+#define BSIM4_MOD_WEFFEOT         68
+#define BSIM4_MOD_UCSTE           69
+#define BSIM4_MOD_LUCSTE          70
+#define BSIM4_MOD_WUCSTE          71
+#define BSIM4_MOD_PUCSTE          72
+#define BSIM4_MOD_UCS             73
+#define BSIM4_MOD_LUCS            74
+#define BSIM4_MOD_WUCS            75
+#define BSIM4_MOD_PUCS            76
+#define BSIM4_MOD_CVCHARGEMOD     77
+#define BSIM4_MOD_ADOS            78
+#define BSIM4_MOD_BDOS            79
+#define BSIM4_MOD_TEMPMOD         80
+#define BSIM4_MOD_MTRLMOD         81
+#define BSIM4_MOD_IGCMOD          82
+#define BSIM4_MOD_IGBMOD          83
+#define BSIM4_MOD_ACNQSMOD        84
+#define BSIM4_MOD_FNOIMOD         85
+#define BSIM4_MOD_RDSMOD          86
+#define BSIM4_MOD_DIOMOD          87
+#define BSIM4_MOD_PERMOD          88
+#define BSIM4_MOD_GEOMOD          89
 #define BSIM4_MOD_RGATEMOD        90
 #define BSIM4_MOD_RBODYMOD        91
 #define BSIM4_MOD_CAPMOD          92
@@ -3224,47 +3238,47 @@ typedef struct sBSIM4model
 #define BSIM4_MOD_LLP              442
 #define BSIM4_MOD_LMINVCV          443
 
-#define BSIM4_MOD_FGIDL            444                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_KGIDL            445                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_RGIDL            446                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_FGISL            447                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_KGISL            448                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_RGISL            449                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_LFGIDL           450                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_LKGIDL           451                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_LRGIDL           452                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_LFGISL           453                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_LKGISL           454                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_LRGISL           455                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_WFGIDL           456                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_WKGIDL           457                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_WRGIDL           458                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_WFGISL           459                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_WKGISL           460                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_WRGISL           461                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_PFGIDL           462                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_PKGIDL           463                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_PRGIDL           464                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_PFGISL           465                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_PKGISL           466                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_PRGISL           467                  /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_GIDLMOD          379                        /* v4.7 New GIDL/GISL*/
-#define BSIM4_MOD_DVTP2           468                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_DVTP3           469                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_DVTP4           470                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_DVTP5           471                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_LDVTP2          472                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_LDVTP3          473                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_LDVTP4          474                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_LDVTP5          475                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_WDVTP2          476                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_WDVTP3          477                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_WDVTP4          478                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_WDVTP5          479                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_PDVTP2          480                        /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_PDVTP3          298                         /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_PDVTP4          299                         /* v4.7 NEW DIBL/Rout*/
-#define BSIM4_MOD_PDVTP5          300                         /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_FGIDL            444          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_KGIDL            445          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_RGIDL            446          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_FGISL            447          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_KGISL            448          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_RGISL            449          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_LFGIDL           450          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_LKGIDL           451          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_LRGIDL           452          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_LFGISL           453          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_LKGISL           454          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_LRGISL           455          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_WFGIDL           456          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_WKGIDL           457          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_WRGIDL           458          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_WFGISL           459          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_WKGISL           460          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_WRGISL           461          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_PFGIDL           462          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_PKGIDL           463          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_PRGIDL           464          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_PFGISL           465          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_PKGISL           466          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_PRGISL           467          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_GIDLMOD          379          /* v4.7 New GIDL/GISL*/
+#define BSIM4_MOD_DVTP2           468           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_DVTP3           469           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_DVTP4           470           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_DVTP5           471           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_LDVTP2          472           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_LDVTP3          473           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_LDVTP4          474           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_LDVTP5          475           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_WDVTP2          476           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_WDVTP3          477           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_WDVTP4          478           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_WDVTP5          479           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_PDVTP2          480           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_PDVTP3          298           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_PDVTP4          299           /* v4.7 NEW DIBL/Rout*/
+#define BSIM4_MOD_PDVTP5          300           /* v4.7 NEW DIBL/Rout*/
 
 /* Width dependence */
 #define BSIM4_MOD_WCDSC            481
@@ -3550,11 +3564,11 @@ typedef struct sBSIM4model
 #define BSIM4_MOD_LKVTH0           808
 #define BSIM4_MOD_WKVTH0           809
 #define BSIM4_MOD_PKVTH0           810
-#define BSIM4_MOD_WLOD                   811
-#define BSIM4_MOD_STK2                   812
-#define BSIM4_MOD_LODK2                   813
-#define BSIM4_MOD_STETA0           814
-#define BSIM4_MOD_LODETA0           815
+#define BSIM4_MOD_WLOD         811
+#define BSIM4_MOD_STK2         812
+#define BSIM4_MOD_LODK2        813
+#define BSIM4_MOD_STETA0       814
+#define BSIM4_MOD_LODETA0      815
 
 #define BSIM4_MOD_WEB              816
 #define BSIM4_MOD_WEC              817
@@ -3643,29 +3657,29 @@ typedef struct sBSIM4model
 /* trap-assisted tunneling */
 
 #define BSIM4_MOD_JTSS             900
-#define BSIM4_MOD_JTSD                   901
-#define BSIM4_MOD_JTSSWS           902
-#define BSIM4_MOD_JTSSWD           903
-#define BSIM4_MOD_JTSSWGS           904
-#define BSIM4_MOD_JTSSWGD           905
-#define BSIM4_MOD_NJTS                    906
-#define BSIM4_MOD_NJTSSW           907
-#define BSIM4_MOD_NJTSSWG           908
-#define BSIM4_MOD_XTSS                   909
-#define BSIM4_MOD_XTSD                   910
-#define BSIM4_MOD_XTSSWS           911
-#define BSIM4_MOD_XTSSWD           912
-#define BSIM4_MOD_XTSSWGS           913
-#define BSIM4_MOD_XTSSWGD           914
-#define BSIM4_MOD_TNJTS                   915
-#define BSIM4_MOD_TNJTSSW           916
-#define BSIM4_MOD_TNJTSSWG           917
+#define BSIM4_MOD_JTSD         901
+#define BSIM4_MOD_JTSSWS       902
+#define BSIM4_MOD_JTSSWD       903
+#define BSIM4_MOD_JTSSWGS      904
+#define BSIM4_MOD_JTSSWGD      905
+#define BSIM4_MOD_NJTS         906
+#define BSIM4_MOD_NJTSSW       907
+#define BSIM4_MOD_NJTSSWG      908
+#define BSIM4_MOD_XTSS         909
+#define BSIM4_MOD_XTSD         910
+#define BSIM4_MOD_XTSSWS       911
+#define BSIM4_MOD_XTSSWD       912
+#define BSIM4_MOD_XTSSWGS      913
+#define BSIM4_MOD_XTSSWGD      914
+#define BSIM4_MOD_TNJTS        915
+#define BSIM4_MOD_TNJTSSW      916
+#define BSIM4_MOD_TNJTSSWG     917
 #define BSIM4_MOD_VTSS             918
-#define BSIM4_MOD_VTSD                   919
-#define BSIM4_MOD_VTSSWS           920
-#define BSIM4_MOD_VTSSWD           921
-#define BSIM4_MOD_VTSSWGS           922
-#define BSIM4_MOD_VTSSWGD           923
+#define BSIM4_MOD_VTSD         919
+#define BSIM4_MOD_VTSSWS       920
+#define BSIM4_MOD_VTSSWD       921
+#define BSIM4_MOD_VTSSWGS      922
+#define BSIM4_MOD_VTSSWGD      923
 #define BSIM4_MOD_PUD              924
 #define BSIM4_MOD_PUD1             925
 #define BSIM4_MOD_PUP              926
@@ -3722,9 +3736,9 @@ typedef struct sBSIM4model
 #define BSIM4_DRAINCONDUCT         991
 #define BSIM4_CBDB                 992
 #define BSIM4_CBSB                 993
-#define BSIM4_CSUB                   994
-#define BSIM4_QINV                   995
-#define BSIM4_IGIDL                   996
+#define BSIM4_CSUB         994
+#define BSIM4_QINV         995
+#define BSIM4_IGIDL        996
 #define BSIM4_CSGB                 997
 #define BSIM4_CSDB                 998
 #define BSIM4_CSSB                 999
@@ -3733,14 +3747,14 @@ typedef struct sBSIM4model
 #define BSIM4_CSBB                 1002
 #define BSIM4_CBBB                 1003
 #define BSIM4_QS                   1004
-#define BSIM4_IGISL                   1005
-#define BSIM4_IGS                   1006
-#define BSIM4_IGD                   1007
-#define BSIM4_IGB                   1008
-#define BSIM4_IGCS                   1009
-#define BSIM4_IGCD                   1010
-#define BSIM4_QDEF                   1011
-#define BSIM4_DELVT0                   1012
+#define BSIM4_IGISL        1005
+#define BSIM4_IGS          1006
+#define BSIM4_IGD          1007
+#define BSIM4_IGB          1008
+#define BSIM4_IGCS         1009
+#define BSIM4_IGCD         1010
+#define BSIM4_QDEF         1011
+#define BSIM4_DELVT0           1012
 #define BSIM4_GCRG                 1013
 #define BSIM4_GTAU                 1014
 
@@ -3753,13 +3767,13 @@ typedef struct sBSIM4model
 
 #define BSIM4_MOD_LKVTH0WE          1061
 #define BSIM4_MOD_LK2WE             1062
-#define BSIM4_MOD_LKU0WE                1063
+#define BSIM4_MOD_LKU0WE        1063
 #define BSIM4_MOD_WKVTH0WE          1064
 #define BSIM4_MOD_WK2WE             1065
-#define BSIM4_MOD_WKU0WE                1066
+#define BSIM4_MOD_WKU0WE        1066
 #define BSIM4_MOD_PKVTH0WE          1067
 #define BSIM4_MOD_PK2WE             1068
-#define BSIM4_MOD_PKU0WE                1069
+#define BSIM4_MOD_PKU0WE        1069
 
 #define BSIM4_MOD_RBPS0               1101
 #define BSIM4_MOD_RBPSL               1102
@@ -3843,26 +3857,35 @@ typedef struct sBSIM4model
 
 /* v4.7 temp dep of leakage current  */
 
-#define BSIM4_MOD_TNFACTOR          1256
-#define BSIM4_MOD_TETA0                    1257
-#define BSIM4_MOD_TVOFFCV           1258
-#define BSIM4_MOD_LTNFACTOR         1260
-#define BSIM4_MOD_LTETA0            1261
-#define BSIM4_MOD_LTVOFFCV          1262
-#define BSIM4_MOD_WTNFACTOR         1264
-#define BSIM4_MOD_WTETA0            1265
-#define BSIM4_MOD_WTVOFFCV          1266
-#define BSIM4_MOD_PTNFACTOR         1268
-#define BSIM4_MOD_PTETA0            1269
-#define BSIM4_MOD_PTVOFFCV          1270
+#define BSIM4_MOD_TNFACTOR            1256
+#define BSIM4_MOD_TETA0               1257
+#define BSIM4_MOD_TVOFFCV             1258
+#define BSIM4_MOD_LTNFACTOR           1260
+#define BSIM4_MOD_LTETA0              1261
+#define BSIM4_MOD_LTVOFFCV            1262
+#define BSIM4_MOD_WTNFACTOR           1264
+#define BSIM4_MOD_WTETA0              1265
+#define BSIM4_MOD_WTVOFFCV            1266
+#define BSIM4_MOD_PTNFACTOR           1268
+#define BSIM4_MOD_PTETA0              1269
+#define BSIM4_MOD_PTVOFFCV            1270
 
 /* tnoiMod=2 (v4.7) */
-#define BSIM4_MOD_TNOIC             1272
-#define BSIM4_MOD_RNOIC             1273
+#define BSIM4_MOD_TNOIC               1272
+#define BSIM4_MOD_RNOIC               1273
 /* smoothing for gidl clamp (C.K.Dabhi) */
-#define BSIM4_MOD_GIDLCLAMP         1274
+#define BSIM4_MOD_GIDLCLAMP           1274
 /* Tuning for noise parameter BSIM4IdovVds (C.K.Dabhi) - request cadence */
-#define BSIM4_MOD_IDOVVDSC          1275
+#define BSIM4_MOD_IDOVVDSC            1275
+
+/* for dynamic evaluate */
+#define BSIM4_MOD_KETAC               1276
+#define BSIM4_MOD_LKETAC              1277
+#define BSIM4_MOD_WKETAC              1278
+#define BSIM4_MOD_PKETAC              1279
+#define BSIM4_MULT_I                  1280
+#define BSIM4_MULT_Q                  1281
+#define BSIM4_MULT_FN                 1282
 
 #define BSIM4_MOD_VGS_MAX           1301
 #define BSIM4_MOD_VGD_MAX           1302
@@ -3875,14 +3898,6 @@ typedef struct sBSIM4model
 #define BSIM4_MOD_VGBR_MAX          1309
 #define BSIM4_MOD_VBSR_MAX          1310
 #define BSIM4_MOD_VBDR_MAX          1311
-
-#define BSIM4_VGSTEFF               1400
-#define BSIM4_VDSEFF                1401
-#define BSIM4_CGSO                  1402
-#define BSIM4_CGDO                  1403
-#define BSIM4_CGBO                  1404
-#define BSIM4_WEFF                  1405
-#define BSIM4_LEFF                  1406
 
 #include "bsim4ext.h"
 
@@ -3898,3 +3913,4 @@ extern int BSIM4RdsEndIso(double, double, double, double, double, double, int, i
 extern int BSIM4RdsEndSha(double, double, double, double, double, double, int, int, double *);
 
 #endif /*BSIM4*/
+

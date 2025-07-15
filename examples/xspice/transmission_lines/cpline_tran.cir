@@ -1,0 +1,23 @@
+* Coupled lines SP
+
+V1 1 0 PULSE(0 1 1n 10p 10p 980p)
+
+R2 p1 1 0.1
+
+R1 p4 0 50.0
+R3 p3 0 50.0
+R4 p2 0 50.0
+
+A1 %hd(p1 0) %hd(p2 0) %hd(p3 0) %hd(p4 0) %vd(p1 0) %vd(p2 0) %vd(p3 0) %vd(p4 0) CPLINE1
+.MODEL CPLINE1 CPLINE(ze=100 zo=50 l=100e-3 ere=1 ero=1 ao=0 ae=0)
+
+.control
+
+tran 10p 5n
+
+let v2 = -v(p2)
+let v3 = -v(p3)
+
+plot v(1) v(p2) v(p3) v(p4)
+
+.endc

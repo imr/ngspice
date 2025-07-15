@@ -1,0 +1,81 @@
+* Simple SRAM cell in a subcircuit, double exponential current pulses
+* total charge is varied.
+* IHP Open PDK
+
+* Path to the PDK
+.lib "D:\Spice_general\IHP-Open-PDK\ihp-sg13g2\libs.tech\ngspice\models\cornerMOSlv.lib" mos_tt
+
+.param vdd = 1.2
+*.param tochar = 1e-13  ; tochar dependency on LET not yet defined
+
+.param d = 1
+.param let = 8
+
+.param tochar = 1.035e-14 * let * d 
+.csparam let = 'let' ; send param value to .control section
+.param tfall = 500p trise = 100p  ; tau in exponent for pulse
+.param Inull = 'tochar/(tfall-trise)'
+
+* the voltage sources: 
+Vdd vd gnd DC 'vdd'
+Vwl wl 0 0 PULSE 0 'vdd' 45n 1n 1n 7n 1
+Vbl1 bl1 0 'vdd'
+Vbl2 bl2 0 0
+
+****  SEE generator without control input, double exponential current sources
+aseegen1 NULL mon [%id(xcell.n1 m1) %id(xcell.n2 m2) %id(xcell.n1 m1) %id(xcell.n2 m2)] seemod1
+.model seemod1 seegen (tdelay = 11n tperiod=25n tfall='tfall' trise='trise' let='let' cdepth='d')
+* alternative syntax, if no current measurement required and reference nodes are GND
+*aseegen1 NULL mon [%i(xcell.n1) %i(xcell.n2) %i(xcell.n1) %i(xcell.n2)] seemod1
+
+**** the SRAM cell
+Xcell bl1 bl2 wl vdd vss srcell
+
+.subckt srcell bl1 bl2 wl vdd vss
+Xnot1 n1 vdd vss n2 not1
+Xnot2 n2 vdd vss n1 not1
+xmo02   n2 wl bl1  vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+xmo01   n1 wl bl2  vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+.ends
+
+**** Current measurements
+Vmeasvss vss 0 0
+Vmeasvdd vd vdd 0
+Vm1 m1 0 0
+Vm2 m2 0 0
+
+**** Inverter cell
+.subckt not1 a vdd vss z
+xm01   z a     vdd     vdd sg13_lv_pmos  l=0.15u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+xm02   z a     vss     vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+c3  a     vss   0.384f
+c2  z     vss   0.576f
+.ends
+
+* starting condition for SRAM cell
+.ic v(xcell.n2)=0 v(xcell.n1)='vdd'
+
+* simulation command: 
+.tran 100ps 120ns
+
+*.options method=gear
+
+.options noinit
+
+.control
+pre_osdi C:\Spice64\lib\ngspice\psp103_nqs.osdi
+set xbrushwidth=3
+let newlet = let
+
+repeat 5
+  print newlet
+  run
+  plot xcell.n1 xcell.n2+2 wl+4 i(vm1)*10000+6 i(vm2)*10000+8 ylimit -1 10
+  let newlet = newlet + 1
+  alterparam let = $&newlet
+  reset
+end
+rusage
+.endc
+
+.end

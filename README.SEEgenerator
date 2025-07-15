@@ -1,0 +1,192 @@
+SEE (single event effects) generator
+
+The SEE generator generates current pulses, which resemble the 
+charge generation and flow causes by a penetrating particle.
+
+How to use it:
+Select LET and charge collection depth cdepth, define them as parameters.
+Identify all nodes of a circuit netlist which are pn junctions,
+and thus are sensitive to pulses.
+
+Set up the SEEgenerator by adding for example
+
+* charge collection depth (in µm)
+.param d = 1
+* LET (linear energy transfer) in MeV*cm²/mg
+.param let = 12
+aseegen1 NULL mon [%id(xcell.n1 m1) %id(xcell.n2 m2) %id(xcell.n1 m1) %id(xcell.n2 m2)] seemod1
+.model seemod1 seegen (tdelay = 11n tperiod=25n let='let' cdepth='d')
+
+to the netlist. 
+
+Each sensitive node from the (flattend) netlist may be added to the output vector of assegen1
+(in brackets [...]), together with its reference node, for example GND for NMOS, nwell potential
+for PMOS. This procedure is currently to be done manually, a semi-automated setup using
+a GUI is in preparation.
+
+Instead of NULL, one may give a control signal to aseegen1, to start the pulse sequence. 
+'mon' is a monitoring output, showing each pulse as a voltage equivalent to the current.
+
+After a transient simulation, plotting the data output versus a non-radiated device
+may reveal the SEE influence.
+
+Several examples are gieven in ./src/axamples/xspice/see: inverters, SRAM cell, opamp,
+also as loop with varying LET to detect the threshold. 
+
+As literature please see for example
+    Ygor Quadros de Aguiar, Frédéric Wrobel. Jean-Luc Autran, Rubén García Alía
+    Single-Event Effects, from Space to Accelerator Environments
+    Springer 2025
+
+Detailed description (will be added to the manual):
+
+NAME_TABLE:
+
+C_Function_Name:       cm_seegen
+Spice_Model_Name:      seegen
+Description:           "single event effect generator"
+
+
+PORT_TABLE:
+
+Port_Name:             ctrl                 mon
+Description:          "control input"       "monitor"
+Direction:             in                   out
+Default_Type:          v                    v
+Allowed_Types:         [v,vd,i,id]          [v]
+Vector:                no                   no
+Vector_Bounds:         -                    -
+Null_Allowed:          yes                  yes
+
+
+PORT_TABLE:
+
+Port_Name:             out
+Description:           "output"
+Direction:             out
+Default_Type:          i
+Allowed_Types:         [i,id]
+Vector:                yes
+Vector_Bounds:         [1 -]
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     tfall                    trise
+Description:        "pulse fall time"        "pulse rise time"
+Data_Type:          real                     real
+Default_Value:      500e-12                  20e-12
+Limits:             -                        -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                      yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     tdelay                 inull
+Description:        "pulse delay"          "max current"
+Data_Type:          real                   real
+Default_Value:      0                      0
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:       -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     tperiod                ctrlthres
+Description:        "pulse repetition"     "control voltage threshold"
+Data_Type:          real                   real
+Default_Value:      0                      0.5
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     let                    cdepth
+Description:        "lin energy transfer"  "charge collection depth"
+Data_Type:          real                   real
+Default_Value:      10                     1
+Limits:             -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     angle                  perlim
+Description:        "particle angle"       "pulse repetition"
+Data_Type:          real                   boolean
+Default_Value:      0                      TRUE
+Limits:             [0 1.57079]            -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    last_t_value
+Data_Type:          pointer
+Vector:              no
+Description:        "next pulse start time"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    pulse_number
+Data_Type:          pointer
+Vector:              no
+Description:        "number of pulse"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    last_ctrl
+Data_Type:          pointer
+Vector:              no
+Description:        "last control value"
+
+Description
+This code model generates "double exponentially" formed current pulses according to
+
+i(t) = inull * (exp(-(t-tdelay)/tfall) - (exp(-(t-tdelay)/trise) for t > tdelay
+i(t) = 0       for t < tdelay
+
+with inull given as parameter input or (if not given), calculated as
+inull = 1.035e-14 * let/cos(angle) * cdepth / (tfall - trise)
+with data for silicon, cdepth in µm, let in MeV*cm²/mg, angle in radians.
+
+Minimum is one pulse output (a node pair, or a single node with the other grounded).
+Several output node pairs may be defined per code model instance. Parameter tperiod
+may then be used to create pulses in sequence. Per default only one sequence is running,
+with one pulse for each node.
+Parameter perlim, set to FALSE, allows running and repeating the sequence until
+the end of the simulation. The first pulse is issued in the first
+node pair of the node list in the vector [], the second (after time tperiod has elapsed), 
+is injected by the second node (pair) of the list and so on. When the sequence is repeated, 
+again the output starts pulsing at port (node pair) number 1.
+
+The control input ctrl (voltage or current) may be used
+to start or repeat the whole sequence, depending on the circuit status. A rising voltage
+at ctrl, when crossing the threshold given by ctrlthres, will initiate the sequence (including
+tdelay and tperiod). If set to NULL, the pulse (sequence) will start immediately after tdelay.
+
+'mon' is a monitoring output, showing each pulse as a voltage equivalent to the current. It
+may be used just for plotting, or for re-triggering an action.
+
+This model will work in transient analysis.
+
+Example ngspice usage (with control)
+
+aseegen1 ctrl mon [%id(n1 m1) %id(n2 m2) %id(n1 m1) %id(n2 m2)] seemod1
+.model seemod1 seegen (tdelay = 8n tperiod=25n)
+
+Example ngspice usage (without control, ctrl replaced by NULL, parameters as offered by default)
+
+aseegen2 NULL mon [%id(n1 m1) %id(n5 n6) %id(n6 n7) %i(isingle) ] seemod2
+.model seemod2 seegen (tdelay = 0 tperiod=0 ctrlthres=0.5 inull=0 tfall=500p trise=20p perlim=FALSE)

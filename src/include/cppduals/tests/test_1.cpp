@@ -81,9 +81,7 @@ expm4(const Eigen::EigenBase<DerivedA> & A_,
   R.setIdentity();
   R += B;
   ReturnT S = B;
-  int ni = 0;
   for (int ii = 2; ii < maxt; ii++) {
-    ni++;
     S = Real(1.0/ii) * S * B;
     R += S;
     auto Sn = S.norm();

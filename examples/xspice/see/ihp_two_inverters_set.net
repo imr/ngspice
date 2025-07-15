@@ -1,0 +1,47 @@
+* simple inverter, IHP Open PDK
+
+* Path to the PDK
+*.include "D:\Spice_general\skywater-pdk\libraries\sky130_fd_pr\latest\models\corners/tt.spice"
+.lib "D:\Spice_general\IHP-Open-PDK\ihp-sg13g2\libs.tech\ngspice\models\cornerMOSlv.lib" mos_tt
+*.include lib_out1.lib
+
+.param vdd = 1.2
+.param deltat=11n deltat2=27n
+
+* the voltage sources: 
+Vdd vd gnd DC 'vdd'
+V1 in gnd pulse(0 'vdd' 0p 200p 100p 5n 10.1n)
+
+* Eponential current source
+Iset1 out1 0 EXP(0 250u 'deltat' 10p 'deltat' 500p)
+Iset2 out1 0 EXP(0 250u 'deltat2' 10p 'deltat2' 500p)
+*Cset out 0 10f
+
+Xnot1 in vdd vss out1 not1
+Xnot2 out1 vdd vss out2 not1
+
+Vmeasvss vss 0 0
+Vmeasvdd vd vdd 0
+
+.subckt not1 a vdd vss z
+xm01   z a     vdd     vdd sg13_lv_pmos  l=0.15u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+xm02   z a     vss     vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+c3  a     vss   0.384f
+c2  z     vss   0.576f
+.ends
+
+* simulation command: 
+.tran 100ps 50ns ; 0 10p
+
+.options method=gear
+
+.control
+run
+rusage
+*set nolegend
+set xbrushwidth=3
+plot i(Vmeasvss) i(Vmeasvdd)
+plot in out1+2 out2+4
+.endc
+
+.end

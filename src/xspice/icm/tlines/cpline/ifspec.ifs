@@ -1,0 +1,191 @@
+/* ===========================================================================
+ FILE    ifspec.ifs
+ Copyright 2025 Vadim Kuznetsov
+
+ Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+ 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ */
+
+/* Ports connection
+    4 --||||||-- 3
+
+    1 --||||||-- 2
+*/
+
+NAME_TABLE:
+
+Spice_Model_Name:      cpline
+C_Function_Name:       cm_cpline
+Description:           "Generic transmission line"
+
+
+PORT_TABLE:
+Port_Name:             p1
+Description:           "Terminals Line1"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p2
+Description:           "Terminals Line1"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p3
+Description:           "Terminals Line2"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p4
+Description:           "Terminals Line2"
+Direction:             inout
+Default_Type:          hd
+Allowed_Types:         [hd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p1s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p2s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p3s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+PORT_TABLE:
+Port_Name:             p4s
+Description:           "Sensing terminals line 1"
+Direction:             in
+Default_Type:          vd
+Allowed_Types:         [vd]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+Parameter_Name:        l
+Description:           "length"
+Data_Type:             real
+Default_Value:         1.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        ze
+Description:           "characteristic impedance of even mode"
+Data_Type:             real
+Default_Value:         50.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+Parameter_Name:        zo
+Description:           "characteristic impedance of odd mode"
+Data_Type:             real
+Default_Value:         50.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+PARAMETER_TABLE:
+Parameter_Name:        ae
+Description:           "attenuation per length (dB) even mode"
+Data_Type:             real
+Default_Value:         0.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+PARAMETER_TABLE:
+Parameter_Name:        ao
+Description:           "attenuation per length (dB) odd mode"
+Data_Type:             real
+Default_Value:         0.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+PARAMETER_TABLE:
+Parameter_Name:        ere
+Description:           "dielectric constant even mode"
+Data_Type:             real
+Default_Value:         1.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+PARAMETER_TABLE:
+Parameter_Name:        ero
+Description:           "dielectric constant odd mode"
+Data_Type:             real
+Default_Value:         1.0
+Limits:                -
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    sim_points_data
+Description:        "local static data"
+Data_Type:          pointer
+

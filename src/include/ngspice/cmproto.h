@@ -99,6 +99,7 @@ double cm_netlist_get_l(void);
 
 void        cm_irreversible(unsigned int);
 const char *cm_get_node_name(const char *, unsigned int);
+const char *cm_get_neg_node_name(const char *, unsigned int);
 bool        cm_probe_node(unsigned int, unsigned int, void *);
 bool        cm_schedule_output(unsigned int, unsigned int, double, void *);
 

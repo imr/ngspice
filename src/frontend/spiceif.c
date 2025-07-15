@@ -55,6 +55,7 @@ CDHW*/
 #include "ngspice/iferrmsg.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/hash.h"
+#include "ngspice/devdefs.h"
 
 #include "circuits.h"
 #include "spiceif.h"
@@ -1621,6 +1622,10 @@ void com_snload(wordlist *wl)
     _foo(ckt->CKTstat, STATistics, 1);
     ckt->CKTstat->STATdevNum = NULL;
     _foo(ckt->CKTstat->STATdevNum, STATdevList, -1);
+    ckt->CKTstat->devCounts = NULL;
+    _foo(ckt->CKTstat->devCounts, size_t, DEVmaxnum + 1);
+    ckt->CKTstat->devTimes = NULL;
+    _foo(ckt->CKTstat->devTimes, double, DEVmaxnum + 1);
 
 #ifdef XSPICE
     _foo(ckt->evt, Evt_Ckt_Data_t, 1);
@@ -1776,6 +1781,8 @@ void com_snsave(wordlist *wl)
     /* Finally the stats */
     _foo(ckt->CKTstat, STATistics, 1);
     _foo(ckt->CKTstat->STATdevNum, STATdevList, 1);
+    _foo(ckt->CKTstat->devCounts, size_t, DEVmaxnum + 1);
+    _foo(ckt->CKTstat->devTimes, double, DEVmaxnum + 1);
 
 #ifdef XSPICE
     /* FIXME struct ckt->evt->data and others are not stored

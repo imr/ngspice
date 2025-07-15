@@ -16,14 +16,24 @@
 #define CPPDUALS_DUAL
 
 #ifndef PARSED_BY_DOXYGEN
-#include <cmath>
-#include <ctgmath>
+#define _DUALS_CONSTEXPR constexpr
+
+///// FOR LIBCPP /////
+#include <cstddef>
+#if !defined(_LIBCPP_BEGIN_NAMESPACE_STD)
+namespace std {
+template <typename T> class complex;
+}
+#else // LIBCPP
+_LIBCPP_BEGIN_NAMESPACE_STD
+template <typename T> class complex;
+_LIBCPP_END_NAMESPACE_STD
+#endif // LIBCPP
+
 #include <limits>
 #include <type_traits>
-#include <complex>
-#include <random>
-#include <iostream>
-#endif
+
+#endif // PARSED_BY_DOXYGEN
 
 #if !defined(CPPDUALS_IGNORE_COMPILER_VERSION) && !defined(_WIN32)
 #if __cplusplus < 201103L
@@ -180,11 +190,12 @@ T rpart(dual<T>)        // Real part
 T dpart(dual<T>)        // Dual part
 dual<T> dconj(dual<T>)  // Dual-conjugate
 
-dual<T> random(dual<T> low = {0,0}, dual<T> high = {1,0})
-
+// Transcendental functions
 dual<T> exp(dual<T>)
 dual<T> log(dual<T>)
 dual<T> log10(dual<T>)
+dual<T> log2(dual<T>)
+dual<T> logb(dual<T> x)
 dual<T> pow(dual<T>, U)
 dual<T> pow(U, dual<T>)
 dual<T> pow(dual<T>, dual<T>)
@@ -196,7 +207,9 @@ dual<T> tan(dual<T>)
 dual<T> asin(dual<T>)
 dual<T> acos(dual<T>)
 dual<T> atan(dual<T>)
-
+dual<T> atan2(dual<T>, dual<T>)
+dual<T> hypot(dual<T>, dual<T>)
+dual<T> scalbn(dual<T> arg, int ex)
 // TODO:
 dual<T> sinh(dual<T>)
 dual<T> cosh(dual<T>)
@@ -205,18 +218,35 @@ dual<T> asinh(dual<T>)
 dual<T> acosh(dual<T>)
 dual<T> atanh(dual<T>)
 
+dual<T> erf(dual<T>)
+dual<T> erfc(dual<T>)
+dual<T> tgamma(dual<T>)
+dual<T> lgamma(dual<T>)
+
 // Non-differentiable operations on the real part.
-T frexp(duals::dual<T> arg, int* exp );
-duals::dual<T> ldexp(duals::dual<T> arg, int exp );
-T trunc(duals::dual<T> d);
-T floor(duals::dual<T> d);
-T ceil(duals::dual<T> d);
-T round(duals::dual<T> d);
-int fpclassify(duals::dual<T> d);
-bool isfinite(duals::dual<T> d);
-bool isnormal(duals::dual<T> d);
-bool isinf(duals::dual<T> d);
-bool isnan(duals::dual<T> d);
+dual<T> abs(dual<T> d)
+dual<T> fabs(dual<T> d)
+dual<T> fmax(dual<T> x, dual<T> y)
+dual<T> fmin(dual<T> x, dual<T> y)
+dual<T> frexp(dual<T> arg, int* exp )
+dual<T> ldexp(dual<T> arg, int exp )
+dual<T> trunc(dual<T> d)
+dual<T> floor(dual<T> d)
+dual<T> ceil(dual<T> d)
+dual<T> round(dual<T> d)
+
+// floating point functions
+int fpclassify(dual<T> d)
+bool isfinite(dual<T> d)
+bool isnormal(dual<T> d)
+bool isinf(dual<T> d)
+bool isnan(dual<T> d)
+bool signbit(dual<T> d)
+dual<T> copysign(dual<T> x, dual<T> y)
+
+// Utility functions
+dual<T> random(dual<T> low = {0,0}, dual<T> high = {1,0})
+dual<T> random2(dual<T> low = {0,0}, dual<T> high = {1,0})
 
 // Stream IO
 template<T> operator>>(basic_istream<charT, traits> &, dual<T> &);
@@ -256,7 +286,7 @@ are disabled by default, but can be enabled by `#define
 CPPDUALS_LIBFMT` for the `dual<>` formatter, and/or `#define
 CPPDUALS_LIBFMT_COMPLEX` for the std::complex<> formatter. There are
 three custom formatting flags that control how the dual numbers are
-printed, these must come before the normal `{fmt}` formatting spec:
+printed, these must come before the normal `{fmt}` formatting spec
 '$', '*', ','.  For me these are about 3x faster than iostreams.
 
 ```
@@ -333,7 +363,7 @@ template <class T> struct dual_traits<dual<T>>
 template <class T> struct dual_traits<std::complex<dual<T>>>
 {
   /// complex<dual<T>> have the same 'depth' as their dual.
-  enum { depth = dual_traits<T>::depth };
+  enum { depth = dual_traits<dual<T> >::depth };
 
   /// The real storage type.
   typedef typename dual_traits<T>::real_type real_type;
@@ -361,6 +391,8 @@ template <class T, class U, class V = void> struct promote : std::common_type<T,
 /// Can types A and B be promoted to a common type?
 template<class A, class B> using can_promote = detail::has_member_type<promote<A,B>>;
 
+// dual<T> dual<U>
+// T == U
 template <class T, class U>
 struct promote<dual<T>, dual<U>,
                typename std::enable_if<(can_promote<T,U>::value
@@ -368,6 +400,9 @@ struct promote<dual<T>, dual<U>,
 {
   typedef dual<typename promote<U,T>::type> type;
 };
+// dual<T> U
+// T >= U
+// U is not complex
 template <class T, class U>
 struct promote<dual<T>, U,
                typename std::enable_if<(can_promote<T,U>::value
@@ -376,6 +411,9 @@ struct promote<dual<T>, U,
 {
   typedef dual<typename promote<U,T>::type> type;
 };
+// U dual<T>
+// T >= U
+// U is not complex
 template <class T, class U>
 struct promote<U, dual<T>,
                typename std::enable_if<(can_promote<T,U>::value
@@ -385,6 +423,8 @@ struct promote<U, dual<T>,
   typedef dual<typename promote<U,T>::type> type;
 };
 // /////////////////////////////////////////////////
+// complex<T> complex<U>
+// T == U
 template <class T, class U>
 struct promote<std::complex<T>, std::complex<U>,
                typename std::enable_if<(can_promote<T,U>::value
@@ -392,6 +432,9 @@ struct promote<std::complex<T>, std::complex<U>,
 {
   typedef std::complex<typename promote<T,U>::type> type;
 };
+// complex<T> U
+// T >= U
+// U is not complex
 template <class T, class U>
 struct promote<std::complex<T>, U,
                typename std::enable_if<(can_promote<T,U>::value
@@ -400,6 +443,9 @@ struct promote<std::complex<T>, U,
 {
   typedef std::complex<typename promote<T,U>::type> type;
 };
+// U complex<T>
+// T >= U
+// U is not complex
 template <class T, class U>
 struct promote<U, std::complex<T>,
                typename std::enable_if<(can_promote<T,U>::value
@@ -446,7 +492,7 @@ struct is_compound<duals::dual<T>> : true_type {};
 // Modification of std::numeric_limits<> per
 // C++03 17.4.3.1/1, and C++11 18.3.2.3/1.
 template <class T>
-struct numeric_limits<duals::dual<T>> : numeric_limits<T> {
+struct numeric_limits<duals::dual<T> > : public numeric_limits<T> {
   static constexpr bool is_specialized = true;
   static constexpr duals::dual<T> min NOMACRO ()  { return numeric_limits<T>::min NOMACRO (); }
   static constexpr duals::dual<T> lowest()        { return numeric_limits<T>::lowest(); }
@@ -477,24 +523,24 @@ namespace duals {
 
 // Both T and U are wrapped in a dual<>
 #define CPPDUALS_ENABLE_SAME_DEPTH_AND_COMMON_T(T,U)                    \
-  typename std::enable_if<(int)duals::dual_traits<T>::depth ==          \
-                          (int)duals::dual_traits<U>::depth, int>::type = 0, \
-    typename std::enable_if<can_promote<T,U>::value,int>::type = 0,     \
-    typename common_t = dual<typename duals::promote<T,U>::type>
+  typename common_t = dual<typename duals::promote<T,U>::type>,         \
+    typename std::enable_if<(int)duals::dual_traits<T>::depth ==        \
+                            (int)duals::dual_traits<U>::depth, int>::type = 0, \
+    typename std::enable_if<can_promote<T,U>::value,int>::type = 0
 
 // T is wrapped in a dual<>, U may or may not be.
 #define CPPDUALS_ENABLE_LEQ_DEPTH_AND_COMMON_T(T,U)                     \
+  typename common_t = typename duals::promote<dual<T>, U>::type,        \
   typename std::enable_if<((int)duals::dual_traits<T>::depth >=         \
                            (int)duals::dual_traits<U>::depth), int>::type = 0, \
-    typename std::enable_if<can_promote<dual<T>,U>::value,int>::type = 0, \
-    typename common_t = typename duals::promote<dual<T>, U>::type
+    typename std::enable_if<can_promote<dual<T>,U>::value,int>::type = 0
 
 // T is wrapped in complex<dual<>>
 #define CPPDUALS_ENABLE_LEQ_DEPTH_AND_CX_COMMON_T(T,U)                  \
+  typename common_t = typename duals::promote<std::complex<dual<T> >,U>::type, \
   typename std::enable_if<((int)duals::dual_traits<T>::depth >=         \
                            (int)duals::dual_traits<U>::depth), int>::type = 0, \
-  typename std::enable_if<can_promote<std::complex<dual<T>>,U>::value,int>::type = 0, \
-    typename common_t = typename duals::promote<std::complex<dual<T> >,U>::type
+  typename std::enable_if<can_promote<std::complex<dual<T>>,U>::value,int>::type = 0
 
 #define CPPDUALS_ENABLE_IF(...) typename std::enable_if< (__VA_ARGS__) , int>::type = 0
 
@@ -528,16 +574,13 @@ public:
     : _real(re), _dual(du) {}
 
   /// Copy construct from a dual of equal depth.
-#if defined (_MSC_VER)
-#pragma warning (disable : 4244) /* floats are not used in HICUM */
-#endif
   template<class X, CPPDUALS_ONLY_SAME_DEPTH_AS_T(T,X),
            CPPDUALS_ENABLE_IF(!is_complex<X>::value)>
   dual(const dual<X> & x)
     : _real(x.rpart()), _dual(x.dpart()) {}
 
   /// Cast to a complex<dual<>> with real part equal to *this.
-  operator std::complex<dual<T>>() { return std::complex<dual<T>>(*this); }
+  operator std::complex<dual<T>>() { return std::complex<dual<T>>(*this, (T)0); }
 
   /// Explicit cast to an arithmetic type retains the rpart()
   template <class X,
@@ -589,7 +632,7 @@ public:
   template<class X, CPPDUALS_ONLY_SAME_DEPTH_AS_T(T,X)>
   dual<T> & operator-=(const dual<X> & x) { _real -= x.rpart(); _dual -= x.dpart(); return *this; }
 
-  /// Multiply this dual with a dual of same of lower depth.
+  /// Multiply this dual with a dual of same depth.
   template<class X, CPPDUALS_ONLY_SAME_DEPTH_AS_T(T,X)>
   dual<T> & operator*=(const dual<X> & x) {
     _dual = _real * x.dpart() + _dual * x.rpart();
@@ -733,6 +776,768 @@ CPPDUALS_LHS_COMPARISON(!=)
 
 #endif // PARSED_BY_DOXYGEN
 
+/// Complex Conjugate of a dual is just the dual.
+template<class T> dual<T> conj(const dual<T> & x) { return x; }
+
+/// Conjugate a thing that's not dual and not complex -- it has no
+/// complex value so just return it.  This is different from
+/// std::conj() which promotes the T to a std::complex<T>.
+template<class T, CPPDUALS_ENABLE_IF(!is_dual<T>::value &&
+                                     !is_complex<T>::value &&
+                                     std::is_arithmetic<T>::value)>
+T conj(const T & x) { return x; }
+
+/// Dual Conjugate, such that x*dconj(x) = rpart(x)^2.  Different
+/// function name from complex conjugate conj().
+template<class T> dual<T> dconj(const dual<T> & x) {
+  return dual<T>(x.rpart(), - x.dpart());
+}
+
+/// Dual Conjugate of a complex, such that x*dconj(x) = rpart(x)^2.
+/// Different function name from complex conjugate conj().
+template<class T> std::complex<T> dconj(const std::complex<T> & x) {
+  return std::complex<T>(dconj(x.real()), dconj(x.imag()));
+}
+
+/// Conjugate a thing that's not dual and not complex.
+template<class T, CPPDUALS_ENABLE_IF(!is_dual<T>::value &&
+                                     !is_complex<T>::value &&
+                                     std::is_arithmetic<T>::value)>
+T dconj(const T & x) { return x; }
+
+namespace detail {
+  template<class T> dual<T> exp_impl(const dual<T> & x);
+  template<class T> dual<T> log_impl(const dual<T> & x);
+  template<class T> dual<T> log10_impl(const dual<T> & x);
+  template<class T> dual<T> log2_impl(const dual<T> & x);
+  template<class T> dual<T> logb_impl(const dual<T> & x);
+  template<typename T, typename U, typename common_t>
+  common_t pow_dual_scalar(const dual<T>& x, const U& y);
+  template<typename T, typename U, typename common_t>
+  common_t pow_scalar_dual(const U& x, const dual<T>& y);
+  template<typename T>
+  std::complex<dual<T>> pow_complex_dual(const std::complex<dual<T>>& x, const dual<T>& y);
+  template<typename T>
+  std::complex<dual<T>> pow_dual_complex(const dual<T>& x, const std::complex<dual<T>>& y);
+  template<typename T, typename U, typename common_t>
+  common_t pow_dual_dual(const dual<T>& x, const dual<U>& y);
+  template<class T> dual<T> sqrt_impl(const dual<T> & x);
+  template<class T> dual<T> cbrt_impl(const dual<T> & x);
+  template<class T> dual<T> sin_impl(const dual<T> & x);
+  template<class T> dual<T> cos_impl(const dual<T> & x);
+  template<class T> dual<T> tan_impl(const dual<T> & x);
+  template<class T> dual<T> asin_impl(const dual<T> & x);
+  template<class T> dual<T> acos_impl(const dual<T> & x);
+  template<class T> dual<T> atan_impl(const dual<T> & x);
+  template<class T, class U, typename common_t>
+  common_t atan2_dual_scalar(const dual<T> & y, const U & x);
+  template<class T, class U, typename common_t>
+  common_t atan2_scalar_dual(const U & y, const dual<T> & x);
+  template<class T> dual<T> atan2_dual_dual(const dual<T> & y, const dual<T> & x);
+  template<class T> dual<T> hypot_impl(const dual<T> & x, const dual<T> & y);
+  template<class T> dual<T> scalbn_impl(const dual<T> & arg, int ex);
+  template<class T> dual<T> sinh_impl(const dual<T> & x);
+  template<class T> dual<T> cosh_impl(const dual<T> & x);
+  template<class T> dual<T> tanh_impl(const dual<T> & x);
+  template<class T> dual<T> asinh_impl(const dual<T> & x);
+  template<class T> dual<T> acosh_impl(const dual<T> & x);
+  template<class T> dual<T> atanh_impl(const dual<T> & x);
+  template<class T> dual<T> erf_impl(const dual<T> & x);
+  template<class T> dual<T> erfc_impl(const dual<T> & x);
+  template<class T> dual<T> tgamma_impl(const dual<T> & x);
+  template<class T> dual<T> lgamma_impl(const dual<T> & x);
+  template<class T> dual<T> abs_impl(const dual<T> & x);
+  template<class T> dual<T> fabs_impl(const dual<T> & x);
+  template<class T> dual<T> fmax_impl(const dual<T> & x, const dual<T> & y);
+  template<class T> dual<T> fmin_impl(const dual<T> & x, const dual<T> & y);
+  template<class T> dual<T> frexp_impl(const dual<T> & x, int* exp);
+  template<class T> dual<T> ldexp_impl(const dual<T> & x, int exp);
+  template<class T> dual<T> trunc_impl(const dual<T> & x);
+  template<class T> dual<T> floor_impl(const dual<T> & x);
+  template<class T> dual<T> ceil_impl(const dual<T> & x);
+  template<class T> dual<T> round_impl(const dual<T> & x);
+  template<class T> int fpclassify_impl(const dual<T> & x);
+  template<class T> bool isfinite_impl(const dual<T> & x);
+  template<class T> bool isnormal_impl(const dual<T> & x);
+  template<class T> bool isinf_impl(const dual<T> & x);
+  template<class T> bool isnan_impl(const dual<T> & x);
+  template<class T> bool signbit_impl(const dual<T> & x);
+  template<class T> dual<T> copysign_impl(const dual<T> & x, const dual<T> & y);
+  template<class T> dual<T> log1p_impl(const dual<T> & x);
+  template<class T> dual<T> expm1_impl(const dual<T> & x);
+  template<class T> dual<T> random_impl(const dual<T> & low, const dual<T> & high);
+  template<class T> dual<T> random2_impl(const dual<T> & low, const dual<T> & high);
+}
+
+/// /// /// /// /// /// /// ///
+/// Prototypes
+///
+  
+// Public interfaces that forward to implementations
+template<class T> dual<T> exp(const dual<T> & x) { return detail::exp_impl(x); }
+template<class T> dual<T> log(const dual<T> & x) { return detail::log_impl(x); }
+template<class T> dual<T> log10(const dual<T> & x) { return detail::log10_impl(x); }
+template<class T> dual<T> log2(const dual<T> & x) { return detail::log2_impl(x); }
+template<class T> dual<T> logb(const dual<T> & x) { return detail::logb_impl(x); }
+template<typename T, typename U, CPPDUALS_ENABLE_LEQ_DEPTH_AND_COMMON_T(T,U), CPPDUALS_ENABLE_IF(!is_complex<U>::value)>
+common_t pow(const dual<T>& x, const U& y) { return detail::pow_dual_scalar<T,U,common_t>(x, y); }
+template<typename T, typename U, CPPDUALS_ENABLE_LEQ_DEPTH_AND_COMMON_T(T,U), CPPDUALS_ENABLE_IF(!is_complex<U>::value)>
+common_t pow(const U& x, const dual<T>& y) { return detail::pow_scalar_dual<T,U,common_t>(x, y); }
+template <typename T>
+std::complex<dual<T>> pow(const dual<T> & x, const std::complex<dual<T>> & y) { return detail::pow_dual_complex<T>(x, y); }
+template <typename T>
+std::complex<dual<T>> pow(const std::complex<dual<T>> & x, const dual<T>& y) { return detail::pow_complex_dual<T>(x, y); }
+template <typename T, typename U, CPPDUALS_ENABLE_SAME_DEPTH_AND_COMMON_T(T,U)>
+common_t pow(const dual<T>& x, const dual<U>& y) { return detail::pow_dual_dual<T,U,common_t>(x, y); }
+template<class T> dual<T> sqrt(const dual<T> & x) { return detail::sqrt_impl(x); }
+template<class T> dual<T> cbrt(const dual<T> & x) { return detail::cbrt_impl(x); }
+template<class T> dual<T> sin(const dual<T> & x) { return detail::sin_impl(x); }
+template<class T> dual<T> cos(const dual<T> & x) { return detail::cos_impl(x); }
+template<class T> dual<T> tan(const dual<T> & x) { return detail::tan_impl(x); }
+template<class T> dual<T> asin(const dual<T> & x) { return detail::asin_impl(x); }
+template<class T> dual<T> acos(const dual<T> & x) { return detail::acos_impl(x); }
+template<class T> dual<T> atan(const dual<T> & x) { return detail::atan_impl(x); }
+template<class T, class U, CPPDUALS_ENABLE_LEQ_DEPTH_AND_COMMON_T(T,U)>
+common_t atan2(const dual<T> & y, const U & x) { return detail::atan2_dual_scalar<T,U,common_t>(y, x); }
+template<class T, class U, CPPDUALS_ENABLE_LEQ_DEPTH_AND_COMMON_T(T,U)>
+common_t atan2(const U & y, const dual<T> & x) { return detail::atan2_scalar_dual<T,U,common_t>(y, x); }
+template<class T> dual<T> atan2(const dual<T> & y, const dual<T> & x) { return detail::atan2_dual_dual(y, x); }
+template<class T> dual<T> hypot(const dual<T> & x, const dual<T> & y) { return detail::hypot_impl(x, y); }
+template<class T> dual<T> scalbn(const dual<T> & arg, int ex) { return detail::scalbn_impl(arg, ex); }
+template<class T> dual<T> sinh(const dual<T> & x) { return detail::sinh_impl(x); }
+template<class T> dual<T> cosh(const dual<T> & x) { return detail::cosh_impl(x); }
+template<class T> dual<T> tanh(const dual<T> & x) { return detail::tanh_impl(x); }
+template<class T> dual<T> asinh(const dual<T> & x) { return detail::asinh_impl(x); }
+template<class T> dual<T> acosh(const dual<T> & x) { return detail::acosh_impl(x); }
+template<class T> dual<T> atanh(const dual<T> & x) { return detail::atanh_impl(x); }
+/// The error function.  Make sure to `#include <math.h>` before
+/// `#include <duals/dual>` to use this function.
+template<class T> dual<T> erf(const dual<T> & x) { return detail::erf_impl(x); }
+template<class T> dual<T> erfc(const dual<T> & x) { return detail::erfc_impl(x); }
+template<class T> dual<T> tgamma(const dual<T> & x) { return detail::tgamma_impl(x); }
+template<class T> dual<T> lgamma(const dual<T> & x) { return detail::lgamma_impl(x); }
+template<class T> dual<T> abs(const dual<T> & x) { return detail::abs_impl(x); }
+template<class T> dual<T> fabs(const dual<T> & x) { return detail::fabs_impl(x); }
+template<class T> dual<T> fmax(const dual<T> & x, const dual<T> & y) { return detail::fmax_impl(x, y); }
+template<class T> dual<T> fmin(const dual<T> & x, const dual<T> & y) { return detail::fmin_impl(x, y); }
+
+template<class T> dual<T> frexp(const dual<T> & x, int* exp) { return detail::frexp_impl(x, exp); }
+template<class T> dual<T> ldexp(const dual<T> & x, int exp) { return detail::ldexp_impl(x, exp); }
+//template<class T> dual<T> trunc(const dual<T> & x) { return detail::trunc_impl(x); }
+template<class T> dual<T> trunc(const dual<T> & x) { return detail::trunc_impl(x); }
+template<class T> dual<T> floor(const dual<T> & x) { return detail::floor_impl(x); }
+template<class T> dual<T> ceil(const dual<T> & x) { return detail::ceil_impl(x); }
+template<class T> dual<T> round(const dual<T> & x) { return detail::round_impl(x); }
+
+template<class T> int fpclassify(const dual<T> & x) { return detail::fpclassify_impl(x); }
+template<class T> bool isfinite(const dual<T> & x) { return detail::isfinite_impl(x); }
+template<class T> bool isnormal(const dual<T> & x) { return detail::isnormal_impl(x); }
+template<class T> bool isinf(const dual<T> & x) { return detail::isinf_impl(x); }
+template<class T> bool isnan(const dual<T> & x) { return detail::isnan_impl(x); }
+template<class T> bool signbit(const dual<T> & x) { return detail::signbit_impl(x); }
+template<class T> dual<T> copysign(const dual<T> & x, const dual<T> & y) { return detail::copysign_impl(x, y); }
+
+//template<class T> dual<T> random(const dual<T> & low, const dual<T> & high) { return detail::random_impl(low, high); }
+//template<class T> dual<T> random2(const dual<T> & low, const dual<T> & high) { return detail::random2_impl(low, high); }
+
+namespace utils {
+template <typename T> int sgn(T val) {
+  return (T(0) < val) - (val < T(0));
+}
+}
+
+template<class T> dual<T> log1p(const dual<T> & x) {return detail::log1p_impl(x);}
+template<class T> dual<T> expm1(const dual<T> & x) {return detail::expm1_impl(x);}
+
+#if __cpp_user_defined_literals >= 200809
+/// Dual number literals in namespace duals::literals
+inline namespace literals
+{
+using duals::dual;
+constexpr dual<float> operator""_ef(long double du)
+{
+  return { 0.0f, static_cast<float>(du) };
+}
+constexpr dual<float> operator""_ef(unsigned long long du)
+{
+  return { 0.0f, static_cast<float>(du) };
+}
+constexpr dual<double> operator""_e(long double du)
+{
+  return { 0.0, static_cast<double>(du) };
+}
+constexpr dual<double> operator""_e(unsigned long long du)
+{
+  return { 0.0, static_cast<double>(du) };
+}
+constexpr dual<long double> operator""_el(long double du)
+{
+  return { 0.0l, du };
+}
+constexpr dual<long double> operator""_el(unsigned long long du)
+{
+  return { 0.0l, static_cast<long double>(du) };
+}
+} // namespace literals
+#endif
+
+// shortcut type names
+typedef dual<float> dualf;
+typedef dual<double> duald;
+typedef dual<long double> dualld;
+typedef dual<dualf> hyperdualf;
+typedef dual<duald> hyperduald;
+typedef dual<dualld> hyperdualld;
+
+} // namespace duals
+
+/// /// /// /// /// /// /// /// /// /// /// /// /// /// ///
+/// Insert some stuff into std::
+/// /// /// /// /// /// /// /// /// /// /// /// /// /// ///
+
+#ifdef _LIBCPP_BEGIN_NAMESPACE_STD
+_LIBCPP_BEGIN_NAMESPACE_STD
+#else
+namespace std {
+#endif
+
+// special needs LIBCPP
+#if defined(_LIBCPP_BEGIN_NAMESPACE_STD)
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_copysign(duals::dual<DT> a, duals::dual<DT> b);
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_fabs(duals::dual<DT> a);
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI bool __constexpr_isfinite(duals::dual<DT> a);
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI bool __constexpr_isinf(duals::dual<DT> a);
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_fmax(duals::dual<DT> a, duals::dual<DT> b);
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_scalbn(duals::dual<DT> a, int exp);
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_logb(duals::dual<DT> a);
+#endif
+
+// export functions to the std namespace
+using duals::exp;
+using duals::log;
+using duals::log10;
+using duals::log2;
+using duals::logb;
+using duals::pow;
+using duals::sqrt;
+using duals::cbrt;
+using duals::sin;
+using duals::cos;
+using duals::tan;
+using duals::asin;
+using duals::acos;
+using duals::atan;
+using duals::atan2;
+using duals::hypot;
+using duals::scalbn;
+using duals::sinh;
+using duals::cosh;
+using duals::tanh;
+using duals::asinh;
+using duals::acosh;
+using duals::atanh;
+using duals::erf;
+using duals::erfc;
+using duals::tgamma;
+using duals::lgamma;
+using duals::abs;
+using duals::fabs;
+using duals::fmax;
+using duals::fmin;
+using duals::frexp;
+using duals::ldexp;
+using duals::trunc;
+using duals::floor;
+using duals::ceil;
+using duals::round;
+using duals::fpclassify;
+using duals::isfinite;
+using duals::isnormal;
+using duals::isinf;
+using duals::isnan;
+using duals::signbit;
+using duals::copysign;
+//using duals::random;
+//using duals::random2;
+
+// TODO: figure out if still needed
+namespace __math {
+  using duals::isinf;
+}
+
+#ifdef _LIBCPP_END_NAMESPACE_STD
+_LIBCPP_END_NAMESPACE_STD
+#else
+} // namespace std
+#endif
+
+/// /// /// /// /// /// /// /// /// /// /// /// /// /// ///
+/// Implementations
+/// /// /// /// /// /// /// /// /// /// /// /// /// /// ///
+
+#include <cmath>
+#include <cerrno>
+
+#ifdef _LIBCPP_BEGIN_NAMESPACE_STD
+_LIBCPP_BEGIN_NAMESPACE_STD
+#else
+namespace std {
+#endif
+
+#if defined(_LIBCPP_BEGIN_NAMESPACE_STD)
+// special needs LIBCPP
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_copysign(duals::dual<DT> a, duals::dual<DT> b) { return duals::copysign(a, b); }
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_fabs(duals::dual<DT> a) { return duals::fabs(a); }
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI bool __constexpr_isfinite(duals::dual<DT> a)  { return duals::isfinite(a); }
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI bool __constexpr_isinf(duals::dual<DT> a) { return duals::isinf(a); }
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_fmax(duals::dual<DT> a, duals::dual<DT> b) { return duals::fmax(a, b); }
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_scalbn(duals::dual<DT> a, int exp)  { return duals::scalbn(a, exp); }
+template <class DT> _LIBCPP_CONSTEXPR inline _LIBCPP_HIDE_FROM_ABI duals::dual<DT> __constexpr_logb(duals::dual<DT> a) { return duals::logb(a); }
+#endif
+
+#ifdef _LIBCPP_END_NAMESPACE_STD
+_LIBCPP_END_NAMESPACE_STD
+#else
+} // namespace std
+#endif
+
+namespace duals {
+namespace detail {
+
+/// Exponential e^x
+template<class T> dual<T> exp_impl(const dual<T> & x) {
+  using std::exp;
+  T v = exp(x.rpart());
+  return dual<T>(v,
+                 v * x.dpart());
+}
+
+/// Natural log ln(x)
+template<class T> dual<T> log_impl(const dual<T> & x) {
+  using std::log;
+  T v = log(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else
+    return dual<T>(v, x.dpart() / x.rpart());
+}
+
+template<class T> dual<T> log10_impl(const dual<T> & x) {
+  using std::log;
+  return log(x) / log(static_cast<T>(10));
+}
+
+template<class T> dual<T> log2_impl(const dual<T> & x) {
+  using std::log;
+  return log(x) / log(static_cast<T>(2));
+}
+
+template<class T> duals::dual<T> logb_impl(const duals::dual<T> & x) {
+  using std::log;
+  using std::pow;
+  using std::abs;
+  using std::floor;
+  T v = floor(log(abs(x.rpart())) / log(std::numeric_limits<T>::radix));
+  return duals::dual<T>(v,
+                        x.rpart() - pow(2,v) ? (T)0 : std::numeric_limits<T>::infinity());
+}
+
+// dual<T> ^ U implementation
+template <typename T, typename U, typename common_t>
+common_t pow_dual_scalar(const dual<T>& x, const U& y)
+{
+  using std::pow;
+  typedef typename common_t::value_type V;
+  return common_t(
+      pow(x.rpart(), y),
+      x.dpart() == V(0) ? V(0) : x.dpart() * y * pow(x.rpart(), y - U(1)));
+}
+
+// U ^ dual<T> implementation
+template <typename T, typename U, typename common_t>
+common_t pow_scalar_dual(const U& x, const dual<T>& y)
+{
+  return pow(common_t(x), y);
+}
+
+// U ^ dual<T> implementation
+template <typename T>
+std::complex<duals::dual<T>> pow_complex_dual(const std::complex<duals::dual<T>>& x, const dual<T>& y)
+{
+  using dual_t = duals::dual<T>;
+
+  // 1. Compute the magnitude (r = |x|).
+  //    r = sqrt( (Re x)^2 + (Im x)^2 ), where Re x and Im x are dual<T>.
+  dual_t rr = x.real() * x.real() + x.imag() * x.imag();
+  dual_t r = sqrt(rr);  // Must have sqrt(dual_t) defined in your dual library
+
+  // 2. Compute the argument (theta = arg(x)).
+  //    theta = atan2( Im x, Re x )
+  dual_t theta = atan2(x.imag(), x.real());  // dual-friendly atan2
+
+  // 3. Compute ln(x) = ln(r) + i * theta
+  //    Then multiply by y: y * ln(x)
+  //    realPart = y * ln(r)
+  //    imagPart = y * theta
+  dual_t realPart = y * log(r);
+  dual_t imagPart = y * theta;
+
+  // 4. exponent = exp(realPart)
+  //    Then real/imag of x^y = exponent * cos(imagPart), exponent *
+  //    sin(imagPart)
+  dual_t exponent = exp(realPart);
+
+  dual_t realOut = exponent * cos(imagPart);
+  dual_t imagOut = exponent * sin(imagPart);
+
+  // 5. Return the result as a complex<dual<T>>.
+  return std::complex<dual_t>(realOut, imagOut);
+}
+
+template <typename T>
+std::complex<duals::dual<T>> pow_dual_complex(
+    const dual<T>& x, const std::complex<duals::dual<T>>& y)
+{
+  // For clarity, define short aliases:
+  using dual_t = duals::dual<T>;
+
+  // Extract the real and imaginary parts of y: both are dual<T>.
+  const dual_t& a = y.real();  // exponent's real part
+  const dual_t& b = y.imag();  // exponent's imaginary part
+
+  // 1. Compute ln(x).  We assume x > 0 in the "real" sense.
+  //    (In forward-mode dual, x can carry derivatives, but rpart(x) should be >
+  //    0
+  //     or else you'd need branch handling for negative bases.)
+  dual_t ln_x = log(x);
+
+  // 2. Compute the real exponent = a * ln_x
+  //             and the imaginary exponent = b * ln_x
+  dual_t realExp = a * ln_x;  // a ln(x)
+  dual_t imagExp = b * ln_x;  // b ln(x)
+
+  // 3. The magnitude is exp(a ln(x)):
+  dual_t magnitude = exp(realExp);
+
+  // 4. Then the final real and imaginary parts come from:
+  //    Re(x^y) = magnitude * cos(b ln(x))
+  //    Im(x^y) = magnitude * sin(b ln(x))
+  dual_t realPart = magnitude * cos(imagExp);
+  dual_t imagPart = magnitude * sin(imagExp);
+
+  // 5. Return the complex result.
+  return std::complex<dual_t>(realPart, imagPart);
+}
+
+// dual<T> ^ dual<U> implementation
+template <typename T, typename U, typename common_t>
+common_t pow_dual_dual(const dual<T>& f, const dual<U>& g)
+{
+  using std::log;
+  using std::pow;
+#if 1
+  using std::floor;
+  typedef typename common_t::value_type V;
+  common_t result;
+
+  if (f.rpart() == T(0) && g.rpart() >= U(1)) {
+    if (g.rpart() > U(1)) {
+      result = common_t(0);
+    }
+    else {
+      result = f;
+    }
+  }
+  else {
+    if (f.rpart() < T(0) && g.rpart() == floor(g.rpart())) {
+      V const tmp = g.rpart() * pow(f.rpart(), g.rpart() - U(1.0));
+      result = common_t(pow(f.rpart(), g.rpart()),
+                        f.dpart() == T(0) ? T(0) : f.dpart() * tmp);
+      if (g.dpart() != U(0.0)) {
+        // Return a NaN when g.dpart() != 0.
+        result.dpart(std::numeric_limits<T>::quiet_NaN());
+      }
+    }
+    else {
+      // Handle the remaining cases. For cases 4,5,6,9 we allow the log()
+      // function to generate -HUGE_VAL or NaN, since those cases result in
+      // a nonfinite derivative.
+      V const tmp1 = pow(f.rpart(), g.rpart());
+      V const tmp2 = g.rpart() * pow(f.rpart(), g.rpart() - T(1.0));
+      V const tmp3 = tmp1 * log(f.rpart());
+      result = common_t(tmp1, f.dpart() == T(0) && g.dpart() == U(0)
+                                  ? V(0)
+                                  : tmp2 * f.dpart() + tmp3 * g.dpart());
+    }
+  }
+  return result;
+#else
+  T v = pow(f.rpart(), g.rpart());
+  return common_t(
+      v, pow(f.rpart(), g.rpart() - T(1)) *
+             (g.rpart() * f.dpart() + f.rpart() * log(f.rpart()) * g.dpart()));
+#endif
+}
+
+template<class T> dual<T> sqrt_impl(const dual<T> & x) {
+  using std::sqrt;
+  T v = sqrt(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else
+    return dual<T>(v, x.dpart() / (T(2) * v) );
+}
+
+template<class T> dual<T> cbrt_impl(const dual<T> & x) {
+  using std::cbrt;
+  T v = cbrt(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else
+    return dual<T>(v, x.dpart() / (T(3) * v * v) );
+}
+
+template<class T> dual<T> sin_impl(const dual<T> & x) {
+  using std::sin;
+  using std::cos;
+  return dual<T>(sin(x.rpart()),
+                 x.dpart() * cos(x.rpart()));
+}
+
+template<class T> dual<T> cos_impl(const dual<T> & x) {
+  using std::cos;
+  using std::sin;
+  return dual<T>(cos(x.rpart()),
+                 -sin(x.rpart()) * x.dpart());
+}
+
+template<class T> dual<T> tan_impl(const dual<T> & x) {
+  using std::tan;
+  T v = tan(x.rpart());
+  return dual<T>(v, x.dpart() * (v*v + 1));
+}
+
+template<class T> dual<T> asin_impl(const dual<T> & x) {
+  using std::asin;
+  using std::sqrt;
+  T v = asin(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else
+    return dual<T>(v, x.dpart() / sqrt(1 - x.rpart()*x.rpart()));
+}
+
+template<class T> dual<T> acos_impl(const dual<T> & x) {
+  using std::acos;
+  using std::sqrt;
+  T v = acos(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else
+    return dual<T>(v, -x.dpart() / sqrt(1 - x.rpart()*x.rpart()));
+}
+
+template<class T> dual<T> atan_impl(const dual<T> & x) {
+  using std::atan;
+  T v = atan(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else
+    return dual<T>(v, x.dpart() / (1 + x.rpart() * x.rpart()));
+}
+
+template<class T> dual<T> atan2_dual_dual(const dual<T> & y, const dual<T> & x) {
+  using std::atan2;
+  T v = atan2(y.rpart(), x.rpart());
+  return dual<T>(v,
+                 (x.rpart() * y.dpart() - y.rpart() * x.dpart()) /
+                 (y.rpart() * y.rpart() + x.rpart() * x.rpart()));
+}
+
+template<class T, class U, typename common_t>
+common_t
+atan2_dual_scalar(const dual<T> & y, const U & x) {
+  using std::atan2;
+  T v = atan2(y.rpart(), x);
+  return dual<T>(v,
+                 (x * y.dpart()) /
+                 (y.rpart() * y.rpart() + x * x));
+}
+
+template<class T, class U, typename common_t>
+common_t
+atan2_scalar_dual(const U & y, const dual<T> & x) {
+  using std::atan2;
+  T v = atan2(y, x.rpart());
+  return dual<T>(v,
+                 (-y * x.dpart()) /
+                 (y * y + x.rpart() * x.rpart()));
+}
+
+template<class T> duals::dual<T> hypot_impl(const duals::dual<T> & x, const duals::dual<T> & y) {
+  using std::hypot;
+  return dual<T>(hypot(x.rpart(), y.rpart()),
+                 (x.rpart() * y.dpart() + y.rpart() * x.dpart()) / hypot(x.rpart(), y.rpart()));
+}
+
+template<class T> duals::dual<T> scalbn_impl(const duals::dual<T> & arg, int ex) {
+  return arg * std::pow((T)2, ex);
+}
+
+template<class T> dual<T> sinh_impl(const dual<T> & x) {
+  using std::sinh;
+  using std::cosh;
+  return dual<T>(sinh(x.rpart()),
+                 x.dpart() * cosh(x.rpart()));
+}
+
+template<class T> dual<T> cosh_impl(const dual<T> & x) {
+  using std::cosh;
+  using std::sinh;
+  return dual<T>(cosh(x.rpart()),
+                 x.dpart() * sinh(x.rpart()));
+}
+
+template<class T> dual<T> tanh_impl(const dual<T> & x) {
+  using std::tanh;
+  return dual<T>(tanh(x.rpart()),
+                 x.dpart() * (1 - tanh(x.rpart()) * tanh(x.rpart())));
+}
+
+template<class T> dual<T> asinh_impl(const dual<T> & x) {
+  using std::asinh;
+  using std::sqrt;
+  return dual<T>(asinh(x.rpart()),
+                 x.dpart() / sqrt(1 + x.rpart() * x.rpart()));
+}
+
+template<class T> dual<T> acosh_impl(const dual<T> & x) {
+  using std::acosh;
+  using std::sqrt;
+  return dual<T>(acosh(x.rpart()),
+                 x.dpart() / sqrt(x.rpart() * x.rpart() - 1));
+}
+
+template<class T> dual<T> atanh_impl(const dual<T> & x) {
+  using std::atanh;
+  return dual<T>(atanh(x.rpart()),
+                 x.dpart() / (1 - x.rpart() * x.rpart()));
+}
+
+template<class T> dual<T> log1p_impl(const dual<T> & x) {
+  using std::log1p;
+  return dual<T>(log1p(x.rpart()),
+                 x.dpart() / (1 + x.rpart()));
+}
+
+template<class T> dual<T> expm1_impl(const dual<T> & x) {
+  using std::expm1;
+  using std::exp;
+  return dual<T>(expm1(x.rpart()),
+                 x.dpart() * exp(x.rpart()));
+}
+
+/// The error function.  Make sure to `#include <math.h>` before
+/// `#include <duals/dual>` to use this function.
+template<class T> dual<T> erf_impl(const dual<T> & x) {
+  using std::erf;
+  using std::sqrt;
+  using std::pow;
+  using std::exp;
+  return dual<T>(erf(x.rpart()),
+                 x.dpart() * T(2)/sqrt(T(MY_PI)) * exp(-pow(x.rpart(),T(2))));
+}
+
+/// Error function complement (1 - erf()).
+template<class T> dual<T> erfc_impl(const dual<T> & x) {
+  using std::erfc;
+  using std::sqrt;
+  using std::pow;
+  using std::exp;
+  return dual<T>(erfc(x.rpart()),
+                 x.dpart() * -T(2)/sqrt(T(MY_PI)) * exp(-pow(x.rpart(),T(2))));
+}
+
+/// Gamma function.  Approximation of the dual part.
+// TODO specialize for integers
+template<class T> dual<T> tgamma_impl(const dual<T> & x) {
+  using std::tgamma;
+  T v = tgamma(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else {
+
+    int errno_saved = errno;
+    T h(T(1) / (1ull << (std::numeric_limits<T>::digits / 3)));
+    T w((tgamma(x.rpart()+h) - tgamma(x.rpart()-h))/(2*h));
+    errno = errno_saved;
+    return dual<T>(v, x.dpart() * w);
+  }
+}
+
+/// Log of absolute value of gamma function.  Approximation of the dual part.
+template<class T> dual<T> lgamma_impl(const dual<T> & x) {
+  using std::lgamma;
+  T v = lgamma(x.rpart());
+  if (x.dpart() == T(0))
+    return v;
+  else {
+#if CPPDUALS_HAVE_SIGNGAM
+    int signgam_saved = signgam;
+#endif
+    int errno_saved = errno;
+    T h(T(1) / (1ull << (std::numeric_limits<T>::digits / 3)));
+    T w((lgamma(x.rpart()+h) - lgamma(x.rpart()-h))/(2*h));
+#if CPPDUALS_HAVE_SIGNGAM
+    signgam = signgam_saved;
+#endif
+    errno = errno_saved;
+    return dual<T>(v, x.dpart() * w);
+  }
+}
+template<class T> dual<T> abs_impl(const dual<T> & x) {
+  using std::abs;
+  return dual<T>(abs(x.rpart()),
+                 x.dpart() * utils::sgn(x.rpart()));
+}
+template<class T> dual<T> fabs_impl(const dual<T> & x) {
+  using std::fabs;
+  return dual<T>(fabs(x.rpart()),
+                 x.dpart() * utils::sgn(x.rpart()));
+}
+template<class T> duals::dual<T> fmax_impl(const duals::dual<T> & x, const duals::dual<T> & y) {
+  return x.rpart() > y.rpart() ? x : y;
+}
+template<class T> duals::dual<T> fmin_impl(const duals::dual<T> & x, const duals::dual<T> & y) {
+  return x.rpart() <= y.rpart() ? x : y;
+}
+template<class T> duals::dual<T> frexp_impl(const duals::dual<T> & arg, int* exp ) { using std::frexp; return frexp(arg.rpart(), exp); }
+template<class T> duals::dual<T> ldexp_impl(const duals::dual<T> & arg, int exp ) { return arg * std::pow((T)2,exp); }
+template<class T> duals::dual<T> trunc_impl(const duals::dual<T> & d) { using std::trunc; return trunc(d.rpart()); }
+template<class T> dual<T> floor_impl(const dual<T> & x) {
+  using std::floor;
+  return dual<T>(floor(x.rpart()),
+                 x.dpart() * utils::sgn(x.rpart()-floor(x.rpart())));
+}
+template<class T> duals::dual<T> ceil_impl(const duals::dual<T> & d)  { using std::ceil; return ceil(d.rpart()); }
+template<class T> duals::dual<T> round_impl(const duals::dual<T> & d) { using std::round; return round(d.rpart()); }
+template<class T> int fpclassify_impl(const duals::dual<T> & d) { using std::fpclassify; return fpclassify(d.rpart()); }
+template<class T> bool isfinite_impl(const duals::dual<T> & d) { using std::isfinite; return isfinite(d.rpart()); }
+template<class T> bool isnormal_impl(const duals::dual<T> & d) { using std::isnormal; return isnormal(d.rpart()); }
+template<class T> bool isinf_impl(const duals::dual<T> & d) { using std::isinf; return isinf(d.rpart()); }
+template<class T> bool isnan_impl(const duals::dual<T> & d) { using std::isnan; return isnan(d.rpart()); }
+template<class T> bool signbit_impl(const duals::dual<T> & d) { using std::signbit; return signbit(d.rpart()); }
+template<class T> duals::dual<T> copysign_impl(const duals::dual<T> & x, const duals::dual<T> & y) {
+  using std::copysign;
+  T r = copysign(x.rpart(), y.rpart());
+  return duals::dual<T>(r, r == x.rpart() ? x.dpart() : -x.dpart());
+}
+
+}  // namespace detail
+} // namespace duals
+
+#include <random>
+namespace duals {
 namespace randos {
 
 // Random real value between a and b.
@@ -781,290 +1586,18 @@ DT random(DT a = DT(0,0), DT b = DT(1,0)) {
             random<typename DT::value_type,dist>(a.dpart(),b.dpart()));
 }
 
-/// Complex Conjugate of a dual is just the dual.
-template<class T> dual<T> conj(const dual<T> & x) { return x; }
+} // namespace duals
+  
+#include <complex>
 
-/// Conjugate a thing that's not dual and not complex -- it has no
-/// complex value so just return it.  This is different from
-/// std::conj() which promotes the T to a std::complex<T>.
-template<class T, CPPDUALS_ENABLE_IF(!is_dual<T>::value &&
-                                     !is_complex<T>::value &&
-                                     std::is_arithmetic<T>::value)>
-T conj(const T & x) { return x; }
-
-/// Dual Conjugate, such that x*dconj(x) = rpart(x)^2.  Different
-/// function name from complex conjugate conj().
-template<class T> dual<T> dconj(const dual<T> & x) {
-  return dual<T>(x.rpart(), - x.dpart());
+namespace duals {
+typedef std::complex<dualf> cdualf;
+typedef std::complex<duald> cduald;
+typedef std::complex<dualld> cdualld;
 }
 
-/// Dual Conjugate of a complex, such that x*dconj(x) = rpart(x)^2.
-/// Different function name from complex conjugate conj().
-template<class T> std::complex<T> dconj(const std::complex<T> & x) {
-  return std::complex<T>(dconj(x.real()), dconj(x.imag()));
-}
-
-/// Conjugate a thing that's not dual and not complex.
-template<class T, CPPDUALS_ENABLE_IF(!is_dual<T>::value &&
-                                     !is_complex<T>::value &&
-                                     std::is_arithmetic<T>::value)>
-T dconj(const T & x) { return x; }
-
-/// Exponential e^x
-template<class T> dual<T> exp(const dual<T> & x) {
-  using std::exp;
-  T v = exp(x.rpart());
-  return dual<T>(v,
-                 v * x.dpart());
-}
-
-/// Natural log ln(x)
-template<class T> dual<T> log(const dual<T> & x) {
-  using std::log;
-  T v = log(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else
-    return dual<T>(v, x.dpart() / x.rpart());
-}
-
-template<class T> dual<T> log10(const dual<T> & x) {
-  using std::log;
-  return log(x) / log(static_cast<T>(10));
-}
-
-template<class T> dual<T> log2(const dual<T> & x) {
-  using std::log;
-  return log(x) / log(static_cast<T>(2));
-}
-
-template<class T, class U, CPPDUALS_ENABLE_SAME_DEPTH_AND_COMMON_T(T,U)>
-common_t
-pow(const dual<T> & x, const dual<U> & y) {
-  using std::pow;
-  using std::log;
-  T v = pow(x.rpart(), y.rpart());
-  return common_t(v,
-                  x.dpart() * y.rpart() * pow(x.rpart(), y.rpart() - T(1)) +
-                  y.dpart() * log(x.rpart()) * v);
-}
-
-template<class T, class U, CPPDUALS_ENABLE_LEQ_DEPTH_AND_COMMON_T(T,U)>
-common_t
-pow(const dual<T> & x, const U & y) {
-  using std::pow;
-  return common_t(pow(x.rpart(), y),
-                  x.dpart() * y * pow(x.rpart(), y - U(1)));
-}
-
-template<class T, class U, CPPDUALS_ENABLE_LEQ_DEPTH_AND_COMMON_T(T,U)>
-common_t
-pow(const U & x, const dual<T> & y) {
-  return pow(common_t(x), y);
-}
-
-namespace utils {
-template <typename T> int sgn(T val) {
-  return (T(0) < val) - (val < T(0));
-}
-}
-
-template<class T> dual<T> abs(const dual<T> & x) {
-  using std::abs;
-  return dual<T>(abs(x.rpart()),
-                 x.dpart() * utils::sgn(x.rpart()));
-}
-
-template<class T> dual<T> fabs(const dual<T> & x) {
-  using std::fabs;
-  return dual<T>(fabs(x.rpart()),
-                 x.dpart() * utils::sgn(x.rpart()));
-}
-
-#if 0
-template<class T> dual<T> abs2(const dual<T> & x) {
-  using std::abs;
-  return dual<T>(x.rpart() * x.rpart(),
-                 xxx x.dpart() * utils::sgn(x.rpart()));
-}
-#endif
-
-template<class T> duals::dual<T> copysign(const duals::dual<T> & x, const duals::dual<T> & y) {
-  using std::copysign;
-  T r = copysign(x.rpart(), y.rpart());
-  return duals::dual<T>(r, r == x.rpart() ? x.dpart() : -x.dpart());
-}
-
-template<class T> duals::dual<T> hypot(const duals::dual<T> & x, const duals::dual<T> & y) {
-  return sqrt(x*x + y*y);
-}
-
-template<class T> duals::dual<T> scalbn(const duals::dual<T> & arg, int ex) {
-  return arg * std::pow((T)2, ex);
-}
-
-template<class T> duals::dual<T> (fmax)(const duals::dual<T> & x, const duals::dual<T> & y) {
-  return x.rpart() > y.rpart() ? x : y;
-}
-
-template<class T> duals::dual<T> (fmin)(const duals::dual<T> & x, const duals::dual<T> & y) {
-  return x.rpart() <= y.rpart() ? x : y;
-}
-
-template<class T> duals::dual<T> logb(const duals::dual<T> & x) {
-  return duals::log2(x);
-}
-
-template<class T> int (fpclassify)(const duals::dual<T> & d) { using std::fpclassify; return (fpclassify)(d.rpart()); }
-template<class T> bool (isfinite)(const duals::dual<T> & d) { using std::isfinite; return (isfinite)(d.rpart()); }
-template<class T> bool (isnormal)(const duals::dual<T> & d) { using std::isnormal; return (isnormal)(d.rpart()); }
-template<class T> bool (isinf)(const duals::dual<T> & d) { using std::isinf; return (isinf)(d.rpart()); }
-template<class T> bool (isnan)(const duals::dual<T> & d) { using std::isnan; return (isnan)(d.rpart()); }
-template<class T> bool (signbit)(const duals::dual<T> & d) { using std::signbit; return (signbit)(d.rpart()); }
-
-template<class T> dual<T> sqrt(const dual<T> & x) {
-  using std::sqrt;
-  T v = sqrt(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else
-    return dual<T>(v, x.dpart() / (T(2) * v) );
-}
-
-template<class T> dual<T> cbrt(const dual<T> & x) {
-  using std::cbrt;
-  T v = cbrt(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else
-    return dual<T>(v, x.dpart() / (T(3) * v * v) );
-}
-
-template<class T> dual<T> sin(const dual<T> & x) {
-  using std::sin;
-  using std::cos;
-  return dual<T>(sin(x.rpart()),
-                 x.dpart() * cos(x.rpart()));
-}
-
-template<class T> dual<T> cos(const dual<T> & x) {
-  using std::cos;
-  using std::sin;
-  return dual<T>(cos(x.rpart()),
-                 -sin(x.rpart()) * x.dpart());
-}
-
-template<class T> dual<T> tan(const dual<T> & x) {
-  using std::tan;
-  T v = tan(x.rpart());
-  return dual<T>(v, x.dpart() * (v*v + 1));
-}
-
-template<class T> dual<T> asin(const dual<T> & x) {
-  using std::asin;
-  using std::sqrt;
-  T v = asin(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else
-    return dual<T>(v, x.dpart() / sqrt(1 - x.rpart()*x.rpart()));
-}
-
-template<class T> dual<T> acos(const dual<T> & x) {
-  using std::acos;
-  using std::sqrt;
-  T v = acos(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else
-    return dual<T>(v, -x.dpart() / sqrt(1 - x.rpart()*x.rpart()));
-}
-
-template<class T> dual<T> atan(const dual<T> & x) {
-  using std::atan;
-  T v = atan(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else
-    return dual<T>(v, x.dpart() / (1 + x.rpart()*x.rpart()));
-}
-
-template<class T> dual<T> atan2(const dual<T> & x, const dual<T> & y) {
-  using std::atan2;
-  T v = atan2(x.rpart(), y.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else
-    return dual<T>(v, x.dpart() / (1 + x.rpart()*x.rpart()));
-}
-
-// TODO
-template<class T> dual<T> sinh(const dual<T> & x);
-template<class T> dual<T> cosh(const dual<T> & x);
-template<class T> dual<T> tanh(const dual<T> & x);
-template<class T> dual<T> asinh(const dual<T> & x);
-template<class T> dual<T> acosh(const dual<T> & x);
-template<class T> dual<T> atanh(const dual<T> & x);
-template<class T> dual<T> log1p(const dual<T> & x);
-template<class T> dual<T> expm1(const dual<T> & x);
-
-/// The error function.  Make sure to `#include <math.h>` before
-/// `#include <duals/dual>` to use this function.
-template<class T> dual<T> erf(const dual<T> & x) {
-  using std::erf;
-  using std::sqrt;
-  using std::pow;
-  using std::exp;
-  return dual<T>(erf(x.rpart()),
-                 x.dpart() * T(2)/sqrt(T(MY_PI)) * exp(-pow(x.rpart(),T(2))));
-}
-
-/// Error function complement (1 - erf()).
-template<class T> dual<T> erfc(const dual<T> & x) {
-  using std::erfc;
-  using std::sqrt;
-  using std::pow;
-  using std::exp;
-  return dual<T>(erfc(x.rpart()),
-                 x.dpart() * -T(2)/sqrt(T(MY_PI)) * exp(-pow(x.rpart(),T(2))));
-}
-
-/// Gamma function.  Approximation of the dual part.
-// TODO specialize for integers
-template<class T> dual<T> tgamma(const dual<T> & x) {
-  using std::tgamma;
-  T v = tgamma(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else {
-    int errno_saved = errno;
-    T h(T(1) / (1ull << (std::numeric_limits<T>::digits / 3)));
-    T w((tgamma(x.rpart()+h) - tgamma(x.rpart()-h))/(2*h));
-    errno = errno_saved;
-    return dual<T>(v, x.dpart() * w);
-  }
-}
-
-/// Log of absolute value of gamma function.  Approximation of the dual part.
-template<class T> dual<T> lgamma(const dual<T> & x) {
-  using std::lgamma;
-  T v = lgamma(x.rpart());
-  if (x.dpart() == T(0))
-    return v;
-  else {
-#if CPPDUALS_HAVE_SIGNGAM
-    int signgam_saved = signgam;
-#endif
-    int errno_saved = errno;
-    T h(T(1) / (1ull << (std::numeric_limits<T>::digits / 3)));
-    T w((lgamma(x.rpart()+h) - lgamma(x.rpart()-h))/(2*h));
-#if CPPDUALS_HAVE_SIGNGAM
-    signgam = signgam_saved;
-#endif
-    errno = errno_saved;
-    return dual<T>(v, x.dpart() * w);
-  }
-}
+#include <iostream>
+namespace duals {
 
 /// Putto operator
 template<class T, class _CharT, class _Traits>
@@ -1170,48 +1703,6 @@ operator>>(std::basic_istream<CharT, Traits> & is, dual<T> & x)
   return is;
 }
 
-#if __cpp_user_defined_literals >= 200809
-/// Dual number literals in namespace duals::literals
-inline namespace literals
-{
-using duals::dual;
-constexpr dual<float> operator""_ef(long double du)
-{
-  return { 0.0f, static_cast<float>(du) };
-}
-constexpr dual<float> operator""_ef(unsigned long long du)
-{
-  return { 0.0f, static_cast<float>(du) };
-}
-constexpr dual<double> operator""_e(long double du)
-{
-  return { 0.0, static_cast<double>(du) };
-}
-constexpr dual<double> operator""_e(unsigned long long du)
-{
-  return { 0.0, static_cast<double>(du) };
-}
-constexpr dual<long double> operator""_el(long double du)
-{
-  return { 0.0l, du };
-}
-constexpr dual<long double> operator""_el(unsigned long long du)
-{
-  return { 0.0l, static_cast<long double>(du) };
-}
-}
-#endif
-
-typedef dual<float> dualf;
-typedef dual<double> duald;
-typedef dual<long double> dualld;
-typedef dual<dualf> hyperdualf;
-typedef dual<duald> hyperduald;
-typedef dual<dualld> hyperdualld;
-typedef std::complex<dualf> cdualf;
-typedef std::complex<duald> cduald;
-typedef std::complex<dualld> cdualld;
-
 } // namespace duals
 
 #ifdef CPPDUALS_LIBFMT
@@ -1221,7 +1712,7 @@ typedef std::complex<dualld> cdualld;
 /// Formats a dual number (r,d) as (r+d_e), offering the same
 /// formatting options as the underlying type - with the addition of
 /// three optional format options, only one of which may appear
-/// directly after the ':' in the format spec: '$', '*', and ',".  The
+/// directly after the ':' in the format spec: '$', '*', and ','.  The
 /// '*' flag changes the separating _ to a *, producing (r+d*e), where
 /// r and d are the formatted value_type values.  The ',' flag simply
 /// prints the real and dual parts separated by a comma.  As a
@@ -1236,47 +1727,61 @@ struct fmt::formatter<duals::dual<T>,Char> : public fmt::formatter<T,Char>
 {
   typedef fmt::formatter<T,Char> base;
   enum style { expr, star, pair } style_ = expr;
-  internal::dynamic_format_specs<Char> specs_;
-  FMT_CONSTEXPR auto parse(format_parse_context & ctx) -> decltype(ctx.begin()) {
-    using handler_type = internal::dynamic_specs_handler<format_parse_context>;
-    auto type = internal::type_constant<T, Char>::value;
-    internal::specs_checker<handler_type> handler(handler_type(specs_, ctx), type);
+  detail::dynamic_format_specs<Char> specs_;
+
+  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> decltype(ctx.begin()) {
     auto it = ctx.begin();
-    switch (*it) {
-    case '$': style_ = style::expr; ctx.advance_to(++it); break;
-    case '*': style_ = style::star; ctx.advance_to(++it); break;
-    case ',': style_ = style::pair; ctx.advance_to(++it); break;
-    default: break;
+    if (it != ctx.end()) {
+      switch (*it) {
+        case '$': style_ = style::expr; ctx.advance_to(++it); break;
+        case '*': style_ = style::star; ctx.advance_to(++it); break;
+        case ',': style_ = style::pair; ctx.advance_to(++it); break;
+        default: break;
+      }
     }
-    parse_format_specs(ctx.begin(), ctx.end(), handler);
-    return base::parse(ctx);
+    return parse_format_specs(it, ctx.end(), specs_, ctx,
+                            detail::type_constant<T, Char>::value);
   }
+  
   template <typename FormatCtx>
-  auto format(const duals::dual<T> & x, FormatCtx & ctx) -> decltype(ctx.out()) {
-    format_to(ctx.out(), "(");
+  auto format(const duals::dual<T> & x, FormatCtx & ctx) const -> decltype(ctx.out()) {
+    auto specs = specs_;
+    if (specs.dynamic()) {
+      detail::handle_dynamic_spec(specs.dynamic_width(), specs.width,
+                                specs.width_ref, ctx);
+      detail::handle_dynamic_spec(specs.dynamic_precision(), specs.precision,
+                                specs.precision_ref, ctx);
+    }
+
+    auto out = ctx.out();
+    *out++ = '(';
     if (style_ == style::pair) {
-      base::format(x.rpart(), ctx);
-      format_to(ctx.out(), ",");
-      base::format(x.dpart(), ctx);
-      return format_to(ctx.out(), ")");
+      out = detail::write<Char>(out, x.rpart(), specs, ctx.locale());
+      *out++ = ',';
+      out = detail::write<Char>(out, x.dpart(), specs, ctx.locale());
+    } else {
+      if (x.rpart() || !x.dpart())
+        out = detail::write<Char>(out, x.rpart(), specs, ctx.locale());
+      if (x.dpart()) {
+        if (x.rpart() && x.dpart() >= 0)
+          specs.set_sign(sign::plus);
+        out = detail::write<Char>(out, x.dpart(), specs, ctx.locale());
+        if (style_ == style::star) {
+          *out++ = '*';
+          *out++ = 'e';
+        } else {
+          *out++ = '_';
+          *out++ = 'e';
+        }
+        if (std::is_same<typename std::decay<T>::type,float>::value)       *out++ = 'f';
+        if (std::is_same<typename std::decay<T>::type,long double>::value) *out++ = 'l';
+      }
     }
-    if (x.rpart() || !x.dpart())
-      base::format(x.rpart(), ctx);
-    if (x.dpart()) {
-      if (x.rpart() && x.dpart() >= 0 && specs_.sign != sign::plus)
-        format_to(ctx.out(), "+");
-      base::format(x.dpart(), ctx);
-      if (style_ == style::star)
-        format_to(ctx.out(), "*e");
-      else
-        format_to(ctx.out(), "_e");
-      if (std::is_same<typename std::decay<T>::type,float>::value)       format_to(ctx.out(), "f");
-      if (std::is_same<typename std::decay<T>::type,long double>::value) format_to(ctx.out(), "l");
-    }
-    return format_to(ctx.out(), ")");
+    *out++ = ')';
+    return out;
   }
 };
-#endif
+#endif // CPPDUALS_LIBFMT
 
 #ifdef CPPDUALS_LIBFMT_COMPLEX
 #ifndef CPPDUALS_LIBFMT
@@ -1294,7 +1799,7 @@ struct fmt::formatter<duals::dual<T>,Char> : public fmt::formatter<T,Char>
 /// options as the underlying type - with the addition of three
 /// optional format options, only one of which may appear directly
 /// after the ':' in the format spec (before any fill or align): '$'
-/// (the default if no flag is specified), '*', and ',".  The '*' flag
+/// (the default if no flag is specified), '*', and ','.  The '*' flag
 /// adds a * before the 'i', producing (a+b*i), where a and b are the
 /// formatted value_type values.  The ',' flag simply prints the real
 /// and complex parts separated by a comma (same as iostreams' format).
@@ -1308,82 +1813,53 @@ struct fmt::formatter<std::complex<T>,Char> : public fmt::formatter<T,Char>
 {
   typedef fmt::formatter<T,Char> base;
   enum style { expr, star, pair } style_ = expr;
-  internal::dynamic_format_specs<Char> specs_;
-  FMT_CONSTEXPR auto parse(format_parse_context & ctx) -> decltype(ctx.begin()) {
-    using handler_type = internal::dynamic_specs_handler<format_parse_context>;
-    auto type = internal::type_constant<T, Char>::value;
-    internal::specs_checker<handler_type> handler(handler_type(specs_, ctx), type);
+  detail::dynamic_format_specs<Char> specs_;
+
+  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> decltype(ctx.begin()) {
     auto it = ctx.begin();
-    switch (*it) {
-    case '$': style_ = style::expr; ctx.advance_to(++it); break;
-    case '*': style_ = style::star; ctx.advance_to(++it); break;
-    case ',': style_ = style::pair; ctx.advance_to(++it); break;
-    default: break;
+    if (it != ctx.end()) {
+      switch (*it) {
+        case '$': style_ = style::expr; ctx.advance_to(++it); break;
+        case '*': style_ = style::star; ctx.advance_to(++it); break;
+        case ',': style_ = style::pair; ctx.advance_to(++it); break;
+        default: break;
+      }
     }
-    parse_format_specs(ctx.begin(), ctx.end(), handler);
-    //todo: fixup alignment
-    return base::parse(ctx);
+    // Let base parser handle any nested format chars first
+    auto end = base::parse(ctx);
+    // Now parse the format specs for this formatter
+    parse_format_specs(end, ctx.end(), specs_, ctx,
+                      detail::type_constant<T, Char>::value);
+    return end;
   }
+
   template <typename FormatCtx>
-  auto format(const std::complex<T> & x, FormatCtx & ctx) -> decltype(ctx.out()) {
+  auto format(const std::complex<T> & x, FormatCtx & ctx) const -> decltype(ctx.out()) {
     format_to(ctx.out(), "(");
     if (style_ == style::pair) {
       base::format(x.real(), ctx);
       format_to(ctx.out(), ",");
       base::format(x.imag(), ctx);
-      return format_to(ctx.out(), ")");
-    }
-    if (x.real() || !x.imag())
-      base::format(x.real(), ctx);
-    if (x.imag()) {
-      if (x.real() && x.imag() >= 0 && specs_.sign != sign::plus)
-        format_to(ctx.out(), "+");
-      base::format(x.imag(), ctx);
-      if (style_ == style::star)
-        format_to(ctx.out(), "*i");
-      else
-        format_to(ctx.out(), "i");
-      if (std::is_same<typename std::decay<T>::type,float>::value)       format_to(ctx.out(), "f");
-      if (std::is_same<typename std::decay<T>::type,long double>::value) format_to(ctx.out(), "l");
+    } else {
+      if (x.real() || !x.imag())
+        base::format(x.real(), ctx);
+      if (x.imag()) {
+        // The base formatter will handle the negative sign
+        if (x.real() && x.imag() >= 0 && sign::plus != specs_.sign()) {
+          format_to(ctx.out(), "+");
+        }
+        base::format(x.imag(), ctx);
+        if (style_ == style::star)
+          format_to(ctx.out(), "*i");
+        else
+          format_to(ctx.out(), "i");
+        if (std::is_same<typename std::decay<T>::type,float>::value)       format_to(ctx.out(), "f");
+        if (std::is_same<typename std::decay<T>::type,long double>::value) format_to(ctx.out(), "l");
+      }
     }
     return format_to(ctx.out(), ")");
   }
 };
-#endif
-
-#ifdef _LIBCPP_BEGIN_NAMESPACE_STD
-_LIBCPP_BEGIN_NAMESPACE_STD
-#else
-namespace std {
-#endif
-
-#ifndef PARSED_BY_DOXYGEN
-
-#define make_math(T)                                                    \
-  inline T (frexp)(const duals::dual<T> & arg, int* exp ) { return (frexp)(arg.rpart(), exp); } \
-  inline duals::dual<T> (ldexp)(const duals::dual<T> & arg, int exp ) { return arg * std::pow((T)2,exp); } \
-  inline T (trunc)(const duals::dual<T> & d) { return (trunc)(d.rpart()); } \
-  inline T (floor)(const duals::dual<T> & d) { return (floor)(d.rpart()); } \
-  inline T (ceil)(const duals::dual<T> & d)  { return (ceil)(d.rpart()); } \
-  inline T (round)(const duals::dual<T> & d) { return (round)(d.rpart()); } \
-  inline int (fpclassify)(const duals::dual<T> & d) { return (fpclassify)(d.rpart()); } \
-  inline bool (isfinite)(const duals::dual<T> & d) { return (isfinite)(d.rpart()); } \
-  inline bool (isnormal)(const duals::dual<T> & d) { return (isnormal)(d.rpart()); } \
-  inline bool (isinf)(const duals::dual<T> & d) { return (isinf)(d.rpart()); } \
-  inline bool (isnan)(const duals::dual<T> & d) { return (isnan)(d.rpart()); } \
-
-make_math(float)
-make_math(double)
-make_math(long double)
-
-#undef make_math
-
-#endif // PARSED_BY_DOXYGEN
-
-#ifdef _LIBCPP_BEGIN_NAMESPACE_STD
-_LIBCPP_END_NAMESPACE_STD
-#else
-} // namespace std
-#endif
+#endif // CPPDUALS_LIBFMT_COMPLEX
 
 #endif // CPPDUALS_DUAL

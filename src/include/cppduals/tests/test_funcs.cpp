@@ -32,25 +32,38 @@ typedef std::complex<double> complexd;
 // not verify precision.
 #define FD_CHECK(T, F, ...)                                             \
   TEST(func##_##T, F) {                                                 \
+    using std::isnan;                                                   \
     for (T x : __VA_ARGS__) {                                           \
       T prec = 100 * std::sqrt(std::numeric_limits<T>::epsilon());      \
-      T dd = dpart(F(x + dual<T>(0,1)));                                \
+      T dd = duals::dpart(F(x + dual<T>(0,1)));                         \
       /*T dx = std::numeric_limits<T>::epsilon() * (T)1000000;      */  \
       T dx = T(1)/ (1ull << (std::numeric_limits<T>::digits / 3));      \
       T fd = (F(x + dx) - F(x - dx)) / (2*dx);                          \
-      EXPECT_CNEAR(dd, fd, prec * std::abs(std::max(std::max(dd,fd),T(1)))) \
-        << "dd=" << dd << " fd=" << fd << " x=" << x << " dx=" << dx;   \
+      if (!isnan(dd) && !isnan(fd)) {                                   \
+        EXPECT_CNEAR(dd, fd,                                            \
+                     prec * std::abs(std::max(std::max(dd,fd),T(1))))   \
+          << "dd=" << dd << " fd=" << fd << " x=" << x << " dx=" << dx; \
+      }                                                                 \
     }                                                                   \
   }
 
+#define powL(x) pow(x,2)
+#define powR(x) pow(2,x)
+#define powLR(x) pow(x,x)
+
 FD_CHECK(double, exp, {-1,0,1})
-FD_CHECK(double, log, {1})
-//FD_CHECK(complexd, log, {-1,1}) TODO
-FD_CHECK(double, log10, {1})
-//FD_CHECK(complexd, log10, {-1,0,1}) TODO
+FD_CHECK(double, log, {1, 3})
+// FD_CHECK(complexd, log, {-1,1}) TODO
+FD_CHECK(double, log10, {1, 3})
+
+FD_CHECK(double, powL, {-3.,-1.,-0.4,0.,0.6,1.,2.5})
+FD_CHECK(double, powR, {-3.,-1.,-0.4,0.,0.6,1.,2.5})
+FD_CHECK(double, powLR, {-3.,-1.,-0.4,0.,0.6,1.,2.5})
+
+// FD_CHECK(complexd, log10, {-1,0,1}) TODO
 FD_CHECK(double, sqrt, {0.5,1.0})
 FD_CHECK(double, cbrt, {-10.,-0.01,0.01,1.0,10.})
-//FD_CHECK(complexd, sqrt, {0,1}) TODO
+// FD_CHECK(complexd, sqrt, {0,1}) TODO
 FD_CHECK(double, sin, {-1,0,1})
 FD_CHECK(double, cos, {-1,0,1})
 FD_CHECK(double, tan, {-1,0,1})
@@ -59,12 +72,27 @@ FD_CHECK(double, acos, {-.9,0.,.9})
 FD_CHECK(double, atan, {-10,-1,0,1,10})
 
 // TODO:
-//FD_CHECK(double, sinh, {0})
-//FD_CHECK(double, cosh, {0})
-//FD_CHECK(double, tanh, {0})
-//FD_CHECK(double, asinh, {0})
-//FD_CHECK(double, acosh, {0})
-//FD_CHECK(double, atanh, {0})
+#define atan2L(x) atan2(x,2)
+#define atan2R(x) atan2(2,x)
+#define atan2LR(x) atan2(x,x)
+FD_CHECK(double, atan2L, {-10.,-1.,0.,1.,10.})
+FD_CHECK(double, atan2R, {-10.,-1.,0.01,1.,10.})
+FD_CHECK(double, atan2LR, {-10.,-1.,0.01,1.,10.})
+
+#define hypot2LR(x) hypot(x,x)
+FD_CHECK(double, hypot2LR, {-10.,-1.,0.01,1.,10.})
+
+#define scalbnL(x) scalbn(x,2)
+FD_CHECK(double, scalbnL, {-10.,-1.,0.01,1.,10.})
+
+FD_CHECK(double, sinh, {-0.1, 0.1})
+FD_CHECK(double, cosh, {-0.1, 0.1})
+FD_CHECK(double, tanh, {-0.1, 0.1})
+FD_CHECK(double, asinh, {-0.1, 0.1})
+FD_CHECK(double, acosh, {-1.1, 1.1})
+FD_CHECK(double, atanh, {-0.1, 0.1})
+FD_CHECK(double, log1p, {-0.1, 0.1})
+FD_CHECK(double, expm1, {-0.1, 0.1})
 
 FD_CHECK(double, erf, {-1,0,1})
 FD_CHECK(double, erfc, {-1,0,1})
@@ -97,6 +125,8 @@ TEST(func, tgamma) {
   //EXPECT_EQ(tgamma(x).rpart(), 362880); "interestingly", compiling without optimization (-O0) causes this to fail
   EXPECT_NEAR(tgamma(x).rpart(), 362880, 362880 * 100 * std::numeric_limits<double>::epsilon());
 }
+
+// part selection functions
 TEST(func, rpart) {
   dualf x = 10 + 4_e;
   EXPECT_EQ(rpart(x), 10);
@@ -105,16 +135,258 @@ TEST(func, dpart) {
   dualf x = 2 + 4_e;
   EXPECT_EQ(dpart(x), 4);
 }
+
+// non-differentiable operations on the real part.
 TEST(func, abs) {
+  dualf x = -10 + 4_e;
+  EXPECT_EQ(abs(x), 10);
 }
-TEST(func, arg) {
+TEST(func, fabs) {
+  dualf x = -10 + 4_e;
+  EXPECT_EQ(fabs(x), 10);
+}
+TEST(func, fmax) {
+  dualf x = -10 + 4_e;
+  dualf y = 10 + 4_e;
+  EXPECT_EQ(fmax(x, y), 10);
+}
+TEST(func, fmin) {
+  dualf x = -10 + 4_e;
+  dualf y = 10 + 4_e;
+  EXPECT_EQ(fmin(x, y), -10);
+}
+TEST(func, frexp) {
+  dualf x = 6 + 4_e;
+  int exp = 0;
+  EXPECT_EQ(frexp(x, &exp), 0.75);
+  EXPECT_EQ(exp, 3);
+}
+TEST(func, ldexp) {
+  dualf x = 0.5 + 4_e;
+  int exp = 1;
+  EXPECT_EQ(ldexp(x, exp), 1);
+}
+TEST(func, trunc) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(trunc(x), 1);
+}
+TEST(func, floor) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(floor(x), 1);
+}
+TEST(func, ceil) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(ceil(x), 2);
+}
+TEST(func, round) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(round(x), 2);
+}
+// floating point functions
+TEST(func, fpclassify) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(fpclassify(x), FP_NORMAL);
+  EXPECT_EQ(fpclassify(std::numeric_limits<dualf>::infinity()), FP_INFINITE);
+  EXPECT_EQ(fpclassify(std::numeric_limits<dualf>::quiet_NaN()), FP_NAN);
+  if (std::numeric_limits<dualf>::has_denorm != std::denorm_absent) {
+    EXPECT_EQ(fpclassify(std::numeric_limits<dualf>::denorm_min()), FP_SUBNORMAL);
+  }
+  EXPECT_EQ(fpclassify(x+std::numeric_limits<dualf>::min()), FP_NORMAL);
+  EXPECT_EQ(fpclassify(2*std::numeric_limits<dualf>::max()), FP_INFINITE);
+  EXPECT_EQ(fpclassify(x+std::numeric_limits<dualf>::epsilon()), FP_NORMAL);
+}
+TEST(func, isfinite) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(isfinite(x), true);
+}
+TEST(func, isnormal) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(isnormal(x), true);
+}
+TEST(func, isinf) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(isinf(x), false);
+}
+TEST(func, isnan) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(isnan(x), false);
+}
+TEST(func, signbit) {
+  dualf x = 1.5 + 4_e;
+  EXPECT_EQ(signbit(x), false);
+}
+TEST(func, copysign) {
+  dualf x = 1.5 + 4_e;
+  dualf y = -1.3 + 2_e;
+  EXPECT_EQ(copysign(x, y), -1.5);
+}
+
+// Utility functions
+TEST(func, random) {
+  dualf x = random(0.001 + 0.001_e, 1 + 1_e);
+  EXPECT_GE(rpart(x), 0.001);
+  EXPECT_LE(rpart(x), 1);
+  EXPECT_GE(dpart(x), 0.001);
+  EXPECT_LE(dpart(x), 1);
+}
+
+TEST(func, random2) {
+  dualf x = duals::randos::random2(0.001 + 0.001_e, 1 + 1_e);
+  EXPECT_GE(rpart(x), 0.001);
+  EXPECT_LE(rpart(x), 1);
+  EXPECT_GE(dpart(x), 0.001);
+  EXPECT_LE(dpart(x), 1);
+}
+
+// more tests
+TEST(func, logb) {
+  dualf x = 4 + 1_e;
+  EXPECT_EQ(rpart(logb(.5 + 1_e)), -1.);
+  EXPECT_EQ(rpart(logb(1 + 1_e)), 0.);
+  EXPECT_EQ(rpart(logb(2 + 1_e)), 1.);
+  EXPECT_EQ(rpart(logb(3 + 1_e)), 1.);
+  EXPECT_EQ(rpart(logb(4 + 1_e)), 2.);
+  EXPECT_EQ(rpart(logb(x * x)), 4.);
+
+  EXPECT_EQ(dpart(logb(4 + 8_e)), std::numeric_limits<dualf>::infinity());
+  EXPECT_EQ(dpart(logb(4.01 + 8_e)), 0.);
+
+  EXPECT_EQ(dpart(logb(x * x)), std::numeric_limits<dualf>::infinity());
+  EXPECT_EQ(dpart(logb(3 * x)), 0.);
+  x += 0.01;
+  EXPECT_EQ(dpart(logb(3 * x)), 0.);
+  EXPECT_EQ(dpart(logb(x * x)), 0.);
+}
+
+TEST(func, pow) {
+  dualf x = pow(0 + 0_e, 0.);
+  EXPECT_EQ(rpart(x), 1);
+  EXPECT_EQ(dpart(x), 0);
+
+  dualf y = pow(0 + 0_e, 0. + 0_e);
+  EXPECT_EQ(rpart(y), 1);
+  EXPECT_EQ(dpart(y), 0);
+
+  dualf z = pow(0, 0. + 0_e);
+  EXPECT_EQ(rpart(z), 1);
+  EXPECT_EQ(dpart(z), 0);
+}
+TEST(func, pow_complex) {
+  std::complex<dualf> C(3+4_ef, 5+6_ef);
+  std::complex<dualf> x = std::pow(C, 2+1_ef);
+  std::complex<float> ref = std::complex<float>(std::pow(std::complex<float>(3,5), 2));
+  EXPECT_NEAR(rpart(x.real()), ref.real(), 1e-5);
+  EXPECT_NEAR(rpart(x.imag()), ref.imag(), 1e-6);
+  //EXPECT_EQ(dpart(x), std::pow(std::complex<float>(3, 5), 2) * (2+1_ef));
+}
+
+//----------------------------------------------------------------------
+// Test for pow_dual_complex(const dual<T>& realBase, const std::complex<dual<T>>& complexExponent)
+//----------------------------------------------------------------------
+TEST(func, PowDualComplexTest)
+{
+    // 1) Prepare inputs:
+    //    realBase = 2.0 (with zero derivative for this example)
+    duald realBase(2.0f);
+    
+    //    complexExponent = (1.5 + 0.7i),
+    //    each part a dual with .rpart() = 1.5 or 0.7, derivative 0
+    std::complex<duald> complexExponent(duald(1.5f), duald(0.7f));
+    
+    // 2) Call the function we want to test:
+    //    x^y  =>  pow_dual_complex(realBase, complexExponent)
+    std::complex<duald> result = std::pow(realBase, complexExponent);
+
+    // 3) Reference: use standard pow in double
+    double dblBase = 2.0;
+    std::complex<double> dblExponent(1.5, 0.7);
+    std::complex<double> reference = std::pow(dblBase, dblExponent);
+
+    // 4) Compare the .rpart() of the dual’s real/imag with reference
+    EXPECT_NEAR(result.real().rpart(), reference.real(), 1e-6);
+    EXPECT_NEAR(result.imag().rpart(), reference.imag(), 1e-6);
+}
+
+//----------------------------------------------------------------------
+// Test for pow_complex_dual(const std::complex<dual<T>>& complexBase, const dual<T>& realExponent)
+//----------------------------------------------------------------------
+TEST(func, PowComplexDualTest)
+{
+    // 1) Prepare inputs:
+    //    complexBase = (3 + 5i), each part dual with zero derivative
+    std::complex<duald> complexBase(duald(3.0f), duald(5.0f));
+
+    //    realExponent = 2.0 as a dual
+    duald realExponent(2.0f);
+
+    // 2) Call the function we want to test:
+    //    x^y => pow_complex_dual(complexBase, realExponent)
+    std::complex<duald> result = pow(complexBase, realExponent);
+
+    // 3) Reference: again, standard pow in double
+    std::complex<double> dblBase(3.0, 5.0);
+    double               dblExponent = 2.0;
+    std::complex<double> reference   = std::pow(dblBase, dblExponent);
+
+    // 4) Compare the .rpart() of the dual’s real/imag with reference
+    EXPECT_NEAR(result.real().rpart(), reference.real(), 1e-6);
+    EXPECT_NEAR(result.imag().rpart(), reference.imag(), 1e-6);
 }
 TEST(func, norm) {
+  // TODO
 }
 TEST(func, conj) {
+  // TODO
 }
 TEST(func, polar) {
+  // TODO
 }
+TEST(func, atan) {
+  EXPECT_EQ(rpart(atan(0 + 1_e)), atan(0));
+  EXPECT_EQ(dpart(atan(1_e)), 1);
+  EXPECT_EQ(dpart(atan(1 + 1_e)), 0.5);  // = 1 / (1 + x^2)
+  EXPECT_EQ(dpart(atan(-2 + 1_e)), 1. / 5.);  // = 1 / (1 + x^2)
+}
+TEST(func, atan2) {
+  // TODO
+  //EXPECT_EQ(dpart(atan2(1_e, 1)), 1);
+  //EXPECT_EQ(dpart(atan2(1 + 1_e, 1)), 0.5);
+  //EXPECT_EQ(dpart(atan2(-2 + 1_e, 1)), (1. / 5.));
+  duald y = 1 + 1_e;
+  duald x = 1 + 0_e;
+  auto z = atan2(y, x);
+  z = atan2(y, x);
+  EXPECT_EQ(rpart(z), atan2(rpart(y), rpart(x)));
+  EXPECT_EQ(dpart(z), 0.5);
+
+  y = -2 + 1_e;
+  x = 1 + 0_e;
+  z = atan2(y, x);
+  EXPECT_EQ(rpart(z), atan2(rpart(y), rpart(x)));
+  EXPECT_EQ(dpart(z), 1. / 5.);
+
+  y = 1 + 0_e;
+  x = -2 + 1_e;
+  z = atan2(y, x);
+  EXPECT_EQ(rpart(z), atan2(rpart(y), rpart(x)));
+  EXPECT_EQ(dpart(z), -1. / 5.);
+}
+TEST(func, atan2a) {
+  // TODO
+  duald y = 1 + 1_e;
+  EXPECT_EQ(rpart(atan2(y, 1)), atan2(rpart(y), 1));
+  EXPECT_EQ(rpart(atan2(y, 2)), atan2(rpart(y), 2));
+  EXPECT_EQ(dpart(atan2(y, 1)), 0.5);
+  y = 2 + 1_e;
+  EXPECT_EQ(dpart(atan2(y, -2)), -0.25);
+}
+TEST(func, atan2b) {
+  // TODO
+  duald x = 10 + 1_e;
+  EXPECT_EQ(rpart(atan2(2, x)), atan2(2, rpart(x)));
+  EXPECT_EQ(dpart(atan2(2, x)), -1./52);
+}
+
 
 struct pike_f1 {
   // function

@@ -16,8 +16,8 @@
  * (c)2019 Michael Tesch. tesch1@gmail.com
  */
 
-#include "type_name.hpp"
 #include <duals/dual_eigen>
+#include "type_name.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/StdVector>
@@ -104,7 +104,7 @@ expm4(const Eigen::EigenBase<DerivedA> & A_,
   return R;
 }
 
-template <class T, int NN = 30, class DT = dual<T> >
+template <class T, int NN = 30, class DT = dual<T>, int N2 = 2*NN>
 void dexpm() {
   //typedef std::complex<float> T;
   //typedef std::complex<dual<T>> dualt;
@@ -167,8 +167,6 @@ void dexpm() {
                                      << "eA2=" << eA2.block(0,0,std::min(4,NN),std::min(4,NN)) << "\n";
   EXPECT_LT((dA1 - dA2).norm(), tol) << "dA1=" << dA1.block(0,0,std::min(4,NN),std::min(4,NN)) << "\n"
                                      << "dA2=" << dA2.block(0,0,std::min(4,NN),std::min(4,NN)) << "\n";
-#undef NN
-#undef N2
 }
 
 #if defined(PHASE_1)

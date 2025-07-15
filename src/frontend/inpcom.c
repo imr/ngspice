@@ -147,6 +147,7 @@ static void inp_compat(struct card *deck);
 static void inp_bsource_compat(struct card *deck);
 static bool inp_temper_compat(struct card *card);
 static void inp_meas_current(struct card *card);
+static void inp_meas_control(struct card *card);
 static void inp_dot_if(struct card *deck);
 static char *inp_modify_exp(char *expression);
 static struct func_temper *inp_new_func(char *funcname, char *funcbody,
@@ -1138,12 +1139,12 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
             inp_fix_agauss_in_param(working, statfcn[ii]);
 
         inp_fix_temper_in_param(working);
-
+//        tprint(working);
         inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
-//        tprint(working);
+
         /* Special handling for large PDKs: We need to know W and L of
            transistor subcircuits by checking their x invocation */
         inp_get_w_l_x(working);
@@ -1179,6 +1180,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
             inp_repair_dc_ps(working);
         }
         bool expr_w_temper = FALSE;
+
         if (!newcompat.s3) {
             /* Do all the compatibility stuff here */
             working = cc->nextcard;
@@ -1190,6 +1192,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
             inp_bsource_compat(working);
             inp_dot_if(working);
             expr_w_temper = inp_temper_compat(working);
+            /* check for expressions in meas command */
+            inp_meas_control(working);
         }
         if (expr_w_temper_p)
             *expr_w_temper_p = expr_w_temper;
@@ -3641,74 +3645,76 @@ static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str;
 
     equal = strchr(s, '=');
-    if (equal &&
-        (!strstr(s, "params:") || !isspace_c(s[-1]))) {
-        /* get subckt name (ptr1 will point to name) */
+    if (equal) {
+        char* paramstr = strstr(s, "params:");
+        if (!paramstr || !isspace_c(paramstr[-1])) {
 
-        ptr1 = skip_token(s);
-        for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2);
+            /* get subckt name (ptr1 will point to name) */
+            ptr1 = skip_token(s);
+            for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2);
                 ptr2++)
-            ;
+                ;
 
-        add_name(subckt_w_params, copy_substring(ptr1, ptr2));
+            add_name(subckt_w_params, copy_substring(ptr1, ptr2));
 
-        /* go to beginning of first parameter word  */
-        /* s    will contain only subckt definition */
-        /* beg  will point to start of param list   */
-        beg = skip_back_ws(equal, s);
-        beg = skip_back_non_ws(beg, s);
-        beg[-1] = '\0'; /* fixme can be < s */
+            /* go to beginning of first parameter word  */
+            /* s    will contain only subckt definition */
+            /* beg  will point to start of param list   */
+            beg = skip_back_ws(equal, s);
+            beg = skip_back_non_ws(beg, s);
+            beg[-1] = '\0'; /* fixme can be < s */
 
-        head = insert_new_line(NULL, NULL, 0, 0, "internal");
-        /* create list of parameters that need to get sorted */
-        first_param_card = c = NULL;
-        while ((ptr1 = strchr(beg, '=')) != NULL) {
-            ptr2 = skip_ws(ptr1 + 1);
-            ptr1 = skip_back_ws(ptr1, beg);
-            ptr1 = skip_back_non_ws(ptr1, beg);
-            /* ptr1 points to beginning of parameter */
+            head = insert_new_line(NULL, NULL, 0, 0, "internal");
+            /* create list of parameters that need to get sorted */
+            first_param_card = c = NULL;
+            while ((ptr1 = strchr(beg, '=')) != NULL) {
+                ptr2 = skip_ws(ptr1 + 1);
+                ptr1 = skip_back_ws(ptr1, beg);
+                ptr1 = skip_back_non_ws(ptr1, beg);
+                /* ptr1 points to beginning of parameter */
 
-            if (*ptr2 == '{')
-                ptr2 = inp_spawn_brace(ptr2);
-            else
-                ptr2 = skip_non_ws(ptr2);
+                if (*ptr2 == '{')
+                    ptr2 = inp_spawn_brace(ptr2);
+                else
+                    ptr2 = skip_non_ws(ptr2);
 
-            if (!ptr2) {
-                fprintf(stderr, "Error: Missing } in line %s\n", s);
-                controlled_exit(EXIT_FAILURE);
+                if (!ptr2) {
+                    fprintf(stderr, "Error: Missing } in line %s\n", s);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                beg = ptr2;
+
+                c = insert_new_line(c, copy_substring(ptr1, ptr2), 0, 0, "internal");
+
+                if (!first_param_card)
+                    first_param_card = c;
             }
+            /* now sort parameters in order of dependencies */
+            inp_sort_params(first_param_card, head, NULL, NULL);
 
-            beg = ptr2;
+            /* create new ordered parameter string for subckt call */
+            new_str = NULL;
+            for (c = head->nextcard; c; c = c->nextcard)
+                if (new_str == NULL) {
+                    new_str = copy(c->line);
+                }
+                else {
+                    char* x = tprintf("%s %s", new_str, c->line);
+                    tfree(new_str);
+                    new_str = x;
+                }
 
-            c = insert_new_line(c, copy_substring(ptr1, ptr2), 0, 0, "internal");
+            line_free_x(head, TRUE);
 
-            if (!first_param_card)
-                first_param_card = c;
+            /* create buffer and insert params: */
+            buffer = tprintf("%s params: %s", s, new_str);
+
+            tfree(s);
+            tfree(new_str);
+
+            s = buffer;
         }
-        /* now sort parameters in order of dependencies */
-        inp_sort_params(first_param_card, head, NULL, NULL);
-
-        /* create new ordered parameter string for subckt call */
-        new_str = NULL;
-        for (c = head->nextcard; c; c = c->nextcard)
-            if (new_str == NULL) {
-                new_str = copy(c->line);
-            }
-            else {
-                char *x = tprintf("%s %s", new_str, c->line);
-                tfree(new_str);
-                new_str = x;
-            }
-
-        line_free_x(head, TRUE);
-
-        /* create buffer and insert params: */
-        buffer = tprintf("%s params: %s", s, new_str);
-
-        tfree(s);
-        tfree(new_str);
-
-        s = buffer;
     }
 
     return s;
@@ -7698,6 +7704,10 @@ void tprint(struct card *t)
     npr++;
     /*debug: print into file*/
     FILE *fd = fopen(outfile, "w");
+    if (!fd) {
+        fprintf(stderr, "Warning: cannot open debug output file tprint-outxx.txt\n");
+        return;
+    }
     for (tmp = t; tmp; tmp = tmp->nextcard)
         if (*(tmp->line) != '*')
             fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum,
@@ -9047,7 +9057,8 @@ static void rem_mfg_from_models(struct card *deck)
                     }
             }
             start = search_plain_identifier(curr_line, "type");
-            if (start && start[4] == '=') {
+            /* still retain type=0, type=1, type=+1, or type=-1 */
+            if (start && start[4] == '=' && !isdigit_c(start[5]) && !((start[5] == '-' || start[5] == '+') && isdigit_c(start[6]))) {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
@@ -9743,6 +9754,71 @@ int add_to_sourcepath(const char* filepath, const char* path)
     wl_free(startwl);
     tfree(fpath);
     return 0;
+}
+
+/* if there is an expression in FIND ... WHEN etc in a .control section,
+   use a vector with this expression:
+   meas tran yeval2 FIND v(2) WHEN v(1)= 0.9*v(2)
+   will become
+   let vexprint1 = 0.9*v(2)
+   meas tran yeval2 FIND v(2) WHEN v(1)=vexprint1
+   unlet vint 
+*/
+static void inp_meas_control(struct card* card)
+{
+    int is_control = 0;
+    static int replaceno = 1;
+    struct card* prevcard;
+
+    for (; card; prevcard = card, card = card->nextcard) {
+
+        char* equal_ptr = NULL;
+        char* curr_line = card->line;
+        char* newcurrline = card->line;
+        int currlinenumber = card->linenum_orig;
+
+        /* only commands inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            is_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            is_control--;
+            continue;
+        }
+        else if (is_control < 1) {
+            continue;
+        }
+        curr_line = skip_ws(curr_line);
+        if (ciprefix("meas", curr_line) && (equal_ptr = find_assignment(curr_line)) != NULL) {
+            curr_line = equal_ptr + 1;
+            while (*curr_line != '\0' && equal_ptr) {
+                char* token = gettok(&curr_line);
+                if (str_has_arith_char(token)) {
+                    char* newtok = tprintf("=vexprint%d", replaceno++);
+                    char* begstr = copy_substring(newcurrline, equal_ptr);
+                    char* endstr = copy(curr_line);
+                    char* newline = tprintf("%s%s %s", begstr, newtok, endstr);
+                    char* letline = tprintf("let %s=%s", newtok + 1, token);
+                    char* unletline = tprintf("unlet %s", newtok + 1);
+                    tfree(newtok);
+                    tfree(begstr);
+                    tfree(endstr);
+                    prevcard = insert_new_line(prevcard, letline, 0, currlinenumber, card->linesource);
+                    card = prevcard->nextcard;
+                    tfree(card->line);
+                    card->line = newline;
+                    newcurrline = curr_line = card->line;
+                    card = insert_new_line(card, unletline, 0, currlinenumber, card->linesource);
+                }
+                tfree(token);
+                /* next equal sign in line */
+                equal_ptr = find_assignment(curr_line);
+                if (equal_ptr)
+                    curr_line = equal_ptr + 1;
+            }
+        }
+    }
 }
 
 

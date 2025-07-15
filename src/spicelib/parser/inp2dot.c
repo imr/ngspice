@@ -288,8 +288,8 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
 
     NG_IGNORE(gnode);
 
-    /* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
-    /*        Vstop2 Vinc2 */
+    /* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 Vstop2 Vinc2]
+       Return 1 upon error because of bad syntax (missing tokens).*/
     which = ft_find_analysis("DC");
     if (which == -1) {
         LITERR("DC transfer curve analysis unsupported\n");
@@ -297,25 +297,43 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
     }
     IFC(newAnalysis, (ckt, which, "DC transfer characteristic", &foo, task));
     INPgetTok(&line, &name, 1);
+    if (*name == '\0')
+        return 1;
     INPinsert(&name, tab);
     ptemp.uValue = name;
     GCA(INPapName, (ckt, which, foo, "name1", &ptemp));
+    if (*line == '\0')
+        return 1;
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstart1 */
     GCA(INPapName, (ckt, which, foo, "start1", parm));
+    if (*line == '\0')
+        return 1;
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vstop1 */
     GCA(INPapName, (ckt, which, foo, "stop1", parm));
+    if (*line == '\0')
+        return 1;
     parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* vinc1 */
+        if (parm->rValue == 0)
+            return 1;
     GCA(INPapName, (ckt, which, foo, "step1", parm));
     if (*line) {
         INPgetTok(&line, &name, 1);
+        if (*line == '\0')
+            return 1;
         INPinsert(&name, tab);
         ptemp.uValue = name;
         GCA(INPapName, (ckt, which, foo, "name2", &ptemp));
         parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstart2 */
+        if (*line == '\0')
+            return 1;
         GCA(INPapName, (ckt, which, foo, "start2", parm));
         parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vstop2 */
+        if (*line == '\0')
+            return 1;
         GCA(INPapName, (ckt, which, foo, "stop2", parm));
         parm = INPgetValue(ckt, &line, IF_REAL, tab); /* vinc2 */
+        if (parm->rValue == 0)
+            return 1;
         GCA(INPapName, (ckt, which, foo, "step2", parm));
     }
     return 0;
@@ -861,6 +879,9 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CK
         goto quit;
     } else if ((strcmp(token, ".dc") == 0)) {
         rtn = dot_dc(line, ckt, tab, current, task, gnode, foo);
+        if (rtn == 1) {
+            current->error = copy("Bad syntax! ");
+        }
         goto quit;
     } else if ((strcmp(token, ".tf") == 0)) {
         rtn = dot_tf(line, ckt, tab, current, task, gnode, foo);

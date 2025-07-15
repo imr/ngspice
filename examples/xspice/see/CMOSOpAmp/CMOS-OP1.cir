@@ -1,0 +1,33 @@
+.title KiCad schematic
+.include "cmos_sub.mod"
+.include "seegen4.mod"
+V1 Vcc 0 DC 3.3 
+XU1 VGP2 VGP4P8 Vbias VSN4N8 seegen4
+XMN9 Vbias Vbias 0 0 NCH W=5u L=1.4u
+V5 in+ 0 DC 1.65 
+R1 out in- 100k
+R2 in in- 20k
+V4 in 0 DC 1.65 SIN( 1.65 100m 20k 0 0 0 ) AC 1
+XMN3 out Vbias 0 0 NCH W=17.4u L=1.4u
+C2 out 0 2p
+XMP2 out VGP2 Vcc Vcc PCH W=14.5u L=1.4u
+C1 VGP2 out 1.2p
+XMP4 VGP4P8 VGP4P8 Vcc Vcc PCH W=2.8u L=1.4u
+I1 Vcc Vbias 12u
+XMN4 VGP4P8 in- VSN4N8 0 NCH W=2.8u L=1.4u
+XMN8 VGP2 in+ VSN4N8 0 NCH W=2.8u L=1.4u
+XMN2 VSN4N8 Vbias 0 0 NCH W=5u L=1.4u
+XMP8 VGP2 VGP4P8 Vcc Vcc PCH W=2.8u L=1.4u
+
+.control
+set xbrushwidth=2
+
+tran 20n 2m
+plot v(VGP4P8) v(xu1.mon)*5000+3
+plot in out
+
+ac dec 10 1 1Meg
+plot db(out)
+.endc
+ 
+.end

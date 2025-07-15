@@ -1,0 +1,41 @@
+* Repeat loop, double exponential current pulses
+
+.param let = 10.5 cdepth = 1.2
+.csparam let = 'let'
+.param tfall = 500p trise = 20p  ; tau in exponent for pulse
+
+R1 n1 0 1e4
+R2 n2 0 1e4
+R3 n3 0 1e4
+R4 n4 0 1e4
+
+
+****  SEE generator without control input, double exponential current sources
+aseegen1 NULL mon [%id(n1 0) %id(n2 0) %id(n3 0) %id(n4 0)] seemod1
+.model seemod1 seegen (tdelay = 11n tperiod=25n let='let' cdepth='cdepth' trise='trise' tfall='tfall')
+* alternative syntax, if no current measurement required and reference nodes are GND
+*aseegen1 NULL mon [%i(n1) %i(n2) %i(n3) %i(n4)] seemod1
+
+
+
+* simulation command: 
+.tran 100ps 120ns
+
+*.options method=gear
+
+.control
+set xbrushwidth=3
+*run
+*plot n1 n2+2 n3+4 n4+6
+let newlet = let
+repeat 10
+  run
+  plot n1 n2+2 n3+4 n4+6 ylimit -3 7
+  let newlet = newlet - 0.5
+  alterparam let = $&newlet
+  reset
+end
+rusage
+.endc
+
+.end
