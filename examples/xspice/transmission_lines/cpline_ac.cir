@@ -5,7 +5,7 @@ V2 p2 0 dc 0 ac 1 portnum 2 z0 50
 V3 p3 0 dc 0 ac 1 portnum 3 z0 50
 V4 p4 0 dc 0 ac 1 portnum 4 z0 50
 
-A1 %hd(p1 0) %hd(p2 0) %hd(p3 0) %hd(p4 0) CPLINE1
+A1 %hd(p1 0) %hd(p2 0) %hd(p3 0) %hd(p4 0) %vd(p1 0) %vd(p2 0) %vd(p3 0) %vd(p4 0) CPLINE1
 .MODEL CPLINE1 CPLINE(ze=84.48 zo=53.99 l=25e-3 ere=3.34 ero=2.829 ao=0 ae=0)
 
 .control
