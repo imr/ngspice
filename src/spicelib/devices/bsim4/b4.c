@@ -1,30 +1,27 @@
 /* ******************************************************************************
-   *  BSIM4 4.8.2 released by Chetan Kumar Dabhi 01/01/2020                     *
+   *  BSIM4 4.8.3 released on 05/19/2025                                        *
    *  BSIM4 Model Equations                                                     *
    ******************************************************************************
 
    ******************************************************************************
-   *  Copyright (c) 2020 University of California                               *
+   *  Copyright (c) 2025 University of California                               *
    *                                                                            *
-   *  Project Director: Prof. Chenming Hu.                                      *
-   *  Current developers: Chetan Kumar Dabhi   (Ph.D. student, IIT Kanpur)      *
-   *                      Prof. Yogesh Chauhan (IIT Kanpur)                     *
-   *                      Dr. Pragya Kushwaha  (Postdoc, UC Berkeley)           *
-   *                      Dr. Avirup Dasgupta  (Postdoc, UC Berkeley)           *
-   *                      Ming-Yen Kao         (Ph.D. student, UC Berkeley)     *
-   *  Authors: Gary W. Ng, Weidong Liu, Xuemei Xi, Mohan Dunga, Wenwei Yang     *
-   *           Ali Niknejad, Chetan Kumar Dabhi, Yogesh Singh Chauhan,          *
-   *           Sayeef Salahuddin, Chenming Hu                                   * 
+   *  Project Directors: Prof. Sayeef Salahuddin and Prof. Chenming Hu          *
+   *  Developers list: https://www.bsim.berkeley.edu/models/bsim4/auth_bsim4/   *
    ******************************************************************************/
 
 /*
 Licensed under Educational Community License, Version 2.0 (the "License"); you may
 not use this file except in compliance with the License. You may obtain a copy of the license at
 http://opensource.org/licenses/ECL-2.0
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
 under the License.
+
+BSIM4 model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc
 */
+
 
 #include "ngspice/ngspice.h"
 #include "ngspice/devdefs.h"
@@ -57,11 +54,10 @@ IOP( "rbpb", BSIM4_RBPB,  IF_REAL   , "Body resistance"),
 IOP( "rbps", BSIM4_RBPS,  IF_REAL   , "Body resistance"),
 IOP( "rbpd", BSIM4_RBPD,  IF_REAL   , "Body resistance"),
 IOP( "delvto", BSIM4_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
-IOPR( "delvt0", BSIM4_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
-IOP( "mulu0", BSIM4_MULU0, IF_REAL, "Low field mobility multiplier"),
+IOPR("delvt0", BSIM4_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
 IOP( "xgw",  BSIM4_XGW, IF_REAL, "Distance from gate contact center to device edge"),
 IOP( "ngcon", BSIM4_NGCON, IF_REAL, "Number of gate contacts"),
-IOP( "wnflag", BSIM4_WNFLAG, IF_INTEGER, "W/NF device flag for bin selection"),
+
 
 IOP( "trnqsmod", BSIM4_TRNQSMOD, IF_INTEGER, "Transient NQS model selector"),
 IOP( "acnqsmod", BSIM4_ACNQSMOD, IF_INTEGER, "AC NQS model selector"),
@@ -69,6 +65,10 @@ IOP( "rbodymod", BSIM4_RBODYMOD, IF_INTEGER, "Distributed body R model selector"
 IOP( "rgatemod", BSIM4_RGATEMOD, IF_INTEGER, "Gate resistance model selector"),
 IOP( "geomod", BSIM4_GEOMOD, IF_INTEGER, "Geometry dependent parasitics model selector"),
 IOP( "rgeomod", BSIM4_RGEOMOD, IF_INTEGER, "S/D resistance and contact model selector"),
+
+IOP( "mult_i", BSIM4_MULT_I, IF_REAL, "Variability in current"),
+IOP( "mult_q", BSIM4_MULT_Q, IF_REAL, "Variability in charge"),
+IOP( "mult_fn", BSIM4_MULT_FN, IF_REAL, "Variability in flicker noise"),
 IP( "ic",  BSIM4_IC,     IF_REALVEC , "Vector of DS,GS,BS initial voltages"),
 OP( "gmbs",         BSIM4_GMBS,       IF_REAL,    "Gmb"),
 OP( "gm",           BSIM4_GM,         IF_REAL,    "Gm"),
@@ -138,7 +138,6 @@ IOP( "rbodymod", BSIM4_MOD_RBODYMOD, IF_INTEGER, "Distributed body R model selec
 IOP( "rgatemod", BSIM4_MOD_RGATEMOD, IF_INTEGER, "Gate R model selector"),
 IOP( "permod", BSIM4_MOD_PERMOD, IF_INTEGER, "Pd and Ps model selector"),
 IOP( "geomod", BSIM4_MOD_GEOMOD, IF_INTEGER, "Geometry dependent parasitics model selector"),
-IOP( "rgeomod", BSIM4_MOD_RGEOMOD, IF_INTEGER, "S/D resistance and contact model selector"),
 IOP( "fnoimod", BSIM4_MOD_FNOIMOD, IF_INTEGER, "Flicker noise model selector"),
 IOP( "tnoimod", BSIM4_MOD_TNOIMOD, IF_INTEGER, "Thermal noise model selector"),
 IOP( "mtrlmod", BSIM4_MOD_MTRLMOD, IF_INTEGER, "parameter for non-silicon substrate or metal gate selector"),
@@ -164,18 +163,19 @@ IOP( "toxref", BSIM4_MOD_TOXREF, IF_REAL, "Target tox value"),
 IOP( "dtox", BSIM4_MOD_DTOX, IF_REAL, "Defined as (toxe - toxp) "),
 IOP( "epsrox", BSIM4_MOD_EPSROX, IF_REAL, "Dielectric constant of the gate oxide relative to vacuum"),
 IOP( "cdsc", BSIM4_MOD_CDSC, IF_REAL, "Drain/Source and channel coupling capacitance"),
-IOP( "cdscb", BSIM4_MOD_CDSCB, IF_REAL, "Body-bias dependence of cdsc"), 
-IOP( "cdscd", BSIM4_MOD_CDSCD, IF_REAL, "Drain-bias dependence of cdsc"), 
+IOP( "cdscb", BSIM4_MOD_CDSCB, IF_REAL, "Body-bias dependence of cdsc"),
+IOP( "cdscd", BSIM4_MOD_CDSCD, IF_REAL, "Drain-bias dependence of cdsc"),
 IOP( "cit", BSIM4_MOD_CIT, IF_REAL, "Interface state capacitance"),
 IOP( "nfactor", BSIM4_MOD_NFACTOR, IF_REAL, "Subthreshold swing Coefficient"),
 IOP( "xj", BSIM4_MOD_XJ, IF_REAL, "Junction depth in meters"),
 IOP( "vsat", BSIM4_MOD_VSAT, IF_REAL, "Saturation velocity at tnom"),
 IOP( "at", BSIM4_MOD_AT, IF_REAL, "Temperature coefficient of vsat"),
-IOP( "a0", BSIM4_MOD_A0, IF_REAL, "Non-uniform depletion width effect coefficient."), 
-IOP( "ags", BSIM4_MOD_AGS, IF_REAL, "Gate bias  coefficient of Abulk."), 
+IOP( "a0", BSIM4_MOD_A0, IF_REAL, "Non-uniform depletion width effect coefficient."),
+IOP( "ags", BSIM4_MOD_AGS, IF_REAL, "Gate bias  coefficient of Abulk."),
 IOP( "a1", BSIM4_MOD_A1, IF_REAL, "Non-saturation effect coefficient"),
 IOP( "a2", BSIM4_MOD_A2, IF_REAL, "Non-saturation effect coefficient"),
 IOP( "keta", BSIM4_MOD_KETA, IF_REAL, "Body-bias coefficient of non-uniform depletion width effect."),
+IOP( "ketac", BSIM4_MOD_KETAC, IF_REAL, "Body-bias coefficient of non-uniform depletion width effect in dynamic evaluation."),
 IOP( "phig", BSIM4_MOD_PHIG, IF_REAL, "Work function of gate"),
 IOP( "epsrgate", BSIM4_MOD_EPSRGATE, IF_REAL, "Dielectric constant of gate relative to vacuum"),
 IOP( "easub",BSIM4_MOD_EASUB, IF_REAL, "Electron affinity of substrate"),
@@ -248,30 +248,30 @@ IOP( "cgbo", BSIM4_MOD_CGBO, IF_REAL, "Gate-bulk overlap capacitance per length"
 IOP( "xpart", BSIM4_MOD_XPART, IF_REAL, "Channel charge partitioning"),
 IOP( "delta", BSIM4_MOD_DELTA, IF_REAL, "Effective Vds parameter"),
 IOP( "rsh", BSIM4_MOD_RSH, IF_REAL, "Source-drain sheet resistance"),
-IOP( "rdsw", BSIM4_MOD_RDSW, IF_REAL, "Source-drain resistance per width"),    
+IOP( "rdsw", BSIM4_MOD_RDSW, IF_REAL, "Source-drain resistance per width"),
 IOP( "rdswmin", BSIM4_MOD_RDSWMIN, IF_REAL, "Source-drain resistance per width at high Vg"),
 IOP( "rsw", BSIM4_MOD_RSW, IF_REAL, "Source resistance per width"),
 IOP( "rdw", BSIM4_MOD_RDW, IF_REAL, "Drain resistance per width"),
 IOP( "rdwmin", BSIM4_MOD_RDWMIN, IF_REAL, "Drain resistance per width at high Vg"),
 IOP( "rswmin", BSIM4_MOD_RSWMIN, IF_REAL, "Source resistance per width at high Vg"),
 
-IOP( "prwg", BSIM4_MOD_PRWG, IF_REAL, "Gate-bias effect on parasitic resistance "),    
-IOP( "prwb", BSIM4_MOD_PRWB, IF_REAL, "Body-effect on parasitic resistance "),    
+IOP( "prwg", BSIM4_MOD_PRWG, IF_REAL, "Gate-bias effect on parasitic resistance "),
+IOP( "prwb", BSIM4_MOD_PRWB, IF_REAL, "Body-effect on parasitic resistance "),
 
-IOP( "prt", BSIM4_MOD_PRT, IF_REAL, "Temperature coefficient of parasitic resistance "),    
+IOP( "prt", BSIM4_MOD_PRT, IF_REAL, "Temperature coefficient of parasitic resistance "),
 IOP( "eta0", BSIM4_MOD_ETA0, IF_REAL, "Subthreshold region DIBL coefficient"),
 IOP( "etab", BSIM4_MOD_ETAB, IF_REAL, "Subthreshold region DIBL coefficient"),
 IOP( "pclm", BSIM4_MOD_PCLM, IF_REAL, "Channel length modulation Coefficient"),
-IOP( "pdiblc1", BSIM4_MOD_PDIBL1, IF_REAL, "Drain-induced barrier lowering coefficient"),   
-IOP( "pdiblc2", BSIM4_MOD_PDIBL2, IF_REAL, "Drain-induced barrier lowering coefficient"),   
-IOP( "pdiblcb", BSIM4_MOD_PDIBLB, IF_REAL, "Body-effect on drain-induced barrier lowering"),   
+IOP( "pdiblc1", BSIM4_MOD_PDIBL1, IF_REAL, "Drain-induced barrier lowering coefficient"),
+IOP( "pdiblc2", BSIM4_MOD_PDIBL2, IF_REAL, "Drain-induced barrier lowering coefficient"),
+IOP( "pdiblcb", BSIM4_MOD_PDIBLB, IF_REAL, "Body-effect on drain-induced barrier lowering"),
 IOP( "fprout", BSIM4_MOD_FPROUT, IF_REAL, "Rout degradation coefficient for pocket devices"),
 IOP( "pdits", BSIM4_MOD_PDITS, IF_REAL, "Coefficient for drain-induced Vth shifts"),
 IOP( "pditsl", BSIM4_MOD_PDITSL, IF_REAL, "Length dependence of drain-induced Vth shifts"),
 IOP( "pditsd", BSIM4_MOD_PDITSD, IF_REAL, "Vds dependence of drain-induced Vth shifts"),
-IOP( "pscbe1", BSIM4_MOD_PSCBE1, IF_REAL, "Substrate current body-effect coefficient"),   
-IOP( "pscbe2", BSIM4_MOD_PSCBE2, IF_REAL, "Substrate current body-effect coefficient"),   
-IOP( "pvag", BSIM4_MOD_PVAG, IF_REAL, "Gate dependence of output resistance parameter"),   
+IOP( "pscbe1", BSIM4_MOD_PSCBE1, IF_REAL, "Substrate current body-effect coefficient"),
+IOP( "pscbe2", BSIM4_MOD_PSCBE2, IF_REAL, "Substrate current body-effect coefficient"),
+IOP( "pvag", BSIM4_MOD_PVAG, IF_REAL, "Gate dependence of output resistance parameter"),
 
 IOP( "jss", BSIM4_MOD_JSS, IF_REAL, "Bottom source junction reverse saturation current density"),
 IOP( "jsws", BSIM4_MOD_JSWS, IF_REAL, "Isolation edge sidewall source junction reverse saturation current density"),
@@ -390,14 +390,14 @@ IOP( "beta0", BSIM4_MOD_BETA0, IF_REAL, "substrate current model parameter"),
 IOP( "agidl", BSIM4_MOD_AGIDL, IF_REAL, "Pre-exponential constant for GIDL"),
 IOP( "bgidl", BSIM4_MOD_BGIDL, IF_REAL, "Exponential constant for GIDL"),
 IOP( "cgidl", BSIM4_MOD_CGIDL, IF_REAL, "Parameter for body-bias dependence of GIDL"),
-IOP( "rgidl", BSIM4_MOD_RGIDL, IF_REAL, "GIDL vg parameter"),	/* v4.7 New GIDL/GISL */ 
+IOP( "rgidl", BSIM4_MOD_RGIDL, IF_REAL, "GIDL vg parameter"),   /* v4.7 New GIDL/GISL */
 IOP( "kgidl", BSIM4_MOD_KGIDL, IF_REAL, "GIDL vb parameter"),   /* v4.7 New GIDL/GISL */
 IOP( "fgidl", BSIM4_MOD_FGIDL, IF_REAL, "GIDL vb parameter"),   /* v4.7 New GIDL/GISL */
 IOP( "egidl", BSIM4_MOD_EGIDL, IF_REAL, "Fitting parameter for Bandbending"),
 IOP( "agisl", BSIM4_MOD_AGISL, IF_REAL, "Pre-exponential constant for GISL"),
 IOP( "bgisl", BSIM4_MOD_BGISL, IF_REAL, "Exponential constant for GISL"),
 IOP( "cgisl", BSIM4_MOD_CGISL, IF_REAL, "Parameter for body-bias dependence of GISL"),
-IOP( "rgisl", BSIM4_MOD_RGISL, IF_REAL, "GISL vg parameter"),	/* v4.7 New GIDL/GISL */ 
+IOP( "rgisl", BSIM4_MOD_RGISL, IF_REAL, "GISL vg parameter"),   /* v4.7 New GIDL/GISL */
 IOP( "kgisl", BSIM4_MOD_KGISL, IF_REAL, "GISL vb parameter"),   /* v4.7 New GIDL/GISL */
 IOP( "fgisl", BSIM4_MOD_FGISL, IF_REAL, "GISL vb parameter"),   /* v4.7 New GIDL/GISL */
 IOP( "egisl", BSIM4_MOD_EGISL, IF_REAL, "Fitting parameter for Bandbending"),
@@ -442,7 +442,7 @@ IOP( "jtssws", BSIM4_MOD_JTSSWS, IF_REAL, "Source STI sidewall trap-assisted sat
 IOP( "jtsswd", BSIM4_MOD_JTSSWD, IF_REAL, "Drain STI sidewall trap-assisted saturation current density"),
 IOP( "jtsswgs", BSIM4_MOD_JTSSWGS, IF_REAL, "Source gate-edge sidewall trap-assisted saturation current density"),
 IOP( "jtsswgd", BSIM4_MOD_JTSSWGD, IF_REAL, "Drain gate-edge sidewall trap-assisted saturation current density"),
-IOP( "jtweff", BSIM4_MOD_JTWEFF, IF_REAL, "TAT current width dependence"),
+IOP( "jtweff", BSIM4_MOD_JTWEFF, IF_REAL, "TAT current width dependance"),
 IOP( "njts", BSIM4_MOD_NJTS, IF_REAL, "Non-ideality factor for bottom junction"),
 IOP( "njtssw", BSIM4_MOD_NJTSSW, IF_REAL, "Non-ideality factor for STI sidewall junction"),
 IOP( "njtsswg", BSIM4_MOD_NJTSSWG, IF_REAL, "Non-ideality factor for gate-edge sidewall junction"),
@@ -514,11 +514,12 @@ IOP( "lnfactor", BSIM4_MOD_LNFACTOR, IF_REAL, "Length dependence of nfactor"),
 IOP( "lxj", BSIM4_MOD_LXJ, IF_REAL, "Length dependence of xj"),
 IOP( "lvsat", BSIM4_MOD_LVSAT, IF_REAL, "Length dependence of vsat"),
 IOP( "lat", BSIM4_MOD_LAT, IF_REAL, "Length dependence of at"),
-IOP( "la0", BSIM4_MOD_LA0, IF_REAL, "Length dependence of a0"), 
-IOP( "lags", BSIM4_MOD_LAGS, IF_REAL, "Length dependence of ags"), 
+IOP( "la0", BSIM4_MOD_LA0, IF_REAL, "Length dependence of a0"),
+IOP( "lags", BSIM4_MOD_LAGS, IF_REAL, "Length dependence of ags"),
 IOP( "la1", BSIM4_MOD_LA1, IF_REAL, "Length dependence of a1"),
 IOP( "la2", BSIM4_MOD_LA2, IF_REAL, "Length dependence of a2"),
 IOP( "lketa", BSIM4_MOD_LKETA, IF_REAL, "Length dependence of keta"),
+IOP( "lketac", BSIM4_MOD_LKETAC, IF_REAL, "Length dependence of ketac"),
 IOP( "lnsub", BSIM4_MOD_LNSUB, IF_REAL, "Length dependence of nsub"),
 IOP( "lndep",  BSIM4_MOD_LNDEP, IF_REAL, "Length dependence of ndep"),
 IOP( "lnsd",  BSIM4_MOD_LNSD, IF_REAL, "Length dependence of nsd"),
@@ -553,8 +554,8 @@ IOP( "ldvt1w", BSIM4_MOD_LDVT1W, IF_REAL, "Length dependence of dvt1w"),
 IOP( "ldvt2w", BSIM4_MOD_LDVT2W, IF_REAL, "Length dependence of dvt2w"),
 IOP( "ldrout", BSIM4_MOD_LDROUT, IF_REAL, "Length dependence of drout"),
 IOP( "ldsub", BSIM4_MOD_LDSUB, IF_REAL, "Length dependence of dsub"),
-IOP( "lvth0", BSIM4_MOD_LVTH0, IF_REAL,"Length dependence of vth0"),
-IOPR("lvtho", BSIM4_MOD_LVTH0, IF_REAL,"Length dependence of vtho"),
+IOP( "lvth0", BSIM4_MOD_LVTH0, IF_REAL,"Length dependence of vto"),
+IOPR("lvtho", BSIM4_MOD_LVTH0, IF_REAL,"Length dependence of vto"),
 IOP( "lua",  BSIM4_MOD_LUA, IF_REAL, "Length dependence of ua"),
 IOP( "lua1", BSIM4_MOD_LUA1, IF_REAL, "Length dependence of ua1"),
 IOP( "lub", BSIM4_MOD_LUB, IF_REAL, "Length dependence of ub"),
@@ -572,26 +573,26 @@ IOP( "lvoff", BSIM4_MOD_LVOFF, IF_REAL, "Length dependence of voff"),
 IOP( "lminv", BSIM4_MOD_LMINV, IF_REAL, "Length dependence of minv"),
 IOP( "lminvcv", BSIM4_MOD_LMINVCV, IF_REAL, "Length dependence of minvcv"),
 IOP( "ldelta", BSIM4_MOD_LDELTA, IF_REAL, "Length dependence of delta"),
-IOP( "lrdsw", BSIM4_MOD_LRDSW,  IF_REAL, "Length dependence of rdsw "),    
+IOP( "lrdsw", BSIM4_MOD_LRDSW,  IF_REAL, "Length dependence of rdsw "),
 IOP( "lrsw", BSIM4_MOD_LRSW, IF_REAL, "Length dependence of rsw"),
 IOP( "lrdw", BSIM4_MOD_LRDW, IF_REAL, "Length dependence of rdw"),
 
-IOP( "lprwg", BSIM4_MOD_LPRWG,  IF_REAL, "Length dependence of prwg "),    
-IOP( "lprwb", BSIM4_MOD_LPRWB,  IF_REAL, "Length dependence of prwb "),    
+IOP( "lprwg", BSIM4_MOD_LPRWG,  IF_REAL, "Length dependence of prwg "),
+IOP( "lprwb", BSIM4_MOD_LPRWB,  IF_REAL, "Length dependence of prwb "),
 
-IOP( "lprt", BSIM4_MOD_LPRT, IF_REAL, "Length dependence of prt "),    
-IOP( "leta0", BSIM4_MOD_LETA0, IF_REAL, "Length dependence of eta0"),   
-IOP( "letab", BSIM4_MOD_LETAB, IF_REAL, "Length dependence of etab"),   
-IOP( "lpclm", BSIM4_MOD_LPCLM, IF_REAL, "Length dependence of pclm"),   
-IOP( "lpdiblc1", BSIM4_MOD_LPDIBL1, IF_REAL, "Length dependence of pdiblc1"),   
-IOP( "lpdiblc2", BSIM4_MOD_LPDIBL2, IF_REAL, "Length dependence of pdiblc2"),   
-IOP( "lpdiblcb", BSIM4_MOD_LPDIBLB, IF_REAL, "Length dependence of pdiblcb"),   
+IOP( "lprt", BSIM4_MOD_LPRT, IF_REAL, "Length dependence of prt "),
+IOP( "leta0", BSIM4_MOD_LETA0, IF_REAL, "Length dependence of eta0"),
+IOP( "letab", BSIM4_MOD_LETAB, IF_REAL, "Length dependence of etab"),
+IOP( "lpclm", BSIM4_MOD_LPCLM, IF_REAL, "Length dependence of pclm"),
+IOP( "lpdiblc1", BSIM4_MOD_LPDIBL1, IF_REAL, "Length dependence of pdiblc1"),
+IOP( "lpdiblc2", BSIM4_MOD_LPDIBL2, IF_REAL, "Length dependence of pdiblc2"),
+IOP( "lpdiblcb", BSIM4_MOD_LPDIBLB, IF_REAL, "Length dependence of pdiblcb"),
 IOP( "lfprout", BSIM4_MOD_LFPROUT, IF_REAL, "Length dependence of pdiblcb"),
 IOP( "lpdits", BSIM4_MOD_LPDITS, IF_REAL, "Length dependence of pdits"),
 IOP( "lpditsd", BSIM4_MOD_LPDITSD, IF_REAL, "Length dependence of pditsd"),
-IOP( "lpscbe1",  BSIM4_MOD_LPSCBE1, IF_REAL, "Length dependence of pscbe1"),   
-IOP( "lpscbe2",  BSIM4_MOD_LPSCBE2, IF_REAL, "Length dependence of pscbe2"),   
-IOP( "lpvag", BSIM4_MOD_LPVAG, IF_REAL, "Length dependence of pvag"),   
+IOP( "lpscbe1",  BSIM4_MOD_LPSCBE1, IF_REAL, "Length dependence of pscbe1"),
+IOP( "lpscbe2",  BSIM4_MOD_LPSCBE2, IF_REAL, "Length dependence of pscbe2"),
+IOP( "lpvag", BSIM4_MOD_LPVAG, IF_REAL, "Length dependence of pvag"),
 IOP( "lwr",  BSIM4_MOD_LWR, IF_REAL, "Length dependence of wr"),
 IOP( "ldwg", BSIM4_MOD_LDWG, IF_REAL, "Length dependence of dwg"),
 IOP( "ldwb", BSIM4_MOD_LDWB, IF_REAL, "Length dependence of dwb"),
@@ -611,16 +612,16 @@ IOP( "lbeta0", BSIM4_MOD_LBETA0, IF_REAL, "Length dependence of beta0"),
 IOP( "lagidl", BSIM4_MOD_LAGIDL, IF_REAL, "Length dependence of agidl"),
 IOP( "lbgidl", BSIM4_MOD_LBGIDL, IF_REAL, "Length dependence of bgidl"),
 IOP( "lcgidl", BSIM4_MOD_LCGIDL, IF_REAL, "Length dependence of cgidl"),
-IOP( "lrgidl", BSIM4_MOD_LRGIDL, IF_REAL, "Length dependence of rgidl"),	/* v4.7 New GIDL/GISL */
-IOP( "lkgidl", BSIM4_MOD_LKGIDL, IF_REAL, "Length dependence of kgidl"),	/* v4.7 New GIDL/GISL */
-IOP( "lfgidl", BSIM4_MOD_LFGIDL, IF_REAL, "Length dependence of fgidl"),	/* v4.7 New GIDL/GISL */
+IOP( "lrgidl", BSIM4_MOD_LRGIDL, IF_REAL, "Length dependence of rgidl"),    /* v4.7 New GIDL/GISL */
+IOP( "lkgidl", BSIM4_MOD_LKGIDL, IF_REAL, "Length dependence of kgidl"),    /* v4.7 New GIDL/GISL */
+IOP( "lfgidl", BSIM4_MOD_LFGIDL, IF_REAL, "Length dependence of fgidl"),    /* v4.7 New GIDL/GISL */
 IOP( "legidl", BSIM4_MOD_LEGIDL, IF_REAL, "Length dependence of egidl"),
 IOP( "lagisl", BSIM4_MOD_LAGISL, IF_REAL, "Length dependence of agisl"),
 IOP( "lbgisl", BSIM4_MOD_LBGISL, IF_REAL, "Length dependence of bgisl"),
 IOP( "lcgisl", BSIM4_MOD_LCGISL, IF_REAL, "Length dependence of cgisl"),
-IOP( "lrgisl", BSIM4_MOD_LRGISL, IF_REAL, "Length dependence of rgisl"),	/* v4.7 New GIDL/GISL */
-IOP( "lkgisl", BSIM4_MOD_LKGISL, IF_REAL, "Length dependence of kgisl"),	/* v4.7 New GIDL/GISL */
-IOP( "lfgisl", BSIM4_MOD_LFGISL, IF_REAL, "Length dependence of fgisl"),	/* v4.7 New GIDL/GISL */
+IOP( "lrgisl", BSIM4_MOD_LRGISL, IF_REAL, "Length dependence of rgisl"),    /* v4.7 New GIDL/GISL */
+IOP( "lkgisl", BSIM4_MOD_LKGISL, IF_REAL, "Length dependence of kgisl"),    /* v4.7 New GIDL/GISL */
+IOP( "lfgisl", BSIM4_MOD_LFGISL, IF_REAL, "Length dependence of fgisl"),    /* v4.7 New GIDL/GISL */
 IOP( "legisl", BSIM4_MOD_LEGISL, IF_REAL, "Length dependence of egisl"),
 IOP( "laigc", BSIM4_MOD_LAIGC, IF_REAL, "Length dependence of aigc"),
 IOP( "lbigc", BSIM4_MOD_LBIGC, IF_REAL, "Length dependence of bigc"),
@@ -669,18 +670,19 @@ IOP( "lteta0",     BSIM4_MOD_LTETA0,     IF_REAL, "Length dependence of teta0"),
 IOP( "ltvoffcv",     BSIM4_MOD_LTVOFFCV,     IF_REAL, "Length dependence of tvoffcv"),  /* v4.7 Tanvir*/
 
 IOP( "wcdsc",  BSIM4_MOD_WCDSC, IF_REAL, "Width dependence of cdsc"),
-IOP( "wcdscb", BSIM4_MOD_WCDSCB, IF_REAL, "Width dependence of cdscb"),  
-IOP( "wcdscd", BSIM4_MOD_WCDSCD, IF_REAL, "Width dependence of cdscd"),  
+IOP( "wcdscb", BSIM4_MOD_WCDSCB, IF_REAL, "Width dependence of cdscb"),
+IOP( "wcdscd", BSIM4_MOD_WCDSCD, IF_REAL, "Width dependence of cdscd"),
 IOP( "wcit",   BSIM4_MOD_WCIT,  IF_REAL, "Width dependence of cit"),
 IOP( "wnfactor", BSIM4_MOD_WNFACTOR, IF_REAL, "Width dependence of nfactor"),
 IOP( "wxj", BSIM4_MOD_WXJ, IF_REAL, "Width dependence of xj"),
 IOP( "wvsat", BSIM4_MOD_WVSAT, IF_REAL, "Width dependence of vsat"),
 IOP( "wat", BSIM4_MOD_WAT, IF_REAL, "Width dependence of at"),
-IOP( "wa0", BSIM4_MOD_WA0, IF_REAL, "Width dependence of a0"), 
-IOP( "wags", BSIM4_MOD_WAGS, IF_REAL, "Width dependence of ags"), 
+IOP( "wa0", BSIM4_MOD_WA0, IF_REAL, "Width dependence of a0"),
+IOP( "wags", BSIM4_MOD_WAGS, IF_REAL, "Width dependence of ags"),
 IOP( "wa1", BSIM4_MOD_WA1, IF_REAL, "Width dependence of a1"),
 IOP( "wa2", BSIM4_MOD_WA2, IF_REAL, "Width dependence of a2"),
 IOP( "wketa", BSIM4_MOD_WKETA, IF_REAL, "Width dependence of keta"),
+IOP( "wketac", BSIM4_MOD_WKETAC, IF_REAL, "Width dependence of ketac"),
 IOP( "wnsub", BSIM4_MOD_WNSUB, IF_REAL, "Width dependence of nsub"),
 IOP( "wndep",  BSIM4_MOD_WNDEP, IF_REAL, "Width dependence of ndep"),
 IOP( "wnsd",  BSIM4_MOD_WNSD, IF_REAL, "Width dependence of nsd"),
@@ -715,8 +717,8 @@ IOP( "wdvt1w", BSIM4_MOD_WDVT1W, IF_REAL, "Width dependence of dvt1w"),
 IOP( "wdvt2w", BSIM4_MOD_WDVT2W, IF_REAL, "Width dependence of dvt2w"),
 IOP( "wdrout", BSIM4_MOD_WDROUT, IF_REAL, "Width dependence of drout"),
 IOP( "wdsub", BSIM4_MOD_WDSUB, IF_REAL, "Width dependence of dsub"),
-IOP( "wvth0", BSIM4_MOD_WVTH0, IF_REAL,"Width dependence of vth0"),
-IOPR("wvtho", BSIM4_MOD_WVTH0, IF_REAL,"Width dependence of vtho"),
+IOP( "wvth0", BSIM4_MOD_WVTH0, IF_REAL,"Width dependence of vto"),
+IOPR("wvtho", BSIM4_MOD_WVTH0, IF_REAL,"Width dependence of vto"),
 IOP( "wua",  BSIM4_MOD_WUA, IF_REAL, "Width dependence of ua"),
 IOP( "wua1", BSIM4_MOD_WUA1, IF_REAL, "Width dependence of ua1"),
 IOP( "wub", BSIM4_MOD_WUB, IF_REAL, "Width dependence of ub"),
@@ -742,18 +744,18 @@ IOP( "wprwg", BSIM4_MOD_WPRWG,  IF_REAL, "Width dependence of prwg "),
 IOP( "wprwb", BSIM4_MOD_WPRWB,  IF_REAL, "Width dependence of prwb "),
 
 IOP( "wprt", BSIM4_MOD_WPRT, IF_REAL, "Width dependence of prt"),
-IOP( "weta0", BSIM4_MOD_WETA0, IF_REAL, "Width dependence of eta0"),   
-IOP( "wetab", BSIM4_MOD_WETAB, IF_REAL, "Width dependence of etab"),   
-IOP( "wpclm", BSIM4_MOD_WPCLM, IF_REAL, "Width dependence of pclm"),   
-IOP( "wpdiblc1", BSIM4_MOD_WPDIBL1, IF_REAL, "Width dependence of pdiblc1"),   
-IOP( "wpdiblc2", BSIM4_MOD_WPDIBL2, IF_REAL, "Width dependence of pdiblc2"),   
-IOP( "wpdiblcb", BSIM4_MOD_WPDIBLB, IF_REAL, "Width dependence of pdiblcb"),   
+IOP( "weta0", BSIM4_MOD_WETA0, IF_REAL, "Width dependence of eta0"),
+IOP( "wetab", BSIM4_MOD_WETAB, IF_REAL, "Width dependence of etab"),
+IOP( "wpclm", BSIM4_MOD_WPCLM, IF_REAL, "Width dependence of pclm"),
+IOP( "wpdiblc1", BSIM4_MOD_WPDIBL1, IF_REAL, "Width dependence of pdiblc1"),
+IOP( "wpdiblc2", BSIM4_MOD_WPDIBL2, IF_REAL, "Width dependence of pdiblc2"),
+IOP( "wpdiblcb", BSIM4_MOD_WPDIBLB, IF_REAL, "Width dependence of pdiblcb"),
 IOP( "wfprout", BSIM4_MOD_WFPROUT, IF_REAL, "Width dependence of pdiblcb"),
 IOP( "wpdits", BSIM4_MOD_WPDITS, IF_REAL, "Width dependence of pdits"),
 IOP( "wpditsd", BSIM4_MOD_WPDITSD, IF_REAL, "Width dependence of pditsd"),
-IOP( "wpscbe1",  BSIM4_MOD_WPSCBE1, IF_REAL, "Width dependence of pscbe1"),   
-IOP( "wpscbe2",  BSIM4_MOD_WPSCBE2, IF_REAL, "Width dependence of pscbe2"),   
-IOP( "wpvag", BSIM4_MOD_WPVAG, IF_REAL, "Width dependence of pvag"),   
+IOP( "wpscbe1",  BSIM4_MOD_WPSCBE1, IF_REAL, "Width dependence of pscbe1"),
+IOP( "wpscbe2",  BSIM4_MOD_WPSCBE2, IF_REAL, "Width dependence of pscbe2"),
+IOP( "wpvag", BSIM4_MOD_WPVAG, IF_REAL, "Width dependence of pvag"),
 IOP( "wwr",  BSIM4_MOD_WWR, IF_REAL, "Width dependence of wr"),
 IOP( "wdwg", BSIM4_MOD_WDWG, IF_REAL, "Width dependence of dwg"),
 IOP( "wdwb", BSIM4_MOD_WDWB, IF_REAL, "Width dependence of dwb"),
@@ -773,16 +775,16 @@ IOP( "wbeta0", BSIM4_MOD_WBETA0, IF_REAL, "Width dependence of beta0"),
 IOP( "wagidl", BSIM4_MOD_WAGIDL, IF_REAL, "Width dependence of agidl"),
 IOP( "wbgidl", BSIM4_MOD_WBGIDL, IF_REAL, "Width dependence of bgidl"),
 IOP( "wcgidl", BSIM4_MOD_WCGIDL, IF_REAL, "Width dependence of cgidl"),
-IOP( "wrgidl", BSIM4_MOD_WRGIDL, IF_REAL, "Width dependence of rgidl"),		/* v4.7 New GIDL/GISL */
-IOP( "wkgidl", BSIM4_MOD_WKGIDL, IF_REAL, "Width dependence of kgidl"),		/* v4.7 New GIDL/GISL */
-IOP( "wfgidl", BSIM4_MOD_WFGIDL, IF_REAL, "Width dependence of fgidl"),		/* v4.7 New GIDL/GISL */
+IOP( "wrgidl", BSIM4_MOD_WRGIDL, IF_REAL, "Width dependence of rgidl"),     /* v4.7 New GIDL/GISL */
+IOP( "wkgidl", BSIM4_MOD_WKGIDL, IF_REAL, "Width dependence of kgidl"),     /* v4.7 New GIDL/GISL */
+IOP( "wfgidl", BSIM4_MOD_WFGIDL, IF_REAL, "Width dependence of fgidl"),     /* v4.7 New GIDL/GISL */
 IOP( "wegidl", BSIM4_MOD_WEGIDL, IF_REAL, "Width dependence of egidl"),
 IOP( "wagisl", BSIM4_MOD_WAGISL, IF_REAL, "Width dependence of agisl"),
 IOP( "wbgisl", BSIM4_MOD_WBGISL, IF_REAL, "Width dependence of bgisl"),
 IOP( "wcgisl", BSIM4_MOD_WCGISL, IF_REAL, "Width dependence of cgisl"),
-IOP( "wrgisl", BSIM4_MOD_WRGISL, IF_REAL, "Width dependence of rgisl"),		/* v4.7 New GIDL/GISL */
-IOP( "wkgisl", BSIM4_MOD_WKGISL, IF_REAL, "Width dependence of kgisl"),		/* v4.7 New GIDL/GISL */
-IOP( "wfgisl", BSIM4_MOD_WFGISL, IF_REAL, "Width dependence of fgisl"),		/* v4.7 New GIDL/GISL */
+IOP( "wrgisl", BSIM4_MOD_WRGISL, IF_REAL, "Width dependence of rgisl"),     /* v4.7 New GIDL/GISL */
+IOP( "wkgisl", BSIM4_MOD_WKGISL, IF_REAL, "Width dependence of kgisl"),     /* v4.7 New GIDL/GISL */
+IOP( "wfgisl", BSIM4_MOD_WFGISL, IF_REAL, "Width dependence of fgisl"),     /* v4.7 New GIDL/GISL */
 IOP( "wegisl", BSIM4_MOD_WEGISL, IF_REAL, "Width dependence of egisl"),
 IOP( "waigc", BSIM4_MOD_WAIGC, IF_REAL, "Width dependence of aigc"),
 IOP( "wbigc", BSIM4_MOD_WBIGC, IF_REAL, "Width dependence of bigc"),
@@ -830,18 +832,19 @@ IOP( "wteta0",     BSIM4_MOD_WTETA0,     IF_REAL, "Width dependence of teta0"), 
 IOP( "wtvoffcv",     BSIM4_MOD_WTVOFFCV,     IF_REAL, "Width dependence of tvoffcv"),  /* v4.7 Tanvir*/
 
 IOP( "pcdsc",  BSIM4_MOD_PCDSC, IF_REAL, "Cross-term dependence of cdsc"),
-IOP( "pcdscb", BSIM4_MOD_PCDSCB, IF_REAL, "Cross-term dependence of cdscb"), 
+IOP( "pcdscb", BSIM4_MOD_PCDSCB, IF_REAL, "Cross-term dependence of cdscb"),
 IOP( "pcdscd", BSIM4_MOD_PCDSCD, IF_REAL, "Cross-term dependence of cdscd"),
 IOP( "pcit",   BSIM4_MOD_PCIT,  IF_REAL, "Cross-term dependence of cit"),
 IOP( "pnfactor", BSIM4_MOD_PNFACTOR, IF_REAL, "Cross-term dependence of nfactor"),
 IOP( "pxj", BSIM4_MOD_PXJ, IF_REAL, "Cross-term dependence of xj"),
 IOP( "pvsat", BSIM4_MOD_PVSAT, IF_REAL, "Cross-term dependence of vsat"),
 IOP( "pat", BSIM4_MOD_PAT, IF_REAL, "Cross-term dependence of at"),
-IOP( "pa0", BSIM4_MOD_PA0, IF_REAL, "Cross-term dependence of a0"), 
+IOP( "pa0", BSIM4_MOD_PA0, IF_REAL, "Cross-term dependence of a0"),
 IOP( "pags", BSIM4_MOD_PAGS, IF_REAL, "Cross-term dependence of ags"),
 IOP( "pa1", BSIM4_MOD_PA1, IF_REAL, "Cross-term dependence of a1"),
 IOP( "pa2", BSIM4_MOD_PA2, IF_REAL, "Cross-term dependence of a2"),
 IOP( "pketa", BSIM4_MOD_PKETA, IF_REAL, "Cross-term dependence of keta"),
+IOP( "pketac", BSIM4_MOD_PKETAC, IF_REAL, "Cross-term dependence of ketac"),
 IOP( "pnsub", BSIM4_MOD_PNSUB, IF_REAL, "Cross-term dependence of nsub"),
 IOP( "pndep",  BSIM4_MOD_PNDEP, IF_REAL, "Cross-term dependence of ndep"),
 IOP( "pnsd",  BSIM4_MOD_PNSD, IF_REAL, "Cross-term dependence of nsd"),
@@ -876,8 +879,8 @@ IOP( "pdvt1w", BSIM4_MOD_PDVT1W, IF_REAL, "Cross-term dependence of dvt1w"),
 IOP( "pdvt2w", BSIM4_MOD_PDVT2W, IF_REAL, "Cross-term dependence of dvt2w"),
 IOP( "pdrout", BSIM4_MOD_PDROUT, IF_REAL, "Cross-term dependence of drout"),
 IOP( "pdsub", BSIM4_MOD_PDSUB, IF_REAL, "Cross-term dependence of dsub"),
-IOP( "pvth0", BSIM4_MOD_PVTH0, IF_REAL,"Cross-term dependence of vth0"),
-IOPR("pvtho", BSIM4_MOD_PVTH0, IF_REAL,"Cross-term dependence of vtho"),
+IOP( "pvth0", BSIM4_MOD_PVTH0, IF_REAL,"Cross-term dependence of vto"),
+IOPR("pvtho", BSIM4_MOD_PVTH0, IF_REAL,"Cross-term dependence of vto"),
 IOP( "pua",  BSIM4_MOD_PUA, IF_REAL, "Cross-term dependence of ua"),
 IOP( "pua1", BSIM4_MOD_PUA1, IF_REAL, "Cross-term dependence of ua1"),
 IOP( "pub", BSIM4_MOD_PUB, IF_REAL, "Cross-term dependence of ub"),
@@ -895,12 +898,12 @@ IOP( "pvoff", BSIM4_MOD_PVOFF, IF_REAL, "Cross-term dependence of voff"),
 IOP( "pminv", BSIM4_MOD_PMINV, IF_REAL, "Cross-term dependence of minv"),
 IOP( "pminvcv", BSIM4_MOD_PMINVCV, IF_REAL, "Cross-term dependence of minvcv"),
 IOP( "pdelta", BSIM4_MOD_PDELTA, IF_REAL, "Cross-term dependence of delta"),
-IOP( "prdsw", BSIM4_MOD_PRDSW,  IF_REAL, "Cross-term dependence of rdsw "),    
+IOP( "prdsw", BSIM4_MOD_PRDSW,  IF_REAL, "Cross-term dependence of rdsw "),
 IOP( "prsw", BSIM4_MOD_PRSW, IF_REAL, "Cross-term dependence of rsw"),
 IOP( "prdw", BSIM4_MOD_PRDW, IF_REAL, "Cross-term dependence of rdw"),
 
-IOP( "pprwg", BSIM4_MOD_PPRWG,  IF_REAL, "Cross-term dependence of prwg "),    
-IOP( "pprwb", BSIM4_MOD_PPRWB,  IF_REAL, "Cross-term dependence of prwb "),    
+IOP( "pprwg", BSIM4_MOD_PPRWG,  IF_REAL, "Cross-term dependence of prwg "),
+IOP( "pprwb", BSIM4_MOD_PPRWB,  IF_REAL, "Cross-term dependence of prwb "),
 
 IOP( "pprt", BSIM4_MOD_PPRT, IF_REAL, "Cross-term dependence of prt "),
 IOP( "peta0", BSIM4_MOD_PETA0, IF_REAL, "Cross-term dependence of eta0"),
@@ -914,7 +917,7 @@ IOP( "ppdits", BSIM4_MOD_PPDITS, IF_REAL, "Cross-term dependence of pdits"),
 IOP( "ppditsd", BSIM4_MOD_PPDITSD, IF_REAL, "Cross-term dependence of pditsd"),
 IOP( "ppscbe1",  BSIM4_MOD_PPSCBE1, IF_REAL, "Cross-term dependence of pscbe1"),
 IOP( "ppscbe2",  BSIM4_MOD_PPSCBE2, IF_REAL, "Cross-term dependence of pscbe2"),
-IOP( "ppvag", BSIM4_MOD_PPVAG, IF_REAL, "Cross-term dependence of pvag"),   
+IOP( "ppvag", BSIM4_MOD_PPVAG, IF_REAL, "Cross-term dependence of pvag"),
 IOP( "pwr",  BSIM4_MOD_PWR, IF_REAL, "Cross-term dependence of wr"),
 IOP( "pdwg", BSIM4_MOD_PDWG, IF_REAL, "Cross-term dependence of dwg"),
 IOP( "pdwb", BSIM4_MOD_PDWB, IF_REAL, "Cross-term dependence of dwb"),
@@ -934,17 +937,17 @@ IOP( "pbeta0", BSIM4_MOD_PBETA0, IF_REAL, "Cross-term dependence of beta0"),
 IOP( "pagidl", BSIM4_MOD_PAGIDL, IF_REAL, "Cross-term dependence of agidl"),
 IOP( "pbgidl", BSIM4_MOD_PBGIDL, IF_REAL, "Cross-term dependence of bgidl"),
 IOP( "pcgidl", BSIM4_MOD_PCGIDL, IF_REAL, "Cross-term dependence of cgidl"),
-IOP( "prgidl", BSIM4_MOD_PRGIDL, IF_REAL, "Cross-term dependence of rgidl"),	/* v4.7 New GIDL/GISL */
-IOP( "pkgidl", BSIM4_MOD_PKGIDL, IF_REAL, "Cross-term dependence of kgidl"),	/* v4.7 New GIDL/GISL */
-IOP( "pfgidl", BSIM4_MOD_PFGIDL, IF_REAL, "Cross-term dependence of fgidl"),	/* v4.7 New GIDL/GISL */
+IOP( "prgidl", BSIM4_MOD_PRGIDL, IF_REAL, "Cross-term dependence of rgidl"),    /* v4.7 New GIDL/GISL */
+IOP( "pkgidl", BSIM4_MOD_PKGIDL, IF_REAL, "Cross-term dependence of kgidl"),    /* v4.7 New GIDL/GISL */
+IOP( "pfgidl", BSIM4_MOD_PFGIDL, IF_REAL, "Cross-term dependence of fgidl"),    /* v4.7 New GIDL/GISL */
 IOP( "pegidl", BSIM4_MOD_PEGIDL, IF_REAL, "Cross-term dependence of egidl"),
 IOP( "pagisl", BSIM4_MOD_PAGISL, IF_REAL, "Cross-term dependence of agisl"),
 IOP( "pbgisl", BSIM4_MOD_PBGISL, IF_REAL, "Cross-term dependence of bgisl"),
 IOP( "pcgisl", BSIM4_MOD_PCGISL, IF_REAL, "Cross-term dependence of cgisl"),
 IOP( "pegisl", BSIM4_MOD_PEGISL, IF_REAL, "Cross-term dependence of egisl"),
-IOP( "prgisl", BSIM4_MOD_PRGISL, IF_REAL, "Cross-term dependence of rgisl"),	/* v4.7 New GIDL/GISL */
-IOP( "pkgisl", BSIM4_MOD_PKGISL, IF_REAL, "Cross-term dependence of kgisl"),	/* v4.7 New GIDL/GISL */
-IOP( "pfgisl", BSIM4_MOD_PFGISL, IF_REAL, "Cross-term dependence of fgisl"),	/* v4.7 New GIDL/GISL */
+IOP( "prgisl", BSIM4_MOD_PRGISL, IF_REAL, "Cross-term dependence of rgisl"),    /* v4.7 New GIDL/GISL */
+IOP( "pkgisl", BSIM4_MOD_PKGISL, IF_REAL, "Cross-term dependence of kgisl"),    /* v4.7 New GIDL/GISL */
+IOP( "pfgisl", BSIM4_MOD_PFGISL, IF_REAL, "Cross-term dependence of fgisl"),    /* v4.7 New GIDL/GISL */
 IOP( "paigc", BSIM4_MOD_PAIGC, IF_REAL, "Cross-term dependence of aigc"),
 IOP( "pbigc", BSIM4_MOD_PBIGC, IF_REAL, "Cross-term dependence of bigc"),
 IOP( "pcigc", BSIM4_MOD_PCIGC, IF_REAL, "Cross-term dependence of cigc"),
@@ -1071,8 +1074,9 @@ char *BSIM4names[] = {
    "Charge"
 };
 
-int	BSIM4nSize = NUMELEMS(BSIM4names);
-int	BSIM4pTSize = NUMELEMS(BSIM4pTable);
-int	BSIM4mPTSize = NUMELEMS(BSIM4mPTable);
-int	BSIM4iSize = sizeof(BSIM4instance);
-int	BSIM4mSize = sizeof(BSIM4model);
+int BSIM4nSize = NUMELEMS(BSIM4names);
+int BSIM4pTSize = NUMELEMS(BSIM4pTable);
+int BSIM4mPTSize = NUMELEMS(BSIM4mPTable);
+int BSIM4iSize = sizeof(BSIM4instance);
+int BSIM4mSize = sizeof(BSIM4model);
+
