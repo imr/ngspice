@@ -1,30 +1,27 @@
 /* ******************************************************************************
-   *  BSIM4 4.8.2 released by Chetan Kumar Dabhi 01/01/2020                     *
+   *  BSIM4 4.8.3 released on 05/19/2025                                        *
    *  BSIM4 Model Equations                                                     *
    ******************************************************************************
 
    ******************************************************************************
-   *  Copyright (c) 2020 University of California                               *
+   *  Copyright (c) 2025 University of California                               *
    *                                                                            *
-   *  Project Director: Prof. Chenming Hu.                                      *
-   *  Current developers: Chetan Kumar Dabhi   (Ph.D. student, IIT Kanpur)      *
-   *                      Prof. Yogesh Chauhan (IIT Kanpur)                     *
-   *                      Dr. Pragya Kushwaha  (Postdoc, UC Berkeley)           *
-   *                      Dr. Avirup Dasgupta  (Postdoc, UC Berkeley)           *
-   *                      Ming-Yen Kao         (Ph.D. student, UC Berkeley)     *
-   *  Authors: Gary W. Ng, Weidong Liu, Xuemei Xi, Mohan Dunga, Wenwei Yang     *
-   *           Ali Niknejad, Chetan Kumar Dabhi, Yogesh Singh Chauhan,          *
-   *           Sayeef Salahuddin, Chenming Hu                                   * 
+   *  Project Directors: Prof. Sayeef Salahuddin and Prof. Chenming Hu          *
+   *  Developers list: https://www.bsim.berkeley.edu/models/bsim4/auth_bsim4/   *
    ******************************************************************************/
 
 /*
 Licensed under Educational Community License, Version 2.0 (the "License"); you may
 not use this file except in compliance with the License. You may obtain a copy of the license at
 http://opensource.org/licenses/ECL-2.0
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
 under the License.
+
+BSIM4 model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc
 */
+
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -35,7 +32,6 @@ under the License.
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-
 int
 BSIM4convTest(
 GENmodel *inModel,
@@ -44,7 +40,7 @@ CKTcircuit *ckt)
 BSIM4model *model = (BSIM4model*)inModel;
 BSIM4instance *here;
 double delvbd, delvbs, delvds, delvgd, delvgs;
-double delvdbd, delvsbs; 
+double delvdbd, delvsbs;
 double delvbd_jct, delvbs_jct;
 double vds, vgs, vgd, vgdo, vbs, vbd;
 double vdbd, vdbs, vsbs;
@@ -57,8 +53,7 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
     for (; model != NULL; model = BSIM4nextModel(model))
     {    for (here = BSIM4instances(model); here != NULL ;
               here=BSIM4nextInstance(here)) 
-         {
-              vds = model->BSIM4type
+         {    vds = model->BSIM4type
                   * (*(ckt->CKTrhsOld + here->BSIM4dNodePrime)
                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vgs = model->BSIM4type
@@ -72,14 +67,14 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
                    - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vsbs = model->BSIM4type
                    * (*(ckt->CKTrhsOld + here->BSIM4sbNode)
-                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));              
+                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vses = model->BSIM4type
                    * (*(ckt->CKTrhsOld + here->BSIM4sNode)
                    - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vdes = model->BSIM4type
                    * (*(ckt->CKTrhsOld + here->BSIM4dNode)
                    - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
-              
+
               vgdo = *(ckt->CKTstate0 + here->BSIM4vgs)
                     - *(ckt->CKTstate0 + here->BSIM4vds);
               vbd = vbs - vds;
@@ -125,11 +120,11 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
                          * delvds + here->BSIM4gIgbb * delvbs;
               }
               else
-               {   Idtot = here->BSIM4cd + here->BSIM4cbd - here->BSIM4Igidl; /* bugfix */
-                   cdhat = Idtot + here->BSIM4gbd * delvbd_jct + here->BSIM4gmbs 
-                         * delvbd + here->BSIM4gm * delvgd 
-                         - (here->BSIM4gds + here->BSIM4ggidls) * delvds 
-                         - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
+              {   Idtot = here->BSIM4cd + here->BSIM4cbd - here->BSIM4Igidl; /* bugfix */
+                  cdhat = Idtot + here->BSIM4gbd * delvbd_jct + here->BSIM4gmbs
+                        * delvbd + here->BSIM4gm * delvgd
+                        - (here->BSIM4gds + here->BSIM4ggidls) * delvds
+                        - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
 
                   Igstot = here->BSIM4Igs + here->BSIM4Igcd;
                   cgshat = Igstot + here->BSIM4gIgsg * delvgs + here->BSIM4gIgcdg * delvgd
@@ -176,7 +171,7 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
                       || (fabs(cdedhat - Idedtot) >= tol2))
                   {   ckt->CKTnoncon++;
                       return(OK);
-                  } 
+                  }
 
                   if ((fabs(cgshat - Igstot) >= tol3) || (fabs(cgdhat - Igdtot) >= tol4)
                       || (fabs(cgbhat - Igbtot) >= tol5))
@@ -194,15 +189,15 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
                             - here->BSIM4ggislg * delvgd - here->BSIM4ggislb* delvbd + here->BSIM4ggisls * delvds ;
                   }
                   else
-                  {   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd 
-                         * delvbd_jct - (here->BSIM4gbbs + here->BSIM4ggislb) * delvbd
-                         - (here->BSIM4gbgs + here->BSIM4ggislg) * delvgd
-                         + (here->BSIM4gbds + here->BSIM4ggisld - here->BSIM4ggidls) * delvds
-                         - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs; 
+                  {   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd
+                                 * delvbd_jct - (here->BSIM4gbbs + here->BSIM4ggislb) * delvbd
+                                 - (here->BSIM4gbgs + here->BSIM4ggislg) * delvgd
+                                 + (here->BSIM4gbds + here->BSIM4ggisld - here->BSIM4ggidls) * delvds
+                                 - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
                   }
-                  tol6 = ckt->CKTreltol * MAX(fabs(cbhat), 
-                        fabs(Ibtot)) + ckt->CKTabstol;
-                  if (fabs(cbhat - Ibtot) > tol6) 
+                  tol6 = ckt->CKTreltol * MAX(fabs(cbhat),
+                  fabs(Ibtot)) + ckt->CKTabstol;
+                  if (fabs(cbhat - Ibtot) > tol6)
                   {   ckt->CKTnoncon++;
                       return(OK);
                   }
