@@ -24,14 +24,38 @@
 #include "msline_common.h"
 #include "tline_common.h"
 
+
+#ifdef _MSC_VER
+typedef _Dcomplex DoubleComplex;  // double complex
+#else
+typedef double complex DoubleComplex;
+#endif
+
 static double ae, ao, be, bo, ze, zo, ee, eo;
 
-static void copy_complex(double complex s, Complex_t *d)
+static void copy_complex(DoubleComplex s, Complex_t *d)
 {
 	d->real = creal(s);
 	d->imag = cimag(s);
 }
 
+#ifdef _MSC_VER
+static DoubleComplex divide(DoubleComplex n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        return rez;
+    }
+
+static DoubleComplex rdivide(double n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        rez._Val[0] = (n1 * n2._Val[0] + n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        rez._Val[1] = (n1 * n2._Val[0] - n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        return rez;
+    }
+#endif
 
 //static cpline_state_t *state = NULL;
 static void cm_cpmline_callback(ARGS, Mif_Callback_Reason_t reason);
@@ -424,15 +448,37 @@ void cm_cpmline (ARGS)
 	else if(ANALYSIS == AC) {
 		double o = RAD_FREQ;
         calcPropagation(W,s,er,h,t,tand,rho,D,SModel,DModel, o/(2*M_PI));
-		double complex _Z11, _Z12, _Z13, _Z14;
-		double complex ge =  ae + I*be;
-		double complex go =  ao + I*bo;
+		DoubleComplex _Z11, _Z12, _Z13, _Z14;
+#ifdef _MSC_VER
+		DoubleComplex ge = _Cbuild(ae, be);
+		DoubleComplex go = _Cbuild(ao, bo);
+        DoubleComplex tango = _Cmulcr(ctanh(_Cmulcr(go, l)), 2.);
+        DoubleComplex tange = _Cmulcr(ctanh(_Cmulcr(ge, l)), 2.);
+        DoubleComplex singo = _Cmulcr(csinh(_Cmulcr(go, l)), 2.);
+        DoubleComplex singe = _Cmulcr(csinh(_Cmulcr(ge, l)), 2.);
+		_Z11._Val[0] = (rdivide(zo, tango))._Val[0] + (rdivide(ze, tange))._Val[0];
+        _Z11._Val[1] = (rdivide(zo, tango))._Val[1] + (rdivide(ze, tange))._Val[1];
+        _Z12._Val[0] = (rdivide(zo, singo))._Val[0] + (rdivide(ze, singe))._Val[0];
+        _Z12._Val[1] = (rdivide(zo, singo))._Val[1] + (rdivide(ze, singe))._Val[1];
+		_Z13._Val[0] = (rdivide(ze, singe))._Val[0] - (rdivide(zo, singo))._Val[0];
+		_Z13._Val[1] = (rdivide(ze, singe))._Val[1] - (rdivide(zo, singo))._Val[1];
+		_Z14._Val[0] = (rdivide(ze, tange))._Val[0] - (rdivide(zo, tango))._Val[0];
+		_Z14._Val[1] = (rdivide(ze, tange))._Val[1] - (rdivide(zo, tango))._Val[1];
+
+//		_Z11._Val[0] = (rdivide(zo, _Cmulcr(ctanh(_Cmulcr(go, l)), 2.)))._Val[0] + (rdivide(ze, _Cmulcr(ctanh(_Cmulcr(ge, l)), 2.)))._Val[0];
+//        _Z11._Val[1] = (rdivide(zo, _Cmulcr(ctanh(_Cmulcr(go, l)), 2.)))._Val[1] + (rdivide(ze, _Cmulcr(ctanh(_Cmulcr(ge, l)), 2.)))._Val[1];
+//		_Z12 = zo / (2*csinh(go*l)) + ze / (2*csinh(ge*l));
+//		_Z13 = ze / (2*csinh(ge*l)) - zo / (2*csinh(go*l));
+//		_Z14 = ze / (2*ctanh(ge*l)) - zo / (2*ctanh(go*l));
+#else
+		DoubleComplex ge =  ae + I*be;
+		DoubleComplex go =  ao + I*bo;
 
 		_Z11 = zo / (2*ctanh(go*l)) + ze / (2*ctanh(ge*l));
 		_Z12 = zo / (2*csinh(go*l)) + ze / (2*csinh(ge*l));
 		_Z13 = ze / (2*csinh(ge*l)) - zo / (2*csinh(go*l));
 		_Z14 = ze / (2*ctanh(ge*l)) - zo / (2*ctanh(go*l));
-
+#endif
 		copy_complex(_Z11,&z11);
 		copy_complex(_Z12,&z12);
 		copy_complex(_Z13,&z13);
