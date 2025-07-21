@@ -1,5 +1,5 @@
 /* ===========================================================================
-	FILE    cfunc.mod
+	FILE    cfunc.mod for cm_cpmline
 	Copyright 2025 Vadim Kuznetsov
 
 	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -20,10 +20,8 @@
 #include <math.h>
 #include <complex.h>
 
-
 #include "msline_common.h"
 #include "tline_common.h"
-
 
 #ifdef _MSC_VER
 typedef _Dcomplex DoubleComplex;  // double complex
@@ -456,20 +454,19 @@ void cm_cpmline (ARGS)
         DoubleComplex tange = _Cmulcr(ctanh(_Cmulcr(ge, l)), 2.);
         DoubleComplex singo = _Cmulcr(csinh(_Cmulcr(go, l)), 2.);
         DoubleComplex singe = _Cmulcr(csinh(_Cmulcr(ge, l)), 2.);
-		_Z11._Val[0] = (rdivide(zo, tango))._Val[0] + (rdivide(ze, tange))._Val[0];
-        _Z11._Val[1] = (rdivide(zo, tango))._Val[1] + (rdivide(ze, tange))._Val[1];
-        _Z12._Val[0] = (rdivide(zo, singo))._Val[0] + (rdivide(ze, singe))._Val[0];
-        _Z12._Val[1] = (rdivide(zo, singo))._Val[1] + (rdivide(ze, singe))._Val[1];
-		_Z13._Val[0] = (rdivide(ze, singe))._Val[0] - (rdivide(zo, singo))._Val[0];
-		_Z13._Val[1] = (rdivide(ze, singe))._Val[1] - (rdivide(zo, singo))._Val[1];
-		_Z14._Val[0] = (rdivide(ze, tange))._Val[0] - (rdivide(zo, tango))._Val[0];
-		_Z14._Val[1] = (rdivide(ze, tange))._Val[1] - (rdivide(zo, tango))._Val[1];
+        DoubleComplex zotango = rdivide(zo, tango);
+        DoubleComplex zetange = rdivide(ze, tange);
+        DoubleComplex zosingo = rdivide(zo, singo);
+        DoubleComplex zesinge = rdivide(ze, singe);
 
-//		_Z11._Val[0] = (rdivide(zo, _Cmulcr(ctanh(_Cmulcr(go, l)), 2.)))._Val[0] + (rdivide(ze, _Cmulcr(ctanh(_Cmulcr(ge, l)), 2.)))._Val[0];
-//        _Z11._Val[1] = (rdivide(zo, _Cmulcr(ctanh(_Cmulcr(go, l)), 2.)))._Val[1] + (rdivide(ze, _Cmulcr(ctanh(_Cmulcr(ge, l)), 2.)))._Val[1];
-//		_Z12 = zo / (2*csinh(go*l)) + ze / (2*csinh(ge*l));
-//		_Z13 = ze / (2*csinh(ge*l)) - zo / (2*csinh(go*l));
-//		_Z14 = ze / (2*ctanh(ge*l)) - zo / (2*ctanh(go*l));
+		_Z11._Val[0] = zotango._Val[0] + zetange._Val[0];
+        _Z11._Val[1] = zotango._Val[1] + zetange._Val[1];
+        _Z12._Val[0] = zosingo._Val[0] + zesinge._Val[0];
+        _Z12._Val[1] = zosingo._Val[1] + zesinge._Val[1];
+		_Z13._Val[0] = zesinge._Val[0] - zosingo._Val[0];
+		_Z13._Val[1] = zesinge._Val[1] - zosingo._Val[1];
+		_Z14._Val[0] = zetange._Val[0] - zotango._Val[0];
+		_Z14._Val[1] = zetange._Val[1] - zotango._Val[1];
 #else
 		DoubleComplex ge =  ae + I*be;
 		DoubleComplex go =  ao + I*bo;

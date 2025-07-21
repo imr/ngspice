@@ -51,6 +51,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KLU_COMPLEX", "KLU\KLU_COMPLEX.vcxproj", "{B8DD41C5-70C6-4183-9018-C4B518E8D36A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tlines", "xspice\tlines.vcxproj", "{2F52507B-4C61-4B8D-8E32-E9DF5EFF527F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7C865696-FA10-43AE-A20B-22AE72A165E2} = {7C865696-FA10-43AE-A20B-22AE72A165E2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
