@@ -1,5 +1,5 @@
 /* ===========================================================================
-	FILE    cfunc.mod
+	FILE    cfunc.mod for cm_mlin
 	Copyright 2025 Vadim Kuznetsov
 
 	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -21,6 +21,32 @@
 #include "tline_common.h"
 
 #include "msline_common.h"
+
+#ifdef _MSC_VER
+typedef _Dcomplex DoubleComplex;  // double complex
+#else
+typedef double complex DoubleComplex;
+#endif
+
+#ifdef _MSC_VER
+static DoubleComplex divide(DoubleComplex n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        return rez;
+    }
+
+static DoubleComplex rdivide(double n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        rez._Val[0] = (n1 * n2._Val[0] + n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        rez._Val[1] = (n1 * n2._Val[0] - n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        return rez;
+    }
+#endif
+
+
 
 //static tline_state_t *sim_points = NULL;
 
@@ -102,10 +128,19 @@ void cm_mlin (ARGS)
 	else if(ANALYSIS == AC) {
 	    double frequency = RAD_FREQ/(2.0*M_PI);
 		calcPropagation(W,SModel,DModel,er,h,t,tand,rho,D,frequency);
-
-		double complex g = alpha + beta*I;
-		double complex _Z11 = zl / ctanh(g*l);
-		double complex _Z21 = zl / csinh(g*l);
+#ifdef _MSC_VER
+		DoubleComplex g = _Cbuild(alpha, beta);
+		DoubleComplex _Z11 = rdivide(zl, ctanh(_Cmulcr(g, l)));
+		DoubleComplex _Z21 = rdivide(zl, csinh(_Cmulcr(g, l)));
+		z11.real = creal(_Z11); z11.imag = cimag(_Z11);
+		z21.real = creal(_Z21); z21.imag = cimag(_Z21);
+#else
+		DoubleComplex g = alpha + beta*I;
+		DoubleComplex _Z11 = zl / ctanh(g*l);
+		DoubleComplex _Z21 = zl / csinh(g*l);
+		z11.real = creal(_Z11); z11.imag = cimag(_Z11);
+		z21.real = creal(_Z21); z21.imag = cimag(_Z21);
+#endif
 
 		z11.real = creal(_Z11); z11.imag = cimag(_Z11);
 		z21.real = creal(_Z21); z21.imag = cimag(_Z21);

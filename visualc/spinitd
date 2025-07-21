@@ -27,6 +27,7 @@ if $?xspice_enabled
  codemodel C:/Spiced/lib/ngspice/xtradev.cm
  codemodel C:/Spiced/lib/ngspice/xtraevt.cm
  codemodel C:/Spiced/lib/ngspice/table.cm
+ codemodel C:/Spiced/lib/ngspice/tlines.cm
 
 
 end

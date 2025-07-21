@@ -215,9 +215,11 @@
     <ClCompile Include="icm\tlines\msopen\msopen-cfunc.c" />
     <ClCompile Include="icm\tlines\msopen\msopen-ifspec.c" />
     <ClCompile Include="icm\tlines\tline\tline-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+          <AdditionalIncludeDirectories>..\..\src\xspice\icm\$(ProjectName);..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\tlines\tline\tline-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\xspice\icm\tlines\cpline\cfunc.mod" />

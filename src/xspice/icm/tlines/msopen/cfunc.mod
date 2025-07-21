@@ -1,5 +1,5 @@
 /* ===========================================================================
- FILE    cfunc.mod
+ FILE    cfunc.mod for cm_msopen
  Copyright 2025 Vadim Kuznetsov
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -23,6 +23,29 @@
 #include "msline_common.h"
 #include "tline_common.h"
 
+#ifdef _MSC_VER
+typedef _Dcomplex DoubleComplex;  // double complex
+#else
+typedef double complex DoubleComplex;
+#endif
+
+#ifdef _MSC_VER
+static DoubleComplex divide(DoubleComplex n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        return rez;
+    }
+
+static DoubleComplex rdivide(double n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        rez._Val[0] = (n1 * n2._Val[0] + n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        rez._Val[1] = (n1 * n2._Val[0] - n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        return rez;
+    }
+#endif
 
 #define MSOPEN_KIRSCHNING 0
 #define MSOPEN_HAMMERSTAD 1
@@ -102,10 +125,17 @@ void cm_msopen (ARGS)
 			l2 = (0.008285 * tanh (0.5665 * W / h) + 0.0103) *
 				h / 2.54e-5 / 25 * ZlEffFreq * 1e-9;
 			r2 = (1.024 * tanh (2.025 * W / h)) * ZlEffFreq;
-			double complex d1 = 0 + I*c1 * RAD_FREQ;
-			double complex d2 = r2 + I*(l2 * RAD_FREQ - 1.0 / c2 / RAD_FREQ);
-			double complex y = d1 + 1.0/d2;
-
+#ifdef _MSC_VER
+			DoubleComplex d1 = _Cbuild(0, c1 * RAD_FREQ);
+			DoubleComplex d2 = _Cbuild(r2, (l2 * RAD_FREQ - 1.0 / c2 / RAD_FREQ));
+			DoubleComplex y;
+			y._Val[0]= d1._Val[0] + (rdivide(1.0, d2))._Val[0];
+			y._Val[1]= d1._Val[1] + (rdivide(1.0, d2))._Val[1];
+#else
+			DoubleComplex d1 = 0 + I*c1 * RAD_FREQ;
+			DoubleComplex d2 = r2 + I*(l2 * RAD_FREQ - 1.0 / c2 / RAD_FREQ);
+			DoubleComplex y = d1 + 1.0/d2;
+#endif
             ac_gain.real = creal(y);
 			ac_gain.imag = cimag(y);
 			AC_GAIN(p1, p1) = ac_gain;
