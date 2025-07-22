@@ -39,16 +39,18 @@ static void copy_complex(DoubleComplex s, Complex_t *d)
 static DoubleComplex divide(DoubleComplex n1, DoubleComplex n2)
     {
         DoubleComplex rez;
-        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
-        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / denom;
+        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / denom;
         return rez;
     }
 
 static DoubleComplex rdivide(double n1, DoubleComplex n2)
     {
         DoubleComplex rez;
-        rez._Val[0] = (n1 * n2._Val[0] + n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
-        rez._Val[1] = (n1 * n2._Val[0] - n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1 * n2._Val[0]) / denom;
+        rez._Val[1] = (-1. * n1 * n2._Val[1]) / denom;
         return rez;
     }
 #endif
@@ -116,10 +118,10 @@ void cm_cpline (ARGS)
 		double bon = o*l/C0*sqrt(ero);
 		DoubleComplex ge = _Cbuild(aen, ben);
 		DoubleComplex go = _Cbuild(aon, bon);
-        DoubleComplex tango = _Cmulcr(ctanh(_Cmulcr(go, l)), 2.);
-        DoubleComplex tange = _Cmulcr(ctanh(_Cmulcr(ge, l)), 2.);
-        DoubleComplex singo = _Cmulcr(csinh(_Cmulcr(go, l)), 2.);
-        DoubleComplex singe = _Cmulcr(csinh(_Cmulcr(ge, l)), 2.);
+        DoubleComplex tango = _Cmulcr(ctanh(go), 2.);
+        DoubleComplex tange = _Cmulcr(ctanh(ge), 2.);
+        DoubleComplex singo = _Cmulcr(csinh(go), 2.);
+        DoubleComplex singe = _Cmulcr(csinh(ge), 2.);
 
         DoubleComplex zotango = rdivide(zo, tango);
         DoubleComplex zetange = rdivide(ze, tange);
