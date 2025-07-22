@@ -20,6 +20,7 @@ copy %cmsrc%\table.cm %dst%\lib\ngspice\table.cm
 copy %cmsrc%\xtraevt.cm %dst%\lib\ngspice\xtraevt.cm
 copy %cmsrc%\xtradev.cm %dst%\lib\ngspice\xtradev.cm
 copy %cmsrc%\spice2poly.cm %dst%\lib\ngspice\spice2poly.cm
+copy %cmsrc%\tlines.cm %dst%\lib\ngspice\tlines.cm
 copy xspice\verilog\ivlng.dll %dst%\lib\ngspice\ivlng.dll
 copy xspice\verilog\shim.vpi %dst%\lib\ngspice\ivlng.vpi
 
@@ -50,6 +51,7 @@ copy %cmsrc%\table64.cm %dst%\lib\ngspice\table.cm
 copy %cmsrc%\xtraevt64.cm %dst%\lib\ngspice\xtraevt.cm
 copy %cmsrc%\xtradev64.cm %dst%\lib\ngspice\xtradev.cm
 copy %cmsrc%\spice2poly64.cm %dst%\lib\ngspice\spice2poly.cm
+copy %cmsrc%\tlines64.cm %dst%\lib\ngspice\tlines.cm
 copy xspice\verilog\ivlng.dll %dst%\lib\ngspice\ivlng.dll
 copy xspice\verilog\shim.vpi %dst%\lib\ngspice\ivlng.vpi
 

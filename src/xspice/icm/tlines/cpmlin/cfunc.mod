@@ -41,16 +41,18 @@ static void copy_complex(DoubleComplex s, Complex_t *d)
 static DoubleComplex divide(DoubleComplex n1, DoubleComplex n2)
     {
         DoubleComplex rez;
-        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
-        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / denom;
+        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / denom;
         return rez;
     }
 
 static DoubleComplex rdivide(double n1, DoubleComplex n2)
     {
         DoubleComplex rez;
-        rez._Val[0] = (n1 * n2._Val[0] + n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
-        rez._Val[1] = (n1 * n2._Val[0] - n1 * n2._Val[1]) / (n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1]);
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1 * n2._Val[0]) / denom;
+        rez._Val[1] = (-1. * n1 * n2._Val[1]) / denom;
         return rez;
     }
 #endif
