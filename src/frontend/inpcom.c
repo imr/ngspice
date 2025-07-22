@@ -1880,6 +1880,11 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         comfile = TRUE;
 
     if (call_depth == 0 && !comfile) {
+        if (cp_getvar("soacheck", CP_BOOL, NULL, 0))
+            insert_new_line(cc, copy(".param SWSOA=1"), 1, 0, "internal");
+        else
+            insert_new_line(cc, copy(".param SWSOA=0"), 1, 0, "internal");
+
         if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
             insert_new_line(cc, copy(".global gnd"), 1, 0, "internal");
         else
