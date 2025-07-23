@@ -596,6 +596,10 @@ gettoks(char *s)
     list = NULL;
     prevp = &list;
 
+    if (!s) {
+        return list;
+    }
+
     /* stripWhite.... uses copy() to return a malloc'ed s, so we have to free it,
        using s0 as its starting address */
     if (strchr(s, '('))
