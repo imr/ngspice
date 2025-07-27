@@ -81,6 +81,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPR( "ik",  DIO_MOD_IKF,   IF_REAL, "Forward Knee current"),
  IOP( "ikr",  DIO_MOD_IKR,   IF_REAL, "Reverse Knee current"),
  IOP( "nbv",  DIO_MOD_NBV,   IF_REAL, "Breakdown Emission Coefficient"),
+ IOPR( "nz",  DIO_MOD_NBV,   IF_REAL, "Breakdown Emission Coefficient"),
  IOP("area",  DIO_MOD_AREA,  IF_REAL, "Area factor"),
  IOP( "pj",   DIO_MOD_PJ,    IF_REAL, "Perimeter factor"),
 
@@ -115,6 +116,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "ibv", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  IOPR( "ib", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  IOP( "tcv", DIO_MOD_TCV, IF_REAL, "Reverse breakdown voltage temperature coefficient"),
+ IOPR("tbv1", DIO_MOD_TCV, IF_REAL, "Reverse breakdown voltage temperature coefficient"),
  OPU( "cond", DIO_MOD_COND,IF_REAL, "Ohmic conductance"),
  IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
  IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
