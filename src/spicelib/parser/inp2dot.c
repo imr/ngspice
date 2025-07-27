@@ -838,6 +838,10 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CK
         /* don't have to do anything, since models were all done in
          * pass 1 */
         goto quit;
+    } else if (strcmp(token, ".param") == 0) {
+        /* don't have to do anything, since params were all done
+         * elsewhere */
+        goto quit;
     } else if ((strcmp(token, ".width") == 0) ||
                strcmp(token, ".print") == 0 || strcmp(token, ".plot") == 0) {
         /* obsolete - ignore */
