@@ -122,7 +122,7 @@ void
 com_print(wordlist *wl)
 {
     struct dvec *v, *lv = NULL, *bv, *nv, *vecs = NULL;
-    int i, j, ll, width = DEF_WIDTH, height = DEF_HEIGHT, npoints, lineno;
+    int i, j, ll, width = DEF_WIDTH, height = DEF_HEIGHT, npoints, lineno, npages = 0;
     struct pnode *pn, *names;
     struct plot *p;
     bool col = TRUE, nobreak = FALSE, noprintscale, plotnames = FALSE;
@@ -292,6 +292,7 @@ com_print(wordlist *wl)
         noprintscale = cp_getvar("noprintscale", CP_BOOL, NULL, 0);
         bv = vecs;
     nextpage:
+        npages++;
         /* Make the first vector of every page be the scale... */
         /* XXX But what if there is no scale?  e.g. op, pz */
         if (!noprintscale && bv->v_plot->pl_ndims)
@@ -313,21 +314,24 @@ com_print(wordlist *wl)
                 break;
         }
 
-        /* Print the header on the first page only. */
-        p = bv->v_plot;
-        j = (width - (int) strlen(p->pl_title)) / 2;    /* Yes, keep "(int)" */
-        if (j < 0)
-            j = 0;
-        for (i = 0; i < j; i++)
-            buf2[i] = ' ';
-        buf2[j] = '\0';
-        out_send(buf2);
-        out_send(p->pl_title);
-        out_send("\n");
-        out_send(buf2);
-        (void) sprintf(buf, "%s  %s", p->pl_name, p->pl_date);
-        out_send(buf);
-        out_send("\n");
+        /* Print the header on the first page only, if 'option nopage'. */
+        if (!ft_nopage || npages == 1) {
+            /* print the header */
+            p = bv->v_plot;
+            j = (width - (int)strlen(p->pl_title)) / 2;    /* Yes, keep "(int)" */
+            if (j < 0)
+                j = 0;
+            for (i = 0; i < j; i++)
+                buf2[i] = ' ';
+            buf2[j] = '\0';
+            out_send(buf2);
+            out_send(p->pl_title);
+            out_send("\n");
+            out_send(buf2);
+            (void)sprintf(buf, "%s  %s", p->pl_name, p->pl_date);
+            out_send(buf);
+            out_send("\n");
+        }
         for (i = 0; i < width; i++)
             buf2[i] = '-';
         buf2[width] = '\n';
@@ -403,7 +407,10 @@ com_print(wordlist *wl)
             goto done;
         if (j == npoints) { /* More vectors to print. */
             bv = lv;
-            out_send("\f\n");   /* Form feed. */
+            if(nobreak)
+                out_send("\n");   /* return without form feed. */
+            else
+                out_send("\f\n");   /* Form feed. */
             goto nextpage;
         }
 
