@@ -131,8 +131,9 @@ void cm_msopen (ARGS)
 			DoubleComplex d1 = _Cbuild(0, c1 * RAD_FREQ);
 			DoubleComplex d2 = _Cbuild(r2, (l2 * RAD_FREQ - 1.0 / c2 / RAD_FREQ));
 			DoubleComplex y;
-			y._Val[0]= d1._Val[0] + (rdivide(1.0, d2))._Val[0];
-			y._Val[1]= d1._Val[1] + (rdivide(1.0, d2))._Val[1];
+			DoubleComplex divd2 = rdivide(1.0, d2);
+			y._Val[0]= d1._Val[0] + divd2._Val[0];
+			y._Val[1]= d1._Val[1] + divd2._Val[1];
 #else
 			DoubleComplex d1 = 0 + I*c1 * RAD_FREQ;
 			DoubleComplex d2 = r2 + I*(l2 * RAD_FREQ - 1.0 / c2 / RAD_FREQ);
