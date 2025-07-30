@@ -260,7 +260,10 @@ int HSM2LoadOMP(HSM2instance *here, CKTcircuit *ckt)
   double delvbd=0.0, delvbs=0.0, delvds=0.0, delvgd=0.0, delvgs=0.0 ;
   double gcbdb=0.0, gcbgb=0.0, gcbsb=0.0, gcddb=0.0, gcdgb=0.0, gcdsb=0.0 ;
   double gcgdb=0.0, gcggb=0.0, gcgsb=0.0, gcgbb=0.0, gcsdb=0.0, gcsgb=0.0, gcssb=0.0 ;
-  double geq=0.0, xfact=0.0 ;
+  double geq=0.0 ;
+#ifndef PREDICTOR
+  double xfact=0.0;
+#endif
   double vbd=0.0, vbs=0.0, vds=0.0, vgb=0.0, vgd=0.0, vgdo=0.0, vgs=0.0, von=0.0 ;
   double gbbdp=0.0, gbbsp=0.0, gbspg=0.0, gbspdp=0.0, gbspb=0.0, gbspsp=0.0 ;
   double qgate=0.0, qbulk=0.0, qdrn=0.0 ;

@@ -107,6 +107,9 @@ double dRs_dvg, dRd_dvg, dRs_dvb, dRd_dvb;
 double dT0_dvg, dT1_dvb, dT3_dvg, dT3_dvb;
 double vses, vdes, vdedo, delvses, delvded, delvdes;
 double Isestot, cseshat, Idedtot, cdedhat;
+#ifndef NEWCONV
+double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
+#endif
 
 double geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb, ceqgcrg;
 double vges, vgms, vgedo, vgmdo, vged, vgmd, delvged, delvgmd;
@@ -114,7 +117,10 @@ double delvges, delvgms, vgmb;
 double gcgmgmb=0.0, gcgmdb=0.0, gcgmsb=0.0, gcdgmb, gcsgmb;
 double gcgmbb=0.0, gcbgmb, qgmb, qgmid=0.0, ceqqgmid;
 
-double vbd, vbs, vds, vgb, vgd, vgs, vgdo, xfact;
+double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
+#ifndef PREDICTOR
+double xfact;
+#endif
 double vdbs, vdbd, vsbs, vsbdo, vsbd;
 double delvdbs, delvdbd, delvsbs;
 double delvbd_jct, delvbs_jct, vbs_jct, vbd_jct;
@@ -4076,7 +4082,7 @@ finished:
                   }
                   tol0 = ckt->CKTreltol * MAX(fabs(cdhat), fabs(Idtot))
                        + ckt->CKTabstol;
-          tol1 = ckt->CKTreltol * MAX(fabs(cseshat), fabs(Isestot))
+                  tol1 = ckt->CKTreltol * MAX(fabs(cseshat), fabs(Isestot))
                        + ckt->CKTabstol;
                   tol2 = ckt->CKTreltol * MAX(fabs(cdedhat), fabs(Idedtot))
                        + ckt->CKTabstol;
