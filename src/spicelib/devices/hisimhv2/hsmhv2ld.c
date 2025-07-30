@@ -367,7 +367,10 @@ int HSMHV2load(
 #define LIM_TOL2 1.0e0
 
   /* predictor and numerical integration stuff */
-  double ag0=0.0, xfact=0.0 ;
+  double ag0=0.0 ;
+#ifndef PREDICTOR
+  double xfact=0.0;
+#endif
   double ceq=0.0, geq=0.0 ;
   int ChargeComputationNeeded =
     ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
