@@ -500,7 +500,6 @@ void cm_cpmline (ARGS)
 		double t = TIME;
 		double Vp[PORT_NUM];
 		double Ip[PORT_NUM];
-		double Vnew[PORT_NUM];
 		Vp[0] = INPUT(p1s);
 		Vp[1] = INPUT(p2s);
 		Vp[2] = INPUT(p3s);
