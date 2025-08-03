@@ -194,7 +194,7 @@ com_version(wordlist *wl)
 
                 "** The U. C. Berkeley CAD Group\n"
                 "** Copyright 1985-1994, Regents of the University of California.\n"
-                "** Copyright 2001-2024, The ngspice team.\n"
+                "** Copyright 2001-2025, The ngspice team.\n"
                 "** %s\n",
                 ft_sim->simulator, ft_sim->version, ft_sim->description, Spice_Manual);
         if (*Spice_Notice != '\0')
