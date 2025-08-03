@@ -166,6 +166,9 @@ void cm_seegen(ARGS)  /* structure holding parms,
         ctrl = INPUT(ctrl);
 
     if (INIT==1) {
+
+        CALLBACK = cm_seegen_callback;
+
         /* Allocate storage for last_t_value */
         STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
         last_t_value = (double *) STATIC_VAR(last_t_value);
