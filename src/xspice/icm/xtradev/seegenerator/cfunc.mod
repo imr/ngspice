@@ -70,11 +70,11 @@ cm_seegen_callback(ARGS, Mif_Callback_Reason_t reason)
             if (pulse_number)
                 free(pulse_number);
             STATIC_VAR (pulse_number) = NULL;
-            break;
             double *last_ctrl = STATIC_VAR (last_ctrl);
             if (last_ctrl)
                 free(last_ctrl);
             STATIC_VAR (last_ctrl) = NULL;
+            break;
         }
     }
 }
