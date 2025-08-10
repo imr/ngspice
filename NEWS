@@ -1,3 +1,30 @@
+Ngspice-45, August 17th, 2025
+============
+- New features:
+    + Debug output debug-out.txt modified, simple view comes first.
+    + Add co-simulation with VHDL, using the GHDL compiler and d_cosim.
+    + VBIC bipolar model code revised and improved
+    + Enhance the search path for .spiceinit (spice.rc)
+    + Add variable 'fournosave'. If set, suppresses newly introduced
+      vector generation from THD calculation with 'four' command.
+    + New command 'save nointernals' to suppress outputting and saving
+      of internal device nodes, espicially needed for PSP OSDI model.
+    + Debug printout of start-up command line
+    + Add new XSPICE functions: EVTnew_value_call() and EVTcancel_value_call()
+    + Add support use of XSPICE event nodes with iplot
+    + Add new functions ngSpice_Raw_Evt() and ngSpice_Decode_Evt() to shared
+      ngspice API
+    + Enable expressions in a meas statement within a .control section
+    + A function cm_get_neg_node_name as a complement to cm_get_node_name
+    + Add the SEE_generator code model for SEE by radiation simulation
+    + Update cppduals
+    + Error checking for .dc command.
+    + 'showmod' command now also shows verilog-a models.
+    + Add new transmission and microstrip line models as code models: 
+      generic (also coupled), generic microstrip (also coupled), open microstrip
+    + BSIM4 transistor model updated to version 4.8.3
+
+
 Ngspice-44.2, January 11th, 2025
 ============
 - Bug fix release, no new features
