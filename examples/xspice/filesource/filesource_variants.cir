@@ -1,0 +1,49 @@
+simple filesource, time relative or absolute
+
+a1 %vd([out1 0]) filesrc
+
+.model filesrc filesource (file="rect_rel.m" amploffset=[0.1] amplscale=[1]
++ timeoffset=0 timescale=1
++ timerelative=true amplstep=false)
+
+a2 %vd([out2 0]) filesrc2
+
+.model filesrc2 filesource (file="rect_rel.m" amploffset=[0.15] amplscale=[1]
++ timeoffset=10e-6 timescale=1
++ timerelative=true amplstep=false)
+
+a3 %vd([out3 0]) filesrc3
+
+.model filesrc3 filesource (file="rect_rel.m" amploffset=[0.2] amplscale=[0.9]
++ timeoffset=5e-6 timescale=1.2
++ timerelative=true amplstep=false)
+
+a4 %vd([out4 0]) filesrc4
+
+.model filesrc4 filesource (file="rect_rel.m" amploffset=[0.05] amplscale=[1.2]
++ timeoffset=0 timescale=1.2
++ timerelative=true amplstep=true)
+
+
+a5 %vd([out5 0]) filesrc5
+
+.model filesrc5 filesource (file="rect_abs.m" amploffset=[0.05] amplscale=[1.1]
++ timeoffset=5u timescale=1.2
++ timerelative=false amplstep=false)
+
+a6 %v([out6 out7]) filesrc6
+
+.model filesrc6 filesource (file="rect_abs_dual.m" amploffset=[0.05 -0.05] amplscale=[0.9]
++ timeoffset=5u timescale=1.2
++ timerelative=false amplstep=false)
+
+.control
+tran 0.1u 100u
+set xbrushwidth=3
+plot V(out1) V(out2)+2 V(out3)+4 V(out4)+6 V(out5)+8 V(out6)+11 V(out7)+11
+.endc
+
+.end
+
+
+
