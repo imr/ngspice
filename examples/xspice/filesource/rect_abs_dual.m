@@ -1,4 +1,4 @@
-# simple input, time absolut
+# simple input, time absolute
 0      0     0
 10e-6  0     0
 11e-6  1.8  -0.3
@@ -8,4 +8,4 @@
 33e-6  1.8  -0.3
 43e-6  1.8  -0.3
 44e-6  0     0
-1 0
+1      0     0
