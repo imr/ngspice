@@ -153,7 +153,7 @@ void cm_mlin (ARGS)
 	else if(ANALYSIS == TRANSIENT) {
 		calcPropagation(W,SModel,DModel,er,h,t,tand,rho,D,0);
         sim_points = &(STATIC_VAR(sim_points_data));
-        double t = TIME;
+        double time = TIME;
 		double V1 = INPUT(V1sens);
 		double V2 = INPUT(V2sens);
 		double I1 = INPUT(port1);
@@ -169,10 +169,10 @@ void cm_mlin (ARGS)
                 //fprintf(stderr,"Rollbacki time=%g\n",TIME);
 				delete_tline_last_state((tline_state_t **)sim_points);
 			}
-			append_state((tline_state_t **)sim_points, t, V1, V2, I1, I2, 1.2*delay);
+			append_state((tline_state_t **)sim_points, time, V1, V2, I1, I2, 1.2*delay);
 		}
-		if (t > delay && TModel == TRAN_FULL) {
-			tline_state_t *pp = get_state(*(tline_state_t **)sim_points, t - delay);
+		if (time > delay && TModel == TRAN_FULL) {
+			tline_state_t *pp = get_state(*(tline_state_t **)sim_points, time - delay);
 			if (pp != NULL) {
 				double V2out = pp->V1 + zl*(pp->I1);
 				double V1out = pp->V2 + zl*(pp->I2);
