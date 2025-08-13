@@ -568,13 +568,13 @@ void cpmslineAnalyseDispersion (double W, double h, double s,
     *ErEffoFreq = er - (er - ErEffo) / (1 + Fo);
 
     // dispersion of even characteristic impedance
-    double t, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21;
+    double tn, q11, q12, q13, q14, q15, q16, q17, q18, q19, q20, q21;
     q11 = 0.893 * (1 - 0.3 / (1 + 0.7 * (er - 1)));
-    t = pow (fn / 20, 4.91);
-    q12 = 2.121 * t / (1 + q11 * t) * exp (-2.87 * g) * pow (g, 0.902);
+    tn = pow (fn / 20, 4.91);
+    q12 = 2.121 * tn / (1 + q11 * tn) * exp (-2.87 * g) * pow (g, 0.902);
     q13 = 1 + 0.038 * pow (er / 8, 5.1);
-    t = quadr (er / 15);
-    q14 = 1 + 1.203 * t / (1 + t);
+    tn = quadr (er / 15);
+    q14 = 1 + 1.203 * tn / (1 + tn);
     q15 = 1.887 * exp (-1.5 * pow (g, 0.84)) * pow (g, q14) /
       (1 + 0.41 * pow (fn / 15, 3.) *
        pow (u, 2 / q13) / (0.125 + pow (u, 1.626 / q13)));
@@ -586,9 +586,9 @@ void cpmslineAnalyseDispersion (double W, double h, double s,
     q19 = 0.21 * quadr (g) / (1 + 0.18 * pow (g, 4.9)) / (1 + 0.1 * sqr (u)) /
       (1 + pow (fn / 24, 3.));
     q20 = q19 * (0.09 + 1 / (1 + 0.1 * pow (er - 1, 2.7)));
-    t = pow (u, 2.5);
-    q21 = fabs (1 - 42.54 * pow (g, 0.133) * exp (-0.812 * g) * t /
-		(1 + 0.033 * t));
+    tn = pow (u, 2.5);
+    q21 = fabs (1 - 42.54 * pow (g, 0.133) * exp (-0.812 * g) * tn /
+		(1 + 0.033 * tn));
 
     double re, qe, pe, de, Ce, q0, ZlFreq, ErEffFreq;
     Kirschning_er (u, fn, er, ErEffe, &ErEffFreq);
@@ -596,9 +596,9 @@ void cpmslineAnalyseDispersion (double W, double h, double s,
     re = pow (fn / 28.843, 12.);
     qe = 0.016 + pow (0.0514 * er * q21, 4.524);
     pe = 4.766 * exp (-3.228 * pow (u, 0.641));
-    t = pow (er - 1, 6.);
+    tn = pow (er - 1, 6.);
     de = 5.086 * qe * re / (0.3838 + 0.386 * qe) *
-      exp (-22.2 * pow (u, 1.92)) / (1 + 1.2992 * re) * t / (1 + 10 * t);
+      exp (-22.2 * pow (u, 1.92)) / (1 + 1.2992 * re) * tn / (1 + 10 * tn);
     Ce = 1 + 1.275 * (1 - exp (-0.004625 * pe * pow (er, 1.674) *
 	 pow (fn / 18.365, 2.745))) - q12 + q16 - q17 + q18 + q20;
     *ZleFreq = Zle * pow ((0.9408 * pow (ErEffFreq, Ce) - 0.9603) /
@@ -609,19 +609,19 @@ void cpmslineAnalyseDispersion (double W, double h, double s,
     Kirschning_er (u, fn, er, ErEffo, &ErEffFreq);
     Kirschning_zl (u, fn, er, ErEffo, ErEffFreq, Zlo, &q0, &ZlFreq);
     q29 = 15.16 / (1 + 0.196 * sqr (er - 1));
-    t = sqr (er - 1);
-    q25 = 0.3 * sqr (fn) / (10 + sqr (fn)) * (1 + 2.333 * t / (5 + t));
-    t = pow ((er - 1) / 13, 12.);
-    q26 = 30 - 22.2 * t / (1 + 3 * t) - q29;
-    t = pow (er - 1, 1.5);
-    q27 = 0.4 * pow (g, 0.84) * (1 + 2.5 * t / (5 + t));
-    t = pow (er - 1, 3.);
-    q28 = 0.149 * t / (94.5 + 0.038 * t);
+    tn = sqr (er - 1);
+    q25 = 0.3 * sqr (fn) / (10 + sqr (fn)) * (1 + 2.333 * tn / (5 + tn));
+    tn = pow ((er - 1) / 13, 12.);
+    q26 = 30 - 22.2 * tn / (1 + 3 * tn) - q29;
+    tn = pow (er - 1, 1.5);
+    q27 = 0.4 * pow (g, 0.84) * (1 + 2.5 * tn / (5 + tn));
+    tn = pow (er - 1, 3.);
+    q28 = 0.149 * tn / (94.5 + 0.038 * tn);
     q22 = 0.925 * pow (fn / q26, 1.536) / (1 + 0.3 * pow (fn / 30, 1.536));
     q23 = 1 + 0.005 * fn * q27 / (1 + 0.812 * pow (fn / 15, 1.9)) /
       (1 + 0.025 * sqr (u));
-    t = pow (u, 0.894);
-    q24 = 2.506 * q28 * t / (3.575 + t) *
+    tn = pow (u, 0.894);
+    q24 = 2.506 * q28 * tn / (3.575 + tn) *
       pow ((1 + 1.3 * u) * fn / 99.25, 4.29);
     *ZloFreq = ZlFreq + (Zlo * pow (*ErEffoFreq / ErEffo, q22) - ZlFreq * q23) /
       (1 + q24 + pow (0.46 * g, 2.2) * q25);
