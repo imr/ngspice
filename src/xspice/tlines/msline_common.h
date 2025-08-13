@@ -68,4 +68,20 @@ void analyseLoss (double, double, double, double,
                          double, double, int,
                          double*, double*);
 
+void cpmslineAnalyseQuasiStatic (double W, double h, double s,
+				   double t, double er,
+				   int SModel, double* Zle,
+				   double* Zlo, double* ErEffe,
+				   double* ErEffo);
+
+void cpmslineAnalyseDispersion (double W, double h, double s,
+				   double t, double er, double Zle,
+				   double Zlo, double ErEffe,
+				   double ErEffo, double frequency,
+				   int  DModel, double *ZleFreq,
+				   double  *ZloFreq,
+				   double  *ErEffeFreq,
+				   double  *ErEffoFreq);
+
+
 #endif
