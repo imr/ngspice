@@ -1067,7 +1067,7 @@ int main(int argc, char **argv)
 
         case 'q':       /* Command completion */
             qflag = FALSE;
-            fprintf(stderr, "Warning: Command completion is not supported, 'q' ignored\n");
+            fprintf(stderr, "Warning: Command completion is not supported, 'q' is ignored\n");
             break;
 
         case 'r':       /* The raw file */
