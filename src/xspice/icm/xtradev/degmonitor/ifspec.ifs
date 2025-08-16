@@ -1,0 +1,110 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Public Domain
+
+
+Universty Duisburg-Essen
+Duisburg, Germany
+Project Flowspace
+
+AUTHORS
+
+Holger Vogt    19 May 2025
+
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    degradation monitor code model.
+
+===============================================================================*/
+ 
+NAME_TABLE:
+
+C_Function_Name:       cm_degmon
+Spice_Model_Name:      degmon
+Description:           "degradation monitor"
+
+
+PORT_TABLE:
+
+Port_Name:             nodes                mon
+Description:          "deg mon input"       "monitor"
+Direction:             in                   out
+Default_Type:          v                    v
+Allowed_Types:         [v]                  [v]
+Vector:                yes                  no
+Vector_Bounds:         [- -]                -
+Null_Allowed:          no                   yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     a                        ea
+Description:        "A"                      "Ea"
+Data_Type:          real                     real
+Default_Value:      500e-12                  20e-12
+Limits:             -                        -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                      yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     b                      L1
+Description:        "b"                    "L1"
+Data_Type:          real                   real
+Default_Value:      0                      0
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:       -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     L2                     n
+Description:        "L2"                   "n"
+Data_Type:          real                   real
+Default_Value:      0                      0.5
+Limits:             -                      -
+Vector:              no                    no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     c                      tfuture
+Description:        "c"                    "future time"
+Data_Type:          real                   int
+Default_Value:      10                     3153360000
+Limits:             -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     L                   
+Description:        "channel length"  
+Data_Type:          real 
+Default_Value:      10
+Limits:             -  
+Vector:             no 
+Vector_Bounds:      - 
+Null_Allowed:       yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    constfac
+Data_Type:          pointer
+Description:        "constant factor"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    sintegral
+Data_Type:          pointer
+Description:        "integrated degradation"
