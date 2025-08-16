@@ -132,18 +132,18 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double c;             /* degradation model parameter */
     double L;             /* channel length */
     double *constfac;     /* static storage of const factor in model equation */
-    int tfut;
+    double tfut;
     double tsim;
     double deg;           /* monitor output */
     double sintegrand = 0;
     double *sintegral;
-    double k = 1.38062259e-23; /* Boltzmann */
+    double *prevtime;
+    double k = 1.38062259e-5; /* Boltzmann */
 
 
-    if (ANALYSIS != MIF_TRAN) {
+    if (ANALYSIS == MIF_AC) {
         return;
     }
-    
 
 
     /* Retrieve frequently used parameters... */
@@ -157,6 +157,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
     b = PARAM(b);
     c = PARAM(c);
     tfut = PARAM(tfuture);
+    L = PARAM(L);
     tsim = TSTOP;
 
 
@@ -166,47 +167,68 @@ void cm_degmon(ARGS)  /* structure holding parms,
         
         if (PORT_SIZE(nodes) != 4)
         {
-        
+            cm_message_send("Error: only devices with exactly 4 node are currently supported\n");
+            cm_cexit(1);
         }
 
         CALLBACK = cm_degmon_callback;
 
-        /* Allocate storage for constant_factor */
+        /* Allocate storage for static values */
         STATIC_VAR(constfac) = (double *) malloc(sizeof(double));
         constfac = (double *) STATIC_VAR(constfac);
-        *constfac = c * A * exp(Ea / k / Temp) * (L1 + pow((1 / L) , L2));
+        *constfac = c * A * exp(Ea / k / Temp) * (L1 + pow((1 / L / 1e6) , L2));
 
         STATIC_VAR(sintegral) = (double *) malloc(sizeof(double));
         sintegral = (double *) STATIC_VAR(sintegral);
         *sintegral = 0.;
 
+        STATIC_VAR(prevtime) = (double *) malloc(sizeof(double));
+        prevtime = (double *) STATIC_VAR(prevtime);
+        *prevtime = 0.;
 
     }
     else {
 
-        
+        if (ANALYSIS == MIF_DC) {
+            return;
+        }
+
         double x1, x2;
 
         constfac = (double *) STATIC_VAR(constfac);
         sintegral = (double *) STATIC_VAR(sintegral);
+        prevtime = (double *) STATIC_VAR(prevtime);
+
+        /* final time step quasi reached */
+        if (*sintegral > 1e90) {
+            return;
+        }
 
         vd = INPUT(nodes[0]);
         vg = INPUT(nodes[1]);
         vs = INPUT(nodes[2]);
         vb = INPUT(nodes[3]);
 
-        if (vd - vs > 0) {
+        if (vd - vs > 0 && *prevtime < T(0)) {
+            /**** model equations 1 ****/
             x1 = 1. / (*constfac * exp (b / (vd - vs)));
             x2 = -1. / n;
             sintegrand = pow(x1 , x2);
             *sintegral = *sintegral + sintegrand * (T(0) - T(1));
+            /***************************/
+            *prevtime = T(0);
         }
+
+        /* test output */
         OUTPUT(mon) = *sintegral;
 
-        if (T(0) == tsim) {
+        if (T(0) > 0.99999 * tsim) {
+            /**** model equations 2 ****/
             *sintegral = *sintegral * tfut / tsim;
             deg = 1. / (c * (pow(*sintegral, -1.* n)));
+            /***************************/
             cm_message_printf("Degradation deg = %e\n", deg);
+            *sintegral = 1e99; // flag final time step
         }
     }
 }
