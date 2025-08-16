@@ -9,7 +9,7 @@ Project Flowspace
 
 AUTHORS
 
-Holger Vogt    19 May 2025
+Holger Vogt    16 Aug 2025
 
 
 
@@ -44,7 +44,7 @@ PARAMETER_TABLE:
 Parameter_Name:     a                        ea
 Description:        "A"                      "Ea"
 Data_Type:          real                     real
-Default_Value:      500e-12                  20e-12
+Default_Value:      -0.00139                 -0.01185
 Limits:             -                        -
 Vector:              no                      no
 Vector_Bounds:       -                       -
@@ -56,7 +56,7 @@ PARAMETER_TABLE:
 Parameter_Name:     b                      L1
 Description:        "b"                    "L1"
 Data_Type:          real                   real
-Default_Value:      0                      0
+Default_Value:      -14.749                0.37197
 Limits:             -                      -
 Vector:              no                    no
 Vector_Bounds:       -                      -
@@ -68,7 +68,7 @@ PARAMETER_TABLE:
 Parameter_Name:     L2                     n
 Description:        "L2"                   "n"
 Data_Type:          real                   real
-Default_Value:      0                      0.5
+Default_Value:      4.01997                0.36785
 Limits:             -                      -
 Vector:              no                    no
 Vector_Bounds:      -                      -
@@ -78,8 +78,8 @@ PARAMETER_TABLE:
 
 Parameter_Name:     c                      tfuture
 Description:        "c"                    "future time"
-Data_Type:          real                   int
-Default_Value:      10                     3153360000
+Data_Type:          real                   real
+Default_Value:      -1.108                 315336e4
 Limits:             -                      -
 Vector:             no                     no
 Vector_Bounds:      -                      -
@@ -90,7 +90,7 @@ PARAMETER_TABLE:
 Parameter_Name:     L                   
 Description:        "channel length"  
 Data_Type:          real 
-Default_Value:      10
+Default_Value:      0.13e-6
 Limits:             -  
 Vector:             no 
 Vector_Bounds:      - 
@@ -108,3 +108,10 @@ STATIC_VAR_TABLE:
 Static_Var_Name:    sintegral
 Data_Type:          pointer
 Description:        "integrated degradation"
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    prevtime
+Data_Type:          pointer
+Description:        "previous time value"
+
