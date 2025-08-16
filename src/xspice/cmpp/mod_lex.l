@@ -101,6 +101,8 @@ TIME			{return TOK_TIME;}
 RAD_FREQ		{return TOK_RAD_FREQ;}
 TEMPERATURE		{return TOK_TEMPERATURE;}
 T			{return TOK_T;}
+TSTEP			{return TOK_TSTEP;}
+TSTOP			{return TOK_TSTOP;}
 LOAD			{return TOK_LOAD;}
 TOTAL_LOAD		{return TOK_TOTAL_LOAD;}
 MESSAGE			{return TOK_MESSAGE;}

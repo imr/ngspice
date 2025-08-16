@@ -337,6 +337,8 @@ static void append (char *str)
 %token TOK_RAD_FREQ
 %token TOK_TEMPERATURE
 %token TOK_T 
+%token TOK_TSTEP
+%token TOK_TSTOP
 %token TOK_PARAM 
 %token TOK_PARAM_SIZE 
 %token TOK_PARAM_NULL 
@@ -435,6 +437,10 @@ macro			: TOK_INIT
 			   {fprintf (mod_yyout, "mif_private->circuit.call_type");}
 			| TOK_TIME
 			   {fprintf (mod_yyout, "mif_private->circuit.time");}
+			| TOK_TSTEP
+			   {fprintf (mod_yyout, "mif_private->circuit.tstep");}
+			| TOK_TSTOP
+			   {fprintf (mod_yyout, "mif_private->circuit.tstop");}
 			| TOK_RAD_FREQ
 			   {fprintf (mod_yyout, "mif_private->circuit.frequency");}
 			| TOK_TEMPERATURE

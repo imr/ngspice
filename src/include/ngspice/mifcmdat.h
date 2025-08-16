@@ -333,6 +333,8 @@ typedef struct Mif_Circ_Data_s {
     double                frequency;    /* Current analysis frequency                 */
     double                temperature;  /* Current analysis temperature               */
     double                t[8];         /* History of last 8 analysis times t[0]=time */
+    double                tstep;        /* tran simulation tstep */
+    double                tstop;        /* tran simulation tstop */
 
 } Mif_Circ_Data_t;
 
