@@ -194,6 +194,8 @@ MIFload(
     /* otherwise, set the times to zero */
     if(anal_type == MIF_TRAN) {
        cm_data.circuit.time = ckt->CKTtime;
+       cm_data.circuit.tstep = ckt->CKTstep;
+       cm_data.circuit.tstop = ckt->CKTfinalTime;
        cm_data.circuit.t[0] = ckt->CKTtime;
        for(i = 1; i < 8; i++) {
            cm_data.circuit.t[i] = cm_data.circuit.t[i-1] - ckt->CKTdeltaOld[i-1];
@@ -203,6 +205,8 @@ MIFload(
     }
     else {
        cm_data.circuit.time = 0.0;
+       cm_data.circuit.tstep = 0.0;
+       cm_data.circuit.tstop = 0.0;
        for(i = 0; i < 8; i++) {
            cm_data.circuit.t[i] = 0.0;
        }
