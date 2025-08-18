@@ -147,6 +147,10 @@ docommand(wordlist *wlist)
     /* Do all the things that used to be done by cshpar when the line
      * was read...  */
     wlist = cp_variablesubst(wlist);
+
+    if (!wlist || !wlist->wl_word)
+        return;
+
     pwlist(wlist, "After variable substitution");
 
     wlist = cp_bquote(wlist);
