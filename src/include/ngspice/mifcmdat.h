@@ -430,6 +430,7 @@ struct Mif_Private {
     Mif_Inst_Var_Data_t    **inst_var;    /* Information about each inst variable */
     Mif_Callback_t         *callback;     /* Callback function */
     Mif_Noise_Data_t       *noise;        /* Noise context, NULL when not in noise analysis */
+    MIFinstance            *instance;     /* Information about the instance */
 
 };
 

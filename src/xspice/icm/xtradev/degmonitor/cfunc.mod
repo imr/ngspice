@@ -43,7 +43,7 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 
-                                      
+#include "ngspice/mifdefs.h"
 
 /*=== CONSTANTS ========================*/
 
@@ -185,6 +185,8 @@ void cm_degmon(ARGS)  /* structure holding parms,
         STATIC_VAR(prevtime) = (double *) malloc(sizeof(double));
         prevtime = (double *) STATIC_VAR(prevtime);
         *prevtime = 0.;
+        cm_message_send(INSTNAME);
+        cm_message_send(INSTMODNAME);
 
     }
     else {

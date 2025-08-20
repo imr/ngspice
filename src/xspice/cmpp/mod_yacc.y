@@ -373,6 +373,8 @@ static void append (char *str)
 %token TOK_CALL_TYPE
 %token TOK_NOISE_DENSITY
 %token TOK_NOISE_FREQ
+%token TOK_INSTNAME
+%token TOK_INSTMODNAME
 
 %start mod_file
 
@@ -447,6 +449,10 @@ macro			: TOK_INIT
 			   {fprintf (mod_yyout, "mif_private->circuit.frequency");}
 			| TOK_TEMPERATURE
 			   {fprintf (mod_yyout, "mif_private->circuit.temperature");}
+			| TOK_INSTNAME
+			   {fprintf (mod_yyout, "mif_private->instance->MIFname");}
+			| TOK_INSTMODNAME
+			   {fprintf (mod_yyout, "mif_private->instance->gen.GENmodPtr->GENmodName");}
 			| TOK_T TOK_LPAREN buffered_c_code TOK_RPAREN
 			   {fprintf (mod_yyout, "mif_private->circuit.t[%s]", $3);}
 			| TOK_PARAM TOK_LPAREN subscriptable_id TOK_RPAREN
