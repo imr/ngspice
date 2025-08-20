@@ -241,6 +241,7 @@ MIFload(
             /* ***************************************************************** */
             g_mif_info.instance = here;
             g_mif_info.errmsg = "";
+            cm_data.instance = here;
 
             if(here->initialized) {
                 cm_data.circuit.init = MIF_FALSE;
