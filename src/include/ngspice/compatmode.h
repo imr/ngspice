@@ -17,6 +17,7 @@ struct compat
 	bool eg; /* EAGLE */
 	bool mc; /* to be set for 'make check' */
 	bool xs; /* XSPICE */
+	bool de; /* degradation sim */
 };
 
 extern struct compat newcompat;

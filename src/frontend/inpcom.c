@@ -1485,6 +1485,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 tmpcomp.eg = newcompat.eg; /* EAGLE */
                 tmpcomp.mc = newcompat.mc; /* to be set for 'make check' */
                 tmpcomp.xs = newcompat.xs; /* XSPICE */
+                tmpcomp.de = newcompat.de; /* degradation */
                 /* save the new comptmode */
                 newcompat.isset = TRUE; /* at least one mode is set */
                 if (ciprefix(".incpslt", buffer)) {
@@ -1505,6 +1506,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 newcompat.eg = FALSE;
                 newcompat.mc = FALSE;
                 newcompat.xs = FALSE;
+                newcompat.de = FALSE;
             }
 
             inp_stripcomments_line(buffer, FALSE, TRUE);
@@ -1648,6 +1650,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 newcompat.eg = tmpcomp.eg; /* EAGLE */
                 newcompat.mc = tmpcomp.mc; /* to be set for 'make check' */
                 newcompat.xs = tmpcomp.xs; /* XSPICE */
+                newcompat.de = tmpcomp.de; /* degradation */
             }
 
         } /*  end of .include handling  */

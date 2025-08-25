@@ -78,6 +78,8 @@ void set_compat_mode(void)
             newcompat.isset = newcompat.ps = TRUE; /*PSPICE*/
         if (strstr(behaviour, "xs"))
             newcompat.isset = newcompat.xs = TRUE; /*XSPICE*/
+        if (strstr(behaviour, "de"))
+            newcompat.isset = newcompat.de = TRUE; /*degradation*/
         if (strstr(behaviour, "lt"))
             newcompat.isset = newcompat.lt = TRUE; /*LTSPICE*/
         if (strstr(behaviour, "ki"))
@@ -106,7 +108,7 @@ void set_compat_mode(void)
     /* reset everything for 'make check' */
     if (newcompat.mc)
         newcompat.eg = newcompat.hs = newcompat.spe = newcompat.ps = newcompat.xs =
-        newcompat.ll = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
+        newcompat.ll = newcompat.lt = newcompat.ki = newcompat.a = newcompat.de = FALSE;
 }
 
 /* Print the compatibility flags */
@@ -136,6 +138,8 @@ void print_compat_mode(void) {
             fprintf(stdout, " spe");
         if (newcompat.a)
             fprintf(stdout, " a");
+        if (newcompat.de)
+            fprintf(stdout, " de");
         fprintf(stdout, "\n\n");
     }
     else {
