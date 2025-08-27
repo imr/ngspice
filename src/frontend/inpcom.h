@@ -13,4 +13,6 @@ char *inp_pathresolve(const char *name);
 extern char* inp_remove_ws(char* s);
 extern char* search_plain_identifier(char* str, const char* identifier);
 
+extern int readdegparams(struct card* deck);
+
 #endif
