@@ -87,13 +87,24 @@ Null_Allowed:       yes                    yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     L                   
-Description:        "channel length"  
-Data_Type:          real 
-Default_Value:      0.13e-6
-Limits:             -  
-Vector:             no 
-Vector_Bounds:      - 
+Parameter_Name:     l                      devmod
+Description:        "channel length"       "device model"
+Data_Type:          real                   string
+Default_Value:      0.13e-6                " "
+Limits:             -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     file
+Description:        "file name"
+Data_Type:          string
+Default_Value:      "degradation-model.txt"
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
 Null_Allowed:       yes
 
 
