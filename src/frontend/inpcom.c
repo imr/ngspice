@@ -3967,7 +3967,8 @@ static void expand_section_references(struct card *c, const char *dir_name)
             tfree(filename);
         }
         else if (ciprefix(".lib", c->line)) {
-            /* add SOA check info direcly after inserting the library */
+            /* add SOA check info direcly after inserting the library.
+               SWSOA is used in the Open PDK from IHP to enable SOA checks. */
             if (cp_getvar("soacheck", CP_BOOL, NULL, 0))
                 insert_new_line(c, copy(".param SWSOA=1"), c->linenum + 1, 0, "internal");
             c = expand_section_ref(c, dir_name);
