@@ -5,11 +5,9 @@ EXTRA_DIST = README examples icm xspice.c .gitignore \
              verilog/verilator_shim.cpp verilog/verilator_main.cpp \
              verilog/libvvp.def verilog/MSVC.CMD verilog/README.txt \
              vhdl/ghnggen \
-             vhdl/ghdl_shim.h vhdl/ghdl_shim.c vhdl/ghdl_vpi.c
-
-## This is removed because icm relies upon the existance of all other
-## libs.  It is currently compiled manually, last.
-##SUBDIRS = mif cm enh evt ipc idn icm
+             vhdl/ghdl_shim.h vhdl/ghdl_shim.c vhdl/ghdl_vpi.c \
+             tlines/msline_common.c tlines/msline_common.h \
+             tlines/tline_common.c tlines/tline_common.h
 
 SUBDIRS = mif cm enh evt ipc idn cmpp icm verilog vhdl
 
