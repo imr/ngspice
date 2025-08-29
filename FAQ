@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.9 (ngspice-41 release)
+  Ngspice F.A.Q.Version 2.9 (ngspice-45 release)
 
   Maintained by Holger Vogt
-  Last update: Aug 11 2023
+  Last update: Aug 29 2025
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -72,8 +72,8 @@
     models.
 
   - Xspice is an extension to Spice3 that provides code modeling support
-    and simulation of digital components through an embedded event
-    driven algorithm.
+    and simulation of analogue components and especially of digital
+    components through an embedded event driven algorithm.
 
   The NG prefix has lot of meanings: Next Generation, New (and) Good, etc.
   Choose or invent the one you prefer. The heart of the project is the
@@ -90,13 +90,13 @@
 
  1.3 What is tclspice ?
 
-  Tclspice is a another interface option of ngspice, providing a tcl/tk
+  Tclspice is a another interface option of ngspice, offering a tcl/tk
   interface to the user. Tclspice is both a batch and interactive simulator
   and a building block for simulator applications. Analyses can be run
   from a tcl script and vector plotted or post processed using tcl. A small
   GUI may be built by the user to analyze a circuit or a set of circuits.
-  Tclspice is obtained compiling ngspice activating an additional option.
-  This has not been used and tested for some time now.
+  Tclspice is obtained by compiling ngspice after activating an additional
+  option. This feature has not been used and tested for some time now.
 
 
  1.4 Why resurrecting Berkeley's Spice?
@@ -107,7 +107,7 @@
   free, it's available in source code and most of the electrical
   simulators inherited it's syntax. Spice3 is based on proven numerical
   algorithms (most commercial implementations have only strengthened
-  them), implements most of the models for MOSFET submicron design
+  them), implements many of the models for MOSFET submicron design
   and has a powerful set of analyses. The readily availability of
   its source code in the past made this simulator the de-facto standard.
 
@@ -217,7 +217,7 @@
 
   https://sourceforge.net/projects/ngspice/files/ng-spice-rework/
   
-  Nearly all distributions for MINGW, Cygwin, Linux, macOS and
+  Nearly all OS distributions for MINGW, Cygwin, Linux, macOS and
   others offer install-ready copies of ngspice. Please see
   https://repology.org/project/ngspice/packages for packages
   available.
@@ -256,7 +256,7 @@
 
   The latest version released is:
 
-  ngspice-44 (released on January 2 2025)
+  ngspice-45 (released on August 31, 2025)
 
 
  2.2.  What are the latest features in the current release?
