@@ -40,6 +40,10 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOresist = value->rValue;
             model->DIOresistGiven = TRUE;
             break;
+        case DIO_MOD_RSW:
+            model->DIOresistSW = value->rValue;
+            model->DIOresistSWGiven = TRUE;
+            break;
         case DIO_MOD_TRS:
             model->DIOresistTemp1 = value->rValue;
             model->DIOresistTemp1Given = TRUE;
@@ -107,6 +111,10 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_IKR:
             model->DIOreverseKneeCurrent = value->rValue;
             model->DIOreverseKneeCurrentGiven = TRUE;
+            break;
+        case DIO_MOD_IKP:
+            model->DIOforwardSWKneeCurrent = value->rValue;
+            model->DIOforwardSWKneeCurrentGiven = TRUE;
             break;
         case DIO_MOD_NBV:
             model->DIObrkdEmissionCoeff = value->rValue;
