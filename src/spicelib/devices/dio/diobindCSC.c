@@ -112,6 +112,7 @@ DIObindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposTempPtr,      DIOposTempBinding,      DIOposNode,      DIOtempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposPrimeTempPtr, DIOposPrimeTempBinding, DIOposPrimeNode, DIOtempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOnegTempPtr,      DIOnegTempBinding,      DIOnegNode,      DIOtempNode);
+            }
         }
     }
 
