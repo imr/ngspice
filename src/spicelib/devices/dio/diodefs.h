@@ -194,6 +194,16 @@ typedef struct sDIOinstance {
     BindElement *DIOposPosBinding ;
     BindElement *DIOnegNegBinding ;
     BindElement *DIOposPrimePosPrimeBinding ;
+    /* self heating */
+    BindElement *DIOtempPosBinding;
+    BindElement *DIOtempPosPrimeBinding;
+    BindElement *DIOtempNegBinding; 
+    BindElement *DIOtempTempBinding;
+    BindElement *DIOposTempBinding;
+    BindElement *DIOposPrimeTempBinding;
+    BindElement *DIOnegTempBinding;
+    BindElement *DIOtempPosSwPrimeBinding;
+    BindElement *DIOposSwPrimeTempBinding;
 #endif
 
 } DIOinstance ;
