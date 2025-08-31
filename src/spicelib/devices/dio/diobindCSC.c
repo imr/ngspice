@@ -32,15 +32,6 @@ DIObindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(DIOposPosPtr, DIOposPosBinding, DIOposNode, DIOposNode);
             CREATE_KLU_BINDING_TABLE(DIOnegNegPtr, DIOnegNegBinding, DIOnegNode, DIOnegNode);
             CREATE_KLU_BINDING_TABLE(DIOposPrimePosPrimePtr, DIOposPrimePosPrimeBinding, DIOposPrimeNode, DIOposPrimeNode);
-            if ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given)) {
-                CREATE_KLU_BINDING_TABLE(DIOtempPosPtr,      DIOtempPosBinding,      DIOtempNode,     DIOposNode);
-                CREATE_KLU_BINDING_TABLE(DIOtempPosPrimePtr, DIOtempPosPrimeBinding, DIOtempNode,     DIOposPrimeNode);
-                CREATE_KLU_BINDING_TABLE(DIOtempNegPtr,      DIOtempNegBinding,      DIOtempNode,     DIOnegNode);
-                CREATE_KLU_BINDING_TABLE(DIOtempTempPtr,     DIOtempTempBinding,     DIOtempNode,     DIOtempNode);
-                CREATE_KLU_BINDING_TABLE(DIOposTempPtr,      DIOposTempBinding,      DIOposNode,      DIOtempNode);
-                CREATE_KLU_BINDING_TABLE(DIOposPrimeTempPtr, DIOposPrimeTempBinding, DIOposPrimeNode, DIOtempNode);
-                CREATE_KLU_BINDING_TABLE(DIOnegTempPtr,      DIOnegTempBinding,      DIOnegNode,      DIOtempNode);
-            }
         }
     }
 
@@ -68,15 +59,6 @@ DIObindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposPosPtr, DIOposPosBinding, DIOposNode, DIOposNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOnegNegPtr, DIOnegNegBinding, DIOnegNode, DIOnegNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposPrimePosPrimePtr, DIOposPrimePosPrimeBinding, DIOposPrimeNode, DIOposPrimeNode);
-            if ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given)) {
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempPosPtr,      DIOtempPosBinding,      DIOtempNode,     DIOposNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempPosPrimePtr, DIOtempPosPrimeBinding, DIOtempNode,     DIOposPrimeNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempNegPtr,      DIOtempNegBinding,      DIOtempNode,     DIOnegNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempTempPtr,     DIOtempTempBinding,     DIOtempNode,     DIOtempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposTempPtr,      DIOposTempBinding,      DIOposNode,      DIOtempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposPrimeTempPtr, DIOposPrimeTempBinding, DIOposPrimeNode, DIOtempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOnegTempPtr,      DIOnegTempBinding,      DIOnegNode,      DIOtempNode);
-            }
         }
     }
 
@@ -104,14 +86,6 @@ DIObindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposPosPtr, DIOposPosBinding, DIOposNode, DIOposNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOnegNegPtr, DIOnegNegBinding, DIOnegNode, DIOnegNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposPrimePosPrimePtr, DIOposPrimePosPrimeBinding, DIOposPrimeNode, DIOposPrimeNode);
-            if ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given)) {
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempPosPtr,      DIOtempPosBinding,      DIOtempNode,     DIOposNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempPosPrimePtr, DIOtempPosPrimeBinding, DIOtempNode,     DIOposPrimeNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempNegPtr,      DIOtempNegBinding,      DIOtempNode,     DIOnegNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempTempPtr,     DIOtempTempBinding,     DIOtempNode,     DIOtempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposTempPtr,      DIOposTempBinding,      DIOposNode,      DIOtempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposPrimeTempPtr, DIOposPrimeTempBinding, DIOposPrimeNode, DIOtempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOnegTempPtr,      DIOnegTempBinding,      DIOnegNode,      DIOtempNode);
         }
     }
 
