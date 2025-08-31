@@ -41,19 +41,19 @@ typedef struct sDIOinstance {
     const int DIOtempNode;    /* number of the temperature node of the diode */
     int DIOposPrimeNode;      /* number of positive prime node of diode */
 
-    double *DIOposPosPrimePtr;      /* pointer to sparse matrix at
+    double *DIOposPosPrimePtr;      /* pointer to sparse matrix at 
                                      * (positive,positive prime) */
-    double *DIOnegPosPrimePtr;      /* pointer to sparse matrix at
+    double *DIOnegPosPrimePtr;      /* pointer to sparse matrix at 
                                      * (negative,positive prime) */
-    double *DIOposPrimePosPtr;      /* pointer to sparse matrix at
+    double *DIOposPrimePosPtr;      /* pointer to sparse matrix at 
                                      * (positive prime,positive) */
-    double *DIOposPrimeNegPtr;      /* pointer to sparse matrix at
+    double *DIOposPrimeNegPtr;      /* pointer to sparse matrix at 
                                      * (positive prime,negative) */
-    double *DIOposPosPtr;   /* pointer to sparse matrix at
+    double *DIOposPosPtr;   /* pointer to sparse matrix at 
                              * (positive,positive) */
-    double *DIOnegNegPtr;   /* pointer to sparse matrix at
+    double *DIOnegNegPtr;   /* pointer to sparse matrix at 
                              * (negative,negative) */
-    double *DIOposPrimePosPrimePtr; /* pointer to sparse matrix at
+    double *DIOposPrimePosPrimePtr; /* pointer to sparse matrix at 
                                      * (positive prime,positive prime) */
 
     /* self heating */
@@ -131,7 +131,7 @@ typedef struct sDIOinstance {
     double DIOtVcrit;   /* temperature adjusted V crit */
     double DIOtF1;      /* temperature adjusted f1 */
     double DIOtBrkdwnV; /* temperature adjusted breakdown voltage */
-
+    
     double DIOtF2;     /* coeff. for capacitance equation precomputation */
     double DIOtF3;     /* coeff. for capacitance equation precomputation */
     double DIOtF2SW;   /* coeff. for capacitance equation precomputation */
@@ -210,7 +210,7 @@ typedef struct sDIOinstance {
 
 #define DIOsenGeq DIOsens /* stores the perturbed values of geq */
 #define DIOsenCeq DIOsens + 3 /* stores the perturbed values of ceq */
-#define DIOdphidp DIOsens + 6
+#define DIOdphidp DIOsens + 6 
 
 
 #define DIOvoltage DIOstate
@@ -218,16 +218,21 @@ typedef struct sDIOinstance {
 #define DIOconduct DIOstate+2
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
+#define DIOdiffCharge DIOstate+5
+#define DIOdiffCurrent DIOstate+6
+#define DIOdiffCap DIOstate+7
+#define DIOoldCurr DIOstate+8
+#define DIOoldCond DIOstate+9
 
-#define DIOqth DIOstate+5     /* thermal capacitor charge */
-#define DIOcqth DIOstate+6    /* thermal capacitor current */
+#define DIOqth DIOstate+10     /* thermal capacitor charge */
+#define DIOcqth DIOstate+11    /* thermal capacitor current */
 
-#define DIOdeltemp DIOstate+7 /* thermal voltage over rth0 */
-#define DIOdIdio_dT DIOstate+8
+#define DIOdeltemp DIOstate+12 /* thermal voltage over rth0 */
+#define DIOdIdio_dT DIOstate+13
 
-#define DIOnumStates 9
+#define DIOnumStates 14
 
-#define DIOsensxp DIOstate+9    /* charge sensitivities and their derivatives.
+#define DIOsensxp DIOstate+14    /* charge sensitivities and their derivatives.
                                  * +10 for the derivatives - pointer to the
                                  * beginning of the array */
 
@@ -272,8 +277,6 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOtlevGiven : 1;
     unsigned DIOtlevcGiven : 1;
     unsigned DIOactivationEnergyGiven : 1;
-    unsigned DIOfirstBGcorrFactorGiven : 1;
-    unsigned DIOsecndBGcorrFactorGiven : 1;
     unsigned DIOsaturationCurrentExpGiven : 1;
     unsigned DIOctaGiven : 1;
     unsigned DIOctpGiven : 1;
@@ -302,6 +305,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOte_maxGiven : 1;
     unsigned DIOrecSatCurGiven : 1;
     unsigned DIOrecEmissionCoeffGiven : 1;
+    unsigned DIOsoftRevRecParamGiven : 1;
 
     unsigned DIOrth0Given :1;
     unsigned DIOcth0Given :1;
@@ -314,13 +318,12 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOpolyOxideThickGiven : 1;  /* Thickness of the polysilicon to bulk oxide (level=3) */
     unsigned DIOmetalMaskOffsetGiven : 1; /* Masking and etching effects in metal (level=3)") */
     unsigned DIOpolyMaskOffsetGiven : 1;  /* Masking and etching effects in polysilicon (level=3) */
-    unsigned DIOmaskOffsetGiven : 1;      /* Masking and etching effects (level=3) */
 
     int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
     double DIOsatSWCur;   /* Sidewall saturation current */
 
-    double DIOresist;             /* ohmic series resistance */
+    double DIOresist;             /* ohmic series resistance */ 
     double DIOresistTemp1;        /* series resistance 1st order temp. coeff. */
     double DIOresistTemp2;        /* series resistance 2nd order temp. coeff. */
     double DIOconductance;        /* conductance corresponding to ohmic R */
@@ -344,8 +347,6 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     int    DIOtlev; /* Diode temperature equation selector */
     int    DIOtlevc; /* Diode temperature equation selector */
     double DIOactivationEnergy; /* activation energy (EG) */
-    double DIOfirstBGcorrFactor; /* First bandgap correction factor */
-    double DIOsecndBGcorrFactor; /* Second bandgap correction factor */
     double DIOsaturationCurrentExp; /* Saturation current exponential (XTI) */
     double DIOcta; /* Area junction temperature coefficient */
     double DIOctp; /* Perimeter junction temperature coefficient */
@@ -375,6 +376,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOte_max; /* maximum temperature */
     double DIOrecSatCur; /* Recombination saturation current */
     double DIOrecEmissionCoeff; /* Recombination emission coefficient */
+    double DIOsoftRevRecParam; /* Soft reverse recovery parameter */
 
     double DIOrth0;
     double DIOcth0;
@@ -387,7 +389,6 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOpolyOxideThick;  /* Thickness of the polysilicon to bulk oxide (level=3) */
     double DIOmetalMaskOffset; /* Masking and etching effects in metal (level=3)") */
     double DIOpolyMaskOffset;  /* Masking and etching effects in polysilicon (level=3) */
-    double DIOmaskOffset;      /* Masking and etching effects (level=3) */
 
 } DIOmodel;
 
@@ -434,8 +435,6 @@ enum {
     DIO_MOD_VJ,
     DIO_MOD_M,
     DIO_MOD_EG,
-    DIO_MOD_GAP1,
-    DIO_MOD_GAP2,
     DIO_MOD_XTI,
     DIO_MOD_FC,
     DIO_MOD_BV,
@@ -481,6 +480,7 @@ enum {
     DIO_MOD_PD_MAX,
     DIO_MOD_ISR,
     DIO_MOD_NR,
+    DIO_MOD_VP,
     DIO_MOD_RTH0,
     DIO_MOD_CTH0,
 
@@ -492,7 +492,6 @@ enum {
     DIO_MOD_XOI,
     DIO_MOD_XM,
     DIO_MOD_XP,
-    DIO_MOD_XW,
 };
 
 void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit *ckt);

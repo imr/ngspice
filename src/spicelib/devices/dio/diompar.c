@@ -133,14 +133,6 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOactivationEnergy = value->rValue;
             model->DIOactivationEnergyGiven = TRUE;
             break;
-        case DIO_MOD_GAP1:
-            model->DIOfirstBGcorrFactor = value->rValue;
-            model->DIOfirstBGcorrFactorGiven = TRUE;
-            break;
-        case DIO_MOD_GAP2:
-            model->DIOsecndBGcorrFactor = value->rValue;
-            model->DIOsecndBGcorrFactorGiven = TRUE;
-            break;
         case DIO_MOD_XTI:
             model->DIOsaturationCurrentExp = value->rValue;
             model->DIOsaturationCurrentExpGiven = TRUE;
@@ -237,6 +229,10 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOrecEmissionCoeff = value->rValue;
             model->DIOrecEmissionCoeffGiven = TRUE;
             break;
+        case DIO_MOD_VP:
+            model->DIOsoftRevRecParam = value->rValue;
+            model->DIOsoftRevRecParamGiven = TRUE;
+            break;
         case  DIO_MOD_RTH0:
             model->DIOrth0 = value->rValue;
             model->DIOrth0Given = TRUE;
@@ -277,10 +273,6 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
         case DIO_MOD_XP:
             model->DIOpolyMaskOffset = value->rValue;
             model->DIOpolyMaskOffsetGiven = TRUE;
-            break;
-        case DIO_MOD_XW:
-            model->DIOmaskOffset = value->rValue;
-            model->DIOmaskOffsetGiven = TRUE;
             break;
 
         case DIO_MOD_D:

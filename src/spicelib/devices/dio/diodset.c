@@ -60,7 +60,7 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 		*           This is an old analysis anyway....
 		*/
 
-            csat=here->DIOtSatCur+here->DIOtSatSWCur; // area and multiplier are already counted in tSatCur and tSatSWCur
+                        csat=(here->DIOtSatCur*here->DIOarea+here->DIOtSatSWCur*here->DIOpj)*here->DIOm;
 			vt = CONSTKoverQ * here->DIOtemp;
 			vte=model->DIOemissionCoeff * vt;
 	    		vd = *(ckt->CKTrhsOld + (here->DIOposPrimeNode)) -
@@ -113,7 +113,7 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			/*
 			                 *   junction charge storage elements
 			                 */
-            czero=here->DIOtJctCap; // area and multiplier are already counted in DIOtJctCap
+                        czero=here->DIOtJctCap*here->DIOarea*here->DIOm;
 			if (czero != 0.0) {
 			  if (vd < here->DIOtDepCap){
 			  	arg=1-vd/model->DIOjunctionPot;
@@ -143,7 +143,7 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			{
 			  cjunc1 = cjunc2 = cjunc3 = 0.0;
 			}
-            czeroSW=+here->DIOtJctSWCap; // pj and multiplier are already counted in DIOtJctSWCap
+                        czeroSW=+here->DIOtJctSWCap*here->DIOpj*here->DIOm;
 			if (czeroSW != 0.0) {
 			  if (vd < here->DIOtDepCap){
 			  	arg=1-vd/model->DIOjunctionSWPot;

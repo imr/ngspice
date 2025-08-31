@@ -106,12 +106,6 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_EG:
             value->rValue = model->DIOactivationEnergy;
             return (OK);
-        case DIO_MOD_GAP1:
-            value->rValue = model->DIOfirstBGcorrFactor;
-            return (OK);
-        case DIO_MOD_GAP2:
-            value->rValue = model->DIOsecndBGcorrFactor;
-            return (OK);
         case DIO_MOD_XTI:
             value->rValue = model->DIOsaturationCurrentExp;
             return(OK);
@@ -193,6 +187,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_NR:
             value->rValue = model->DIOrecEmissionCoeff;
             return(OK);
+        case DIO_MOD_VP:
+            value->rValue = model->DIOsoftRevRecParam;
+            return(OK);
         case DIO_MOD_RTH0:
             value->rValue = model->DIOrth0; 
             return(OK);
@@ -223,9 +220,6 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_XP:
             value->rValue = model->DIOpolyMaskOffset;
-            return(OK);
-        case DIO_MOD_XW:
-            value->rValue = model->DIOmaskOffset;
             return(OK);
 
         default:

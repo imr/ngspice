@@ -16,7 +16,6 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 #include "ngspice/fteext.h"
-#include "ngspice/compatmode.h"
 
 int
 DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -79,20 +78,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOtranTimeTemp2 = 0.0;
         }
         if(!model->DIOjunctionCapGiven) {
-            if (newcompat.ps || newcompat.lt) {
-                double cdiode = 0.;
-                /* to improve convergence (sometimes) */
-                if (cp_getvar("diode_cj0", CP_REAL, &cdiode, 0) && cdiode > 0) {
-                    model->DIOjunctionCap = cdiode;
-                    if (ft_ngdebug)
-                        fprintf(stderr, "Diode junction capacitance in model %s set to %e F\n", model->gen.GENmodName, cdiode);
-                }
-                else
-                    model->DIOjunctionCap = 0.0;
-            }
-            else {
-                model->DIOjunctionCap = 0.0;
-            }
+            model->DIOjunctionCap = 0;
         }
         if(!model->DIOjunctionSWCapGiven) {
             model->DIOjunctionSWCap = 0;
@@ -103,19 +89,11 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOgradingSWCoeffGiven) {
             model->DIOgradingSWCoeff = .33;
         }
-        if(model->DIOforwardKneeCurrentGiven) {
-            if (model->DIOforwardKneeCurrent < ckt->CKTepsmin) {
-                model->DIOforwardKneeCurrentGiven = FALSE;
-                fprintf(stderr, "Warning: %s: IKF too small - model effect disabled!\n",
-                model->DIOmodName);
-            }
+        if(!model->DIOforwardKneeCurrentGiven) {
+            model->DIOforwardKneeCurrent = 0.0;
         }
-        if(model->DIOreverseKneeCurrentGiven) {
-            if (model->DIOreverseKneeCurrent < ckt->CKTepsmin) {
-                model->DIOreverseKneeCurrentGiven = FALSE;
-                fprintf(stderr, "Warning: %s: IKR too small - model effect disabled!\n",
-                model->DIOmodName);
-            }
+        if(!model->DIOreverseKneeCurrentGiven) {
+            model->DIOreverseKneeCurrent = 0.0;
         }
         if(!model->DIObrkdEmissionCoeffGiven) {
             model->DIObrkdEmissionCoeff = model->DIOemissionCoeff;
@@ -127,17 +105,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOtlevc = 0;
         }
         if(!model->DIOactivationEnergyGiven) {
-            if(model->DIOtlev == 2) {
-                model->DIOactivationEnergy = 1.16;
-            } else {
-                model->DIOactivationEnergy = 1.11;
-            }
-        }
-        if(!model->DIOfirstBGcorrFactorGiven) {
-            model->DIOfirstBGcorrFactor = 7.02e-4;
-        }
-        if(!model->DIOsecndBGcorrFactorGiven) {
-            model->DIOsecndBGcorrFactor = 1108.0;
+            model->DIOactivationEnergy = 1.11;
         }
         if(!model->DIOsaturationCurrentExpGiven) {
             model->DIOsaturationCurrentExp = 3;
@@ -206,10 +174,13 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOte_max = 1e99;
         }
         if(!model->DIOrecEmissionCoeffGiven) {
-            model->DIOrecEmissionCoeff = 2;
+            model->DIOrecEmissionCoeff = 1;
         }
         if(!model->DIOrecSatCurGiven) {
             model->DIOrecSatCur = 1e-14;
+        }
+        if (!model->DIOsoftRevRecParamGiven) {
+            model->DIOsoftRevRecParam = 0.0;
         }
 
         /* set lower limit of saturation current */
@@ -221,20 +192,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         if((!model->DIOresistGiven) || (model->DIOresist==0)) {
-            if (newcompat.ps || newcompat.lt) {
-                double rsdiode = 0.;
-                /* to improve convergence (sometimes) */
-                if (cp_getvar("diode_rser", CP_REAL, &rsdiode, 0) && rsdiode > 0) {
-                    model->DIOconductance = 1./rsdiode;
-                    model->DIOresist = rsdiode;
-                    if (ft_ngdebug)
-                        fprintf(stderr, "Diode series resistance in model %s set to %e Ohm\n", model->gen.GENmodName, rsdiode);
-                }
-                else
-                    model->DIOconductance = 0.0;
-            }
-            else
-                model->DIOconductance = 0.0;
+            model->DIOconductance = 0.0;
         } else {
             model->DIOconductance = 1/model->DIOresist;
         }
@@ -270,9 +228,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOpolyMaskOffsetGiven) {
             model->DIOpolyMaskOffset = 0.0;
         }
-        if(!model->DIOmaskOffsetGiven) {
-            model->DIOmaskOffset = 0.0;
-        }
 
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
@@ -296,41 +251,45 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->DIOm = 1;
             }
 
-            here->DIOcmetal = 0.0;
-            here->DIOcpoly = 0.0;
+            here->DIOarea = here->DIOarea * here->DIOm;
+            here->DIOpj = here->DIOpj * here->DIOm;
+            here->DIOcmetal = 0.0; 
+            here->DIOcpoly = 0.0; 
             if (model->DIOlevel == 3) {
                 double wm, lm, wp, lp;
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
-                    here->DIOarea = (here->DIOw+model->DIOmaskOffset) * (here->DIOl+model->DIOmaskOffset) * here->DIOm * scale * scale;
-                    here->DIOpj = (2 * (here->DIOw+model->DIOmaskOffset) + 2 * (here->DIOl+model->DIOmaskOffset)) * here->DIOm * scale;
+                    here->DIOarea = here->DIOw * here->DIOl * here->DIOm;
+                    here->DIOpj = (2 * here->DIOw + 2 * here->DIOl) * here->DIOm;
                 }
-                if (here->DIOwidthMetalGiven)
+                here->DIOarea = here->DIOarea * scale * scale;
+                here->DIOpj = here->DIOpj * scale;
+                if (here->DIOwidthMetalGiven) 
                     wm = here->DIOwidthMetal;
                 else
                     wm = model->DIOwidthMetal;
-                if (here->DIOlengthMetalGiven)
+                if (here->DIOlengthMetalGiven) 
                     lm = here->DIOlengthMetal;
                 else
                     lm = model->DIOlengthMetal;
-                if (here->DIOwidthPolyGiven)
+                if (here->DIOwidthPolyGiven) 
                     wp = here->DIOwidthPoly;
                 else
                     wp = model->DIOwidthPoly;
-                if (here->DIOlengthPolyGiven)
+                if (here->DIOlengthPolyGiven) 
                     lp = here->DIOlengthPoly;
                 else
                     lp = model->DIOlengthPoly;
                 here->DIOcmetal = CONSTepsSiO2 / model->DIOmetalOxideThick  * here->DIOm
-                                  * (wm * scale + model->DIOmetalMaskOffset)
+                                  * (wm * scale + model->DIOmetalMaskOffset) 
                                   * (lm * scale + model->DIOmetalMaskOffset);
                 here->DIOcpoly = CONSTepsSiO2 / model->DIOpolyOxideThick  * here->DIOm
-                                  * (wp * scale + model->DIOpolyMaskOffset)
+                                  * (wp * scale + model->DIOpolyMaskOffset) 
                                   * (lp * scale + model->DIOpolyMaskOffset);
             }
-            here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea * here->DIOm;
-            here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea * here->DIOm;
-            here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea * here->DIOm;
-            here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj * here->DIOm;
+            here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea;
+            here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea;
+            here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea;
+            here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
 
             here->DIOstate = *states;
             *states += DIOnumStates;
