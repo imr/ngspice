@@ -471,6 +471,15 @@ DIOunsetup(
               && here->DIOposPrimeNode != here->DIOposNode)
                 CKTdltNNum(ckt, here->DIOposPrimeNode);
             here->DIOposPrimeNode = 0;
+
+            if(model->DIOresistSWGiven) {
+                /* separate sidewall */
+                if (here->DIOposSwPrimeNode > 0
+                  && here->DIOposSwPrimeNode != here->DIOposNode)
+                    CKTdltNNum(ckt, here->DIOposSwPrimeNode);
+                here->DIOposSwPrimeNode = 0;
+            }
+
         }
     }
     return OK;
