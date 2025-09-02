@@ -4180,8 +4180,9 @@ finished:
           here->BSIM4cgso = cgso;
           here->BSIM4qgso = qgso;
 
-
+#ifndef NOBYPASS
 line755:
+#endif
           ag0 = ckt->CKTag[0];
           if (here->BSIM4mode > 0)
           {   if (here->BSIM4trnqsMod == 0)
