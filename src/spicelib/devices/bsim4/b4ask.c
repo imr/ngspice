@@ -421,15 +421,15 @@ BSIM4instance *here = (BSIM4instance*)inst;
             return(OK);
         case BSIM4_CGSO:
             value->rValue = here->BSIM4cgso;
-            value->rValue *= here->BSIM4m;
+            value->rValue *= here->BSIM4mult_q;
             return(OK);
         case BSIM4_CGDO:
             value->rValue = here->BSIM4cgdo;
-            value->rValue *= here->BSIM4m;
+            value->rValue *= here->BSIM4mult_q;
             return(OK);
         case BSIM4_CGBO:
             value->rValue = here->pParam->BSIM4cgbo;
-            value->rValue *= here->BSIM4m;
+            value->rValue *= here->BSIM4mult_q;
             return(OK);
         case BSIM4_WEFF:
             value->rValue = here->pParam->BSIM4weff;
