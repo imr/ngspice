@@ -47,7 +47,7 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   DOPtable *dopTableList = NULL;
   double startTime;
 
-#ifdef KLU
+#if defined(KLU) && defined(NOT_WITH_CIDER)
     if (ckt->CKTkluMODE) {
         fprintf(stderr, "Error: CIDER simulation is not (yet) supported with 'option klu'.\n");
         fprintf(stderr, "    Use 'option sparse' instead.\n");
