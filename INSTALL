@@ -81,10 +81,10 @@ This file describes the procedures to install ngspice from sources.
  For compiling ngspice as a shared library, see section 1.4.
 
 
-1.2 Install from tarball (e.g. ngspice-44.tar.gz)
+1.2 Install from tarball (e.g. ngspice-45.tar.gz)
 
  This covers installation from a release distribution (for example
- ngspice-44.tar.gz, the so called tar ball).
+ ngspice-45.tar.gz, the so called tar ball).
 
  After downloading the tar ball to a local directory, unpack it by command:
 
@@ -94,7 +94,7 @@ This file describes the procedures to install ngspice from sources.
  INSTALL file can be found).
 
  The most comfortable way to compile ngspice is running the compile script
- compile_linux.sh within the terminal window by ./compile_linux_new.sh. The
+ compile_linux.sh within the terminal window by ./compile_linux.sh. The
  script has to be declared as 'executable', and admin
  rights are required to allow the installation of ngspice.
 
@@ -169,7 +169,7 @@ This file describes the procedures to install ngspice from sources.
  $ ./autogen.sh
  $ mkdir release
  $ cd release
- $ ../configure --with-x --enable-cider  --enable-predictor
+ $ ../configure --with-x --enable-cider
  $ make 2>&1 | tee make.log
  $ sudo make install
 
@@ -355,11 +355,11 @@ This file describes the procedures to install ngspice from sources.
  Unfortunately compiling with MINGW is slow. Compiling with Visual Studio
  may be more than 10 times faster!
 
- Installing from the tarball, e.g. ngspice-44.tar.gz, is simple: After
+ Installing from the tarball, e.g. ngspice-45.tar.gz, is simple: After
  expanding, you may just run ./compile_min.sh from the ngspice directory.
 
  The default installation location of ngspice is the Windows path
- C:\spice. The install path can be altered by passing --prefix=NEWPATH
+ C:\spice64. The install path can be altered by passing --prefix=NEWPATH
  as an argument to ./configure during the build process.
 
  Put the install path you desire inside "", e.g. "D:/NewSpice". Be

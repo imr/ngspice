@@ -92,10 +92,11 @@ settrace(wordlist *wl, int what, char *name)
                 continue;
         }
 
-        /* Don't save a nodename more than once */
+        /* Don't save a nodename more than once, except for token 'all' */
         if (db_type == DB_SAVE) {
             for (dbcheck = dbs; dbcheck; dbcheck = dbcheck->db_next) {
-                if (dbcheck->db_type == DB_SAVE && eq(dbcheck->db_nodename1, db_nodename1)) {
+                if (dbcheck->db_type == DB_SAVE && eq(dbcheck->db_nodename1, db_nodename1) &&
+                    !eq("all", db_nodename1)) {
                     tfree(db_nodename1);
                     goto loopend;
                 }

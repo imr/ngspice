@@ -256,7 +256,7 @@ void ft_gnuplot(double *xlims, double *ylims,
         const char *filename, const char *title,
         const char *xlabel, const char *ylabel,
         GRIDTYPE gridtype, PLOTTYPE plottype,
-        struct dvec *vecs, bool xycontour, bool save_files_only)
+        struct dvec *vecs, bool xycontour)
 {
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
@@ -644,11 +644,6 @@ void ft_gnuplot(double *xlims, double *ylims,
         (void) sprintf(buf, "gnuplot -persist %s &", filename_plt);
     }
 #endif
-    if (save_files_only) {
-        printf("Saving gnuplot plt file %s\n", filename_plt);
-        printf("Saving gnuplot data file %s\n", filename_data);
-        return;
-    }
     err = system(buf);
 
     /* delete the plt and data files */

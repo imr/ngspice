@@ -23,6 +23,21 @@
 #define TLINE_COMMON_H
 
 // Constants
+
+#ifdef _MSC_VER
+#ifndef M_E
+  #define M_E        2.7182818284590452354    // e
+#endif
+#ifndef M_PI
+  #define M_PI       3.14159265358979323846   // pi
+#endif
+#define M_LN2      0.69314718055994530942   // log_e 2
+#define M_PI_2     1.57079632679489661923   // pi/2
+#define M_PI_4     0.785398163397448309616  // pi/4
+#define M_1_PI     0.318309886183790671538  // 1/pi
+#define M_2_PI     0.636619772367581343076  // 2/pi
+#endif
+
 #define Z0 (120*M_PI)
 #define z0 50.0
 #define MU0 (4*M_PI*1e-7)
@@ -30,7 +45,6 @@
 #define C0 299792458.0
 
 #define GMIN 1e-12
-
 
 // Functions
 #define sqr(x) (x*x)

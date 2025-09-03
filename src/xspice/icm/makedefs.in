@@ -23,11 +23,11 @@ BUILD_EXEEXT = @BUILD_EXEEXT@
 INCLUDES = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
 
 # CFLAGS to use here
-EXTRA_CFLAGS = -fPIC
+EXTRA_CFLAGS = -fPIC -Wshadow
 DEPFLAGS = -MD -MF
 ISMINGW = $(shell uname | grep -c "MINGW32")
 ifeq ($(ISMINGW), 1)
-  EXTRA_CFLAGS =
+  EXTRA_CFLAGS = -Wshadow
 endif
 ISCYGWIN = $(shell uname | grep -c "CYGWIN")
 ifeq ($(ISCYGWIN), 1)

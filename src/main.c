@@ -758,7 +758,6 @@ show_help(void)
            "  -n, --no-spiceinit        don't load the local or user's config file\n"
            "  -o, --output=FILE         set the outputfile\n"
            "  -p, --pipe                run in I/O pipe mode\n"
-           "  -q, --completion          activate command completion\n"
            "  -r, --rawfile=FILE        set the rawfile output\n"
            "      --soa-log=FILE        set the outputfile for SOA warnings\n"
            "  -s, --server              run spice as a server process\n"
@@ -1067,7 +1066,8 @@ int main(int argc, char **argv)
             break;
 
         case 'q':       /* Command completion */
-            qflag = TRUE;
+            qflag = FALSE;
+            fprintf(stderr, "Warning: Command completion is not supported, 'q' is ignored\n");
             break;
 
         case 'r':       /* The raw file */

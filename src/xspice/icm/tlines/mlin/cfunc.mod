@@ -1,5 +1,5 @@
 /* ===========================================================================
-	FILE    cfunc.mod
+	FILE    cfunc.mod for cm_mlin
 	Copyright 2025 Vadim Kuznetsov
 
 	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -21,6 +21,34 @@
 #include "tline_common.h"
 
 #include "msline_common.h"
+
+#ifdef _MSC_VER
+typedef _Dcomplex DoubleComplex;  // double complex
+#else
+typedef double complex DoubleComplex;
+#endif
+
+#ifdef _MSC_VER
+static DoubleComplex divide(DoubleComplex n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / denom;
+        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / denom;
+        return rez;
+    }
+
+static DoubleComplex rdivide(double n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1 * n2._Val[0]) / denom;
+        rez._Val[1] = (-1. * n1 * n2._Val[1]) / denom;
+        return rez;
+    }
+#endif
+
+
 
 //static tline_state_t *sim_points = NULL;
 
@@ -102,10 +130,19 @@ void cm_mlin (ARGS)
 	else if(ANALYSIS == AC) {
 	    double frequency = RAD_FREQ/(2.0*M_PI);
 		calcPropagation(W,SModel,DModel,er,h,t,tand,rho,D,frequency);
-
-		double complex g = alpha + beta*I;
-		double complex _Z11 = zl / ctanh(g*l);
-		double complex _Z21 = zl / csinh(g*l);
+#ifdef _MSC_VER
+		DoubleComplex g = _Cbuild(alpha, beta);
+		DoubleComplex _Z11 = rdivide(zl, ctanh(_Cmulcr(g, l)));
+		DoubleComplex _Z21 = rdivide(zl, csinh(_Cmulcr(g, l)));
+		z11.real = creal(_Z11); z11.imag = cimag(_Z11);
+		z21.real = creal(_Z21); z21.imag = cimag(_Z21);
+#else
+		DoubleComplex g = alpha + beta*I;
+		DoubleComplex _Z11 = zl / ctanh(g*l);
+		DoubleComplex _Z21 = zl / csinh(g*l);
+		z11.real = creal(_Z11); z11.imag = cimag(_Z11);
+		z21.real = creal(_Z21); z21.imag = cimag(_Z21);
+#endif
 
 		z11.real = creal(_Z11); z11.imag = cimag(_Z11);
 		z21.real = creal(_Z21); z21.imag = cimag(_Z21);
@@ -116,7 +153,7 @@ void cm_mlin (ARGS)
 	else if(ANALYSIS == TRANSIENT) {
 		calcPropagation(W,SModel,DModel,er,h,t,tand,rho,D,0);
         sim_points = &(STATIC_VAR(sim_points_data));
-        double t = TIME;
+        double time = TIME;
 		double V1 = INPUT(V1sens);
 		double V2 = INPUT(V2sens);
 		double I1 = INPUT(port1);
@@ -132,10 +169,10 @@ void cm_mlin (ARGS)
                 //fprintf(stderr,"Rollbacki time=%g\n",TIME);
 				delete_tline_last_state((tline_state_t **)sim_points);
 			}
-			append_state((tline_state_t **)sim_points, t, V1, V2, I1, I2, 1.2*delay);
+			append_state((tline_state_t **)sim_points, time, V1, V2, I1, I2, 1.2*delay);
 		}
-		if (t > delay && TModel == TRAN_FULL) {
-			tline_state_t *pp = get_state(*(tline_state_t **)sim_points, t - delay);
+		if (time > delay && TModel == TRAN_FULL) {
+			tline_state_t *pp = get_state(*(tline_state_t **)sim_points, time - delay);
 			if (pp != NULL) {
 				double V2out = pp->V1 + zl*(pp->I1);
 				double V1out = pp->V2 + zl*(pp->I2);

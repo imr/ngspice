@@ -14,6 +14,7 @@ AUTHORS
     03 Sep 2012     Holger Vogt
     27 Feb 2017     Marcel Hendrix
     23 JUL 2018     Holger Vogt
+    11 Aug 2025     Holger Vogt
 
 
 MODIFICATIONS
@@ -171,6 +172,17 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
     if (INIT == 1) {
 
         int count;
+        double tprev; /* store the previous time, used when time relative is set */
+        bool terr = MIF_FALSE; /* Cumulative warning message upon error during time reading */
+        bool derr = MIF_FALSE; /* Cumulative warning message upon error during data reading */
+
+        /* add time offset only once to tprev */
+        if (!PARAM_NULL(timeoffset)) {
+            tprev = PARAM(timeoffset);
+        }
+        else
+            tprev = 0.;
+
 
         /*** allocate static storage for *loc ***/
         if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = calloc(1,
@@ -240,11 +252,12 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         amplscalesize = PARAM_NULL(amplscale) ? 0 : PARAM_SIZE(amplscale);
         amploffssize = PARAM_NULL(amploffset) ? 0 : PARAM_SIZE(amploffset);
         count = 0;
+
         while (!loc->state->atend) {
             char line[512];
             char *cp, *cpdel;
             char *cp2;
-            double t, tprev = 0;
+            double t = 0, d = 0;
             int i;
             if (!fgets(line, sizeof(line), loc->state->fp)) {
                 loc->state->atend = 1;
@@ -260,13 +273,14 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             /* read the time channel; update the time difference */
             while (*cp && isspace_c(*cp))
                 ++cp;
-            if (*cp == '*' || *cp == '#' || *cp == ';') {
+            if (*cp == '*' || *cp == '#' || *cp == ';' || *cp == '\0') {
                 free(cpdel);
                 continue;
             }
             t = strtod(cp, &cp2);
             if (cp2 == cp) {
                 free(cpdel);
+                terr = MIF_TRUE;
                 continue;
             }
             cp = cp2;
@@ -297,15 +311,17 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             for (i = 0; i < size; ++i) {
                 while (*cp && (isspace_c(*cp) || *cp == ','))
                     ++cp;
-                t = strtod(cp, &cp2);
-                if (cp2 == cp)
+                d = strtod(cp, &cp2);
+                if (cp2 == cp) {
+                    derr = MIF_TRUE;
                     break;
+                }
                 cp = cp2;
                 if (i < amplscalesize)
-                    t *= PARAM(amplscale[i]);
+                    d *= PARAM(amplscale[i]);
                 if (i < amploffssize)
-                    t += PARAM(amploffset[i]);
-                loc->indata->datavec[count++] = t;
+                    d += PARAM(amploffset[i]);
+                loc->indata->datavec[count++] = d;
             }
             free(cpdel);
         }
@@ -318,6 +334,11 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         /* set the start time data */
         loc->timeinterval[0] = loc->indata->datavec[loc->indata->actpointer];
         loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer + stepsize];
+
+        if (terr)
+            cm_message_printf("WARNING: some error occured during reading the time values");
+        if (derr)
+            cm_message_printf("WARNING: some error occured during reading the data values");
     }
 
     loc = STATIC_VAR (locdata);
@@ -326,7 +347,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
      * If TIME steps backward, for example due to a second invocation of a 'tran' analysis
      *   step back in datavec[loc->indata->actpointer] .
      */
-    if (TIME < loc->timeinterval[0]) {
+    if (TIME < loc->timeinterval[0] && loc->indata->actpointer >= stepsize) {
         while (TIME < loc->indata->datavec[loc->indata->actpointer] && loc->indata->actpointer >= 0)
             loc->indata->actpointer -= stepsize;
         loc->timeinterval[0] = loc->indata->datavec[loc->indata->actpointer];

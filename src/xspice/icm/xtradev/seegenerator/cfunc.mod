@@ -70,11 +70,11 @@ cm_seegen_callback(ARGS, Mif_Callback_Reason_t reason)
             if (pulse_number)
                 free(pulse_number);
             STATIC_VAR (pulse_number) = NULL;
-            break;
             double *last_ctrl = STATIC_VAR (last_ctrl);
             if (last_ctrl)
                 free(last_ctrl);
             STATIC_VAR (last_ctrl) = NULL;
+            break;
         }
     }
 }
@@ -166,6 +166,9 @@ void cm_seegen(ARGS)  /* structure holding parms,
         ctrl = INPUT(ctrl);
 
     if (INIT==1) {
+
+        CALLBACK = cm_seegen_callback;
+
         /* Allocate storage for last_t_value */
         STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
         last_t_value = (double *) STATIC_VAR(last_t_value);

@@ -21,7 +21,7 @@ vdm 1 11 dc 0 sin(0 0.1 5meg) ac 1
 vcc 8 0 12
 vee 9 0 -12
 
-.options noacct
+.options noacct nopage
 
 * Analyses:
 .tf v(5) vcm

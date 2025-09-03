@@ -71,10 +71,11 @@ void cm_d_osc(ARGS)
     double        ctl, period, delta, when;
     int           csize, i;
 
-    CALLBACK = cm_d_osc_callback;
-
     csize = PARAM_SIZE(cntl_array);
+
     if (INIT) {
+
+        CALLBACK = cm_d_osc_callback;
 
         /* Validate PWL table. */
 

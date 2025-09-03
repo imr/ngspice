@@ -129,6 +129,12 @@ BSIM4instance *here = (BSIM4instance*)inst;
         case BSIM4_DELVTO:
             value->rValue = here->BSIM4delvto;
             return(OK);
+        case BSIM4_MULU0:
+            value->rValue = here->BSIM4mulu0;
+            return(OK);
+        case BSIM4_WNFLAG:
+            value->iValue = here->BSIM4wnflag;
+            return(OK);
         case BSIM4_XGW:
             value->rValue = here->BSIM4xgw;
             return(OK);
@@ -421,15 +427,15 @@ BSIM4instance *here = (BSIM4instance*)inst;
             return(OK);
         case BSIM4_CGSO:
             value->rValue = here->BSIM4cgso;
-            value->rValue *= here->BSIM4m;
+            value->rValue *= here->BSIM4mult_q;
             return(OK);
         case BSIM4_CGDO:
             value->rValue = here->BSIM4cgdo;
-            value->rValue *= here->BSIM4m;
+            value->rValue *= here->BSIM4mult_q;
             return(OK);
         case BSIM4_CGBO:
             value->rValue = here->pParam->BSIM4cgbo;
-            value->rValue *= here->BSIM4m;
+            value->rValue *= here->BSIM4mult_q;
             return(OK);
         case BSIM4_WEFF:
             value->rValue = here->pParam->BSIM4weff;

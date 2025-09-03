@@ -1,5 +1,5 @@
 /* ===========================================================================
-	FILE    cfunc.mod
+	FILE    cfunc.mod for cm_cpline
 	Copyright 2025 Vadim Kuznetsov
 
 	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -23,12 +23,38 @@
 #include "msline_common.h"
 #include "tline_common.h"
 
+#ifdef _MSC_VER
+typedef _Dcomplex DoubleComplex;  // double complex
+#else
+typedef double complex DoubleComplex;
+#endif
 
-static void copy_complex(double complex s, Complex_t *d)
+static void copy_complex(DoubleComplex s, Complex_t *d)
 {
     d->real = creal(s);
 	d->imag = cimag(s);
 }
+
+#ifdef _MSC_VER
+static DoubleComplex divide(DoubleComplex n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1._Val[0] * n2._Val[0] + n1._Val[1] * n2._Val[1]) / denom;
+        rez._Val[1] = (n1._Val[1] * n2._Val[0] - n1._Val[0] * n2._Val[1]) / denom;
+        return rez;
+    }
+
+static DoubleComplex rdivide(double n1, DoubleComplex n2)
+    {
+        DoubleComplex rez;
+        double denom = n2._Val[0] * n2._Val[0] + n2._Val[1] * n2._Val[1];
+        rez._Val[0] = (n1 * n2._Val[0]) / denom;
+        rez._Val[1] = (-1. * n1 * n2._Val[1]) / denom;
+        return rez;
+    }
+#endif
+
 
 //cpline_state_t *sim_points = NULL;
 
@@ -83,14 +109,42 @@ void cm_cpline (ARGS)
 	else if(ANALYSIS == AC) {
 		double o = RAD_FREQ;
 
-		double complex _Z11, _Z12, _Z13, _Z14;
-		double complex arg_e =  log(ae)*l/2.0 + I*o*l/C0*sqrt(ere);
-		double complex arg_o =  log(ao)*l/2.0 + I*o*l/C0*sqrt(ero);
+		DoubleComplex _Z11, _Z12, _Z13, _Z14;
+
+#ifdef _MSC_VER
+		double aen = log(ae)*l/2.0;
+		double ben = o*l/C0*sqrt(ere);
+		double aon = log(ao)*l/2.0;
+		double bon = o*l/C0*sqrt(ero);
+		DoubleComplex ge = _Cbuild(aen, ben);
+		DoubleComplex go = _Cbuild(aon, bon);
+        DoubleComplex tango = _Cmulcr(ctanh(go), 2.);
+        DoubleComplex tange = _Cmulcr(ctanh(ge), 2.);
+        DoubleComplex singo = _Cmulcr(csinh(go), 2.);
+        DoubleComplex singe = _Cmulcr(csinh(ge), 2.);
+
+        DoubleComplex zotango = rdivide(zo, tango);
+        DoubleComplex zetange = rdivide(ze, tange);
+        DoubleComplex zosingo = rdivide(zo, singo);
+        DoubleComplex zesinge = rdivide(ze, singe);
+
+		_Z11._Val[0] = zotango._Val[0] + zetange._Val[0];
+        _Z11._Val[1] = zotango._Val[1] + zetange._Val[1];
+        _Z12._Val[0] = zosingo._Val[0] + zesinge._Val[0];
+        _Z12._Val[1] = zosingo._Val[1] + zesinge._Val[1];
+		_Z13._Val[0] = zesinge._Val[0] - zosingo._Val[0];
+		_Z13._Val[1] = zesinge._Val[1] - zosingo._Val[1];
+		_Z14._Val[0] = zetange._Val[0] - zotango._Val[0];
+		_Z14._Val[1] = zetange._Val[1] - zotango._Val[1];
+#else
+		DoubleComplex arg_e =  log(ae)*l/2.0 + I*o*l/C0*sqrt(ere);
+		DoubleComplex arg_o =  log(ao)*l/2.0 + I*o*l/C0*sqrt(ero);
 
 		_Z11 = zo / (2*ctanh(arg_o)) + ze / (2*ctanh(arg_e));
 		_Z12 = zo / (2*csinh(arg_o)) + ze / (2*csinh(arg_e));
 		_Z13 = ze / (2*csinh(arg_e)) - zo / (2*csinh(arg_o));
 		_Z14 = ze / (2*ctanh(arg_e)) - zo / (2*ctanh(arg_o));
+#endif
 
 		copy_complex(_Z11,&z11);
 		copy_complex(_Z12,&z12);

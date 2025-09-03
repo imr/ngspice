@@ -27,6 +27,7 @@ if $?xspice_enabled
  codemodel ../lib/ngspice/xtradev.cm
  codemodel ../lib/ngspice/xtraevt.cm
  codemodel ../lib/ngspice/table.cm
+ codemodel ../lib/ngspice/tlines.cm
 
 end
 
