@@ -14,6 +14,8 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/complex.h"
 #include "ngspice/spmatrix.h"
 #include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ftedefs.h"
 
 #include "onedext.h"
 #include "oneddefs.h"
@@ -29,7 +31,17 @@ extern IFfrontEnd *SPfrontEnd;
  */
  SPcomplex yAc;
 
-
+#ifdef KLU
+static void small_signal_check(char *where)
+{
+  if (ft_curckt->ci_ckt->CKTmode == MODEAC
+   || ft_curckt->ci_ckt->CKTmode == MODEACNOISE) {
+    fprintf(stderr, "Error: CIDER %s small signal simulation is not (yet) supported with 'option klu'.\n", where);
+    fprintf(stderr, "    Use 'option sparse' instead.\n");
+    controlled_exit(1);
+  }
+}
+#endif
 
 int
 NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
@@ -45,6 +57,11 @@ NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
   bool SORFailed;
   double startTime;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NUMDadmittance");
+  }
+#endif
 
   /* Each time we call this counts as one AC iteration. */
   pDevice->pStats->numIters[STAT_AC] += 1;
@@ -119,6 +136,7 @@ NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
 
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
+      // Not implemented
       pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
     } else {
 #endif
@@ -196,6 +214,11 @@ NBJTadmittance(ONEdevice *pDevice, double omega, SPcomplex *yIeVce,
   SPcomplex cOmega, pIeVce, pIcVce, pIeVbe, pIcVbe;
   double startTime;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NBJTadmittance");
+  }
+#endif
   /* Each time we call this counts as one AC iteration. */
   pDevice->pStats->numIters[STAT_AC] += 1;
 
@@ -315,6 +338,7 @@ NBJTadmittance(ONEdevice *pDevice, double omega, SPcomplex *yIeVce,
 
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
+      // Not implemented
       pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
     } else {
 #endif
@@ -552,6 +576,11 @@ NUMDys(ONEdevice *pDevice, SPcomplex *s, SPcomplex *yd)
   SPcomplex *y;
 
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NUMDys");
+  }
+#endif
   /*
    * change context names of solution vectors for ac analysis dcDeltaSolution
    * stores the real part and copiedSolution stores the imaginary part of the
@@ -580,6 +609,7 @@ NUMDys(ONEdevice *pDevice, SPcomplex *s, SPcomplex *yd)
 
 #ifdef KLU
   if (pDevice->matrix->CKTkluMODE) {
+    // Not implemented
     pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
   } else {
 #endif
@@ -640,6 +670,11 @@ NBJTys(ONEdevice *pDevice, SPcomplex *s, SPcomplex *yIeVce,
   SPcomplex temp, cOmega;
   SPcomplex pIeVce, pIcVce, pIeVbe, pIcVbe;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NBJTys");
+  }
+#endif
   /*
    * change context names of solution vectors for ac analysis dcDeltaSolution
    * stores the real part and copiedSolution stores the imaginary part of the
@@ -667,6 +702,7 @@ NBJTys(ONEdevice *pDevice, SPcomplex *s, SPcomplex *yIeVce,
 
 #ifdef KLU
   if (pDevice->matrix->CKTkluMODE) {
+    // Not implemented
     pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
   } else {
 #endif

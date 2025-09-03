@@ -1,0 +1,105 @@
+BICMOS INVERTER PULLUP CIRCUIT
+
+VDD 1 0 5.0V
+VSS 2 0 0.0V
+
+VIN 3 0 0.75V
+
+VC  1 11 0.0V
+VB  5 15 0.0V
+
+Q1  11 15 4 M_NPNS   AREA=8
+M1  5 3 1 1 M_PMOS_1 W=10U L=1U
+
+CL  4 0 5.0PF
+
+.IC V(4)=0.75V V(5)=0.0V
+
+.MODEL M_NPNS nbjt level=2
++ title TWO-DIMENSIONAL NUMERICAL POLYSILICON EMITTER BIPOLAR TRANSISTOR
++ * Since half the device is simulated, double the unit width to get
++ * 1.0 um emitter.  Use a small mesh for this model.
++ options defw=2.0u
++ 
++ x.mesh w=2.0 h.e=0.02 h.m=0.5 r=2.0
++ x.mesh w=0.5 h.s=0.02 h.m=0.2 r=2.0
++ 
++ y.mesh l=-0.2 n=1
++ y.mesh l= 0.0 n=5
++ y.mesh w=0.10 h.e=0.004 h.m=0.05  r=2.5
++ y.mesh w=0.15 h.s=0.004 h.m=0.02  r=2.5
++ y.mesh w=1.05 h.s=0.02  h.m=0.1   r=2.5
++
++ domain num=1 material=1 x.l=2.0 y.h=0.0
++ domain num=2 material=2 x.h=2.0 y.h=0.0
++ domain num=3 material=3 y.l=0.0
++ material num=1 polysilicon
++ material num=2 oxide
++ material num=3 silicon
++
++ elec num=1 x.l=0.0  x.h=0.0  y.l=1.1  y.h=1.3
++ elec num=2 x.l=0.0  x.h=0.5  y.l=0.0  y.h=0.0
++ elec num=3 x.l=2.0  x.h=3.0  y.l=-0.2 y.h=-0.2
++
++ doping gauss n.type conc=3e20 x.l=2.0 x.h=3.0 y.l=-0.2 y.h=0.0
++ + char.l=0.047 lat.rotate
++ doping gauss p.type conc=5e18 x.l=0.0 x.h=5.0 y.l=-0.2 y.h=0.0
++ + char.l=0.100 lat.rotate
++ doping gauss p.type conc=1e20 x.l=0.0 x.h=0.5 y.l=-0.2 y.h=0.0
++ + char.l=0.100 lat.rotate ratio=0.7
++ doping unif  n.type conc=1e16 x.l=0.0 x.h=5.0 y.l=0.0 y.h=1.3
++ doping gauss n.type conc=5e19 x.l=0.0 x.h=5.0 y.l=1.3 y.h=1.3
++ + char.l=0.100 lat.rotate
++
++ method ac=direct itlim=10
++ models bgn srh auger conctau concmob fieldmob
+
+.MODEL M_PMOS_1 numos
++ 
++ y.mesh w=0.9 h.e=0.020 h.m=0.2 r=2.0
++ y.mesh w=0.2 h.e=0.005 h.m=0.02 r=2.0
++ y.mesh w=0.4 h.s=0.005 h.m=0.1 r=2.0
++ y.mesh w=0.4 h.e=0.005 h.m=0.1 r=2.0
++ y.mesh w=0.2 h.e=0.005 h.m=0.02 r=2.0
++ y.mesh w=0.9 h.s=0.020 h.m=0.2 r=2.0
++
++ x.mesh l=-.0200 n=1
++ x.mesh l=0.0 n=6
++ x.mesh w=0.15 h.s=0.0001 h.max=.02 r=2.0
++ x.mesh w=0.45 h.s=0.02 h.max=0.2 r=2.0
++ x.mesh w=1.40 h.s=0.20 h.max=0.4 r=2.0
++
++ region num=1 material=1 x.h=0.0
++ region num=2 material=2 x.l=0.0
++ interface dom=2 nei=1 y.l=1 y.h=2 layer.width=0.0
++ material num=1 oxide
++ material num=2 silicon
++
++ elec num=1 y.l=2.5   y.h=3.1  x.l=0.0 x.h=0.0
++ elec num=2 y.l=1     y.h=2    ix.l=1  ix.h=1
++ elec num=3 y.l=-0.1  y.h=0.5  x.l=0.0 x.h=0.0
++ elec num=4 y.l=-0.1  y.h=3.1  x.l=2.0 x.h=2.0
++
++ doping gauss n.type conc=1.0e17 y.l=-0.1 y.h=3.1 x.l=0.0
++ + char.l=0.30
++ doping unif n.type conc=5.0e15 y.l=-0.1 y.h=3.1 x.l=0.0 x.h=2.1
++ doping gauss p.type conc=4e17  y.l=-0.1 y.h=1 x.l=0.0 x.h=0.0
++ + char.l=0.16 lat.rotate ratio=0.65
++ doping gauss p.type conc=1e20  y.l=-0.1 y.h=0.95 x.l=0.0 x.h=0.08
++ + char.l=0.03 lat.rotate ratio=0.65
++ doping gauss p.type conc=4e17  y.l=2 y.h=3.1 x.l=0.0 x.h=0.0
++ + char.l=0.16 lat.rotate ratio=0.65
++ doping gauss p.type conc=1e20  y.l=2.05 y.h=3.1 x.l=0.0 x.h=0.08
++ + char.l=0.03 lat.rotate ratio=0.65
++
++ contact num=2 workf=5.29
++ models concmob surfmob transmob fieldmob srh auger conctau bgn 
++ method ac=direct itlim=10 onec
+
+
+.TRAN 0.5NS 3.0NS
+.PRINT TRAN V(3) V(4)
+.PLOT TRAN V(3) V(4)
+
+* .OPTION ACCT BYPASS=1
+.END
