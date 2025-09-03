@@ -786,7 +786,8 @@ TWOPbindCSC (TWOdevice *pDevice)
 
 	    }
 	  } else { /* Horizontal Slice */
-	    if ( nIndex <= 1 ) { /* Top Side */
+	    //if ( nIndex <= 1 ) { /* Top Side */
+ 	    if ( nIndex == 0 || nIndex == 3 ) { /* Left (Top?) Side : bug 483 */
 
               CREATE_KLU_BINDING_TABLE_CIDER(fPPsiIn, fPPsiInBinding, pEqn, psiEqnInM) ;
               CREATE_KLU_BINDING_TABLE_CIDER(fPPsiInP1, fPPsiInP1Binding, pEqn, psiEqnInP) ;

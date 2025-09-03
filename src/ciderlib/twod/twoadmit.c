@@ -16,6 +16,9 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/bool.h"
 #include "ngspice/macros.h"
 #include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ftedefs.h"
+
 #include "twoddefs.h"  
 #include "twodext.h"
 #include "ngspice/cidersupt.h"
@@ -27,6 +30,18 @@ extern IFfrontEnd *SPfrontEnd;
  * Paolo Nenzi 2002
  */
  SPcomplex yTotal;
+
+#ifdef KLU
+static void small_signal_check(char *where)
+{
+  if (ft_curckt->ci_ckt->CKTmode == MODEAC
+   || ft_curckt->ci_ckt->CKTmode == MODEACNOISE) {
+    fprintf(stderr, "Error: CIDER %s small signal simulation is not (yet) supported with 'option klu'.\n", where);
+    fprintf(stderr, "    Use 'option sparse' instead.\n");
+    controlled_exit(1);
+  }
+}
+#endif
 
 int
 NUMD2admittance(TWOdevice *pDevice, double omega, SPcomplex *yd)
@@ -42,6 +57,11 @@ NUMD2admittance(TWOdevice *pDevice, double omega, SPcomplex *yd)
   bool SORFailed;
   double startTime;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NUMD2admittance");
+  }
+#endif
   /* Each time we call this counts as one AC iteration. */
   pDevice->pStats->numIters[STAT_AC] += 1;
 
@@ -192,6 +212,11 @@ NBJT2admittance(TWOdevice *pDevice, double omega, SPcomplex *yIeVce,
   SPcomplex cOmega;
   double startTime;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NBJT2admittance");
+  }
+#endif
   /* Each time we call this counts as one AC iteration. */
   pDevice->pStats->numIters[STAT_AC] += 1;
 
@@ -416,6 +441,11 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
   SPcomplex *y, cOmega;
   double startTime;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NUMOSadmittance");
+  }
+#endif
   /* Each time we call this counts as one AC iteration. */
   pDevice->pStats->numIters[STAT_AC] += 1;
 
@@ -1151,6 +1181,11 @@ NUMD2ys(TWOdevice *pDevice, SPcomplex *s, SPcomplex *yIn)
   bool deltaVContact = FALSE;
   SPcomplex temp, cOmega;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NUMD2ys");
+  }
+#endif
   /*
    * change context names of solution vectors for ac analysis dcDeltaSolution
    * stores the real part and copiedSolution stores the imaginary part of the
@@ -1252,6 +1287,11 @@ NBJT2ys(TWOdevice *pDevice, SPcomplex *s, SPcomplex *yIeVce, SPcomplex *yIcVce,
   SPcomplex pIeVce, pIcVce, pIeVbe, pIcVbe;
   SPcomplex temp, cOmega;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NBJT2ys");
+  }
+#endif
   pDevice->solverType = SLV_SMSIG;
   rhsReal = pDevice->rhs;
   rhsImag = pDevice->rhsImag;
@@ -1375,6 +1415,11 @@ NUMOSys(TWOdevice *pDevice, SPcomplex *s, struct mosAdmittances *yAc)
   SPcomplex *y;
   SPcomplex temp, cOmega;
 
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    small_signal_check("NUMOSys");
+  }
+#endif
   pDevice->solverType = SLV_SMSIG;
   rhsReal = pDevice->rhs;
   rhsImag = pDevice->rhsImag;
