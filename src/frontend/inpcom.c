@@ -9844,6 +9844,10 @@ static void inp_meas_control(struct card* card)
  * might need to add the prefix separately if using the result in APIs
  * that require it for long path support.
  *
+ * Using this function however may neglect the ngspice file search sequence,
+ * as an absolute path is returned also for relative paths.
+ * So restrict this function to paths longer than MAX_PATH.
+ *
  * @param input_path The input path string (UTF-8 encoded). Can be relative or
  *                   absolute, may contain '.' or '..'.
  * @return char* A newly allocated UTF-8 string containing the canonical absolute
@@ -9868,6 +9872,10 @@ char* get_windows_canonical_path(const char* input_path) {
     }
 
     inputLenMB = (int)strlen(input_path);
+
+    /* If path length is less than MAX_PATH, just copy and return path. */
+    if (inputLenMB < MAX_PATH)
+        return copy(input_path);
 
     if (inputLenMB == 0) {
         inputLenW = 1;
