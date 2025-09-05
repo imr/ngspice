@@ -56,7 +56,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double vdtemp;
     double vt;      /* K t / Q */
     double vte, vtesw, vtetun, vtebrk;
-    int Check_dio=0, Check_th;
+    int Check_dio=0, Check_dio_sw=0, Check_th;
     int error;
     int SenCond=0;    /* sensitivity condition */
     double diffcharge, deplcharge, deplchargeSW, diffcap, deplcap, deplcapSW;
@@ -132,7 +132,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                 goto next1;
             }
 
-            Check_dio=1;
+            Check_dio=1; Check_dio_sw=1;
             if(ckt->CKTmode & MODEINITSMSIG) {
                 vd= *(ckt->CKTstate0 + here->DIOvoltage);
                 if (model->DIOresistSWGiven) vdsw = *(ckt->CKTstate0 + here->DIOvoltageSW);
@@ -257,20 +257,24 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                             here->DIOtBrkdwnV),vtebrk,
                             here->DIOtVcrit,&Check_dio);
                     vd = -(vdtemp+here->DIOtBrkdwnV);
-                    if (model->DIOresistSWGiven) {
+                } else {
+                    vd = DEVpnjlim(vd,*(ckt->CKTstate0 + here->DIOvoltage),
+                            vte,here->DIOtVcrit,&Check_dio);
+                }
+                if (model->DIOresistSWGiven) {
+                    if ( (model->DIObreakdownVoltageGiven) &&
+                            (vdsw < MIN(0,-here->DIOtBrkdwnV+10*vtebrk))) {
                         vdtemp = -(vdsw+here->DIOtBrkdwnV);
                         vdtemp = DEVpnjlim(vdtemp,
                                 -(*(ckt->CKTstate0 + here->DIOvoltageSW) +
                                 here->DIOtBrkdwnV),vtebrk,
-                                here->DIOtVcritSW,&Check_dio);
+                                here->DIOtVcritSW,&Check_dio_sw);
                         vdsw = -(vdtemp+here->DIOtBrkdwnV);
+                    } else {
+                        if (model->DIOresistSWGiven)
+                            vdsw = DEVpnjlim(vdsw,*(ckt->CKTstate0 + here->DIOvoltageSW),
+                                      vtesw,here->DIOtVcritSW,&Check_dio_sw);
                     }
-                } else {
-                    vd = DEVpnjlim(vd,*(ckt->CKTstate0 + here->DIOvoltage),
-                            vte,here->DIOtVcrit,&Check_dio);
-                    if (model->DIOresistSWGiven)
-                        vdsw = DEVpnjlim(vdsw,*(ckt->CKTstate0 + here->DIOvoltageSW),
-                                  vtesw,here->DIOtVcritSW,&Check_dio);
                 }
                 if (selfheat)
                     delTemp = DEVlimitlog(delTemp,
@@ -299,14 +303,14 @@ next1:
             gspr = here->DIOtConductance;
             gsprsw = here->DIOtConductanceSW;
 
-            if (model->DIOsatSWCurGiven) {              /* sidewall current */
+            if (model->DIOsatSWCurGiven) {               /* sidewall current */
                 double vds;
                 if (model->DIOresistSWGiven) 
-                    vds = vdsw; /* sidewall voltage */
+                    vds = vdsw;                          /* sidewall voltage used */
                 else
-                    vds = vd;   /* common voltage */
+                    vds = vd;                            /* common voltage used */
 
-                if (model->DIOswEmissionCoeffGiven) {   /* with own characteristic */
+                if (model->DIOswEmissionCoeffGiven) {    /* with own characteristic */
 
                     if (vds >= -3*vtesw) {               /* forward */
 
@@ -325,7 +329,7 @@ next1:
                         gdsw = csatsw*3*argsw/vds;
                         cdsw_dT = -csatsw_dT - (csatsw_dT*argsw + csatsw*argsw_dT);
 
-                    } else {                            /* breakdown */
+                    } else {                             /* breakdown */
                         double evrev_dT;
 
                         evrev = exp(-(here->DIOtBrkdwnV+vds)/vtebrk);
@@ -373,7 +377,7 @@ next1:
                     cdb_dT = cdb_dT + cdb_rec_dT*gen_fac;
                 }
 
-            } else if((!(model->DIObreakdownVoltageGiven)) ||
+            } else if ((!(model->DIObreakdownVoltageGiven)) ||
                     vd >= -here->DIOtBrkdwnV) { /* reverse */
 
                 double darg_dT;
@@ -389,6 +393,7 @@ next1:
                     gdsw = csatsw*3*arg/vd;
                     cdsw_dT = -csatsw_dT - (csatsw_dT*arg + csatsw*darg_dT);
                 }
+
             } else {                            /* breakdown */
                 double evrev_dT;
 
@@ -396,12 +401,15 @@ next1:
                 evrev_dT = (here->DIOtBrkdwnV+vd)*evrev/(vtebrk*Temp);
                 cdb = -csat*evrev;
                 gdb = csat*evrev/vtebrk;
-                cdb_dT = -(csat_dT*evrev + csat*evrev_dT);
-                if ((model->DIOsatSWCurGiven)&&(!model->DIOswEmissionCoeffGiven)) {
+                cdb_dT = -(csat_dT*evrev + csat*evrev_dT); /* no breakdown for separate sidewall diode */
+                if ((model->DIOsatSWCurGiven)&&(!model->DIOresistSWGiven)&&(!model->DIOswEmissionCoeffGiven)) {
+                    evrev = exp(-(here->DIOtBrkdwnV+vdsw)/vtebrk);
+                    evrev_dT = (here->DIOtBrkdwnV+vdsw)*evrev/(vtebrk*Temp);
                     cdsw = -csatsw*evrev;
                     gdsw = csatsw*evrev/vtebrk;
                     cdsw_dT = -(csatsw_dT*evrev + csatsw*evrev_dT);
                 }
+
             }
 
             if (model->DIOtunSatSWCurGiven) {    /* tunnel sidewall current */
@@ -439,11 +447,8 @@ next1:
                 if( (model->DIOforwardSWKneeCurrentGiven) && (cdsw > 1.0e-18) ) {
                     ikp_peri_m = here->DIOforwardSWKneeCurrent;
                     sqrt_ikx = sqrt(cdsw/ikp_peri_m);
-                    gdsw = ((1+sqrt_ikx)*gdsw - cdsw*gdsw/(2*sqrt_ikx*ikp_peri_m))/(1+2*sqrt_ikx + cdsw/ikp_peri_m) + ckt->CKTgmin;
-                    cdsw = cdsw/(1+sqrt_ikx) + ckt->CKTgmin*vdsw;
-                } else {
-                    gdsw = gdsw + ckt->CKTgmin;
-                    cdsw = cdsw + ckt->CKTgmin*vdsw;
+                    gdsw = ((1+sqrt_ikx)*gdsw - cdsw*gdsw/(2*sqrt_ikx*ikp_peri_m))/(1+2*sqrt_ikx + cdsw/ikp_peri_m);
+                    cdsw = cdsw/(1+sqrt_ikx);
                 }
                 dIdioSw_dT = cdsw_dT;
             }
@@ -453,11 +458,8 @@ next1:
                 if( (model->DIOforwardKneeCurrentGiven) && (cd > 1.0e-18) ) {
                     ikf_area_m = here->DIOforwardKneeCurrent;
                     sqrt_ikx = sqrt(cd/ikf_area_m);
-                    gd = ((1+sqrt_ikx)*gd - cd*gd/(2*sqrt_ikx*ikf_area_m))/(1+2*sqrt_ikx + cd/ikf_area_m) + ckt->CKTgmin;
-                    cd = cd/(1+sqrt_ikx) + ckt->CKTgmin*vd;
-                } else {
-                    gd = gd + ckt->CKTgmin;
-                    cd = cd + ckt->CKTgmin*vd;
+                    gd = ((1+sqrt_ikx)*gd - cd*gd/(2*sqrt_ikx*ikf_area_m))/(1+2*sqrt_ikx + cd/ikf_area_m);
+                    cd = cd/(1+sqrt_ikx);
                 }
 
             } else {            /* limit reverse */
@@ -465,14 +467,16 @@ next1:
                 if( (model->DIOreverseKneeCurrentGiven) && (cd < -1.0e-18) ) {
                     ikr_area_m = here->DIOreverseKneeCurrent;
                     sqrt_ikx = sqrt(cd/(-ikr_area_m));
-                    gd = ((1+sqrt_ikx)*gd + cd*gd/(2*sqrt_ikx*ikr_area_m))/(1+2*sqrt_ikx - cd/ikr_area_m) + ckt->CKTgmin;
-                    cd = cd/(1+sqrt_ikx) + ckt->CKTgmin*vd;
-                } else {
-                    gd = gd + ckt->CKTgmin;
-                    cd = cd + ckt->CKTgmin*vd;
+                    gd = ((1+sqrt_ikx)*gd + cd*gd/(2*sqrt_ikx*ikr_area_m))/(1+2*sqrt_ikx - cd/ikr_area_m);
+                    cd = cd/(1+sqrt_ikx);
                 }
 
             }
+
+            gd = gd + ckt->CKTgmin;
+            cd = cd + ckt->CKTgmin*vd;
+            gdsw = gdsw + ckt->CKTgmin;
+            cdsw = cdsw + ckt->CKTgmin*vdsw;
 
             if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
@@ -612,9 +616,16 @@ next1:
              *   check convergence
              */
             if ( (!(ckt->CKTmode & MODEINITFIX)) || (!(here->DIOoff))  ) {
-                if ((Check_th == 1) || (Check_dio == 1)) {
-                    ckt->CKTnoncon++;
-                    ckt->CKTtroubleElt = (GENinstance *) here;
+                if (!model->DIOresistSWGiven) {
+                    if ((Check_th == 1) || (Check_dio == 1)) {
+                        ckt->CKTnoncon++;
+                        ckt->CKTtroubleElt = (GENinstance *) here;
+                    }
+                } else {
+                    if ((Check_th == 1) || (Check_dio == 1) || (Check_dio_sw == 1)) {
+                        ckt->CKTnoncon++;
+                        ckt->CKTtroubleElt = (GENinstance *) here;
+                    }
                 }
             }
 next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
