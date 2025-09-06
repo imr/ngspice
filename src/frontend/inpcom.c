@@ -9867,10 +9867,6 @@ char* get_windows_canonical_path(const char* input_path) {
         return NULL;
     }
 
-    /* If plain filename, just copy it. */
-    if (!strchr(input_path, '\\') && !strchr(input_path, '/'))
-        return copy(input_path);
-
     inputLenMB = (int)strlen(input_path);
 
     if (inputLenMB == 0) {
