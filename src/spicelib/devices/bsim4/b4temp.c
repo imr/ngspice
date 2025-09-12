@@ -122,8 +122,12 @@ int Fatal_Flag = 0;
 
      if(model->BSIM4mtrlMod == 0)
      {
+         double chktol = fabs(model->BSIM4toxe);
+         if (fabs(model->BSIM4toxp)>chktol) chktol = fabs(model->BSIM4toxp);
+         if (fabs(model->BSIM4dtox)>chktol) chktol = fabs(model->BSIM4dtox);
+         chktol=chktol*1e-14;
          if ((model->BSIM4toxeGiven) && (model->BSIM4toxpGiven) && (model->BSIM4dtoxGiven)
-         && (model->BSIM4toxe != (model->BSIM4toxp + model->BSIM4dtox)))
+         && (fabs(model->BSIM4toxe-(model->BSIM4toxp + model->BSIM4dtox))>chktol))
          {   printf("Warning: toxe, toxp and dtox all given and toxe != toxp + dtox; dtox ignored.\n");
          }
          else if ((model->BSIM4toxeGiven) && (!model->BSIM4toxpGiven))
