@@ -1096,8 +1096,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         inp_check_syntax(working);
 
         /* collect .agemodel data */
-        if (newcompat.de)
-            readdegparams(working);
+        readdegparams(working);
 
         if (newcompat.lt && newcompat.a)
             ltspice_compat_a(working);
