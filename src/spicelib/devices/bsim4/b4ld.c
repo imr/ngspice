@@ -5227,9 +5227,9 @@ line900:
                here->BSIM4_99 = m * (ggts - gcqsb);
                here->BSIM4_100 = m * (ggtb - gcqbb);
 
-               here->BSIM4_101 = m * dxpart * here->BSIM4gtau;
-               here->BSIM4_102 = m * sxpart * here->BSIM4gtau;
-               here->BSIM4_103 = m * here->BSIM4gtau;
+               here->BSIM4_101 = mult_q * dxpart * here->BSIM4gtau;
+               here->BSIM4_102 = mult_q * sxpart * here->BSIM4gtau;
+               here->BSIM4_103 = mult_q * here->BSIM4gtau;
            }
 #else
            if (here->BSIM4rgateMod == 1)
@@ -5382,9 +5382,9 @@ line900:
                (*(here->BSIM4QspPtr) += m * (ggts - gcqsb));
                (*(here->BSIM4QbpPtr) += m * (ggtb - gcqbb));
 
-               (*(here->BSIM4DPqPtr) += m * (dxpart * here->BSIM4gtau));
-               (*(here->BSIM4SPqPtr) += m * (sxpart * here->BSIM4gtau));
-               (*(here->BSIM4GPqPtr) -= m * (here->BSIM4gtau));
+               (*(here->BSIM4DPqPtr) += mult_q * (dxpart * here->BSIM4gtau));
+               (*(here->BSIM4SPqPtr) += mult_q * (sxpart * here->BSIM4gtau));
+               (*(here->BSIM4GPqPtr) -= mult_q * (here->BSIM4gtau));
            }
 #endif
 
