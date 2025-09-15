@@ -5006,9 +5006,9 @@ line900:
                                 - ceqgstot + Istoteq) + mult_q * (ceqqg + ceqqb + ceqqd + ceqqgmid));
         }
         else
-        {   here->BSIM4rhsdb = mult_i * (ceqjd + ceqqjd);
+        {   here->BSIM4rhsdb = mult_i * (ceqjd /*+ ceqqjd */) + mult_q * ceqqjd);
             here->BSIM4rhsbPrime = (mult_i * (ceqbd + ceqbs + Ibtoteq) - mult_q * ceqqb);
-            here->BSIM4rhssb = mult_i * (ceqjs + ceqqjs);
+            here->BSIM4rhssb = mult_i * (ceqjs /*+ ceqqjs*/) + mult_q * ceqqjs;
             here->BSIM4rhssPrime = (mult_i * (ceqdrn - ceqbs + ceqjs - ceqgstot + Istoteq) + mult_q * (ceqqd
                                  + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid));
         }
@@ -5037,9 +5037,9 @@ line900:
                               - ceqgstot + Istoteq) + mult_q * (ceqqg + ceqqb + ceqqd + ceqqgmid)));
            }
            else
-           {   (*(ckt->CKTrhs + here->BSIM4dbNode) -= mult_i * (ceqjd + ceqqjd));
+           {   (*(ckt->CKTrhs + here->BSIM4dbNode) -= mult_i * (ceqjd /*+ ceqqjd*/) + mult_q * ceqqjd);
                (*(ckt->CKTrhs + here->BSIM4bNodePrime) += (mult_i * (ceqbd + ceqbs + Ibtoteq) - mult_q * ceqqb));
-               (*(ckt->CKTrhs + here->BSIM4sbNode) -= mult_i * (ceqjs + ceqqjs));
+               (*(ckt->CKTrhs + here->BSIM4sbNode) -= mult_i * (ceqjs /*+ ceqqjs*/) + mult_q * ceqqjs);
                (*(ckt->CKTrhs + here->BSIM4sNodePrime) += (mult_i * (ceqdrn - ceqbs + ceqjs - ceqgstot + Istoteq) + mult_q * (ceqqd
                                                         + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid)));
            }
