@@ -462,8 +462,8 @@ double m, mult_i, mult_q;
                * Loading AC matrix
                */
               m = here->BSIM4m;
-              mult_i = here->BSIM4mult_i;
-              mult_q = here->BSIM4mult_q;
+              mult_i = here->BSIM4mult_i * here->BSIM4m;
+              mult_q = here->BSIM4mult_q * here->BSIM4m;
 
               if (!model->BSIM4rdsMod)
               {   gdpr = here->BSIM4drainConductance;

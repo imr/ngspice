@@ -4986,9 +4986,9 @@ line900:
             */
 
            m = here->BSIM4m;
-           mult_i = here->BSIM4mult_i;
-           mult_q = here->BSIM4mult_q;
-
+           mult_i = here->BSIM4mult_i * here->BSIM4m;
+           mult_q = here->BSIM4mult_q * here->BSIM4m;
+           
 #ifdef USE_OMP
        here->BSIM4rhsdPrime = (mult_i * (ceqjd - ceqbd + ceqgdtot
                             - ceqdrn + Idtoteq) - mult_q * ceqqd);

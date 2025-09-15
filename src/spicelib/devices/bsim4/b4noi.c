@@ -155,8 +155,8 @@ double mult_i, mult_fn;
               }
               break;
              case N_CALC:
-              mult_i = here->BSIM4mult_i;
-              mult_fn = here->BSIM4mult_fn;
+              mult_i = here->BSIM4mult_i * here->BSIM4m;
+              mult_fn = here->BSIM4mult_fn * here->BSIM4m;
               switch (mode)
               {  case N_DENS:
                   if (model->BSIM4tnoiMod == 0)
