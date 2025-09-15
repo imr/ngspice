@@ -2375,9 +2375,10 @@ BSIM4instance **InstArray;
             if (!here->BSIM4ngconGiven)
                 here->BSIM4ngcon = model->BSIM4ngcon;
 
-            here->BSIM4mult_i = here->BSIM4mult_i * here->BSIM4m;
-            here->BSIM4mult_q = here->BSIM4mult_q * here->BSIM4m;
-            here->BSIM4mult_fn = here->BSIM4mult_fn * here->BSIM4m;
+            // Recursive scaling produces incorrect results after second call to setup()
+            // here->BSIM4mult_i = here->BSIM4mult_i * here->BSIM4m;
+            // here->BSIM4mult_q = here->BSIM4mult_q * here->BSIM4m;
+            // here->BSIM4mult_fn = here->BSIM4mult_fn * here->BSIM4m;
 
             /* Process instance model selectors, some
              * may override their global counterparts
