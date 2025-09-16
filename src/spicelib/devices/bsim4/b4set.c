@@ -355,9 +355,6 @@ BSIM4instance **InstArray;
         if (!model->BSIM4ucsGiven)
             model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
 
-        // if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) &&
-        //     (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)) &&
-        //     (strcmp(model->BSIM4version, "4.8.3")) && (strncmp(model->BSIM4version, "4.83", 4)))
         if (model->BSIM4v48intVersion<=BSIM4v48V480)
         {
                 if (!model->BSIM4uaGiven)
@@ -2374,11 +2371,6 @@ BSIM4instance **InstArray;
                 here->BSIM4xgw = model->BSIM4xgw;
             if (!here->BSIM4ngconGiven)
                 here->BSIM4ngcon = model->BSIM4ngcon;
-
-            // Recursive scaling produces incorrect results after second call to setup()
-            // here->BSIM4mult_i = here->BSIM4mult_i * here->BSIM4m;
-            // here->BSIM4mult_q = here->BSIM4mult_q * here->BSIM4m;
-            // here->BSIM4mult_fn = here->BSIM4mult_fn * here->BSIM4m;
 
             /* Process instance model selectors, some
              * may override their global counterparts

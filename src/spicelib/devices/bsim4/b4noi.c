@@ -366,9 +366,6 @@ double mult_i, mult_fn;
                                   epsilon = (T7 - T7 * T7 * T7 / 3.0) / (6.0 * T6);
                               T8 = here->BSIM4Vgsteff / here->BSIM4EsatL;
                               T8 *= T8;
-                              // if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) && (strncmp(model->BSIM4version, "4.8", 3)) &&
-                              //     (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)) &&
-                              //     (strcmp(model->BSIM4version, "4.8.3")) && (strncmp(model->BSIM4version, "4.83", 4)))
                               if (model->BSIM4v48intVersion<=BSIM4v48V480) 
                               {
                               npart_c = model->BSIM4rnoic * (1.0 + T8
@@ -421,9 +418,6 @@ double mult_i, mult_fn;
                           }
                               switch(model->BSIM4tnoiMod)
                   {  case 0:
-                    // if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) && (strncmp(model->BSIM4version, "4.8", 3)) &&
-                    //     (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)) &&
-                    //     (strcmp(model->BSIM4version, "4.8.3")) && (strncmp(model->BSIM4version, "4.83", 4)))
                     if (model->BSIM4v48intVersion<=BSIM4v48V480) 
                     {
                       T0 = here->BSIM4ueff * fabs(here->BSIM4qinv);
@@ -451,9 +445,6 @@ double mult_i, mult_fn;
                     }
                       break;
                  case 1:
-                 // if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) && (strncmp(model->BSIM4version, "4.8", 3)) &&
-                 //     (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)) &&
-                 //     (strcmp(model->BSIM4version, "4.8.3")) && (strncmp(model->BSIM4version, "4.83", 4)))
                  if (model->BSIM4v48intVersion<=BSIM4v48V480) 
                  {
                       T0 = here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds;
