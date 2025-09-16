@@ -5006,7 +5006,7 @@ line900:
                                 - ceqgstot + Istoteq) + mult_q * (ceqqg + ceqqb + ceqqd + ceqqgmid));
         }
         else
-        {   here->BSIM4rhsdb = mult_i * (ceqjd /*+ ceqqjd */) + mult_q * ceqqjd);
+        {   here->BSIM4rhsdb = mult_i * (ceqjd /*+ ceqqjd */) + mult_q * ceqqjd;
             here->BSIM4rhsbPrime = (mult_i * (ceqbd + ceqbs + Ibtoteq) - mult_q * ceqqb);
             here->BSIM4rhssb = mult_i * (ceqjs /*+ ceqqjs*/) + mult_q * ceqqjs;
             here->BSIM4rhssPrime = (mult_i * (ceqdrn - ceqbs + ceqjs - ceqgstot + Istoteq) + mult_q * (ceqqd
