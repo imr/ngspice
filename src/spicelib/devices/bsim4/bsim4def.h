@@ -941,7 +941,12 @@ typedef struct sBSIM4model
     int    BSIM4tempMod;
     int    BSIM4binUnit;
     int    BSIM4paramChk;
-    char *BSIM4version;
+    char   *BSIM4version;
+    int    BSIM4v48intVersion;
+#define BSIM4v48V483  483       /* BSIM4v48 V4.8.3 */
+#define BSIM4v48V482  482       /* BSIM4v48 V4.8.2 */
+#define BSIM4v48V481  481       /* BSIM4v48 V4.8.1 */
+#define BSIM4v48V480  480       /* BSIM4v48 V4.8.0 */
     double BSIM4eot;
     double BSIM4vddeot;
     double BSIM4tempeot;
