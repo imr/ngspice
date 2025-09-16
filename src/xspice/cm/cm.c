@@ -43,6 +43,8 @@ INTERFACES
     cm_get_neg_node_name()
     cm_probe_node()
 
+    cm_get_deg_params()
+
 REFERENCED FILES
 
     None.
@@ -61,7 +63,7 @@ NON-STANDARD FEATURES
 #include "ngspice/cktdefs.h"
 #include "ngspice/cpextern.h"
 //#include "util.h"
-
+extern struct agemod agemods;
 
 
 
@@ -940,7 +942,6 @@ During N_CALC (registering=FALSE): returns the same sequential index
 without storing anything. The code model uses this index to set
 NOISE_DENSITY(index).
 */
-
 int
 cm_noise_add_source(const char *name, int conn_index, int port_index,
                     Mif_Noise_Src_Type_t type)
@@ -1007,4 +1008,14 @@ cm_noise_add_source(const char *name, int conn_index, int port_index,
     nd->num_prog_srcs++;
 
     return idx;
+
+/*
+cm_get_deg_params()
+
+This function returns a pointer to the degradation data structure
+agemods.
+*/
+void *cm_get_deg_params(void)
+{
+    return &agemods;
 }

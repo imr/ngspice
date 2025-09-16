@@ -71,6 +71,7 @@ struct coreInfo_t  coreInfo =
   cm_complex_divide,
   cm_get_path,
   cm_get_circuit,
+  cm_get_deg_params,
   no_file,
   no_file,
   no_file,

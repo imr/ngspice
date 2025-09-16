@@ -41,6 +41,30 @@ Null_Allowed:          no                   yes
 
 PARAMETER_TABLE:
 
+Parameter_Name:     l                      devmod
+Description:        "channel length"       "device model"
+Data_Type:          real                   string
+Default_Value:      0.13e-6                " "
+Limits:             -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     tfuture
+Description:        "future time"
+Data_Type:          real
+Default_Value:      315336e4
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
+PARAMETER_TABLE:
+
 Parameter_Name:     a                        ea
 Description:        "A"                      "Ea"
 Data_Type:          real                     real
@@ -76,32 +100,10 @@ Null_Allowed:       yes                    yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     c                      tfuture
-Description:        "c"                    "future time"
-Data_Type:          real                   real
-Default_Value:      -1.108                 315336e4
-Limits:             -                      -
-Vector:             no                     no
-Vector_Bounds:      -                      -
-Null_Allowed:       yes                    yes
-
-PARAMETER_TABLE:
-
-Parameter_Name:     l                      devmod
-Description:        "channel length"       "device model"
-Data_Type:          real                   string
-Default_Value:      0.13e-6                " "
-Limits:             -                      -
-Vector:             no                     no
-Vector_Bounds:      -                      -
-Null_Allowed:       yes                    yes
-
-PARAMETER_TABLE:
-
-Parameter_Name:     file
-Description:        "file name"
-Data_Type:          string
-Default_Value:      "degradation-model.txt"
+Parameter_Name:     c
+Description:        "c"
+Data_Type:          real
+Default_Value:      -1.108
 Limits:             -
 Vector:             no
 Vector_Bounds:      -

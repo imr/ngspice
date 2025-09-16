@@ -102,6 +102,7 @@ const char *cm_get_node_name(const char *, unsigned int);
 const char *cm_get_neg_node_name(const char *, unsigned int);
 bool        cm_probe_node(unsigned int, unsigned int, void *);
 bool        cm_schedule_output(unsigned int, unsigned int, double, void *);
+void*       cm_get_deg_params(void);
 
 enum cp_types;
 bool        cm_getvar(char *, enum cp_types, void *, size_t);
