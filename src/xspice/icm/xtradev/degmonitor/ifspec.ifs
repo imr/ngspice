@@ -112,19 +112,6 @@ Null_Allowed:       yes
 
 STATIC_VAR_TABLE:
 
-Static_Var_Name:    constfac
+Static_Var_Name:    locdata
+Description:        "local static data"
 Data_Type:          pointer
-Description:        "constant factor"
-
-STATIC_VAR_TABLE:
-
-Static_Var_Name:    sintegral
-Data_Type:          pointer
-Description:        "integrated degradation"
-
-STATIC_VAR_TABLE:
-
-Static_Var_Name:    prevtime
-Data_Type:          pointer
-Description:        "previous time value"
-

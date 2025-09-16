@@ -72,28 +72,42 @@ struct agemod {
     bool paramread[DEGPARAMAX];
 } *agemodptr;
 
-static void
-cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
-{
-    switch (reason) {
-        case MIF_CB_DESTROY: {
-            double *constfac = STATIC_VAR (constfac);
-            if (constfac)
-                free(constfac);
-            STATIC_VAR (constfac) = NULL;
-            double *sintegral = STATIC_VAR (sintegral);
-            if (sintegral)
-                free(sintegral);
-            STATIC_VAR (sintegral) = NULL;
-            break;
-        }
-    }
-}
+typedef struct {
+    double    constfac[3];   /* the storage array for input values   */
+    double    sintegral[3];  /* size of buffer */
+    double    prevtime[3];   /* buffer write index */
+
+    double A[3];             /* degradation model parameter */
+    double Ea[3];            /* degradation model parameter */
+    double b[3];             /* degradation model parameter */
+    double L1[3];            /* degradation model parameter */
+    double L2[3];            /* degradation model parameter */
+    double n[3];             /* degradation model parameter */
+    double c[3];             /* degradation model parameter */
+} degLocal_Data_t;
+
 
 
            
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
+static void
+cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            degLocal_Data_t *loc = (degLocal_Data_t *) STATIC_VAR(locdata);
+            if (loc == (degLocal_Data_t *) NULL) {
+                break;
+            }
+
+            free(loc);
+
+            STATIC_VAR(locdata) = NULL;
+            break;
+        }
+    }
+}
 
 
 
@@ -140,13 +154,13 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double vs;            /* source voltage */
     double vb;            /* bulk voltage */
     double L;             /* channel length */
-    double *constfac;     /* static storage of const factor in model equation */
+    double constfac;     /* static storage of const factor in model equation */
     double tfut;
     double tsim;
     double deg;           /* monitor output */
     double sintegrand = 0;
-    double *sintegral;
-    double *prevtime;
+    double sintegral;
+    double prevtime;
     double k = 1.38062259e-5; /* Boltzmann */
 
     char *devmod;     /* PSP device model */
@@ -167,6 +181,9 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double L22;            /* degradation model parameter */
     double n2;             /* degradation model parameter */
     double c2;             /* degradation model parameter */
+
+    degLocal_Data_t *loc;        /* Pointer to local static data, not to be included
+                                       in the state vector */
 
     struct agemod *agemods = cm_get_deg_params();
 
@@ -225,18 +242,19 @@ void cm_degmon(ARGS)  /* structure holding parms,
 
         CALLBACK = cm_degmon_callback;
 
-        /* Allocate storage for static values */
-        STATIC_VAR(constfac) = (double *) malloc(sizeof(double));
-        constfac = (double *) STATIC_VAR(constfac);
-        *constfac = c * A * exp(Ea / k / Temp) * (L1 + pow((1 / L / 1e6) , L2));
+        /*** allocate static storage for *loc ***/
+        if ((loc = (degLocal_Data_t *) (STATIC_VAR(locdata) = calloc(1,
+                sizeof(degLocal_Data_t)))) == (degLocal_Data_t *) NULL) {
+            cm_message_send("Unable to allocate Local_Data_t "
+                "in cm_degmon()");
+            return;
+        }
 
-        STATIC_VAR(sintegral) = (double *) malloc(sizeof(double));
-        sintegral = (double *) STATIC_VAR(sintegral);
-        *sintegral = 0.;
+        loc->constfac[0] = c * A * exp(Ea / k / Temp) * (L1 + pow((1 / L / 1e6) , L2));
 
-        STATIC_VAR(prevtime) = (double *) malloc(sizeof(double));
-        prevtime = (double *) STATIC_VAR(prevtime);
-        *prevtime = 0.;
+        loc->sintegral[0] = 0.;
+
+        loc->prevtime[0] = 0.;
 /*
         cm_message_send(INSTNAME);
         cm_message_send(INSTMODNAME);
@@ -250,12 +268,15 @@ void cm_degmon(ARGS)  /* structure holding parms,
 
         double x1, x2;
 
-        constfac = (double *) STATIC_VAR(constfac);
-        sintegral = (double *) STATIC_VAR(sintegral);
-        prevtime = (double *) STATIC_VAR(prevtime);
+        /* retrieve previous values */
+        loc = STATIC_VAR (locdata);
+
+        constfac = loc->constfac[0];
+        sintegral = loc->sintegral[0];
+        prevtime = loc->prevtime[0];
 
         /* final time step quasi reached */
-        if (*sintegral > 1e90) {
+        if (sintegral > 1e90) {
             return;
         }
 
@@ -264,26 +285,29 @@ void cm_degmon(ARGS)  /* structure holding parms,
         vs = INPUT(nodes[2]);
         vb = INPUT(nodes[3]);
 
-        if (vd - vs > 0 && *prevtime < T(0)) {
+        if (vd - vs > 0 && prevtime < T(0)) {
             /**** model equations 1 ****/
-            x1 = 1. / (*constfac * exp (b / (vd - vs)));
+            x1 = 1. / (constfac * exp (b / (vd - vs)));
             x2 = -1. / n;
             sintegrand = pow(x1 , x2);
-            *sintegral = *sintegral + sintegrand * (T(0) - T(1));
+            sintegral = sintegral + sintegrand * (T(0) - T(1));
             /***************************/
-            *prevtime = T(0);
+            prevtime = T(0);
         }
 
         /* test output */
-        OUTPUT(mon) = *sintegral;
+        OUTPUT(mon) = sintegral;
 
         if (T(0) > 0.99999 * tsim) {
             /**** model equations 2 ****/
-            *sintegral = *sintegral * tfut / tsim;
-            deg = 1. / (c * (pow(*sintegral, -1.* n)));
+            sintegral = sintegral * tfut / tsim;
+            deg = 1. / (c * (pow(sintegral, -1.* n)));
             /***************************/
             cm_message_printf("Degradation deg = %e\n", deg);
-            *sintegral = 1e99; // flag final time step
+            sintegral = 1e99; // flag final time step
         }
+        loc->constfac[0] = constfac;
+        loc->sintegral[0] = sintegral;
+        loc->prevtime[0] = prevtime;
     }
 }
