@@ -74,9 +74,11 @@ struct coreInfo_t {
 	Complex_t ((*dllitf_cm_complex_divide)(Complex_t, Complex_t));
 	char *    ((*dllitf_cm_get_path)(void));
 	CKTcircuit *((*dllitf_cm_get_circuit)(void));
+	void *    ((*dllitf_cm_get_deg_params)(void));
 	FILE *    ((*dllitf_cm_stream_out)(void));
 	FILE *    ((*dllitf_cm_stream_in)(void));
 	FILE *    ((*dllitf_cm_stream_err)(void));
+
   /*Other stuff*/
 	void *    ((*dllitf_malloc_pj)(size_t));
 	void *    ((*dllitf_calloc_pj)(size_t, size_t));

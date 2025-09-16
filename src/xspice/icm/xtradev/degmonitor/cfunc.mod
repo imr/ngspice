@@ -21,7 +21,9 @@ MODIFICATIONS
 SUMMARY
 
     This file contains the model-specific routines used to
-    functionally describe degradation monitor code model.
+    functionally describe a degradation monitor code model.
+    The model has been provided by IIS/EAS, Dresden, Germany,
+    extracted for the IHP Open PDK and its MOS devoces modelled by PSP.
 
 
 INTERFACES       
@@ -47,7 +49,10 @@ NON-STANDARD FEATURES
 
 /*=== CONSTANTS ========================*/
 
-
+/* maximum number of model parameters */
+#define DEGPARAMAX 64
+/* maximum number of models */
+#define DEGMODMAX 64
 
 
 /*=== MACROS ===========================*/
@@ -55,7 +60,17 @@ NON-STANDARD FEATURES
 
 
   
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
+
+struct agemod {
+    char* devmodel;
+    char* simmodel;
+    int numparams;
+    char *paramnames[DEGPARAMAX];
+    char *paramvalstr[DEGPARAMAX];
+    double paramvals[DEGPARAMAX];
+    bool paramread[DEGPARAMAX];
+} *agemodptr;
 
 static void
 cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
@@ -75,6 +90,7 @@ cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
     }
 }
 
+
            
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
@@ -84,7 +100,7 @@ cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
                    
 /*==============================================================================
 
-FUNCTION void cm_seegen()
+FUNCTION void cm_degmon()
 
 AUTHORS                      
 
@@ -123,13 +139,6 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double vg;            /* gate voltage */
     double vs;            /* source voltage */
     double vb;            /* bulk voltage */
-    double A;             /* degradation model parameter */
-    double Ea;            /* degradation model parameter */
-    double b;             /* degradation model parameter */
-    double L1;            /* degradation model parameter */
-    double L2;            /* degradation model parameter */
-    double n;             /* degradation model parameter */
-    double c;             /* degradation model parameter */
     double L;             /* channel length */
     double *constfac;     /* static storage of const factor in model equation */
     double tfut;
@@ -140,22 +149,65 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double *prevtime;
     double k = 1.38062259e-5; /* Boltzmann */
 
+    char *devmod;     /* PSP device model */
+    char *simmod;     /* degradation model */
+
+    double A;             /* degradation model parameter */
+    double Ea;            /* degradation model parameter */
+    double b;             /* degradation model parameter */
+    double L1;            /* degradation model parameter */
+    double L2;            /* degradation model parameter */
+    double n;             /* degradation model parameter */
+    double c;             /* degradation model parameter */
+
+    double A2;             /* degradation model parameter */
+    double Ea2;            /* degradation model parameter */
+    double b2;             /* degradation model parameter */
+    double L12;            /* degradation model parameter */
+    double L22;            /* degradation model parameter */
+    double n2;             /* degradation model parameter */
+    double c2;             /* degradation model parameter */
+
+    struct agemod *agemods = cm_get_deg_params();
 
     if (ANALYSIS == MIF_AC) {
         return;
     }
 
+    if (!agemods) {
+        return;
+    }
+
+    if(!agemods[0].devmodel)
+        return;
 
     /* Retrieve frequently used parameters... */
-
+/*
     A = PARAM(A);
     Ea = PARAM(Ea);
     b = PARAM(b);
     L1 = PARAM(L1);
     L2 = PARAM(L2);
     n = PARAM(n);
-    b = PARAM(b);
     c = PARAM(c);
+
+    A2 = agemods[0].paramvals[8];
+    Ea2 = agemods[0].paramvals[9];
+    b2 = agemods[0].paramvals[10];
+    c2 = agemods[0].paramvals[11];
+    n2 = agemods[0].paramvals[12];
+    L12 = agemods[0].paramvals[13];
+    L22 = agemods[0].paramvals[14];
+*/
+    A = agemods[0].paramvals[8];
+    Ea = agemods[0].paramvals[9];
+    b = agemods[0].paramvals[10];
+    c = agemods[0].paramvals[11];
+    n = agemods[0].paramvals[12];
+    L1 = agemods[0].paramvals[13];
+    L2 = agemods[0].paramvals[14];
+
+    devmod = PARAM(devmod);
     tfut = PARAM(tfuture);
     L = PARAM(L);
     tsim = TSTOP;

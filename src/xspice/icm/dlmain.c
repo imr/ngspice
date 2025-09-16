@@ -372,6 +372,10 @@ bool cm_getvar(char *name, enum cp_types type, void *retval, size_t rsize)
     return (coreitf->dllitf_cm_getvar)(name, type, retval, rsize);
 }
 
+void* cm_get_deg_params(void) {
+    return coreitf->dllitf_cm_get_deg_params();
+}
+
 Complex_t cm_complex_set(double real, double imag) {
 	return (coreitf->dllitf_cm_complex_set)(real,imag);
 }

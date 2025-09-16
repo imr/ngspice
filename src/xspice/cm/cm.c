@@ -43,6 +43,8 @@ INTERFACES
     cm_get_neg_node_name()
     cm_probe_node()
 
+    cm_get_deg_params()
+
 REFERENCED FILES
 
     None.
@@ -61,7 +63,7 @@ NON-STANDARD FEATURES
 #include "ngspice/cktdefs.h"
 #include "ngspice/cpextern.h"
 //#include "util.h"
-
+extern struct agemod agemods;
 
 
 
@@ -925,4 +927,17 @@ bool cm_probe_node(unsigned int  conn_index,  // Connection index
                                                   value);
     this->output_value[edata->output_subindex] = hold;
     return TRUE;
+}
+
+/*
+cm_get_deg_params()
+
+This function returns a pointer to the degradation data structure
+agemods.
+*/
+
+
+void *cm_get_deg_params(void)
+{
+    return &agemods;
 }
