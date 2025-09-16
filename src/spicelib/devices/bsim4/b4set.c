@@ -204,13 +204,13 @@ BSIM4instance **InstArray;
         if (!model->BSIM4versionGiven)
            model->BSIM4version = copy("4.8.3");
         /* Speed up version checking via integer version number */
-        if ((!strcmp(model->BSIM4version, "4.8.3"))||(!strncmp(model->BSIM4version, "4.83", 4))) {
+        if ((!strcmp(model->BSIM4version, "4.8.3"))||(!strncmp(model->BSIM4version, "4.83", 4))||(!strncmp(model->BSIM4version, "4.8", 3))) {
             model->BSIM4v48intVersion = BSIM4v48V483;
         } else if ((!strcmp(model->BSIM4version, "4.8.2"))||(!strncmp(model->BSIM4version, "4.82", 4))) {
             model->BSIM4v48intVersion = BSIM4v48V482;
         } else if ((!strcmp(model->BSIM4version, "4.8.1"))||(!strncmp(model->BSIM4version, "4.81", 4))) {
             model->BSIM4v48intVersion = BSIM4v48V481;
-        } else if ((!strcmp(model->BSIM4version, "4.8.0"))||(!strncmp(model->BSIM4version, "4.80", 4))||(!strncmp(model->BSIM4version, "4.8", 3))) {
+        } else if ((!strcmp(model->BSIM4version, "4.8.0"))||(!strncmp(model->BSIM4version, "4.80", 4))) {
             model->BSIM4v48intVersion = BSIM4v48V480;
         } else {
             printf("Warning: unknown BSIM4 version. Working now with BSIM4.8.3.\n");
