@@ -5286,8 +5286,7 @@ int get_number_terminals(char *c)
                 char* comma;
 
                 name[i] = gettok_instance(&cc);
-                if (search_plain_identifier(name[i], "off") ||
-                    strchr(name[i], '=')) {
+                if (search_plain_identifier(name[i], "off")) {
                     j++;
                 }
 #ifdef CIDER
@@ -5296,16 +5295,9 @@ int get_number_terminals(char *c)
                     j++;
                 }
 #endif
-                /* If we have IC=VBE, VCE instead of IC=VBE,VCE
-                 *  we need to increment j.
-                 */
-                if ((comma = strchr(name[i], ',')) != NULL &&
-                        (*(++comma) == '\0'))
-                    j++;
-                /* If we have IC=VBE , VCE ("," is a token) we need to inc j
-                 */
-                if (eq(name[i], ","))
-                    j++;
+                if (strchr(name[i], '=')) {
+                    break;
+                }
             }
             i--;
             tfree(ccfree);
