@@ -319,6 +319,17 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
+            /* rev-rec */
+            if (model->DIOsoftRevRecParamGiven) {
+                if(here->DIOqdNode == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->DIOname, "Qdiff");
+                    if(error) return(error);
+                    here->DIOqdNode = tmp->number;
+                }
+            } else {
+                here->DIOqdNode = 0;
+            }
+
             int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
 
 /* macro to make elements with built in test for out of memory */
@@ -345,6 +356,13 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(DIOnegTempPtr,      DIOnegNode,      DIOtempNode);
             }
 
+            /* rev-rec */
+            if (model->DIOsoftRevRecParamGiven) {
+                TSTALLOC(DIOqdQdPtr      , DIOqdNode, DIOqdNode);
+                TSTALLOC(DIOqdPosPrimePtr, DIOqdNode, DIOposPrimeNode);
+                TSTALLOC(DIOqdNegPtr     , DIOqdNode, DIOnegNode);
+            }
+
         }
     }
     return(OK);
@@ -369,6 +387,12 @@ DIOunsetup(
               && here->DIOposPrimeNode != here->DIOposNode)
                 CKTdltNNum(ckt, here->DIOposPrimeNode);
             here->DIOposPrimeNode = 0;
+
+            /* rev-rec */
+            if (model->DIOsoftRevRecParamGiven) {
+                CKTdltNNum(ckt, here->DIOqdNode);
+            here->DIOqdNode = 0;
+            }
         }
     }
     return OK;

@@ -2,7 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
-Modified by Paolo Nenzi 2003, Dietmar Warning 2012 and Ste Kulov 2021
 **********/
 
 #include "ngspice/ngspice.h"
@@ -48,8 +47,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     int Check=0;
     int error;
     int SenCond=0;    /* sensitivity condition */
-    double diffcharge, deplcharge, diffcap, deplcap;
-
+    double deplcharge, deplcap;
+    double difcharge, difcap, cdif=0.0, gdif=0.0;
     double tt;
     double vp;
 
@@ -108,17 +107,23 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             Check=1;
             if(ckt->CKTmode & MODEINITSMSIG) {
                 vd= *(ckt->CKTstate0 + here->DIOvoltage);
+                difcharge= *(ckt->CKTstate0 + here->DIOqdNode);
             } else if (ckt->CKTmode & MODEINITTRAN) {
                 vd= *(ckt->CKTstate1 + here->DIOvoltage);
+                difcharge= *(ckt->CKTstate1 + here->DIOqdNode);
             } else if ( (ckt->CKTmode & MODEINITJCT) &&
                     (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC) ) {
                 vd=here->DIOinitCond;
+                difcharge=0;
             } else if ( (ckt->CKTmode & MODEINITJCT) && here->DIOoff) {
                 vd=0;
+                difcharge=0;
             } else if ( ckt->CKTmode & MODEINITJCT) {
                 vd=here->DIOtVcrit;
+                difcharge=0;
             } else if ( ckt->CKTmode & MODEINITFIX && here->DIOoff) {
                 vd=0;
+                difcharge=0;
             } else {
 #ifndef PREDICTOR
                 if (ckt->CKTmode & MODEINITPRED) {
@@ -129,10 +134,12 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->DIOcurrent);
                     *(ckt->CKTstate0 + here->DIOconduct) =
                             *(ckt->CKTstate1 + here->DIOconduct);
+                    difcharge = DEVpred(ckt,here->DIOdifCharge);
                 } else {
 #endif /* PREDICTOR */
                     vd = *(ckt->CKTrhsOld+here->DIOposPrimeNode)-
                             *(ckt->CKTrhsOld + here->DIOnegNode);
+                    difcharge = *(ckt->CKTrhsOld + here->DIOqdNode);
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -179,22 +186,21 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   compute dc current and derivitives
              */
-next1:
-            if (vd >= -3*vte) {                 /* forward */
+next1:      if (vd >= -3*vte) {
 
                 evd = exp(vd/vte);
                 cd = csat*(evd-1) + ckt->CKTgmin*vd;
                 gd = csat*evd/vte + ckt->CKTgmin;
 
             } else if((!(model->DIObreakdownVoltageGiven)) ||
-                    vd >= -here->DIOtBrkdwnV) { /* reverse */
+                    vd >= -here->DIOtBrkdwnV) {
 
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
                 cd = -csat*(1+arg) + ckt->CKTgmin*vd;
                 gd = csat*3*arg/vd + ckt->CKTgmin;
 
-            } else {                            /* breakdown */
+            } else {
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
                 cd = -csat*evrev + ckt->CKTgmin*vd;
@@ -220,55 +226,32 @@ next1:
                     deplcap = czof2*(here->DIOtF3+here->DIOtGradingCoeff*vd/here->DIOtJctPot);
                 }
 
+                *(ckt->CKTstate0 + here->DIOcapCharge) = deplcharge;
+
                 if (model->DIOsoftRevRecParamGiven) {
 
                     if (ckt->CKTmode & MODEINITTRAN) {
-                        diffcharge = tt * cd;
-                        diffcap = tt * gd;
-                        *(ckt->CKTstate2 + here->DIOdiffCharge) = diffcharge;
-                        *(ckt->CKTstate2 + here->DIOdiffCap) = diffcap;
-                        *(ckt->CKTstate1 + here->DIOdiffCharge) = diffcharge;
-                        *(ckt->CKTstate1 + here->DIOdiffCap) = diffcap;
-                        *(ckt->CKTstate1 + here->DIOoldCurr) = cd;
-                        *(ckt->CKTstate1 + here->DIOoldCond) = gd;
+                        difcharge = tt * cd;
+                        difcap = tt * gd;
                     }
                     else {
-                        double dt = ckt->CKTdelta;
 
-                        //Backward Euler
-                        // Qk+1 = tt (VP Qk + h Ik+1) / (tt VP + h)
-                        //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*cd) / (tt*vp + dt));
-                        //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + dt*gd) / (tt*vp + dt));
-
-                        //Trap
-                        // Qk+1 = (Qk (2 tt VP - h) + h tt (Ik + Ik+1)) / (2 tt VP + h)
-                        diffcharge = ((*(ckt->CKTstate1 + here->DIOdiffCharge))*(2.0*tt*vp - dt) + dt*tt*((*(ckt->CKTstate1 + here->DIOoldCurr)) + cd)) / (2.0*tt*vp + dt);
-                        diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(2.0*tt*vp - dt) + dt*tt*((*(ckt->CKTstate1 + here->DIOoldCond)) + gd)) / (2.0*tt*vp + dt);
-
-                        //Gear
-                        // Qk+1 = tt ((VP (4 Qk - Qk-1) + 2 h Ik+1) / (3 tt VP + 2 h))
-                        //diffcharge = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCharge)) - (*(ckt->CKTstate2 + here->DIOdiffCharge))) + 2.0*dt*cd) / (3.0*tt*vp + 2.0*dt));
-                        //diffcap = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCap)) - (*(ckt->CKTstate2 + here->DIOdiffCap))) + 2.0*dt*gd) / (3.0*tt*vp + 2.0*dt));
+                    difcharge = *(ckt->CKTstate0 + here->DIOqdNode);
+                    difcap = tt * gd;
 
                     }
-
-                    //printf("time: %e vd: %e\n", ckt->CKTtime, vd);
-                    //printf("%e %e %e %e %e %e %e\n", ckt->CKTtime, ckt->CKTdelta, diffcharge, diffcap, vd, cd, gd);
 
                 } else {
 
-                    diffcharge = tt*cd;
-                    diffcap = tt*gd;
+                    difcharge = tt*cd;
+                    difcap = tt*gd;
 
                 }
 
-                *(ckt->CKTstate0 + here->DIOdiffCharge) = diffcharge;
-                *(ckt->CKTstate0 + here->DIOdiffCap) = diffcap;
-                *(ckt->CKTstate0 + here->DIOcapCharge) = deplcharge + diffcharge;
-                *(ckt->CKTstate0 + here->DIOoldCurr) = cd;
-                *(ckt->CKTstate0 + here->DIOoldCond) = gd;
+                *(ckt->CKTstate0 + here->DIOdifCharge) = difcharge;
+//printf("difcharge = %.7e, difcap = %.7e, cd = %.7e\n", difcharge,difcap,cd);
 
-                capd = deplcap + diffcap;
+                capd = deplcap + difcap;
 
                 here->DIOcap = capd;
 
@@ -309,14 +292,24 @@ next1:
                     if (ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->DIOcapCharge) =
                                 *(ckt->CKTstate0 + here->DIOcapCharge);
+                        *(ckt->CKTstate1 + here->DIOdifCharge) =
+                                *(ckt->CKTstate0 + here->DIOdifCharge);
                     }
-                    error = NIintegrate(ckt,&geq,&ceq,capd,here->DIOcapCharge);
+                    error = NIintegrate(ckt,&geq,&ceq,deplcap,here->DIOcapCharge);
                     if(error) return(error);
                     gd=gd+geq;
                     cd=cd+*(ckt->CKTstate0 + here->DIOcapCurrent);
+                    error = NIintegrate(ckt,&geq,&ceq,difcap,here->DIOdifCharge);
+                    if(error) return(error);
+                    gd=gd+geq;
+                    cd=cd+*(ckt->CKTstate0 + here->DIOdifCurrent);
+                    gdif=geq;
+                    cdif=*(ckt->CKTstate0 + here->DIOdifCurrent);
                     if (ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->DIOcapCurrent) =
                                 *(ckt->CKTstate0 + here->DIOcapCurrent);
+                        *(ckt->CKTstate1 + here->DIOdifCurrent) =
+                                *(ckt->CKTstate0 + here->DIOdifCurrent);
                     }
                 }
             }
@@ -357,6 +350,14 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(here->DIOnegPosPrimePtr) -= gd;
             *(here->DIOposPrimePosPtr) -= gspr;
             *(here->DIOposPrimeNegPtr) -= gd;
+
+            if (model->DIOsoftRevRecParamGiven) {
+//printf("cd = %.7e, cdif = %.7e, gdif = %.7e\n", cd, cdif, gdif);
+               *(ckt->CKTrhs + here->DIOqdNode) += tt * (cd - vp * cdif) - tt*(gd-gdif)*vd;
+               *(here->DIOqdQdPtr)       += tt*(gd-gdif);
+               *(here->DIOqdPosPrimePtr) -= tt*(gd-gdif);
+               *(here->DIOqdNegPtr)      -= tt*(gd-gdif);
+            }
         }
     }
     return(OK);

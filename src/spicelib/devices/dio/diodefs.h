@@ -40,6 +40,7 @@ typedef struct sDIOinstance {
     const int DIOnegNode;     /* number of negative node of diode */
     const int DIOtempNode;    /* number of the temperature node of the diode */
     int DIOposPrimeNode;      /* number of positive prime node of diode */
+    int DIOqdNode;            /* number of qdif node */
 
     double *DIOposPosPrimePtr;      /* pointer to sparse matrix at 
                                      * (positive,positive prime) */
@@ -64,6 +65,11 @@ typedef struct sDIOinstance {
     double *DIOposTempPtr;
     double *DIOposPrimeTempPtr;
     double *DIOnegTempPtr;
+
+    /* rev-rec */
+    double *DIOqdQdPtr;
+    double *DIOqdPosPrimePtr;
+    double *DIOqdNegPtr;
 
     double DIOcap;   /* stores the diode capacitance */
 
@@ -218,21 +224,18 @@ typedef struct sDIOinstance {
 #define DIOconduct DIOstate+2
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
-#define DIOdiffCharge DIOstate+5
-#define DIOdiffCurrent DIOstate+6
-#define DIOdiffCap DIOstate+7
-#define DIOoldCurr DIOstate+8
-#define DIOoldCond DIOstate+9
+#define DIOdifCharge DIOstate+5
+#define DIOdifCurrent DIOstate+6
 
-#define DIOqth DIOstate+10     /* thermal capacitor charge */
-#define DIOcqth DIOstate+11    /* thermal capacitor current */
+#define DIOqth DIOstate+7     /* thermal capacitor charge */
+#define DIOcqth DIOstate+8    /* thermal capacitor current */
 
-#define DIOdeltemp DIOstate+12 /* thermal voltage over rth0 */
-#define DIOdIdio_dT DIOstate+13
+#define DIOdeltemp DIOstate+9 /* thermal voltage over rth0 */
+#define DIOdIdio_dT DIOstate+10
 
-#define DIOnumStates 14
+#define DIOnumStates 11
 
-#define DIOsensxp DIOstate+14    /* charge sensitivities and their derivatives.
+#define DIOsensxp DIOstate+11    /* charge sensitivities and their derivatives.
                                  * +10 for the derivatives - pointer to the
                                  * beginning of the array */
 
