@@ -5283,7 +5283,6 @@ int get_number_terminals(char *c)
             /* required to make m= 1 a single token m=1 */
             ccfree = cc = inp_remove_ws(cc);
             for (i = j = 0; (i < 12) && (*cc != '\0'); ++i) {
-                char* comma;
 
                 name[i] = gettok_instance(&cc);
                 if (search_plain_identifier(name[i], "off")) {
@@ -5296,6 +5295,10 @@ int get_number_terminals(char *c)
                 }
 #endif
                 if (strchr(name[i], '=')) {
+                    break;
+                }
+                /* an expression for area {...}, (without area={...})*/
+                if (*name[i] == '{') {
                     break;
                 }
             }
