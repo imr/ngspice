@@ -861,6 +861,57 @@ gettok_node(char **s)
     return copy_substring(token, token_e);
 }
 
+/*-------------------------------------------------------------------------*
+ * gettok_node_br acts like gettok_node, including braces { }.
+ *-------------------------------------------------------------------------*/
+
+char*
+gettok_node_br(char** s)
+{
+    char c;
+    const char* token, * token_e;
+
+    if (*s == NULL)
+        return NULL;
+
+    while (isspace_c(**s) ||
+        (**s == '(') ||
+        (**s == ')') ||
+        (**s == '{') ||
+        (**s == '}') ||
+        (**s == ',')
+        )
+        (*s)++;   /* iterate over whitespace and ( , ) */
+
+    if (!**s)
+        return NULL;  /* return NULL if we come to end of line */
+
+    token = *s;
+    while ((c = **s) != '\0' &&
+        !isspace_c(c) &&
+        (**s != '(') &&
+        (**s != ')') &&
+        (**s != '{') &&
+        (**s != '}') &&
+        (**s != ',')
+        )            /* collect chars until whitespace or ( , ) */
+        (*s)++;
+
+    token_e = *s;
+
+    /* Now iterate up to next non-whitespace char */
+    while (isspace_c(**s) ||
+        (**s == '(') ||
+        (**s == ')') ||
+        (**s == '{') ||
+        (**s == '}') ||
+        (**s == ',')
+        )
+        (*s)++;   /* iterate over whitespace and ( , ) */
+
+    return copy_substring(token, token_e);
+}
+
 
 /*-------------------------------------------------------------------------*
  * get_l_paren iterates the pointer forward in a string until it hits
