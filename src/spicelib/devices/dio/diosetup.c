@@ -211,6 +211,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOrecSatCurGiven) {
             model->DIOrecSatCur = 1e-14;
         }
+        if (!model->DIOsoftRevRecParamGiven) {
+            model->DIOsoftRevRecParam = 0.0;
+        }
 
         /* set lower limit of saturation current */
         if (model->DIOsatCur < ckt->CKTepsmin)
@@ -360,6 +363,18 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
+            /* rev-rec */
+            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+                if(here->DIOqpNode == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->DIOname, "qp");
+                    if(error) return(error);
+                    here->DIOqpNode = tmp->number;
+                }
+            } else {
+                here->DIOqpNode = 0;
+            }
+
+
             int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
 
 /* macro to make elements with built in test for out of memory */
@@ -385,7 +400,15 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(DIOposPrimeTempPtr, DIOposPrimeNode, DIOtempNode);
                 TSTALLOC(DIOnegTempPtr,      DIOnegNode,      DIOtempNode);
             }
-
+            
+            /* rev-rec */
+            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+                TSTALLOC(DIOqpQpPtr      , DIOqpNode, DIOqpNode);
+                TSTALLOC(DIOqpPosPrimePtr, DIOqpNode, DIOposPrimeNode);
+                TSTALLOC(DIOqpNegPtr     , DIOqpNode, DIOnegNode);
+                TSTALLOC(DIOposPrimeQpPtr, DIOposPrimeNode, DIOqpNode);
+                TSTALLOC(DIOnegQpPtr,      DIOnegNode, DIOqpNode);
+            }
         }
     }
     return(OK);
@@ -410,6 +433,12 @@ DIOunsetup(
               && here->DIOposPrimeNode != here->DIOposNode)
                 CKTdltNNum(ckt, here->DIOposPrimeNode);
             here->DIOposPrimeNode = 0;
+
+            /* rev-rec */
+            if (here->DIOqpNode > 0)
+                CKTdltNNum(ckt, here->DIOqpNode);
+            here->DIOqpNode = 0;
+
         }
     }
     return OK;

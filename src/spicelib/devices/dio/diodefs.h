@@ -40,6 +40,7 @@ typedef struct sDIOinstance {
     const int DIOnegNode;     /* number of negative node of diode */
     const int DIOtempNode;    /* number of the temperature node of the diode */
     int DIOposPrimeNode;      /* number of positive prime node of diode */
+    int DIOqpNode;            /* number of soft recovery charge node */
 
     double *DIOposPosPrimePtr;      /* pointer to sparse matrix at
                                      * (positive,positive prime) */
@@ -64,6 +65,13 @@ typedef struct sDIOinstance {
     double *DIOposTempPtr;
     double *DIOposPrimeTempPtr;
     double *DIOnegTempPtr;
+
+    /* rev-rec */
+    double *DIOqpQpPtr;
+    double *DIOqpPosPrimePtr;
+    double *DIOqpNegPtr;
+    double *DIOposPrimeQpPtr;
+    double *DIOnegQpPtr;
 
     double DIOcap;   /* stores the diode capacitance */
 
@@ -218,16 +226,24 @@ typedef struct sDIOinstance {
 #define DIOconduct DIOstate+2
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
+#define DIOsrcapCharge DIOstate+5
+#define DIOsrcapCurrent DIOstate+6
+#define DIOqp DIOstate+7
+#define DIOresCurrent DIOstate+8
+#define DIOresConduct DIOstate+9
+#define DIOcqcsr DIOstate+10
+#define DIOgqcsr DIOstate+11
 
-#define DIOqth DIOstate+5     /* thermal capacitor charge */
-#define DIOcqth DIOstate+6    /* thermal capacitor current */
 
-#define DIOdeltemp DIOstate+7 /* thermal voltage over rth0 */
-#define DIOdIdio_dT DIOstate+8
+#define DIOqth DIOstate+10     /* thermal capacitor charge */
+#define DIOcqth DIOstate+11    /* thermal capacitor current */
 
-#define DIOnumStates 9
+#define DIOdeltemp DIOstate+12 /* thermal voltage over rth0 */
+#define DIOdIdio_dT DIOstate+13
 
-#define DIOsensxp DIOstate+9    /* charge sensitivities and their derivatives.
+#define DIOnumStates 14
+
+#define DIOsensxp DIOstate+14    /* charge sensitivities and their derivatives.
                                  * +10 for the derivatives - pointer to the
                                  * beginning of the array */
 
@@ -302,6 +318,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOte_maxGiven : 1;
     unsigned DIOrecSatCurGiven : 1;
     unsigned DIOrecEmissionCoeffGiven : 1;
+    unsigned DIOsoftRevRecParamGiven : 1;
 
     unsigned DIOrth0Given :1;
     unsigned DIOcth0Given :1;
@@ -375,6 +392,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOte_max; /* maximum temperature */
     double DIOrecSatCur; /* Recombination saturation current */
     double DIOrecEmissionCoeff; /* Recombination emission coefficient */
+    double DIOsoftRevRecParam; /* Soft reverse recovery parameter */
 
     double DIOrth0;
     double DIOcth0;
@@ -481,6 +499,7 @@ enum {
     DIO_MOD_PD_MAX,
     DIO_MOD_ISR,
     DIO_MOD_NR,
+    DIO_MOD_VP,
     DIO_MOD_RTH0,
     DIO_MOD_CTH0,
 
