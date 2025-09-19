@@ -13794,7 +13794,7 @@ New include File:
 2010-10-09  Robert Larice
  * src/include/complex.h :
     !REVERT! remove typedef for _complex, which is used nowhere
-    this breaks MSVC, currently unkown why, FIXME
+    this breaks MSVC, currently unknown why, FIXME
 
 2010-10-09  Robert Larice
  * src/frontend/parse-bison.c ,

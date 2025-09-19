@@ -203,6 +203,19 @@ BSIM4instance **InstArray;
         }
         if (!model->BSIM4versionGiven)
            model->BSIM4version = copy("4.8.3");
+        /* Speed up version checking via integer version number */
+        if ((!strcmp(model->BSIM4version, "4.8.3"))||(!strncmp(model->BSIM4version, "4.83", 4))||(!strncmp(model->BSIM4version, "4.8", 3))) {
+            model->BSIM4v48intVersion = BSIM4v48V483;
+        } else if ((!strcmp(model->BSIM4version, "4.8.2"))||(!strncmp(model->BSIM4version, "4.82", 4))) {
+            model->BSIM4v48intVersion = BSIM4v48V482;
+        } else if ((!strcmp(model->BSIM4version, "4.8.1"))||(!strncmp(model->BSIM4version, "4.81", 4))) {
+            model->BSIM4v48intVersion = BSIM4v48V481;
+        } else if ((!strcmp(model->BSIM4version, "4.8.0"))||(!strncmp(model->BSIM4version, "4.80", 4))) {
+            model->BSIM4v48intVersion = BSIM4v48V480;
+        } else {
+            printf("Warning: unknown BSIM4 version. Working now with BSIM4.8.3.\n");
+            model->BSIM4v48intVersion = BSIM4v48V483;
+        }
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)
@@ -342,9 +355,7 @@ BSIM4instance **InstArray;
         if (!model->BSIM4ucsGiven)
             model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
 
-        if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) &&
-            (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)) &&
-            (strcmp(model->BSIM4version, "4.8.3")) && (strncmp(model->BSIM4version, "4.83", 4)))
+        if (model->BSIM4v48intVersion<=BSIM4v48V480)
         {
                 if (!model->BSIM4uaGiven)
                 model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
@@ -2360,10 +2371,6 @@ BSIM4instance **InstArray;
                 here->BSIM4xgw = model->BSIM4xgw;
             if (!here->BSIM4ngconGiven)
                 here->BSIM4ngcon = model->BSIM4ngcon;
-
-            here->BSIM4mult_i = here->BSIM4mult_i * here->BSIM4m;
-            here->BSIM4mult_q = here->BSIM4mult_q * here->BSIM4m;
-            here->BSIM4mult_fn = here->BSIM4mult_fn * here->BSIM4m;
 
             /* Process instance model selectors, some
              * may override their global counterparts

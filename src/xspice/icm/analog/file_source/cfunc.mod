@@ -336,9 +336,9 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer + stepsize];
 
         if (terr)
-            cm_message_printf("WARNING: some error occured during reading the time values");
+            cm_message_printf("WARNING: some error occurred during reading the time values");
         if (derr)
-            cm_message_printf("WARNING: some error occured during reading the data values");
+            cm_message_printf("WARNING: some error occurred during reading the data values");
     }
 
     loc = STATIC_VAR (locdata);

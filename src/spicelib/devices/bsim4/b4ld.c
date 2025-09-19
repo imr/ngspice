@@ -4986,9 +4986,9 @@ line900:
             */
 
            m = here->BSIM4m;
-           mult_i = here->BSIM4mult_i;
-           mult_q = here->BSIM4mult_q;
-
+           mult_i = here->BSIM4mult_i * here->BSIM4m;
+           mult_q = here->BSIM4mult_q * here->BSIM4m;
+           
 #ifdef USE_OMP
        here->BSIM4rhsdPrime = (mult_i * (ceqjd - ceqbd + ceqgdtot
                             - ceqdrn + Idtoteq) - mult_q * ceqqd);
@@ -5006,9 +5006,9 @@ line900:
                                 - ceqgstot + Istoteq) + mult_q * (ceqqg + ceqqb + ceqqd + ceqqgmid));
         }
         else
-        {   here->BSIM4rhsdb = mult_i * (ceqjd + ceqqjd);
+        {   here->BSIM4rhsdb = mult_i * (ceqjd /*+ ceqqjd */) + mult_q * ceqqjd;
             here->BSIM4rhsbPrime = (mult_i * (ceqbd + ceqbs + Ibtoteq) - mult_q * ceqqb);
-            here->BSIM4rhssb = mult_i * (ceqjs + ceqqjs);
+            here->BSIM4rhssb = mult_i * (ceqjs /*+ ceqqjs*/) + mult_q * ceqqjs;
             here->BSIM4rhssPrime = (mult_i * (ceqdrn - ceqbs + ceqjs - ceqgstot + Istoteq) + mult_q * (ceqqd
                                  + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid));
         }
@@ -5037,9 +5037,9 @@ line900:
                               - ceqgstot + Istoteq) + mult_q * (ceqqg + ceqqb + ceqqd + ceqqgmid)));
            }
            else
-           {   (*(ckt->CKTrhs + here->BSIM4dbNode) -= mult_i * (ceqjd + ceqqjd));
+           {   (*(ckt->CKTrhs + here->BSIM4dbNode) -= mult_i * (ceqjd /*+ ceqqjd*/) + mult_q * ceqqjd);
                (*(ckt->CKTrhs + here->BSIM4bNodePrime) += (mult_i * (ceqbd + ceqbs + Ibtoteq) - mult_q * ceqqb));
-               (*(ckt->CKTrhs + here->BSIM4sbNode) -= mult_i * (ceqjs + ceqqjs));
+               (*(ckt->CKTrhs + here->BSIM4sbNode) -= mult_i * (ceqjs /*+ ceqqjs*/) + mult_q * ceqqjs);
                (*(ckt->CKTrhs + here->BSIM4sNodePrime) += (mult_i * (ceqdrn - ceqbs + ceqjs - ceqgstot + Istoteq) + mult_q * (ceqqd
                                                         + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid)));
            }
@@ -5227,9 +5227,9 @@ line900:
                here->BSIM4_99 = m * (ggts - gcqsb);
                here->BSIM4_100 = m * (ggtb - gcqbb);
 
-               here->BSIM4_101 = m * dxpart * here->BSIM4gtau;
-               here->BSIM4_102 = m * sxpart * here->BSIM4gtau;
-               here->BSIM4_103 = m * here->BSIM4gtau;
+               here->BSIM4_101 = mult_q * dxpart * here->BSIM4gtau;
+               here->BSIM4_102 = mult_q * sxpart * here->BSIM4gtau;
+               here->BSIM4_103 = mult_q * here->BSIM4gtau;
            }
 #else
            if (here->BSIM4rgateMod == 1)
@@ -5382,9 +5382,9 @@ line900:
                (*(here->BSIM4QspPtr) += m * (ggts - gcqsb));
                (*(here->BSIM4QbpPtr) += m * (ggtb - gcqbb));
 
-               (*(here->BSIM4DPqPtr) += m * (dxpart * here->BSIM4gtau));
-               (*(here->BSIM4SPqPtr) += m * (sxpart * here->BSIM4gtau));
-               (*(here->BSIM4GPqPtr) -= m * (here->BSIM4gtau));
+               (*(here->BSIM4DPqPtr) += mult_q * (dxpart * here->BSIM4gtau));
+               (*(here->BSIM4SPqPtr) += mult_q * (sxpart * here->BSIM4gtau));
+               (*(here->BSIM4GPqPtr) -= mult_q * (here->BSIM4gtau));
            }
 #endif
 

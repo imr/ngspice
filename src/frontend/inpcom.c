@@ -5283,11 +5283,9 @@ int get_number_terminals(char *c)
             /* required to make m= 1 a single token m=1 */
             ccfree = cc = inp_remove_ws(cc);
             for (i = j = 0; (i < 12) && (*cc != '\0'); ++i) {
-                char* comma;
 
                 name[i] = gettok_instance(&cc);
-                if (search_plain_identifier(name[i], "off") ||
-                    strchr(name[i], '=')) {
+                if (search_plain_identifier(name[i], "off")) {
                     j++;
                 }
 #ifdef CIDER
@@ -5296,16 +5294,13 @@ int get_number_terminals(char *c)
                     j++;
                 }
 #endif
-                /* If we have IC=VBE, VCE instead of IC=VBE,VCE
-                 *  we need to increment j.
-                 */
-                if ((comma = strchr(name[i], ',')) != NULL &&
-                        (*(++comma) == '\0'))
-                    j++;
-                /* If we have IC=VBE , VCE ("," is a token) we need to inc j
-                 */
-                if (eq(name[i], ","))
-                    j++;
+                if (strchr(name[i], '=')) {
+                    break;
+                }
+                /* an expression for area {...}, (without area={...})*/
+                if (*name[i] == '{') {
+                    break;
+                }
             }
             i--;
             tfree(ccfree);
@@ -9844,6 +9839,10 @@ static void inp_meas_control(struct card* card)
  * might need to add the prefix separately if using the result in APIs
  * that require it for long path support.
  *
+ * Using this function however may neglect the ngspice file search sequence,
+ * as an absolute path is returned also for relative paths.
+ * So restrict this function to paths longer than MAX_PATH.
+ *
  * @param input_path The input path string (UTF-8 encoded). Can be relative or
  *                   absolute, may contain '.' or '..'.
  * @return char* A newly allocated UTF-8 string containing the canonical absolute
@@ -9868,6 +9867,10 @@ char* get_windows_canonical_path(const char* input_path) {
     }
 
     inputLenMB = (int)strlen(input_path);
+
+    /* If path length is less than MAX_PATH, just copy and return path. */
+    if (inputLenMB < MAX_PATH)
+        return copy(input_path);
 
     if (inputLenMB == 0) {
         inputLenW = 1;

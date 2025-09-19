@@ -1,3 +1,9 @@
+Ngspice-45.2, Sept. 5th, 2025
+============
+- Bug-fix release
+    + A bug in the MS Windows version has been fixed 
+     (bug no. 804, see https://sourceforge.net/p/ngspice/bugs/804/)
+
 Ngspice-45, August 17th, 2025
 ============
 - New features:

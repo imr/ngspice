@@ -330,7 +330,7 @@ cp_usrset(struct variable *var, bool isset)
         ft_stricterror = isset;
         if (ft_ngdebug)
             fprintf(stdout, "Note: strict_errorhandling is set\n");
-        /* Immediately bail out when spinit error has occured */
+        /* Immediately bail out when spinit error has occurred */
         if (ft_spiniterror)
             controlled_exit(EXIT_BAD);
     } else if (eq(var->va_name, "rawfileprec")) {

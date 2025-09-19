@@ -122,8 +122,12 @@ int Fatal_Flag = 0;
 
      if(model->BSIM4mtrlMod == 0)
      {
+         double chktol = fabs(model->BSIM4toxe);
+         if (fabs(model->BSIM4toxp)>chktol) chktol = fabs(model->BSIM4toxp);
+         if (fabs(model->BSIM4dtox)>chktol) chktol = fabs(model->BSIM4dtox);
+         chktol=chktol*1e-14;
          if ((model->BSIM4toxeGiven) && (model->BSIM4toxpGiven) && (model->BSIM4dtoxGiven)
-         && (model->BSIM4toxe != (model->BSIM4toxp + model->BSIM4dtox)))
+         && (fabs(model->BSIM4toxe-(model->BSIM4toxp + model->BSIM4dtox))>chktol))
          {   printf("Warning: toxe, toxp and dtox all given and toxe != toxp + dtox; dtox ignored.\n");
          }
          else if ((model->BSIM4toxeGiven) && (!model->BSIM4toxpGiven))
@@ -1368,10 +1372,7 @@ int Fatal_Flag = 0;
                   pParam->BSIM4Aechvb = (model->BSIM4type == NMOS) ? 4.97232e-7 : 3.42537e-7;
                   pParam->BSIM4Bechvb = (model->BSIM4type == NMOS) ? 7.45669e11 : 1.16645e12;
 
-                  if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) &&
-                      (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)) &&
-                      (strcmp(model->BSIM4version, "4.8.3")) && (strncmp(model->BSIM4version, "4.83", 4)))
-                  {
+                  if (model->BSIM4v48intVersion<=BSIM4v48V480) {
                   pParam->BSIM4AechvbEdgeS = pParam->BSIM4Aechvb * pParam->BSIM4weff
                       * model->BSIM4dlcig * pParam->BSIM4ToxRatioEdge;
                   pParam->BSIM4AechvbEdgeD = pParam->BSIM4Aechvb * pParam->BSIM4weff

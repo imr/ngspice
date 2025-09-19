@@ -107,13 +107,13 @@ VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
     VSRCinstance *here;
 
     for (model = (VSRCmodel *)inModel; model != NULL;
-	    model = VSRCnextModel(model))
+            model = VSRCnextModel(model))
     {
         for (here = VSRCinstances(model); here != NULL;
                 here=VSRCnextInstance(here))
-	{
-	    if (here->VSRCbranch > 0)
-		CKTdltNNum(ckt, here->VSRCbranch);
+        {
+            if (here->VSRCbranch > 0)
+                CKTdltNNum(ckt, here->VSRCbranch);
             here->VSRCbranch = 0;
 #ifdef RFSPICE
             if ((here->VSRCresNode > 0) & (here->VSRCisPort))
@@ -121,7 +121,7 @@ VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
             here->VSRCresNode = 0;
 
 #endif
-	}
+        }
     }
     return OK;
 }

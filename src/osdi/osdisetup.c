@@ -46,7 +46,6 @@ static int handle_init_info(OsdiInitInfo info, const OsdiDescriptor *descr) {
       printf("Unknown OSDO init error code %d!\n", err->code);
     }
   }
-  free(info.errors);
   errMsg = tprintf("%i errors occurred during initialization", info.num_errors);
   return (E_PRIVATE);
 }
