@@ -6119,6 +6119,14 @@ static void inp_compat(struct card *card)
                    y_array=[y0 y1 y2]
                    input_domain=0.1 fraction=TRUE)
             */
+            /* Exxx n1 n2 nc1 nc2 TABLE = (x0, y0, x1, y1, x2, y2)
+               -->
+             Exxx n1 n2 Exxx_int1 0 1
+             aExxx %vd(nc1 nc2) %v(Exxx_int1) xfer_Exxx
+             .model xfer_Exxx pwl(x_array=[x0 x1 x2]
+                   y_array=[y0 y1 y2]
+                   input_domain=0.001 fraction=TRUE)
+            */
             if ((str_ptr = search_plain_identifier(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *secondno;
                 DS_CREATE(dxar, 200);
@@ -6128,6 +6136,7 @@ static void inp_compat(struct card *card)
                 title_tok = gettok(&cut_line);
                 node1 = gettok(&cut_line);
                 node2 = gettok(&cut_line);
+
                 // Exxx  n1 n2 int1 0 1
                 ckt_array[0] = tprintf("%s %s %s %s_int1 0 1", title_tok,
                         node1, node2, title_tok);
@@ -6241,6 +6250,89 @@ static void inp_compat(struct card *card)
                     ds_free(&dxar);
                     ds_free(&dyar);
                 }
+                else {
+                    /* LTSPICE table line 
+                    Exxx n+ n- nc+ nc- table=(-5m, 1, 0, 3, 5m, 5) */
+                    char* node3, * node4;
+                    node3 = gettok(&cut_line);
+                    node4 = gettok(&cut_line);
+                    cut_line = skip_ws(cut_line);
+                    if (ciprefix("table", cut_line)) {
+                        /* a LTSPICE TABLE line */
+                        cut_line += 6;
+                        ckt_array[1] = tprintf(
+                            "a%s %%vd(%s %s) %%v(%s_int1) xfer_%s",
+                            title_tok, node3, node4, title_tok, title_tok);
+                        /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
+                        int ipairs = 0;
+                        char* pair_line = cut_line;
+                        while (*cut_line != '\0') {
+                            firstno = gettok_node_br(&cut_line);
+                            secondno = gettok_node_br(&cut_line);
+                            if ((!firstno && secondno) ||
+                                (firstno && !secondno)) {
+                                fprintf(stderr,
+                                    "Error: Missing token in line %s\n"
+                                    "    line no. %d from file %s\n",
+                                    curr_line, card->linenum_orig, card->linesource);
+                                if (ft_stricterror)
+                                    controlled_exit(EXIT_FAILURE);
+                                break;
+                            }
+                            else if (!firstno && !secondno)
+                                continue;
+                            sadd(&dxar, firstno);
+                            cadd(&dxar, ' ');
+                            sadd(&dyar, secondno);
+                            cadd(&dyar, ' ');
+                            tfree(firstno);
+                            tfree(secondno);
+                            ipairs++;
+                        }
+                        /* There is a strange usage of the TABLE function:
+                           A single pair (x0, y0) will return a constant voltage y0 */
+                        if (ipairs == 1) {
+                            tfree(ckt_array[1]);
+                            tfree(ckt_array[2]);
+                            firstno = gettok_node_br(&pair_line);
+                            tfree(firstno);
+                            secondno = gettok_node_br(&pair_line);
+                            ckt_array[1] = tprintf("v%s %s_int1 0 %s", title_tok,
+                                title_tok, secondno);
+                            tfree(secondno);
+                            // comment out current variable e line
+                            *(card->line) = '*';
+                            // insert new lines immediately after current line
+                            for (i = 0; i < 2; i++) {
+                                card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                            }
+                        }
+                        else {
+                            ckt_array[2] = tprintf(
+                                ".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
+                                "input_domain=0.001 fraction=TRUE limit=TRUE)",
+                                title_tok, ds_get_buf(&dxar), ds_get_buf(&dyar));
+                            // comment out current variable e line
+                            *(card->line) = '*';
+                            // insert new lines immediately after current line
+                            for (i = 0; i < 3; i++) {
+                                card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                            }
+                        }
+                        tfree(title_tok);
+                        tfree(node1);
+                        tfree(node2);
+                        tfree(node3);
+                        tfree(node4);
+                        ds_free(&dxar);
+                        ds_free(&dyar);
+                    }
+                    else {
+                        fprintf(stderr, "ERROR: mal formed E source instance: %s\n", curr_line);
+                        fprintf(stderr, "    in line no. %d of file %s\n", card->linenum_orig, card->linesource);
+                        controlled_exit(EXIT_FAILURE);
+                    }
+                }
              }
 
             /* Exxx n1 n2 VOL = {equation}
@@ -6307,6 +6399,15 @@ static void inp_compat(struct card *card)
              .model xfer_Gxxx pwl(x_array=[x0 x1 x2]
                    y_array=[y0 y1 y2]
                    input_domain=0.1 fraction=TRUE)
+            */
+            /* FIXME: to be done
+             Gxxx n1 n2 nc1 nc2 TABLE = (x0, y0, x1, y1, x2, y2) m=1
+               -->
+             Gxxx n1 n2 Gxxx_int1 0 1 m=1
+             aGxxx %vd(nc1 nc2) %v(Gxxx_int1) xfer_Gxxx
+             .model xfer_Gxxx pwl(x_array=[x0 x1 x2]
+                   y_array=[y0 y1 y2]
+                   input_domain=0.001 fraction=TRUE)
             */
             if ((str_ptr = search_plain_identifier(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *secondno;
@@ -9604,6 +9705,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
                 continue;
             if (ciprefix("table", curr_line))
                 continue;
+            /* for TABLE with 4 nodes see below */
             if (ciprefix("laplace", curr_line))
                 continue;
             if (ciprefix("cur", curr_line))
@@ -9635,6 +9737,9 @@ static int inp_poly_2g6_compat(struct card* deck) {
                     controlled_exit(EXIT_BAD);
                 return 1;
             }
+            /* If we now have 'table', just return */
+            if (ciprefix("table", curr_line))
+                continue;
             /* The next token may be a simple text token or an expression
                enclosed in brackets */
             if (*curr_line == '{') {
