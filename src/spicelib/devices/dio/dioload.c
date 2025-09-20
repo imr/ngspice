@@ -23,7 +23,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     DIOinstance *here;
     double arg;
     double capd;
-    double cd;
+    double cd, cddc;
     double cdeq;
     double cdhat;
     double ceq;
@@ -33,7 +33,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double delvd;   /* change in diode voltage temporary */
     double evd;
     double evrev;
-    double gd;
+    double gd, gddc;
     double geq;
     double gspr;    /* area-scaled conductance */
     double sarg;
@@ -48,7 +48,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
     int SenCond=0;    /* sensitivity condition */
     double deplcharge, deplcap;
-    double difcharge, difcap, cdif=0.0, gdif=0.0;
+    double diffcharge, diffcap, cdiff=0.0, gdiff=0.0;
     double tt;
     double vp;
 
@@ -107,23 +107,23 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             Check=1;
             if(ckt->CKTmode & MODEINITSMSIG) {
                 vd= *(ckt->CKTstate0 + here->DIOvoltage);
-                difcharge= *(ckt->CKTstate0 + here->DIOqdNode);
+                diffcharge= *(ckt->CKTstate0 + here->DIOqdNode);
             } else if (ckt->CKTmode & MODEINITTRAN) {
                 vd= *(ckt->CKTstate1 + here->DIOvoltage);
-                difcharge= *(ckt->CKTstate1 + here->DIOqdNode);
+                diffcharge= *(ckt->CKTstate1 + here->DIOqdNode);
             } else if ( (ckt->CKTmode & MODEINITJCT) &&
                     (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC) ) {
                 vd=here->DIOinitCond;
-                difcharge=0;
+                diffcharge=0;
             } else if ( (ckt->CKTmode & MODEINITJCT) && here->DIOoff) {
                 vd=0;
-                difcharge=0;
+                diffcharge=0;
             } else if ( ckt->CKTmode & MODEINITJCT) {
                 vd=here->DIOtVcrit;
-                difcharge=0;
+                diffcharge=0;
             } else if ( ckt->CKTmode & MODEINITFIX && here->DIOoff) {
                 vd=0;
-                difcharge=0;
+                diffcharge=0;
             } else {
 #ifndef PREDICTOR
                 if (ckt->CKTmode & MODEINITPRED) {
@@ -134,12 +134,12 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->DIOcurrent);
                     *(ckt->CKTstate0 + here->DIOconduct) =
                             *(ckt->CKTstate1 + here->DIOconduct);
-                    difcharge = DEVpred(ckt,here->DIOdifCharge);
+                    diffcharge = DEVpred(ckt,here->DIOdiffCharge);
                 } else {
 #endif /* PREDICTOR */
                     vd = *(ckt->CKTrhsOld+here->DIOposPrimeNode)-
                             *(ckt->CKTrhsOld + here->DIOnegNode);
-                    difcharge = *(ckt->CKTrhsOld + here->DIOqdNode);
+                    diffcharge = *(ckt->CKTrhsOld + here->DIOqdNode);
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -189,24 +189,27 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 next1:      if (vd >= -3*vte) {
 
                 evd = exp(vd/vte);
-                cd = csat*(evd-1) + ckt->CKTgmin*vd;
-                gd = csat*evd/vte + ckt->CKTgmin;
+                cddc = csat*(evd-1) + ckt->CKTgmin*vd;
+                gddc = csat*evd/vte + ckt->CKTgmin;
 
             } else if((!(model->DIObreakdownVoltageGiven)) ||
                     vd >= -here->DIOtBrkdwnV) {
 
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
-                cd = -csat*(1+arg) + ckt->CKTgmin*vd;
-                gd = csat*3*arg/vd + ckt->CKTgmin;
+                cddc = -csat*(1+arg) + ckt->CKTgmin*vd;
+                gddc = csat*3*arg/vd + ckt->CKTgmin;
 
             } else {
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
-                cd = -csat*evrev + ckt->CKTgmin*vd;
-                gd = csat*evrev/vtebrk + ckt->CKTgmin;
+                cddc = -csat*evrev + ckt->CKTgmin*vd;
+                gddc = csat*evrev/vtebrk + ckt->CKTgmin;
 
             }
+
+            cd = cddc;
+            gd = gddc;
 
             if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
@@ -231,27 +234,26 @@ next1:      if (vd >= -3*vte) {
                 if (model->DIOsoftRevRecParamGiven) {
 
                     if (ckt->CKTmode & MODEINITTRAN) {
-                        difcharge = tt * cd;
-                        difcap = tt * gd;
+                        diffcharge = tt * cddc;
+                        diffcap = tt * gddc;
                     }
                     else {
 
-                    difcharge = *(ckt->CKTstate0 + here->DIOqdNode);
-                    difcap = tt * gd;
+                    diffcharge = *(ckt->CKTstate0 + here->DIOqdNode);
+                    diffcap = tt * gddc;
 
                     }
 
                 } else {
 
-                    difcharge = tt*cd;
-                    difcap = tt*gd;
+                    diffcharge = tt*cd;
+                    diffcap = tt*gd;
 
                 }
 
-                *(ckt->CKTstate0 + here->DIOdifCharge) = difcharge;
-//printf("difcharge = %.7e, difcap = %.7e, cd = %.7e\n", difcharge,difcap,cd);
+                *(ckt->CKTstate0 + here->DIOdiffCharge) = diffcharge;
 
-                capd = deplcap + difcap;
+                capd = deplcap + diffcap;
 
                 here->DIOcap = capd;
 
@@ -292,24 +294,24 @@ next1:      if (vd >= -3*vte) {
                     if (ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->DIOcapCharge) =
                                 *(ckt->CKTstate0 + here->DIOcapCharge);
-                        *(ckt->CKTstate1 + here->DIOdifCharge) =
-                                *(ckt->CKTstate0 + here->DIOdifCharge);
+                        *(ckt->CKTstate1 + here->DIOdiffCharge) =
+                                *(ckt->CKTstate0 + here->DIOdiffCharge);
                     }
                     error = NIintegrate(ckt,&geq,&ceq,deplcap,here->DIOcapCharge);
                     if(error) return(error);
                     gd=gd+geq;
                     cd=cd+*(ckt->CKTstate0 + here->DIOcapCurrent);
-                    error = NIintegrate(ckt,&geq,&ceq,difcap,here->DIOdifCharge);
+                    error = NIintegrate(ckt,&geq,&ceq,diffcap,here->DIOdiffCharge);
                     if(error) return(error);
                     gd=gd+geq;
-                    cd=cd+*(ckt->CKTstate0 + here->DIOdifCurrent);
-                    gdif=geq;
-                    cdif=*(ckt->CKTstate0 + here->DIOdifCurrent);
+                    cd=cd+*(ckt->CKTstate0 + here->DIOdiffCurrent);
+                    gdiff=geq;
+                    cdiff=*(ckt->CKTstate0 + here->DIOdiffCurrent);
                     if (ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->DIOcapCurrent) =
                                 *(ckt->CKTstate0 + here->DIOcapCurrent);
-                        *(ckt->CKTstate1 + here->DIOdifCurrent) =
-                                *(ckt->CKTstate0 + here->DIOdifCurrent);
+                        *(ckt->CKTstate1 + here->DIOdiffCurrent) =
+                                *(ckt->CKTstate0 + here->DIOdiffCurrent);
                     }
                 }
             }
@@ -352,11 +354,10 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(here->DIOposPrimeNegPtr) -= gd;
 
             if (model->DIOsoftRevRecParamGiven) {
-//printf("cd = %.7e, cdif = %.7e, gdif = %.7e\n", cd, cdif, gdif);
-               *(ckt->CKTrhs + here->DIOqdNode) += tt * (cd - vp * cdif) - tt*(gd-gdif)*vd;
-               *(here->DIOqdQdPtr)       += tt*(gd-gdif);
-               *(here->DIOqdPosPrimePtr) -= tt*(gd-gdif);
-               *(here->DIOqdNegPtr)      -= tt*(gd-gdif);
+               *(ckt->CKTrhs + here->DIOqdNode) += tt * (cddc - vp * cdiff) - tt*(gddc-gdiff)*vd;
+               *(here->DIOqdQdPtr)       += tt*(gddc-gdiff);
+               *(here->DIOqdPosPrimePtr) -= tt*(gddc-gdiff);
+               *(here->DIOqdNegPtr)      -= tt*(gddc-gdiff);
             }
         }
     }
