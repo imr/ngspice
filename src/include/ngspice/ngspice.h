@@ -236,6 +236,7 @@ extern FILE *newfopen(const char *fn, const char* md);
 void findtok_noparen(char **p_str, char **p_token, char **p_token_end);
 extern char *gettok_noparens(char **s);
 extern char *gettok_node(char **s);
+extern char *gettok_node_br(char **s);
 extern char *gettok_iv(char **s);
 extern char *nexttok(const char *s);
 extern char *nexttok_noparens(const char *s);
