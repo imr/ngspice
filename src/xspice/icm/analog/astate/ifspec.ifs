@@ -1,0 +1,58 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+
+-------------------------------------------------------------------------
+ Copyright 2025
+ The ngspice team
+ 3 - Clause BSD license
+ (see COPYING or https://opensource.org/licenses/BSD-3-Clause)
+-------------------------------------------------------------------------
+
+AUTHORS
+
+    20 September 2025     Holger Vogt
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    astate code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+C_Function_Name:       cm_astate
+Spice_Model_Name:      astate
+Description:           "analog state return"
+
+
+PORT_TABLE:
+
+Port_Name:             in                  out
+Description:           "input"             "output"
+Direction:             in                  out
+Default_Type:          v                   v
+Allowed_Types:         [v,vd,vnam,i,id]    [v,vd,i,id]
+Vector:                no                  no
+Vector_Bounds:          -                  -
+Null_Allowed:          no                  no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     astate_no
+Description:        "state to be returned"
+Data_Type:          int
+Default_Value:      1
+Limits:             [0 3]
+Vector:             no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer

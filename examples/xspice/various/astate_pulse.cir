@@ -1,0 +1,20 @@
+state test
+* transient simulation only
+* 0 <= astate_no <= 3 
+* out delayed by astate_no accepted time steps
+* current or voltage in- and outputs
+
+
+Iin iin imeas pulse (1 3 0 2u 2u 198u 400u)
+Vmeas imeas 0 0 
+astate3 %i(iin) %i(iout) newstate3
+.model newstate3 astate(astate_no=3)
+R3 iout 0 0.9
+
+.control
+tran 100n 1m
+set xbrushwidth=2
+plot i(Vmeas) v(iout)
+.endc
+
+.end

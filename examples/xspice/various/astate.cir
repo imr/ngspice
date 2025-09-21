@@ -1,0 +1,23 @@
+state test
+* transient simulation only
+* 0 <= astate_no <= 3 
+* out delayed by astate_no accepted time steps
+* current or voltage in- and outputs
+
+Vsin1 in 0 SIN (0 1.5 1k)
+Rin in 0 1.5
+
+astate1 in out newstate
+.model newstate astate(astate_no=2)
+
+astate2 %vnam(Vsin1) %id(out2+ 0) newstate2
+.model newstate2 astate(astate_no=3)
+R2 out2+ 0 0.9
+
+.control
+tran 10u 2m
+set xbrushwidth=2
+plot v(in) v(out) v(out2+)
+.endc
+
+.end

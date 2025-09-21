@@ -244,6 +244,8 @@
     <ClCompile Include="icm\analog\slew\slew-ifspec.c" />
     <ClCompile Include="icm\analog\square\square-cfunc.c" />
     <ClCompile Include="icm\analog\square\square-ifspec.c" />
+    <ClCompile Include="icm\analog\astate\astate-cfunc.c" />
+    <ClCompile Include="icm\analog\astate\astate-ifspec.c" />
     <ClCompile Include="icm\analog\summer\summer-cfunc.c" />
     <ClCompile Include="icm\analog\summer\summer-ifspec.c" />
     <ClCompile Include="icm\analog\s_xfer\s_xfer-cfunc.c" />
@@ -291,6 +293,8 @@
     <None Include="..\..\src\xspice\icm\analog\slew\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\square\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\square\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\astate\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\astate\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\summer\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\summer\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\s_xfer\cfunc.mod" />
