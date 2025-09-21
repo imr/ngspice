@@ -58,6 +58,7 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
             char* devname = tprintf("capac%dshunt", nn);
 
             (*(ft_sim->newInstance))(ckt, tab->defCmod, &fast, devname);
+            txfree(devname);
 
            /* the top node, second node is gnd automatically */
             (*(ft_sim->bindNode))(ckt, fast, 1, node);
