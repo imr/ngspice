@@ -769,7 +769,9 @@ MIFget_port_type(
     }
 
     if(! found_type) {
-        LITERR("Port type is invalid");
+        char mesg[32];
+        snprintf(mesg, 31, "Port type %s is invalid", temp);
+        LITERR(mesg);
         *status = MIF_ERROR;
     } else {
 
