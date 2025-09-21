@@ -505,6 +505,7 @@ next1:
                         (!(ckt->CKTmode & MODEUIC)) ) {
                     if (ckt->CKTmode & MODEINITSMSIG){
                         *(ckt->CKTstate0 + here->DIOcapCurrent) = capd;
+                        *(ckt->CKTstate0 + here->DIOsrcapCurrent) = capsr;
 
                         if(SenCond){
                             *(ckt->CKTstate0 + here->DIOcurrent) = cd;

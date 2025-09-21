@@ -61,6 +61,26 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 double xgcTt= *(ckt->CKTstate0 + here->DIOcqth) * ckt->CKTomega;
                 (*(here->DIOtempTempPtr + 1) +=  xgcTt);
             }
+            if (model->DIOsoftRevRecParamGiven) {
+                double dcrrdvd, grr, geqrrd;
+                double gdres = *(ckt->CKTstate0 + here->DIOresConduct);
+                double gqcsr = *(ckt->CKTstate0 + here->DIOgqcsr);
+                /* QP subcircuit */
+                dcrrdvd = here->DIOtTransitTime / model->DIOsoftRevRecParam * gdres;
+                grr = 1/model->DIOsoftRevRecParam;
+                *(here->DIOqpQpPtr)       +=  grr + gqcsr;
+                *(here->DIOqpPosPrimePtr) += -dcrrdvd;
+                *(here->DIOqpNegPtr)      +=  dcrrdvd;
+                /* Contribution to diode current */
+                /* Linear contribution -(1-vp)/tau*ddt(Qp) */
+                geqrrd = (1 - model->DIOsoftRevRecParam) / here->DIOtTransitTime * gqcsr;
+                *(here->DIOposPrimeQpPtr) +=  geqrrd;
+                *(here->DIOnegQpPtr)      += -geqrrd;
+
+                xceq = *(ckt->CKTstate0 + here->DIOsrcapCurrent) * ckt->CKTomega;
+                *(here->DIOqpQpPtr + 1)   +=  xceq;
+
+            }
         }
     }
     return(OK);
