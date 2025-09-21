@@ -2,7 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
-Modified by Paolo Nenzi 2003, Dietmar Warning 2012 and Arpad Buermen 2025
+Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 **********/
 
 #include "ngspice/ngspice.h"
@@ -170,11 +170,11 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->DIOconduct);
                     *(ckt->CKTstate0 + here->DIOresCurrent) =
                             *(ckt->CKTstate1 + here->DIOresCurrent);
-                    *(ckt->CKTstate0 + here->DIOresConduct) = 
+                    *(ckt->CKTstate0 + here->DIOresConduct) =
                             *(ckt->CKTstate1 + here->DIOresConduct);
                     *(ckt->CKTstate0 + here->DIOcqcsr) =
                             *(ckt->CKTstate1 + here->DIOcqcsr);
-                    *(ckt->CKTstate0 + here->DIOgqcsr) = 
+                    *(ckt->CKTstate0 + here->DIOgqcsr) =
                             *(ckt->CKTstate1 + here->DIOgqcsr);
                     *(ckt->CKTstate0 + here->DIOdeltemp) =
                             *(ckt->CKTstate1 + here->DIOdeltemp);
@@ -429,8 +429,8 @@ next1:
             gdres = gd;
             cdres = cd;
             gqcsr = 0;
-            cqcsr = 0; 
-                
+            cqcsr = 0;
+
             if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
               /*
@@ -461,27 +461,25 @@ next1:
                     deplcapSW = czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vd/here->DIOtJctSWPot);
                 }
 
-                /* 
-                    Dietmar: should not we also add a term (DIOcmetal+DIOcpoly)*vd to DIOcapCharge? 
+                /*
+                    Dietmar: should not we also add a term (DIOcmetal+DIOcpoly)*vd to DIOcapCharge?
                 */
-                
+
                 if (model->DIOsoftRevRecParam!=0 && here->DIOtTransitTime!=0) {
-                    /* 
-                        soft recovery with TT!=0 
-                        add only depletion capacitance. 
-                        
+                    /*
+                        soft recovery with TT!=0
+                        add only depletion capacitance.
                     */
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
                             deplcharge + deplchargeSW;
-                    
+
                     capd = deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
                     here->DIOcap = capd;
-                    /* 
-                        DIOcap is now equal only to depletion capacitance + overlap capacitance. 
-                        Diffusion capacitance is modelled via Qp so there is no clear way to define it. 
-                        Situation is similar to the one when we have an NQS model for the charge. 
+                    /*
+                        DIOcap is now equal only to depletion capacitance + overlap capacitance.
+                        Diffusion capacitance is modelled via Qp so there is no clear way to define it.
+                        Situation is similar to the one when we have an NQS model for the charge.
                     */
-
 
                     /* Now prepare the charge for the capacitor connected to the QP node */
                     *(ckt->CKTstate0 + here->DIOsrcapCharge) = here->DIOtTransitTime * vqp;
@@ -491,11 +489,11 @@ next1:
                     diffcharge = here->DIOtTransitTime*cd;
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
                             diffcharge + deplcharge + deplchargeSW;
-                    
+
                     diffcap = here->DIOtTransitTime*gd;
                     capd = diffcap + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
                     here->DIOcap = capd;
-                    
+
                     *(ckt->CKTstate0 + here->DIOsrcapCharge) = 0;
                     capsr = 0;
                 }
@@ -566,7 +564,7 @@ next1:
                             *(ckt->CKTstate1 + here->DIOsrcapCurrent) =
                                     *(ckt->CKTstate0 + here->DIOsrcapCurrent);
                         }
-                    } 
+                    }
 
                     if (selfheat)
                     {
@@ -656,12 +654,6 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 (*(here->DIOposPrimeTempPtr) +=  dIdio_dT - dIrs_dT);
                 (*(here->DIOnegTempPtr)      += -dIdio_dT);
             }
-            
-            if (model->DIOsoftRevRecParam!=0 && here->DIOtTransitTime!=0) {
-                // Compute
-            } else {
-
-            }
 
             if (model->DIOsoftRevRecParam!=0 && here->DIOtTransitTime!=0) {
                 double fac, ceqrr, dcrrdvd, grr;
@@ -672,18 +664,18 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 ceqrr = -fac*cdres + cqcsr + dcrrdvd*vd - gqcsr*vqp;
                 grr = 1/model->DIOsoftRevRecParam;
                 *(ckt->CKTrhs + here->DIOqpNode) -= ceqrr;
-                *(here->DIOqpQpPtr)       += grr + gqcsr;
+                *(here->DIOqpQpPtr)       +=  grr + gqcsr;
                 *(here->DIOqpPosPrimePtr) += -dcrrdvd;
-                *(here->DIOqpNegPtr)      += dcrrdvd;
+                *(here->DIOqpNegPtr)      +=  dcrrdvd;
                 /* Contribution to diode current */
                 gain = (1 - model->DIOsoftRevRecParam) / here->DIOtTransitTime;
                 /* Linear contribution -(1-vp)/tau*ddt(Qp) */
                 geqrrd = gain*gqcsr;
                 ceqrrd = gain*cqcsr - geqrrd*vqp;
                 *(ckt->CKTrhs + here->DIOposPrimeNode) -= ceqrrd;
-                *(ckt->CKTrhs + here->DIOnegNode) += ceqrrd;
-                *(here->DIOposPrimeQpPtr) += geqrrd;
-                *(here->DIOnegQpPtr) += -geqrrd;
+                *(ckt->CKTrhs + here->DIOnegNode)      += ceqrrd;
+                *(here->DIOposPrimeQpPtr) +=  geqrrd;
+                *(here->DIOnegQpPtr)      += -geqrrd;
             }
         }
     }
