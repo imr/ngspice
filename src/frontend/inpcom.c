@@ -5171,7 +5171,6 @@ int get_number_terminals(char *c)
 {
     int   i, j, k;
     char *inst;
-    char *name[12];
     bool  area_found = FALSE;
 
     if (!c)
@@ -5277,20 +5276,26 @@ int get_number_terminals(char *c)
              * <TEMP=T> */
             /* 12 tokens maximum */
         {
+            char *name[12];
             char* cc, * ccfree;
 
+            (void) memset(name, 0, sizeof(name));
             cc = copy(c);
             /* required to make m= 1 a single token m=1 */
             ccfree = cc = inp_remove_ws(cc);
             for (i = j = 0; (i < 12) && (*cc != '\0'); ++i) {
 
                 name[i] = gettok_instance(&cc);
+                if (!name[i] || name[i][0] == '\0') {
+                    continue;
+                }
                 if (search_plain_identifier(name[i], "off")) {
                     j++;
                 }
 #ifdef CIDER
-                if (search_plain_identifier(name[i], "save") ||
-                    search_plain_identifier(name[i], "print")) {
+                if (search_plain_identifier(name[i], "save")) {
+                    j++;
+                } else if (search_plain_identifier(name[i], "print")) {
                     j++;
                 }
 #endif
@@ -5320,8 +5325,11 @@ int get_number_terminals(char *c)
                 if (only_digits && (strchr(name[k - 1], ',') == NULL))
                     area_found = TRUE;
             }
-            for (k = i; k >= 0; k--)
-                tfree(name[k]);
+            for (k = 0; k < 12; k++) {
+                if (name[k]) {
+                    tfree(name[k]);
+                }
+            }
             if (area_found) {
                 return i - j - 2;
             }
