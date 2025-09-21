@@ -21,6 +21,9 @@ SUMMARY
 
     This file contains the functional description of the analog
     state code model.
+    It takes an input node, stores its value (voltage or current)
+    during the last three time steps and returns a value at the output,
+    delayed by 0 to 3 steps, depending on the model parameter astate_no.
 
 
 INTERFACES
