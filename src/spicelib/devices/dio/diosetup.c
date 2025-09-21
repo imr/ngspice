@@ -211,13 +211,15 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOrecSatCurGiven) {
             model->DIOrecSatCur = 1e-14;
         }
-        if (!model->DIOsoftRevRecParamGiven) {
-            if (model->DIOtransitTime < ckt->CKTepsmin) {
-                model->DIOsoftRevRecParamGiven = FALSE;
-                fprintf(stderr, "Warning: %s: TT too small - reverse recovery effect disabled!\n",
-                model->DIOmodName);
-            }
-            model->DIOsoftRevRecParam = 0.0;
+        if (model->DIOsoftRevRecParamGiven && (model->DIOsoftRevRecParam < ckt->CKTepsmin)) {
+            fprintf(stderr, "Warning: %s: VP too small - reverse recovery effect disabled!\n",
+            model->DIOmodName);
+            model->DIOsoftRevRecParamGiven = FALSE;
+        }
+        if (model->DIOsoftRevRecParamGiven && (model->DIOtransitTime < ckt->CKTepsmin)) {
+            fprintf(stderr, "Warning: %s: TT too small - reverse recovery effect disabled!\n",
+            model->DIOmodName);
+            model->DIOsoftRevRecParamGiven = FALSE;
         }
 
         /* set lower limit of saturation current */
@@ -369,7 +371,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             /* rev-rec */
-            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+            if (model->DIOsoftRevRecParamGiven) {
                 if(here->DIOqpNode == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->DIOname, "qp");
                     if(error) return(error);
@@ -378,7 +380,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             } else {
                 here->DIOqpNode = 0;
             }
-
 
             int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
 
@@ -405,9 +406,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(DIOposPrimeTempPtr, DIOposPrimeNode, DIOtempNode);
                 TSTALLOC(DIOnegTempPtr,      DIOnegNode,      DIOtempNode);
             }
-            
+
             /* rev-rec */
-            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+            if (model->DIOsoftRevRecParamGiven) {
                 TSTALLOC(DIOqpQpPtr      , DIOqpNode, DIOqpNode);
                 TSTALLOC(DIOqpPosPrimePtr, DIOqpNode, DIOposPrimeNode);
                 TSTALLOC(DIOqpNegPtr     , DIOqpNode, DIOnegNode);
