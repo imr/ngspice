@@ -212,6 +212,11 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOrecSatCur = 1e-14;
         }
         if (!model->DIOsoftRevRecParamGiven) {
+            if (model->DIOtransitTime < ckt->CKTepsmin) {
+                model->DIOsoftRevRecParamGiven = FALSE;
+                fprintf(stderr, "Warning: %s: TT too small - reverse recovery effect disabled!\n",
+                model->DIOmodName);
+            }
             model->DIOsoftRevRecParam = 0.0;
         }
 

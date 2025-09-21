@@ -465,9 +465,9 @@ next1:
                     Dietmar: should not we also add a term (DIOcmetal+DIOcpoly)*vd to DIOcapCharge?
                 */
 
-                if (model->DIOsoftRevRecParam!=0 && here->DIOtTransitTime!=0) {
+                if (model->DIOsoftRevRecParamGiven) {
                     /*
-                        soft recovery with TT!=0
+                        soft recovery model with VP given and TT!=0 (secured in setup)
                         add only depletion capacitance.
                     */
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
@@ -485,7 +485,7 @@ next1:
                     *(ckt->CKTstate0 + here->DIOsrcapCharge) = here->DIOtTransitTime * vqp;
                     capsr = here->DIOtTransitTime;
                 } else {
-                    /* no soft recovery of soft recovery with TT=0 (i.e. no soft recovery due to TT=0) */
+                    /* no soft recovery model (default model allows TT=0, removes diffusion charge) */
                     diffcharge = here->DIOtTransitTime*cd;
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
                             diffcharge + deplcharge + deplchargeSW;
@@ -550,7 +550,7 @@ next1:
                         *(ckt->CKTstate1 + here->DIOcapCurrent) =
                                 *(ckt->CKTstate0 + here->DIOcapCurrent);
                     }
-                    if (model->DIOsoftRevRecParam!=0 && here->DIOtTransitTime!=0) {
+                    if (model->DIOsoftRevRecParamGiven) {
                         /* soft recovery subcircuit */
                         if (ckt->CKTmode & MODEINITTRAN) {
                             *(ckt->CKTstate1 + here->DIOsrcapCharge) =
@@ -655,7 +655,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 (*(here->DIOnegTempPtr)      += -dIdio_dT);
             }
 
-            if (model->DIOsoftRevRecParam!=0 && here->DIOtTransitTime!=0) {
+            if (model->DIOsoftRevRecParamGiven) {
                 double fac, ceqrr, dcrrdvd, grr;
                 double gain, ceqrrd, geqrrd;
                 /* QP subcircuit */
