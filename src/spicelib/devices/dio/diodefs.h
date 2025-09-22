@@ -151,6 +151,7 @@ typedef struct sDIOinstance {
     double DIOjunctionSWCap;      /* geometry adjusted junction sidewall capacitance */
     double DIOtRecSatCur;         /* temperature adjusted recombination saturation current */
     double DIOtRecSatCur_dT;      /* temperature adjusted recombination saturation current */
+    double DIOsoftRevRecParam;    /* Soft reverse recovery parameter */
 
     double DIOdIth_dVrs;
     double DIOdIth_dVdio;

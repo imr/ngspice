@@ -64,13 +64,16 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case DIO_CURRENT:
             value->rValue = *(ckt->CKTstate0+here->DIOcurrent);
             if (here->DIOqpNode > 0)
-                value->rValue += *(ckt->CKTstate0+here->DIOcqcsr);
+                value->rValue += *(ckt->CKTstate0+here->DIOcqcsr) * 
+                       (1 - here->DIOsoftRevRecParam) / here->DIOtTransitTime;
             return(OK);
         case DIO_CAP: 
             value->rValue = here->DIOcap;
             return(OK);
         case DIO_CHARGE: 
             value->rValue = *(ckt->CKTstate0+here->DIOcapCharge);
+            if (here->DIOqpNode > 0)
+                value->rValue += *(ckt->CKTstate0+here->DIOqp);
             return(OK);
         case DIO_CAPCUR:
             value->rValue = *(ckt->CKTstate0+here->DIOcapCurrent);

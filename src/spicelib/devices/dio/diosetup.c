@@ -377,6 +377,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     if(error) return(error);
                     here->DIOqpNode = tmp->number;
                 }
+                here->DIOsoftRevRecParam = model->DIOsoftRevRecParam;
             } else {
                 here->DIOqpNode = 0;
             }
