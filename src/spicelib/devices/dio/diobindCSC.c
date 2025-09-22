@@ -41,6 +41,13 @@ DIObindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 CREATE_KLU_BINDING_TABLE(DIOposPrimeTempPtr, DIOposPrimeTempBinding, DIOposPrimeNode, DIOtempNode);
                 CREATE_KLU_BINDING_TABLE(DIOnegTempPtr,      DIOnegTempBinding,      DIOnegNode,      DIOtempNode);
             }
+//            if (model->DIOsoftRevRecParamGiven) {
+//                CREATE_KLU_BINDING_TABLE(DIOqpQpPtr      , DIOqpQpBinding      , DIOqpNode      , DIOqpNode);
+//                CREATE_KLU_BINDING_TABLE(DIOqpPosPrimePtr, DIOqpPosPrimeBinding, DIOqpNode      , DIOposPrimeNode);
+//                CREATE_KLU_BINDING_TABLE(DIOqpNegPtr     , DIOqpNegBinding     , DIOqpNode      , DIOnegNode);
+//                CREATE_KLU_BINDING_TABLE(DIOposPrimeQpPtr, DIOposPrimeQpBinding, DIOposPrimeNode, DIOqpNode);
+//                CREATE_KLU_BINDING_TABLE(DIOnegQpPtr     , DIOnegQpBinding     , DIOnegNode     , DIOqpNode);
+//            }
         }
     }
 
@@ -77,6 +84,13 @@ DIObindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposPrimeTempPtr, DIOposPrimeTempBinding, DIOposPrimeNode, DIOtempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOnegTempPtr,      DIOnegTempBinding,      DIOnegNode,      DIOtempNode);
             }
+//            if (model->DIOsoftRevRecParamGiven) {
+//                CREATE_KLU_BINDING_TABLE_TO_COMPLEX(DIOqpQpPtr      , DIOqpQpBinding      , DIOqpNode      , DIOqpNode);
+//                CREATE_KLU_BINDING_TABLE_TO_COMPLEX(DIOqpPosPrimePtr, DIOqpPosPrimeBinding, DIOqpNode      , DIOposPrimeNode);
+//                CREATE_KLU_BINDING_TABLE_TO_COMPLEX(DIOqpNegPtr     , DIOqpNegBinding     , DIOqpNode      , DIOnegNode);
+//                CREATE_KLU_BINDING_TABLE_TO_COMPLEX(DIOposPrimeQpPtr, DIOposPrimeQpBinding, DIOposPrimeNode, DIOqpNode);
+//                CREATE_KLU_BINDING_TABLE_TO_COMPLEX(DIOnegQpPtr     , DIOnegQpBinding     , DIOnegNode     , DIOqpNode);
+//            }
         }
     }
 
@@ -113,6 +127,13 @@ DIObindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposPrimeTempPtr, DIOposPrimeTempBinding, DIOposPrimeNode, DIOtempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOnegTempPtr,      DIOnegTempBinding,      DIOnegNode,      DIOtempNode);
             }
+//            if (model->DIOsoftRevRecParamGiven) {
+//                CREATE_KLU_BINDING_TABLE_TO_REAL(DIOqpQpPtr      , DIOqpQpBinding      , DIOqpNode      , DIOqpNode);
+//                CREATE_KLU_BINDING_TABLE_TO_REAL(DIOqpPosPrimePtr, DIOqpPosPrimeBinding, DIOqpNode      , DIOposPrimeNode);
+//                CREATE_KLU_BINDING_TABLE_TO_REAL(DIOqpNegPtr     , DIOqpNegBinding     , DIOqpNode      , DIOnegNode);
+//                CREATE_KLU_BINDING_TABLE_TO_REAL(DIOposPrimeQpPtr, DIOposPrimeQpBinding, DIOposPrimeNode, DIOqpNode);
+//                CREATE_KLU_BINDING_TABLE_TO_REAL(DIOnegQpPtr     , DIOnegQpBinding     , DIOnegNode     , DIOqpNode);
+//            }
         }
     }
 

@@ -213,6 +213,12 @@ typedef struct sDIOinstance {
     BindElement *DIOnegTempBinding;
     BindElement *DIOtempPosSwPrimeBinding;
     BindElement *DIOposSwPrimeTempBinding;
+    /* rev-rec */
+    BindElement *DIOqpQpBinding;
+    BindElement *DIOqpPosPrimeBinding;
+    BindElement *DIOqpNegBinding;
+    BindElement *DIOposPrimeQpBinding;
+    BindElement *DIOnegQpBinding;
 #endif
 
 } DIOinstance ;
