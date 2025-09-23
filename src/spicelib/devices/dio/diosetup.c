@@ -269,10 +269,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOwidthPoly = 0.0;
         }
         if(!model->DIOmetalOxideThickGiven) {
-            model->DIOmetalOxideThick = 1e-06; /* m */
+            model->DIOmetalOxideThick = 1e4; /* 10k Angstrom */
         }
         if(!model->DIOpolyOxideThickGiven) {
-            model->DIOpolyOxideThick = 1e-06; /* m */
+            model->DIOpolyOxideThick = 1e4; /* 10k Angstrom */
         }
         if(!model->DIOmetalMaskOffsetGiven) {
             model->DIOmetalMaskOffset = 0.0;

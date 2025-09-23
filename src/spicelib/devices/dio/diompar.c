@@ -267,11 +267,11 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOwidthPolyGiven = TRUE;
             break;
         case DIO_MOD_XOM:
-            model->DIOmetalOxideThick = value->rValue * 1e-10; /* m */
+            model->DIOmetalOxideThick = value->rValue * 1e-10; /* Angstrom -> m */
             model->DIOmetalOxideThickGiven = TRUE;
             break;
         case DIO_MOD_XOI:
-            model->DIOpolyOxideThick = value->rValue * 1e-10; /* m */
+            model->DIOpolyOxideThick = value->rValue * 1e-10; /* Angstrom -> m */
             model->DIOpolyOxideThickGiven = TRUE;
             break;
         case DIO_MOD_XM:

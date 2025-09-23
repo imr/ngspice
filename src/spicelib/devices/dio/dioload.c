@@ -461,17 +461,13 @@ next1:
                     deplcapSW = czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vd/here->DIOtJctSWPot);
                 }
 
-                /*
-                    Dietmar: should not we also add a term (DIOcmetal+DIOcpoly)*vd to DIOcapCharge?
-                */
-
                 if (model->DIOsoftRevRecParamGiven) {
                     /*
                         soft recovery model with VP given and TT!=0 (secured in setup)
                         add only depletion capacitance.
                     */
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
-                            deplcharge + deplchargeSW;
+                            deplcharge + deplchargeSW + (here->DIOcmetal + here->DIOcpoly)*vd;
 
                     capd = deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
                     here->DIOcap = capd;
