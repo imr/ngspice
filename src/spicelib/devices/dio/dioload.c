@@ -484,7 +484,7 @@ next1:
                     /* no soft recovery model (default model allows TT=0, removes diffusion charge) */
                     diffcharge = here->DIOtTransitTime*cd;
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
-                            diffcharge + deplcharge + deplchargeSW;
+                            diffcharge + deplcharge + deplchargeSW + (here->DIOcmetal + here->DIOcpoly)*vd;
 
                     diffcap = here->DIOtTransitTime*gd;
                     capd = diffcap + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;

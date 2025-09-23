@@ -79,7 +79,6 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
                 xceq = *(ckt->CKTstate0 + here->DIOsrcapCurrent) * ckt->CKTomega;
                 *(here->DIOqpQpPtr + 1)   +=  xceq;
-
             }
         }
     }
