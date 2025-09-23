@@ -435,7 +435,7 @@ next1:
 
                 diffcharge = here->DIOtTransitTime*cd;
                 *(ckt->CKTstate0 + here->DIOcapCharge) =
-                        diffcharge + deplcharge + deplchargeSW;
+                        diffcharge + deplcharge + deplchargeSW + (here->DIOcmetal + here->DIOcpoly)*vd;
 
                 diffcap = here->DIOtTransitTime*gd;
 
