@@ -517,12 +517,12 @@ next1:
                 diffcap = here->DIOtTransitTime*gd;
                 if (!model->DIOresistSWGiven) {
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
-                            diffcharge + deplcharge + deplchargeSW;
+                            diffcharge + deplcharge + deplchargeSW + (here->DIOcmetal + here->DIOcpoly)*vd;
                     capd = diffcap + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
                     here->DIOcap = capd;
                 } else {
                     *(ckt->CKTstate0 + here->DIOcapCharge) =
-                            diffcharge + deplcharge;
+                            diffcharge + deplcharge + (here->DIOcmetal + here->DIOcpoly)*vd;
                     capd = diffcap + deplcap + here->DIOcmetal + here->DIOcpoly;
                     here->DIOcap = capd;
                     *(ckt->CKTstate0 + here->DIOcapChargeSW) =
