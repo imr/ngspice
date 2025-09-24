@@ -46,6 +46,8 @@ NON-STANDARD FEATURES
 
 
 #include "ngspice/mifdefs.h"
+#include "ngspice/ngspice.h"
+#include <string.h>
 
 /*=== CONSTANTS ========================*/
 
@@ -72,10 +74,12 @@ struct agemod {
     bool paramread[DEGPARAMAX];
 } *agemodptr;
 
+/* This struct is model-specific: We need three data sets for dlt_vth [0],
+   d_idlin [1], and d_idsat [2] */
 typedef struct {
-    double    constfac[3];   /* the storage array for input values   */
-    double    sintegral[3];  /* size of buffer */
-    double    prevtime[3];   /* buffer write index */
+    double    constfac[3];   /* intermediate factor */
+    double    sintegral[3];  /* intermediate intgral */
+    double    prevtime[3];   /* previous time */
 
     double A[3];             /* degradation model parameter */
     double Ea[3];            /* degradation model parameter */
@@ -109,7 +113,48 @@ cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
     }
 }
 
+/* use agemods as input to set the agemodel model parameters,
+   e.g. loc->A[3] */
+int
+getdata(struct agemod *agemodptr, degLocal_Data_t *loc, char *devmod)
+{
+    int no; /* which device model */
+    for (no = 0; no < 64; no++) {
+       if (!agemodptr[no].devmodel){
+           cm_message_printf("Error: Could not find device model %s in the degradation model data!\n", devmod);
+           cm_cexit(1);
+       }
+       if (!strcasecmp(agemodptr[no].devmodel, devmod))
+           break;
+    }
+    if (no == 64){
+        cm_message_printf("Error: Could not find device model %s in the degradation model data!\n", devmod);
+        cm_cexit(1);
+    }
 
+    loc->A[0] = agemodptr[no].paramvals[1];
+    loc->Ea[0] = agemodptr[no].paramvals[2];
+    loc->b[0] = agemodptr[no].paramvals[3];
+    loc->c[0] = agemodptr[no].paramvals[4];
+    loc->n[0] = agemodptr[no].paramvals[5];
+    loc->L1[0] = agemodptr[no].paramvals[6];
+    loc->L2[0] = agemodptr[no].paramvals[7];
+    loc->A[1] = agemodptr[no].paramvals[8];
+    loc->Ea[1] = agemodptr[no].paramvals[9];
+    loc->b[1] = agemodptr[no].paramvals[10];
+    loc->c[1] = agemodptr[no].paramvals[11];
+    loc->n[1] = agemodptr[no].paramvals[12];
+    loc->L1[1] = agemodptr[no].paramvals[13];
+    loc->L2[1] = agemodptr[no].paramvals[14];
+    loc->A[2] = agemodptr[no].paramvals[15];
+    loc->Ea[2] = agemodptr[no].paramvals[16];
+    loc->b[2] = agemodptr[no].paramvals[17];
+    loc->c[2] = agemodptr[no].paramvals[18];
+    loc->n[2] = agemodptr[no].paramvals[19];
+    loc->L1[2] = agemodptr[no].paramvals[20];
+    loc->L2[2] = agemodptr[no].paramvals[21];
+    return no;
+}
 
                    
 /*==============================================================================
@@ -174,66 +219,31 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double n;             /* degradation model parameter */
     double c;             /* degradation model parameter */
 
-    double A2;             /* degradation model parameter */
-    double Ea2;            /* degradation model parameter */
-    double b2;             /* degradation model parameter */
-    double L12;            /* degradation model parameter */
-    double L22;            /* degradation model parameter */
-    double n2;             /* degradation model parameter */
-    double c2;             /* degradation model parameter */
-
     degLocal_Data_t *loc;        /* Pointer to local static data, not to be included
                                        in the state vector */
-
-    struct agemod *agemods = cm_get_deg_params();
 
     if (ANALYSIS == MIF_AC) {
         return;
     }
 
-    if (!agemods) {
-        return;
-    }
-
-    if(!agemods[0].devmodel)
-        return;
-
     /* Retrieve frequently used parameters... */
-/*
-    A = PARAM(A);
-    Ea = PARAM(Ea);
-    b = PARAM(b);
-    L1 = PARAM(L1);
-    L2 = PARAM(L2);
-    n = PARAM(n);
-    c = PARAM(c);
-
-    A2 = agemods[0].paramvals[8];
-    Ea2 = agemods[0].paramvals[9];
-    b2 = agemods[0].paramvals[10];
-    c2 = agemods[0].paramvals[11];
-    n2 = agemods[0].paramvals[12];
-    L12 = agemods[0].paramvals[13];
-    L22 = agemods[0].paramvals[14];
-*/
-    A = agemods[0].paramvals[8];
-    Ea = agemods[0].paramvals[9];
-    b = agemods[0].paramvals[10];
-    c = agemods[0].paramvals[11];
-    n = agemods[0].paramvals[12];
-    L1 = agemods[0].paramvals[13];
-    L2 = agemods[0].paramvals[14];
 
     devmod = PARAM(devmod);
     tfut = PARAM(tfuture);
     L = PARAM(L);
     tsim = TSTOP;
 
-
     if (INIT==1) {
 
         double Temp = TEMPERATURE + 273.15;
-        
+        int err = -1, ii;
+        struct agemod *agemods = cm_get_deg_params();
+
+        if (!agemods || !agemods[0].devmodel) {
+            cm_message_send("Error: Could not find the degradation model data!\n");
+            cm_cexit(1);
+        }
+
         if (PORT_SIZE(nodes) != 4)
         {
             cm_message_send("Error: only devices with exactly 4 node are currently supported\n");
@@ -245,16 +255,25 @@ void cm_degmon(ARGS)  /* structure holding parms,
         /*** allocate static storage for *loc ***/
         if ((loc = (degLocal_Data_t *) (STATIC_VAR(locdata) = calloc(1,
                 sizeof(degLocal_Data_t)))) == (degLocal_Data_t *) NULL) {
-            cm_message_send("Unable to allocate Local_Data_t "
-                "in cm_degmon()");
-            return;
+            cm_message_send("Error: Unable to allocate Local_Data_t "
+                "in code model degmon");
+            cm_cexit(1);
         }
 
-        loc->constfac[0] = c * A * exp(Ea / k / Temp) * (L1 + pow((1 / L / 1e6) , L2));
+        /* use agemods as input to set the agemodel model parameters,
+           e.g. loc->A[3] */
+        err = getdata(agemods, loc, devmod);
+        if (err == -1){
+            cm_message_send("Error: Could not retrieve the degradation model info!\n");
+            cm_cexit(1);
+        }
 
-        loc->sintegral[0] = 0.;
-
-        loc->prevtime[0] = 0.;
+        for (ii=0; ii < 3; ii++) {
+            loc->constfac[ii] = loc->c[ii] * loc->A[ii] * exp(loc->Ea[ii] / k / Temp) 
+                * (loc->L1[ii] + pow((1 / L / 1e6) , loc->L2[ii]));
+            loc->sintegral[ii] = 0.;
+            loc->prevtime[ii] = 0.;
+        }
 /*
         cm_message_send(INSTNAME);
         cm_message_send(INSTMODNAME);
@@ -262,52 +281,61 @@ void cm_degmon(ARGS)  /* structure holding parms,
     }
     else {
 
+        int ii;
+
         if (ANALYSIS == MIF_DC) {
             return;
         }
 
-        double x1, x2;
-
         /* retrieve previous values */
         loc = STATIC_VAR (locdata);
 
-        constfac = loc->constfac[0];
-        sintegral = loc->sintegral[0];
-        prevtime = loc->prevtime[0];
-
-        /* final time step quasi reached */
-        if (sintegral > 1e90) {
+        if (!loc)
             return;
-        }
 
         vd = INPUT(nodes[0]);
         vg = INPUT(nodes[1]);
         vs = INPUT(nodes[2]);
         vb = INPUT(nodes[3]);
 
-        if (vd - vs > 0 && prevtime < T(0)) {
-            /**** model equations 1 ****/
-            x1 = 1. / (constfac * exp (b / (vd - vs)));
-            x2 = -1. / n;
-            sintegrand = pow(x1 , x2);
-            sintegral = sintegral + sintegrand * (T(0) - T(1));
-            /***************************/
-            prevtime = T(0);
-        }
 
-        /* test output */
-        OUTPUT(mon) = sintegral;
+        for (ii = 0; ii < 3; ii++) {
+            double x1, x2;
+            constfac = loc->constfac[ii];
+            sintegral = loc->sintegral[ii];
+            prevtime = loc->prevtime[ii];
+            b = loc->b[ii];
+            n = loc->n[ii];
+            c = loc->c[ii];
 
-        if (T(0) > 0.99999 * tsim) {
-            /**** model equations 2 ****/
-            sintegral = sintegral * tfut / tsim;
-            deg = 1. / (c * (pow(sintegral, -1.* n)));
-            /***************************/
-            cm_message_printf("Degradation deg = %e\n", deg);
-            sintegral = 1e99; // flag final time step
+            /* final time step quasi reached */
+            if (sintegral > 1e90) {
+                return;
+            }
+
+            if (vd - vs > 0 && prevtime < T(0)) {
+                /**** model equations 1 ****/
+                x1 = 1. / (constfac * exp (b / (vd - vs)));
+                x2 = -1. / n;
+                sintegrand = pow(x1 , x2);
+                sintegral = sintegral + sintegrand * (T(0) - T(1));
+                /***************************/
+                prevtime = T(0);
+            }
+
+            /* test output */
+            OUTPUT(mon) = sintegral;
+
+            if (T(0) > 0.99999 * tsim) {
+                /**** model equations 2 ****/
+                sintegral = sintegral * tfut / tsim;
+                deg = 1. / (c * (pow(sintegral, -1.* n)));
+                /***************************/
+                cm_message_printf("no. %d, Degradation deg = %e\n", ii, deg);
+                sintegral = 1e99; // flag final time step
+            }
+            loc->sintegral[ii] = sintegral;
+            loc->prevtime[ii] = prevtime;
         }
-        loc->constfac[0] = constfac;
-        loc->sintegral[0] = sintegral;
-        loc->prevtime[0] = prevtime;
     }
 }
