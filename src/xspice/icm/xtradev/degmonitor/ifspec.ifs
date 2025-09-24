@@ -63,53 +63,6 @@ Vector_Bounds:      -
 Null_Allowed:       yes
 
 
-PARAMETER_TABLE:
-
-Parameter_Name:     a                        ea
-Description:        "A"                      "Ea"
-Data_Type:          real                     real
-Default_Value:      -0.00139                 -0.01185
-Limits:             -                        -
-Vector:              no                      no
-Vector_Bounds:       -                       -
-Null_Allowed:       yes                      yes
-
-
-PARAMETER_TABLE:
-
-Parameter_Name:     b                      L1
-Description:        "b"                    "L1"
-Data_Type:          real                   real
-Default_Value:      -14.749                0.37197
-Limits:             -                      -
-Vector:              no                    no
-Vector_Bounds:       -                      -
-Null_Allowed:       yes                    yes
-
-
-PARAMETER_TABLE:
-
-Parameter_Name:     L2                     n
-Description:        "L2"                   "n"
-Data_Type:          real                   real
-Default_Value:      4.01997                0.36785
-Limits:             -                      -
-Vector:              no                    no
-Vector_Bounds:      -                      -
-Null_Allowed:       yes                    yes
-
-PARAMETER_TABLE:
-
-Parameter_Name:     c
-Description:        "c"
-Data_Type:          real
-Default_Value:      -1.108
-Limits:             -
-Vector:             no
-Vector_Bounds:      -
-Null_Allowed:       yes
-
-
 STATIC_VAR_TABLE:
 
 Static_Var_Name:    locdata
