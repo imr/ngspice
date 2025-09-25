@@ -492,6 +492,10 @@ next1:
                     }
                     if (selfheat)
                     {
+                        if (ckt->CKTmode & MODEINITTRAN) {
+                            *(ckt->CKTstate1 + here->DIOqth) =
+                                    *(ckt->CKTstate0 + here->DIOqth);
+                        }
                         error = NIintegrate(ckt, &gcTt, &ceqqth, model->DIOcth0, here->DIOqth);
                         if (error) return(error);
                         if (ckt->CKTmode & MODEINITTRAN) {
