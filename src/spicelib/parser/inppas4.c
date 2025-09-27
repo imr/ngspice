@@ -57,8 +57,24 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
             int nn = node->number;
             char* devname = tprintf("capac%dshunt", nn);
 
-            (*(ft_sim->newInstance))(ckt, tab->defCmod, &fast, devname);
-            txfree(devname);
+            fast = (*(ft_sim->findInstance))(ckt, devname);
+            if (fast) {
+                fprintf(stderr,
+                    "WARNING: non-cshunt instance %s already exists\n",
+                    devname);
+                tfree(devname);
+                continue;
+            }
+            error = (*(ft_sim->newInstance))(ckt, tab->defCmod, &fast, devname);
+            if (error) {
+                fprintf(stderr,
+                    "ERROR: cshunt newInstance status %d devname %s\n",
+                    error, devname);
+                tfree(devname);
+                continue;
+            }
+            /* devname is eventually freed when INPtabEnd is called */
+            INPinsert(&devname, tab);
 
            /* the top node, second node is gnd automatically */
             (*(ft_sim->bindNode))(ckt, fast, 1, node);
