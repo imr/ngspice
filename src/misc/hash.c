@@ -32,7 +32,9 @@ REVISIONS:
 /* definitions local to this file only */
 
 #ifdef XSPICECM
-#define fprintf(stderr, X) cm_message_printf(X)
+#include "ngspice/cmproto.h"
+#undef fprintf
+#define fprintf(stderr, ...) cm_message_printf(__VA_ARGS__)
 #endif
 
 /* ********************** TYPE DEFINITIONS ************************* */
