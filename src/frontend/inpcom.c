@@ -110,6 +110,8 @@ struct func_temper
 
 extern void line_free_x(struct card *deck, bool recurse);
 
+extern int readdegparams(struct card* deck);
+
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
 int dynmaxline; /* inpcom.c 1529 */

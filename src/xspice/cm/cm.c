@@ -63,10 +63,8 @@ NON-STANDARD FEATURES
 #include "ngspice/cktdefs.h"
 #include "ngspice/cpextern.h"
 //#include "util.h"
+
 extern struct agemod agemods;
-
-
-
 
 static void cm_static_integrate(int byte_index,
                                 double integrand,
