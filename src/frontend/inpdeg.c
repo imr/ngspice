@@ -28,6 +28,7 @@ struct agemod {
     char *paramvalstr[DEGPARAMAX];
     double paramvals[DEGPARAMAX];
     bool paramread[DEGPARAMAX];
+    NGHASHPTR paramhash;
 } agemods[DEGMODMAX];
 
 int readdegparams (struct card *deck) {
@@ -48,6 +49,8 @@ int readdegparams (struct card *deck) {
                 *card->line = '*';
                 continue;
             }
+
+            agemods[ageindex].paramhash = nghash_init(64);
 
             card->line = inp_remove_ws(card->line);
 
@@ -94,12 +97,15 @@ int readdegparams (struct card *deck) {
                 agemods[ageindex].paramvalstr[parno] = f2;
                 char *fp = f2;
                 agemods[ageindex].paramvals[parno] = INPevaluate(&fp, &err, 1);
-                agemods[ageindex].paramread[parno] = FALSE;
-                parno++;
                 if (err != 0)
                     fprintf(stderr, "\nError: Could not evaluate parameter %s\n", f2);
-                else 
+                else {
+                    agemods[ageindex].paramread[parno] = FALSE;
+                    nghash_insert(agemods[ageindex].paramhash, f1, &(agemods[ageindex].paramvals[parno]));
+                    parno++;
                     agemods[ageindex].numparams = parno;
+                }
+
                 tfree(dftok);
             }
             ageindex++;
