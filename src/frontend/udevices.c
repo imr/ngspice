@@ -4,10 +4,16 @@
     Notes: To translate Pspice U* devices in a subcircuit containing
     U* instance and Pspice .model cards, two passes through the subcircuit
     are necessary. The first pass is to translate the timing models from
-    the .model cards. This timing delay information is stored. The second
-    pass is for translating the U* instance cards to generate equivalent
-    Xspice digital device instances and their timing delay .model cards
-    using the previously stored delays.
+    the .model cards. This timing delay information is stored. Also, during
+    the first pass each U* instance in the subcircuit is checked to see
+    if it can be translated.
+
+    The second pass is for translating the U* instance cards to generate
+    equivalent Xspice digital device instances and their timing delay
+    .model cards using the previously stored delays.
+
+    The two pass algorithm is implemented by the function u_instances()
+    in frontend/inpcompat.c.
 
     Some limitations are:
         No support for CONSTRAINT, RAM, ROM, STIM, PLAs.
@@ -21,24 +27,45 @@
         f_logicexp and f_pindly.
 
    First pass through a subcircuit. Call initialize_udevice() and read the
-   .model cards by calling u_process_model_line() (or similar) for each card,
-   The delays for the different types (ugate, utgate, ueff, ugff, udly) are stored
-   by get_delays_...() and add_delays_to_model_xlator(). Also, during the
-   first pass, check that each U* instance can be translated to Xspice.
+   .model cards by calling u_process_model_line() for each model card.
+   The delays for the different types (ugate, utgate, ueff, ugff, udly)
+   are stored by:
+     get_delays_ugate(), get_delays_utgate(), get_delays_ueff(),
+     get_delays_ugff(), get_delays_udly().
+
+   Also, during the first pass, verify that each U* instance can be translated
+   to Xspice by calling u_check_instance().
    If there are any .model or U* instance cards that cannot be processed
    in the .subckt, then there is no second pass and the .subckt is skipped.
 
    Second pass through a subcircuit. To translate each U* instance call
-   u_process_instance_line() (or similar). This calls translate_...()
-   functions for gates, tristate, flip-flops and latches. translate_...()
-   calls add_..._inout_timing_model() to parse the U* card, and then calls
-   gen_..._instance(). Creating new cards to replace the U* and .model
-   cards is done by calling replacement_udevice_cards(), which returns a
-   list of new cards. The list of cards is then to be inserted after the
-   .subckt card and before the .ends card.  This occurs in the driver
-   function u_instances() in frontend/inpcom.c.
-   Finally, call cleanup_udevice() before repeating the sequence for
-   another subcircuit.
+   u_process_instance(). This calls:
+     translate_gate(), translate_ff_latch(), translate_pull(),
+     translate_dlyline()
+   functions for gates, tristate, flip-flops, latches etc.
+
+   The translate functions call the corresponding:
+     add_gate_inout_timing_model(), add_array_inout_timing_model(),
+     add_compound_inout_timing_model(), add_dff_inout_timing_model(),
+     add_dltch_inout_timing_model(), add_jkff_inout_timing_model(),
+     add_srff_inout_timing_model()
+   when parsing the U* card to add inputs, outputs, and timing model
+   to an Xspice instance.
+
+   Finally, the translate functions call:
+     gen_gate_instance(), gen_compound_instance(), gen_dff_instance(),
+     gen_jkff_instance(), gen_dltch_instance(), gen_srff_instance().
+
+   Each gen_..._instance() creates new cards to replace the U* and .model
+   cards.
+
+   If all the U* instances and timing models in the subcircuit can be
+   translated, the driver function u_instances() (in inpcompat.c) will call
+     replacement_udevice_cards(),
+   which returns a list of new cards. The list of cards is then inserted
+   after the .subckt card and before the .ends card.
+   Finally, the driver calls cleanup_udevice() before repeating the sequence
+   for another subcircuit.
 
    More explanations are provided below in comments with NOTE.
 */
