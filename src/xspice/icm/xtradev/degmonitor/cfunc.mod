@@ -47,6 +47,8 @@ NON-STANDARD FEATURES
 
 #include "ngspice/mifdefs.h"
 #include "ngspice/ngspice.h"
+#include "ngspice/hash.h"
+#include "ngspice/stringutil.h"
 #include <string.h>
 
 /*=== CONSTANTS ========================*/
@@ -72,6 +74,7 @@ struct agemod {
     char *paramvalstr[DEGPARAMAX];
     double paramvals[DEGPARAMAX];
     bool paramread[DEGPARAMAX];
+    NGHASHPTR paramhash;
 } *agemodptr;
 
 /* This struct is model-specific: We need three data sets for dlt_vth [0],
@@ -80,7 +83,7 @@ typedef struct {
     double    constfac[3];   /* intermediate factor */
     double    sintegral[3];  /* intermediate intgral */
     double    prevtime[3];   /* previous time */
-
+    double VGS0;             /* degradation model parameter */
     double A[3];             /* degradation model parameter */
     double Ea[3];            /* degradation model parameter */
     double b[3];             /* degradation model parameter */
@@ -119,6 +122,63 @@ int
 getdata(struct agemod *agemodptr, degLocal_Data_t *loc, char *devmod)
 {
     int no; /* which device model */
+    int ii, jj;
+
+    /* all parameters lower case!
+       At most 64 parameters are supported! */
+    static char *names[] = {
+        "vgs0",
+        "a_dlt_vth",
+        "ea_dlt_vth",
+        "b_dlt_vth",
+        "c_dlt_vth",
+        "n_dlt_vth",
+        "l1_dlt_vth",
+        "l2_dlt_vth",
+        "a_d_idlin",
+        "ea_d_idlin",
+        "b_d_idlin",
+        "c_d_idlin",
+        "n_d_idlin",
+        "l1_d_idlin",
+        "l2_d_idlin",
+        "a_d_idsat",
+        "ea_d_idsat",
+        "b_d_idsat",
+        "c_d_idsat",
+        "n_d_idsat",
+        "l1_d_idsat",
+        "l2_d_idsat"
+    };
+/*
+    static char *names[] = {
+        "VGS0",
+        "A_dlt_vth",
+        "Ea_dlt_vth",
+        "B_dlt_vth",
+        "C_dlt_vth",
+        "n_dlt_vth",
+        "L1_dlt_vth",
+        "L2_dlt_vth",
+        "A_d_idlin",
+        "Ea_d_idlin",
+        "B_d_idlin",
+        "C_d_idlin",
+        "n_d_idlin",
+        "L1_d_idlin",
+        "L2_d_idlin",
+        "A_d_idsat",
+        "Ea_d_idsat",
+        "B_d_idsat",
+        "C_d_idsat",
+        "n_d_idsat",
+        "L1_d_idsat",
+        "L2_d_idsat"
+    };
+*/
+    double pvals[64];
+
+
     for (no = 0; no < 64; no++) {
        if (!agemodptr[no].devmodel){
            cm_message_printf("Error: Could not find device model %s in the degradation model data!\n", devmod);
@@ -132,28 +192,43 @@ getdata(struct agemod *agemodptr, degLocal_Data_t *loc, char *devmod)
         cm_cexit(1);
     }
 
-    loc->A[0] = agemodptr[no].paramvals[1];
-    loc->Ea[0] = agemodptr[no].paramvals[2];
-    loc->b[0] = agemodptr[no].paramvals[3];
-    loc->c[0] = agemodptr[no].paramvals[4];
-    loc->n[0] = agemodptr[no].paramvals[5];
-    loc->L1[0] = agemodptr[no].paramvals[6];
-    loc->L2[0] = agemodptr[no].paramvals[7];
-    loc->A[1] = agemodptr[no].paramvals[8];
-    loc->Ea[1] = agemodptr[no].paramvals[9];
-    loc->b[1] = agemodptr[no].paramvals[10];
-    loc->c[1] = agemodptr[no].paramvals[11];
-    loc->n[1] = agemodptr[no].paramvals[12];
-    loc->L1[1] = agemodptr[no].paramvals[13];
-    loc->L2[1] = agemodptr[no].paramvals[14];
-    loc->A[2] = agemodptr[no].paramvals[15];
-    loc->Ea[2] = agemodptr[no].paramvals[16];
-    loc->b[2] = agemodptr[no].paramvals[17];
-    loc->c[2] = agemodptr[no].paramvals[18];
-    loc->n[2] = agemodptr[no].paramvals[19];
-    loc->L1[2] = agemodptr[no].paramvals[20];
-    loc->L2[2] = agemodptr[no].paramvals[21];
+    /* Retrive model parameters from hash table. Sequence in pvals[i] is as set by names[i] above. */
+    for (ii = 0; ii < agemodptr[no].numparams; ii++) {
+        double* fval;
+        fval = (double*)nghash_find(agemodptr[no].paramhash, names[ii]);
+        if (fval){
+            pvals[ii] = *fval;
+        }
+        else { /* error */
+            cm_message_printf("Error: Could not retrieve parameter %s from the degradation model data!\n", names[ii]);
+            cm_cexit(1);
+        }
+    }
+    /* loc->xxx selected according to the sequence given in names[i]. */
+    loc->VGS0 = pvals[0];
+    loc->A[0] = pvals[1];
+    loc->Ea[0] = pvals[2];
+    loc->b[0] = pvals[3];
+    loc->c[0] = pvals[4];
+    loc->n[0] = pvals[5];
+    loc->L1[0] = pvals[6];
+    loc->L2[0] = pvals[7];
+    loc->A[1] = pvals[8];
+    loc->Ea[1] = pvals[9];
+    loc->b[1] = pvals[10];
+    loc->c[1] = pvals[11];
+    loc->n[1] = pvals[12];
+    loc->L1[1] = pvals[13];
+    loc->L2[1] = pvals[14];
+    loc->A[2] = pvals[15];
+    loc->Ea[2] = pvals[16];
+    loc->b[2] = pvals[17];
+    loc->c[2] = pvals[18];
+    loc->n[2] = pvals[19];
+    loc->L1[2] = pvals[20];
+    loc->L2[2] = pvals[21];
     return no;
+
 }
 
                    
