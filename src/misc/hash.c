@@ -24,10 +24,16 @@ DATE:	    Jul  7, 1988 - original coding.
             1988 - 2009 many updates...
 REVISIONS:
 ----------------------------------------------------------------- */
+
+
 #include "ngspice/ngspice.h"
 #include "ngspice/hash.h"
 
 /* definitions local to this file only */
+
+#ifdef XSPICECM
+#define fprintf(stderr, X) cm_message_printf(X)
+#endif
 
 /* ********************** TYPE DEFINITIONS ************************* */
 #define  PRIMECOUNT   200
@@ -546,7 +552,7 @@ void * nghash_insert(NGHASHPTR hashtable, void * user_key, void * data)
     table[hsum] = curTable = NGMALLOC(1,NGTABLEBOX);
     curTable->data = data ;
     if( hashtable->hash_func == NGHASH_DEF_HASH(NGHASH_FUNC_STR) ) {
-        curTable->key = copy((char *) user_key);
+        curTable->key = strdup((char *) user_key);
     } else {
         curTable->key = user_key ;
     }
