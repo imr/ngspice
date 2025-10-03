@@ -1490,7 +1490,10 @@ int main(int argc, char **argv)
             gotone = FALSE; // Re-use
 
             if (tempfile && (!err || !ft_batchmode)) {
-                /* Copy the input file name for becoming another file search path */
+                /* Parsing the circuit 1.
+                   This is the next major step:
+                   Source the input file, then parse the data and create the circuit.
+                   Copy the input file name for becoming another file search path */
                 if (inp_spsource(tempfile, FALSE, dname, FALSE) != 0) {
                     fprintf(stderr, "    Simulation interrupted due to error!\n\n");
                     if (ft_stricterror || (oflag && !cp_getvar("interactive", CP_BOOL, NULL, 0)))

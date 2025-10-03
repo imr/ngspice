@@ -8,9 +8,8 @@ Author: 1985 Thomas L. Quarles
 #include "inppas1.h"
 
 /*
- * The first pass of the circuit parser just looks for '.model' lines
- */
-
+   The first pass of the circuit parser just looks for '.model' lines,
+   and sticks model into model table tab. */
 void INPpas1(CKTcircuit *ckt, struct card *deck, INPtables * tab)
 {
     struct card *current;
