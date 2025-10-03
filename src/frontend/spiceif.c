@@ -93,8 +93,9 @@ static int finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel *
 /* espice fix integration */
 static int finddev_special(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr, int *device_or_model);
 
-/* Input a single deck, and return a pointer to the circuit. */
-
+/* Input a single deck, and return a pointer to the circuit. 
+   Parse all models in function INPpas1, instances (devices) in INPpas2,
+   consider initial conditions (INPpas3), and shunt capacitors (INPpas4). */
 CKTcircuit *
 if_inpdeck(struct card *deck, INPtables **tab)
 {
@@ -162,16 +163,23 @@ if_inpdeck(struct card *deck, INPtables **tab)
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
 
-    /* Parse the .model lines. Enter the model into the global model table modtab. */
     modtab = NULL;
     modtabhash = NULL;
-    /* Parse .model lines, put them into 'tab' */
+    /* Parsing the circuit 7.
+       This is the next major step:
+       Parse the .model lines.
+       Enter the model into the global model table modtab
+       and into the corresponding hash table modtabhash.
+       The role of 'tab' is unclear (not used any more?). */
     INPpas1(ckt, deck->nextcard, *tab);
-    /* store the new model table in the current circuit */
+    /* store the new model tables in the current circuit */
     ft_curckt->ci_modtab = modtab;
     ft_curckt->ci_modtabhash = modtabhash;
 
-    /* Scan through the instance lines and parse the circuit. */
+    /* Parsing the circuit 8.
+       This is the next major step:
+       Scan through the instance lines and parse the circuit.
+       Set up the circuit matrix. */
     INPpas2(ckt, deck->nextcard, *tab, ft_curckt->ci_defTask);
 #ifdef XSPICE
     if (!Evtcheck_nodes(ckt, *tab)) {

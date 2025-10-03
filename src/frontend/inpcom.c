@@ -1054,6 +1054,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
     /* set the members of the compatibility structure */
     set_compat_mode();
 
+    /* Parsing the circuit 3.
+       This is the next major step:
+       Reading the netlist line by line, handle .include and .lib,
+       line continuation and upper/lower casing */
     rv = inp_read(fp, 0, dir_name, file_name, comfile, intfile);
     cc = rv.cc;
 
