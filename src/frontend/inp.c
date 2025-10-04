@@ -989,8 +989,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                             continue;
                         /* Only truncated .model lines */
                         if (ciprefix(".model", tc->line)) {
-                            fprintf(fdo, "%6d  %.100s ...\n",
+                            fprintf(fdo, "%6d  %.100s ",
                                 tc->linenum, tc->line);
+                            if (strlen(tc->line) > 100)
+                                fprintf(fdo, " ... (truncated)");
+                            fprintf(fdo, "\n");
                         }
                         else {
                             fprintf(fdo, "%6d  %s\n",

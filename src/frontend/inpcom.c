@@ -1245,8 +1245,11 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
                         continue;
                     /* Only truncated .model lines */
                     if (ciprefix(".model", t->line)) {
-                        fprintf(fd, "%6d  %.100s ...\n",
+                        fprintf(fd, "%6d  %.100s ",
                             t->linenum, t->line);
+                        if (strlen(t->line) > 100)
+                            fprintf(fd, " ... (truncated)");
+                        fprintf(fd, "\n");
                     }
                     else {
                         fprintf(fd, "%6d  %s\n",
