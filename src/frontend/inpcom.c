@@ -1609,11 +1609,8 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             char* tmpstr = copy(nexttok(buffer));
             wl_append_word(&sourceinfo, &sourceinfo, tmpstr);
 
-            /* Add source of netlist data, for use in verbose error messages.
-               Set the compatibility mode flag to 1, if pslt is read. */
+            /*  Set the compatibility mode flag to 1, if pslt is read. */
             for (tmpcard = newcard; tmpcard; tmpcard = tmpcard->nextcard) {
-                /* skip *include */
-                tmpcard->linesource = tmpstr;
                 if (compset)
                     tmpcard->compmod = 1;
                 else
