@@ -9042,7 +9042,7 @@ static void inp_check_syntax(struct card *deck)
             acline = nexttok(acline);
             if (!acline) {
                 fprintf(stderr, "Error in line   %s\n", cut_line);
-                fprintf(stderr, "    Not enough parameters\n");
+                fprintf(stderr, "    Not enough parameters for %c source\n", *cut_line);
                 fprintf(stderr,
                     "    line no. %d from file %s\n",
                     card->linenum_orig, card->linesource);
