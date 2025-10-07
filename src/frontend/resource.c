@@ -339,9 +339,9 @@ printres(char *name)
                     ft_curckt->ci_ckt->CKTstat->devTimes[i]/(double)(ft_curckt->ci_ckt->CKTstat->devCounts[i])
                 );
             }
+            yy = TRUE;
         }
-        yy = TRUE;
-        
+
 #ifdef CIDER
 /* begin cider integration */
         if (!name || eq(name, "circuit") || eq(name, "task"))
