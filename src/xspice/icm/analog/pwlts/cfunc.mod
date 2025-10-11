@@ -13,6 +13,7 @@ AUTHORS
 
 Pwl with time input and smoothing: pwlts
      9 Sep 2022    Holger Vogt
+    10 Oct 2025    Holger Vogt
 
 SUMMARY
 
@@ -211,6 +212,46 @@ void cm_pwlts(ARGS)  /* structure holding parms,
             y[0] = 2. * y[1] - y[2];
             y[size - 1] = 2. * y[size - 2] - y[size - 3];
         }
+
+        /* See if input_domain is absolute...if so, test against   */
+        /* breakpoint segments for violation of 50% rule...        */
+        if (PARAM(fraction) == MIF_FALSE) {
+            if ( 3 < size ) {
+                for (i=1; i<(size-2); i++) {
+                    /* Test for overlap...0.999999999 factor is to      */
+                    /* prevent floating point problems with comparison. */
+                    if ( (test1 = x[i+1] - x[i]) <
+                         (test2 = 0.999999999 * (2.0 * input_domain)) ) {
+                        cm_message_send(limit_error);
+                    }
+                }
+            }
+        }
+
+        /* add permanent breakpoints */
+        if (PARAM(fraction) == MIF_FALSE) {
+            for (i=1; i<size-1; i++) {
+                if (x[i] - input_domain <= 0)
+                    continue;
+                cm_analog_set_perm_bkpt(x[i] - input_domain);
+                cm_analog_set_perm_bkpt(x[i]);
+                cm_analog_set_perm_bkpt(x[i] + input_domain);
+            }
+        }
+        else {
+            double dtlo, dthi, dt;
+            for (i=1; i<size-1; i++) {
+                dtlo = x[i] - x[i-1];
+                dthi = x[i+1] - x[i];
+                dt = ((dtlo >= dthi) ? dthi : dtlo) * input_domain;
+                if (x[i] - dt <= 0)
+                    continue;
+                cm_analog_set_perm_bkpt(x[i] - dt);
+                cm_analog_set_perm_bkpt(x[i]);
+                cm_analog_set_perm_bkpt(x[i] + dt);
+            }
+        }
+
         /* debug printout
         for (i = 0; i < size; i++)
            fprintf(stderr, "%e ", y[i]);
@@ -226,22 +267,6 @@ void cm_pwlts(ARGS)  /* structure holding parms,
         x = (double *) STATIC_VAR(x);
 
         y = (double *) STATIC_VAR(y);
-
-    }
-
-    /* See if input_domain is absolute...if so, test against   */
-    /* breakpoint segments for violation of 50% rule...        */
-    if (PARAM(fraction) == MIF_FALSE) {
-        if ( 3 < size ) {
-            for (i=1; i<(size-2); i++) {
-                /* Test for overlap...0.999999999 factor is to      */
-                /* prevent floating point problems with comparison. */
-                if ( (test1 = x[i+1] - x[i]) <
-                     (test2 = 0.999999999 * (2.0 * input_domain)) ) {
-                    cm_message_send(limit_error);
-                }
-            }
-        }
 
     }
 

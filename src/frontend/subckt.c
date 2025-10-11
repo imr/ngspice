@@ -97,11 +97,10 @@ struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, int flen, char *actual, const char *subname);
 static char *gettrans(const char *name, const char *name_end, bool *isglobal);
-static int numnodes(const char *line, struct subs *subs, wordlist const *modnames);
+static int numnodes(const char *line);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
-static int inp_numnodes(char c);
 
 /* hash table to store the global nodes
  * For now its use is limited to avoid double entries in global_nodes[] */
@@ -1384,9 +1383,11 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
             tfree(name);
             bxx_putc(&buffer, ' ');
 
-            /* Next iterate over all nodes (netnames) found and translate them. */
-            nnodes = numnodes(c->line, subs, modnames);
+            /* Next iterate over all nodes (netnames) found and translate them.
+             * Ignore controlling nodes as they get special treatment for POLY.
+             */
 
+            nnodes = numnodes(c->line);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
@@ -1476,13 +1477,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
             tfree(name);
             bxx_putc(&buffer, ' ');
 
-            /* FIXME anothet hack: if no models found for m devices, set number of nodes to 4 */
-            if (!modnames && *(c->line) == 'm')
-                nnodes = get_number_terminals(c->line);
-            else if (*(c->line) == 'n')
-                nnodes = get_number_terminals(c->line);
-            else
-                nnodes = numnodes(c->line, subs, modnames);
+            nnodes = numnodes(c->line);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
@@ -1692,91 +1687,23 @@ gettrans(const char *name, const char *name_end, bool *isglobal)
 }
 
 
-/*-------------------------------------------------------------------*/
-/*-------------------------------------------------------------------*/
+/* Control nodes for E and G sources are not counted as they vary in
+ * the case of POLY. The count returned by get_number_terminals() includes
+ * devices for K (mutual inductors) and W (current-controlled switch).
+ */
+
 static int
-numnodes(const char *line, struct subs *subs, wordlist const *modnames)
+numnodes(const char *line)
 {
-    /* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
-    /* 'A' type devices since the callers will not know how to find the */
-    /* nodes even if they know how many there are.  Modify the callers  */
-    /* instead.                                                         */
-    /* gtri - end - wbk - 10/23/90 */
-    char c;
-    int n;
-
-    line = skip_ws(line);
-
-    c = tolower_c(*line);
-
-    if (c == 'x') {     /* Handle this ourselves. */
-        const char *xname_e = skip_back_ws(strchr(line, '\0'), line);
-        const char *xname = skip_back_non_ws(xname_e, line);
-        for (; subs; subs = subs->su_next)
-            if (eq_substr(xname, xname_e, subs->su_name))
-                return subs->su_numargs;
-        /*
-         * number of nodes not known so far.
-         * lets count the nodes ourselves,
-         * assuming `buf' looks like this:
-         *    xname n1 n2 ... nn subname
-         */
-        {
-            int nodes = -2;
-            while (*line) {
-                nodes++;
-                line = skip_ws(skip_non_ws(line));
-            }
-            return (nodes);
-        }
+    switch (*line) {
+    case 'e':
+    case 'g':
+    case 'w':
+        return 2;
+    case 'k':
+        return 0;
     }
-    /* if we use option skywaterpdk, MOS has four nodes. Required if number of devices is large */
-    if (ft_skywaterpdk && c == 'm')
-        return 4;
-
-    n = inp_numnodes(c);
-
-    /* Added this code for variable number of nodes on certain devices.  */
-    /* The consequence of this code is that the value returned by the    */
-    /* inp_numnodes(c) call must be regarded as "maximum number of nodes */
-    /* for a given device type.                                          */
-    /* Paolo Nenzi Jan-2001                                              */
-
-    /* If model names equal node names, this code will fail! */
-    if ((c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
-        char *s = nexttok(line);       /* Skip the instance name */
-        int gotit = 0;
-        int i = 0;
-
-        while ((i <= n) && (*s) && !gotit) {
-            char *t = gettok_node(&s);       /* get nodenames . . .  */
-            const wordlist *wl;
-            for (wl = modnames; wl; wl = wl->wl_next)
-                if (model_name_match(t, wl->wl_word)) {
-                    gotit = 1;
-                    break;
-                }
-            i++;
-            tfree(t);
-        }
-
-        /* Note: node checks must be done on #_of_node-1 because the */
-        /* "while" cycle increments the counter even when a model is */
-        /* recognized. This code may be better!                      */
-
-        if ((i < 4) && ((c == 'm') || (c == 'q'))) {
-            fprintf(cp_err, "Error: too few nodes for MOS or BJT: %s\n", line);
-            return (0);
-        }
-        if ((i < 5) && (c == 'p')) {
-            fprintf(cp_err, "Error: too few nodes for CPL: %s\n", line);
-            return (0);
-        }
-        return (i-1); /* compensate the unnecessary increment in the while cycle */
-    } else {
-        /* for all other elements */
-        return (n);
-    }
+    return get_number_terminals((char *)line);
 }
 
 
@@ -2285,79 +2212,4 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
     }
 
     bxx_free(&buffer);
-}
-
-
-/*----------------------------------------------------------------------*
- * inp_numnodes returns the maximum number of nodes (netnames) attached
- * to the component.
- * This is a spice-dependent thing.  It should probably go somewhere
- * else, but...  Note that we pretend that dependent sources and mutual
- * inductors have more nodes than they really do...
- *----------------------------------------------------------------------*/
-static int
-inp_numnodes(char c)
-{
-    if (isupper_c(c))
-        c = tolower_c(c);
-    switch (c) {
-    case ' ':
-    case '\t':
-    case '.':
-    case 'x':
-    case '*':
-    case '$':
-        return (0);
-
-    case 'b':
-        return (2);
-    case 'c':
-        return (2);
-    case 'd':
-        return (3);
-    case 'e':
-        return (2); /* changed from 4 to 2 by SDB on 4.22.2003 to enable POLY */
-    case 'f':
-        return (2);
-    case 'g':
-        return (2); /* changed from 4 to 2 by SDB on 4.22.2003 to enable POLY */
-    case 'h':
-        return (2);
-    case 'i':
-        return (2);
-    case 'j':
-        return (3);
-    case 'k':
-        return (0);
-    case 'l':
-        return (2);
-    case 'm':
-        return (7); /* This means that 7 is the maximun number of nodes */
-    case 'o':
-        return (4);
-    case 'p':
-        return (18);/* 16 lines + 2 gnd is the maximum number of nodes for CPL */
-    case 'q':
-        return (5);
-    case 'r':
-        return (2);
-    case 's':
-        return (4);
-    case 't':
-        return (4);
-    case 'u':
-        return (3);
-    case 'v':
-        return (2);
-    case 'w':
-        return (2); /* change 3 to 2 here to fix w bug, NCF 1/31/95 */
-    case 'y':
-        return (4);
-    case 'z':
-        return (3);
-
-    default:
-        fprintf(cp_err, "Warning: unknown device type: %c\n", c);
-        return (2);
-    }
 }

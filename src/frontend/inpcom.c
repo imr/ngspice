@@ -1054,6 +1054,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
     /* set the members of the compatibility structure */
     set_compat_mode();
 
+    /* Parsing the circuit 3.
+       This is the next major step:
+       Reading the netlist line by line, handle .include and .lib,
+       line continuation and upper/lower casing */
     rv = inp_read(fp, 0, dir_name, file_name, comfile, intfile);
     cc = rv.cc;
 
@@ -1241,8 +1245,11 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
                         continue;
                     /* Only truncated .model lines */
                     if (ciprefix(".model", t->line)) {
-                        fprintf(fd, "%6d  %.100s ...\n",
+                        fprintf(fd, "%6d  %.100s ",
                             t->linenum, t->line);
+                        if (strlen(t->line) > 100)
+                            fprintf(fd, " ... (truncated)");
+                        fprintf(fd, "\n");
                     }
                     else {
                         fprintf(fd, "%6d  %s\n",
@@ -1602,11 +1609,8 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             char* tmpstr = copy(nexttok(buffer));
             wl_append_word(&sourceinfo, &sourceinfo, tmpstr);
 
-            /* Add source of netlist data, for use in verbose error messages.
-               Set the compatibility mode flag to 1, if pslt is read. */
+            /*  Set the compatibility mode flag to 1, if pslt is read. */
             for (tmpcard = newcard; tmpcard; tmpcard = tmpcard->nextcard) {
-                /* skip *include */
-                tmpcard->linesource = tmpstr;
                 if (compset)
                     tmpcard->compmod = 1;
                 else
@@ -9038,7 +9042,7 @@ static void inp_check_syntax(struct card *deck)
             acline = nexttok(acline);
             if (!acline) {
                 fprintf(stderr, "Error in line   %s\n", cut_line);
-                fprintf(stderr, "    Not enough parameters\n");
+                fprintf(stderr, "    Not enough parameters for %c source\n", *cut_line);
                 fprintf(stderr,
                     "    line no. %d from file %s\n",
                     card->linenum_orig, card->linesource);

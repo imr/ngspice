@@ -530,7 +530,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    /* inp_source() called with fp: load from file, */
+    /* Parsing the circuit 2.
+       This is the next major step:
+       inp_source() called with fp: load circuit netlist from file, */
     /* called with *fp == NULL and intfile: we want to load circuit from circarray */
     if (fp || intfile) {
         deck = inp_readall(fp, dir_name, filename, comfile, intfile, &expr_w_temper);
@@ -931,7 +933,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 }
             }
 
-            /* Now expand subcircuit macros and substitute numparams.*/
+            /* Parsing the circuit 4.
+               This is the next major step:
+               Expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", CP_BOOL, NULL, 0))
                 if ((deck->nextcard = inp_subcktexpand(deck->nextcard)) == NULL) {
                     line_free(realdeck, TRUE);
@@ -985,8 +989,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                             continue;
                         /* Only truncated .model lines */
                         if (ciprefix(".model", tc->line)) {
-                            fprintf(fdo, "%6d  %.100s ...\n",
+                            fprintf(fdo, "%6d  %.100s ",
                                 tc->linenum, tc->line);
+                            if (strlen(tc->line) > 100)
+                                fprintf(fdo, " ... (truncated)");
+                            fprintf(fdo, "\n");
                         }
                         else {
                             fprintf(fdo, "%6d  %s\n",
@@ -1084,7 +1091,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
            if (newcompat.hs || newcompat.spe)
               rem_unused_mos_models(deck->nextcard);
 #endif
-            /* now load deck into ft_curckt -- the current circuit. */
+            /* Parsing the circuit 5.
+               This is the next major step:
+               load deck into ft_curckt -- the current circuit. */
             if(inp_dodeck(deck, tt, wl_first, FALSE, options, filename) != 0)
                 return 1;
 
@@ -1411,6 +1420,10 @@ inp_dodeck(
      *---------------------------------------------------*/
     if (!noparse) {
         startTime = seconds();
+        /* Parsing the circuit 6.
+           This is the next major step:
+           Input a single deck, and return a pointer to the circuit.
+           Parse all models and instances */
         ckt = if_inpdeck(deck, &tab);
         ft_curckt->FTEstats->FTESTATnetParseTime = seconds() - startTime;
         /* if .probe, rename the current measurement node vcurr_ */

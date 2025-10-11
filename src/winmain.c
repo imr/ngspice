@@ -1340,7 +1340,9 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     /* Wait until everything is settled */
     WaitForIdle();
 
-    /* Go to main() */
+    /* Parsing the command line.
+       This is the next major step:
+       Go to main() for reading the start command line and preparing the simulator. */
     nReturnCode = xmain(argc, argv);
 
 THE_END:
