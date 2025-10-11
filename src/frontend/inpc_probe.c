@@ -48,6 +48,7 @@ void inp_probe(struct card* deck)
     int skip_control = 0;
     int skip_subckt = 0;
     wordlist* probes = NULL, *probeparams = NULL, *wltmp, *allsaves = NULL;
+    wordlist *next_wl = NULL;
     bool haveall = FALSE, havedifferential = FALSE, t = TRUE, havesave = FALSE;
     NGHASHPTR instances;   /* instance hash table */
     int ee = 0; /* serial number for sources */
@@ -140,7 +141,12 @@ void inp_probe(struct card* deck)
         }
     }
     /* don't free the wl_word, they belong to the cards */
-    tfree(probes);
+    wltmp = probes;
+    while (wltmp) {
+        next_wl = wltmp->wl_next;
+        tfree(wltmp); // Do not free the wl_word
+        wltmp = next_wl;
+    }
 
     /* Set up the hash table for all instances (instance name is key, data
        is the storage location of the card) */
@@ -188,6 +194,7 @@ void inp_probe(struct card* deck)
         if (!instname)
             continue;
         nghash_insert(instances, instname, card);
+        tfree(instname);
     }
 
     if (haveall || probeparams == NULL) {
@@ -882,6 +889,7 @@ void inp_probe(struct card* deck)
                 tmpcard = nghash_find(instances, instname);
                 if (!tmpcard) {
                     fprintf(stderr, "Warning: Could not find the instance line for %s,\n   .probe %s will be ignored\n", instname, wltmp->wl_word);
+                    tfree(instname);
                     continue;
                 }
                 char* thisline = tmpcard->line;
@@ -917,6 +925,7 @@ void inp_probe(struct card* deck)
                 else if (err == 3) {
                     fprintf(stderr, "Warning: Number of nodes mismatch,\n   .probe %s will be ignored\n", wltmp->wl_word);
                 }
+                tfree(instname);
                 continue;
             }
             else if (!haveall) {
@@ -933,6 +942,9 @@ void inp_probe(struct card* deck)
             card = insert_new_line(card, newline, 0, card->linenum_orig, card->linesource);
         }
 
+    }
+    if (probeparams) {
+        wl_free(probeparams);
     }
     nghash_free(instances, NULL, NULL);
 }
