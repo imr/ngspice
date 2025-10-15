@@ -7,6 +7,13 @@ Modified: 2023 XSPICE breakpoint fix for shared ngspice by Vyacheslav Shevchuk
 
 /* subroutine to do DC TRANSIENT analysis */
 
+
+/* line   goto label:
+   373    nextTime
+   515    resume
+   788    past_breakpoint
+   987    chkStep */
+
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "cktaccept.h"
@@ -360,10 +367,9 @@ DCtran(CKTcircuit *ckt,
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
         }
-        goto resume; /* line 517 */
+        goto resume; /* line 515 */
     }
 
-/* 650 */
     nextTime:
 
     /* begin LTRA code addition */
@@ -818,7 +824,7 @@ resume:
                 goto nextTime; /* line 373 */
 #else
                 redostep = 0;
-                goto chkStep;
+                goto chkStep; /* line 987 */
 #endif
             }
             newdelta = ckt->CKTdelta;
@@ -845,7 +851,7 @@ resume:
                     EVTcall_hybrids(ckt);
                     if (g_mif_info.breakpoint.current < ckt->CKTtime) {
                         /* A hybrid requested a breakpoint in the past. */
-                        goto past_breakpoint;
+                        goto past_breakpoint; /* line 788 */
                     }
                 }
 #endif
@@ -905,7 +911,7 @@ resume:
                 goto nextTime;  /* line 373 */
 #else
                 redostep = 0;
-                goto chkStep;
+                goto chkStep;  /* line 987 */
 #endif
             } else {
                 /* not (newdelta > .9 * ckt->CKTdelta): reject the step
@@ -991,11 +997,11 @@ chkStep:
                  olddelta_for_shared_sync = 0.0;
         if(sharedsync(&ckt->CKTtime, &ckt->CKTdelta, olddelta_for_shared_sync, ckt->CKTfinalTime,
                  ckt->CKTdelmin, redostep, &ckt->CKTstat->STATrejected, 1) == 0)
-            goto nextTime;
+            goto nextTime; /* line 373 */
 #else
         if(sharedsync(&ckt->CKTtime, &ckt->CKTdelta, olddelta, ckt->CKTfinalTime,
                  ckt->CKTdelmin, redostep, &ckt->CKTstat->STATrejected, 1) == 0)
-            goto nextTime;
+            goto nextTime; /* line 373 */
 #endif // XSPICE
 #endif // SHARED_MODULE
 
