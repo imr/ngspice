@@ -5,8 +5,7 @@ Modified: 2000  AlansFixes
 Modified: 2023 XSPICE breakpoint fix for shared ngspice by Vyacheslav Shevchuk
 **********/
 
-/* subroutine to do DC TRANSIENT analysis
-        --- ONLY, unlike spice2 routine with the same name! */
+/* subroutine to do DC TRANSIENT analysis */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -21,15 +20,12 @@ extern struct dbcomm *dbs;
 #include "ngspice/ftedebug.h"
 
 #ifdef XSPICE
-/* gtri - add - wbk - Add headers */
 #include "ngspice/miftypes.h"
-
 #include "ngspice/evt.h"
 #include "ngspice/enh.h"
 #include "ngspice/mif.h"
 #include "ngspice/evtproto.h"
 #include "ngspice/ipctiein.h"
-/* gtri - end - wbk - Add headers */
 #endif
 
 #ifdef CLUSTER
@@ -100,13 +96,12 @@ DCtran(CKTcircuit *ckt,
     int ltra_num;
     CKTnode *node;
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
+    /* IPC stuff */
     Ipc_Boolean_t  ipc_firsttime = IPC_TRUE;
     Ipc_Boolean_t  ipc_secondtime = IPC_FALSE;
     Ipc_Boolean_t  ipc_delta_cut = IPC_FALSE;
     double         ipc_last_time = 0.0;
     double         ipc_last_delta = 0.0;
-/* gtri - end - wbk - 12/19/90 - Add IPC stuff */
 
     // Fix for sharedsync olddelta: When DCTran processes
     // either analog or XSPICE breakpoint, then it subtracts delta from
@@ -154,6 +149,8 @@ DCtran(CKTcircuit *ckt,
             ckt->CKTtimePoints = TMALLOC(double, ckt->CKTtimeListSize);
         /* end LTRA code addition */
 
+        /* Reset the breakpoint list.
+           Add breakpoints at 0 time and TSTOP (final) time */
         if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);
         ckt->CKTbreaks = TMALLOC(double, 2);
         if(ckt->CKTbreaks == NULL) return(E_NOMEM);
@@ -166,16 +163,18 @@ DCtran(CKTcircuit *ckt,
 #endif
 
 #ifdef XSPICE
-/* gtri - begin - wbk - 12/19/90 - Modify setting of CKTminBreak */
-        /* Set to 10 times delmin for ATESSE 1 compatibity */
-        if(ckt->CKTminBreak==0) ckt->CKTminBreak = 10.0 * ckt->CKTdelmin;
-/* gtri - end - wbk - 12/19/90 - Modify setting of CKTminBreak */
+        /* Modify setting of CKTminBreak
+           Set to 10 times delmin (minimum step time). */
+        if(ckt->CKTminBreak == 0)
+            ckt->CKTminBreak = 10.0 * ckt->CKTdelmin;
+
 #else
-        if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
+        if(ckt->CKTminBreak == 0)
+            ckt->CKTminBreak = ckt->CKTmaxStep * 5e-5;
 #endif
 
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff and set anal_init and anal_type */
+        /* Add IPC stuff and set anal_init and anal_type */
         /* Tell the beginPlot routine what mode we're in */
         g_ipc.anal_type = IPC_ANAL_TRAN;
 
@@ -183,7 +182,6 @@ DCtran(CKTcircuit *ckt,
         g_mif_info.circuit.anal_type = MIF_DC;
 
         g_mif_info.circuit.anal_init = MIF_TRUE;
-/* gtri - end - wbk */
 #endif
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
@@ -196,7 +194,7 @@ DCtran(CKTcircuit *ckt,
         tfree(nameList);
         if(error) return(error);
 
-        /* initialize CKTsoaCheck `warn' counters */
+        /* initialize CKTsoaCheck 'warn' counters */
         if (ckt->CKTsoaCheck)
             error = CKTsoaInit();
 
@@ -225,13 +223,12 @@ DCtran(CKTcircuit *ckt,
         }
 
 #ifdef XSPICE
-/* gtri - begin - wbk - set a breakpoint at end of supply ramping time */
-        /* must do this after CKTtime set to 0 above */
+        /* set a breakpoint at end of supply ramping time.
+           Must do this after CKTtime is set to 0 above */
         if(ckt->enh->ramp.ramptime > 0.0)
             CKTsetBreak(ckt, ckt->enh->ramp.ramptime);
-/* gtri - end - wbk - set a breakpoint at end of supply ramping time */
 
-/* gtri - begin - wbk - Call EVTop if event-driven instances exist */
+        /* Call EVTop if event-driven instances exist */
         if(ckt->evt->counts.num_insts != 0) {
             /* use new DCOP algorithm */
             converged = EVTop(ckt,
@@ -242,10 +239,9 @@ DCtran(CKTcircuit *ckt,
             EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
 
             EVTop_save(ckt, MIF_FALSE, 0.0);
-
-/* gtri - end - wbk - Call EVTop if event-driven instances exist */
         } else
 #endif
+            /* Get operating point for analogue circuit */
             converged = CKTop(ckt,
                 (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
                 (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITFLOAT,
@@ -280,40 +276,31 @@ DCtran(CKTcircuit *ckt,
             return(converged);
         }
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-
-        /* Send the operating point results for Mspice compatibility */
+        /* IPC stuff: Send the operating point results */
         if(g_ipc.enabled) {
             ipc_send_dcop_prefix();
             CKTdump(ckt, 0.0, job->TRANplot);
             ipc_send_dcop_suffix();
         }
 
-/* gtri - end - wbk */
-
-/* gtri - add - wbk - 12/19/90 - set anal_init and anal_type */
-
+        /* set anal_init and anal_type */
         g_mif_info.circuit.anal_init = MIF_TRUE;
 
         /* Tell the code models what mode we're in */
         g_mif_info.circuit.anal_type = MIF_TRAN;
 
-/* gtri - end - wbk */
-
-/* gtri - begin - wbk - Add Breakpoint stuff */
-
+        /* Breakpoint stuff */
         /* Initialize the temporary breakpoint variables to infinity */
         g_mif_info.breakpoint.current = 1.0e30;
         g_mif_info.breakpoint.last    = 1.0e30;
-
-/* gtri - end - wbk - Add Breakpoint stuff */
 #endif
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTorder = 1;
+        /* Initialze CKTdeltaOld with maximum value */
         for(i=0;i<7;i++) {
             ckt->CKTdeltaOld[i]=ckt->CKTmaxStep;
         }
-        ckt->CKTdelta = delta; /* delta set in line 135 */
+        ckt->CKTdelta = delta; /* delta set in line 130 */
 #ifdef STEPDEBUG
         (void)printf("delta initialized to %g\n",ckt->CKTdelta);
 #endif
@@ -339,9 +326,9 @@ DCtran(CKTcircuit *ckt,
             ckt->CKTorder = save2;
         }
 #endif
-
-        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
         /* modeinittran set here */
+        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
+        /* Reset the gear variable coefficient matrix. */
         ckt->CKTag[0]=ckt->CKTag[1]=0;
         if (ckt->CKTstate1 && ckt->CKTstate0) {
             memcpy(ckt->CKTstate1, ckt->CKTstate0,
@@ -360,14 +347,16 @@ DCtran(CKTcircuit *ckt,
 #ifdef CLUSTER
         CLUsetup(ckt);
 #endif
+    /* End of (restart || ckt->CKTtime == 0) */
     } else {
-        /* saj As traninit resets CKTmode */
+        /* traninit resets CKTmode */
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITPRED;
-        /* saj */
+
         INIT_STATS();
-        if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
+        if(ckt->CKTminBreak == 0)
+            ckt->CKTminBreak = ckt->CKTmaxStep * 5e-5;
         firsttime=0;
-        /* To get rawfile working saj*/
+        /* To get rawfile working */
         error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
                                            NULL,
                                            NULL, 0,
@@ -377,8 +366,7 @@ DCtran(CKTcircuit *ckt,
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
         }
-        /* end saj*/
-        goto resume;
+        goto resume; /* line 517 */
     }
 
 /* 650 */
@@ -403,7 +391,8 @@ DCtran(CKTcircuit *ckt,
 
     error = CKTaccept(ckt);
     /* check if current breakpoint is outdated; if so, clear */
-    if (ckt->CKTtime > ckt->CKTbreaks[0]) CKTclrBreak(ckt);
+    if (ckt->CKTtime > ckt->CKTbreaks[0])
+        CKTclrBreak(ckt);
 
     if (ckt->CKTsoaCheck)
         error = CKTsoaCheck(ckt);
@@ -432,8 +421,8 @@ DCtran(CKTcircuit *ckt,
         return(error);
     }
 #ifdef XSPICE
-/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 
+    /*  Send IPC stuff */
     if ((g_ipc.enabled) || wantevtdata) {
 
         /* Send event-driven results */
@@ -477,8 +466,8 @@ DCtran(CKTcircuit *ckt,
 
             g_ipc.last_time = ckt->CKTtime;
         }
+    /* End of Send IPC stuff*/
     } else
-/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 #endif
 #ifdef CLUSTER
         CLUoutput(ckt);
@@ -487,15 +476,14 @@ DCtran(CKTcircuit *ckt,
                 || (!(ckt->CKTmode&MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime))
             CKTdump(ckt, ckt->CKTtime, job->TRANplot);
 #ifdef XSPICE
-/* gtri - begin - wbk - Update event queues/data for accepted timepoint */
-    /* Note: this must be done AFTER sending results to SI so it can't */
-    /* go next to CKTaccept() above */
+    /* Update event queues/data for accepted timepoint */
+    /* Note: this must be done AFTER sending results to SI so it can't
+       go next to CKTaccept() above */
     if(ckt->evt->counts.num_insts > 0)
         EVTaccept(ckt, ckt->CKTtime);
-/* gtri - end - wbk - Update event queues/data for accepted timepoint */
 #endif
     ckt->CKTstat->STAToldIter = ckt->CKTstat->STATnumIter;
-    /* check for the end of the tran simulation, either by< stop time given,
+    /* Check for the end of the tran simulation, either by stop time given,
        or final time has been reached. */
     if (have_autostop)
     /* time consuming autostop check only, when variable 'autostop' has been set
@@ -518,7 +506,7 @@ DCtran(CKTcircuit *ckt,
         if (flag_autostop)
             fprintf(stdout, "\nNote: Autostop after %e s, all measurement conditions are fulfilled.\n", ckt->CKTtime);
 
-        /* Final return from tran*/
+        /* Final return from tran upon success */
         return(OK);
     }
     if(SPfrontEnd->IFpauseTest()) {
@@ -556,14 +544,12 @@ resume:
 
 #endif
 
-  /* are we at a breakpoint, or indistinguishably close? */
-    /* if ((ckt->CKTtime == ckt->CKTbreaks[0]) || (ckt->CKTbreaks[0] - */
+    /* Are we at a breakpoint, or indistinguishably close? */
     if ( AlmostEqualUlps( ckt->CKTtime, ckt->CKTbreaks[0], 100 ) ||
          ckt->CKTbreaks[0] - ckt->CKTtime <= ckt->CKTdelmin) {
-        /* first timepoint after a breakpoint - cut integration order */
-        /* and limit timestep to .1 times minimum of time to next breakpoint,
-         * and previous timestep
-         */
+        /* First timepoint after a breakpoint: cut integration order
+           and limit timestep to .1 times minimum of time to next breakpoint,
+           and previous timestep. */
         ckt->CKTorder = 1;
 #ifdef STEPDEBUG
         if( (ckt->CKTdelta > .1*ckt->CKTsaveDelta) ||
@@ -612,11 +598,10 @@ resume:
 
 
 #ifdef XSPICE
-/* gtri - begin - wbk - Add Breakpoint stuff */
-
+    /* More Breakpoint stuff */
     if(ckt->CKTtime + ckt->CKTdelta >= g_mif_info.breakpoint.current) {
-        /* If next time > temporary breakpoint, force it to the breakpoint */
-        /* And mark that timestep was set by temporary breakpoint */
+        /* If next time > temporary breakpoint, force it to the breakpoint,
+           and mark that timestep was set by temporary breakpoint */
         ckt->CKTsaveDelta = ckt->CKTdelta;
         ckt->CKTdelta = g_mif_info.breakpoint.current - ckt->CKTtime;
         g_mif_info.breakpoint.last = ckt->CKTtime + ckt->CKTdelta;
@@ -625,12 +610,8 @@ resume:
         g_mif_info.breakpoint.last = 1.0e30;
     }
 
-/* gtri - end - wbk - Add Breakpoint stuff */
-
-/* gtri - begin - wbk - Modify Breakpoint stuff */
     /* Throw out any permanent breakpoint with time <= current time or in the
-     * very near future, unless it the final stop break.
-     */
+       very near future, unless it is the final stop break. */
 #ifdef STEPDEBUG
     printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",
            ckt->CKTbreaks[0], ckt->CKTtime, ckt->CKTminBreak);
@@ -654,8 +635,6 @@ resume:
         ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
     }
 
-/* gtri - end - wbk - Modify Breakpoint stuff */
-
 #ifdef SHARED_MODULE
         /* Either directly go to next time step, or modify ckt->CKTdelta depending on
            synchronization requirements. sharedsync() returns 0. */
@@ -663,17 +642,16 @@ resume:
         ckt->CKTdelmin, 0, &ckt->CKTstat->STATrejected, 0);
 #endif
 
-/* gtri - begin - wbk - Do event solution */
-
+    /* Do event solution */
     if(ckt->evt->counts.num_insts > 0) {
 
-        /* if time = 0 and op_alternate was specified as false during */
-        /* dcop analysis, call any changed instances to let them */
-        /* post their outputs with their associated delays */
+        /* If time = 0 and op_alternate was specified as false during
+           dcop analysis, call any changed instances to let them
+           post their outputs with their associated delays */
         if((ckt->CKTtime == 0.0) && (! ckt->evt->options.op_alternate))
             EVTiter(ckt);
 
-        /* while there are events on the queue with event time <= next */
+        /* While there are events on the queue with event time <= next */
         /* projected analog time, process them */
         while((g_mif_info.circuit.evt_step = EVTnext_time(ckt))
                <= (ckt->CKTtime + ckt->CKTdelta)) {
@@ -685,14 +663,14 @@ resume:
             EVTdequeue(ckt, g_mif_info.circuit.evt_step);
             EVTiter(ckt);
 
-            /* If any instances have forced an earlier */
-            /* next analog time, cut the delta */
+            /* If any instances have forced an earlier
+               next analog time, cut the delta */
             if(ckt->CKTbreaks[0] < g_mif_info.breakpoint.current)
                 if(ckt->CKTbreaks[0] > ckt->CKTtime + ckt->CKTminBreak)
                     g_mif_info.breakpoint.current = ckt->CKTbreaks[0];
             if(g_mif_info.breakpoint.current < ckt->CKTtime + ckt->CKTdelta) {
-                /* Breakpoint must be > last accepted timepoint */
-                /* and >= current event time */
+                /* Breakpoint must be > last accepted timepoint
+                   and >= current event time */
                 if(g_mif_info.breakpoint.current >  ckt->CKTtime + ckt->CKTminBreak  &&
                    g_mif_info.breakpoint.current >= g_mif_info.circuit.evt_step) {
                     ckt->CKTsaveDelta = ckt->CKTdelta;
@@ -704,7 +682,6 @@ resume:
         } /* end while next event time <= next analog time */
     } /* end if there are event instances */
 
-/* gtri - end - wbk - Do event solution */
 #else /* no XSPICE */
 
 #ifdef CLUSTER
@@ -739,14 +716,10 @@ resume:
         redostep = 1;
 #endif
 #ifdef XSPICE
-/* gtri - add - wbk - 4/17/91 - Fix Berkeley bug */
-/* This is needed here to allow CAPask to output currents */
-/* during Transient analysis.  A grep for CKTcurrentAnalysis */
-/* indicates that it should not hurt anything else ... */
-
+/* This is needed here to allow CAPask to output currents
+   during Transient analysis. */
         ckt->CKTcurrentAnalysis = DOING_TRAN;
 
-/* gtri - end - wbk - 4/17/91 - Fix Berkeley bug */
         xspice_breakpoints_processed = 0;
 #endif
         olddelta=ckt->CKTdelta;
@@ -763,33 +736,25 @@ resume:
         save_mode = ckt->CKTmode;
         save_order = ckt->CKTorder;
 #ifdef XSPICE
-/* gtri - begin - wbk - Add Breakpoint stuff */
 
         /* Initialize temporary breakpoint to infinity */
         g_mif_info.breakpoint.current = 1.0e30;
 
-/* gtri - end - wbk - Add Breakpoint stuff */
-
-
-/* gtri - begin - wbk - add convergence problem reporting flags */
+        /* Add convergence problem reporting flags */
         /* delta is forced to equal delmin on last attempt near line 650 */
         if(ckt->CKTdelta <= ckt->CKTdelmin)
             ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
         else
             ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-/* gtri - begin - wbk - add convergence problem reporting flags */
 
+/* Call all hybrids */
 
-/* gtri - begin - wbk - Call all hybrids */
-
-/* gtri - begin - wbk - Set evt_step */
-
+        /* Set evt_step */
         if(ckt->evt->counts.num_insts > 0) {
             g_mif_info.circuit.evt_step = ckt->CKTtime;
         }
-/* gtri - end - wbk - Set evt_step */
 #endif
-
+        /* Central solver step */
         converged = NIiter(ckt,ckt->CKTtranMaxIter);
 
         ckt->CKTstat->STATtimePts ++;
@@ -805,6 +770,7 @@ resume:
                 return(converged);
         }
 
+        /* If no convergence in Central solver step */
         if(converged != 0) {
 #ifndef CLUSTER
 #ifndef SHARED_MODULE
@@ -825,10 +791,12 @@ resume:
             ckt->CKTorder = 1;
 
 #ifdef XSPICE
-/* gtri - begin - wbk - Add Breakpoint stuff */
-
+        /* Add Breakpoint stuff */
         } else if(g_mif_info.breakpoint.current < ckt->CKTtime) {
-            /* Force backup if temporary breakpoint is < current time */
+            /* Force backup if temporary breakpoint is < current time:
+               - save old delta
+               - retract time by old delta
+               - new delta by difference between by retracted time and breakpoint */
 
         past_breakpoint:
             ckt->CKTsaveDelta = ckt->CKTdelta;
@@ -841,11 +809,13 @@ resume:
                 ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
             }
             ckt->CKTorder = 1;
-
-/* gtri - end - wbk - Add Breakpoint stuff */
 #endif
 
         } else {
+            /* If converged:
+               - go to next time step if this was the first time.
+               - If not the first time step, don not accept, but check the truncation errors,
+                 and reduce delta accordingly, thenm redo the step, to bound the error. */
             if (firsttime) {
 #ifdef WANT_SENSE2
                 if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){
@@ -863,15 +833,16 @@ resume:
 #endif
                 firsttime = 0;
 #if !defined CLUSTER && !defined SHARED_MODULE
-                goto nextTime;  /* no check on
-                                 * first time point
-                                 */
+                /* no check on first time point */
+                goto nextTime; /* line 373 */
 #else
                 redostep = 0;
                 goto chkStep;
 #endif
             }
             newdelta = ckt->CKTdelta;
+            /* Scan through all devices, estimate the truncation error,
+               and reduce the time step, if necessary.*/
             error = CKTtrunc(ckt,&newdelta);
             if(error) {
                 UPDATE_STATS(DOING_TRAN);
@@ -893,13 +864,12 @@ resume:
                     EVTcall_hybrids(ckt);
                     if (g_mif_info.breakpoint.current < ckt->CKTtime) {
                         /* A hybrid requested a breakpoint in the past. */
-
                         goto past_breakpoint;
                     }
                 }
 #endif
-
-                if ((ckt->CKTorder == 1) && (ckt->CKTmaxOrder > 1)) { /* don't rise the order for backward Euler */
+                /* don't raise the order for backward Euler */
+                if ((ckt->CKTorder == 1) && (ckt->CKTmaxOrder > 1)) {
                     newdelta = ckt->CKTdelta;
                     ckt->CKTorder = 2;
                     error = CKTtrunc(ckt, &newdelta);
@@ -950,13 +920,16 @@ resume:
 #endif
 
 #if !defined CLUSTER && !defined SHARED_MODULE
-                /* go to 650 - trapezoidal */
-                goto nextTime;
+                /* trapezoidal */
+                goto nextTime;  /* line 373 */
 #else
                 redostep = 0;
                 goto chkStep;
 #endif
             } else {
+                /* not (newdelta > .9 * ckt->CKTdelta): reject the step
+                - redo the time
+                - apply the new (reduced) delta */
 #ifndef CLUSTER
 #ifndef SHARED_MODULE
                 ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
@@ -968,11 +941,13 @@ resume:
                 ckt->CKTdelta = newdelta;
 #ifdef STEPDEBUG
                 (void)printf(
-                    "delta set to truncation error result:point rejected\n");
+                    "delta set to truncation error result: point rejected\n");
 #endif
             }
         }
-
+        /* Set the new delta to delmin (minimum delta allowed). However:
+           If the new delta has been less than the minimum delta
+           for the second time, bail out with 'Timestep too small'. */
         if (ckt->CKTdelta <= ckt->CKTdelmin) {
             if (olddelta > ckt->CKTdelmin) {
                 ckt->CKTdelta = ckt->CKTdelmin;
@@ -990,8 +965,7 @@ resume:
             }
         }
 #ifdef XSPICE
-/* gtri - begin - wbk - Do event backup */
-
+        /* Do event backup */
         if(ckt->evt->counts.num_insts > 0) {
 #ifdef SHARED_MODULE
             double discard_start_time = ckt->CKTtime + ckt->CKTdelta;
@@ -1011,7 +985,6 @@ resume:
 #endif
         }
 
-/* gtri - end - wbk - Do event backup */
 #endif
 #ifdef CLUSTER
         chkStep:
