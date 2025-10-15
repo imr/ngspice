@@ -11,8 +11,8 @@ Modified: 2023 XSPICE breakpoint fix for shared ngspice by Vyacheslav Shevchuk
 /* line   goto label:
    373    nextTime
    515    resume
-   788    past_breakpoint
-   987    chkStep */
+   786    past_breakpoint
+   985    chkStep */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -469,7 +469,7 @@ DCtran(CKTcircuit *ckt,
     /* End of Send IPC stuff*/
     } else
 #endif
-
+        /* Output the data of the current accepted time point */
         if((ckt->CKTmode&MODEUIC && ckt->CKTtime > 0 && ckt->CKTtime >= ckt->CKTinitTime) 
                 || (!(ckt->CKTmode&MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime))
             CKTdump(ckt, ckt->CKTtime, job->TRANplot);
@@ -531,15 +531,13 @@ resume:
     else
         SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime + 0.5));
 #endif
-    ckt->CKTdelta =
-            MIN(ckt->CKTdelta,ckt->CKTmaxStep);
+
+    ckt->CKTdelta = MIN(ckt->CKTdelta,ckt->CKTmaxStep);
+
 #ifdef XSPICE
-/* gtri - begin - wbk - Cut integration order if first timepoint after breakpoint */
-    /* if(ckt->CKTtime == g_mif_info.breakpoint.last) */
+    /* Cut integration order if first timepoint after breakpoint */
     if ( AlmostEqualUlps( ckt->CKTtime, g_mif_info.breakpoint.last, 100 ) )
         ckt->CKTorder = 1;
-/* gtri - end   - wbk - Cut integration order if first timepoint after breakpoint */
-
 #endif
 
     /* Are we at a breakpoint, or indistinguishably close? */
@@ -851,7 +849,7 @@ resume:
                     EVTcall_hybrids(ckt);
                     if (g_mif_info.breakpoint.current < ckt->CKTtime) {
                         /* A hybrid requested a breakpoint in the past. */
-                        goto past_breakpoint; /* line 788 */
+                        goto past_breakpoint; /* line 786 */
                     }
                 }
 #endif
