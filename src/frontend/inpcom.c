@@ -583,6 +583,7 @@ static struct library *read_a_lib(const char *y, const char *dir_name)
 
         if (!newfp) {
             fprintf(cp_err, "Error: Could not open library file %s\n", y);
+            perror("    Cause: ");
             return NULL;
         }
 
@@ -1564,6 +1565,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                         else
                             fprintf(cp_err, "    While reading %s\n", y_resolved);
                     }
+                    perror("    Cause: ");
                     tfree(buffer); /* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
                 }
