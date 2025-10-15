@@ -131,6 +131,7 @@ DCtran(CKTcircuit *ckt,
     int redostep;
 #endif
     if(restart || ckt->CKTtime == 0) {
+        /* set the first step time */
         delta=MIN(ckt->CKTfinalTime/100,ckt->CKTstep)/10;
 
 #ifdef STEPDEBUG
@@ -251,10 +252,10 @@ DCtran(CKTcircuit *ckt,
                 ckt->CKTdcMaxIter);
 
         if(converged != 0) {
-            fprintf(stdout,"\nTransient solution failed -\n");
+            fprintf(stderr,"\nError: Finding the operating point for transient simulation failed \n");
             CKTncDump(ckt);
-            fprintf(stdout,"\n");
-            fflush(stdout);
+            fprintf(stderr,"\n");
+            fflush(stderr);
         } else if (ckt->CKTmode & MODEUIC && !ft_ngdebug) {
             fprintf(stdout,"Operating point simulation skipped by 'uic',\n");
             fprintf(stdout,"  now using transient initial conditions.\n");
@@ -273,6 +274,7 @@ DCtran(CKTcircuit *ckt,
             fflush(stdout);
         }
 
+        /* return upon failure to converge during op */
         if (converged != 0) {
             SPfrontEnd->OUTendPlot(job->TRANplot);
             return(converged);
@@ -311,7 +313,7 @@ DCtran(CKTcircuit *ckt,
         for(i=0;i<7;i++) {
             ckt->CKTdeltaOld[i]=ckt->CKTmaxStep;
         }
-        ckt->CKTdelta = delta;
+        ckt->CKTdelta = delta; /* delta set in line 135 */
 #ifdef STEPDEBUG
         (void)printf("delta initialized to %g\n",ckt->CKTdelta);
 #endif
@@ -983,6 +985,7 @@ resume:
                 SPfrontEnd->OUTendPlot(job->TRANplot);
                 job->TRANplot = NULL;
                 UPDATE_STATS(0);
+                /* return upon convergence failure */
                 return(E_TIMESTEP);
             }
         }

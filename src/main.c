@@ -1397,7 +1397,7 @@ int main(int argc, char **argv)
                 tpf = smktemp("sp");
                 tempfile = fopen(tpf, "w+bTD");
                 if (tempfile == NULL) {
-                    fprintf(stderr, "Could not open a temporary file "
+                    fprintf(stderr, "Error: Could not open a temporary file "
                             "to save and use optional arguments.\n");
                     sp_shutdown(EXIT_BAD);
                 }
