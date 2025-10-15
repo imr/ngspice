@@ -28,10 +28,6 @@ extern struct dbcomm *dbs;
 #include "ngspice/ipctiein.h"
 #endif
 
-#ifdef CLUSTER
-#include "ngspice/cluster.h"
-#endif
-
 #ifdef SHARED_MODULE
 extern int add_bkpt(void);
 extern int sharedsync(double*, double*, double, double, double, int, int*, int);
@@ -120,9 +116,9 @@ DCtran(CKTcircuit *ckt,
 
 #ifdef SHARED_MODULE
     double olddelta_for_shared_sync = 0.0;
-#endif // SHARED_MODULE
 #endif
-#if defined CLUSTER || defined SHARED_MODULE
+#endif
+#if defined SHARED_MODULE
     int redostep;
 #endif
     if(restart || ckt->CKTtime == 0) {
@@ -344,9 +340,7 @@ DCtran(CKTcircuit *ckt,
 #endif
 
         INIT_STATS();
-#ifdef CLUSTER
-        CLUsetup(ckt);
-#endif
+
     /* End of (restart || ckt->CKTtime == 0) */
     } else {
         /* traninit resets CKTmode */
@@ -469,9 +463,7 @@ DCtran(CKTcircuit *ckt,
     /* End of Send IPC stuff*/
     } else
 #endif
-#ifdef CLUSTER
-        CLUoutput(ckt);
-#endif
+
         if((ckt->CKTmode&MODEUIC && ckt->CKTtime > 0 && ckt->CKTtime >= ckt->CKTinitTime) 
                 || (!(ckt->CKTmode&MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime))
             CKTdump(ckt, ckt->CKTtime, job->TRANplot);
@@ -684,13 +676,6 @@ resume:
 
 #else /* no XSPICE */
 
-#ifdef CLUSTER
-    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
-      printf("Sync error!\n");
-      exit(0);
-    }
-#endif /* CLUSTER */
-
 #ifdef SHARED_MODULE
     /* Either directly go to next time step, or modify ckt->CKTdelta depending on
        synchronization requirements. sharedsync() returns 0.
@@ -712,7 +697,7 @@ resume:
 
 /* 600 */
     for (;;) {
-#if defined CLUSTER || defined SHARED_MODULE
+#if defined SHARED_MODULE
         redostep = 1;
 #endif
 #ifdef XSPICE
@@ -725,9 +710,6 @@ resume:
         olddelta=ckt->CKTdelta;
         /* time abort? */
         ckt->CKTtime += ckt->CKTdelta;
-#ifdef CLUSTER
-        CLUinput(ckt);
-#endif
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);
 #ifdef PREDICTOR
@@ -772,13 +754,12 @@ resume:
 
         /* If no convergence in Central solver step */
         if(converged != 0) {
-#ifndef CLUSTER
+
 #ifndef SHARED_MODULE
             ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
             ckt->CKTstat->STATrejected ++;
 #else
             redostep = 1;
-#endif
 #endif
             ckt->CKTdelta = ckt->CKTdelta/8;
 #ifdef STEPDEBUG
@@ -832,7 +813,7 @@ resume:
                 }
 #endif
                 firsttime = 0;
-#if !defined CLUSTER && !defined SHARED_MODULE
+#if !defined SHARED_MODULE
                 /* no check on first time point */
                 goto nextTime; /* line 373 */
 #else
@@ -919,7 +900,7 @@ resume:
                 }
 #endif
 
-#if !defined CLUSTER && !defined SHARED_MODULE
+#if !defined SHARED_MODULE
                 /* trapezoidal */
                 goto nextTime;  /* line 373 */
 #else
@@ -930,13 +911,11 @@ resume:
                 /* not (newdelta > .9 * ckt->CKTdelta): reject the step
                 - redo the time
                 - apply the new (reduced) delta */
-#ifndef CLUSTER
 #ifndef SHARED_MODULE
                 ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
                 ckt->CKTstat->STATrejected ++;
 #else
                 redostep = 1;
-#endif
 #endif
                 ckt->CKTdelta = newdelta;
 #ifdef STEPDEBUG
@@ -985,15 +964,6 @@ resume:
 #endif
         }
 
-#endif
-#ifdef CLUSTER
-        chkStep:
-        if(CLUsync(ckt->CKTtime,&ckt->CKTdelta,redostep)){
-            goto nextTime;
-        } else {
-            ckt->CKTtime -= olddelta;
-            ckt->CKTstat->STATrejected ++;
-        }
 #endif
 
 #ifdef SHARED_MODULE
