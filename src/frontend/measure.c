@@ -255,8 +255,10 @@ do_measure(
 
     if (cp_getvar("measoutfile", CP_STRING, out_file, sizeof(out_file))) {
         measout = fopen(out_file, "w");
-        if (!measout)
+        if (!measout) {
             fprintf(stderr, " Warning: Could not open file %s\n", out_file);
+            perror("    Cause: ");
+        }
     }
 
     /* Evaluating the linked list of .meas cards, assembled from the input deck

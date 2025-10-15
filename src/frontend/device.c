@@ -1542,6 +1542,7 @@ com_alter_mod(wordlist *wl)
 
     if (modfile == NULL) {
         fprintf(cp_err, "Warning: Could not open file %s, altermod ignored\n", filename);
+        perror("    Cause: ");
         tfree(input);
         tfree(filename);
         return;
