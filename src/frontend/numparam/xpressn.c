@@ -30,6 +30,7 @@ extern long dynsubst;           /* see inpcom.c */
 #define  S_stop   4
 
 static char* sort_idlist(char *list);
+static char *string_expr(dico_t *, DSTRINGPTR, const char *, const char *);
 
 static double
 ternary_fcn(double conditional, double if_value, double else_value)
@@ -83,23 +84,27 @@ limit(double nominal_val, double abs_variation)
     return (nominal_val + (drand() > 0 ? abs_variation : -1. * abs_variation));
 }
 
+/* The list of built-in functions. Patch 'mathfunction', here to get more ...
+ * Function "vec" and following take a string argument and must come last.
+ */
 
 static const char *fmathS =     /* all math functions */
     "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log log10 sinh cosh"
     " tanh ternary_fcn agauss sgn gauss unif aunif limit ceil floor"
-    " asin acos atan asinh acosh atanh tan nint";
+    " asin acos atan asinh acosh atanh tan nint"
+    " vec var";
 
 
 enum {
     XFU_SQR = 1, XFU_SQRT, XFU_SIN, XFU_COS, XFU_EXP, XFU_LN, XFU_ARCTAN, XFU_ABS, XFU_POW, XFU_PWR, XFU_MAX, XFU_MIN, XFU_INT, XFU_LOG, XFU_LOG10, XFU_SINH, XFU_COSH,
     XFU_TANH, XFU_TERNARY_FCN, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
-    XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN, XFU_NINT
+    XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN, XFU_NINT,
+    XFU_VEC, XFU_VAR // String arguments.
 };
 
 
 static double
 mathfunction(int f, double z, double x)
-/* the list of built-in functions. Patch 'fmath', here and near line 888 to get more ...*/
 {
     double y;
     switch (f)
@@ -946,6 +951,48 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             if (kptr >= s_end) {
                 error = message(dico, "Closing \")\" not found.\n");
                 natom++;        /* shut up other error message */
+            } else if (fu >= XFU_VEC) {
+                struct dvec *d;
+                char        *vec_name;
+
+                /* Special case: function with string arg.
+                 * Try to evaluate any string expression, else use directly.
+                 */
+
+                if (string_expr(dico, &tstr, s, kptr) != kptr)
+                    pscopy(&tstr, s, kptr);  // No, or not fully consumed.
+                vec_name = ds_get_buf(&tstr);
+
+                if (fu == XFU_VEC) {
+                    struct plot *cplot, *prev;
+
+                    d = vec_get(vec_name);
+
+                    /* A simple name will be looked-up is the current plot.
+                     * Try "const" if not found.
+                     */
+
+                    if (!d && !strchr(vec_name, '.')) {
+                        cplot = get_plot("const");
+                        if (plot_cur != cplot) {
+                            prev = plot_cur;
+                            plot_cur = cplot;
+                            d = vec_get(vec_name);
+                            plot_cur = prev;
+                        }
+                    }
+
+                    if (d && d->v_length > 0 && isreal(d))
+                        u = d->v_realdata[0];
+                    else
+                        u = 0;
+                } else if (fu == XFU_VAR) {
+                    if (!cp_getvar(vec_name, CP_REAL, &u, sizeof u))
+                        u = 0;
+                }
+                state = S_atom;
+                s = kptr + 1;
+                fu = 0;
             } else {
                 if (arg2 >= s) {
                     v = formula(dico, s, arg2, &error);
@@ -1088,7 +1135,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 }
 
 
-/* Check for a string expression, return end  pointer or NULL.
+/* Check for a string expression, return end pointer or NULL.
  * A string expression is a sequence of quoted strings and string
  * variables, optionally enclosed by '{}' with no interventing space.
  * If successful return pointer to next char, otherwise NULL.
