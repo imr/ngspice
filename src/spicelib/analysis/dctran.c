@@ -106,19 +106,11 @@ DCtran(CKTcircuit *ckt,
     double         ipc_last_time = 0.0;
     double         ipc_last_delta = 0.0;
 
-    // Fix for sharedsync olddelta: When DCTran processes
-    // either analog or XSPICE breakpoint, then it subtracts delta from
-    // ckt->CKTtime. It sends 0 as olddelta after analog breakpoint
-    // processing. Still, for XSPICE breakpoints it subtracts delta (see code
-    // 'else if(g_mif_info.breakpoint.current < ckt->CKTtime)' branch) and
-    // then sends non zero olddelta to sharedsync at the end of the function
-    // (see chkStep: label). Thus olddelta is subtracted twice. Then
-    // ckt->CKTtime becomes less than last_accepted_time.
-    // xspice_breakpoints_processed 0:
-    // XSPICE models didn't have breakpoints in [last_accepted_time, CKTtime].
-    // xspice_breakpoints_processed 1:
-    // convergence criteria are satisfied but XSPICE breakpoint(s) is in the
-    // time interval [last_accepted_time, CKTtime].
+    /* xspice_breakpoints_processed 0:
+       XSPICE models didn't have breakpoints in [last_accepted_time, CKTtime].
+       xspice_breakpoints_processed 1:
+       convergence criteria are satisfied but XSPICE breakpoint(s) is in the
+       time interval [last_accepted_time, CKTtime]. */
     int xspice_breakpoints_processed = 0;
 
 #ifdef SHARED_MODULE
@@ -129,7 +121,14 @@ DCtran(CKTcircuit *ckt,
     int redostep;
 #endif
     if(restart || ckt->CKTtime == 0) {
-        /* set the first step time */
+        /* dctran() is entered here upon starting transient simulation
+           with time 0 and restart 1.
+           ckt->CKTstep, CKTfinalTime, CKTinitTime, CKTmaxStep have been
+           set already in fcn TRANinit() of traninit.c according to
+           TSTEP TSTOP TSTART TMAX given on the .tran line. TMAX is set to TSTEP,
+           if 'set nostepsizelimit' is not given in .spiceinit.*/
+
+        /* Set the first delta (step) time, typically depending on TSTEP */
         delta=MIN(ckt->CKTfinalTime/100,ckt->CKTstep)/10;
 
 #ifdef STEPDEBUG
@@ -167,7 +166,7 @@ DCtran(CKTcircuit *ckt,
 
 #ifdef XSPICE
         /* Modify setting of CKTminBreak
-           Set to 10 times delmin (minimum step time). */
+           Set to 10 times delmin (minimum delta step time). */
         if(ckt->CKTminBreak == 0)
             ckt->CKTminBreak = 10.0 * ckt->CKTdelmin;
 
@@ -186,6 +185,7 @@ DCtran(CKTcircuit *ckt,
 
         g_mif_info.circuit.anal_init = MIF_TRUE;
 #endif
+        /* Scan ckt->CKTnodes and create list of node names */
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
         SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
@@ -952,14 +952,14 @@ resume:
         if(ckt->evt->counts.num_insts > 0) {
 #ifdef SHARED_MODULE
             double discard_start_time = ckt->CKTtime + ckt->CKTdelta;
-            // ngspice in executable mode subtracts olddelta from the time
-            // before new delta calculation, but it keeps delta in CKTtime and
-            // postpones subtraction in library mode. Delayed subtraction leads
-            // to incorrect points dropping because ckt->CKTdelta is almost always
-            // less than olddelta if there are convergence issues, and EVTbackup
-            // may drop valid events that need to be processed within
-            // [last_accepted_time, last_accepted_time + ckt->CKTdelta] range
-            // after delta adjustment.
+            /* ngspice in executable mode subtracts olddelta from the time
+               before new delta calculation, but it keeps delta in CKTtime and
+               postpones subtraction in library mode. Delayed subtraction leads
+               to incorrect points dropping because ckt->CKTdelta is almost always
+               less than olddelta if there are convergence issues, and EVTbackup
+               may drop valid events that need to be processed within
+               [last_accepted_time, last_accepted_time + ckt->CKTdelta] range
+               after delta adjustment. */
             if (redostep && xspice_breakpoints_processed == 0)
                 discard_start_time -= olddelta;
             EVTbackup(ckt, discard_start_time);
