@@ -280,6 +280,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                             saves[i].used = 1;
                             break;
                         }
+                        else if (ft_ngdebug && refName && eq(refName, "time") && eq(saves[i].name, "deltacheck")) {
+                            addDataDesc(run, "deltacheck", IF_REAL, j, initmem);
+                            savesused[i] = TRUE;
+                            saves[i].used = 1;
+                            break;
+                        }
                     }
                 }
             }
@@ -307,6 +313,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             /* generate a vector of real time information */
             if (ft_ngdebug && refName && eq(refName, "time")) {
                  addDataDesc(run, "speedcheck", IF_REAL, numNames, initmem);
+                 addDataDesc(run, "deltacheck", IF_REAL, numNames, initmem);
             }
         }
 
@@ -582,6 +589,9 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 double tt = ((double)cl - (double)startclock) / CLOCKS_PER_SEC;
                 plotAddRealValue(d, tt);
             }
+            else if (ft_ngdebug && d->type == IF_REAL && eq(d->name, "deltacheck")) {
+                plotAddRealValue(d, ft_curckt->ci_ckt->CKTdeltaOld[0]);
+            }
             else if (d->type == IF_REAL)
                 plotAddRealValue(d, valuePtr->v.vec.rVec[d->outIndex]);
             else if (d->type == IF_COMPLEX)
@@ -692,6 +702,9 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     clock_t cl = clock();
                     double tt = ((double)cl - (double)startclock) / CLOCKS_PER_SEC;
                     fileAddRealValue(run->fp, run->binary, tt);
+                }
+                else if (ft_ngdebug && run->data[i].type == IF_REAL && eq(run->data[i].name, "deltacheck")) {
+                    fileAddRealValue(run->fp, run->binary, ft_curckt->ci_ckt->CKTdeltaOld[0]);
                 }
                 else if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
@@ -969,6 +982,8 @@ guess_type(const char *name, char* pltypename)
     else if (cieq(name, "time"))
         type = SV_TIME;
     else if ( cieq(name, "speedcheck"))
+        type = SV_TIME;
+    else if ( cieq(name, "deltacheck"))
         type = SV_TIME;
     else if (cieq(name, "frequency"))
         type = SV_FREQUENCY;
