@@ -24,11 +24,6 @@
 /* gtri - end - wbk - Add headers */
 #endif
 
-#ifdef CLUSTER
-#include "ngspice/cluster.h"
-#endif
-
-
 #define INIT_STATS() \
 do { \
     startTime = SPfrontEnd->IFseconds();        \
@@ -97,9 +92,6 @@ DCpss(CKTcircuit *ckt,
     double         ipc_last_time = 0.0;
     double         ipc_last_delta = 0.0;
 /* gtri - end - wbk - 12/19/90 - Add IPC stuff */
-#endif
-#ifdef CLUSTER
-    int redostep;
 #endif
 
     /* New variables */
@@ -365,9 +357,7 @@ DCpss(CKTcircuit *ckt,
 
         /* Statistics Initialization using a macro at the beginning of this code */
         INIT_STATS();
-#ifdef CLUSTER
-        CLUsetup(ckt);
-#endif
+
     } else {
         /* saj As traninit resets CKTmode */
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITPRED;
@@ -490,10 +480,6 @@ DCpss(CKTcircuit *ckt,
         }
     } else
 /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
-#endif
-#ifdef CLUSTER
-    if (pss_state == PSS)
-        CLUoutput(ckt);
 #endif
 
     if (pss_state == PSS)
@@ -1278,14 +1264,6 @@ resume:
     } /* end if there are event instances */
 
 /* gtri - end - wbk - Do event solution */
-#else
-
-#ifdef CLUSTER
-    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
-      fprintf (stderr, "Sync error!\n");
-      exit(0);
-    }
-#endif /* CLUSTER */
 
 #endif
 
@@ -1302,9 +1280,6 @@ resume:
 
 /* 600 */
     for (;;) {
-#ifdef CLUSTER
-        redostep = 1;
-#endif
 #ifdef XSPICE
 /* gtri - add - wbk - 4/17/91 - Fix Berkeley bug */
 /* This is needed here to allow CAPask to output currents */
@@ -1318,9 +1293,6 @@ resume:
         olddelta=ckt->CKTdelta;
         /* time abort? */
         ckt->CKTtime += ckt->CKTdelta;
-#ifdef CLUSTER
-        CLUinput(ckt);
-#endif
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);
 #ifdef PREDICTOR
@@ -1384,10 +1356,8 @@ resume:
             fprintf (stderr, "pss_state: %d, converged: %d\n", pss_state, converged) ;
 #endif
         if(converged != 0) {
-#ifndef CLUSTER
-            ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
-            ckt->CKTstat->STATrejected ++;
-#endif
+            ckt->CKTtime = ckt->CKTtime - ckt->CKTdelta;
+            ckt->CKTstat->STATrejected++;
             ckt->CKTdelta = ckt->CKTdelta/8;
 #ifdef STEPDEBUG
             fprintf (stderr, "delta cut to %g for non-convergence\n", ckt->CKTdelta) ;
@@ -1419,14 +1389,9 @@ resume:
         } else {
             if (firsttime) {
                 firsttime = 0;
-#ifndef CLUSTER
                 goto nextTime;  /* no check on
                                  * first time point
                                  */
-#else
-                redostep = 0;
-                goto chkStep;
-#endif
             }
             newdelta = ckt->CKTdelta;
             error = CKTtrunc(ckt,&newdelta);
@@ -1467,18 +1432,13 @@ resume:
                 fflush(stdout);
 #endif
 
-#ifndef CLUSTER
+
                 /* go to 650 - trapezoidal */
                 goto nextTime;
-#else
-                redostep = 0;
-                goto chkStep;
-#endif
+
             } else { /* newdelta <= .9 * ckt->CKTdelta */
-#ifndef CLUSTER
                 ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
                 ckt->CKTstat->STATrejected ++;
-#endif
                 ckt->CKTdelta = newdelta;
 #ifdef STEPDEBUG
                 fprintf (stderr, "delta set to truncation error result:point rejected\n") ;
@@ -1505,15 +1465,6 @@ resume:
             EVTbackup(ckt, ckt->CKTtime + ckt->CKTdelta);
 
 /* gtri - end - wbk - Do event backup */
-#endif
-#ifdef CLUSTER
-        chkStep:
-        if(CLUsync(ckt->CKTtime,&ckt->CKTdelta,redostep)){
-            goto nextTime;
-        } else {
-            ckt->CKTtime -= olddelta;
-            ckt->CKTstat->STATrejected ++;
-        }
 #endif
     }
     /* NOTREACHED */
