@@ -98,8 +98,7 @@ libckt_la_SOURCES = \
 		tfsetp.c	\
 		tranaskq.c	\
 		traninit.c	\
-		transetp.c	\
-		cluster.c
+		transetp.c
 
 
 if PSS_WANTED

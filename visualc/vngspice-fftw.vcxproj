@@ -956,7 +956,6 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\include\ngspice\ciderinp.h" />
     <ClInclude Include="..\src\include\ngspice\cidersupt.h" />
     <ClInclude Include="..\src\include\ngspice\cktdefs.h" />
-    <ClInclude Include="..\src\include\ngspice\cluster.h" />
     <ClInclude Include="..\src\include\ngspice\cm.h" />
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
@@ -1764,7 +1763,6 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\spicelib\analysis\ckttroub.c" />
     <ClCompile Include="..\src\spicelib\analysis\ckttrunc.c" />
     <ClCompile Include="..\src\spicelib\analysis\ckttyplk.c" />
-    <ClCompile Include="..\src\spicelib\analysis\cluster.c" />
     <ClCompile Include="..\src\spicelib\analysis\daskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\dcoaskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\dcop.c" />

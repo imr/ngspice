@@ -11,7 +11,6 @@ noinst_HEADERS = \
 	ciderinp.h	\
 	cidersupt.h	\
 	cktdefs.h	\
-	cluster.h	\
 	cmconstants.h	\
 	cm.h		\
 	cmproto.h	\
