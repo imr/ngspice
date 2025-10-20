@@ -67,6 +67,8 @@ static bool nooptran = TRUE;
     we firstly fill the static vars opstepsize, opfinaltime,
     and opramptime. Later from inp.c we call com_optran again and set the
     data in ft_curckt->ci_defTask.
+
+    com_optran is called from cp_init() as 'optran 1 1 1 100n 10u 0'.
     */
 void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
@@ -177,8 +179,10 @@ void com_optran(wordlist* wl) {
         goto bugquit;
     }
     /* optran deselected by setting opstepsize to 0 */
-    if (opstepsize == 0)
+    if (opstepsize == 0) {
         nooptran = TRUE;
+        fprintf(stdout, "Note: Optran is deselected");
+    }
 
     dataset = TRUE;
     if (errno == 0)
@@ -311,8 +315,8 @@ OPtran(CKTcircuit *ckt, int oldconverged)
     int redostep;
 #endif
 
-    /* if optran command has not been given (in .spiceinit or in .control section),
-       we don' use optran */
+    /* if optran command with step size 0 has been set in in .spiceinit or in .control section,
+       we don't use optran */
     if (nooptran)
         return oldconverged;
 /*
