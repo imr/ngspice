@@ -99,13 +99,6 @@ DCtran(CKTcircuit *ckt,
     int ltra_num;
     CKTnode *node;
 #ifdef XSPICE
-    /* IPC stuff */
-    Ipc_Boolean_t  ipc_firsttime = IPC_TRUE;
-    Ipc_Boolean_t  ipc_secondtime = IPC_FALSE;
-    Ipc_Boolean_t  ipc_delta_cut = IPC_FALSE;
-    double         ipc_last_time = 0.0;
-    double         ipc_last_delta = 0.0;
-
     /* xspice_breakpoints_processed 0:
        XSPICE models didn't have breakpoints in [last_accepted_time, CKTtime].
        xspice_breakpoints_processed 1:
@@ -176,13 +169,9 @@ DCtran(CKTcircuit *ckt,
 #endif
 
 #ifdef XSPICE
-        /* Add IPC stuff and set anal_init and anal_type */
-        /* Tell the beginPlot routine what mode we're in */
-        g_ipc.anal_type = IPC_ANAL_TRAN;
-
+        /* set anal_init and anal_type */
         /* Tell the code models what mode we're in */
         g_mif_info.circuit.anal_type = MIF_DC;
-
         g_mif_info.circuit.anal_init = MIF_TRUE;
 #endif
         /* Scan ckt->CKTnodes and create list of node names */
@@ -279,13 +268,6 @@ DCtran(CKTcircuit *ckt,
             return(converged);
         }
 #ifdef XSPICE
-        /* IPC stuff: Send the operating point results */
-        if(g_ipc.enabled) {
-            ipc_send_dcop_prefix();
-            CKTdump(ckt, 0.0, job->TRANplot);
-            ipc_send_dcop_suffix();
-        }
-
         /* set anal_init and anal_type */
         g_mif_info.circuit.anal_init = MIF_TRUE;
 
@@ -420,59 +402,21 @@ DCtran(CKTcircuit *ckt,
         UPDATE_STATS(DOING_TRAN);
         return(error);
     }
+
 #ifdef XSPICE
-
-    /*  Send IPC stuff */
-    if ((g_ipc.enabled) || wantevtdata) {
-
+    /*  Send evt data stuff in shared library */
+    if (wantevtdata) {
         /* Send event-driven results */
         EVTdump(ckt, IPC_ANAL_TRAN, 0.0);
-
         /* Then follow with analog results... */
-
-        /* Test to see if delta was cut by a breakpoint, */
-        /* a non-convergence, or a too large truncation error */
-        if(ipc_firsttime)
-            ipc_delta_cut = IPC_FALSE;
-        else if(ckt->CKTtime < (ipc_last_time + (0.999 * ipc_last_delta)))
-            ipc_delta_cut = IPC_TRUE;
-        else
-            ipc_delta_cut = IPC_FALSE;
-
-        /* Record the data required to check for delta cuts */
-        ipc_last_time = ckt->CKTtime;
-        ipc_last_delta = MIN(ckt->CKTdelta, ckt->CKTmaxStep);
-
-        /* Send results data if time since last dump is greater */
-        /* than 'mintime', or if first or second timepoints, */
-        /* or if delta was cut */
-        if( (ckt->CKTtime >= (g_ipc.mintime + g_ipc.last_time)) ||
-            ipc_firsttime || ipc_secondtime || ipc_delta_cut ) {
-
-            if (wantevtdata)
-                CKTdump(ckt, ckt->CKTtime, job->TRANplot);
-            else {
-                ipc_send_data_prefix(ckt->CKTtime);
-                CKTdump(ckt, ckt->CKTtime, job->TRANplot);
-                ipc_send_data_suffix();
-            }
-
-            if(ipc_firsttime) {
-                ipc_firsttime = IPC_FALSE;
-                ipc_secondtime = IPC_TRUE;
-            } else if(ipc_secondtime) {
-                ipc_secondtime = IPC_FALSE;
-            }
-
-            g_ipc.last_time = ckt->CKTtime;
-        }
-    /* End of Send IPC stuff*/
-    } else
+    }
 #endif
-        /* Output the data of the current accepted time point */
-        if((ckt->CKTmode&MODEUIC && ckt->CKTtime > 0 && ckt->CKTtime >= ckt->CKTinitTime) 
-                || (!(ckt->CKTmode&MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime))
-            CKTdump(ckt, ckt->CKTtime, job->TRANplot);
+
+    /* Output the data of the current accepted time point */
+    if ((ckt->CKTmode & MODEUIC && ckt->CKTtime > 0 && ckt->CKTtime >= ckt->CKTinitTime)
+        || (!(ckt->CKTmode & MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime)) {
+        CKTdump(ckt, ckt->CKTtime, job->TRANplot);
+    }
 #ifdef XSPICE
     /* Update event queues/data for accepted timepoint */
     /* Note: this must be done AFTER sending results to SI so it can't

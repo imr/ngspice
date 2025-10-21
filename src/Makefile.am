@@ -163,7 +163,6 @@ ngspice_LDADD += \
 	xspice/mif/libmifxsp.la \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
-	xspice/ipc/libipcxsp.la \
 	xspice/idn/libidnxsp.la 
 endif
 ngspice_LDADD += $(XSPICEDLLIBS)
@@ -459,7 +458,6 @@ if XSPICE_WANTED
 libspice_la_LIBADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
-	xspice/ipc/libipcxsp.la \
 	xspice/idn/libidnxsp.la 
 endif
 libspice_la_LIBADD += $(XSPICEDLLIBS)
@@ -586,7 +584,6 @@ if XSPICE_WANTED
 libngspice_la_LIBADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
-	xspice/ipc/libipcxsp.la \
 	xspice/idn/libidnxsp.la 
 endif
 libngspice_la_LIBADD += $(XSPICEDLLIBS)

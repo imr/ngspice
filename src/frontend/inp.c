@@ -244,13 +244,6 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
     bool useout = (file == cp_out);
     int i = 1;
 
-    /* gtri - wbk - 03/07/91 - Don't use 'more' type output if ipc enabled */
-#ifdef XSPICE
-    if (g_ipc.enabled)
-        useout = FALSE;
-#endif
-    /* gtri - end - 03/07/91 */
-
     if (useout) {
         out_init();
         file = cp_more;
@@ -1474,10 +1467,6 @@ inp_dodeck(
 
         if (dd->error) {
             char *p, *q;
-#ifdef XSPICE
-            /* add setting of ipc syntax error flag */
-            g_ipc.syntax_error = IPC_TRUE;
-#endif
             p = dd->error;
             fflush(stdout);
             do {

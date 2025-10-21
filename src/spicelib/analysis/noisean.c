@@ -65,16 +65,9 @@ NOISEan(CKTcircuit* ckt, int restart)
     runDesc* plot = NULL;
 
 #ifdef XSPICE
-    /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
-
-        /* Tell the beginPlot routine what mode we're in */
-    g_ipc.anal_type = IPC_ANAL_NOI;
-
     /* Tell the code models what mode we're in */
     g_mif_info.circuit.anal_type = MIF_DC;
     g_mif_info.circuit.anal_init = MIF_TRUE;
-
-    /* gtri - end - wbk */
 #endif
 
 #ifdef KLU
@@ -193,15 +186,15 @@ NOISEan(CKTcircuit* ckt, int restart)
 #endif
 
 #ifdef KLU
-        if (ckt->CKTmatrix->CKTkluMODE)
-        {
-            /* Conversion from Complex Matrix to Real Matrix */
-            for (i = 0 ; i < DEVmaxnum ; i++)
-                if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
-                    DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
+            if (ckt->CKTmatrix->CKTkluMODE)
+            {
+                /* Conversion from Complex Matrix to Real Matrix */
+                for (i = 0 ; i < DEVmaxnum ; i++)
+                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
+                        DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
 
-            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
-        }
+                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
+            }
 #endif
 
             /* If no event-driven instances, do what SPICE normally does */
@@ -220,42 +213,7 @@ NOISEan(CKTcircuit* ckt, int restart)
             else {
                 fprintf(stdout, "\n Linear circuit, option noopac given: no OP analysis\n");
             }
-
-#ifdef XSPICE
         } // end of no XSPICE event-driven instances
-
-        /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-
-            /* Send the operating point results for Mspice compatibility */
-        if (g_ipc.enabled)
-        {
-            /* Call CKTnames to get names of nodes/branches used by
-                BeginPlot */
-                /* Probably should free nameList after this block since
-                    called again... */
-            error = CKTnames(ckt, &numNames, &nameList);
-            if (error) return(error);
-
-            /* We have to do a beginPlot here since the data to return is
-             * different for the DCOP than it is for the AC analysis.
-             * Moreover the begin plot has not even been done yet at this
-             * point...
-             */
-            SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
-                ckt->CKTcurJob->JOBname,
-                NULL, IF_REAL,
-                numNames, nameList, IF_REAL,
-                &noiPlot);
-            txfree(nameList);
-
-            ipc_send_dcop_prefix();
-            CKTdump(ckt, 0.0, noiPlot);
-            ipc_send_dcop_suffix();
-
-            SPfrontEnd->OUTendPlot(noiPlot);
-        }
-        /* gtri - end - wbk */
-#endif
 
         /* Patch to noisean.c by Richard D. McRoberts. */
         ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;

@@ -1428,7 +1428,6 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/mif/Makefile
                  src/xspice/evt/Makefile
                  src/xspice/enh/Makefile
-                 src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
                  src/xspice/verilog/Makefile
                  src/xspice/vhdl/Makefile

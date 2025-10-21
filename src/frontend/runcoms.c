@@ -323,14 +323,6 @@ static int dosim(
         if (if_sens_run(ft_curckt->ci_ckt, ww, ft_curckt->ci_symtab) == 1) {
             /* The circuit was interrupted somewhere. */
             fprintf(cp_err, "%s simulation interrupted\n", what);
-#ifdef XSPICE
-            /* gtri - add - 12/12/90 - wbk - record error and return errchk */
-            g_ipc.run_error = IPC_TRUE;
-            if (g_ipc.enabled) {
-                ipc_send_errchk();
-            }
-            /* gtri - end - 12/12/90 */
-#endif
         }
         else {
             ft_curckt->ci_inprogress = FALSE;
@@ -342,14 +334,6 @@ static int dosim(
         if (err == 1) {
             /* The circuit was interrupted somewhere. */
             fprintf(cp_err, "%s simulation interrupted\n", what);
-#ifdef XSPICE
-            /* record error and return errchk */
-            g_ipc.run_error = IPC_TRUE;
-            if (g_ipc.enabled) {
-                ipc_send_errchk();
-            }
-            /* gtri - end - 12/12/90 */
-#endif
             err = 0;
         }
         else if (err == 2) {

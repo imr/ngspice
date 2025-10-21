@@ -165,17 +165,12 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 #endif
 
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
-
-    /* Tell the beginPlot routine what mode we're in */
-    g_ipc.anal_type = IPC_ANAL_DCTRCURVE;
 
     /* Tell the code models what mode we're in */
     g_mif_info.circuit.anal_type = MIF_DC;
 
     g_mif_info.circuit.anal_init = MIF_TRUE;
 
-/* gtri - end - wbk */
 #endif
 
     error = CKTnames(ckt, &numNames, &nameList);
@@ -383,18 +378,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ckt->CKTtime = ckt->CKTtemp - CONSTCtoK;
 
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-
         /* If first time through, call CKTdump to output Operating Point info */
-        /* for Mspice compatibility */
-
-        if (((g_ipc.enabled) || wantevtdata) && firstTime) {
-            ipc_send_dcop_prefix();
+        if (wantevtdata && firstTime) {
             CKTdump(ckt, 0.0, plot);
-            ipc_send_dcop_suffix();
         }
-
-/* gtri - end - wbk */
 #endif
 
 #ifdef WANT_SENSE2
@@ -435,24 +422,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         }
 #endif
 
-#ifdef XSPICE
-/* gtri - modify - wbk - 12/19/90 - Send IPC delimiters */
-
-        if (g_ipc.enabled)
-            ipc_send_data_prefix(ckt->CKTtime);
-#endif
-
         CKTdump(ckt,ckt->CKTtime,plot);
 
         if (ckt->CKTsoaCheck)
             error = CKTsoaCheck(ckt);
-
-#ifdef XSPICE
-        if (g_ipc.enabled)
-            ipc_send_data_suffix();
-
-/* gtri - end - wbk */
-#endif
 
         if (firstTime) {
             firstTime = 0;

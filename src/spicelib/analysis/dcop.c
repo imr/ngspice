@@ -35,18 +35,13 @@ DCop(CKTcircuit *ckt, int notused)
     NG_IGNORE(notused);
   
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff and initialize anal_init and anal_type */
-
-    /* Tell the beginPlot routine what mode we're in */
-    g_ipc.anal_type = IPC_ANAL_DCOP;
 
     /* Tell the code models what mode we're in */
     g_mif_info.circuit.anal_type = MIF_DC;
 
     g_mif_info.circuit.anal_init = MIF_TRUE;
 
-/* gtri - end - wbk */
-#endif  
+#endif
 
     error = CKTnames(ckt,&numNames,&nameList);
     if(error) return(error);
@@ -114,31 +109,17 @@ DCop(CKTcircuit *ckt, int notused)
 
     }
 #endif
+
     converged = CKTload(ckt);
-#ifdef XSPICE
-/* gtri - modify - wbk - 12/19/90 - Send IPC data delimiters */
 
-    if(g_ipc.enabled)
-        ipc_send_dcop_prefix();
-
-    CKTdump(ckt, 0.0, plot);
-
-    if (ckt->CKTsoaCheck)
-        error = CKTsoaCheck(ckt);
-
-    if(g_ipc.enabled)
-        ipc_send_dcop_suffix();
-
-/* gtri - end - wbk */
-#else
     if(converged == 0) {
-	   CKTdump(ckt, 0.0, plot);
-           if (ckt->CKTsoaCheck)
-              error = CKTsoaCheck(ckt);
-         } else {
-           fprintf(stderr,"error: circuit reload failed.\n");
-         }
-#endif
+        CKTdump(ckt, 0.0, plot);
+        if (ckt->CKTsoaCheck)
+            error = CKTsoaCheck(ckt);
+    } else {
+         fprintf(stderr,"error: circuit reload failed.\n");
+    }
+
     SPfrontEnd->OUTendPlot (plot);
     return(converged);
 }
