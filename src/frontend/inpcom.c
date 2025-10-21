@@ -1355,53 +1355,24 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         else {
 
 #ifdef XSPICE
-            /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc
-             * enabled */
 
-             /* If IPC is not enabled, do equivalent of what SPICE did before
-              */
-            if (!g_ipc.enabled) {
-                if (call_depth == 0 && line_count == 0) {
-                    line_count++;
-                    if (fgets(big_buff, 5000, fp))
-                        buffer = copy(big_buff);
-                }
-                else {
-                    buffer = readline(fp);
-                    if (!buffer)
-                        break;
-                }
+            if (call_depth == 0 && line_count == 0) {
+                line_count++;
+                if (fgets(big_buff, 5000, fp))
+                    buffer = copy(big_buff);
             }
             else {
-                /* else, get the line from the ipc channel. */
-                /* We assume that newlines are not sent by the client */
-                /* so we add them here */
-                char ipc_buffer[1025]; /* Had better be big enough */
-                int ipc_len;
-                Ipc_Status_t ipc_status =
-                    ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
-                if (ipc_status == IPC_STATUS_END_OF_DECK) {
-                    buffer = NULL;
+                buffer = readline(fp);
+                if (!buffer)
                     break;
-                }
-                else if (ipc_status == IPC_STATUS_OK) {
-                    buffer = TMALLOC(char, strlen(ipc_buffer) + 3);
-                    strcpy(buffer, ipc_buffer);
-                    strcat(buffer, "\n");
-                }
-                else { /* No good way to report this so just die */
-                    fprintf(stderr, "Error: IPC status not o.k.\n");
-                    controlled_exit(EXIT_FAILURE);
-                }
             }
 
-            /* gtri - end - 12/12/90 */
 #else
 
             buffer = readline(fp);
             if (!buffer) {
                 break;
-        }
+            }
 
 #endif
         }

@@ -794,8 +794,6 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\include\ngspice\inpmacs.h" />
     <ClInclude Include="..\src\include\ngspice\inpptree.h" />
     <ClInclude Include="..\src\include\ngspice\ipc.h" />
-    <ClInclude Include="..\src\include\ngspice\ipcproto.h" />
-    <ClInclude Include="..\src\include\ngspice\ipctiein.h" />
     <ClInclude Include="..\src\include\ngspice\jobdefs.h" />
     <ClInclude Include="..\src\include\ngspice\lsort.h" />
     <ClInclude Include="..\src\include\ngspice\macros.h" />
@@ -2612,11 +2610,6 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\xspice\evt\evtshared.c" />
     <ClCompile Include="..\src\xspice\evt\evttermi.c" />
     <ClCompile Include="..\src\xspice\idn\idndig.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipc.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipcaegis.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipcsockets.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipcstdio.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipctiein.c" />
     <ClCompile Include="..\src\xspice\mif\mif.c" />
     <ClCompile Include="..\src\xspice\mif\mifask.c" />
     <ClCompile Include="..\src\xspice\mif\mifbindCSC.c" />

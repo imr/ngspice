@@ -386,18 +386,9 @@ SPan(CKTcircuit* ckt, int restart)
     }
 
 #ifdef XSPICE
-    /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
-
-        /* Tell the beginPlot routine what mode we're in */
-
-        // For now, let's keep this as IPC_ANAL_AC (TBD)
-    g_ipc.anal_type = IPC_ANAL_AC;
-
     /* Tell the code models what mode we're in */
     g_mif_info.circuit.anal_type = MIF_DC;
     g_mif_info.circuit.anal_init = MIF_TRUE;
-
-    /* gtri - end - wbk */
 #endif
 
     /* start at beginning */
@@ -474,40 +465,6 @@ SPan(CKTcircuit* ckt, int restart)
             }
             else
                 fprintf(stdout, "\n Linear circuit, option noopac given: no OP analysis\n");
-
-#ifdef XSPICE
-        /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-
-            /* Send the operating point results for Mspice compatibility */
-        if (g_ipc.enabled)
-        {
-            /* Call CKTnames to get names of nodes/branches used by
-                BeginPlot */
-                /* Probably should free nameList after this block since
-                    called again... */
-            error = CKTnames(ckt, &numNames, &nameList);
-            if (error) return(error);
-
-            /* We have to do a beginPlot here since the data to return is
-             * different for the DCOP than it is for the AC analysis.
-             * Moreover the begin plot has not even been done yet at this
-             * point...
-             */
-            SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
-                ckt->CKTcurJob->JOBname,
-                NULL, IF_REAL,
-                numNames, nameList, IF_REAL,
-                &spPlot);
-            txfree(nameList);
-
-            ipc_send_dcop_prefix();
-            CKTdump(ckt, 0.0, spPlot);
-            ipc_send_dcop_suffix();
-
-            SPfrontEnd->OUTendPlot(spPlot);
-        }
-        /* gtri - end - wbk */
-#endif
 
         ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
         error = CKTload(ckt);
@@ -937,22 +894,8 @@ SPan(CKTcircuit* ckt, int restart)
             data->lstFreq = freq;
         }
 
-
-#ifdef XSPICE
-        /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
-
-        if (g_ipc.enabled)
-            ipc_send_data_prefix(freq);
-
         error = CKTspDump(ckt, freq, spPlot, job->SPdoNoise);
 
-        if (g_ipc.enabled)
-            ipc_send_data_suffix();
-
-        /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
-#else
-        error = CKTspDump(ckt, freq, spPlot, job->SPdoNoise);
-#endif
         if (error) {
             UPDATE_STATS(DOING_AC);
             tfree(internalNoiseAN);

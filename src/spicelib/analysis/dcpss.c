@@ -84,15 +84,6 @@ DCpss(CKTcircuit *ckt,
 
     int ltra_num;
     CKTnode *node;
-#ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-    Ipc_Boolean_t  ipc_firsttime = IPC_TRUE;
-    Ipc_Boolean_t  ipc_secondtime = IPC_FALSE;
-    Ipc_Boolean_t  ipc_delta_cut = IPC_FALSE;
-    double         ipc_last_time = 0.0;
-    double         ipc_last_delta = 0.0;
-/* gtri - end - wbk - 12/19/90 - Add IPC stuff */
-#endif
 
     /* New variables */
     int j, oscnNode;
@@ -216,15 +207,12 @@ DCpss(CKTcircuit *ckt,
 #endif
 
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff and set anal_init and anal_type */
-        /* Tell the beginPlot routine what mode we're in */
-        g_ipc.anal_type = IPC_ANAL_TRAN;
+        /* set anal_init and anal_type */
 
         /* Tell the code models what mode we're in */
         g_mif_info.circuit.anal_type = MIF_DC;
 
         g_mif_info.circuit.anal_init = MIF_TRUE;
-/* gtri - end - wbk */
 #endif
 
 	/* Time Domain plot start and prepared to be filled in later */
@@ -298,35 +286,18 @@ DCpss(CKTcircuit *ckt,
 #endif
 
         /* If no convergence reached - NO valid Operating Point */
-        if(converged != 0) return(converged);
+        if(converged != 0)
+            return(converged);
+
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-
-        /* Send the operating point results for Mspice compatibility */
-        if(g_ipc.enabled) {
-            ipc_send_dcop_prefix();
-            CKTdump(ckt, 0.0, job->PSSplot_td);
-            ipc_send_dcop_suffix();
-        }
-
-/* gtri - end - wbk */
-
-/* gtri - add - wbk - 12/19/90 - set anal_init and anal_type */
-
         g_mif_info.circuit.anal_init = MIF_TRUE;
 
         /* Tell the code models what mode we're in */
         g_mif_info.circuit.anal_type = MIF_TRAN;
 
-/* gtri - end - wbk */
-
-/* gtri - begin - wbk - Add Breakpoint stuff */
-
         /* Initialize the temporary breakpoint variables to infinity */
         g_mif_info.breakpoint.current = HUGE_VAL;
         g_mif_info.breakpoint.last    = HUGE_VAL;
-
-/* gtri - end - wbk - Add Breakpoint stuff */
 #endif
         ckt->CKTstat->STATtimePts ++;
 
@@ -434,52 +405,16 @@ DCpss(CKTcircuit *ckt,
         return(error);
     }
 #ifdef XSPICE
-/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 
-    if ((g_ipc.enabled) || wantevtdata) {
+    if (wantevtdata) {
 
         if (pss_state == PSS)
         {
-        /* Send event-driven results */
-        EVTdump(ckt, IPC_ANAL_TRAN, 0.0);
-
-        /* Then follow with analog results... */
-
-        /* Test to see if delta was cut by a breakpoint, */
-        /* a non-convergence, or a too large truncation error */
-        if(ipc_firsttime)
-            ipc_delta_cut = IPC_FALSE;
-        else if(ckt->CKTtime < (ipc_last_time + (0.999 * ipc_last_delta)))
-            ipc_delta_cut = IPC_TRUE;
-        else
-            ipc_delta_cut = IPC_FALSE;
-
-        /* Record the data required to check for delta cuts */
-        ipc_last_time = ckt->CKTtime;
-        ipc_last_delta = MIN(ckt->CKTdelta, ckt->CKTmaxStep);
-
-        /* Send results data if time since last dump is greater */
-        /* than 'mintime', or if first or second timepoints, */
-        /* or if delta was cut */
-        if( (ckt->CKTtime >= (g_ipc.mintime + g_ipc.last_time)) ||
-            ipc_firsttime || ipc_secondtime || ipc_delta_cut ) {
-
-            ipc_send_data_prefix(ckt->CKTtime);
-            CKTdump(ckt, ckt->CKTtime, job->PSSplot_td);
-            ipc_send_data_suffix();
-
-            if(ipc_firsttime) {
-                ipc_firsttime = IPC_FALSE;
-                ipc_secondtime = IPC_TRUE;
-            } else if(ipc_secondtime) {
-                ipc_secondtime = IPC_FALSE;
-            }
-
-            g_ipc.last_time = ckt->CKTtime;
-        }
+            /* Send event-driven results */
+            EVTdump(ckt, IPC_ANAL_TRAN, 0.0);
         }
     } else
-/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
+
 #endif
 
     if (pss_state == PSS)
