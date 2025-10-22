@@ -191,11 +191,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances */
         for(here=VDMOSinstances(model);here;here=VDMOSnextInstance(here)) {
 
-            if(!here->VDMOSdtempGiven) here->VDMOSdtemp = 0.0;
-
-            if(!here->VDMOStempGiven)
-                here->VDMOStemp = ckt->CKTtemp + here->VDMOSdtemp;
-
             VDMOStempUpdate(model, here, here->VDMOStemp, ckt);
 
         } /* instance */
