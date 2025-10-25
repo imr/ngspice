@@ -3446,7 +3446,7 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
             found_control = TRUE;
         if (ciprefix(".endc", c->line))
             found_control = FALSE;
-        inp_stripcomments_line(c->line, found_control | cf, FALSE);
+        inp_stripcomments_line(c->line, found_control || cf, FALSE);
     }
 }
 
