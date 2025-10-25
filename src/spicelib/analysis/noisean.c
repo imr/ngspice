@@ -182,9 +182,8 @@ NOISEan(CKTcircuit* ckt, int restart)
             EVTop_save(ckt, MIF_TRUE, 0.0);
         }
         else
-        { // start of no XSPICE event-driven instances
 #endif
-
+        { // start of no XSPICE event-driven instances
 #ifdef KLU
             if (ckt->CKTmatrix->CKTkluMODE)
             {
