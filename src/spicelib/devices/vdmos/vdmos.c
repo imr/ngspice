@@ -16,6 +16,7 @@ IFparm VDMOSpTable[] = { /* parameters */
  IP("off",          VDMOS_OFF,        IF_FLAG,    "Device initially off"),
  IOPU("icvds",      VDMOS_IC_VDS,     IF_REAL,    "Initial D-S voltage"),
  IOPU("icvgs",      VDMOS_IC_VGS,     IF_REAL,    "Initial G-S voltage"),
+ IOPU("temp",       VDMOS_TEMP,       IF_REAL,    "Instance temperature"),
  IOPU("dtemp",      VDMOS_DTEMP,      IF_REAL,    "Instance temperature difference"),
  IP( "ic",          VDMOS_IC,         IF_REALVEC, "Vector of D-S, G-S voltages"),
 

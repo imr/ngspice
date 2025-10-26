@@ -296,18 +296,16 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             /*  Calculate temperature dependent values for self-heating effect  */
             if (selfheat) {
-                Beta = here->VDMOStTransconductance;
-                dBeta_dT = Beta * model->VDMOSmu * pow(Temp, model->VDMOSmu-1) / pow(model->VDMOStnom, model->VDMOSmu);
-                rd0T = here->VDMOSdrainResistance;
-                if (model->VDMOStexp0Given)
-                    drd0T_dT = rd0T * model->VDMOStexp0 * pow(Temp, model->VDMOStexp0-1) / pow(model->VDMOStnom, model->VDMOStexp0);
-                else
-                    drd0T_dT = rd0T * (model->VDMOStrd1 + model->VDMOStrd2*(2*model->VDMOStnom*Temp - model->VDMOStnom*model->VDMOStnom));
+                double TempRatio = Temp / here->VDMOStemp;
+                Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
+                dBeta_dT = Beta * model->VDMOSmu / Temp;
+                rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
+                drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven) {
-                    rd1T = here->VDMOSqsResistance;
-                    drd1T_dT = rd1T * model->VDMOStexp1 * pow(Temp, model->VDMOStexp1-1) / pow(model->VDMOStnom, model->VDMOStexp1);
+                    rd1T = here->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
+                    drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
                 }
             } else {
                 Beta = here->VDMOStTransconductance;

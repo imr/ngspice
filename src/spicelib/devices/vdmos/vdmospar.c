@@ -30,6 +30,10 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         scale = 1;
 
     switch (param) {
+        case VDMOS_TEMP:
+            here->VDMOStemp = value->rValue+CONSTCtoK;
+            here->VDMOStempGiven = TRUE;
+            break;
         case VDMOS_DTEMP:
             here->VDMOSdtemp = value->rValue;
             here->VDMOSdtempGiven = TRUE;

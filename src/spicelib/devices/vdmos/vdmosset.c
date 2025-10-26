@@ -304,10 +304,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDIOconductance = 0.0;
             }
 
-            if (!here->VDMOSdtempGiven) here->VDMOSdtemp = 0.0;
-
-            here->VDMOStemp = ckt->CKTtemp + here->VDMOSdtemp;
-
             if (model->VDMOSdrainResistance > 0) {
                 if (here->VDMOSdNodePrime == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "drain");

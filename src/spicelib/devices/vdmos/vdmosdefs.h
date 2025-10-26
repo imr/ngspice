@@ -148,6 +148,7 @@ typedef struct sVDMOSinstance {
     int VDMOSmode;       /* device mode : 1 = normal, -1 = inverse */
 
     unsigned VDMOSoff:1;  /* non-zero to indicate device is off for dc analysis*/
+    unsigned VDMOStempGiven :1;  /* instance temperature specified */
     unsigned VDMOSdtempGiven :1;  /* instance delta temperature specified */
     unsigned VDMOSmGiven :1;
     unsigned VDMOSdNodePrimeSet :1;
@@ -346,10 +347,10 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSgateResistance;
     double VDMOSqsResistance;
     double VDMOSqsVoltage;
-    double VDMOStransconductance; /* input - use tTransconductance */
+    double VDMOStransconductance;    /* input - use tTransconductance */
     double VDMOSoxideCapFactor;
-    double VDMOSvth0;             /* input - use tVth */
-    double VDMOSphi;              /* input - use tPhi */
+    double VDMOSvth0; /* input - use tVth */
+    double VDMOSphi; /* input - use tPhi */
     double VDMOSlambda;
     double VDMOStheta;
     double VDMOSfNcoef;
@@ -365,10 +366,10 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSrds;
 
     /* body diode */
-    double VDIOjunctionCap;       /* input - use tCj */
-    double VDIOjunctionPot;       /* input - use tJctPot */
+    double VDIOjunctionCap;   /* input - use tCj */
+    double VDIOjunctionPot;    /* input - use tJctPot */
     double VDIOdepletionCapCoeff;
-    double VDIOjctSatCur;         /* input - use tSatCur */
+    double VDIOjctSatCur;   /* input - use tSatCur */
     double VDIObv;
     double VDIOibv;
     double VDIObrkdEmissionCoeff;
@@ -497,6 +498,7 @@ enum {
     VDMOS_CG,
     VDMOS_CS,
     VDMOS_POWER,
+    VDMOS_TEMP,
     VDMOS_M,
     VDMOS_DTEMP,
     VDMOS_THERMAL,

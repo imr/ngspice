@@ -23,6 +23,9 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     NG_IGNORE(select);
 
     switch(which) {
+        case VDMOS_TEMP:
+            value->rValue = here->VDMOStemp - CONSTCtoK;
+            return(OK);
         case VDMOS_DTEMP:
             value->rValue = here->VDMOSdtemp;
             return(OK);
