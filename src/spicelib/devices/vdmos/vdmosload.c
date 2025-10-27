@@ -279,7 +279,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 if (selfheat)
                     delTemp = DEVlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->VDMOSdelTemp),30,&Check_th);
+                          *(ckt->CKTstate0 + here->VDMOSdelTemp),10,&Check_th);
                 else
                     delTemp = 0.0;
 #endif /*NODELIMITING*/
@@ -296,15 +296,18 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             /*  Calculate temperature dependent values for self-heating effect  */
             if (selfheat) {
-                double TempRatio = Temp / here->VDMOStemp;
-                Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
+                Beta = here->VDMOStTransconductance;
                 dBeta_dT = Beta * model->VDMOSmu / Temp;
-                rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
-                drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
+                rd0T =  here->VDMOSdrainResistance;
+                if (model->VDMOStexp0Given)
+                    drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
+                else
+                    drd0T_dT = model->VDMOSdrainResistance / here->VDMOSm 
+                               * (model->VDMOStrd1 + 2 * model->VDMOStrd2 * (Temp - model->VDMOStnom));
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven) {
-                    rd1T = here->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
+                    rd1T = here->VDMOSqsResistance;
                     drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
                 }
             } else {
@@ -368,7 +371,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 double betap = Beta*t0/t1;
                 double dbetapdvgs = -Beta*theta*t0/(t1*t1);
                 double dbetapdvds = Beta*lambda/t1;
-                double dbetapdT = dBeta_dT*t0/t1;
 
                 double t2 = exp((vgst-shift)/slope);
                 vgst = slope * log(1 + t2);
@@ -376,19 +378,28 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                 if (vgst <= vdss) {
                     /* saturation region */
-                    cdrain = betap * vgst*vgst * .5;
+                    cdrain = betap * vgst*vgst * 0.5;
                     here->VDMOSgm = betap*vgst*dvgstdvgs + 0.5*dbetapdvgs*vgst*vgst;
-                    here->VDMOSgds = .5*dbetapdvds*vgst*vgst;
-                    dIds_dT = dbetapdT * vgst*vgst * .5;
+                    here->VDMOSgds = 0.5*dbetapdvds*vgst*vgst;
                 }
                 else {
                     /* linear region */
-                    cdrain = betap * vdss * (vgst - .5 * vdss);
-                    here->VDMOSgm = betap*vdss*dvgstdvgs + vdss*dbetapdvgs*(vgst-.5*vdss);
-                    here->VDMOSgds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*mtr*(vgst-.5*vdss) - .5*vdss*betap*mtr;
-                    dIds_dT = dbetapdT * vdss * (vgst - .5 * vdss);
+                    cdrain = betap * vdss * (vgst - 0.5 * vdss);
+                    here->VDMOSgm = betap*vdss*dvgstdvgs + vdss*dbetapdvgs*(vgst-0.5*vdss);
+                    here->VDMOSgds = vdss*dbetapdvds*(vgst-0.5*vdss) + betap*mtr*(vgst-0.5*vdss) - 0.5*vdss*betap*mtr;
                 }
-            }
+                if (selfheat) {
+                    double dvgst_dT = model->VDMOStcvth * model->VDMOStype;
+                    double dt1_dT = theta * dvgst_dT;
+                    double dbetap_dT = t0 * (t1 * dBeta_dT - Beta * dt1_dT) / (t1 * t1);
+                    if (vgst <= vdss) {
+                        dIds_dT = 0.5 * dbetap_dT * vgst*vgst + betap * vgst * dvgst_dT;
+                    }
+                    else {
+                        dIds_dT = vdss * (dbetap_dT * vgst + betap * dvgst_dT) - dbetap_dT * vdss * 0.5 * vdss;
+                   }
+                }
+           }
 
 
             /* now deal with n vs p polarity */
