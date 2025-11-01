@@ -963,6 +963,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Translate all SPICE 2G6 polynomial type sources */
             deck->nextcard = ENHtranslate_poly(deck->nextcard);
 #endif
+            /* quote nodes of degmons, is required for  parsing the a device node,
+               when [x] is part of a node nname. */
+            int err = 0;
+            err = quote_degmons(deck->nextcard);
 
             line_free(deck->actualLine, FALSE);
             deck->actualLine = realdeck;
