@@ -1100,6 +1100,9 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         /* collect .agemodel data */
         readdegparams(working);
 
+        /* Add degradation monitors to devices in X lines */
+        adddegmonitors(working);
+
         if (newcompat.lt && newcompat.a)
             ltspice_compat_a(working);
         if (newcompat.ps && newcompat.a)
