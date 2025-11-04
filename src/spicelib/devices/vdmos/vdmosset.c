@@ -485,9 +485,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSTcasetcasePtr, VDMOStcaseNode,   VDMOStcaseNode);   /* Rthjc between tj and tcase*/
                 TSTALLOC(VDMOSTcasetempPtr,  VDMOStcaseNode,   VDMOStempNode);
                 TSTALLOC(VDMOSTemptcasePtr,  VDMOStempNode,    VDMOStcaseNode);
+
                 TSTALLOC(VDMOSTptpPtr,       VDMOStNodePrime,  VDMOStNodePrime);  /* Rthca between tcase and Vsrc */
-                TSTALLOC(VDMOSTptcasePtr,    VDMOStNodePrime,  VDMOStempNode);
-                TSTALLOC(VDMOSTcasetpPtr,    VDMOStempNode,    VDMOStNodePrime);
+                TSTALLOC(VDMOSTptcasePtr,    VDMOStNodePrime,  VDMOStcaseNode);
+                TSTALLOC(VDMOSTcasetpPtr,    VDMOStcaseNode,    VDMOStNodePrime);
+
                 TSTALLOC(VDMOSCktTcktTPtr,   VDMOSvcktTbranch, VDMOSvcktTbranch); /* Vsrc=cktTemp to gnd */
                 TSTALLOC(VDMOSCktTtpPtr,     VDMOSvcktTbranch, VDMOStNodePrime);
                 TSTALLOC(VDMOSTpcktTPtr,     VDMOStNodePrime,  VDMOSvcktTbranch);
