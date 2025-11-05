@@ -118,9 +118,11 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 #endif
                 if(diff != 0) {
 //                if(!AlmostEqualUlps(diff, 0, 10)) {
-                    tmp = ckt->CKTdeltaOld[0]*ckt->CKTtrtol * tol * 3 * 
-                            (ckt->CKTdeltaOld[0]+ckt->CKTdeltaOld[1])/diff;
+                    tmp = tol * ckt->CKTtrtol * (ckt->CKTdeltaOld[0] + ckt->CKTdeltaOld[1])
+                        / (diff * ckt->CKTdelta);
                     tmp = fabs(tmp);
+                    tmp = exp(log(tmp) / 3);
+                    tmp *= ckt->CKTdelta;
                     timetemp = MIN(timetemp,tmp);
 #ifdef STEPDEBUG
                     printf("tol = %g, diff = %g, h->%g\n",tol,diff,tmp);
