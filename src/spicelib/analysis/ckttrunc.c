@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
-
+//#define STEPDEBUG
 int
 CKTtrunc(CKTcircuit *ckt, double *timeStep)
 {
@@ -69,12 +69,15 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
     timetemp = HUGE;
     size = SMPmatSize(ckt->CKTmatrix);
 #ifdef STEPDEBUG
-    printf("at time %g, delta %g\n",ckt->CKTtime,ckt->CKTdeltaOld[0]);
+    printf("\nNEWTRUNC at time %g, delta %g\n",ckt->CKTtime,ckt->CKTdeltaOld[0]);
 #endif
     node = ckt->CKTnodes;
     switch(ckt->CKTintegrateMethod) {
 
     case TRAPEZOIDAL:
+#ifdef STEPDEBUG
+        printf("TRAP, Order is %d\n", ckt->CKTorder);
+#endif
         switch(ckt->CKTorder) {
         case 1:
             for(i=1;i<size;i++) {
@@ -88,6 +91,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
                         ckt->CKTrhs[i],ckt->CKTpred[i]);
 #endif
                 if(diff != 0) {
+//                if (!AlmostEqualUlps(diff, 0, 10)) {
                     tmp = ckt->CKTtrtol * tol * 2 /diff;
                     tmp = ckt->CKTdeltaOld[0]*sqrt(fabs(tmp));
                     timetemp = MIN(timetemp,tmp);
@@ -113,6 +117,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
                         ckt->CKTpred[i]);
 #endif
                 if(diff != 0) {
+//                if(!AlmostEqualUlps(diff, 0, 10)) {
                     tmp = ckt->CKTdeltaOld[0]*ckt->CKTtrtol * tol * 3 * 
                             (ckt->CKTdeltaOld[0]+ckt->CKTdeltaOld[1])/diff;
                     tmp = fabs(tmp);
@@ -135,6 +140,9 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
     break;
 
     case GEAR: {
+#ifdef STEPDEBUG
+        printf("GEAR, Order is %d\n", ckt->CKTorder);
+#endif
         double delsum=0;
         for(i=0;i<=ckt->CKTorder;i++) {
             delsum += ckt->CKTdeltaOld[i];
