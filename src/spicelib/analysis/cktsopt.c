@@ -187,6 +187,17 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         task->TSKkluMemGrowFactor = (val->rValue == 1.2);
         break;
 #endif
+#ifdef NEWTRUNC
+    case OPT_LTERELTOL:
+        task->TSKlteReltol = val->rValue;
+        break;
+    case OPT_LTEABSTOL:
+        task->TSKlteAbstol = val->rValue;
+        break;
+    case OPT_LTETRTOL:
+        task->TSKlteTrtol = val->rValue;
+        break;
+#endif
 
 /* gtri - begin - wbk - add new options */
 #ifdef XSPICE
@@ -357,9 +368,9 @@ static IFparm OPTtbl[] = {
 #endif
 
 #ifdef NEWTRUNC
- { "ltereltol", OPT_RELTOL,IF_SET | IF_REAL ,"Relative error tolerence" },
- { "lteabstol", OPT_ABSTOL,IF_SET | IF_REAL,"Absolute error tolerence" },
- { "ltetrtol", OPT_TRTOL,IF_SET | IF_REAL,"Truncation error overestimation factor" }
+ { "ltereltol", OPT_LTERELTOL,IF_SET | IF_REAL ,"Relative error tolerence" },
+ { "lteabstol", OPT_LTEABSTOL,IF_SET | IF_REAL,"Absolute error tolerence" },
+ { "ltetrtol", OPT_LTETRTOL,IF_SET | IF_REAL,"Truncation error overestimation factor" }
 #endif
 
 };
