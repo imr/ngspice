@@ -51,6 +51,7 @@ struct TSKtask {
 #ifdef NEWTRUNC
     double TSKlteReltol;
     double TSKlteAbstol;
+    double TSKlteTrtol;
 #endif /* NEWTRUNC */
     double TSKgmin;
     double TSKgshunt;   /* shunt conductance (CKTdiagGmin) */

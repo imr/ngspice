@@ -221,6 +221,7 @@ struct CKTcircuit {
 #ifdef NEWTRUNC
     double CKTlteReltol;
     double CKTlteAbstol;
+    double CKTlteTrtol;
 #endif /* NEWTRUNC */
     double CKTgmin;             /* .options GMIN */
     double CKTgshunt;           /* .options RSHUNT */

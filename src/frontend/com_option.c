@@ -82,6 +82,7 @@ com_option(wordlist *wl)
 #ifdef NEWTRUNC
         printf("ltereltol = %g\n", circuit->CKTlteReltol);
         printf("lteabstol = %g\n", circuit->CKTlteAbstol);
+        printf("ltetrtol = %g\n", circuit->CKTlteTrtol);
 #endif /* NEWTRUNC */
 
         printf("\nConductances:\n");

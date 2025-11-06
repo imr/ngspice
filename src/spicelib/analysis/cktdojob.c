@@ -117,6 +117,7 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
 #ifdef NEWTRUNC
     ckt->CKTlteReltol = task->TSKlteReltol;
     ckt->CKTlteAbstol = task->TSKlteAbstol;
+    ckt->CKTlteTrtol = task->TSKlteTrtol;
 #endif /* NEWTRUNC */
 
     fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n",

@@ -353,7 +353,13 @@ static IFparm OPTtbl[] = {
  { "klu", OPT_KLU, IF_SET|IF_FLAG,
         "Set KLU as Direct Linear Solver" },
  { "klu_memgrow_factor", OPT_KLU_MEMGROW_FACTOR, IF_SET|IF_REAL,
-        "KLU Memory Grow Factor (default is 1.2)" }
+        "KLU Memory Grow Factor (default is 1.2)" },
+#endif
+
+#ifdef NEWTRUNC
+ { "ltereltol", OPT_RELTOL,IF_SET | IF_REAL ,"Relative error tolerence" },
+ { "lteabstol", OPT_ABSTOL,IF_SET | IF_REAL,"Absolute error tolerence" },
+ { "ltetrtol", OPT_TRTOL,IF_SET | IF_REAL,"Truncation error overestimation factor" }
 #endif
 
 };

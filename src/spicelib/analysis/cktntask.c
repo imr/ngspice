@@ -85,6 +85,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
 #ifdef NEWTRUNC
         tsk->TSKlteReltol       = def->TSKlteReltol;
         tsk->TSKlteAbstol       = def->TSKlteAbstol;
+        tsk->TSKlteTrtol       = def->TSKlteTrtol;
 #endif
 
     } else {
@@ -101,6 +102,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
 #ifdef NEWTRUNC
         tsk->TSKlteReltol       = 1e-3;
         tsk->TSKlteAbstol       = 1e-6;
+        tsk->TSKlteTrtol       = 7;
 #endif
         tsk->TSKtrtol           = 7;
         tsk->TSKbypass          = 0;

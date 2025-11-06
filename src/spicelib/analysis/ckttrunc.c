@@ -92,7 +92,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 #endif
                 if(diff != 0) {
 //                if (!AlmostEqualUlps(diff, 0, 10)) {
-                    tmp = ckt->CKTtrtol * tol * 2 /diff;
+                    tmp = ckt->CKTlteTrtol * tol * 2 /diff;
                     tmp = ckt->CKTdeltaOld[0]*sqrt(fabs(tmp));
                     timetemp = MIN(timetemp,tmp);
 #ifdef STEPDEBUG
@@ -118,7 +118,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 #endif
                 if(diff != 0) {
 //                if(!AlmostEqualUlps(diff, 0, 10)) {
-                    tmp = tol * ckt->CKTtrtol * (ckt->CKTdeltaOld[0] + ckt->CKTdeltaOld[1])
+                    tmp = tol * ckt->CKTlteTrtol * (ckt->CKTdeltaOld[0] + ckt->CKTdeltaOld[1])
                         / (diff * ckt->CKTdelta);
                     tmp = fabs(tmp);
                     tmp = exp(log(tmp) / 3);
@@ -160,7 +160,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
                     ckt->CKTpred[i]);
 #endif
             if(diff != 0) {
-                tmp = tol*ckt->CKTtrtol*delsum/(diff*ckt->CKTdelta);
+                tmp = tol*ckt->CKTlteTrtol*delsum/(diff*ckt->CKTdelta);
                 tmp = fabs(tmp);
                 switch(ckt->CKTorder) {
                     case 0:
