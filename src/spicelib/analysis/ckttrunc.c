@@ -92,8 +92,8 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 #endif
                 if(diff != 0) {
 //                if (!AlmostEqualUlps(diff, 0, 10)) {
-                    tmp = ckt->CKTlteTrtol * tol * 2 /diff;
-                    tmp = ckt->CKTdeltaOld[0]*sqrt(fabs(tmp));
+                    tmp = ckt->CKTlteTrtol * tol * 2 / diff;
+                    tmp = ckt->CKTdeltaOld[0]*fabs(tmp);
                     timetemp = MIN(timetemp,tmp);
 #ifdef STEPDEBUG
                     printf("tol = %g, diff = %g, h->%g\n",tol,diff,tmp);
@@ -106,6 +106,33 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
             }
             break;
         case 2:
+            for (i = 1; i < size; i++) {
+                tol = MAX(fabs(ckt->CKTrhs[i]), fabs(ckt->CKTpred[i])) *
+                    ckt->CKTlteReltol + ckt->CKTlteAbstol;
+                node = node->next;
+                if (node->type != SP_VOLTAGE) continue;
+                diff = ckt->CKTrhs[i] - ckt->CKTpred[i];
+#ifdef STEPDEBUG
+                printf("%s: cor=%g, pred=%g ", node->name,
+                    ckt->CKTrhs[i], ckt->CKTpred[i]);
+#endif
+                if (diff != 0) {
+                    //                if (!AlmostEqualUlps(diff, 0, 10)) {
+                    tmp = ckt->CKTlteTrtol * tol * 2 / diff;
+                    tmp = ckt->CKTdeltaOld[0] * sqrt(fabs(tmp));
+                    timetemp = MIN(timetemp, tmp);
+#ifdef STEPDEBUG
+                    printf("tol = %g, diff = %g, h->%g\n", tol, diff, tmp);
+#endif
+                }
+                else {
+#ifdef STEPDEBUG
+                    printf("diff is 0\n");
+#endif
+                }
+            }
+            break;
+/*        case 2:
             for(i=1;i<size;i++) {
                 tol = MAX( fabs(ckt->CKTrhs[i]),fabs(ckt->CKTpred[i]))*
                         ckt->CKTlteReltol+ckt->CKTlteAbstol;
@@ -133,7 +160,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
 #endif
                 }
             }
-            break;
+            break; */
         default:
             return(E_ORDER);
         break;
