@@ -114,11 +114,10 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     ckt->CKTkluMemGrowFactor = task->TSKkluMemGrowFactor ;
 #endif
 
-#ifdef NEWTRUNC
     ckt->CKTlteReltol = task->TSKlteReltol;
     ckt->CKTlteAbstol = task->TSKlteAbstol;
     ckt->CKTlteTrtol = task->TSKlteTrtol;
-#endif /* NEWTRUNC */
+    ckt->CKTnewtrunc = task->TSKnewtrunc;
 
     fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n",
         ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);

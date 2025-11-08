@@ -77,14 +77,16 @@ com_option(wordlist *wl)
         printf("gminsteps = %d\n", circuit->CKTnumGminSteps);
         printf("srcsteps = %d\n", circuit->CKTnumSrcSteps);
 
-        printf("\nTruncation error correction:\n");
-        printf("trtol = %f\n", circuit->CKTtrtol);
-#ifdef NEWTRUNC
-        printf("ltereltol = %g\n", circuit->CKTlteReltol);
-        printf("lteabstol = %g\n", circuit->CKTlteAbstol);
-        printf("ltetrtol = %g\n", circuit->CKTlteTrtol);
-#endif /* NEWTRUNC */
-
+        if (circuit->CKTnewtrunc) {
+            printf("\nTruncation error correction, voltage based, is selected:\n");
+            printf("ltereltol = %g\n", circuit->CKTlteReltol);
+            printf("lteabstol = %g\n", circuit->CKTlteAbstol);
+            printf("ltetrtol = %g\n", circuit->CKTlteTrtol);
+        }
+        else {
+            printf("\nTruncation error correction, charge based, is selected:\n");
+            printf("trtol = %f\n", circuit->CKTtrtol);
+        }
         printf("\nConductances:\n");
         printf("gmin     (devices)  = %g\n", circuit->CKTgmin);
         printf("diaggmin (stepping) = %g\n", circuit->CKTdiagGmin);

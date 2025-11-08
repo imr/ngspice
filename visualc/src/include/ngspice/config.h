@@ -464,9 +464,6 @@
 /* Define if you want to discover :) */
 /* #undef NEWPRED */
 
-/* Do not trigger unwanted traps by default */
-#define NEWTRUNC
-
 /* Define if we want NOBYPASS */
 /* #undef NOBYPASS */
 

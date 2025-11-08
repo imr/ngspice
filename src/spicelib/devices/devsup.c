@@ -814,15 +814,16 @@ DEVcap(CKTcircuit *ckt, double vgd, double vgs, double vgb, double covlgd,
 double
 DEVpred(CKTcircuit *ckt, int loct)
 {
-#ifndef NEWTRUNC
-    double xfact;
+    if (!ckt->CKTnewtrunc) {
+        double xfact;
 
-    xfact = ckt->CKTdelta/ckt->CKTdeltaOld[1];
-    return( ( (1+xfact) * *(ckt->CKTstate1+loct) ) -
-            (    xfact  * *(ckt->CKTstate2+loct) )  );
-#else
-    return 1.;
-#endif /* NEWTRUNC */
+        xfact = ckt->CKTdelta / ckt->CKTdeltaOld[1];
+        return(((1 + xfact) * *(ckt->CKTstate1 + loct)) -
+            (xfact * *(ckt->CKTstate2 + loct)));
+    }
+    else {
+        return 1.;
+    }
 }
 
 

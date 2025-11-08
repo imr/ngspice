@@ -48,11 +48,10 @@ struct TSKtask {
     double TSKreltol;
     double TSKchgtol;
     double TSKvoltTol;
-#ifdef NEWTRUNC
     double TSKlteReltol;
     double TSKlteAbstol;
     double TSKlteTrtol;
-#endif /* NEWTRUNC */
+    unsigned int TSKnewtrunc:1; /* voltage controlled truncation */
     double TSKgmin;
     double TSKgshunt;   /* shunt conductance (CKTdiagGmin) */
     double TSKcshunt;   /* shunt capacitor to ground */

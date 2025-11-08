@@ -187,7 +187,6 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         task->TSKkluMemGrowFactor = (val->rValue == 1.2);
         break;
 #endif
-#ifdef NEWTRUNC
     case OPT_LTERELTOL:
         task->TSKlteReltol = val->rValue;
         break;
@@ -197,8 +196,15 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_LTETRTOL:
         task->TSKlteTrtol = val->rValue;
         break;
+    case OPT_NEWTRUNC:
+#ifdef PREDICTOR
+        task->TSKnewtrunc = (val->iValue != 0);
+#else
+        task->TSKnewtrunc = 0;
+        fprintf(stderr, "Warning: Option 'newtrunc' ignored,\n"
+            "    compilation with preprocessor flag 'PREDICTOR' is required.\n");
 #endif
-
+        break;
 /* gtri - begin - wbk - add new options */
 #ifdef XSPICE
     case OPT_EVT_MAX_OP_ALTER:
@@ -241,7 +247,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
           ckt->enh->rshunt_data.gshunt = 1.0 / val->rValue;
         }
         else {
-          printf("WARNING - Rshunt option too small.  Ignored.\n");
+          fprintf(stderr, "WARNING - Rshunt option too small.  Ignored.\n");
         }
         break;
 #endif
@@ -367,11 +373,10 @@ static IFparm OPTtbl[] = {
         "KLU Memory Grow Factor (default is 1.2)" },
 #endif
 
-#ifdef NEWTRUNC
  { "ltereltol", OPT_LTERELTOL,IF_SET | IF_REAL ,"Relative error tolerence" },
  { "lteabstol", OPT_LTEABSTOL,IF_SET | IF_REAL,"Absolute error tolerence" },
- { "ltetrtol", OPT_LTETRTOL,IF_SET | IF_REAL,"Truncation error overestimation factor" }
-#endif
+ { "ltetrtol", OPT_LTETRTOL,IF_SET | IF_REAL,"Truncation error overestimation factor" },
+ { "newtrunc", OPT_NEWTRUNC,IF_SET | IF_FLAG,"voltage controlled truncation" }
 
 };
 

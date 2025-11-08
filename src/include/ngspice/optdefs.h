@@ -132,12 +132,10 @@ enum {
     OPT_KLU_MEMGROW_FACTOR,
 #endif
 
-#ifdef NEWTRUNC
     OPT_LTERELTOL,
     OPT_LTEABSTOL,
     OPT_LTETRTOL,
-#endif
-
+    OPT_NEWTRUNC,
 };
 
 #ifdef XSPICE

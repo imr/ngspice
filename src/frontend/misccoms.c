@@ -274,9 +274,6 @@ com_version(wordlist *wl)
 #ifdef PREDICTOR
             fprintf(cp_out, "** --enable-predictor\n");
 #endif
-#ifdef NEWTRUNC
-            fprintf(cp_out, "** --enable-newtrunc\n");
-#endif
 #ifdef WANT_SENSE2
             fprintf(cp_out, "** --enable-sense2\n");
 #endif

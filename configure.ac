@@ -229,10 +229,6 @@ AC_ARG_ENABLE([predictor],
 AC_ARG_ENABLE([newpred],
     [AS_HELP_STRING([--enable-newpred], [Enable NEWPRED whatever it is(?)])])
 
-# --enable-newtrunc: define NEWTRUNC for the code
-AC_ARG_ENABLE([newtrunc],
-    [AS_HELP_STRING([--enable-newtrunc], [Enable, how we want extrapolate capacitances.])])
-
 # --enable-sense2: define WANT_SENSE2 for the code
 AC_ARG_ENABLE([sense2],
     [AS_HELP_STRING([--enable-sense2], [Use spice2 sensitivity analysis.])])
@@ -1043,10 +1039,6 @@ fi
 if test "x$enable_newpred" = xyes; then
     AC_DEFINE([NEWPRED], [], [Define if you want to discover :)])
     AC_MSG_RESULT([NEWPRED enabled])
-fi
-if test "x$enable_newtrunc" = xyes; then
-    AC_DEFINE([NEWTRUNC], [], [Do not trigger unwanted traps by default])
-    AC_MSG_RESULT([New truncation error calculation enabled])
 fi
 if test "x$enable_experimental" = xyes; then
     AC_DEFINE([EXPERIMENTAL_CODE], [], [Define if we want some experimental code])
