@@ -56,9 +56,15 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
     else
         here->VDMOSdrainResistance =  model->VDMOSdrainResistance / here->VDMOSm * (1.0 + (model->VDMOStrd1 * dt) + (model->VDMOStrd2 * dt * dt));
 
-    here->VDMOSgateConductance =  here->VDMOSgateConductance / (1.0 + (model->VDMOStrg1 * dt) + (model->VDMOStrg2 * dt * dt));
+    if (model->VDMOSgateResistance > 0)
+        here->VDMOSgateConductance = here->VDMOSm / model->VDMOSgateResistance / (1.0 + (model->VDMOStrg1 * dt) + (model->VDMOStrg2 * dt * dt));
+    else
+        here->VDMOSgateConductance = 0.0;
 
-    here->VDMOSsourceConductance =  here->VDMOSsourceConductance / (1.0 + (model->VDMOStrs1 * dt) + (model->VDMOStrs2 * dt * dt));
+    if (model->VDMOSsourceResistance > 0)
+        here->VDMOSsourceConductance = here->VDMOSm / model->VDMOSsourceResistance / (1.0 + (model->VDMOStrs1 * dt) + (model->VDMOStrs2 * dt * dt));
+    else
+        here->VDMOSsourceConductance = 0.0;
 
     if (model->VDMOSqsGiven)
         here->VDMOSqsResistance = model->VDMOSqsResistance / here->VDMOSm * pow(ratio, model->VDMOStexp1);
