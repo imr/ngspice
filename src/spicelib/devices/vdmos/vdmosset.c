@@ -259,6 +259,13 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             here->VDMOSstates = *states;
             *states += VDMOSnumStates;
 
+            if ((here->VDMOStempGiven) && (here->VDMOSdtempGiven)) {
+                SPfrontEnd->IFerrorf(ERR_WARNING,
+                    "%s: temp and dtemp instance parameter given - using dtemp",
+                    here->VDMOSname);
+                here->VDMOStempGiven = FALSE;
+            }
+
             if (!here->VDMOSicVDSGiven) {
                 here->VDMOSicVDS = 0;
             }
