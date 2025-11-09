@@ -296,15 +296,18 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             /*  Calculate temperature dependent values for self-heating effect  */
             if (selfheat) {
-                double TempRatio = Temp / here->VDMOStemp;
-                Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
+                Beta = here->VDMOStTransconductance;
                 dBeta_dT = Beta * model->VDMOSmu / Temp;
-                rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
-                drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
+                rd0T =  here->VDMOSdrainResistance;
+                if (model->VDMOStexp0Given)
+                    drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
+                else
+                    drd0T_dT = model->VDMOSdrainResistance / here->VDMOSm 
+                               * (model->VDMOStrd1 + 2 * model->VDMOStrd2 * (Temp - model->VDMOStnom));
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven) {
-                    rd1T = here->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
+                    rd1T = here->VDMOSqsResistance;
                     drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
                 }
             } else {
@@ -451,7 +454,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                  - here->VDMOSgtempT * delTemp;
 
                 Vrd = *(ckt->CKTrhsOld + here->VDMOSdNode) - *(ckt->CKTrhsOld + here->VDMOSdNodePrime);
-                dIth_dVrd = here->VDMOSdrainConductance * Vrd;
+                dIth_dVrd = here->VDMOSdrainConductance * 2 * Vrd;
                 dIrd_dgdrain = Vrd;
                 dIrd_dT = dIrd_dgdrain * dgdrain_dT;
                 here->VDMOScth += here->VDMOSdrainConductance * Vrd*Vrd - dIth_dVrd*Vrd - dIrd_dT*Vrd*delTemp;
