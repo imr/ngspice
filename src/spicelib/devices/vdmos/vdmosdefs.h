@@ -229,8 +229,8 @@ typedef struct sVDMOSinstance {
     double *VDMOSTempdPtr;
     double *VDIOPosPrimetempPtr;
     double *VDMOSDtempPtr;
-    double *VDMOStempSPtr;
-    double *VDMOSSTempPtr;
+    double *VDMOSTempsPtr;
+    double *VDMOSStempPtr;
 
     double *VDMOSTcasetcasePtr; /* for Rthjc */
     double *VDMOSTcasetempPtr;
