@@ -82,8 +82,9 @@ VDMOSconvTest(GENmodel *inModel, CKTcircuit *ckt)
              *   initialization 
              */
 
-            vd = *(ckt->CKTrhsOld+here->VDIOposPrimeNode)-
-                    *(ckt->CKTrhsOld + here->VDMOSdNode);
+            vd = model->VDMOStype * (
+                  *(ckt->CKTrhsOld+here->VDIOposPrimeNode)-
+                  *(ckt->CKTrhsOld + here->VDMOSdNode));
 
             delvd=vd- *(ckt->CKTstate0 + here->VDIOvoltage);
 
