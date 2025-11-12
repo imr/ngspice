@@ -993,19 +993,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                                 tc->linenum, tc->line);
                         }
                     }
-                    fprintf(fdo, "**************** uncommented deck **************\n\n");
-                    /* always print first line */
-                    fprintf(fdo, "%6s  %6d  %6d  %s\n", deck->linesource, deck->linenum_orig, deck->linenum, deck->line);
-                    /* here without out-commented lines */
-                    for (tc = deck->nextcard; tc; tc = tc->nextcard) {
-                        if (*(tc->line) == '*')
-                            continue;
-                        fprintf(fdo, "%6s  %6d  %6d  %s\n", tc->linesource, tc->linenum_orig, tc->linenum, tc->line);
+                    if (!cp_getvar("debug-out-short", CP_BOOL, NULL, 0)) {
+                        fprintf(fdo, "**************** uncommented deck **************\n\n");
+                        /* always print first line */
+                        fprintf(fdo, "%6s  %6d  %6d  %s\n", deck->linesource, deck->linenum_orig, deck->linenum, deck->line);
+                        /* here without out-commented lines */
+                        for (tc = deck->nextcard; tc; tc = tc->nextcard) {
+                            if (*(tc->line) == '*')
+                                continue;
+                            fprintf(fdo, "%6s  %6d  %6d  %s\n", tc->linesource, tc->linenum_orig, tc->linenum, tc->line);
+                        }
+                        fprintf(fdo, "\n****************** complete deck ***************\n\n");
+                        /* now completely */
+                        for (tc = deck; tc; tc = tc->nextcard)
+                            fprintf(fdo, "%6s  %6d  %6d  %s\n", tc->linesource, tc->linenum_orig, tc->linenum, tc->line);
                     }
-                    fprintf(fdo, "\n****************** complete deck ***************\n\n");
-                    /* now completely */
-                    for (tc = deck; tc; tc = tc->nextcard)
-                        fprintf(fdo, "%6s  %6d  %6d  %s\n", tc->linesource, tc->linenum_orig, tc->linenum, tc->line);
                     fclose(fdo);
                 }
                 else
@@ -1209,10 +1211,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         continue;
                     fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
                 }
-                fprintf(fdo, "\n****************** complete deck ***************\n\n");
-                /* now completely */
-                for (tc = deck; tc; tc = tc->nextcard)
-                    fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
+                if (!cp_getvar("debug-out-short", CP_BOOL, NULL, 0)) {
+                    fprintf(fdo, "\n****************** complete deck ***************\n\n");
+                    /* now completely */
+                    for (tc = deck; tc; tc = tc->nextcard)
+                        fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
+                }
                 fclose(fdo);
             }
             else
