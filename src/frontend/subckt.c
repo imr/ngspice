@@ -97,7 +97,7 @@ struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, int flen, char *actual, const char *subname);
 static char *gettrans(const char *name, const char *name_end, bool *isglobal);
-static int numnodes(const char *line);
+static int numnodes(const char* line, struct subs* subs);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
@@ -1173,11 +1173,15 @@ translate_inst_name(struct bxx_buffer *buffer, const char *scname, const char *n
 static int
 translate(struct card *deck, char *formal, int flen, char *actual, char *scname, const char *subname, struct subs *subs, wordlist const *modnames)
 {
+
     struct card *c;
     struct bxx_buffer buffer;
     char *next_name, *name, *t, *nametofree, *paren_ptr;
     int nnodes, i, dim;
     int rtn = 0;
+
+    NG_IGNORE(modnames);
+
 #ifdef XSPICE
     bool got_vnam = FALSE;
 #endif
@@ -1387,7 +1391,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
              * Ignore controlling nodes as they get special treatment for POLY.
              */
 
-            nnodes = numnodes(c->line);
+            nnodes = numnodes(c->line, subs);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
@@ -1477,7 +1481,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
             tfree(name);
             bxx_putc(&buffer, ' ');
 
-            nnodes = numnodes(c->line);
+            nnodes = numnodes(c->line, subs);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
@@ -1690,18 +1694,26 @@ gettrans(const char *name, const char *name_end, bool *isglobal)
 /* Control nodes for E and G sources are not counted as they vary in
  * the case of POLY. The count returned by get_number_terminals() includes
  * devices for K (mutual inductors) and W (current-controlled switch).
- */
-
+ * x lines are special, when nested and containing parameters.
+ * Therefore the old code is kept.*/
 static int
-numnodes(const char *line)
+numnodes(const char* line, struct subs* subs)
 {
     switch (*line) {
-    case 'e':
-    case 'g':
-    case 'w':
-        return 2;
-    case 'k':
-        return 0;
+        case 'e':
+        case 'g':
+        case 'w':
+            return 2;
+        case 'k':
+            return 0;
+        case 'x':
+        {
+            const char* xname_e = skip_back_ws(strchr(line, '\0'), line);
+            const char* xname = skip_back_non_ws(xname_e, line);
+            for (; subs; subs = subs->su_next)
+                if (eq_substr(xname, xname_e, subs->su_name))
+                    return subs->su_numargs;
+        }
     }
     return get_number_terminals((char *)line);
 }
