@@ -363,7 +363,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 double t2 = exp((vgst-shift)/slope);
                 vgst = slope * log(1 + t2);
                 double dvgstdvgs = t2/(t2+1);
-
+                
                 if (vgst <= vdss) {
                     /* saturation region */
                     cdrain = betap * vgst*vgst * .5;
@@ -639,22 +639,23 @@ bypass:
 
             if (selfheat)
             {
-
+                double gthjc = 1/model->VDMOSrthjc;
+                double gthca = 1/model->VDMOSrthca;
                 (*(here->VDMOSDtempPtr)      +=  dIrd_dT);
                 (*(here->VDMOSDPtempPtr)     +=  GmT - dIrd_dT);
                 (*(here->VDMOSSPtempPtr)     += -GmT);
                 (*(here->VDMOSGPtempPtr)     += 0.0);
-                (*(here->VDMOSTemptempPtr)   += -gTtt - dIrd_dT*Vrd + 1/model->VDMOSrthjc + gcTt);
+                (*(here->VDMOSTemptempPtr)   += -gTtt - dIrd_dT*Vrd + gthjc + gcTt);
                 (*(here->VDMOSTempgpPtr)     += -gTtg);
                 (*(here->VDMOSTempdPtr)      += -dIth_dVrd);
                 (*(here->VDMOSTempdpPtr)     += -gTtdp + dIth_dVrd);
                 (*(here->VDMOSTempspPtr)     += -gTtsp);
-                (*(here->VDMOSTemptcasePtr)  += -1/model->VDMOSrthjc);
-                (*(here->VDMOSTcasetempPtr)  += -1/model->VDMOSrthjc);
-                (*(here->VDMOSTcasetcasePtr) +=  1/model->VDMOSrthjc + 1/model->VDMOSrthca);
-                (*(here->VDMOSTptpPtr)       +=  1/model->VDMOSrthca);
-                (*(here->VDMOSTptcasePtr)    += -1/model->VDMOSrthca);
-                (*(here->VDMOSTcasetpPtr)    += -1/model->VDMOSrthca);
+                (*(here->VDMOSTemptcasePtr)  += -gthjc);
+                (*(here->VDMOSTcasetempPtr)  += -gthjc);
+                (*(here->VDMOSTcasetcasePtr) +=  gthjc + gthca);
+                (*(here->VDMOSTptpPtr)       +=  gthca);
+                (*(here->VDMOSTptcasePtr)    += -gthca);
+                (*(here->VDMOSTcasetpPtr)    += -gthca);
                 (*(here->VDMOSCktTtpPtr)     +=  1.0);
                 (*(here->VDMOSTpcktTPtr)     +=  1.0);
             }
