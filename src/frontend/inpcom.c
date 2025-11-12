@@ -1257,32 +1257,35 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
                             t->linenum, t->line);
                     }
                 }
-                fprintf(fd,
-                    "\n\n**************** uncommented deck "
-                    "**************\n\n");
-                /* always print first line */
-                fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
-                    cc->line);
-                /* here without out-commented lines */
-                for (t = cc->nextcard; t; t = t->nextcard) {
-                    if (*(t->line) == '*')
-                        continue;
-                    fprintf(fd, "%6s  %6d  %6d  %s\n",
-                        t->linesource, t->linenum_orig, t->linenum, t->line);
-                }
-                fprintf(fd,
+                if (!cp_getvar("debug-out-short", CP_BOOL, NULL, 0)) {
+                    fprintf(fd,
+                        "\n\n**************** uncommented deck "
+                        "**************\n\n");
+                    /* always print first line */
+                    fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
+                        cc->line);
+                    /* here without out-commented lines */
+                    for (t = cc->nextcard; t; t = t->nextcard) {
+                        if (*(t->line) == '*')
+                            continue;
+                        fprintf(fd, "%6s  %6d  %6d  %s\n",
+                            t->linesource, t->linenum_orig, t->linenum, t->line);
+                    }
+                    fprintf(fd,
                         "\n\n****************** complete deck "
                         "***************\n\n");
-                /* now completely */
-                for (t = cc; t; t = t->nextcard)
-                    fprintf(fd, "%6s  %6d  %6d  %s\n",
-                            t->linesource, t->linenum_orig,t->linenum, t->line);
+                    /* now completely */
+                    for (t = cc; t; t = t->nextcard)
+                        fprintf(fd, "%6s  %6d  %6d  %s\n",
+                            t->linesource, t->linenum_orig, t->linenum, t->line);
+                }
                 fclose(fd);
 
                 fprintf(stdout,
-                        "max line length %d, max subst. per line %d, number "
-                        "of lines %d\n",
-                        (int) max_line_length, no_braces, dynmaxline);
+                    "max line length %d, max subst. per line %d, number "
+                    "of lines %d\n",
+                    (int)max_line_length, no_braces, dynmaxline);
+
             }
             else
                 fprintf(stderr,
