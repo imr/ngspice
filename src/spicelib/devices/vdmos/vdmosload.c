@@ -84,16 +84,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             else
                 Check_th = 0;
 
-            /* FIXME:
-               this is not a fix, but a hack:
-               with selfheat, op and op for ac don't work, NaN in self heating evaluation of
-               first iteration in CKTop(). Calling CKTop() from acan uses flag MODEDCOP,
-               changing this to MODETRANOP, as used by CKTop() called from dctran, then op is o.k.
-            */
-            if (selfheat)
-                if(ckt->CKTmode == 528) /* includes MODEDCOP */
-                    ckt->CKTmode = 544; /* includes MODETRANOP */
-
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
              * here.  They may be moved at the expense of instance size
@@ -680,7 +670,6 @@ bypass:
                 (*(here->VDMOSDPtempPtr)     +=  GmT - dIrd_dT);
                 (*(here->VDMOSStempPtr)      +=  dIrs_dT);
                 (*(here->VDMOSSPtempPtr)     += -GmT - dIrs_dT);
-                (*(here->VDMOSGPtempPtr)     += 0.0);
                 (*(here->VDMOSTemptempPtr)   += -gTtt - dIrd_dT*Vrd - dIrs_dT*Vrs + 1/model->VDMOSrthjc + gcTt);
                 (*(here->VDMOSTempgpPtr)     += -gTtg);
                 (*(here->VDMOSTempdPtr)      += -dIth_dVrd);
