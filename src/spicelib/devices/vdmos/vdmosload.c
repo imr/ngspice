@@ -462,10 +462,12 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  * you must add in the other half from previous time
                  * and the constant part
                  */
-                DevCapVDMOS(vgd, cgdmin, cgdmax, a, cgs,
+                // Everything is computed for m parallel instances... scale ggdmin, cgdmax, and cgs accordingly
+                DevCapVDMOS(vgd, here->VDMOSm*cgdmin, here->VDMOSm*cgdmax, a, here->VDMOSm*cgs,
                             (ckt->CKTstate0 + here->VDMOScapgs),
                             (ckt->CKTstate0 + here->VDMOScapgd));
-                *(ckt->CKTstate0 + here->VDMOScapth) = model->VDMOScthj; /* always constant */
+                // Everything is computed for m parallel instances... so scale cthj accordingly
+                *(ckt->CKTstate0 + here->VDMOScapth) =  here->VDMOSm * model->VDMOScthj; /* always constant */
 
                 vgs1 = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
@@ -604,7 +606,7 @@ bypass:
                     vCktTemp *= ckt->CKTsrcFact;
                 *(ckt->CKTrhs + here->VDMOSvcktTbranch)+= vCktTemp;
             }
-
+            
             /*
              *  load y matrix
              */
@@ -639,8 +641,9 @@ bypass:
 
             if (selfheat)
             {
-                double gthjc = 1/model->VDMOSrthjc;
-                double gthca = 1/model->VDMOSrthca;
+                // Everything is computed for m parallel instances... so scale gthjc and gthja accordingly
+                double gthjc = here->VDMOSm / model->VDMOSrthjc;
+                double gthca = here->VDMOSm / model->VDMOSrthca;
                 (*(here->VDMOSDtempPtr)      +=  dIrd_dT);
                 (*(here->VDMOSDPtempPtr)     +=  GmT - dIrd_dT);
                 (*(here->VDMOSSPtempPtr)     += -GmT);

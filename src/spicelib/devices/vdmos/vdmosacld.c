@@ -48,7 +48,8 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 GmT = model->VDMOStype * here->VDMOSgmT;
                 cgT  = model->VDMOStype * here->VDMOScgT;
                 cdT  = model->VDMOStype * here->VDMOScdT;
-                cTt = model->VDMOScthj;
+                // Everything is computed for m parallel instances... so scale cthj accordingly
+                cTt = here->VDMOSm * model->VDMOScthj;
                 gTtg  = here->VDMOSgtempg;
                 gTtdp = here->VDMOSgtempd;
                 gTtt  = here->VDMOSgtempT;
@@ -57,7 +58,8 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 GmT = -model->VDMOStype * here->VDMOSgmT;
                 cgT  = -model->VDMOStype * here->VDMOScgT;
                 cdT  = -model->VDMOStype * here->VDMOScdT;
-                cTt = -model->VDMOScthj;
+                // Everything is computed for m parallel instances... so scale cthj accordingly
+                cTt = - here->VDMOSm * model->VDMOScthj;
                 gTtg  = -here->VDMOSgtempg;
                 gTtdp = -here->VDMOSgtempd;
                 gTtt  = -here->VDMOSgtempT;
