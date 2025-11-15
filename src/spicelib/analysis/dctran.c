@@ -525,6 +525,7 @@ resume:
     }
 
 #ifndef XSPICE
+    /* Force the breakpoint if appropriate */
     else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
         ckt->CKTsaveDelta = ckt->CKTdelta;
         ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
@@ -533,6 +534,15 @@ resume:
         fflush(stdout);
 #endif
         ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
+    }
+    /* Try to equalise the last two time steps before the breakpoint,
+       if the second step would be smaller than CKTdelta otherwise.*/
+    else if (ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
+        ckt->CKTsaveDelta = ckt->CKTdelta;
+        ckt->CKTdelta = (ckt->CKTbreaks[0] - ckt->CKTtime) / 2.;
+#ifdef STEPDEBUG
+        fprintf(stdout, "Delta equalising step at time %e with delta %e\n", ckt->CKTtime, ckt->CKTdelta);
+#endif
     }
 #endif /* !XSPICE */
 
@@ -573,6 +583,15 @@ resume:
         ckt->CKTbreak = 1;
         ckt->CKTsaveDelta = ckt->CKTdelta;
         ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
+    }
+    /* Try to equalise the last two time steps before the breakpoint,
+       if the second step would be smaller than CKTdelta otherwise.*/
+    else if (ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
+        ckt->CKTsaveDelta = ckt->CKTdelta;
+        ckt->CKTdelta = (ckt->CKTbreaks[0] - ckt->CKTtime) / 2.;
+#ifdef STEPDEBUG
+        fprintf(stdout, "Delta equalising step at time %e with delta %e\n", ckt->CKTtime, ckt->CKTdelta);
+#endif
     }
 
 #ifdef SHARED_MODULE
