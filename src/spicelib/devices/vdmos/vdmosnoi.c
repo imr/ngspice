@@ -110,11 +110,12 @@ VDMOSnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
             NevalSrc(&noizDens[VDMOSFLNOIZ], NULL, ckt,
                  N_GAIN,inst->VDMOSdNodePrime, inst->VDMOSsNodePrime,
                  (double)0.0);
+            // VDMOScd is scaled with m, no need to scale coxSquared (which is a constant)
+            // Should be proportional to m
             noizDens[VDMOSFLNOIZ] *= model->VDMOSfNcoef * 
                  exp(model->VDMOSfNexp *
                  log(MAX(fabs(inst->VDMOScd),N_MINLOG))) /
-                 (data->freq * 
-                 inst->VDMOSm * coxSquared);
+                 (data->freq * coxSquared);
             lnNdens[VDMOSFLNOIZ] = 
                  log(MAX(noizDens[VDMOSFLNOIZ],N_MINLOG));
 

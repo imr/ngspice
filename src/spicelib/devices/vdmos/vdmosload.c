@@ -67,15 +67,16 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
-        /* VDMOS capacitance parameters */
-        const double cgdmin = model->VDMOScgdmin;
-        const double cgdmax = model->VDMOScgdmax;
-        const double a = model->VDMOSa;
-        const double cgs = model->VDMOScgs;
 
         /* loop through all the instances of the model */
         for (here = VDMOSinstances(model); here != NULL;
                 here = VDMOSnextInstance(here)) {
+
+            /* VDMOS capacitance parameters */
+            const double cgdmin = here->VDMOSm * model->VDMOScgdmin;
+            const double cgdmax = here->VDMOSm * model->VDMOScgdmax;
+            const double a = model->VDMOSa;
+            const double cgs = here->VDMOSm * model->VDMOScgs;
 
             Temp = here->VDMOStemp;
             selfheat = (here->VDMOSthermal) && (model->VDMOSrthjcGiven);
@@ -491,7 +492,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 DevCapVDMOS(vgd, cgdmin, cgdmax, a, cgs,
                             (ckt->CKTstate0 + here->VDMOScapgs),
                             (ckt->CKTstate0 + here->VDMOScapgd));
-                *(ckt->CKTstate0 + here->VDMOScapth) = model->VDMOScthj; /* always constant */
+                // Everything is computed for m parallel instances... so scale cthj accordingly
+                *(ckt->CKTstate0 + here->VDMOScapth) =  here->VDMOSm * model->VDMOScthj; /* always constant */
 
                 vgs1 = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
@@ -666,22 +668,25 @@ bypass:
 
             if (selfheat)
             {
+                // Everything is computed for m parallel instances... so scale gthjc and gthja accordingly
+                double gthjc = here->VDMOSm / model->VDMOSrthjc;
+                double gthca = here->VDMOSm / model->VDMOSrthca;
                 (*(here->VDMOSDtempPtr)      +=  dIrd_dT);
                 (*(here->VDMOSDPtempPtr)     +=  GmT - dIrd_dT);
                 (*(here->VDMOSStempPtr)      +=  dIrs_dT);
                 (*(here->VDMOSSPtempPtr)     += -GmT - dIrs_dT);
-                (*(here->VDMOSTemptempPtr)   += -gTtt - dIrd_dT*Vrd - dIrs_dT*Vrs + 1/model->VDMOSrthjc + gcTt);
+                (*(here->VDMOSTemptempPtr)   += -gTtt - dIrd_dT*Vrd - dIrs_dT*Vrs + gthjc + gcTt);
                 (*(here->VDMOSTempgpPtr)     += -gTtg);
                 (*(here->VDMOSTempdPtr)      += -dIth_dVrd);
                 (*(here->VDMOSTempsPtr)      += -dIth_dVrs);
                 (*(here->VDMOSTempdpPtr)     += -gTtdp + dIth_dVrd);
                 (*(here->VDMOSTempspPtr)     += -gTtsp + dIth_dVrs);
-                (*(here->VDMOSTemptcasePtr)  += -1/model->VDMOSrthjc);
-                (*(here->VDMOSTcasetempPtr)  += -1/model->VDMOSrthjc);
-                (*(here->VDMOSTcasetcasePtr) +=  1/model->VDMOSrthjc + 1/model->VDMOSrthca);
-                (*(here->VDMOSTptpPtr)       +=  1/model->VDMOSrthca);
-                (*(here->VDMOSTptcasePtr)    += -1/model->VDMOSrthca);
-                (*(here->VDMOSTcasetpPtr)    += -1/model->VDMOSrthca);
+                (*(here->VDMOSTemptcasePtr)  += -gthjc);
+                (*(here->VDMOSTcasetempPtr)  += -gthjc);
+                (*(here->VDMOSTcasetcasePtr) +=  gthjc + gthca);
+                (*(here->VDMOSTptpPtr)       +=  gthca);
+                (*(here->VDMOSTptcasePtr)    += -gthca);
+                (*(here->VDMOSTcasetpPtr)    += -gthca);
                 (*(here->VDMOSCktTtpPtr)     +=  1.0);
                 (*(here->VDMOSTpcktTPtr)     +=  1.0);
             }
