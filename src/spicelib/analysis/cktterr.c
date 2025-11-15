@@ -69,7 +69,9 @@ CKTterr(int qcap, CKTcircuit *ckt, double *timeStep)
     del = ckt->CKTtrtol * tol/MAX(ckt->CKTabstol,factor * fabs(diff[0]));
     if(ckt->CKTorder == 2) {
         del = sqrt(del);
-    } else if (ckt->CKTorder > 2) {
+    } else if (ckt->CKTorder == 3) {
+        del = cbrt(del);
+    } else if (ckt->CKTorder > 3) {
         del = exp(log(del)/ckt->CKTorder);
     }
     *timeStep = MIN(*timeStep,del);
