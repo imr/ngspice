@@ -67,15 +67,16 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
-        /* VDMOS capacitance parameters */
-        const double cgdmin = model->VDMOScgdmin;
-        const double cgdmax = model->VDMOScgdmax;
-        const double a = model->VDMOSa;
-        const double cgs = model->VDMOScgs;
 
         /* loop through all the instances of the model */
         for (here = VDMOSinstances(model); here != NULL;
                 here = VDMOSnextInstance(here)) {
+
+            /* VDMOS capacitance parameters */
+            const double cgdmin = here->VDMOSm * model->VDMOScgdmin;
+            const double cgdmax = here->VDMOSm * model->VDMOScgdmax;
+            const double a = model->VDMOSa;
+            const double cgs = here->VDMOSm * model->VDMOScgs;
 
             Temp = here->VDMOStemp;
             selfheat = (here->VDMOSthermal) && (model->VDMOSrthjcGiven);
@@ -462,8 +463,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  * you must add in the other half from previous time
                  * and the constant part
                  */
-                // Everything is computed for m parallel instances... scale ggdmin, cgdmax, and cgs accordingly
-                DevCapVDMOS(vgd, here->VDMOSm*cgdmin, here->VDMOSm*cgdmax, a, here->VDMOSm*cgs,
+                DevCapVDMOS(vgd, cgdmin, cgdmax, a, cgs,
                             (ckt->CKTstate0 + here->VDMOScapgs),
                             (ckt->CKTstate0 + here->VDMOScapgd));
                 // Everything is computed for m parallel instances... so scale cthj accordingly
