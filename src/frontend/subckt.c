@@ -135,9 +135,6 @@ struct subs {
  * list of translated names (i.e. after subckt expansion)
  */
 
-/* flag indicating use of the experimental numparams library */
-static bool use_numparams = FALSE;
-
 static char start[32], sbend[32], invoke[32], model[32];
 
 static void
@@ -224,48 +221,41 @@ inp_subcktexpand(struct card *deck) {
     if (!cp_getvar("modelline", CP_STRING, model, sizeof(model)))
         strcpy(model, ".model");
 
-/*    use_numparams = cp_getvar("numparams", CP_BOOL, NULL, 0); */
-
-    use_numparams = TRUE;
 //    tprint(deck);
     /*  deck has .control sections already removed, but not comments */
-    if (use_numparams) {
-
 #ifdef TRACE
-        fprintf(stderr, "Numparams is processing this deck:\n");
-        for (c = deck; c; c = c->nextcard) {
-            if (ciprefix("*", c->line))
-                continue;
-            fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
-        }
-#endif
-
-        nupa_signal(NUPADECKCOPY);
-        /* get the subckt names from the deck */
-        for (c = deck; c; c = c->nextcard) {    /* first Numparam pass */
-            if (ciprefix(".subckt", c->line)) {
-                 nupa_scan(c);
-            }
-        }
-
-        /* now copy instances */
-        for (c = deck; c; c = c->nextcard) {  /* first Numparam pass */
-            if (*(c->line) == '*') {
-                continue;
-            }
-            c->line = nupa_copy(c);
-        }
-
-#ifdef TRACE
-        fprintf(stderr, "Numparams transformed deck:\n");
-        for (c = deck; c; c = c->nextcard) {
-            if (ciprefix("*", c->line))
-                continue;
-            fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
-        }
-#endif
-
+    fprintf(stderr, "Numparams is processing this deck:\n");
+    for (c = deck; c; c = c->nextcard) {
+        if (ciprefix("*", c->line))
+            continue;
+        fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
     }
+#endif
+
+    nupa_signal(NUPADECKCOPY);
+    /* get the subckt names from the deck */
+    for (c = deck; c; c = c->nextcard) {    /* first Numparam pass */
+        if (ciprefix(".subckt", c->line)) {
+                nupa_scan(c);
+        }
+    }
+
+    /* now copy instances */
+    for (c = deck; c; c = c->nextcard) {  /* first Numparam pass */
+        if (*(c->line) == '*') {
+            continue;
+        }
+        c->line = nupa_copy(c);
+    }
+
+#ifdef TRACE
+    fprintf(stderr, "Numparams transformed deck:\n");
+    for (c = deck; c; c = c->nextcard) {
+        if (ciprefix("*", c->line))
+            continue;
+        fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
+    }
+#endif
 
     /* Get all the model names so we can deal with BJTs, etc.
      *  Stick all the model names into the doubly-linked wordlist modnames.
@@ -374,36 +364,34 @@ inp_subcktexpand(struct card *deck) {
         if (ciprefix(invoke, c->line)) {
             fprintf(cp_err, "Error: unknown subckt: %s\n", c->line);
             fprintf(cp_err, "    in line no. %d from file %s\n", c->linenum_orig, c->linesource);
-            if (use_numparams)
-                nupa_signal(NUPAEVALDONE);
+
+            nupa_signal(NUPAEVALDONE);
             return NULL;
         }
 
-    if (use_numparams) {
-        /* the NUMPARAM final line translation pass */
-        nupa_signal(NUPASUBDONE);
-        for (c = deck; c; c = c->nextcard)
-            /* 'param' .meas statements can have dependencies on measurement values */
-            /* need to skip evaluating here and evaluate after other .meas statements */
-            if (ciprefix(".meas", c->line) && strstr(c->line, "param")) {
-                ;
-            } else {
-                nupa_eval(c);
-            }
+    /* the NUMPARAM final line translation pass */
+    nupa_signal(NUPASUBDONE);
+    for (c = deck; c; c = c->nextcard)
+        /* 'param' .meas statements can have dependencies on measurement values */
+        /* need to skip evaluating here and evaluate after other .meas statements */
+        if (ciprefix(".meas", c->line) && strstr(c->line, "param")) {
+            ;
+        } else {
+            nupa_eval(c);
+        }
 
 #ifdef TRACE
-        fprintf(stderr, "Numparams converted deck:\n");
-        for (c = deck; c; c = c->nextcard) {
-            if (ciprefix("*", c->line))
-                continue;
-            fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
-        }
+    fprintf(stderr, "Numparams converted deck:\n");
+    for (c = deck; c; c = c->nextcard) {
+        if (ciprefix("*", c->line))
+            continue;
+        fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
+    }
 #endif
 
-        /*nupa_list_params(stdout);*/
-        nupa_copy_inst_dico();
-        nupa_signal(NUPAEVALDONE);
-    }
+    /*nupa_list_params(stdout);*/
+    nupa_copy_inst_dico();
+    nupa_signal(NUPAEVALDONE);
 
     return (deck);  /* return the spliced deck.  */
 }
@@ -535,13 +523,8 @@ doit(struct card *deck, wordlist *modnames) {
                 else
                     deck = c;
 
-                if (use_numparams == FALSE) {
-                    line_free_x(ends, FALSE); /* drop the .ends card */
-                    prev_of_ends->nextcard = NULL;
-                } else {
-                    ends->line[0] = '*'; /* comment the .ends card */
-                    ends->nextcard = NULL;
-                }
+                ends->line[0] = '*'; /* comment the .ends card */
+                ends->nextcard = NULL;
 
             } else {
 
@@ -760,18 +743,8 @@ doit(struct card *deck, wordlist *modnames) {
                         error = 1;
 
                     /* Now splice the decks together. */
-
-                    if (use_numparams == FALSE) {
-                        line_free_x(c, FALSE); /* drop the invocation */
-                        if (prev_of_c)
-                            prev_of_c->nextcard = su_deck;
-                        else
-                            deck = su_deck;
-                    } else {
-                        c->line[0] = '*'; /* comment the invocation */
-                        c->nextcard = su_deck;
-                    }
-
+                    c->line[0] = '*'; /* comment the invocation */
+                    c->nextcard = su_deck;
                     c = su_deck;
                     while (c->nextcard)
                         c = c->nextcard;
