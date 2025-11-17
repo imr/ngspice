@@ -492,8 +492,11 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 DevCapVDMOS(vgd, cgdmin, cgdmax, a, cgs,
                             (ckt->CKTstate0 + here->VDMOScapgs),
                             (ckt->CKTstate0 + here->VDMOScapgd));
-                // Everything is computed for m parallel instances... so scale cthj accordingly
-                *(ckt->CKTstate0 + here->VDMOScapth) =  here->VDMOSm * model->VDMOScthj; /* always constant */
+                /* Everything is computed for m parallel instances... so scale cthj accordingly
+                 * Also, take into account Meyer numerical integration style and 
+                 * halve the value of cthj that gets stored in the state. 
+                 */
+                *(ckt->CKTstate0 + here->VDMOScapth) =  here->VDMOSm * model->VDMOScthj / 2; /* always constant */
 
                 vgs1 = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
@@ -576,8 +579,6 @@ bypass:
                 {
                     error = NIintegrate(ckt, &gcTt, &ceqqth, capth, here->VDMOSqth);
                     if (error) return(error);
-                    ceqqth = ceqqth - gcTt*delTemp + ckt->CKTag[0] *
-                             *(ckt->CKTstate0 + here->VDMOSqth);
                 }
             }
 
@@ -668,7 +669,8 @@ bypass:
 
             if (selfheat)
             {
-                // Everything is computed for m parallel instances... so scale gthjc and gthja accordingly
+                /* Everything is computed for m parallel instances... so scale gthjc and gthja accordingly
+                 */
                 double gthjc = here->VDMOSm / model->VDMOSrthjc;
                 double gthca = here->VDMOSm / model->VDMOSrthca;
                 (*(here->VDMOSDtempPtr)      +=  dIrd_dT);
