@@ -258,13 +258,7 @@ IFfrontEnd nutmeginfo = {
     OUTerrorf,
     OUTpBeginPlot,
     OUTpData,
-    OUTwBeginPlot,
-    OUTwReference,
-    OUTwData,
-    OUTwEnd,
     OUTendPlot,
-    OUTbeginDomain,
-    OUTendDomain,
     OUTattributes
 };
 

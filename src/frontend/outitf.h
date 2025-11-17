@@ -50,17 +50,8 @@ int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                   IFuid analName,
                   IFuid refName, int refType,
                   int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr);
-int OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
-                  IFuid analName,
-                  IFuid refName, int refType,
-                  int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr);
 int OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr);
-int OUTwReference(runDesc *plotPtr, IFvalue *valuePtr, void **refPtr);
-int OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr);
-int OUTwEnd(runDesc *plotPtr);
 int OUTendPlot(runDesc *plotPtr);
-int OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue);
-int OUTendDomain(runDesc *plotPtr);
 int OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value);
 int OUTstopnow(void);
 void OUTerror(int flags, char *format, IFuid *names);

@@ -200,11 +200,8 @@ struct comm *cp_coms = spcp_coms;
 
 extern int OUTpBeginPlot(CKTcircuit *, JOB *, IFuid, IFuid, int, int, IFuid *, int, runDesc **);
 extern int OUTpData(runDesc *, IFvalue *, IFvalue *);
-extern int OUTwBeginPlot(CKTcircuit *, JOB *, IFuid, IFuid, int, int, IFuid *, int, runDesc **);
-extern int OUTwReference(runDesc *, IFvalue *, void **);
-extern int OUTwData(runDesc *, int, IFvalue *, void *), OUTwEnd(runDesc *), OUTendPlot(runDesc *);
-extern int OUTbeginDomain(runDesc *, IFuid, int, IFvalue *);
-extern int OUTendDomain(runDesc *), OUTstopnow(void);
+extern int OUTendPlot(runDesc *);
+extern int OUTstopnow(void);
 extern void OUTerror(int, char *, IFuid *);
 
 #ifdef __GNUC__
@@ -224,13 +221,7 @@ IFfrontEnd nutmeginfo = {
     OUTerrorf,
     OUTpBeginPlot,
     OUTpData,
-    OUTwBeginPlot,
-    OUTwReference,
-    OUTwData,
-    OUTwEnd,
     OUTendPlot,
-    OUTbeginDomain,
-    OUTendDomain,
     OUTattributes
 };
 

@@ -455,23 +455,8 @@ struct IFfrontEnd {
                             /* start pointwise output plot */
     int (*OUTpData) (runDesc *, IFvalue *, IFvalue *);
                             /* data for pointwise plot */
-    int (*OUTwBeginPlot) (CKTcircuit *, JOB *,
-                          IFuid,
-                          IFuid, int,
-                          int, IFuid *, int, runDesc **);
-                            /* start windowed output plot */
-    int (*OUTwReference) (runDesc *, IFvalue *, void **);
-                            /* independent vector for windowed plot */
-    int (*OUTwData) (runDesc *, int, IFvalue *, void *);
-                            /* data for windowed plot */
-    int (*OUTwEnd) (runDesc *);
-                            /* signal end of windows */
     int (*OUTendPlot) (runDesc *);
                             /* end of plot */
-    int (*OUTbeginDomain) (runDesc *, IFuid, int, IFvalue *);
-                            /* start nested domain */
-    int (*OUTendDomain) (runDesc *);
-                            /* end nested domain */
     int (*OUTattributes) (runDesc *, IFuid, int, IFvalue *);
                             /* specify output attributes of node */
 };
