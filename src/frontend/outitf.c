@@ -118,20 +118,6 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
 }
 
 
-int
-OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
-              IFuid analName,
-              IFuid refName, int refType,
-              int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
-{
-
-    return (beginPlot(analysisPtr, circuitPtr, "circuit name",
-                      analName, refName, refType, numNames,
-                      dataNames, dataType, TRUE,
-                      plotPtr));
-}
-
-
 static int
 beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
 {
@@ -148,10 +134,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     bool savenointernals = FALSE;
     char *an_name;
     int initmem;
-    /*to resume a run saj
-     *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
-     */
 
+    /*to resume a run, Reassign the file pointer and return
+      (requires *runp to be NULL if this is not needed)*/
     if (dataType == 666 && numNames == 666) {
         run = *runp;
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
@@ -801,38 +786,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 } /* end of function OUTpData */
 
 
-
-int OUTwReference(runDesc*plotPtr, IFvalue *valuePtr, void **refPtr)
-{
-    NG_IGNORE(refPtr);
-    NG_IGNORE(valuePtr);
-    NG_IGNORE(plotPtr);
-
-    return OK;
-}
-
-
-int
-OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
-{
-    NG_IGNORE(refPtr);
-    NG_IGNORE(valuePtr);
-    NG_IGNORE(dataIndex);
-    NG_IGNORE(plotPtr);
-
-    return OK;
-}
-
-
-int
-OUTwEnd(runDesc *plotPtr)
-{
-    NG_IGNORE(plotPtr);
-
-    return OK;
-}
-
-
 int
 OUTendPlot(runDesc *plotPtr)
 {
@@ -847,27 +800,6 @@ OUTendPlot(runDesc *plotPtr)
     tfree(valuenew);
 
     freeRun(plotPtr);
-
-    return (OK);
-}
-
-
-int
-OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
-{
-    NG_IGNORE(outerRefValue);
-    NG_IGNORE(refType);
-    NG_IGNORE(refName);
-    NG_IGNORE(plotPtr);
-
-    return (OK);
-}
-
-
-int
-OUTendDomain(runDesc *plotPtr)
-{
-    NG_IGNORE(plotPtr);
 
     return (OK);
 }
