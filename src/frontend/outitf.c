@@ -970,8 +970,9 @@ fileInit(runDesc *run)
 }
 
 /* Trying to guess the type of a vector, using either their special names
-   or special parameter names for @ vecors. FIXME This guessing may fail
-   due to the many options, especially for the @ vectors. */
+   or special parameter names for @ vectors. FIXME This guessing may fail
+   due to the many options, especially for the @ vectors. pltypename
+   may be run->type in batch mode or the plot name in control mode. */
 static int
 guess_type(const char *name, char* pltypename)
 {
@@ -1040,13 +1041,15 @@ static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
+
     bool keepbranch = cp_getvar("keep#branch", CP_BOOL, NULL, 0);
 
     for (i = 0; i < run->numData; i++) {
 
         char *name = run->data[i].name;
 
-        type = guess_type(name, NULL);
+        /* Use run->type to detect SP analysis */
+        type = guess_type(name, run->type);
 
         if (type == SV_CURRENT && !keepbranch) {
             char *branch = strstr(name, "#branch");
@@ -1185,6 +1188,7 @@ plotInit(runDesc *run)
         else
             name = copy(dd->name);
 
+        /* Use pl->pl_typename to detect SP analysis */
         v = dvec_alloc(name,
                        guess_type(name, pl->pl_typename),
                        run->isComplex
