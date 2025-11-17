@@ -26,7 +26,6 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "variable.h"
 #include <fcntl.h>
 #include "ngspice/cktdefs.h"
-#include "ngspice/inpdefs.h"
 #include "breakp2.h"
 #include "runcoms.h"
 #include "plotting/graf.h"
