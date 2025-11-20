@@ -138,7 +138,6 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 double gthca = here->VDMOSm / model->VDMOSrthca;
                *(here->VDMOSDPtempPtr)       +=  GmT;
                *(here->VDMOSSPtempPtr)       += -GmT;
-
                *(here->VDMOSTemptempPtr)     +=  gTtt + gthjc;
                *(here->VDMOSTempgpPtr)       +=  gTtg;
                *(here->VDMOSTempdpPtr)       +=  gTtdp;
@@ -149,8 +148,8 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                *(here->VDMOSTptpPtr)         +=  gthca;
                *(here->VDMOSTptcasePtr)      += -gthca;
                *(here->VDMOSTcasetpPtr)      += -gthca;
-               *(here->VDMOSCktTtpPtr)       +=  1.0;
-               *(here->VDMOSTpcktTPtr)       +=  1.0;
+               *(here->VDMOSDevTtpPtr)       +=  1.0;
+               *(here->VDMOSTpdevTPtr)       +=  1.0;
 
                *(here->VDMOSTemptempPtr + 1) += xcTt;
                *(here->VDMOSDPtempPtr + 1)   += xcdT;
