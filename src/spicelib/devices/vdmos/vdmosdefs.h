@@ -50,7 +50,7 @@ typedef struct sVDMOSinstance {
     int VDMOStNodePrime; /* number of the internal temp node between voltage source and Rthca */
     int VDIOposPrimeNode; /* number of the internal node of the body diode */
 
-    int VDMOSvcktTbranch; /* equation number of branch equation added for cktTemp source */ 
+    int VDMOSvdevTbranch; /* equation number of branch equation added for cktTemp source */ 
 
     double VDMOSm;   /* parallel device multiplier */
 
@@ -238,9 +238,9 @@ typedef struct sVDMOSinstance {
     double *VDMOSTptpPtr;       /* for Rthca */
     double *VDMOSTptcasePtr;
     double *VDMOSTcasetpPtr;
-    double *VDMOSCktTcktTPtr;   /* for VcktTemp */
-    double *VDMOSCktTtpPtr;
-    double *VDMOSTpcktTPtr;
+    double *VDMOSDevTdevTPtr;   /* for VdevTemp */
+    double *VDMOSDevTtpPtr;
+    double *VDMOSTpdevTPtr;
 
 #ifdef KLU
     BindElement *VDMOSDdBinding ;
@@ -287,9 +287,9 @@ typedef struct sVDMOSinstance {
     BindElement *VDMOSTptpBinding ;
     BindElement *VDMOSTptcaseBinding ;
     BindElement *VDMOSTcasetpBinding ;
-    BindElement *VDMOSCktTcktTBinding ;
-    BindElement *VDMOSCktTtpBinding ;
-    BindElement *VDMOSTpcktTBinding ;
+    BindElement *VDMOSDevTdevTBinding ;
+    BindElement *VDMOSDevTtpBinding ;
+    BindElement *VDMOSTpdevTBinding ;
 #endif
 
 } VDMOSinstance ;

@@ -634,7 +634,7 @@ bypass:
                     vDevTemp = (here->VDMOStemp-CONSTCtoK); /* device temperature */
                 if (ckt->CKTmode & MODETRANOP)
                     vDevTemp *= ckt->CKTsrcFact;
-                *(ckt->CKTrhs + here->VDMOSvcktTbranch)+= vDevTemp;
+                *(ckt->CKTrhs + here->VDMOSvdevTbranch)+= vDevTemp;
             }
 
             /*
@@ -691,8 +691,8 @@ bypass:
                 (*(here->VDMOSTptpPtr)       +=  gthca);
                 (*(here->VDMOSTptcasePtr)    += -gthca);
                 (*(here->VDMOSTcasetpPtr)    += -gthca);
-                (*(here->VDMOSCktTtpPtr)     +=  1.0);
-                (*(here->VDMOSTpcktTPtr)     +=  1.0);
+                (*(here->VDMOSDevTtpPtr)     +=  1.0);
+                (*(here->VDMOSTpdevTPtr)     +=  1.0);
             }
 
             /* body diode model
