@@ -270,7 +270,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 if (selfheat)
                     delTemp = DEVlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->VDMOSdelTemp),1,&Check_th);
+                          *(ckt->CKTstate0 + here->VDMOSdelTemp),10,&Check_th);
                 else
                     delTemp = 0.0;
 #endif /*NODELIMITING*/
@@ -278,7 +278,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if (selfheat) {
-                Temp = here->VDMOStemp + delTemp;
+                Temp = delTemp + CONSTCtoK;
                 VDMOStempUpdate(model, here, Temp, ckt);
             } else {
                 Temp = here->VDMOStemp;
@@ -629,10 +629,12 @@ bypass:
                 *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp - dIrd_dT * delTemp;
                 *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp - dIrs_dT * delTemp;
                 *(ckt->CKTrhs + here->VDMOStempNode)   +=  here->VDMOScth - ceqqth;
-                double vCktTemp = (ckt->CKTtemp-CONSTCtoK); /* ckt temperature */
+                double vDevTemp = (ckt->CKTtemp-CONSTCtoK); /* ckt temperature */
+                if (here->VDMOStempGiven)
+                    vDevTemp = (here->VDMOStemp-CONSTCtoK); /* device temperature */
                 if (ckt->CKTmode & MODETRANOP)
-                    vCktTemp *= ckt->CKTsrcFact;
-                *(ckt->CKTrhs + here->VDMOSvcktTbranch)+= vCktTemp;
+                    vDevTemp *= ckt->CKTsrcFact;
+                *(ckt->CKTrhs + here->VDMOSvcktTbranch)+= vDevTemp;
             }
 
             /*
