@@ -845,6 +845,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 #ifdef OSDI
                 inputdir = dir_name;
 #endif
+                /* process each pre_xxx command */
                 cp_evloop(wl->wl_word);
             }
 
