@@ -38,7 +38,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double czof2SW;
     double sargSW;
     double sqrt_ikx;
-    double ikf_area_m, ikr_area_m, ikp_peri_m;
 
     double delvd, delvdsw=0.0; /* change in diode voltage temporary */
     double evd;
@@ -271,9 +270,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                                 here->DIOtVcritSW,&Check_dio_sw);
                         vdsw = -(vdtemp+here->DIOtBrkdwnV);
                     } else {
-                        if (model->DIOresistSWGiven)
-                            vdsw = DEVpnjlim(vdsw,*(ckt->CKTstate0 + here->DIOvoltageSW),
-                                      vtesw,here->DIOtVcritSW,&Check_dio_sw);
+                        vdsw = DEVpnjlim(vdsw,*(ckt->CKTstate0 + here->DIOvoltageSW),
+                                  vtesw,here->DIOtVcritSW,&Check_dio_sw);
                     }
                 }
                 if (selfheat)
@@ -319,7 +317,7 @@ next1:
                         gdsw = csatsw*evd/vtesw;
                         cdsw_dT = csatsw_dT * (evd - 1) - csatsw * vds * evd / (vtesw * Temp);
 
-                    } else if((!(model->DIObreakdownVoltageGiven)) ||
+                    } else if ((!(model->DIObreakdownVoltageGiven)) ||
                             vds >= -here->DIOtBrkdwnV) { /* reverse */
 
                         argsw = 3*vtesw/(vds*CONSTe);
@@ -329,7 +327,7 @@ next1:
                         gdsw = csatsw*3*argsw/vds;
                         cdsw_dT = -csatsw_dT - (csatsw_dT*argsw + csatsw*argsw_dT);
 
-                    } else {                             /* breakdown */
+                    } else if (!model->DIOresistSWGiven){ /* breakdown, but not for separate sidewall diode */
                         double evrev_dT;
 
                         evrev = exp(-(here->DIOtBrkdwnV+vds)/vtebrk);
@@ -395,14 +393,17 @@ next1:
                 }
 
             } else {                            /* breakdown */
+
                 double evrev_dT;
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
                 evrev_dT = (here->DIOtBrkdwnV+vd)*evrev/(vtebrk*Temp);
                 cdb = -csat*evrev;
                 gdb = csat*evrev/vtebrk;
-                cdb_dT = -(csat_dT*evrev + csat*evrev_dT); /* no breakdown for separate sidewall diode */
-                if ((model->DIOsatSWCurGiven)&&(!model->DIOresistSWGiven)&&(!model->DIOswEmissionCoeffGiven)) {
+                cdb_dT = -(csat_dT*evrev + csat*evrev_dT);
+                if ((model->DIOsatSWCurGiven)
+                    &&(!model->DIOresistSWGiven) /* no breakdown for separate sidewall diode */
+                    &&(!model->DIOswEmissionCoeffGiven)) {
                     evrev = exp(-(here->DIOtBrkdwnV+vdsw)/vtebrk);
                     evrev_dT = (here->DIOtBrkdwnV+vdsw)*evrev/(vtebrk*Temp);
                     cdsw = -csatsw*evrev;
@@ -436,47 +437,45 @@ next1:
 
             }
 
-            if (!model->DIOresistSWGiven) {
-                cd = cdb + cdsw;
-                gd = gdb + gdsw;
-                dIdio_dT = cdb_dT + cdsw_dT;
-            } else {
-                cd = cdb;
-                gd = gdb;
-                dIdio_dT = cdb_dT;
-                if( (model->DIOforwardSWKneeCurrentGiven) && (cdsw > 1.0e-18) ) {
-                    ikp_peri_m = here->DIOforwardSWKneeCurrent;
-                    sqrt_ikx = sqrt(cdsw/ikp_peri_m);
-                    gdsw = ((1+sqrt_ikx)*gdsw - cdsw*gdsw/(2*sqrt_ikx*ikp_peri_m))/(1+2*sqrt_ikx + cdsw/ikp_peri_m);
-                    cdsw = cdsw/(1+sqrt_ikx);
-                }
-                dIdioSw_dT = cdsw_dT;
-            }
-
             if (vd >= -3*vte) { /* limit forward */
 
-                if( (model->DIOforwardKneeCurrentGiven) && (cd > 1.0e-18) ) {
-                    ikf_area_m = here->DIOforwardKneeCurrent;
-                    sqrt_ikx = sqrt(cd/ikf_area_m);
-                    gd = ((1+sqrt_ikx)*gd - cd*gd/(2*sqrt_ikx*ikf_area_m))/(1+2*sqrt_ikx + cd/ikf_area_m);
-                    cd = cd/(1+sqrt_ikx);
+                if ( (model->DIOforwardKneeCurrentGiven) && (cdb > 1.0e-18) ) {
+                    double ikf_area_m = here->DIOforwardKneeCurrent;
+                    sqrt_ikx = sqrt(cdb/ikf_area_m);
+                    gdb = ((1+sqrt_ikx)*gdb - cdb*gdb/(2*sqrt_ikx*ikf_area_m))/(1+2*sqrt_ikx + cdb/ikf_area_m);
+                    cdb = cdb/(1+sqrt_ikx);
                 }
 
             } else {            /* limit reverse */
 
-                if( (model->DIOreverseKneeCurrentGiven) && (cd < -1.0e-18) ) {
-                    ikr_area_m = here->DIOreverseKneeCurrent;
-                    sqrt_ikx = sqrt(cd/(-ikr_area_m));
-                    gd = ((1+sqrt_ikx)*gd + cd*gd/(2*sqrt_ikx*ikr_area_m))/(1+2*sqrt_ikx - cd/ikr_area_m);
-                    cd = cd/(1+sqrt_ikx);
+                if ( (model->DIOreverseKneeCurrentGiven) && (cdb < -1.0e-18) ) {
+                    double ikr_area_m = here->DIOreverseKneeCurrent;
+                    sqrt_ikx = sqrt(cdb/(-ikr_area_m));
+                    gdb = ((1+sqrt_ikx)*gdb + cdb*gdb/(2*sqrt_ikx*ikr_area_m))/(1+2*sqrt_ikx - cdb/ikr_area_m);
+                    cdb = cdb/(1+sqrt_ikx);
                 }
 
             }
 
-            gd = gd + ckt->CKTgmin;
-            cd = cd + ckt->CKTgmin*vd;
-            gdsw = gdsw + ckt->CKTgmin;
-            cdsw = cdsw + ckt->CKTgmin*vdsw;
+            if ( (model->DIOforwardSWKneeCurrentGiven) && (cdsw > 1.0e-18) ) {
+                double ikp_peri_m = here->DIOforwardSWKneeCurrent;
+                sqrt_ikx = sqrt(cdsw/ikp_peri_m);
+                gdsw = ((1+sqrt_ikx)*gdsw - cdsw*gdsw/(2*sqrt_ikx*ikp_peri_m))/(1+2*sqrt_ikx + cdsw/ikp_peri_m);
+                cdsw = cdsw/(1+sqrt_ikx);
+            }
+
+            if (!model->DIOresistSWGiven) {
+                cd = cdb + cdsw + ckt->CKTgmin*vd;
+                gd = gdb + gdsw + ckt->CKTgmin;
+                dIdio_dT = cdb_dT + cdsw_dT;
+            } else {
+                cd = cdb + ckt->CKTgmin*vd;
+                gd = gdb + ckt->CKTgmin;
+                cdsw = cdsw + ckt->CKTgmin*vdsw;
+                gdsw = gdsw + ckt->CKTgmin;
+                dIdio_dT = cdb_dT;
+                dIdioSw_dT = cdsw_dT;
+            }
 
             if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
