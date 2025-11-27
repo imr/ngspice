@@ -42,6 +42,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_RS:
             value->rValue = model->DIOresist;
             return(OK);
+        case DIO_MOD_RSW:
+            value->rValue = model->DIOresistSW;
+            return(OK);
         case DIO_MOD_TRS:
             value->rValue = model->DIOresistTemp1;
             return(OK);
@@ -92,6 +95,9 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             return(OK);
         case DIO_MOD_IKR:
             value->rValue = model->DIOreverseKneeCurrent;
+            return(OK);
+        case DIO_MOD_IKP:
+            value->rValue = model->DIOforwardSWKneeCurrent;
             return(OK);
         case DIO_MOD_NBV:
             value->rValue = model->DIObrkdEmissionCoeff;

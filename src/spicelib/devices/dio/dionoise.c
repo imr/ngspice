@@ -41,10 +41,13 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
     static char *DIOnNames[DIONSRCS] = {
         /* Note that we have to keep the order
-           consistent with thestrchr definitions in DIOdefs.h */
+           consistent with the strchr definitions in DIOdefs.h */
         "_rs",        /* noise due to rs */
         "_id",        /* noise due to id */
         "_1overf",    /* flicker (1/f) noise */
+        "_rsw",       /* noise due to rsw */
+        "_idsw",      /* noise due to id sw */
+        "_1overfsw",  /* flicker (1/f) noise sw */
         ""            /* total diode noise */
     };
 
@@ -108,10 +111,36 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                     noizDens[DIOTOTNOIZ] = noizDens[DIORSNOIZ] +
                         noizDens[DIOIDNOIZ] +
                         noizDens[DIOFLNOIZ];
+
+                    if (model->DIOresistSWGiven) {
+                        /* sidewall diode */
+                        NevalSrcInstanceTemp(&noizDens[DIORSSWNOIZ],&lnNdens[DIORSSWNOIZ],
+                            ckt, THERMNOISE, inst->DIOposSwPrimeNode, inst->DIOposNode,
+                            inst->DIOtConductanceSW, dtemp);
+
+                        NevalSrc(&noizDens[DIOIDSWNOIZ],&lnNdens[DIOIDSWNOIZ],
+                            ckt, SHOTNOISE, inst->DIOposSwPrimeNode, inst->DIOnegNode,
+                            *(ckt->CKTstate0 + inst->DIOcurrentSW));
+
+                        NevalSrc(&noizDens[DIOFLSWNOIZ], NULL, ckt,
+                            N_GAIN, inst->DIOposSwPrimeNode, inst->DIOnegNode,
+                            (double) 0.0);
+                        noizDens[DIOFLSWNOIZ] *= model->DIOfNcoef *
+                            exp(model->DIOfNexp *
+                                log(MAX(fabs(*(ckt->CKTstate0 + inst->DIOcurrentSW) / inst->DIOm), N_MINLOG))) /
+                            data->freq * inst->DIOm;
+                        lnNdens[DIOFLSWNOIZ] =
+                            log(MAX(noizDens[DIOFLSWNOIZ], N_MINLOG));
+
+                        noizDens[DIOTOTNOIZ] += noizDens[DIORSSWNOIZ] +
+                            noizDens[DIOIDSWNOIZ] +
+                            noizDens[DIOFLSWNOIZ];
+                    }
+
                     lnNdens[DIOTOTNOIZ] =
                         log(MAX(noizDens[DIOTOTNOIZ], N_MINLOG));
 
-                   *OnDens += noizDens[DIOTOTNOIZ];
+                    *OnDens += noizDens[DIOTOTNOIZ];
 
                     if (data->delFreq == 0.0) {
 

@@ -18,7 +18,7 @@ int
 DIOpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     DIOmodel *model = (DIOmodel*)inModel;
-    double gspr;
+    double gspr, gsprsw;
     double geq;
     double xceq;
     DIOinstance *here;
@@ -43,6 +43,22 @@ DIOpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->DIOposPrimePosPtr ) -= gspr;
             *(here->DIOposPrimeNegPtr ) -= geq + xceq * s->real;
             *(here->DIOposPrimeNegPtr +1 ) -= xceq * s->imag;
+            if (model->DIOresistSWGiven) {
+                gsprsw=here->DIOtConductanceSW;
+                geq= *(ckt->CKTstate0 + here->DIOconductSW);
+                xceq= *(ckt->CKTstate0 + here->DIOcapCurrentSW) * ckt->CKTomega;
+                *(here->DIOposPosPtr) += gsprsw;
+                *(here->DIOnegNegPtr) += geq + xceq * s->real;
+                *(here->DIOnegNegPtr + 1) += xceq * s->imag;
+                *(here->DIOposSwPrimePosSwPrimePtr) += geq + gsprsw + xceq * s->real;
+                *(here->DIOposSwPrimePosSwPrimePtr + 1) += xceq * s->imag;
+                *(here->DIOposPosSwPrimePtr) -= gsprsw;
+                *(here->DIOnegPosSwPrimePtr) -= geq;
+                *(here->DIOnegPosSwPrimePtr + 1) -= xceq;
+                *(here->DIOposSwPrimePosPtr) -= gsprsw;
+                *(here->DIOposSwPrimeNegPtr) -= geq + xceq * s->real;
+                *(here->DIOposSwPrimeNegPtr + 1) -= xceq * s->imag;
+            }
         }
     }
     return(OK);
