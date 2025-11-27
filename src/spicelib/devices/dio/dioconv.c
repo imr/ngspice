@@ -19,7 +19,7 @@ DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;
-    double delvd,vd,cdhat,cd;
+    double delvd,vd,cdhat,cd,vdsw,cdhatsw=0.0,cdsw=0.0;
     double tol;
     double delTemp, deldelTemp;
     /*  loop through all the diode models */
@@ -46,11 +46,23 @@ DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
             deldelTemp = delTemp - *(ckt->CKTstate0 + here->DIOdeltemp);
 
             cdhat= *(ckt->CKTstate0 + here->DIOcurrent) + 
-                    *(ckt->CKTstate0 + here->DIOconduct) * delvd +
-                    *(ckt->CKTstate0 + here->DIOdIdio_dT) * deldelTemp;
+                   *(ckt->CKTstate0 + here->DIOconduct) * delvd +
+                   *(ckt->CKTstate0 + here->DIOdIdio_dT) * deldelTemp;
 
             cd= *(ckt->CKTstate0 + here->DIOcurrent);
 
+            if (model->DIOresistSWGiven) {
+                vdsw = *(ckt->CKTrhsOld+here->DIOposSwPrimeNode)-
+                        *(ckt->CKTrhsOld + here->DIOnegNode);
+
+                delvd=vdsw- *(ckt->CKTstate0 + here->DIOvoltageSW);
+
+                cdhatsw= *(ckt->CKTstate0 + here->DIOcurrentSW) + 
+                         *(ckt->CKTstate0 + here->DIOconductSW) * delvd +
+                         *(ckt->CKTstate0 + here->DIOdIdioSW_dT) * deldelTemp;
+
+                cdsw= *(ckt->CKTstate0 + here->DIOcurrentSW);
+            }
             /*
              *   check convergence
              */
@@ -60,6 +72,15 @@ DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
                 ckt->CKTnoncon++;
                 ckt->CKTtroubleElt = (GENinstance *) here;
                 return(OK); /* don't need to check any more device */
+            }
+            if (model->DIOresistSWGiven) {
+                tol=ckt->CKTreltol*
+                        MAX(fabs(cdhatsw),fabs(cdsw))+ckt->CKTabstol;
+                if (fabs(cdhatsw-cdsw) > tol) {
+                    ckt->CKTnoncon++;
+                    ckt->CKTtroubleElt = (GENinstance *) here;
+                    return(OK); /* no reason to continue - we've failed... */
+                }
             }
         }
     }
