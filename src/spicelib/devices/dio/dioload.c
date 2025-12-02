@@ -54,7 +54,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double vd, vdsw=0.0; /* current diode voltage */
     double vdtemp;
     double vt;      /* K t / Q */
-    double vte, vtesw, vtetun, vtebrk;
+    double vte, vtesw, vtetun, vtebrk, vterec;
     int Check_dio=0, Check_dio_sw=0, Check_th;
     int error;
     int SenCond=0;    /* sensitivity condition */
@@ -102,6 +102,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             vte = model->DIOemissionCoeff * vt;
             vtesw = model->DIOswEmissionCoeff * vt;
             vtebrk = model->DIObrkdEmissionCoeff * vt;
+            vterec = model->DIOrecEmissionCoeff*vt;
             gspr = here->DIOtConductance;
             gsprsw = here->DIOtConductanceSW;
             /*
@@ -358,8 +359,7 @@ next1:
                     cdsw_dT = csatsw_dT * (evd - 1) - csatsw * vd * evd / (vte * Temp);
                 }
                 if (model->DIOrecSatCurGiven) { /* recombination current */
-                    double vterec = model->DIOrecEmissionCoeff*vt;
-                    evd_rec = exp(vd/(vterec));
+                    evd_rec = exp(vd/vterec);
                     cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
                     gdb_rec = here->DIOtRecSatCur*evd_rec/vterec;
                     cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1)
@@ -383,7 +383,15 @@ next1:
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
                 darg_dT = 3 * arg / Temp;
-                cdb = -csat*(1+arg);
+                if (model->DIOrecSatCurGiven) {
+                    evd_rec = exp((-3*vte)/vterec);
+                    cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
+                    t1 = pow((1-(-3*vte)/here->DIOtJctPot), 2) + 0.005;
+                    gen_fac = pow(t1, here->DIOtGradingCoeff/2);
+                    cdb = -csat*(1+arg) + gen_fac*cdb_rec;
+                } else {
+                    cdb = -csat*(1+arg);
+                }
                 gdb = csat*3*arg/vd;
                 cdb_dT = -csat_dT - (csat_dT*arg + csat*darg_dT);
                 if ((model->DIOsatSWCurGiven)&&(!model->DIOswEmissionCoeffGiven)) {
@@ -398,12 +406,20 @@ next1:
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
                 evrev_dT = (here->DIOtBrkdwnV+vd)*evrev/(vtebrk*Temp);
-                cdb = -csat*evrev;
+                if (model->DIOrecSatCurGiven) {
+                    evd_rec = exp((-3*vte)/vterec);
+                    cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
+                    t1 = pow((1-(-3*vte)/here->DIOtJctPot), 2) + 0.005;
+                    gen_fac = pow(t1, here->DIOtGradingCoeff/2);
+                    cdb = -csat*evrev + gen_fac*cdb_rec;
+                } else {
+                    cdb = -csat*evrev;
+                }
                 gdb = csat*evrev/vtebrk;
                 cdb_dT = -(csat_dT*evrev + csat*evrev_dT);
                 if ((model->DIOsatSWCurGiven)
-                    &&(!model->DIOresistSWGiven) /* no breakdown for separate sidewall diode */
-                    &&(!model->DIOswEmissionCoeffGiven)) {
+                    &&(!model->DIOswEmissionCoeffGiven)
+                    &&(!model->DIOresistSWGiven)) { /* no breakdown for separate sidewall diode */
                     evrev = exp(-(here->DIOtBrkdwnV+vdsw)/vtebrk);
                     evrev_dT = (here->DIOtBrkdwnV+vdsw)*evrev/(vtebrk*Temp);
                     cdsw = -csatsw*evrev;
