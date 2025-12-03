@@ -497,6 +497,19 @@ int ngSpice_nospinit(void);
 IMPEXP
 int ngSpice_nospiceinit(void);
 
+/* Locking and unlocking the realloc of output vectors during simulation. May be set
+during reading output vectors in the primary thread, while the simulation in the
+background thread is moving on. */
+IMPEXP
+int ngSpice_LockRealloc(void);
+
+IMPEXP
+int ngSpice_UnlockRealloc(void);
+
+/* Reset ngspice as far as possible. */
+IMPEXP
+int ngSpice_Reset(void);
+
 #ifdef __cplusplus
 }
 #endif
