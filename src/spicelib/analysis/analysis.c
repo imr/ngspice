@@ -50,10 +50,10 @@ SPICEanalysis *analInfo[] = {
     &SEN2info,
 #endif
 #ifdef RFSPICE
-    & SPinfo,
-#ifdef WITH_HB
-    & HBinfo,
+    &SPinfo,
 #endif
+#ifdef WITH_HB
+    &HBinfo,
 #endif
 };
 
