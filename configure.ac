@@ -158,6 +158,10 @@ AC_ARG_ENABLE([pss],
 AC_ARG_ENABLE([sp],
     [AS_HELP_STRING([--disable-sp], [Disable S parameter Analysis])])
 
+# --disable-hb: disable Harmonic Balance Analysis
+AC_ARG_ENABLE([hb],
+    [AS_HELP_STRING([--disable-hb], [Disable Harmonic Balance Analysis])])
+
 # --enable-relpath: Relative path for binary and data. Default is "no".
 # ngspice shared may want relative paths for spinit etc.
 AC_ARG_ENABLE([relpath],
@@ -1225,6 +1229,18 @@ else
 fi
 
 AM_CONDITIONAL([SP_WANTED], [test "x$has_sp" = xtrue])
+
+# Add harmonic balance analysis to ngspice.
+if test "x$enable_hb" = xno; then
+    AC_MSG_RESULT([Harmonic Balance analysis disabled])
+    has_hb=false
+else
+    AC_MSG_RESULT([Harmonic Balance analysis enabled])
+    AC_DEFINE([WITH_HB], [1], [HB analysis])
+    has_hb=true
+fi
+
+AM_CONDITIONAL([HB_WANTED], [test "x$has_hb" = xtrue])
 
 
 AM_CONDITIONAL([CIDER_WANTED], [test "x$enable_cider" = xyes])

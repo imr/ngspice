@@ -15,16 +15,8 @@ typedef struct {
     int JOBtype;
     JOB *JOBnextJob;    /* pointer to next thing to do */
     char *JOBname;      /* name of this job */
-    double SPstartFreq;
-    double SPstopFreq;
-    double SPfreqDelta; /* multiplier for decade/octave stepping, */
-                        /* step for linear steps. */
-    double SPsaveFreq;  /* frequency at which we left off last time*/
-    int SPstepType;     /* values described below */
-    int SPnumberSteps;
-
-    unsigned SPdoNoise : 1; /* Flag to indicate if SP noise must be calculated*/
-
+    double HBFreq1;
+    double HBFreq2;
     int SPnoiseInput;
     int SPnoiseOutput;
 } HBAN;
@@ -39,13 +31,8 @@ enum {
 #endif
 
 enum {
-    SP_DEC = 1,
-    SP_OCT,
-    SP_LIN,
-    SP_START,
-    SP_STOP,
-    SP_STEPS,
-    SP_DONOISE,
+    HB_F1 = 1,
+    HB_F2
 };
 #endif
 #endif

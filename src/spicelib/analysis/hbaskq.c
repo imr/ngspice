@@ -23,47 +23,12 @@ HBaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
     switch(which) {
 
-    case SP_START:
-        value->rValue = job->SPstartFreq;
+    case HB_F1:
+        value->rValue = job->HBFreq1;
         break;
 
-    case SP_STOP:
-        value->rValue = job->SPstopFreq ;
-        break;
-
-    case SP_STEPS:
-        value->iValue = job->SPnumberSteps;
-        break;
-
-    case SP_DEC:
-        if (job->SPstepType == DECADE) {
-            value->iValue=1;
-        } else {
-            value->iValue=0;
-        }
-        break;
-
-    case SP_OCT:
-        if (job->SPstepType == OCTAVE) {
-            value->iValue=1;
-        } else {
-            value->iValue=0;
-        }
-        break;
-
-    case SP_LIN:
-        if (job->SPstepType == LINEAR) {
-            value->iValue=1;
-        } else {
-            value->iValue=0;
-        }
-        break;
-
-    case SP_DONOISE:
-        if (job->SPdoNoise)
-            value->iValue = 1;
-        else
-            value->iValue = 0;
+    case HB_F2:
+        value->rValue = job->HBFreq2;
         break;
 
     default:

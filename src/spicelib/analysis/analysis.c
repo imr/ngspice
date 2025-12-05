@@ -18,11 +18,10 @@ extern SPICEanalysis SENSinfo;
 
 #ifdef RFSPICE
 extern SPICEanalysis SPinfo;
+#endif
 
 #ifdef WITH_HB
 extern SPICEanalysis HBinfo;
-#endif
-
 #endif
 
 #ifdef WITH_PSS

@@ -11,7 +11,7 @@ Author: 1985 Thomas L. Quarles
 
 #include "analysis.h"
 
-#ifdef RFSPICE
+#ifdef WITH_HB
 
 /* ARGSUSED */
 int
@@ -23,63 +23,28 @@ HBsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
     switch(which) {
 
-    case SP_START:
-	if (value->rValue < 0.0) {
-	    errMsg = copy("Frequency of < 0 is invalid for AC start");
-            job->SPstartFreq = 1.0;
-	    return(E_PARMVAL);
-	}
-
-        job->SPstartFreq = value->rValue;
-        break;
-
-    case SP_STOP:
-	if (value->rValue < 0.0) {
-	    errMsg = copy("Frequency of < 0 is invalid for AC stop");
-            job->SPstartFreq = 1.0;
-	    return(E_PARMVAL);
-	}
-
-        job->SPstopFreq = value->rValue;
-        break;
-
-    case SP_STEPS:
-        job->SPnumberSteps = value->iValue;
-        break;
-
-    case SP_DEC:
-        if(value->iValue) {
-            job->SPstepType = DECADE;
-        } else {
-            if (job->SPstepType == DECADE) {
-                job->SPstepType = 0;
-            }
+    case HB_F1:
+        if (value->rValue < 0.0) {
+            errMsg = copy("Frequency 1 less than 0 is invalid for HB");
+            job->HBFreq1 = 1.0;
+            return(E_PARMVAL);
         }
+
+        job->HBFreq1 = value->rValue;
         break;
 
-    case SP_OCT:
-        if(value->iValue) {
-                job->SPstepType = OCTAVE;
-        } else {
-            if (job->SPstepType == OCTAVE) {
-                job->SPstepType = 0;
-            }
+
+    case HB_F2:
+        if (value->rValue < 0.0) {
+            errMsg = copy("Frequency 2 less than 0 is invalid for HB");
+            job->HBFreq2 = 1.0;
+            return(E_PARMVAL);
         }
+
+        job->HBFreq2 = value->rValue;
         break;
 
-    case SP_LIN:
-        if(value->iValue) {
-            job->SPstepType = LINEAR;
-        } else {
-            if (job->SPstepType == LINEAR) {
-                job->SPstepType = 0;
-            }
-        }
-        break;
 
-    case SP_DONOISE:
-        job->SPdoNoise = value->iValue == 1;
-        break;
 
     default:
         return(E_BADPARM);
@@ -89,8 +54,8 @@ HBsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
 
 static IFparm HBparms[] = {
-    { "f1",      SP_START,   IF_SET|IF_ASK|IF_REAL, "fundamental frequency" },
-    { "f2",       SP_STOP,    IF_SET|IF_ASK|IF_REAL, "second frequency" }
+    { "f1",    HB_F1,   IF_SET|IF_ASK|IF_REAL, "fundamental frequency" },
+    { "f2",    HB_F2,   IF_SET|IF_ASK|IF_REAL, "second frequency" }
 };
 
 SPICEanalysis HBinfo  = {

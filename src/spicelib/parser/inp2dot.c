@@ -763,11 +763,11 @@ dot_hb(char* line, void* ckt, INPtables* tab, struct card* current,
     }
     IFC(newAnalysis, (ckt, which, "Harmonic Balance Analysis", &foo, task));
 
-    parm = INPgetValue(ckt, &line, IF_REALVEC, tab);		/* Fguess */
-    GCA(INPapName, (ckt, which, foo, "freq1", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* F1 */
+    GCA(INPapName, (ckt, which, foo, "f1", parm));
 
-    parm = INPgetValue(ckt, &line, IF_REALVEC, tab);		/* Fguess */
-    GCA(INPapName, (ckt, which, foo, "freq2", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* F2 */
+    GCA(INPapName, (ckt, which, foo, "f2", parm));
 
     if (*line) {
         fprintf(stderr, "Error: unknown parameter %s on .hb - ignored\n", word);

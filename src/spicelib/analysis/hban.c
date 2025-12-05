@@ -373,7 +373,7 @@ HBan(CKTcircuit* ckt, int restart)
     // Noise analysis is performed at each freq of the SP Analysis
     // A temporary dummy job is therefore created
 
-
+#if(0)
     /* variable must be static, for continuation of interrupted (Ctrl-C),
     longer lasting noise anlysis */
     static Ndata* data = NULL;
@@ -769,10 +769,10 @@ HBan(CKTcircuit* ckt, int restart)
                 return (E_NOMOD);
 
             ckt->CKTVSRCid = vsrcRoot;
-#if (0)
+
             // Now that we have found the model, we may init the Zref and Gn ports
             VSRCspinit(ckt->CKThead[vsrcRoot], ckt, zref, gn, gninv);
-#endif
+
         }
         else
             vsrcRoot = ckt->CKTVSRCid;
@@ -982,6 +982,9 @@ endsweep:
         ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal;
     }
 #endif
+
+#endif
+
     return(0);
 }
 
