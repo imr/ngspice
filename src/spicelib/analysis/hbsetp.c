@@ -24,8 +24,8 @@ HBsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
     switch(which) {
 
     case HB_F1:
-        if (value->rValue < 0.0) {
-            errMsg = copy("Frequency 1 less than 0 is invalid for HB");
+        if (value->rValue <= 0.0) {
+            errMsg = copy("A positive fundamental frequency is required for HB");
             job->HBFreq1 = 1.0;
             return(E_PARMVAL);
         }
@@ -36,15 +36,13 @@ HBsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
     case HB_F2:
         if (value->rValue < 0.0) {
-            errMsg = copy("Frequency 2 less than 0 is invalid for HB");
+            errMsg = copy("A negative second frequency is invalid for multitone HB");
             job->HBFreq2 = 1.0;
             return(E_PARMVAL);
         }
 
         job->HBFreq2 = value->rValue;
         break;
-
-
 
     default:
         return(E_BADPARM);
