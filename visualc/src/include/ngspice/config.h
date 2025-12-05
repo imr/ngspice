@@ -11,6 +11,9 @@
 /* Define if you want PSS analysis */
 #define WITH_PSS /**/
 
+/* Define if you want Harmonic Balance analysis */
+#define WITH_HB /**/
+
 /* Name of package */
 #define PACKAGE "ngspice"
 

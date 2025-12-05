@@ -742,61 +742,35 @@ dot_sp(char* line, void* ckt, INPtables* tab, struct card* current,
 }
 
 #ifdef WITH_HB
-/*SP: Steady State Analyis */
+/*HB: Harmonic Balance Analyis */
 static int
 dot_hb(char* line, void* ckt, INPtables* tab, struct card* current,
     void* task, void* gnode, JOB* foo)
 {
     int error;			/* error code temporary */
-    IFvalue ptemp;		/* a value structure to package resistance into */
+//    IFvalue ptemp;		/* a value structure to package resistance into */
     IFvalue* parm;		/* a pointer to a value struct for function returns */
-    char* nname;		/* the oscNode name */
-    CKTnode* nnode;		/* the oscNode node */
     int which;			/* which analysis we are performing */
     char* word;			/* something to stick a word of input into */
 
     NG_IGNORE(gnode);
 
-    /* .pss Fguess StabTime OscNode <UIC>*/
-    which = ft_find_analysis("PSS");
+    /* .hb frequ */
+    which = ft_find_analysis("HB");
     if (which == -1) {
-        LITERR("Periodic steady state analysis unsupported.\n");
+        LITERR("Harmonic Balance analysis unsupported.\n");
         return (0);
     }
-    IFC(newAnalysis, (ckt, which, "Harmonic Balance State Analysis", &foo, task));
+    IFC(newAnalysis, (ckt, which, "Harmonic Balance Analysis", &foo, task));
 
     parm = INPgetValue(ckt, &line, IF_REALVEC, tab);		/* Fguess */
-    GCA(INPapName, (ckt, which, foo, "freq", parm));
+    GCA(INPapName, (ckt, which, foo, "freq1", parm));
 
-    parm = INPgetValue(ckt, &line, IF_INTVEC, tab);		/* StabTime */
-    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
-
-    INPgetNetTok(&line, &nname, 0);
-    INPtermInsert(ckt, &nname, tab, &nnode);
-    ptemp.nValue = nnode;
-    GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp));	/* OscNode given as string */
-
-    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
-    GCA(INPapName, (ckt, which, foo, "points", parm));
-
-    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS harmonics */
-    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
-
-    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* SC iterations */
-    GCA(INPapName, (ckt, which, foo, "sc_iter", parm));
-
-    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Steady coefficient */
-    GCA(INPapName, (ckt, which, foo, "steady_coeff", parm));
+    parm = INPgetValue(ckt, &line, IF_REALVEC, tab);		/* Fguess */
+    GCA(INPapName, (ckt, which, foo, "freq2", parm));
 
     if (*line) {
-        INPgetTok(&line, &word, 1);	/* uic? */
-        if (strcmp(word, "uic") == 0) {
-            ptemp.iValue = 1;
-            GCA(INPapName, (ckt, which, foo, "uic", &ptemp));
-        }
-        else {
-            fprintf(stderr, "Error: unknown parameter %s on .pss - ignored\n", word);
-        }
+        fprintf(stderr, "Error: unknown parameter %s on .hb - ignored\n", word);
     }
     return (0);
 }

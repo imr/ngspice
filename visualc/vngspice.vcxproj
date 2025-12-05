@@ -975,6 +975,7 @@
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
+    <ClInclude Include="..\src\include\ngspice\hbardefs.h" />
     <ClInclude Include="..\src\include\ngspice\osdiitf.h" />
     <ClInclude Include="..\src\include\ngspice\logicexp.h" />
     <ClInclude Include="..\src\include\ngspice\spardefs.h" />
@@ -1789,6 +1790,9 @@
     <ClCompile Include="..\src\spicelib\analysis\dkerproc.c" />
     <ClCompile Include="..\src\spicelib\analysis\dloadfns.c" />
     <ClCompile Include="..\src\spicelib\analysis\dsetparm.c" />
+    <ClCompile Include="..\src\spicelib\analysis\hban.c" />
+    <ClCompile Include="..\src\spicelib\analysis\hbaskq.c" />
+    <ClCompile Include="..\src\spicelib\analysis\hbsetp.c" />
     <ClCompile Include="..\src\spicelib\analysis\naskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\nevalsrc.c" />
     <ClCompile Include="..\src\spicelib\analysis\ninteg.c" />

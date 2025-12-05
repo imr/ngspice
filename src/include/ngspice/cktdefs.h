@@ -473,6 +473,12 @@ extern int CKTspCalcPowerWave(CKTcircuit* ckt);
 extern int CKTspCalcSMatrix(CKTcircuit* ckt);
 #endif
 
+#ifdef WITH_HB
+extern int HBan(CKTcircuit*, int);
+extern int HBaskQuest(CKTcircuit*, JOB*, int, IFvalue*);
+extern int HBsetParm(CKTcircuit*, JOB*, int, IFvalue*);
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
