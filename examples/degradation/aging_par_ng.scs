@@ -1,3 +1,4 @@
+** Aging model parameters for IHP SG13 as provided in report dated Aug. 04, 2020
 *HCI for sg13_lv_nmos
 .agemodel devmodel=sg13_lv_nmos simmodel=HCI1
 +VGS0=0
