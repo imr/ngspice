@@ -1,0 +1,40 @@
+test of integrated degradation monitor
+
+*Inverter sequence
+
+.lib "$PDK_ROOT/$PDK/libs.tech/ngspice/models/cornerMOSlv.lib" mos_tt
+
+.include "aging_par_ng.scs"
+
+* the voltage sources: 
+Vdd vdd gnd DC 1.8
+V1 in gnd pulse(0 1.8 0p 100p 100p 0.5n 2n)
+
+Xnot1 in vdd gnd out1 not1
+Xnot2 out1 vdd gnd out2 not1
+Xnot3 out2 vdd gnd out not1
+
+
+.subckt not1 a vdd vss z
+xm01   z a     vdd     vdd sg13_lv_pmos  l=0.15u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+xm02   z a     vss     vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+*adegmon1 %v([z a vss vss]) mon degmon1
+*.model degmon1 degmon (tfuture=315336e4 l=0.15e-6 devmod="sg13_lv_nmos")
+c3  a     vss   0.384f
+c2  z     vss   0.576f
+.ends
+
+* simulation command: 
+.tran 1ps 20ns 0 10p
+
+.control
+pre_osdi ../lib/ngspice/psp103_nqs.osdi
+run
+rusage
+*set nolegend
+set xbrushwidth=3
+plot xnot1.mon1 xnot2.mon1 xnot3.mon1
+plot in out+2
+.endc
+
+.end
