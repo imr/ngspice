@@ -92,7 +92,7 @@ int readdegparams (struct card *deck) {
                 /* parameter name */
                 f1 = gettok_char(&ftok, '=', FALSE, FALSE);
                 if (!f1) {
-                    fprintf(stderr, "Error: bad.agemodel syntax in line\n % s", card->line);
+                    fprintf(stderr, "Error: bad .agemodel syntax in line\n % s", card->line);
                     controlled_exit(1);
                 }
                 /* parameter value */
@@ -127,7 +127,7 @@ int readdegparams (struct card *deck) {
    Add degmon line and its model line to the netlist.*/
 int adddegmonitors(struct card* deck) {
     static int degmonno;
-    double tfuture = 315336e4;
+    double tfuture = 315336e3; /* 10 years */
     int nodes = 4;
     if (agemods[0].paramhash == NULL)
         return 1;
