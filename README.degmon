@@ -1,0 +1,6 @@
+Degradation monitor
+
+The degradation monitor is a code model with 4 inputs, to be paralleled to
+aMOS transistor, for monitoring (reading and integrating) the
+stress voltages on the device.
+
