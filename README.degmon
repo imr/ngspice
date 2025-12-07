@@ -1,6 +1,31 @@
 Degradation monitor
 
 The degradation monitor is a code model with 4 inputs, to be paralleled to
-aMOS transistor, for monitoring (reading and integrating) the
+a MOS transistor, for monitoring (reading and integrating) the
 stress voltages on the device.
+
+To start a degradation sim, put flag 'de' to ngbehavior, e.g. as
+set ngbehavior=hsdea
+in .spiceinit.
+
+Degradation model parameters have to be provided, as shown in the example
+file ngspice-master/examples/degradation/aging_par_ng.scs, starting with
+
+.agemodel devmodel=sg13_lv_nmos simmodel=HCI1
++VGS0=0
++ <other parameters>
+
+A code model monitor like
+adegmon1 %v([z a vss vss]) mon degmon1
+.model degmon1 degmon (tfuture=315336e4 l=0.15e-6 devmod="sg13_lv_nmos")
+will automatically be added to each MOS device (here of type sg13_lv_nmos).
+A .agemodel command with devmodel=sg13_lv_nmos is required (see aging_par_ng.scs).
+
+The simulation model names by 'simmodel=HCI1' is coded into the above
+cited code model monitor (see ngspice-master\src\xspice\icm\xtradev\degmonitor
+with its 2 files cfunc.mod and ifspec.ifs.
+
+The output is a list of the 3 degradation parameters provided by the HCI1 model.
+
+Examples are provided in ngspice-master\examples\degradation
 
