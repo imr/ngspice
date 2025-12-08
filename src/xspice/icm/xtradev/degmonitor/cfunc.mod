@@ -83,6 +83,7 @@ typedef struct {
     double    constfac[3];   /* intermediate factor */
     double    sintegral[3];  /* intermediate intgral */
     double    prevtime[3];   /* previous time */
+    int devtype;             /* device type 1: nms, -1: pmos */
     double VGS0;             /* degradation model parameter */
     double A[3];             /* degradation model parameter */
     double Ea[3];            /* degradation model parameter */
@@ -282,6 +283,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double sintegral;
     double prevtime;
     double k = 1.38062259e-5; /* Boltzmann */
+    int devtype;
 
     char *devmod;     /* PSP device model */
     char *simmod;     /* degradation model */
@@ -349,6 +351,16 @@ void cm_degmon(ARGS)  /* structure holding parms,
             loc->sintegral[ii] = 0.;
             loc->prevtime[ii] = 0.;
         }
+
+        if (strstr(devmod, "_nmos"))
+            loc->devtype = 1;
+        else if (strstr(devmod, "_pmos"))
+            loc->devtype = -1;
+        else {
+            loc->devtype = 0;
+            cm_message_send("Error: could not extract device type from model name\n");
+            cm_cexit(1);
+        }
 /*
         cm_message_send(INSTNAME);
         cm_message_send(INSTMODNAME);
@@ -372,6 +384,15 @@ void cm_degmon(ARGS)  /* structure holding parms,
         vg = INPUT(nodes[1]);
         vs = INPUT(nodes[2]);
         vb = INPUT(nodes[3]);
+
+        devtype = loc->devtype;
+
+        if (devtype == -1){
+            vd *= -1.;
+            vg *= -1.;
+            vs *= -1.;
+            vb *= -1.;
+        }
 
 
         for (ii = 0; ii < 3; ii++) {
@@ -399,7 +420,8 @@ void cm_degmon(ARGS)  /* structure holding parms,
             }
 
             /* test output */
-            OUTPUT(mon) = sintegral;
+            if(ii == 0)
+                OUTPUT(mon) = sintegral;
 
             if (T(0) > 0.99999 * tsim) {
                 /**** model equations 2 ****/
