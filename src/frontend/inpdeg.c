@@ -177,9 +177,10 @@ int adddegmonitors(struct card* deck) {
                         /* get the channel length */
                         char* lpos = strstr(line, "l=");
                         if (!lpos) {
-                             fprintf(stderr, "Error, l not found in device %s \n\n", deck->line);
+                             fprintf(stderr, "Error, channel length l not found in device %s \n\n", deck->line);
                              return 1;
                         }
+                        /* get l=val [m] */
                         char* clength = gettok(&lpos);
                         /* Now add a degradation monitor like
                            adegmon1 %v([z a vss vss]) mon degmon1
