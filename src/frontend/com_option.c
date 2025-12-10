@@ -7,6 +7,9 @@
 #include "variable.h"
 #include "com_option.h"
 
+#ifdef WITH_HB
+extern int hbnumfreqs[10];
+#endif
 
 /* The option command. Syntax is option [opt ...] [opt = val ...].
  * Val may be a string, an int, a float, or a list of the
@@ -91,6 +94,20 @@ com_option(wordlist *wl)
         printf("cshunt = %g\n", circuit->CKTcshunt);
 
         printf("delmin = %g\n", circuit->CKTdelmin);
+
+
+#ifdef WITH_HB
+        if (hbnumfreqs[0] > 0) {
+            int ii = 0;
+            printf("\nHarmonic Balance number of frequencies\n");
+            printf("hbnumfreq");
+            while (hbnumfreqs[ii] > 0 && ii < 10) {
+                printf(" %d", hbnumfreqs[ii]);
+                ii++;
+            }
+            printf("\n");
+        }
+#endif
 
         printf("\nDefault parameters for MOS devices\n");
         printf("Default M: %f\n", circuit->CKTdefaultMosM);
