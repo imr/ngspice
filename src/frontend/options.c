@@ -26,6 +26,8 @@ bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_norefprint = FALSE, ft_skywaterpdk = FALSE;
 bool ft_ngdebug = FALSE, ft_nginfo = FALSE, ft_stricterror = FALSE, ft_spiniterror = FALSE;
 
+int hbnumfreqs[10];
+
 static void setdb(char *str);
 static struct variable *cp_enqvec_as_var(const char *vec_name,
         int *p_f_found);
@@ -397,8 +399,36 @@ cp_usrset(struct variable *var, bool isset)
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "plots")) {
         return (US_READONLY);
-    }
+    /* Fill in hbnumfreqs[10] by reading from
+    'set hbnumfreq = 7' or 'set hbnumfreq = ( 7, 9 ) 
+     */
+#ifdef WITH_HB
+    } else if (eq(var->va_name, "hbnumfreq")) {
+        if (var->va_type == CP_NUM) {
+            hbnumfreqs[0] = var->va_num;
+            for (int ii = 1; ii < 10; ii++)
+                hbnumfreqs[ii] = 0;
+        }
+        else if (var->va_type == CP_LIST) {
+            int ii = 0;
+            for (tv = var->va_vlist; tv; tv = tv->va_next)
+                if (tv->va_type == CP_NUM) {
+                    if (ii > 9) {
+                        fprintf(stderr, "Warning: too many frequencies (> 10), ignored\n");
+                        break;
+                    }
+                    hbnumfreqs[ii] = tv->va_num;
+                    ii++;
+                }
+                else
+                    fprintf(cp_err, "Error: bad syntax for hbnumfreq\n");
+            for (int jj = ii; jj < 10; jj++)
+                hbnumfreqs[jj] = 0;
+        }
 
+        return (US_OK);
+    }
+#endif
     if (plot_cur)
         for (tv = plot_cur->pl_env; tv; tv = tv->va_next)
             if (eq(tv->va_name, var->va_name))

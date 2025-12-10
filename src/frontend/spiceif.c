@@ -467,6 +467,8 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
     } else if (eq(name, "nomod")) {
         ft_nomod = TRUE;
         return 0;
+    } else if (eq(name, "hbnumfreq")) {
+        return 0;
     }
 
     which = ft_find_analysis("options");

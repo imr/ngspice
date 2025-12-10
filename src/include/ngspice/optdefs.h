@@ -126,6 +126,10 @@ enum {
     OPT_EPSMIN,
     OPT_CSHUNT,
 
+#ifdef WITH_HB
+    OPT_HBNF,
+#endif
+
 #ifdef KLU
     OPT_SPARSE,
     OPT_KLU,

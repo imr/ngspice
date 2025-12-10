@@ -28,6 +28,10 @@ Modified: 2000 AlansFixes
 /* gtri - end - wbk - add includes */
 #endif
 
+#ifdef WITH_HB
+extern int hbnumfreqs[10];
+#endif
+
 /* ARGSUSED */
 int
 CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
@@ -188,6 +192,22 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         break;
 #endif
 
+#ifdef WITH_HB
+        /* called here from .options with parameters only */
+    case OPT_HBNF:
+    {
+        int* inf = val->v.vec.iVec;
+        if (hbnumfreqs[0] == 0) {
+            /* not yet set, cannot overwrite */
+            for (int ii = 0; ii < val->v.numValue && ii < 10; ii++) {
+                hbnumfreqs[ii] = inf[ii];
+            }
+        }
+
+        break;
+    }
+#endif
+
 /* gtri - begin - wbk - add new options */
 #ifdef XSPICE
     case OPT_EVT_MAX_OP_ALTER:
@@ -346,6 +366,11 @@ static IFparm OPTtbl[] = {
         "No op calculation in ac if circuit is linear" },
  { "epsmin", OPT_EPSMIN, IF_SET|IF_REAL,
         "Minimum value for log" },
+
+#ifdef WITH_HB
+ { "hbnumfreq", OPT_HBNF, IF_SET|IF_INTVEC,
+        "Number of harmonics for HB" },
+#endif
 
 #ifdef KLU
  { "sparse", OPT_SPARSE, IF_SET|IF_FLAG,
