@@ -9,7 +9,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/jobdefs.h"
 
 #ifdef WITH_HB
-    /* structure used to describe an AC analysis to be performed */
+    /* structure used to describe an HB analysis to be performed */
 
 typedef struct {
     int JOBtype;
