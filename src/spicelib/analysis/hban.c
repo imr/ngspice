@@ -28,6 +28,8 @@
 #include "../maths/dense/dense.h"
 #include "../maths/dense/denseinlines.h"
 
+extern int hbnumfreqs[10];
+
 #if (0)
 int CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noisean);
 int NInspIter(CKTcircuit* ckt, VSRCinstance* port);
@@ -372,6 +374,8 @@ HBan(CKTcircuit* ckt, int restart)
     NOISEAN* internalNoiseAN = NULL;
     // Noise analysis is performed at each freq of the SP Analysis
     // A temporary dummy job is therefore created
+
+    HBgetOptions();
 
 #if(0)
     /* variable must be static, for continuation of interrupted (Ctrl-C),
