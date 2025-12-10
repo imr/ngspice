@@ -60,6 +60,9 @@ INPdoOpts(
 
         if(if_parm && (if_parm->dataType & IF_SET)) {
             val = INPgetValue(ckt,&line, if_parm->dataType&IF_VARTYPES, tab);
+            /* in case of vector, INPgetValue leaves closing ')' */
+            if (*line == ')')
+                line++;
             error = ft_sim->setAnalysisParm (ckt, anal, if_parm->id, val, NULL);
             if(error) {
                 errmsg = tprintf("Warning:  can't set option %s\n", token);
