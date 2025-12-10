@@ -1400,6 +1400,8 @@ inp_dodeck(
                 break;
             case CP_STRING:
                 break;
+            case CP_LIST:
+                break;
             default: {
                 fprintf(stderr, "ERROR: wrong format in option %s!\n", eev->va_name);
                 fprintf(stderr, "   Aborting...\n");
@@ -1612,8 +1614,11 @@ inp_dodeck(
             case CP_STRING:
                 if_option(ct->ci_ckt, eev->va_name, eev->va_type, eev->va_string);
                 break;
+            case CP_LIST:
+                if_option(ct->ci_ckt, eev->va_name, eev->va_type, eev->va_string);
+                break;
             default: {
-                fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n");
+                fprintf(stderr, "ERROR: Unknown variable type for variable %s\nAborting...\n", eev->va_name);
                 controlled_exit(EXIT_FAILURE);
             }
             } // switch  . . .
