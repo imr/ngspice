@@ -477,6 +477,7 @@ extern int CKTspCalcSMatrix(CKTcircuit* ckt);
 extern int HBan(CKTcircuit*, int);
 extern int HBaskQuest(CKTcircuit*, JOB*, int, IFvalue*);
 extern int HBsetParm(CKTcircuit*, JOB*, int, IFvalue*);
+extern int HBgetOptions(void);
 #endif
 
 #ifdef __cplusplus
