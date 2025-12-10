@@ -32,6 +32,9 @@ struct TSKtask {
 #ifdef RFSPICE
 #define DOING_SP   16
 #endif
+#ifdef WITH_HB
+#define DOING_HB   32;
+#endif
 
     int TSKbypass;
     int TSKdcMaxIter;       /* iteration limit for dc op.  (itl1) */
