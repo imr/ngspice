@@ -81,6 +81,10 @@ static struct library {
 
 static int num_libraries;
 
+#ifdef WITH_HB
+bool ft_hb;
+#endif
+
 struct names {
     char *names[N_SUBCKT_W_PARAMS];
     int num_names;
@@ -1055,6 +1059,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
     /* set the members of the compatibility structure */
     set_compat_mode();
 
+#ifdef WITH_HB
+    ft_hb = FALSE;
+#endif
+
     /* Parsing the circuit 3.
        This is the next major step:
        Reading the netlist line by line, handle .include and .lib,
@@ -1425,6 +1433,12 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 *s = '\0';
             *buffer = '*'; /* change .TITLE line to comment line */
         }
+
+#ifdef WITH_HB
+        /* check for Harmonuic Balance dot command */
+        if (ciprefix(".hb", buffer))
+            ft_hb = TRUE;
+#endif
 
         /* now handle old style .lib entries */
         /* new style .lib entries handling is in expand_section_references()
