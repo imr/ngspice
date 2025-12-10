@@ -36,7 +36,7 @@ HBsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
     case HB_F2:
         if (value->rValue < 0.0) {
-            errMsg = copy("A negative second frequency is invalid for multitone HB");
+            errMsg = copy("A negative second fundamental frequency is invalid for multitone HB");
             job->HBFreq2 = 1.0;
             return(E_PARMVAL);
         }
@@ -53,7 +53,7 @@ HBsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
 static IFparm HBparms[] = {
     { "f1",    HB_F1,   IF_SET|IF_ASK|IF_REAL, "fundamental frequency" },
-    { "f2",    HB_F2,   IF_SET|IF_ASK|IF_REAL, "second frequency" }
+    { "f2",    HB_F2,   IF_SET|IF_ASK|IF_REAL, "optional second fundamental frequency" }
 };
 
 SPICEanalysis HBinfo  = {
