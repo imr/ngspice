@@ -1,6 +1,6 @@
 /**********
-Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1985 Thomas L. Quarles
+Copyright ngspice team
+Author: 2025 Holger Vogt
 **********/
 
 #include "ngspice/ngspice.h"
@@ -8,12 +8,76 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/hbardefs.h"
 #include "ngspice/cktdefs.h"
+#include "ngspice/cpextern.h"
 
 #include "analysis.h"
 
 #ifdef WITH_HB
 
-/* ARGSUSED */
+extern int hbnumfreqs[10];
+
+struct variable {
+    enum cp_types va_type;
+    char* va_name;
+    union {
+        bool vV_bool;
+        int vV_num;
+        double vV_real;
+        char* vV_string;
+        struct variable* vV_list;
+    } va_V;
+    struct variable* va_next;      /* Link. */
+};
+
+#define va_bool   va_V.vV_bool
+#define va_num    va_V.vV_num
+#define va_real   va_V.vV_real
+#define va_string va_V.vV_string
+#define va_vlist  va_V.vV_list
+
+/* Get the HB options.
+   Currently supported:
+   Number of frequencies for f1 
+   Number of frequencies for f2
+   ...
+   Number of frequncies for f10 */
+
+int
+HBgetOptions(void)
+{
+    struct variable* var, *tv;
+
+    if (hbnumfreqs[0] > 0)
+        return 0;
+    if (cp_getvar("hbnumfreq", CP_NUM, &hbnumfreqs[0], 0)) {
+        for (int ii = 1; ii < 10; ii++)
+            hbnumfreqs[ii] = 0;
+    }
+    else if (cp_getvar("hbnumfreq", CP_LIST, &var, 0)) {
+        int ii = 0;
+        for (tv = var; tv; tv = tv->va_next)
+            if (tv->va_type == CP_NUM) {
+                if (ii > 9) {
+                    fprintf(stderr, "Warning: too many frequencies (> 10), ignored\n");
+                    break;
+                }
+                hbnumfreqs[ii] = tv->va_num;
+                ii++;
+            }
+            else
+                fprintf(cp_err, "Error: bad syntax for hbnumfreq\n");
+        for (int jj = ii; jj < 10; jj++)
+            hbnumfreqs[jj] = 0;
+    }
+
+    return (0);
+
+}
+
+/* Set the .hb command parameters:
+   Currently supported:
+   fundamental frequency f1
+   fundamental frequency f2 */
 int
 HBsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
