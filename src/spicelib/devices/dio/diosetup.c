@@ -35,6 +35,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         if(!model->DIOlevelGiven) {
             model->DIOlevel = 1;
+        } else if (model->DIOlevel == 2) {
+            SPfrontEnd->IFerrorf(ERR_FATAL,
+                "%s: Diode model level 2 is not supported.", model->DIOmodName);
+            return(E_BADPARM);
         }
         if(!model->DIOemissionCoeffGiven) {
             model->DIOemissionCoeff = 1;
