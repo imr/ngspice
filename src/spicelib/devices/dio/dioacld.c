@@ -17,7 +17,7 @@ int
 DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     DIOmodel *model = (DIOmodel*)inModel;
-    double gspr;
+    double gspr, gsprsw;
     double geq;
     double xceq;
     DIOinstance *here;
@@ -42,6 +42,23 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->DIOposPrimePosPtr ) -= gspr;
             *(here->DIOposPrimeNegPtr ) -= geq;
             *(here->DIOposPrimeNegPtr +1 ) -= xceq;
+            if (model->DIOresistSWGiven) {
+                gsprsw=here->DIOtConductanceSW;
+                geq= *(ckt->CKTstate0 + here->DIOconductSW);
+                xceq= *(ckt->CKTstate0 + here->DIOcapCurrentSW) * ckt->CKTomega;
+                *(here->DIOposPosPtr) += gsprsw;
+                *(here->DIOnegNegPtr) += geq;
+                *(here->DIOnegNegPtr + 1) += xceq;
+                *(here->DIOposSwPrimePosSwPrimePtr) += (geq + gsprsw);
+                *(here->DIOposSwPrimePosSwPrimePtr + 1) += xceq;
+                *(here->DIOposPosSwPrimePtr) -= gsprsw;
+                *(here->DIOnegPosSwPrimePtr) -= geq;
+                *(here->DIOnegPosSwPrimePtr + 1) -= xceq;
+                *(here->DIOposSwPrimePosPtr) -= gsprsw;
+                *(here->DIOposSwPrimeNegPtr) -= geq;
+                *(here->DIOposSwPrimeNegPtr + 1) -= xceq;
+            }
+
             int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
             if (selfheat) {
                 double dIth_dVrs = here->DIOdIth_dVrs;
@@ -60,6 +77,19 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
                 double xgcTt= *(ckt->CKTstate0 + here->DIOcqth) * ckt->CKTomega;
                 (*(here->DIOtempTempPtr + 1) +=  xgcTt);
+
+                if (model->DIOresistSWGiven) {
+                    double dIth_dVrssw = here->DIOdIth_dVrs;
+                    double dIth_dVdioSw = here->DIOdIth_dVdio;
+                    double dIrssw_dT = here->DIOdIrs_dT;
+                    double dIdioSw_dT = *(ckt->CKTstate0 + here->DIOdIdio_dT);
+                    (*(here->DIOtempPosPtr)        += -dIth_dVrssw);
+                    (*(here->DIOtempPosSwPrimePtr) += -dIth_dVdioSw + dIth_dVrssw);
+                    (*(here->DIOtempNegPtr)        +=  dIth_dVdioSw);
+                    (*(here->DIOposTempPtr)        +=  dIrssw_dT);
+                    (*(here->DIOposSwPrimeTempPtr) +=  dIdioSw_dT - dIrssw_dT);
+                    (*(here->DIOnegTempPtr)        += -dIdioSw_dT);
+                }
             }
         }
     }

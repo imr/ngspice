@@ -42,33 +42,36 @@ mp17 2  18 1 1 p1 l=0.1u w=10u ad=5p pd=6u as=5p ps=6u
 mn17 2  18 0 0 n1 l=0.1u w=5u ad=5p pd=6u as=5p ps=6u
 c1 18 0 .1p
 
-* .ic v(2)=1.0 v(3)=1.0 v(4)=1.0
-* .ic v(2)=2.0 v(3)=0.0 v(4)=2.0
-* .ic v(2)=2.0 v(3)=0.0 v(4)=2.0 v(5)=0.0 v(6)=2.0
-* .ic v(7)=0.0 v(8)=2.0 v(9)=0.0 v(10)=2.0 v(11)=0.0 v(12)=2.0
-* .ic v(13)=0.0 v(14)=2.0 v(15)=0.0 v(16)=2.0 v(17)=0.0 v(18)=2.0
-* .ic V(10)=5 v(2)=5 v(3)=5 v(4)=5 v(5)=5 v(6)=5
-
-* .ic v(18)=1
-
 .tran .1ns 150ns uic
-
-* .option xmu = 0.49
-* .print tran v(5)
 
 .control
 
 * reduce current ringing
 option xmu = 0.49
-* set xmu=0.49
 
-set num_threads=8
 set noinit
-run
+run ; temp is 27°C
 
 * current and output in a single plot
 plot v(18) 1000*(-I(vdd)) ylimit -1 6
 
+meas tran tdiff TRIG v(18) VAL=0.5 RISE=10 TARG v(18) VAL=0.5 RISE=20
+let freq = 10/tdiff
+let delay = tdiff/17
+print freq delay
+echo
+echo
+
+set temp=100
+run ; temp is 100°C
+
+* current and output in a single plot
+plot v(18) 1000*(-I(vdd)) ylimit -1 6
+
+meas tran tdiff TRIG v(18) VAL=0.5 RISE=10 TARG v(18) VAL=0.5 RISE=20
+let freq = 10/tdiff
+let delay = tdiff/17
+print freq delay
 .endc
 
 * Short channel models from CMOS Circuit Design, Layout, and Simulation,

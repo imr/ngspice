@@ -26,7 +26,6 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "variable.h"
 #include <fcntl.h>
 #include "ngspice/cktdefs.h"
-#include "ngspice/inpdefs.h"
 #include "breakp2.h"
 #include "runcoms.h"
 #include "plotting/graf.h"
@@ -119,20 +118,6 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
 }
 
 
-int
-OUTwBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
-              IFuid analName,
-              IFuid refName, int refType,
-              int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
-{
-
-    return (beginPlot(analysisPtr, circuitPtr, "circuit name",
-                      analName, refName, refType, numNames,
-                      dataNames, dataType, TRUE,
-                      plotPtr));
-}
-
-
 static int
 beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName, char *refName, int refType, int numNames, char **dataNames, int dataType, bool windowed, runDesc **runp)
 {
@@ -149,10 +134,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     bool savenointernals = FALSE;
     char *an_name;
     int initmem;
-    /*to resume a run saj
-     *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
-     */
 
+    /*to resume a run, Reassign the file pointer and return
+      (requires *runp to be NULL if this is not needed)*/
     if (dataType == 666 && numNames == 666) {
         run = *runp;
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
@@ -280,6 +264,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                             saves[i].used = 1;
                             break;
                         }
+                        else if (ft_ngdebug && refName && eq(refName, "time") && eq(saves[i].name, "deltacheck")) {
+                            addDataDesc(run, "deltacheck", IF_REAL, j, initmem);
+                            savesused[i] = TRUE;
+                            saves[i].used = 1;
+                            break;
+                        }
                     }
                 }
             }
@@ -307,6 +297,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             /* generate a vector of real time information */
             if (ft_ngdebug && refName && eq(refName, "time")) {
                  addDataDesc(run, "speedcheck", IF_REAL, numNames, initmem);
+                 addDataDesc(run, "deltacheck", IF_REAL, numNames, initmem);
             }
         }
 
@@ -582,6 +573,9 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 double tt = ((double)cl - (double)startclock) / CLOCKS_PER_SEC;
                 plotAddRealValue(d, tt);
             }
+            else if (ft_ngdebug && d->type == IF_REAL && eq(d->name, "deltacheck")) {
+                plotAddRealValue(d, ft_curckt->ci_ckt->CKTdeltaOld[0]);
+            }
             else if (d->type == IF_REAL)
                 plotAddRealValue(d, valuePtr->v.vec.rVec[d->outIndex]);
             else if (d->type == IF_COMPLEX)
@@ -693,6 +687,9 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     double tt = ((double)cl - (double)startclock) / CLOCKS_PER_SEC;
                     fileAddRealValue(run->fp, run->binary, tt);
                 }
+                else if (ft_ngdebug && run->data[i].type == IF_REAL && eq(run->data[i].name, "deltacheck")) {
+                    fileAddRealValue(run->fp, run->binary, ft_curckt->ci_ckt->CKTdeltaOld[0]);
+                }
                 else if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
                             valuePtr->v.vec.rVec [run->data[i].outIndex]);
@@ -789,38 +786,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 } /* end of function OUTpData */
 
 
-
-int OUTwReference(runDesc*plotPtr, IFvalue *valuePtr, void **refPtr)
-{
-    NG_IGNORE(refPtr);
-    NG_IGNORE(valuePtr);
-    NG_IGNORE(plotPtr);
-
-    return OK;
-}
-
-
-int
-OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
-{
-    NG_IGNORE(refPtr);
-    NG_IGNORE(valuePtr);
-    NG_IGNORE(dataIndex);
-    NG_IGNORE(plotPtr);
-
-    return OK;
-}
-
-
-int
-OUTwEnd(runDesc *plotPtr)
-{
-    NG_IGNORE(plotPtr);
-
-    return OK;
-}
-
-
 int
 OUTendPlot(runDesc *plotPtr)
 {
@@ -835,27 +800,6 @@ OUTendPlot(runDesc *plotPtr)
     tfree(valuenew);
 
     freeRun(plotPtr);
-
-    return (OK);
-}
-
-
-int
-OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
-{
-    NG_IGNORE(outerRefValue);
-    NG_IGNORE(refType);
-    NG_IGNORE(refName);
-    NG_IGNORE(plotPtr);
-
-    return (OK);
-}
-
-
-int
-OUTendDomain(runDesc *plotPtr)
-{
-    NG_IGNORE(plotPtr);
 
     return (OK);
 }
@@ -957,8 +901,9 @@ fileInit(runDesc *run)
 }
 
 /* Trying to guess the type of a vector, using either their special names
-   or special parameter names for @ vecors. FIXME This guessing may fail
-   due to the many options, especially for the @ vectors. */
+   or special parameter names for @ vectors. FIXME This guessing may fail
+   due to the many options, especially for the @ vectors. pltypename
+   may be run->type in batch mode or the plot name in control mode. */
 static int
 guess_type(const char *name, char* pltypename)
 {
@@ -969,6 +914,8 @@ guess_type(const char *name, char* pltypename)
     else if (cieq(name, "time"))
         type = SV_TIME;
     else if ( cieq(name, "speedcheck"))
+        type = SV_TIME;
+    else if ( cieq(name, "deltacheck"))
         type = SV_TIME;
     else if (cieq(name, "frequency"))
         type = SV_FREQUENCY;
@@ -1025,13 +972,15 @@ static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
+
     bool keepbranch = cp_getvar("keep#branch", CP_BOOL, NULL, 0);
 
     for (i = 0; i < run->numData; i++) {
 
         char *name = run->data[i].name;
 
-        type = guess_type(name, NULL);
+        /* Use run->type to detect SP analysis */
+        type = guess_type(name, run->type);
 
         if (type == SV_CURRENT && !keepbranch) {
             char *branch = strstr(name, "#branch");
@@ -1170,6 +1119,7 @@ plotInit(runDesc *run)
         else
             name = copy(dd->name);
 
+        /* Use pl->pl_typename to detect SP analysis */
         v = dvec_alloc(name,
                        guess_type(name, pl->pl_typename),
                        run->isComplex

@@ -24,11 +24,6 @@
 /* gtri - end - wbk - Add headers */
 #endif
 
-#ifdef CLUSTER
-#include "ngspice/cluster.h"
-#endif
-
-
 #define INIT_STATS() \
 do { \
     startTime = SPfrontEnd->IFseconds();        \
@@ -89,18 +84,6 @@ DCpss(CKTcircuit *ckt,
 
     int ltra_num;
     CKTnode *node;
-#ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-    Ipc_Boolean_t  ipc_firsttime = IPC_TRUE;
-    Ipc_Boolean_t  ipc_secondtime = IPC_FALSE;
-    Ipc_Boolean_t  ipc_delta_cut = IPC_FALSE;
-    double         ipc_last_time = 0.0;
-    double         ipc_last_delta = 0.0;
-/* gtri - end - wbk - 12/19/90 - Add IPC stuff */
-#endif
-#ifdef CLUSTER
-    int redostep;
-#endif
 
     /* New variables */
     int j, oscnNode;
@@ -224,15 +207,12 @@ DCpss(CKTcircuit *ckt,
 #endif
 
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff and set anal_init and anal_type */
-        /* Tell the beginPlot routine what mode we're in */
-        g_ipc.anal_type = IPC_ANAL_TRAN;
+        /* set anal_init and anal_type */
 
         /* Tell the code models what mode we're in */
         g_mif_info.circuit.anal_type = MIF_DC;
 
         g_mif_info.circuit.anal_init = MIF_TRUE;
-/* gtri - end - wbk */
 #endif
 
 	/* Time Domain plot start and prepared to be filled in later */
@@ -306,35 +286,18 @@ DCpss(CKTcircuit *ckt,
 #endif
 
         /* If no convergence reached - NO valid Operating Point */
-        if(converged != 0) return(converged);
+        if(converged != 0)
+            return(converged);
+
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff */
-
-        /* Send the operating point results for Mspice compatibility */
-        if(g_ipc.enabled) {
-            ipc_send_dcop_prefix();
-            CKTdump(ckt, 0.0, job->PSSplot_td);
-            ipc_send_dcop_suffix();
-        }
-
-/* gtri - end - wbk */
-
-/* gtri - add - wbk - 12/19/90 - set anal_init and anal_type */
-
         g_mif_info.circuit.anal_init = MIF_TRUE;
 
         /* Tell the code models what mode we're in */
         g_mif_info.circuit.anal_type = MIF_TRAN;
 
-/* gtri - end - wbk */
-
-/* gtri - begin - wbk - Add Breakpoint stuff */
-
         /* Initialize the temporary breakpoint variables to infinity */
         g_mif_info.breakpoint.current = HUGE_VAL;
         g_mif_info.breakpoint.last    = HUGE_VAL;
-
-/* gtri - end - wbk - Add Breakpoint stuff */
 #endif
         ckt->CKTstat->STATtimePts ++;
 
@@ -365,9 +328,7 @@ DCpss(CKTcircuit *ckt,
 
         /* Statistics Initialization using a macro at the beginning of this code */
         INIT_STATS();
-#ifdef CLUSTER
-        CLUsetup(ckt);
-#endif
+
     } else {
         /* saj As traninit resets CKTmode */
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITPRED;
@@ -444,56 +405,16 @@ DCpss(CKTcircuit *ckt,
         return(error);
     }
 #ifdef XSPICE
-/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 
-    if ((g_ipc.enabled) || wantevtdata) {
+    if (wantevtdata) {
 
         if (pss_state == PSS)
         {
-        /* Send event-driven results */
-        EVTdump(ckt, IPC_ANAL_TRAN, 0.0);
-
-        /* Then follow with analog results... */
-
-        /* Test to see if delta was cut by a breakpoint, */
-        /* a non-convergence, or a too large truncation error */
-        if(ipc_firsttime)
-            ipc_delta_cut = IPC_FALSE;
-        else if(ckt->CKTtime < (ipc_last_time + (0.999 * ipc_last_delta)))
-            ipc_delta_cut = IPC_TRUE;
-        else
-            ipc_delta_cut = IPC_FALSE;
-
-        /* Record the data required to check for delta cuts */
-        ipc_last_time = ckt->CKTtime;
-        ipc_last_delta = MIN(ckt->CKTdelta, ckt->CKTmaxStep);
-
-        /* Send results data if time since last dump is greater */
-        /* than 'mintime', or if first or second timepoints, */
-        /* or if delta was cut */
-        if( (ckt->CKTtime >= (g_ipc.mintime + g_ipc.last_time)) ||
-            ipc_firsttime || ipc_secondtime || ipc_delta_cut ) {
-
-            ipc_send_data_prefix(ckt->CKTtime);
-            CKTdump(ckt, ckt->CKTtime, job->PSSplot_td);
-            ipc_send_data_suffix();
-
-            if(ipc_firsttime) {
-                ipc_firsttime = IPC_FALSE;
-                ipc_secondtime = IPC_TRUE;
-            } else if(ipc_secondtime) {
-                ipc_secondtime = IPC_FALSE;
-            }
-
-            g_ipc.last_time = ckt->CKTtime;
-        }
+            /* Send event-driven results */
+            EVTdump(ckt, IPC_ANAL_TRAN, 0.0);
         }
     } else
-/* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
-#endif
-#ifdef CLUSTER
-    if (pss_state == PSS)
-        CLUoutput(ckt);
+
 #endif
 
     if (pss_state == PSS)
@@ -1278,14 +1199,6 @@ resume:
     } /* end if there are event instances */
 
 /* gtri - end - wbk - Do event solution */
-#else
-
-#ifdef CLUSTER
-    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
-      fprintf (stderr, "Sync error!\n");
-      exit(0);
-    }
-#endif /* CLUSTER */
 
 #endif
 
@@ -1302,9 +1215,6 @@ resume:
 
 /* 600 */
     for (;;) {
-#ifdef CLUSTER
-        redostep = 1;
-#endif
 #ifdef XSPICE
 /* gtri - add - wbk - 4/17/91 - Fix Berkeley bug */
 /* This is needed here to allow CAPask to output currents */
@@ -1318,9 +1228,6 @@ resume:
         olddelta=ckt->CKTdelta;
         /* time abort? */
         ckt->CKTtime += ckt->CKTdelta;
-#ifdef CLUSTER
-        CLUinput(ckt);
-#endif
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);
 #ifdef PREDICTOR
@@ -1384,10 +1291,8 @@ resume:
             fprintf (stderr, "pss_state: %d, converged: %d\n", pss_state, converged) ;
 #endif
         if(converged != 0) {
-#ifndef CLUSTER
-            ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
-            ckt->CKTstat->STATrejected ++;
-#endif
+            ckt->CKTtime = ckt->CKTtime - ckt->CKTdelta;
+            ckt->CKTstat->STATrejected++;
             ckt->CKTdelta = ckt->CKTdelta/8;
 #ifdef STEPDEBUG
             fprintf (stderr, "delta cut to %g for non-convergence\n", ckt->CKTdelta) ;
@@ -1419,14 +1324,9 @@ resume:
         } else {
             if (firsttime) {
                 firsttime = 0;
-#ifndef CLUSTER
                 goto nextTime;  /* no check on
                                  * first time point
                                  */
-#else
-                redostep = 0;
-                goto chkStep;
-#endif
             }
             newdelta = ckt->CKTdelta;
             error = CKTtrunc(ckt,&newdelta);
@@ -1467,18 +1367,13 @@ resume:
                 fflush(stdout);
 #endif
 
-#ifndef CLUSTER
+
                 /* go to 650 - trapezoidal */
                 goto nextTime;
-#else
-                redostep = 0;
-                goto chkStep;
-#endif
+
             } else { /* newdelta <= .9 * ckt->CKTdelta */
-#ifndef CLUSTER
                 ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
                 ckt->CKTstat->STATrejected ++;
-#endif
                 ckt->CKTdelta = newdelta;
 #ifdef STEPDEBUG
                 fprintf (stderr, "delta set to truncation error result:point rejected\n") ;
@@ -1505,15 +1400,6 @@ resume:
             EVTbackup(ckt, ckt->CKTtime + ckt->CKTdelta);
 
 /* gtri - end - wbk - Do event backup */
-#endif
-#ifdef CLUSTER
-        chkStep:
-        if(CLUsync(ckt->CKTtime,&ckt->CKTdelta,redostep)){
-            goto nextTime;
-        } else {
-            ckt->CKTtime -= olddelta;
-            ckt->CKTstat->STATrejected ++;
-        }
 #endif
     }
     /* NOTREACHED */

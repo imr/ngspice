@@ -285,10 +285,6 @@ AC_ARG_ENABLE([expdevices],
 AC_ARG_ENABLE([ndev],
     [AS_HELP_STRING([--enable-ndev], [Enable NDEV interface, (experimental)])])
 
-# --enable-cluster: define CLUSTER in the code. This is for cluster support
-AC_ARG_ENABLE([cluster],
-    [AS_HELP_STRING([--enable-cluster], [Enable cluster support, (experimental)])])
-
 # --enable-cmathtests: run the ancient tests in src/math/cmaths
 AC_ARG_ENABLE([cmathtests],
     [AS_HELP_STRING([--enable-cmathtests], [Enable ancient tests in src/math/cmaths])])
@@ -1244,14 +1240,6 @@ if test "x$enable_ndev" = xyes; then
 fi
 AM_CONDITIONAL([NDEV_WANTED], [test "x$enable_ndev" = xyes])
 
-
-# Cluster option
-if test "x$enable_cluster" = xyes; then
-    AC_MSG_RESULT([Cluster version is being compiled])
-    AC_DEFINE([CLUSTER], [], [Spice cluster support])
-    LIBS="$LIBS -lpthread"
-fi
-
 if test "x$enable_expdevices" = xyes; then
     AC_DEFINE([EXP_DEV], [], [Define if we want to enable experimental devices])
     AC_MSG_RESULT([WARNING: Experimental devices enabled])
@@ -1440,7 +1428,6 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/mif/Makefile
                  src/xspice/evt/Makefile
                  src/xspice/enh/Makefile
-                 src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
                  src/xspice/verilog/Makefile
                  src/xspice/vhdl/Makefile

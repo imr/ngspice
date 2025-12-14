@@ -67,18 +67,18 @@ VDMOSbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 CREATE_KLU_BINDING_TABLE(VDMOSTempdPtr,       VDMOSTempdBinding,       VDMOStempNode,    VDMOSdNode);
                 CREATE_KLU_BINDING_TABLE(VDIOPosPrimetempPtr, VDIOPosPrimetempBinding, VDIOposPrimeNode, VDMOStempNode);
                 CREATE_KLU_BINDING_TABLE(VDMOSDtempPtr,       VDMOSDtempBinding,       VDMOSdNode,       VDMOStempNode);
-                CREATE_KLU_BINDING_TABLE(VDMOStempSPtr,       VDMOStempSBinding,       VDMOStempNode,    VDMOSsNode);
-                CREATE_KLU_BINDING_TABLE(VDMOSSTempPtr,       VDMOSSTempBinding,       VDMOSsNode,       VDMOStempNode);
+                CREATE_KLU_BINDING_TABLE(VDMOSTempsPtr,       VDMOStempSBinding,       VDMOStempNode,    VDMOSsNode);
+                CREATE_KLU_BINDING_TABLE(VDMOSStempPtr,       VDMOSSTempBinding,       VDMOSsNode,       VDMOStempNode);
 
                 CREATE_KLU_BINDING_TABLE(VDMOSTcasetcasePtr, VDMOSTcasetcaseBinding, VDMOStcaseNode,   VDMOStcaseNode);   /* Rthjc between tj and tcase*/
                 CREATE_KLU_BINDING_TABLE(VDMOSTcasetempPtr,  VDMOSTcasetempBinding,  VDMOStcaseNode,   VDMOStempNode);
                 CREATE_KLU_BINDING_TABLE(VDMOSTemptcasePtr,  VDMOSTemptcaseBinding,  VDMOStempNode,    VDMOStcaseNode);
                 CREATE_KLU_BINDING_TABLE(VDMOSTptpPtr,       VDMOSTptpBinding,       VDMOStNodePrime,  VDMOStNodePrime);  /* Rthca between tcase and Vsrc */
-                CREATE_KLU_BINDING_TABLE(VDMOSTptcasePtr,    VDMOSTptcaseBinding,    VDMOStNodePrime,  VDMOStempNode);
-                CREATE_KLU_BINDING_TABLE(VDMOSTcasetpPtr,    VDMOSTcasetpBinding,    VDMOStempNode,    VDMOStNodePrime);
-                CREATE_KLU_BINDING_TABLE(VDMOSCktTcktTPtr,   VDMOSCktTcktTBinding,   VDMOSvcktTbranch, VDMOSvcktTbranch); /* Vsrc=cktTemp to gnd */
-                CREATE_KLU_BINDING_TABLE(VDMOSCktTtpPtr,     VDMOSCktTtpBinding,     VDMOSvcktTbranch, VDMOStNodePrime);
-                CREATE_KLU_BINDING_TABLE(VDMOSTpcktTPtr,     VDMOSTpcktTBinding,     VDMOStNodePrime,  VDMOSvcktTbranch);
+                CREATE_KLU_BINDING_TABLE(VDMOSTptcasePtr,    VDMOSTptcaseBinding,    VDMOStNodePrime,  VDMOStcaseNode);
+                CREATE_KLU_BINDING_TABLE(VDMOSTcasetpPtr,    VDMOSTcasetpBinding,    VDMOStcaseNode,    VDMOStNodePrime);
+                CREATE_KLU_BINDING_TABLE(VDMOSDevTdevTPtr,   VDMOSDevTdevTBinding,   VDMOSvdevTbranch, VDMOSvdevTbranch); /* Vsrc=devTemp to gnd */
+                CREATE_KLU_BINDING_TABLE(VDMOSDevTtpPtr,     VDMOSDevTtpBinding,     VDMOSvdevTbranch, VDMOStNodePrime);
+                CREATE_KLU_BINDING_TABLE(VDMOSTpdevTPtr,     VDMOSTpdevTBinding,     VDMOStNodePrime,  VDMOSvdevTbranch);
             }
         }
     }
@@ -142,18 +142,18 @@ VDMOSbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTempdPtr,       VDMOSTempdBinding,       VDMOStempNode,    VDMOSdNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOPosPrimetempPtr, VDIOPosPrimetempBinding, VDIOposPrimeNode, VDMOStempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSDtempPtr,       VDMOSDtempBinding,       VDMOSdNode,       VDMOStempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOStempSPtr,       VDMOStempSBinding,       VDMOStempNode,    VDMOSsNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSSTempPtr,       VDMOSSTempBinding,       VDMOSsNode,       VDMOStempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTempsPtr,       VDMOStempSBinding,       VDMOStempNode,    VDMOSsNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSStempPtr,       VDMOSSTempBinding,       VDMOSsNode,       VDMOStempNode);
 
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTcasetcasePtr, VDMOSTcasetcaseBinding, VDMOStcaseNode,   VDMOStcaseNode);   /* Rthjc between tj and tcase*/
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTcasetempPtr,  VDMOSTcasetempBinding,  VDMOStcaseNode,   VDMOStempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTemptcasePtr,  VDMOSTemptcaseBinding,  VDMOStempNode,    VDMOStcaseNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTptpPtr,       VDMOSTptpBinding,       VDMOStNodePrime,  VDMOStNodePrime);  /* Rthca between tcase and Vsrc */
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTptcasePtr,    VDMOSTptcaseBinding,    VDMOStNodePrime,  VDMOStempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTcasetpPtr,    VDMOSTcasetpBinding,    VDMOStempNode,    VDMOStNodePrime);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSCktTcktTPtr,   VDMOSCktTcktTBinding,   VDMOSvcktTbranch, VDMOSvcktTbranch); /* Vsrc=cktTemp to gnd */
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSCktTtpPtr,     VDMOSCktTtpBinding,     VDMOSvcktTbranch, VDMOStNodePrime);
-                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTpcktTPtr,     VDMOSTpcktTBinding,     VDMOStNodePrime,  VDMOSvcktTbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTptcasePtr,    VDMOSTptcaseBinding,    VDMOStNodePrime,  VDMOStcaseNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTcasetpPtr,    VDMOSTcasetpBinding,    VDMOStcaseNode,    VDMOStNodePrime);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSDevTdevTPtr,   VDMOSDevTdevTBinding,   VDMOSvdevTbranch, VDMOSvdevTbranch); /* Vsrc=devTemp to gnd */
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSDevTtpPtr,     VDMOSDevTtpBinding,     VDMOSvdevTbranch, VDMOStNodePrime);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTpdevTPtr,     VDMOSTpdevTBinding,     VDMOStNodePrime,  VDMOSvdevTbranch);
             }
         }
     }
@@ -217,18 +217,18 @@ VDMOSbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTempdPtr,       VDMOSTempdBinding,       VDMOStempNode,    VDMOSdNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOPosPrimetempPtr, VDIOPosPrimetempBinding, VDIOposPrimeNode, VDMOStempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSDtempPtr,       VDMOSDtempBinding,       VDMOSdNode,       VDMOStempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOStempSPtr,       VDMOStempSBinding,       VDMOStempNode,    VDMOSsNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSSTempPtr,       VDMOSSTempBinding,       VDMOSsNode,       VDMOStempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTempsPtr,       VDMOStempSBinding,       VDMOStempNode,    VDMOSsNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSStempPtr,       VDMOSSTempBinding,       VDMOSsNode,       VDMOStempNode);
 
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTcasetcasePtr, VDMOSTcasetcaseBinding, VDMOStcaseNode,   VDMOStcaseNode);   /* Rthjc between tj and tcase*/
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTcasetempPtr,  VDMOSTcasetempBinding,  VDMOStcaseNode,   VDMOStempNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTemptcasePtr,  VDMOSTemptcaseBinding,  VDMOStempNode,    VDMOStcaseNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTptpPtr,       VDMOSTptpBinding,       VDMOStNodePrime,  VDMOStNodePrime);  /* Rthca between tcase and Vsrc */
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTptcasePtr,    VDMOSTptcaseBinding,    VDMOStNodePrime,  VDMOStempNode);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTcasetpPtr,    VDMOSTcasetpBinding,    VDMOStempNode,    VDMOStNodePrime);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSCktTcktTPtr,   VDMOSCktTcktTBinding,   VDMOSvcktTbranch, VDMOSvcktTbranch); /* Vsrc=cktTemp to gnd */
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSCktTtpPtr,     VDMOSCktTtpBinding,     VDMOSvcktTbranch, VDMOStNodePrime);
-                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTpcktTPtr,     VDMOSTpcktTBinding,     VDMOStNodePrime,  VDMOSvcktTbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTptcasePtr,    VDMOSTptcaseBinding,    VDMOStNodePrime,  VDMOStcaseNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTcasetpPtr,    VDMOSTcasetpBinding,    VDMOStcaseNode,    VDMOStNodePrime);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSDevTdevTPtr,   VDMOSDevTdevTBinding,   VDMOSvdevTbranch, VDMOSvdevTbranch); /* Vsrc=devTemp to gnd */
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSDevTtpPtr,     VDMOSDevTtpBinding,     VDMOSvdevTbranch, VDMOStNodePrime);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTpdevTPtr,     VDMOSTpdevTBinding,     VDMOStNodePrime,  VDMOSvdevTbranch);
             }
         }
     }

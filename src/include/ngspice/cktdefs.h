@@ -206,11 +206,11 @@ struct CKTcircuit {
     int CKTtranMaxIter;         /* iteration limit for each timepoint
                                    for tran*/
     /* (itl4) */
-    int CKTbreakSize;           /* ??? */
-    int CKTbreak;               /* ??? */
-    double CKTsaveDelta;        /* ??? */
-    double CKTminBreak;         /* ??? */
-    double *CKTbreaks;          /* List of breakpoints ??? */
+    int CKTbreakSize;           /* number of breakpoints in table *CKTbreaks */
+    int CKTbreak;               /* if 1, a breakpoint may be set (only used in isrcacct.c) */
+    double CKTsaveDelta;        /* previous delta, before breakpoints set a new delta */
+    double CKTminBreak;         /* minimum time difference between breakpoints */
+    double *CKTbreaks;          /* List of breakpoints as an array of doubles */
     double CKTabstol;           /* --- */
     double CKTpivotAbsTol;      /* --- */
     double CKTpivotRelTol;      /* --- */

@@ -9,7 +9,7 @@ EXTRA_DIST = README examples icm xspice.c .gitignore \
              tlines/msline_common.c tlines/msline_common.h \
              tlines/tline_common.c tlines/tline_common.h
 
-SUBDIRS = mif cm enh evt ipc idn cmpp icm verilog vhdl
+SUBDIRS = mif cm enh evt idn cmpp icm verilog vhdl
 
 dist-hook:
 	rm -f "$(distdir)/icm/makedefs"

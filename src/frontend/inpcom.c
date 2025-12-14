@@ -583,6 +583,7 @@ static struct library *read_a_lib(const char *y, const char *dir_name)
 
         if (!newfp) {
             fprintf(cp_err, "Error: Could not open library file %s\n", y);
+            perror("    Cause: ");
             return NULL;
         }
 
@@ -1256,32 +1257,35 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
                             t->linenum, t->line);
                     }
                 }
-                fprintf(fd,
-                    "\n\n**************** uncommented deck "
-                    "**************\n\n");
-                /* always print first line */
-                fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
-                    cc->line);
-                /* here without out-commented lines */
-                for (t = cc->nextcard; t; t = t->nextcard) {
-                    if (*(t->line) == '*')
-                        continue;
-                    fprintf(fd, "%6s  %6d  %6d  %s\n",
-                        t->linesource, t->linenum_orig, t->linenum, t->line);
-                }
-                fprintf(fd,
+                if (!cp_getvar("debug-out-short", CP_BOOL, NULL, 0)) {
+                    fprintf(fd,
+                        "\n\n**************** uncommented deck "
+                        "**************\n\n");
+                    /* always print first line */
+                    fprintf(fd, "%6s  %6d  %6d  %s\n", cc->linesource, cc->linenum_orig, cc->linenum,
+                        cc->line);
+                    /* here without out-commented lines */
+                    for (t = cc->nextcard; t; t = t->nextcard) {
+                        if (*(t->line) == '*')
+                            continue;
+                        fprintf(fd, "%6s  %6d  %6d  %s\n",
+                            t->linesource, t->linenum_orig, t->linenum, t->line);
+                    }
+                    fprintf(fd,
                         "\n\n****************** complete deck "
                         "***************\n\n");
-                /* now completely */
-                for (t = cc; t; t = t->nextcard)
-                    fprintf(fd, "%6s  %6d  %6d  %s\n",
-                            t->linesource, t->linenum_orig,t->linenum, t->line);
+                    /* now completely */
+                    for (t = cc; t; t = t->nextcard)
+                        fprintf(fd, "%6s  %6d  %6d  %s\n",
+                            t->linesource, t->linenum_orig, t->linenum, t->line);
+                }
                 fclose(fd);
 
                 fprintf(stdout,
-                        "max line length %d, max subst. per line %d, number "
-                        "of lines %d\n",
-                        (int) max_line_length, no_braces, dynmaxline);
+                    "max line length %d, max subst. per line %d, number "
+                    "of lines %d\n",
+                    (int)max_line_length, no_braces, dynmaxline);
+
             }
             else
                 fprintf(stderr,
@@ -1354,53 +1358,24 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         else {
 
 #ifdef XSPICE
-            /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc
-             * enabled */
 
-             /* If IPC is not enabled, do equivalent of what SPICE did before
-              */
-            if (!g_ipc.enabled) {
-                if (call_depth == 0 && line_count == 0) {
-                    line_count++;
-                    if (fgets(big_buff, 5000, fp))
-                        buffer = copy(big_buff);
-                }
-                else {
-                    buffer = readline(fp);
-                    if (!buffer)
-                        break;
-                }
+            if (call_depth == 0 && line_count == 0) {
+                line_count++;
+                if (fgets(big_buff, 5000, fp))
+                    buffer = copy(big_buff);
             }
             else {
-                /* else, get the line from the ipc channel. */
-                /* We assume that newlines are not sent by the client */
-                /* so we add them here */
-                char ipc_buffer[1025]; /* Had better be big enough */
-                int ipc_len;
-                Ipc_Status_t ipc_status =
-                    ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
-                if (ipc_status == IPC_STATUS_END_OF_DECK) {
-                    buffer = NULL;
+                buffer = readline(fp);
+                if (!buffer)
                     break;
-                }
-                else if (ipc_status == IPC_STATUS_OK) {
-                    buffer = TMALLOC(char, strlen(ipc_buffer) + 3);
-                    strcpy(buffer, ipc_buffer);
-                    strcat(buffer, "\n");
-                }
-                else { /* No good way to report this so just die */
-                    fprintf(stderr, "Error: IPC status not o.k.\n");
-                    controlled_exit(EXIT_FAILURE);
-                }
             }
 
-            /* gtri - end - 12/12/90 */
 #else
 
             buffer = readline(fp);
             if (!buffer) {
                 break;
-        }
+            }
 
 #endif
         }
@@ -1564,6 +1539,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                         else
                             fprintf(cp_err, "    While reading %s\n", y_resolved);
                     }
+                    perror("    Cause: ");
                     tfree(buffer); /* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
                 }
@@ -3473,7 +3449,7 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
             found_control = TRUE;
         if (ciprefix(".endc", c->line))
             found_control = FALSE;
-        inp_stripcomments_line(c->line, found_control | cf, FALSE);
+        inp_stripcomments_line(c->line, found_control || cf, FALSE);
     }
 }
 

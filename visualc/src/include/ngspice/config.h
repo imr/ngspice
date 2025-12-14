@@ -47,9 +47,6 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 /* #undef CLOSEDIR_VOID */
 
-/* Spice cluster support */
-/* #undef CLUSTER */
-
 /* Define if you want to debug ngspice shell */
 /* #undef CPDEBUG */
 

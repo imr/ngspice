@@ -23,7 +23,6 @@ Author: 1985 Thomas L. Quarles
 #ifdef USE_OMP
 #include <omp.h>
 #include "ngspice/cpextern.h"
-int nthreads;
 #endif
 
 #define CKALLOC(var,size,type) \
@@ -36,7 +35,9 @@ CKTsetup(CKTcircuit *ckt)
 {
     int i;
     int error;
-
+#ifdef USE_OMP
+    int nthreads = 2;
+#endif
 #ifdef XSPICE
  /* gtri - begin - Setup for adding rshunt option resistors */
     CKTnode *node;

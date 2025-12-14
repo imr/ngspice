@@ -97,7 +97,7 @@ struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, int flen, char *actual, const char *subname);
 static char *gettrans(const char *name, const char *name_end, bool *isglobal);
-static int numnodes(const char *line);
+static int numnodes(const char* line, struct subs* subs);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
@@ -134,9 +134,6 @@ struct subs {
 /* orig_modnames is the list of original model names, modnames is the
  * list of translated names (i.e. after subckt expansion)
  */
-
-/* flag indicating use of the experimental numparams library */
-static bool use_numparams = FALSE;
 
 static char start[32], sbend[32], invoke[32], model[32];
 
@@ -224,48 +221,41 @@ inp_subcktexpand(struct card *deck) {
     if (!cp_getvar("modelline", CP_STRING, model, sizeof(model)))
         strcpy(model, ".model");
 
-/*    use_numparams = cp_getvar("numparams", CP_BOOL, NULL, 0); */
-
-    use_numparams = TRUE;
 //    tprint(deck);
     /*  deck has .control sections already removed, but not comments */
-    if (use_numparams) {
-
 #ifdef TRACE
-        fprintf(stderr, "Numparams is processing this deck:\n");
-        for (c = deck; c; c = c->nextcard) {
-            if (ciprefix("*", c->line))
-                continue;
-            fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
-        }
-#endif
-
-        nupa_signal(NUPADECKCOPY);
-        /* get the subckt names from the deck */
-        for (c = deck; c; c = c->nextcard) {    /* first Numparam pass */
-            if (ciprefix(".subckt", c->line)) {
-                 nupa_scan(c);
-            }
-        }
-
-        /* now copy instances */
-        for (c = deck; c; c = c->nextcard) {  /* first Numparam pass */
-            if (*(c->line) == '*') {
-                continue;
-            }
-            c->line = nupa_copy(c);
-        }
-
-#ifdef TRACE
-        fprintf(stderr, "Numparams transformed deck:\n");
-        for (c = deck; c; c = c->nextcard) {
-            if (ciprefix("*", c->line))
-                continue;
-            fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
-        }
-#endif
-
+    fprintf(stderr, "Numparams is processing this deck:\n");
+    for (c = deck; c; c = c->nextcard) {
+        if (ciprefix("*", c->line))
+            continue;
+        fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
     }
+#endif
+
+    nupa_signal(NUPADECKCOPY);
+    /* get the subckt names from the deck */
+    for (c = deck; c; c = c->nextcard) {    /* first Numparam pass */
+        if (ciprefix(".subckt", c->line)) {
+                nupa_scan(c);
+        }
+    }
+
+    /* now copy instances */
+    for (c = deck; c; c = c->nextcard) {  /* first Numparam pass */
+        if (*(c->line) == '*') {
+            continue;
+        }
+        c->line = nupa_copy(c);
+    }
+
+#ifdef TRACE
+    fprintf(stderr, "Numparams transformed deck:\n");
+    for (c = deck; c; c = c->nextcard) {
+        if (ciprefix("*", c->line))
+            continue;
+        fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
+    }
+#endif
 
     /* Get all the model names so we can deal with BJTs, etc.
      *  Stick all the model names into the doubly-linked wordlist modnames.
@@ -374,36 +364,34 @@ inp_subcktexpand(struct card *deck) {
         if (ciprefix(invoke, c->line)) {
             fprintf(cp_err, "Error: unknown subckt: %s\n", c->line);
             fprintf(cp_err, "    in line no. %d from file %s\n", c->linenum_orig, c->linesource);
-            if (use_numparams)
-                nupa_signal(NUPAEVALDONE);
+
+            nupa_signal(NUPAEVALDONE);
             return NULL;
         }
 
-    if (use_numparams) {
-        /* the NUMPARAM final line translation pass */
-        nupa_signal(NUPASUBDONE);
-        for (c = deck; c; c = c->nextcard)
-            /* 'param' .meas statements can have dependencies on measurement values */
-            /* need to skip evaluating here and evaluate after other .meas statements */
-            if (ciprefix(".meas", c->line) && strstr(c->line, "param")) {
-                ;
-            } else {
-                nupa_eval(c);
-            }
+    /* the NUMPARAM final line translation pass */
+    nupa_signal(NUPASUBDONE);
+    for (c = deck; c; c = c->nextcard)
+        /* 'param' .meas statements can have dependencies on measurement values */
+        /* need to skip evaluating here and evaluate after other .meas statements */
+        if (ciprefix(".meas", c->line) && strstr(c->line, "param")) {
+            ;
+        } else {
+            nupa_eval(c);
+        }
 
 #ifdef TRACE
-        fprintf(stderr, "Numparams converted deck:\n");
-        for (c = deck; c; c = c->nextcard) {
-            if (ciprefix("*", c->line))
-                continue;
-            fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
-        }
+    fprintf(stderr, "Numparams converted deck:\n");
+    for (c = deck; c; c = c->nextcard) {
+        if (ciprefix("*", c->line))
+            continue;
+        fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
+    }
 #endif
 
-        /*nupa_list_params(stdout);*/
-        nupa_copy_inst_dico();
-        nupa_signal(NUPAEVALDONE);
-    }
+    /*nupa_list_params(stdout);*/
+    nupa_copy_inst_dico();
+    nupa_signal(NUPAEVALDONE);
 
     return (deck);  /* return the spliced deck.  */
 }
@@ -535,13 +523,8 @@ doit(struct card *deck, wordlist *modnames) {
                 else
                     deck = c;
 
-                if (use_numparams == FALSE) {
-                    line_free_x(ends, FALSE); /* drop the .ends card */
-                    prev_of_ends->nextcard = NULL;
-                } else {
-                    ends->line[0] = '*'; /* comment the .ends card */
-                    ends->nextcard = NULL;
-                }
+                ends->line[0] = '*'; /* comment the .ends card */
+                ends->nextcard = NULL;
 
             } else {
 
@@ -760,18 +743,8 @@ doit(struct card *deck, wordlist *modnames) {
                         error = 1;
 
                     /* Now splice the decks together. */
-
-                    if (use_numparams == FALSE) {
-                        line_free_x(c, FALSE); /* drop the invocation */
-                        if (prev_of_c)
-                            prev_of_c->nextcard = su_deck;
-                        else
-                            deck = su_deck;
-                    } else {
-                        c->line[0] = '*'; /* comment the invocation */
-                        c->nextcard = su_deck;
-                    }
-
+                    c->line[0] = '*'; /* comment the invocation */
+                    c->nextcard = su_deck;
                     c = su_deck;
                     while (c->nextcard)
                         c = c->nextcard;
@@ -1173,11 +1146,15 @@ translate_inst_name(struct bxx_buffer *buffer, const char *scname, const char *n
 static int
 translate(struct card *deck, char *formal, int flen, char *actual, char *scname, const char *subname, struct subs *subs, wordlist const *modnames)
 {
+
     struct card *c;
     struct bxx_buffer buffer;
     char *next_name, *name, *t, *nametofree, *paren_ptr;
     int nnodes, i, dim;
     int rtn = 0;
+
+    NG_IGNORE(modnames);
+
 #ifdef XSPICE
     bool got_vnam = FALSE;
 #endif
@@ -1387,7 +1364,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
              * Ignore controlling nodes as they get special treatment for POLY.
              */
 
-            nnodes = numnodes(c->line);
+            nnodes = numnodes(c->line, subs);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
@@ -1477,7 +1454,7 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
             tfree(name);
             bxx_putc(&buffer, ' ');
 
-            nnodes = numnodes(c->line);
+            nnodes = numnodes(c->line, subs);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
@@ -1690,18 +1667,26 @@ gettrans(const char *name, const char *name_end, bool *isglobal)
 /* Control nodes for E and G sources are not counted as they vary in
  * the case of POLY. The count returned by get_number_terminals() includes
  * devices for K (mutual inductors) and W (current-controlled switch).
- */
-
+ * x lines are special, when nested and containing parameters.
+ * Therefore the old code is kept.*/
 static int
-numnodes(const char *line)
+numnodes(const char* line, struct subs* subs)
 {
     switch (*line) {
-    case 'e':
-    case 'g':
-    case 'w':
-        return 2;
-    case 'k':
-        return 0;
+        case 'e':
+        case 'g':
+        case 'w':
+            return 2;
+        case 'k':
+            return 0;
+        case 'x':
+        {
+            const char* xname_e = skip_back_ws(strchr(line, '\0'), line);
+            const char* xname = skip_back_non_ws(xname_e, line);
+            for (; subs; subs = subs->su_next)
+                if (eq_substr(xname, xname_e, subs->su_name))
+                    return subs->su_numargs;
+        }
     }
     return get_number_terminals((char *)line);
 }
