@@ -1,0 +1,68 @@
+NAND-2 Ring Oscillator IHP Open PDK
+
+.lib "$PDK_ROOT/$PDK/libs.tech/ngspice/models/cornerMOSlv.lib" mos_tt
+
+.subckt nand2 a b vdd vss z
+xm01 vdd   a     z     vdd sg13_lv_pmos  l=0.15u  w=0.96u  as=0.20405p  ad=0.20405p  ps=2.07u   pd=2.07u
+xm02 vss   a     sig3  vss sg13_lv_nmos  l=0.15u  w=0.82u  as=0.1749p   ad=0.1749p   ps=1.85u   pd=1.85u
+xm03 z     b     vdd   vdd sg13_lv_pmos  l=0.15u  w=0.96u  as=0.20405p  ad=0.20405p  ps=2.07u   pd=2.07u
+xm04 sig3  b     z     vss sg13_lv_nmos  l=0.15u  w=0.82u  as=0.1749p   ad=0.1749p   ps=1.85u   pd=1.85u
+c4  a     vss   0.549f
+c5  b     vss   0.578f
+c1  z     vss   0.609f
+.ends
+
+XNAND1 1 1 vd vs 2 nand2
+XNAND2 2 2 vd vs 3 nand2
+XNAND3 3 3 vd vs 4 nand2
+XNAND4 4 4 vd vs 5 nand2
+XNAND5 5 5 vd vs 6 nand2
+XNAND6 6 6 vd vs 7 nand2
+XNAND7 7 7 vd vs 8 nand2
+XNAND8 8 8 vd vs 9 nand2
+XNAND9 9 9 vd vs 10 nand2
+XNAND10 10 10 vd vs 11 nand2
+XNAND11 11 11 vd vs 12 nand2
+XNAND12 12 12 vd vs 13 nand2
+XNAND13 13 13 vd vs 14 nand2
+XNAND14 14 14 vd vs 15 nand2
+XNAND15 15 15 vd vs 16 nand2
+XNAND16 16 16 vd vs 17 nand2
+XNAND17 17 17 vd vs 18 nand2
+XNAND18 18 18 vd vs 19 nand2
+XNAND19 19 19 vd vs 1 nand2
+
+XNAND20 1 1 vd 0 out nand2
+
+Vdd vd 0 1.5
+Vss vs 0 0
+
+.option noinit
+
+.tran 10p 80n uic
+
+.control
+pre_osdi ../lib/ngspice/psp103_nqs.osdi
+set temp=0
+option klu
+run
+rusage
+set xbrushwidth=3
+*plot i(Vss) ylimit 0 500u xlimit 50n 60n
+plot out
+plot out xlimit 50n 60n
+meas tran tdiff TRIG V(out) val=0.7 rise=5 TARG v(out) val=0.7 rise=15
+let freq=10/tdiff
+print freq
+linearize out
+fft out
+plot mag(out)  xlimit 300Meg 2300Meg
+meas sp fmax MAX_AT out from=1e8 to=1e9
+echo
+reset
+pss 500e6 10n out 256 10 5 5e-3 uic
+plot out xlimit 300Meg 2300Meg
+inventory
+.endc
+
+.end

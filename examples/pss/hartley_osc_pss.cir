@@ -17,5 +17,15 @@ l1	3 0	1.5
 l2	0 4	500m
 r2	4 2	100
 
-*.tran 300n 50m
-.pss 50 200e-3 2 1024 11 10 5e-3 uic
+.control
+set xbrushwidth=3
+tran 10u 1
+plot v(2)
+linearize v(2)
+fft v(2)
+plot mag(V(2)) xlimit 0 500 ylimit 0 1.5
+reset
+pss 50 200e-3 2 1024 11 10 5e-3
+plot v(2) xlimit 0 500 ylimit 0 1.5
+.endc
+

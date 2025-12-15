@@ -16,6 +16,18 @@ c2 	3 0 	600p
 c0	4 0	1n
 l1 	4 1 	6.2u
 
-*.tran 30n 12u
-*.plot tran v(4)
-.pss 1e6 10e-6 4 1024 10 50 5e-3 uic
+.control
+tran 10n 20u
+plot v(4)
+linearize v(4)
+fft v(4)
+set xbrushwidth=3
+plot mag(v(4)) xlimit 0 10Meg
+let maxfft=mag(v(4))
+meas sp fosc MAX_AT maxfft from=1Meg to=10Meg
+reset
+pss 1.8e6 10e-6 4 1024 10 50 5e-3 uic
+plot v(4) xlimit 0 10Meg
+.endc
+.end
+

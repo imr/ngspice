@@ -17,6 +17,25 @@ l1 	4 2 	5uH
 re 	3 6 	4.65k
 vee 	6 0 	dc -10 pwl 0 0 1e-9 -10 
 
-*.tran 30n 12u
-.pss 3.1e6 500e-6 3 256 10 50 5e-3
+.control
+** transient sim
+tran 3n 120u 20u
+plot V(2) v(3)
+** fft of tran sim
+linearize v(3)
+fft v(3)
+let dbv3 = db(v(3))
+plot dbv3 xlimit 1Meg 5Meg
+** measure the frequency of oscillation
+meas sp fosc MAX_AT dbv3 from=1Meg to=5Meg
+** periodic steady state sim
+pss 1e6 50e-6 3 256 10 50 5e-3
+set xbrushwidth=3
+plot v(3) ylimit 0 0.3
+.endc
+
+.end
+
+
+
 
