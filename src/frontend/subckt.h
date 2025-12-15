@@ -10,5 +10,6 @@ struct card *inp_subcktexpand(struct card *deck);
 struct card *inp_deckcopy(struct card *deck);
 struct card *inp_deckcopy_oc(struct card *deck);
 struct card *inp_deckcopy_ln(struct card *deck);
+struct card *inp_deckcopy_linear(struct card *deck);
 
 #endif

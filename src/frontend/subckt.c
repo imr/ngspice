@@ -943,6 +943,61 @@ struct card* inp_deckcopy_ln(struct card* deck)
     return nd;
 } /* end of function inp_deckcopy_ln */
 
+/*
+ * Copy a deck, without the ->actualLine lines, without comment lines, and
+ * without .control section(s), without dot commands, copy only linear instances.
+ * Keep the line numbers.
+ */
+struct card* inp_deckcopy_linear(struct card* deck)
+{
+    struct card* d = NULL, * nd = NULL;
+    int skip_control = 0;
+
+    while (deck) {
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", deck->line)) {
+            skip_control++;
+            deck = deck->nextcard;
+            continue;
+        }
+        else if (ciprefix(".endc", deck->line)) {
+            skip_control--;
+            deck = deck->nextcard;
+            continue;
+        }
+        else if (skip_control > 0) {
+            deck = deck->nextcard;
+            continue;
+        }
+        /* linear instances only */
+        else if (!strchr("ehfgvirlck",  *(deck->line)) || strchr(deck->line, '=')) {
+            deck = deck->nextcard;
+            continue;
+        }
+        if (nd) { /* First card already found */
+            /* d is the card at the end of the deck */
+            d = d->nextcard = TMALLOC(struct card, 1);
+        }
+        else { /* This is the first card */
+            nd = d = TMALLOC(struct card, 1);
+        }
+        d->w = deck->w;
+        d->l = deck->l;
+        d->nf = deck->nf;
+        d->linenum_orig = deck->linenum_orig;
+        d->linesource = deck->linesource;
+        d->linenum = deck->linenum;
+        d->compmod = deck->compmod;
+        d->line = copy(deck->line);
+        if (deck->error) {
+            d->error = copy(deck->error);
+        }
+        d->actualLine = NULL;
+        deck = deck->nextcard;
+    } /* end of loop over cards in the source deck */
+
+    return nd;
+} /* end of function inp_deckcopy_linear */
 
 /*-------------------------------------------------------------------
  * struct bxx_buffer,
