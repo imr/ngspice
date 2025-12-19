@@ -1,5 +1,5 @@
 * 51 stage Ring-Osc. BSIM3, transient noise
-* will need 90 sec on a i7 860 with 4 threads
+* will need 20 sec on a i9 9900K with 8 threads
 * for better noise analysis simulation time may be made larger than 200n
 
 * closes the loop between inverters xinv1 and xinv5
