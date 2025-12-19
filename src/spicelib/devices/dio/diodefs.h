@@ -265,8 +265,8 @@ typedef struct sDIOinstance {
 
 #define DIOnumStates 15
 
-#define DIOsensxp DIOstate+12    /* charge sensitivities and their derivatives.
-                                 * +10 for the derivatives - pointer to the
+#define DIOsensxp DIOstate+15    /* charge sensitivities and their derivatives.
+                                 * +16 for the derivatives - pointer to the
                                  * beginning of the array */
 
 #define DIOnumSenStates 2

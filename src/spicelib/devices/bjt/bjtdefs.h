@@ -380,12 +380,12 @@ typedef struct sBJTinstance {
 
 #define BJTnumStates 33
 
-#define BJTsensxpbe BJTstate+24 /* charge sensitivities and their
-                   derivatives. +25 for the derivatives -
+#define BJTsensxpbe BJTstate+33 /* charge sensitivities and their
+                   derivatives. +34 for the derivatives -
                    pointer to the beginning of the array */
-#define BJTsensxpbc BJTstate+26
-#define BJTsensxpsub BJTstate+28
-#define BJTsensxpbx BJTstate+30
+#define BJTsensxpbc BJTstate+35
+#define BJTsensxpsub BJTstate+37
+#define BJTsensxpbx BJTstate+39
 
 #define BJTnumSenStates 8
 
