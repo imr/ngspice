@@ -583,10 +583,10 @@ static int osdi_add_device(int n, OsdiRegistryEntry *devs) {
   DEVicesfl = TREALLOC(int, DEVicesfl, dnum);
 #endif
   for (i = 0; i < n; i++) {
-#ifdef TRACE
-    printf("Added device: %s\n", devs[i]->DEVpublic.name);
-#endif
     DEVices[DEVNUM + i] = osdi_create_spicedev(&devs[i]);
+#ifdef TRACE
+    printf("Added device: %s\n", DEVices[DEVNUM + i]->DEVpublic.name);
+#endif
   }
   DEVNUM += n;
   relink();
