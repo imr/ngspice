@@ -122,6 +122,9 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n",
         ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);
 
+    if (ckt->CKTnewtrunc)
+        fprintf(stdout, "Note: Voltage based truncation error correction selected\n");
+
     /* call altermod and alter on device and model parameters assembled in
        devtlist and modtlist (if using temper) because we have a new temperature */
     inp_evaluate_temper(ft_curckt);
