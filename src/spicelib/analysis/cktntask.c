@@ -99,7 +99,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKvoltTol         = 1e-6;
         tsk->TSKlteReltol       = 1e-3;
         tsk->TSKlteAbstol       = 1e-6;
-        tsk->TSKlteTrtol        = 7.;
+        tsk->TSKlteTrtol        = 500.;
         tsk->TSKnewtrunc        = 0;
         tsk->TSKtrtol           = 7.;
         tsk->TSKbypass          = 0;
