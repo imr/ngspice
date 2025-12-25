@@ -1053,6 +1053,36 @@ void initialize_udevice(char *subckt_line)
     add_drive_hilo = FALSE;
 }
 
+static void determine_port_type(void)
+{
+    bool inp = FALSE, outp = FALSE, tri = FALSE;
+    char *port_type = NULL;
+    NAME_ENTRY x = NULL;
+
+    for (x = port_names_list; x; x = x->next) {
+        inp = (find_name_entry(x->name, input_names_list) ? TRUE : FALSE);
+        outp = (find_name_entry(x->name, output_names_list) ? TRUE : FALSE);
+        tri = (find_name_entry(x->name, tristate_names_list) ? TRUE : FALSE);
+        port_type = "UNKNOWN";
+        if (tri) {
+            if (outp && inp) {
+                port_type = "INOUT";
+            } else if (outp) {
+                port_type = "OUT";
+            }
+        } else {
+            if (outp && inp) {
+                port_type = "OUT";
+            } else if (outp) {
+                port_type = "OUT";
+            } else if (inp) {
+                port_type = "IN";
+            }
+        }
+        printf("* port: %s %s\n", x->name, port_type);
+    }
+}
+
 void cleanup_udevice(bool global)
 {
     if (global) {
@@ -1068,6 +1098,9 @@ void cleanup_udevice(bool global)
         xsubckt_names_list = NULL;
         return;
     }
+
+    if (ps_ports_and_pins & 1) determine_port_type();
+
     cleanup_translated_xlator();
     delete_xlator(model_xlatorp);
     model_xlatorp = NULL;
