@@ -161,8 +161,7 @@ struct CKTcircuit {
 
     /* This define should be somewhere else ??? */
 #define NODENAME(ckt,nodenum) CKTnodName(ckt,nodenum)
-    int CKTnumStates;           /* Number of sates effectively valid
-                                   ??? */
+    int CKTnumStates;           /* Number of states summed up over all device instances */
     long CKTmode;               /* Mode of operation of the circuit
                                    ??? */
 

@@ -117,9 +117,11 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
 #ifdef OSDI
     /* osdi models don't accept their device type as an argument */
+    bool is_osdi = false;
     if (device->registry_entry){ 
         INPgetNetTok(&line, &parm, 1); /* throw away osdi */
         tfree(parm);
+        is_osdi = true;
     }
 #endif
 
@@ -133,6 +135,15 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
         IFparm *p = find_model_parameter(parm, device);
 
         if (p) {
+#ifdef OSDI
+            if (is_osdi && (p->dataType & IF_VECTOR)){  
+                // we need to get rid if the leading [ in order to make sure 
+                // that INPgetValue can parse the value properly
+                // This is because, unlike other SPICEDev, OSDI models receive
+                // array params in the syntax (param_name=[...])
+                ++line;
+            }
+#endif
             IFvalue *val = INPgetValue(ckt, &line, p->dataType, tab);
             error = ft_sim->setModelParm(ckt, modtmp->INPmodfast, p->id, val, NULL);
             if (error)

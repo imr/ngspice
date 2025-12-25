@@ -48,6 +48,18 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case DIO_M:
             value->rValue = here->DIOm;
             return(OK);
+        case DIO_LM:
+            value->rValue = here->DIOlengthMetal;
+            return(OK);
+        case DIO_LP:
+            value->rValue = here->DIOlengthPoly;
+            return(OK);
+        case DIO_WM:
+            value->rValue = here->DIOwidthMetal;
+            return(OK);
+        case DIO_WP:
+            value->rValue = here->DIOwidthPoly;
+            return(OK);
         case DIO_THERMAL:
             value->iValue = here->DIOthermal;
             return(OK);
