@@ -114,13 +114,16 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     ckt->CKTkluMemGrowFactor = task->TSKkluMemGrowFactor ;
 #endif
 
-#ifdef NEWTRUNC
     ckt->CKTlteReltol = task->TSKlteReltol;
     ckt->CKTlteAbstol = task->TSKlteAbstol;
-#endif /* NEWTRUNC */
+    ckt->CKTlteTrtol = task->TSKlteTrtol;
+    ckt->CKTnewtrunc = task->TSKnewtrunc;
 
     fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n",
         ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);
+
+    if (ckt->CKTnewtrunc)
+        fprintf(stdout, "Note: Voltage based truncation error correction selected\n");
 
     /* call altermod and alter on device and model parameters assembled in
        devtlist and modtlist (if using temper) because we have a new temperature */

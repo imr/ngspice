@@ -82,11 +82,10 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKkluMemGrowFactor = def->TSKkluMemGrowFactor ;
 #endif
 
-#ifdef NEWTRUNC
         tsk->TSKlteReltol       = def->TSKlteReltol;
         tsk->TSKlteAbstol       = def->TSKlteAbstol;
-#endif
-
+        tsk->TSKlteTrtol       = def->TSKlteTrtol;
+        tsk->TSKnewtrunc       = def->TSKnewtrunc;
     } else {
 #endif /*CDHW*/
 
@@ -98,11 +97,11 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKreltol          = 1e-3;
         tsk->TSKchgtol          = 1e-14;
         tsk->TSKvoltTol         = 1e-6;
-#ifdef NEWTRUNC
         tsk->TSKlteReltol       = 1e-3;
         tsk->TSKlteAbstol       = 1e-6;
-#endif
-        tsk->TSKtrtol           = 7;
+        tsk->TSKlteTrtol        = 500.;
+        tsk->TSKnewtrunc        = 0;
+        tsk->TSKtrtol           = 7.;
         tsk->TSKbypass          = 0;
         tsk->TSKtranMaxIter     = 10;
         tsk->TSKdcMaxIter       = 100;

@@ -464,9 +464,6 @@
 /* Define if you want to discover :) */
 /* #undef NEWPRED */
 
-/* Do not trigger unwanted traps by default */
-/* #undef NEWTRUNC */
-
 /* Define if we want NOBYPASS */
 /* #undef NOBYPASS */
 
@@ -490,7 +487,7 @@
 #define PACKAGE_VERSION VERSION
 
 /* Define if we want predictor algorithm */
-/* #undef PREDICTOR */
+#define PREDICTOR
 
 /* Define to 1 if the C compiler supports function prototypes. */
 /* #undef PROTOTYPES */
