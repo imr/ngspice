@@ -181,7 +181,7 @@ void com_optran(wordlist* wl) {
     /* optran deselected by setting opstepsize to 0 */
     if (opstepsize == 0) {
         nooptran = TRUE;
-        fprintf(stdout, "Note: Optran is deselected");
+        fprintf(stdout, "Note: Optran is deselected.\n");
     }
 
     dataset = TRUE;
