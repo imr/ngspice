@@ -26,6 +26,7 @@ fi
 if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
+# If truncation error correction by voltage is required, add --enable-predictor
 cd release64_cyg
 if [ $? -ne 0 ]; then  echo "cd release64_cyg failed"; exit 1 ; fi
 echo

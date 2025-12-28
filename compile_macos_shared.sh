@@ -32,6 +32,7 @@ fi
 ./autogen.sh
 if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
+# If truncation error correction by voltage is required, add --enable-predictor
 echo
 if test "$1" = "d"; then
    cd debug-sh
