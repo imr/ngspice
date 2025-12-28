@@ -39,6 +39,7 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 echo
 
 # If truncation error correction by voltage is required, add --enable-predictor
+# If compiling for a local machine, you may add -march=native to the CFLAGS shown below
 if test "$1" = "d"; then
    cd debug
    if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi

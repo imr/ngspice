@@ -27,10 +27,11 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
 # If truncation error correction by voltage is required, add --enable-predictor
+# If compiling for a local machine, you may add -march=native to the CFLAGS shown below
 cd release64_cyg
 if [ $? -ne 0 ]; then  echo "cd release64_cyg failed"; exit 1 ; fi
 echo
-../configure --with-x=yes --enable-cider --enable-shortcheck CFLAGS="-O2 -m64 -Wall -Wextra -Wshadow" LDFLAGS="-s -m64"
+../configure --with-x=yes --enable-cider --enable-predictor --enable-shortcheck CFLAGS="-march=native -O2 -m64 -Wall -Wextra -Wshadow" LDFLAGS="-s -m64"
 
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
