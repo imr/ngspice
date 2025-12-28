@@ -40,6 +40,7 @@ if $?osdi_enabled
  osdi C:/Spice64/lib/ngspice/BSIMCMG.osdi
  osdi C:/Spice64/lib/ngspice/HICUMl0-2.0.osdi
  osdi C:/Spice64/lib/ngspice/psp103_nqs.osdi
+ osdi C:/Spice64/lib/ngspice/psp103.osdi
  osdi C:/Spice64/lib/ngspice/r2_cmc.osdi
  osdi C:/Spice64/lib/ngspice/vbic_4T_et_cf.osdi
  
