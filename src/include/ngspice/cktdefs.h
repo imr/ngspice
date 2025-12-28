@@ -123,8 +123,8 @@ struct CKTcircuit {
                                    (imag) */
     double *CKTirhsOld;         /* previous rhs value (imaginary)*/
     double *CKTirhsSpare;       /* spare rhs value (imaginary)*/
-#ifdef PREDICTOR
     double *CKTpred;            /* predicted solution vector */
+#ifdef PREDICTOR
     double *CKTsols[8];         /* previous 8 solutions */
 #endif /* PREDICTOR */
 
