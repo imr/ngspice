@@ -38,6 +38,7 @@ if $?osdi_enabled
  osdi @pkglibdir@/BSIMCMG.osdi
  osdi @pkglibdir@/HICUMl0-2.0.osdi
  osdi @pkglibdir@/psp103_nqs.osdi
+ osdi @pkglibdir@/psp103.osdi
  osdi @pkglibdir@/r2_cmc.osdi
  osdi @pkglibdir@/vbic_4T_et_cf.osdi
  
