@@ -33,6 +33,7 @@ void * cx_max(void *data, short int type, int length, int *newlength, short int 
 void * cx_min(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_d(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_avg(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_m3avg(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_floor(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_ceil(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_nint(void *data, short int type, int length, int *newlength, short int *newtype);

@@ -363,8 +363,9 @@ struct func ft_funcs[] = {
     { "ceil",        cx_ceil },
     { "mean",        cx_mean },
     { "stddev",      cx_stddev },
-    { "avg",         cx_avg }, /* A.Roldan 03/06/05 incremental average new function */
-    { "group_delay", (cx_function_t*)(void *) cx_group_delay }, /* A.Roldan 10/06/05 group delay new function */
+    { "avg",         cx_avg },
+    { "m3avg",       cx_m3avg },
+    { "group_delay", (cx_function_t*)(void *) cx_group_delay },
     { "vector",      cx_vector },
     { "cvector",     cx_cvector },
     { "unitvec",     cx_unitvec },

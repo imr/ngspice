@@ -361,6 +361,62 @@ cx_avg(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
+/* Compute the moving average of a vector.
+ * Using three elements ((n-1)/2 + n + (n+1)/2)/2
+ * Useful for removing trap ringing.
+ */
+
+void*
+cx_m3avg(void* data, short int type, int length, int* newlength, short int* newtype)
+{
+    double sum_real = 0.0, sum_imag = 0.0;
+    int i;
+
+    if (type == VF_REAL) {
+
+        double* d = alloc_d(length);
+        double* dd = (double*)data;
+
+        int nlen = length - 1;
+
+        *newtype = VF_REAL;
+        *newlength = length;
+
+        d[0] = dd[0];
+
+        for (i = 1; i < nlen; i++) {
+            d[i] = (dd[i-1] + dd[i+1]) / 4. + dd[i] / 2.;
+        }
+
+        d[nlen] = dd[nlen];
+
+        return ((void*)d);
+
+    }
+    else {
+
+        ngcomplex_t* c = alloc_c(length);
+        ngcomplex_t* cc = (ngcomplex_t*)data;
+
+        int nlen = length - 1;
+
+        *newtype = VF_COMPLEX;
+        *newlength = length;
+
+        realpart(c[0]) = realpart(cc[0]);
+
+        for (i = 0; i < length; i++) {
+            realpart(c[i]) = (realpart(cc[i - 1]) + realpart(cc[i + 1])) / 4. + realpart(cc[i]) / 2.;
+            imagpart(c[i]) = (imagpart(cc[i - 1]) + imagpart(cc[i + 1])) / 4. + imagpart(cc[i]) / 2.;
+        }
+
+        realpart(c[nlen]) = realpart(cc[nlen]);
+        imagpart(c[nlen]) = imagpart(cc[nlen]);
+
+        return ((void*)c);
+
+    }
+}
 
 /* Compute the mean of a vector. */
 

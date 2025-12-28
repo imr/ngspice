@@ -103,7 +103,7 @@ extern void *cx_max(void *, short int , int , int *, short int *);
 extern void *cx_min(void *, short int , int , int *, short int *);
 extern void *cx_d(void *, short int , int , int *, short int *);
 extern void *cx_avg(void *, short int , int , int *, short int *);
-
+extern void *cx_m3avg(void *, short int , int , int *, short int *);
 
 /* cmath3.c */
 
