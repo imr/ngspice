@@ -35,7 +35,7 @@ Xtr3 1 0 22 0 tr3
 .ends
 
 * transformer 2
-* ngspice manual 12.2.20 and 12.2.21
+* ngspice manual 8.2.21 and 8.2.22
 * px primary nodes, sx secondary nodes of electric circuit
 * mcx nodes of magnetic circuit 
 .subckt tr2 p1 p2 s1 s2
