@@ -5,7 +5,7 @@ VDMOS SOA check
 + Rd=61m Rs=18m Rg=3 Rds=1e7
 + Cgdmax=2.45n Cgdmin=10p a=0.3 Cgs=1.2n
 + Is=60p N=1.1 Rb=14m Cjo=1.5n XTI=3
-+ tcvth=0.0065 MU=-1.27 texp0=1.5
++ tcvth=-0.0065 MU=-1.27 texp0=1.5
 + mtriode=0.8
 + Vgs_max=20 Vgd_max=20 Vds_max=200
 
