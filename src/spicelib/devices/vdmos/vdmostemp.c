@@ -47,7 +47,7 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
     here->VDMOStTransconductance = model->VDMOStransconductance 
                                    * here->VDMOSm * pow(ratio, model->VDMOSmu);
 
-    here->VDMOStVth = model->VDMOSvth0 - model->VDMOStype * model->VDMOStcvth * dt;
+    here->VDMOStVth = model->VDMOSvth0 + model->VDMOStcvth * dt;
 
     here->VDMOStksubthres =  model->VDMOSksubthres * (1.0 + (model->VDMOStksubthres1 * dt) + (model->VDMOStksubthres2 * dt * dt));
 
