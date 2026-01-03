@@ -32,7 +32,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDMOStype = NMOS;
 
         if (!model->VDMOStransconductanceGiven)
-            model->VDMOStransconductance = 25 + 10 * model->VDMOStype; /* IRF540, 9540 */
+            model->VDMOStransconductance = 15 + 5 * model->VDMOStype; /* IRF540, 9540 */
 
         if (!model->VDMOSvth0Given)
             model->VDMOSvth0 = 3 * model->VDMOStype; /* IRF540, 9540 */
@@ -128,7 +128,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDMOSrthjc = 1.0;
 
         if (!model->VDMOSrthcaGiven)
-            model->VDMOSrthca = 1000;
+            model->VDMOSrthca = 23; /* e.g. TO220 case */
 
         if (!model->VDMOScthjGiven)
             model->VDMOScthj = 10e-06;
