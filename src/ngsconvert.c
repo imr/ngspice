@@ -40,6 +40,9 @@ bool cp_no_histsubst = FALSE;
 struct compat newcompat;
 bool cx_degrees = FALSE;
 
+IFsimulator *ft_sim = NULL;
+char Spice_Build_Date[] = " date is not available\n";
+
 char *cp_program = "sconvert";
 
 
@@ -56,6 +59,15 @@ char *cp_program = "sconvert";
 #define TMALLOC(t, n)       (t*) tmalloc(sizeof(t) * (size_t)(n))
 #define TREALLOC(t, p, n)   (t*) trealloc(p, sizeof(t) * (size_t)(n))
 
+FILE *
+newfopen(const char *fn, const char* md)
+{
+    FILE* fp;
+    if (fn == NULL)
+        return NULL;
+    fp = fopen(fn, md);
+    return fp;
+}
 
 char *
 smktemp(char *id)
@@ -487,7 +499,6 @@ main(int ac, char **av)
     }
     exit(EXIT_NORMAL);
 }
-
 
 void cp_pushcontrol(void) { }
 void cp_popcontrol(void) { }
