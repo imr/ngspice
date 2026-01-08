@@ -21,6 +21,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include <errno.h>
 
+int input(FILE *fp);
 
 FILE *cp_in = NULL;
 FILE *cp_out = NULL;
@@ -59,6 +60,7 @@ char *cp_program = "sconvert";
 #define TMALLOC(t, n)       (t*) tmalloc(sizeof(t) * (size_t)(n))
 #define TREALLOC(t, p, n)   (t*) trealloc(p, sizeof(t) * (size_t)(n))
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
 FILE *
 newfopen(const char *fn, const char* md)
 {
@@ -68,6 +70,7 @@ newfopen(const char *fn, const char* md)
     fp = fopen(fn, md);
     return fp;
 }
+#endif
 
 char *
 smktemp(char *id)
@@ -204,7 +207,11 @@ oldread(char *name)
             pl->pl_scale = pl->pl_dvecs = v;
         end = v;
         tfread(buf, 1, 8, fp);
-        buf[8] = '\0';
+        for (j = 0; j < 8; j++) {
+            if (buf[j] == ' ') break;
+            buf[j] = (char) tolower((unsigned char) buf[j]);
+        }
+        buf[j] = '\0';
         v->v_name = strdup(buf);
     }
     for (v = pl->pl_dvecs; v; v = v->v_next) {
@@ -392,14 +399,18 @@ oldwrite(char *name, bool app, struct plot *pl)
 int
 main(int ac, char **av)
 {
-    char *sf, *af;
+    char *sf = NULL, *af = NULL;
     char buf[BSIZE_SP];
-    char t, f;
+    char t = 0, f = 0;
     struct plot *pl;
     size_t n;
     char *infile = NULL;
     char *outfile = NULL;
     FILE *fp;
+
+    cp_in = stdin;
+    cp_out = stdout;
+    cp_err = stderr;
 
     switch (ac) {
         case 5: 
@@ -426,20 +437,32 @@ main(int ac, char **av)
 
         case 1: printf("Input file: ");
             (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            sf = strdup(buf);
+            if (fgets(buf, BSIZE_SP, stdin) != NULL) {
+                sf = strdup(buf);
+            } else {
+                printf("Error reading input file.");
+            }
             printf("Input type: ");
             (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            f = buf[0];
+            if (fgets(buf, BSIZE_SP, stdin) != NULL) {
+                f = buf[0];
+            } else {
+                printf("Error reading input type.");
+            }
             printf("Output file: ");
             (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            af = strdup(buf);
+            if (fgets(buf, BSIZE_SP, stdin) != NULL) {
+                af = strdup(buf);
+            } else {
+                printf("Error reading output file.");
+            }
             printf("Output type: ");
             (void) fflush(stdout);
-            (void) fgets(buf, BSIZE_SP, stdin);
-            t = buf[0];
+            if (fgets(buf, BSIZE_SP, stdin) != NULL) {
+                t = buf[0];
+            } else {
+                printf("Error reading output type.");
+            }
             break;
         default:
             fprintf(cp_err, 
