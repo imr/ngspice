@@ -21,7 +21,7 @@ bin_PROGRAMS =  ngspice
 
 if OLDAPPS
 if !WINGUI
-bin_PROGRAMS += ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx
+bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec ngmakeidx
 helpdatadir = $(pkgdatadir)/helpdir
 helpdata_DATA = ngspice.txt ngspice.idx
 if !NO_HELP
@@ -220,49 +220,10 @@ endif
 	$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --tag=RC --mode=compile $(RC) $(RCFLAGS) $< -o $@
 
 if OLDAPPS
-## nutmeg:
-
-ngnutmeg_SOURCES = \
-	main.c \
-	conf.c \
-	conf.h \
-	ngnutmeg.c
-
-ngnutmeg_CPPFLAGS = $(AM_CPPFLAGS)
-
-if WINGUI
-ngnutmeg_SOURCES += winmain.c hist_info.c
-endif
-
-ngnutmeg_LDADD = \
-	frontend/libfte.la
-
-if WINGUI
-ngnutmeg_LDADD += \
-	frontend/wdisp/libwindisp.la
-endif
-
-ngnutmeg_LDADD += \
-	frontend/plotting/libplotting.la \
-	frontend/parser/libparser.la \
-	frontend/numparam/libnumparam.la \
-	frontend/trannoise/libtrannoise.la \
-	maths/cmaths/libcmaths.la \
-	maths/misc/libmathmisc.la \
-	maths/fft/libmathfft.la \
-	maths/poly/libpoly.la \
-	misc/libmisc.la \
-	spicelib/parser/libinp.la
-
 
 ## These programs are not required on Windows
 if !WINGUI
 if !SHWIN
-
-if !NO_X
-ngnutmeg_LDADD += \
-	frontend/help/libhlp.la
-endif !NO_X
 
 ## help:
 
