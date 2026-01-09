@@ -707,9 +707,9 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 *(ckt->CKTrhs + here->DIOtempNode)     +=  Ith - dIth_dVdio*vd - dIth_dVrs*vrs - dIth_dT*delTemp - ceqqth;
             }
             if (model->DIOresistSWGiven) {
-                cdeq=cdsw-gdsw*vdsw;
-                *(ckt->CKTrhs + here->DIOnegNode) += cdeq;
-                *(ckt->CKTrhs + here->DIOposSwPrimeNode) -= cdeq;
+                double cdeqsw=cdsw-gdsw*vdsw;
+                *(ckt->CKTrhs + here->DIOnegNode) += cdeqsw;
+                *(ckt->CKTrhs + here->DIOposSwPrimeNode) -= cdeqsw;
                 if (selfheat) {
                     *(ckt->CKTrhs + here->DIOposNode)        +=  dIrssw_dT*delTemp;
                     *(ckt->CKTrhs + here->DIOposSwPrimeNode) +=  dIdioSw_dT*delTemp - dIrssw_dT*delTemp;
