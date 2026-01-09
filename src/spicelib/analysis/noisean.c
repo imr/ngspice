@@ -61,7 +61,6 @@ NOISEan(CKTcircuit* ckt, int restart)
 
     int numNames;
     IFuid* nameList;  /* va: tmalloc'ed list of names */
-    static runDesc* noiPlot = NULL;
     runDesc* plot = NULL;
 
 #ifdef XSPICE
