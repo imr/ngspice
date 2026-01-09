@@ -22,7 +22,6 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/compatmode.h"
 
 extern IFsimulator SIMinfo;
-extern char Spice_Build_Date[];
 
 static void fixdims(struct dvec *v, char *s);
 
