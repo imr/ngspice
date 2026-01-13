@@ -65,6 +65,7 @@ let newstime = stime/1.4
 let deltime = newstime/100
 alter @V1[sin] [ 0 $&vmax $&newfreq ]
 tran $&deltime $&newstime uic
+set xbrushwidth=2
 * the resistor currents
 plot tran1.alli tran2.alli alli title 'Memristor with threshold: currents'
 * calculate resistance (avoid dividing by zero)
