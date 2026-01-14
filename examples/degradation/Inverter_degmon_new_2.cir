@@ -29,6 +29,7 @@ c2  z     vss   0.576f
 
 .control
 pre_osdi ../lib/ngspice/psp103_nqs.osdi
+pre_osdi ../lib/ngspice/psp103.osdi
 run
 rusage
 *set nolegend
