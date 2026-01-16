@@ -240,6 +240,10 @@ void inp_probe(struct card* deck)
             if (strchr("ehvk", *instname))
                 continue;
 
+            /* exclude B voltage source */
+            if (strchr("b", *instname) && strstr(curr_line, "v="))
+                continue;
+
             /* exclude a devices (code models may have special characters in their instance line.
             digital nodes should not get V sources in series anyway.) */
             if ('a' == *instname)
