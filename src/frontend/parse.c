@@ -380,6 +380,7 @@ struct func ft_funcs[] = {
     { "integ",       (cx_function_t*)(void *) cx_integ },
     { "fft",         (cx_function_t*)(void *) cx_fft },
     { "ifft",        (cx_function_t*)(void *) cx_ifft },
+    { "mtimeavg",    (cx_function_t*)(void *) cx_mtimeavg },
     { "v",           NULL },
     { NULL,          NULL }
 };
