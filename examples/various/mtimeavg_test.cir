@@ -1,0 +1,27 @@
+test mtimeavg
+
+* noise source
+
+VNoiw 1 0 DC 0 TRNOISE(20n 0.5n 0 0)
+
+.control
+tran 0.5n 500n
+set color3=orange
+set color5=red
+set mtimeavgwindow=5n
+let filtered5n = mtimeavg(V(1))
+set mtimeavgwindow=10n
+let filtered10n = mtimeavg(V(1))
+set mtimeavgwindow=20n
+let filtered20n = mtimeavg(V(1))
+set mtimeavgwindow=50n
+let filtered50n = mtimeavg(V(1))
+set xbrushwidth=2
+set color0=white
+plot filtered5n filtered10n filtered20n filtered50n ylimit -50n 50n
+set xbrushwidth=1
+set color3=red
+plot V(1) filtered50n ylimit -50n 50n
+.endc
+
+.end
