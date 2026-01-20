@@ -33,6 +33,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/sim.h" /* To get SV_TIME */
 #include "ngspice/fftext.h"
+#include "ngspice/cktdefs.h" /* ft_curckt */
+#include "ngspice/ftedefs.h" /* ft_curckt */
+#include "ngspice/fteext.h" /* ft_curckt */
 
 extern bool cx_degrees;
 extern void vec_new(struct dvec *d);
@@ -988,3 +991,126 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
 
     return ((void *) outdata);
 }
+
+/* Compute the moving average of a vector,
+ * resulting from a transient simulation,
+ * over a time window given by variable mtimeavgwindow.
+ * Create the average over each original time point
+ * +/- mtimeavgwindow/2.
+ */
+void*
+cx_mtimeavg(void* data, short int type, int length, int* newlength, short int* newtype, struct plot* pl, struct plot* newpl, int grouping)
+{
+    double tdelta = 0.0, tstart=0.0, tstop=0.0, tdeltahalf;
+    struct dvec *sc;
+    int i;
+    double* d, * dd, * dsc;
+
+    if (grouping == 0)
+        grouping = length;
+
+    int nlen = length - 1;
+
+    if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
+        fprintf(cp_err, "Internal error mtimeavg: bad scale\n");
+        return (NULL);
+    }
+
+    /* Check to see if we have the time vector as scale */
+    if (!isreal(pl->pl_scale) ||
+        ((pl->pl_scale)->v_type != SV_TIME)) {
+        fprintf(cp_err, "Error: mtimeavg needs real time scale\n");
+        return (NULL);
+    }
+
+    if (type != VF_REAL) {
+        fprintf(cp_err, "Error: mtimeavg needs a real valued vector.\n");
+        return (NULL);
+    }
+
+    if (!cp_getvar("mtimeavgwindow", CP_REAL, &tdelta, 0))
+        if (ft_curckt == (struct circ*)NULL) {
+            tdelta = 1e-6;
+            fprintf(cp_out, "Note: mtimeavgwindow not given, window set to %g s\n", tdelta);
+        }
+        else {
+            CKTcircuit* ckt = ft_curckt->ci_ckt;
+            tdelta = 10.0 * ckt->CKTstep;
+            fprintf(cp_out, "Note: mtimeavgwindow not given, window set to %g s\n", tdelta);
+        }
+
+    sc = pl->pl_scale;
+    dsc = sc->v_realdata;
+
+    d = alloc_d(length);
+    dd = (double*)data;
+
+    tstart = dsc[0];
+    tstop = dsc[nlen];
+    tdeltahalf = tdelta / 2.;
+    *newtype = VF_REAL;
+    *newlength = length;
+
+#ifdef USE_OMP
+#pragma omp parallel 
+    {
+#pragma omp for
+#endif
+        for (i = 0; i < length; i++) {
+            int j, ibeg, iend, k;
+            double tbeg, tend, ttruebeg, ttrueend, truedelta;
+            double integ;
+            double tmid = dsc[i];
+
+            ttruebeg = tmid - tdeltahalf;
+            ttrueend = tmid + tdeltahalf;
+            tbeg = tstop;
+            tend = tstart;
+            /* start of the interval */
+            j = i;
+            while (j > 0 && tbeg > ttruebeg) {
+                tbeg = dsc[j];
+                j--;
+            }
+            ibeg = j;
+
+            /* end of the interval */
+            j = i;
+            while (j < nlen && tend < ttrueend) {
+                tend = dsc[j];
+                j++;
+            }
+            iend = j;
+
+            /* integrate the data */
+            integ = 0.;
+            for (k = ibeg; k < iend; k++) {
+                integ = integ + dd[k] * (dsc[k + 1] - dsc[k]);
+            }
+
+            /* cut a little from integ on the lower border, interpolated */
+            if (ibeg > 0) {
+                integ = integ - (dsc[ibeg] - ttruebeg) * dd[ibeg];
+            }
+            /* add a little to integ on the upper border, interpolated */
+            if (iend < nlen) {
+                integ = integ + (dsc[iend] - ttrueend) * dd[iend];
+            }
+            /* when on the edges of the vector, set reduced time windows */
+            if (ibeg == 0)
+                truedelta = dsc[i] + tdeltahalf;
+            else if (iend == nlen)
+                truedelta = dsc[nlen] - dsc[i] + tdeltahalf;
+            else
+                truedelta = tdelta;
+
+            d[i] = integ / truedelta;
+
+            //        fprintf(stdout, "%d  %d  %d  %e  %e..%e  %e\n", i, ibeg, iend, dsc[ibeg], dsc[iend], ttruebeg, ttrueend);
+        }
+#ifdef USE_OMP
+    }
+#endif
+    return ((void*)d);
+}
+

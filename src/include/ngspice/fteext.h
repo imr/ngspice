@@ -129,6 +129,7 @@ extern void *cx_integ(void *, short int , int , int *, short int *, struct plot 
 extern void *cx_group_delay(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
 extern void *cx_fft(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
 extern void *cx_ifft(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
+extern void *cx_mtimeavg(void *, short int , int , int *, short int *, struct plot *, struct plot *, int );
 
 /* define.c */
 
