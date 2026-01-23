@@ -1860,11 +1860,13 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         comfile = TRUE;
 
     if (call_depth == 0 && !comfile) {
-        if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
+        if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0) && !newcompat.ps)
             insert_new_line(cc, copy(".global gnd"), 1, 0, "internal");
-        else
+        else {
             insert_new_line(
-                    cc, copy("* gnd is not set to 0 automatically "), 1, 0, "internal");
+                cc, copy("* gnd is not set to 0 automatically "), 1, 0, "internal");
+            fprintf(stdout, "Note: gnd in a subcircuit is not set to 0 automatically\n");
+        }
 
         if (!newcompat.lt && !newcompat.ps && !newcompat.s3) {
             /* process all library section references */
@@ -2295,12 +2297,20 @@ static char *readline(FILE *fd)
 
 static void inp_fix_gnd_name(struct card *c)
 {
+    bool found_subckt = FALSE;
     for (; c; c = c->nextcard) {
-
         char *gnd = c->line;
 
+        // if inside of a subcircuit, and compatmode is ps, don't replace gnd
+        if (newcompat.ps) {
+           if (ciprefix(".subckt", c->line))
+                found_subckt = TRUE;
+            if (ciprefix(".ends", c->line))
+                found_subckt = FALSE;
+        }
+
         // if there is a comment or no gnd, go to next line
-        if ((*gnd == '*') || !strstr(gnd, "gnd"))
+        if (found_subckt || (*gnd == '*') || !strstr(gnd, "gnd"))
             continue;
 
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
