@@ -16,5 +16,6 @@ extern char* search_plain_identifier(char* str, const char* identifier);
 extern int readdegparams(struct card* deck);
 extern int adddegmonitors(struct card* deck);
 extern int quote_degmons(struct card* deck);
+extern int remsqrbra(struct card* deck);
 
 #endif
