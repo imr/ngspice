@@ -1097,10 +1097,9 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         /* some syntax checks, excluding title line */
         inp_check_syntax(working);
 
+        /* collect .agemodel data, skip .agemodel if newcompat.de is not set */
+        readdegparams(working);
         if (newcompat.de) {
-            /* collect .agemodel data */
-            readdegparams(working);
-
             /* replace all [  ] by @, except for a instances */
             remsqrbra(working);
 
