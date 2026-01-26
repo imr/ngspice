@@ -1097,11 +1097,16 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         /* some syntax checks, excluding title line */
         inp_check_syntax(working);
 
-        /* collect .agemodel data */
-        readdegparams(working);
+        if (newcompat.de) {
+            /* collect .agemodel data */
+            readdegparams(working);
 
-        /* Add degradation monitors to devices in X lines */
-        adddegmonitors(working);
+            /* replace all [  ] by @, except for a instances */
+            remsqrbra(working);
+
+            /* Add degradation monitors to devices in X lines */
+            adddegmonitors(working);
+        }
 
         if (newcompat.lt && newcompat.a)
             ltspice_compat_a(working);

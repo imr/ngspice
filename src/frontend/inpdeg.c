@@ -266,3 +266,26 @@ int quote_degmons(struct card* deck) {
     }
     return 0;
 }
+
+/* Replace '[' and ']' by '@'
+   Required by code model parsing, when [ or ] are part of instance or node name. */
+int remsqrbra(struct card* deck) {
+
+    for (; deck; deck = deck->nextcard) {
+        char* line = deck->line;
+
+        if (*line == '*') {
+            continue;
+        }
+        if (*line == 'a') {
+            continue;
+        }
+
+        while (*line) {
+            if (*line == '[' || *line == ']')
+                *line = '@';
+            line++;
+        }
+    }
+    return 0;
+}
