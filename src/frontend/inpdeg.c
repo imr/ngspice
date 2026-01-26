@@ -20,6 +20,9 @@ License: Modified BSD
 /* maximum number of models */
 #define DEGMODMAX 64
 
+/* global pointer: results from first tran run */
+NGHASHPTR degdatahash;
+
 struct agemod {
     char* devmodel;
     char* simmodel;
@@ -124,7 +127,8 @@ int readdegparams (struct card *deck) {
    Check if the model in the x line is found in the model list agemodds.
    Create a degradation monitor for each x line if model found.
    Add the x instance name to the degmod name.
-   Add degmon line and its model line to the netlist.*/
+   Add degmon line and its model line to the netlist.
+   Return number of degradation monitors, or 0 in case of error. */
 int adddegmonitors(struct card* deck) {
     static int degmonno;
     double tfuture = 315336e3; /* 10 years */
@@ -178,7 +182,7 @@ int adddegmonitors(struct card* deck) {
                         char* lpos = strstr(line, "l=");
                         if (!lpos) {
                              fprintf(stderr, "Error, channel length l not found in device %s \n\n", deck->line);
-                             return 1;
+                             return 0;
                         }
                         /* get l=val [m] */
                         char* clength = gettok(&lpos);
@@ -207,7 +211,10 @@ int adddegmonitors(struct card* deck) {
             tfree(instname);
         }
     }
-    return 0;
+    /* initialze the result data storage */
+    degdatahash = nghash_init(degmonno);
+
+    return degmonno;
 }
 
 int quote_degmons(struct card* deck) {
