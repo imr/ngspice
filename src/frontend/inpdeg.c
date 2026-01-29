@@ -21,7 +21,7 @@ License: Modified BSD
 #define DEGMODMAX 64
 
 /* global pointer: results from first tran run */
-NGHASHPTR degdatahash;
+NGHASHPTR degdatahash = NULL;
 
 struct agemod {
     char* devmodel;
@@ -192,8 +192,8 @@ int adddegmonitors(struct card* deck) {
                          */
                         char* aline = tprintf("adegmon%d_%s %%v([%s]) mon%d degmon%d\n", 
                             degmonno, instname, fournodes, degmonno, degmonno);
-                        char* mline = tprintf(".model degmon%d degmon (tfuture=%e %s devmod=\"%s\"\n",
-                            degmonno, tfuture, clength, modname);
+                        char* mline = tprintf(".model degmon%d degmon (tfuture=%e %s devmod=\"%s\" instname=\"%s\"\n",
+                            degmonno, tfuture, clength, modname, instname);
                         tfree(clength);
                         insert_new_line(deck, aline, 0, deck->linenum_orig, deck->linesource);
                         insert_new_line(deck, mline, 0, deck->linenum_orig, deck->linesource);
@@ -212,7 +212,7 @@ int adddegmonitors(struct card* deck) {
         }
     }
     /* initialze the result data storage */
-    degdatahash = nghash_init(degmonno);
+    degdatahash = nghash_init(64);
 
     return degmonno;
 }

@@ -75,7 +75,7 @@ struct agemod {
     double paramvals[DEGPARAMAX];
     bool paramread[DEGPARAMAX];
     NGHASHPTR paramhash;
-} *agemodptr;
+};
 
 /* This struct is model-specific: We need three data sets for dlt_vth [0],
    d_idlin [1], and d_idsat [2] */
@@ -83,7 +83,7 @@ typedef struct {
     double    constfac[3];   /* intermediate factor */
     double    sintegral[3];  /* intermediate intgral */
     double    prevtime[3];   /* previous time */
-    int devtype;             /* device type 1: nms, -1: pmos */
+    int devtype;             /* device type 1: nmos, -1: pmos */
     double VGS0;             /* degradation model parameter */
     double A[3];             /* degradation model parameter */
     double Ea[3];            /* degradation model parameter */
@@ -92,6 +92,8 @@ typedef struct {
     double L2[3];            /* degradation model parameter */
     double n[3];             /* degradation model parameter */
     double c[3];             /* degradation model parameter */
+    double result[3];        /* degradation simulation result */
+    char *parentname;        /* name of parent device for degmon */
 } degLocal_Data_t;
 
 
@@ -299,6 +301,10 @@ void cm_degmon(ARGS)  /* structure holding parms,
     degLocal_Data_t *loc;        /* Pointer to local static data, not to be included
                                        in the state vector */
 
+    /* Pointer to global hash table, saving the
+       degradation sim results of the first tran sim. */
+    NGHASHPTR glohash = mif_private->circuit.deghash;
+
     if (ANALYSIS == MIF_AC) {
         return;
     }
@@ -311,7 +317,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
     tsim = TSTOP;
 
     if (INIT==1) {
-
+        char inam[1024];
         double Temp = TEMPERATURE + 273.15;
         int err = -1, ii;
         struct agemod *agemods = cm_get_deg_params();
@@ -361,7 +367,26 @@ void cm_degmon(ARGS)  /* structure holding parms,
             cm_message_send("Error: could not extract device type from model name\n");
             cm_cexit(1);
         }
+        /* retrieve the parent instance name, e.g.
+        a.xtop.xcolumnblock.xcolumn@0@.xperiph2.xclkwe.xwenand.adegmon63_xi1_pmos
+        -->
+        n.xtop.xcolumnblock.xcolumn@0@.xperiph2.xclkwe.xwenand.xi1_pmos.nsg13_lv_pmos
+        */
+        char *ipath = strdup(INSTMODNAME);
+        char *colon = strchr(ipath, ':');
+        if (!colon) {
+            cm_message_printf("Error: no colon, incompatible model name %s\n", ipath);
+            cm_cexit(1);
+        }
+        *colon = '\0';
+        char *xinstname = PARAM(instname);
+        snprintf(inam, 1024, "n.%s.%s.n%s", ipath, xinstname, devmod);
+        loc->parentname = strdup(inam);
+        tfree(ipath);
+
 /*
+        cm_message_send(loc->parentname);
+        cm_message_send(devmod);
         cm_message_send(INSTNAME);
         cm_message_send(INSTMODNAME);
 */
@@ -424,15 +449,23 @@ void cm_degmon(ARGS)  /* structure holding parms,
                 OUTPUT(mon) = sintegral;
 
             if (T(0) > 0.99999 * tsim) {
+                /** debugging **/
+                char *thisinstance = INSTNAME;
+//                cm_message_printf("%s\n", thisinstance);
                 /**** model equations 2 ****/
                 sintegral = sintegral * tfut / tsim;
                 deg = 1. / (c * (pow(sintegral, -1.* n)));
                 /***************************/
-                cm_message_printf("no. %d, Degradation deg = %e\n", ii, deg);
+//                cm_message_printf("no. %d, Degradation deg = %e\n", ii, deg);
                 sintegral = 1e99; // flag final time step
+                loc->result[ii] = deg;
             }
             loc->sintegral[ii] = sintegral;
             loc->prevtime[ii] = prevtime;
+        }
+        /* save the degradation data for this instance */
+        if (T(0) > 0.99999 * tsim) {
+            nghash_insert(glohash, loc->parentname, loc->result);
         }
     }
 }

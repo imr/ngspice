@@ -50,6 +50,7 @@ NON-STANDARD FEATURES
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
+#include "ngspice/hash.h"
 
 #include "ngspice/evt.h"
 
@@ -73,8 +74,7 @@ static void MIFauto_partial(
 );
 
 
-
-
+extern NGHASHPTR degdatahash;
 
 
 /*
@@ -214,6 +214,7 @@ MIFload(
     
     cm_data.circuit.call_type = MIF_ANALOG;
     cm_data.circuit.temperature = ckt->CKTtemp - 273.15;
+    cm_data.circuit.deghash = degdatahash;
 
     g_mif_info.circuit.call_type = MIF_ANALOG;
     g_mif_info.ckt = ckt;
