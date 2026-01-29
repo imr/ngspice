@@ -53,14 +53,14 @@ Null_Allowed:       yes                    yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     tfuture
-Description:        "future time"
-Data_Type:          real
-Default_Value:      315336e4
-Limits:             -
-Vector:             no
-Vector_Bounds:      -
-Null_Allowed:       yes
+Parameter_Name:     tfuture                instname
+Description:        "future time"          "parent instance"
+Data_Type:          real                   string
+Default_Value:      315336e4               -
+Limits:             -                      -
+Vector:             no                     no
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    no
 
 
 STATIC_VAR_TABLE:

@@ -47,6 +47,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/typedefs.h"
 #include "ngspice/miftypes.h"
+#include "ngspice/hash.h"
 
 #ifdef KLU
 #include "ngspice/smpdefs.h"
@@ -335,6 +336,7 @@ typedef struct Mif_Circ_Data_s {
     double                t[8];         /* History of last 8 analysis times t[0]=time */
     double                tstep;        /* tran simulation tstep */
     double                tstop;        /* tran simulation tstop */
+    NGHASHPTR             deghash;      /* result data degradation monitor */
 
 } Mif_Circ_Data_t;
 
