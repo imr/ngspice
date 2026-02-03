@@ -1028,7 +1028,7 @@ cx_mtimeavg(void* data, short int type, int length, int* newlength, short int* n
         return (NULL);
     }
 
-    if (!cp_getvar("mtimeavgwindow", CP_REAL, &tdelta, 0))
+    if (!cp_getvar("mtimeavgwindow", CP_REAL, &tdelta, 0)) {
         if (ft_curckt == (struct circ*)NULL) {
             tdelta = 1e-6;
             fprintf(cp_out, "Note: mtimeavgwindow not given, window set to %g s\n", tdelta);
@@ -1038,6 +1038,7 @@ cx_mtimeavg(void* data, short int type, int length, int* newlength, short int* n
             tdelta = 10.0 * ckt->CKTstep;
             fprintf(cp_out, "Note: mtimeavgwindow not given, window set to %g s\n", tdelta);
         }
+    }
 
     sc = pl->pl_scale;
     dsc = sc->v_realdata;

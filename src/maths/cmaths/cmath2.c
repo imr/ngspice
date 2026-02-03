@@ -369,7 +369,6 @@ cx_avg(void *data, short int type, int length, int *newlength, short int *newtyp
 void*
 cx_m3avg(void* data, short int type, int length, int* newlength, short int* newtype)
 {
-    double sum_real = 0.0, sum_imag = 0.0;
     int i;
 
     if (type == VF_REAL) {
