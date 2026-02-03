@@ -439,8 +439,13 @@ com_measure_when(
         sp_check = TRUE;
     else if (cieq (meas->m_analysis, "dc"))
         dc_check = TRUE;
-    else
+    else {
         tran_check = TRUE;
+        if (!d->v_realdata) {
+            fprintf(stderr, "Error: no real data available for measurement (no tran simulation?)\n");
+            return MEASUREMENT_FAILURE;
+        }
+    }
 
     for (i = 0; i < d->v_length; i++) {
 
@@ -697,8 +702,13 @@ measure_at(
         sp_check = TRUE;
     else if (cieq (meas->m_analysis, "dc"))
         dc_check = TRUE;
-    else
+    else {
         tran_check = TRUE;
+        if (!d->v_realdata) {
+            fprintf(stderr, "Error: no real data available for measurement (no tran simulation?)\n");
+            return MEASUREMENT_FAILURE;
+        }
+    }
 
     for (i = 0; i < d->v_length; i++) {
         if (ac_check) {
