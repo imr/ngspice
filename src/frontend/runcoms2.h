@@ -9,5 +9,6 @@
 void com_resume(wordlist *wl);
 void com_rset(wordlist *wl);
 void com_remcirc(wordlist *wl);
+void com_degsim(wordlist* wl);
 
 #endif

@@ -32,6 +32,8 @@ pre_osdi ../lib/ngspice/psp103_nqs.osdi
 pre_osdi ../lib/ngspice/psp103.osdi
 run
 rusage
+degsim
+run
 *set nolegend
 set xbrushwidth=3
 plot xnot1.mon1 xnot2.mon1 xnot3.mon1

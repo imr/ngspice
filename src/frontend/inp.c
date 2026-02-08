@@ -64,6 +64,8 @@ static void rem_unused_mos_models(struct card* deck);
 extern void com_optran(wordlist * wl);
 extern void tprint(struct card *deck);
 
+static bool wantdegsim = FALSE;
+extern int preparedegsim(struct card* deck);
 
 //void inp_source_recent(void);
 //void inp_mc_free(void);
@@ -1093,7 +1095,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
            if (newcompat.hs || newcompat.spe)
               rem_unused_mos_models(deck->nextcard);
 #endif
-            /* Parsing the circuit 5.
+           /* If compatmode is de and degsim is set by command 'degsim',
+              translate the netlist by removing the monitors and adding the
+              extra degradation elements. */
+           if (wantdegsim && newcompat.de) {
+               wantdegsim = FALSE;
+               preparedegsim(deck);
+           }
+
+           /* Parsing the circuit 5.
                This is the next major step:
                load deck into ft_curckt -- the current circuit. */
             if(inp_dodeck(deck, tt, wl_first, FALSE, options, filename) != 0)
@@ -2680,6 +2690,10 @@ struct mlist {
     bool used;
     bool checked;
 };
+
+void setdegsim(void) {
+    wantdegsim = TRUE;
+}
 
 #ifdef REM_UNUSED
 /* Finally get rid of unused MOS models */

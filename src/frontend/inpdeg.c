@@ -15,6 +15,8 @@ License: Modified BSD
 
 #include "inpcom.h"
 
+int preparedegsim(struct card* deck);
+
 /* maximum number of model parameters */
 #define DEGPARAMAX 64
 /* maximum number of models */
@@ -294,5 +296,13 @@ int remsqrbra(struct card* deck) {
             line++;
         }
     }
+    return 0;
+}
+
+/* Remove the degradation monitors.
+   Add current measurement, delta_vg and current source.
+   Use the data retrieved from degdatahash */
+int preparedegsim(struct card* deck) {
+    fprintf(stdout, "Note: degradation simulation prepared.\n");
     return 0;
 }
