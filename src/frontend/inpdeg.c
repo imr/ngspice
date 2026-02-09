@@ -15,7 +15,7 @@ License: Modified BSD
 
 #include "inpcom.h"
 
-int preparedegsim(struct card* deck);
+int prepare_degsim(struct card* deck);
 
 /* maximum number of model parameters */
 #define DEGPARAMAX 64
@@ -302,7 +302,53 @@ int remsqrbra(struct card* deck) {
 /* Remove the degradation monitors.
    Add current measurement, delta_vg and current source.
    Use the data retrieved from degdatahash */
-int preparedegsim(struct card* deck) {
+int prepare_degsim(struct card* deck) {
+    struct card* prevcard = deck, *ldeck;
+
+    if (!deck)
+        return 1;
+
+    /* skip the title line */
+    for (ldeck = deck->nextcard; ldeck; ldeck = ldeck->nextcard) {
+        char* line = ldeck->line;
+
+        if (*line == '*') {
+            continue;
+        }
+
+        /* remove the remnants of the first run */
+        if (ciprefix(".model", line) && search_plain_identifier(line, "degmon")) {
+            double *result;
+            char* insttoken;
+            struct card* nextdeck = ldeck->nextcard;
+            char* prevline = prevcard->line;
+            if (nextdeck) {
+                char* nextline = nextdeck->line;
+                if (*nextline == 'a' && strstr(nextline, "degmon")) {
+                    *nextline = '*';
+                }
+            }
+            /* get the device instance line */
+            insttoken = gettok_instance(&prevline);
+            result = (double*)nghash_find(degdatahash, insttoken);
+            if (result) {
+                fprintf(stdout, "Instance %s, Result: %e, %e, %e\n", insttoken, result[0], result[1], result[2]);
+            }
+            else
+                fprintf(stdout, "Instance %s not found in hash table\n", insttoken);
+
+            tfree(insttoken);
+
+            *line = '*';
+        }
+        prevcard = ldeck;
+    }
     fprintf(stdout, "Note: degradation simulation prepared.\n");
+    return 0;
+}
+
+/* clear memory */
+int clear_degsim (void){
+    /* delete the hashtables */
     return 0;
 }

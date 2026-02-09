@@ -65,7 +65,7 @@ extern void com_optran(wordlist * wl);
 extern void tprint(struct card *deck);
 
 static bool wantdegsim = FALSE;
-extern int preparedegsim(struct card* deck);
+extern int prepare_degsim(struct card* deck);
 
 //void inp_source_recent(void);
 //void inp_mc_free(void);
@@ -1100,7 +1100,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
               extra degradation elements. */
            if (wantdegsim && newcompat.de) {
                wantdegsim = FALSE;
-               preparedegsim(deck);
+               prepare_degsim(deck);
            }
 
            /* Parsing the circuit 5.

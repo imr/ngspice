@@ -92,7 +92,7 @@ typedef struct {
     double L2[3];            /* degradation model parameter */
     double n[3];             /* degradation model parameter */
     double c[3];             /* degradation model parameter */
-    double result[3];        /* degradation simulation result */
+    double *result;          /* degradation simulation result */
     char *parentname;        /* name of parent device for degmon */
 } degLocal_Data_t;
 
@@ -110,7 +110,8 @@ cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
             if (loc == (degLocal_Data_t *) NULL) {
                 break;
             }
-
+            /* loc->result) should not be freed here, as is used in the second run.
+               Free it via the hash table.*/
             free(loc);
 
             STATIC_VAR(locdata) = NULL;
@@ -343,6 +344,9 @@ void cm_degmon(ARGS)  /* structure holding parms,
             cm_cexit(1);
         }
 
+        double *result = (double*)malloc(3 * sizeof(double));
+        loc->result = result;
+
         /* use agemods as input to set the agemodel model parameters,
            e.g. loc->A[3] */
         err = getdata(agemods, loc, devmod);
@@ -466,6 +470,8 @@ void cm_degmon(ARGS)  /* structure holding parms,
         /* save the degradation data for this instance */
         if (T(0) > 0.99999 * tsim) {
             nghash_insert(glohash, loc->parentname, loc->result);
+            cm_message_printf("instance %s, data: %e %e %e\n", loc->parentname, loc->result[0],
+            loc->result[1], loc->result[2]);
         }
     }
 }
