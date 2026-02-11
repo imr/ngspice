@@ -20,11 +20,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/enh.h"
 #endif
 
-#ifdef USE_OMP
-#include <omp.h>
-#include "ngspice/cpextern.h"
-#endif
-
 #define CKALLOC(var,size,type) \
     if(size && ((var = TMALLOC(type, size)) == NULL)){\
             return(E_NOMEM);\
@@ -35,9 +30,7 @@ CKTsetup(CKTcircuit *ckt)
 {
     int i;
     int error;
-#ifdef USE_OMP
-    int nthreads = 2;
-#endif
+
 #ifdef XSPICE
  /* gtri - begin - Setup for adding rshunt option resistors */
     CKTnode *node;
@@ -86,16 +79,6 @@ CKTsetup(CKTcircuit *ckt)
 
     matrix = ckt->CKTmatrix;
 
-#ifdef USE_OMP
-    if (!cp_getvar("num_threads", CP_NUM, &nthreads, 0))
-        nthreads = 2;
-
-    omp_set_num_threads(nthreads);
-/*    if (nthreads == 1)
-      printf("OpenMP: %d thread is requested in ngspice\n", nthreads);
-    else
-      printf("OpenMP: %d threads are requested in ngspice\n", nthreads);*/
-#endif
 
 #ifdef HAS_PROGREP
     SetAnalyse("Device Setup", 0);

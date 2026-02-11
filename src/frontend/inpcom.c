@@ -58,6 +58,11 @@ Author: 1985 Wayne A. Christopher
 /* gtri - end - 12/12/90 */
 #endif
 
+#ifdef USE_OMP
+#include <omp.h>
+#include "ngspice/cpextern.h"
+#endif
+
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
 
@@ -72,6 +77,10 @@ Author: 1985 Wayne A. Christopher
 #define DEPENDSON 200
 
 #define VALIDCHARS "!$%_#?@.[]&"
+
+#ifdef USE_OMP
+int nthreads = 4;
+#endif
 
 static struct library {
     char *realpath;
@@ -1087,6 +1096,21 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         size_t max_line_length; /* max. line length in input deck */
         struct card *tmp_ptr1;
         struct names *subckt_w_params = new_names();
+
+        /* set the number of threads used by ngspice via OpenMP */
+#ifdef USE_OMP
+        if (!cp_getvar("num_threads", CP_NUM, &nthreads, 0)) {
+            nthreads = omp_get_num_procs();
+            fprintf(stdout, "\nNote: %d logical cores detected, ", nthreads);
+            nthreads = (int)(nthreads / 2);
+            fprintf(stdout, "max %d threads are used by ngspice.\n", nthreads);
+            //        fprintf(stdout, "    (May be overriden by 'set num_threads = xx in .spiceinit.)\n\n", nthreads);
+        }
+        else
+            fprintf(stdout, "\nNote: Number of threads used by ngspice set to %d.\n\n", nthreads);
+
+        omp_set_num_threads(nthreads);
+#endif
 
         /* skip title line */
         struct card *working = cc->nextcard;
