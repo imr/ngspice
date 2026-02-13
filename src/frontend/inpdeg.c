@@ -16,6 +16,7 @@ License: Modified BSD
 #include "inpcom.h"
 
 int prepare_degsim(struct card* deck);
+static int add_degmodel(struct card* deck, double* result);
 
 /* maximum number of model parameters */
 #define DEGPARAMAX 64
@@ -330,12 +331,17 @@ int prepare_degsim(struct card* deck) {
             }
             /* get the device instance line */
             insttoken = gettok_instance(&prevline);
+            if (*insttoken != 'n' && *insttoken != 'm'){
+                fprintf(stderr, "Error: expected N or M device, but found %s\n", insttoken);
+                continue;
+            }
             result = (double*)nghash_find(degdatahash, insttoken);
             if (result) {
                 fprintf(stdout, "Instance %s, Result: %e, %e, %e\n", insttoken, result[0], result[1], result[2]);
+                add_degmodel(prevcard, result);
             }
             else
-                fprintf(stdout, "Instance %s not found in hash table\n", insttoken);
+                fprintf(stdout, "Instance %s not found in hash table,\n     no degradation data available\n", insttoken);
 
             tfree(insttoken);
 
@@ -350,5 +356,45 @@ int prepare_degsim(struct card* deck) {
 /* clear memory */
 int clear_degsim (void){
     /* delete the hashtables */
+    return 0;
+}
+
+/* Add a 0 voltage source between internal and external source for current measurement.
+   Add a B source parallel to drain and source for current reduction.
+   Use the mean of d_idlin (result[1]) and d_idsat (result[2]) as proportional factor to current.
+   Add a voltage source between external and internal gate to apply dlt_vth shift from result[0]. */
+static int add_degmodel(struct card* deck, double* result) {
+
+    char* dtok, * gtok, * stok, *intok;
+    char* nline[3]; /* three new lines to be added to netlist */
+    char* curr_line = deck->line;
+    intok = gettok_instance(&curr_line); /* skip instance name */
+    dtok = gettok_node(&curr_line); /* get drain, gate, and source tokens */
+    gtok = gettok_node(&curr_line);
+    stok = gettok_node(&curr_line);
+    if (!dtok || !gtok || !stok) {
+        fprintf(stderr, "Error: not enough tokens in instance line %s.\n", deck->line);
+        return 1;
+    }
+    /* current measurement*/
+    nline[0] = tprintf("Vm%s intern_%s %s 0\n", intok, stok, stok);
+    /* gate voltage shift */
+    nline[1] = tprintf("Vg%s intern_%s %s %e\n", intok, gtok, gtok, result[0]);
+    /* parallel drain current */
+    double currdeg = (result[1] + result[2]) / 2.;
+    nline[2] = tprintf("B%s %s %s i = i(Vm%s) * %e\n", intok, dtok, stok, intok, currdeg);
+    /* modify the instance line */
+    char* instline = tprintf("%s %s intern_%s intern_%s %s\n", intok, dtok, gtok, stok, curr_line);
+    tfree(deck->line);
+    deck->line = instline;
+    /* attach to the netlist */
+    int ii;
+    for (ii = 0; ii < 3; ii++) {
+        insert_new_line(deck, nline[ii], deck->linenum + 1, deck->linenum_orig, deck->linesource);
+    }
+    tfree(intok);
+    tfree(dtok);
+    tfree(gtok);
+    tfree(stok);
     return 0;
 }
