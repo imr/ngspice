@@ -378,13 +378,14 @@ void cm_degmon(ARGS)  /* structure holding parms,
         */
         char *ipath = strdup(INSTMODNAME);
         char *colon = strchr(ipath, ':');
-        if (!colon) {
-            cm_message_printf("Error: no colon, incompatible model name %s\n", ipath);
-            cm_cexit(1);
-        }
-        *colon = '\0';
         char *xinstname = PARAM(instname);
-        snprintf(inam, 1024, "n.%s.%s.n%s", ipath, xinstname, devmod);
+        if (colon) {
+            *colon = '\0';
+            snprintf(inam, 1024, "n.%s.%s.n%s", ipath, xinstname, devmod);
+        }
+        else /* top level instance only */
+            snprintf(inam, 1024, "n.%s.n%s", xinstname, devmod);
+
         loc->parentname = strdup(inam);
         tfree(ipath);
 
