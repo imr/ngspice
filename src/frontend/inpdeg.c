@@ -16,6 +16,7 @@ License: Modified BSD
 #include "inpcom.h"
 
 int prepare_degsim(struct card* deck);
+int clear_degsim(void);
 static int add_degmodel(struct card* deck, double* result);
 
 /* maximum number of model parameters */
@@ -338,6 +339,8 @@ int prepare_degsim(struct card* deck) {
             result = (double*)nghash_find(degdatahash, insttoken);
             if (result) {
                 fprintf(stdout, "Instance %s, Result: %e, %e, %e\n", insttoken, result[0], result[1], result[2]);
+                /* this will add the necessary devices to
+                   the netlist according to the deg model */
                 add_degmodel(prevcard, result);
             }
             else
@@ -353,9 +356,21 @@ int prepare_degsim(struct card* deck) {
     return 0;
 }
 
+/* user defined delete function */
+static void
+del_data(void* rdata)
+{
+    double* data = (double*)rdata;
+    if (data) {
+        tfree(data);
+    }
+}
+
 /* clear memory */
 int clear_degsim (void){
-    /* delete the hashtables */
+    /* delete the result hashtable */
+    if(degdatahash)
+        nghash_free(degdatahash, del_data, NULL);
     return 0;
 }
 
