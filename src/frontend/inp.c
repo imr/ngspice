@@ -1219,7 +1219,27 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             FILE *fdo = fopen("debug-out3.txt", "w");
             if (fdo) {
                 struct card *tc = NULL;
-                fprintf(fdo, "**************** uncommented deck **************\n\n");
+                fprintf(fdo, "**************** uncommented deck, shorted model line **************\n\n");
+                /* always print first line */
+                fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
+                /* here without out-commented lines */
+                for (tc = deck->nextcard; tc; tc = tc->nextcard) {
+                    if (*(tc->line) == '*')
+                        continue;
+                    /* Only truncated .model lines */
+                    if (ciprefix(".model", tc->line)) {
+                        fprintf(fdo, "%6d  %.100s ",
+                            tc->linenum, tc->line);
+                        if (strlen(tc->line) > 100)
+                            fprintf(fdo, " ... (truncated)");
+                        fprintf(fdo, "\n");
+                    }
+                    else {
+                        fprintf(fdo, "%6d  %s\n",
+                            tc->linenum, tc->line);
+                    }
+                }
+                fprintf(fdo, "\n\n**************** uncommented deck, all models **********\n\n");
                 /* always print first line */
                 fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
                 /* here without out-commented lines */
@@ -1229,7 +1249,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
                 }
                 if (!cp_getvar("debug-out-short", CP_BOOL, NULL, 0)) {
-                    fprintf(fdo, "\n****************** complete deck ***************\n\n");
+                    fprintf(fdo, "\n\n****************** complete deck ***************\n\n");
                     /* now completely */
                     for (tc = deck; tc; tc = tc->nextcard)
                         fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
