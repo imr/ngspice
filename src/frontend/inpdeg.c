@@ -12,6 +12,7 @@ License: Modified BSD
 #include "ngspice/inpdefs.h"
 #include "ngspice/hash.h"
 #include "ngspice/compatmode.h"
+#include "ngspice/fteext.h"
 
 #include "inpcom.h"
 
@@ -306,6 +307,7 @@ int remsqrbra(struct card* deck) {
    Use the data retrieved from degdatahash */
 int prepare_degsim(struct card* deck) {
     struct card* prevcard = deck, *ldeck;
+    int no_devs = 0;
 
     if (!deck)
         return 1;
@@ -337,14 +339,18 @@ int prepare_degsim(struct card* deck) {
                 continue;
             }
             result = (double*)nghash_find(degdatahash, insttoken);
-            if (result) {
+            /* only if significant degradation is measured */
+            if (result && (result[0] != 0 || result[1] != 0 || result[2] != 0)) {
                 fprintf(stdout, "Instance %s, Result: %e, %e, %e\n", insttoken, result[0], result[1], result[2]);
                 /* this will add the necessary devices to
                    the netlist according to the deg model */
                 add_degmodel(prevcard, result);
+                no_devs++;
             }
-            else
-                fprintf(stdout, "Instance %s not found in hash table,\n     no degradation data available\n", insttoken);
+            else if (ft_ngdebug) {
+                fprintf(stdout, "Instance %s\n", insttoken);
+                fprintf(stdout, "     degradation not significant, no data available\n", insttoken);
+            }
 
             tfree(insttoken);
 
@@ -352,7 +358,10 @@ int prepare_degsim(struct card* deck) {
         }
         prevcard = ldeck;
     }
-    fprintf(stdout, "Note: degradation simulation prepared.\n");
+    if (no_devs == 1)
+        fprintf(stdout, "Note: degradation simulation prepared, 1 device degrades.\n");
+    else
+        fprintf(stdout, "Note: degradation simulation prepared, %d devices degrade.\n", no_devs);
     return 0;
 }
 
@@ -374,42 +383,41 @@ int clear_degsim (void){
     return 0;
 }
 
-/* Add a 0 voltage source between internal and external source for current measurement.
-   Add a B source parallel to drain and source for current reduction.
-   Use the mean of d_idlin (result[1]) and d_idsat (result[2]) as proportional factor to current.
-   Add a voltage source between external and internal gate to apply dlt_vth shift from result[0]. */
+/* Use the mean of d_idlin (result[1]) and d_idsat (result[2]) plus 1 as instance parameter factuo.
+   Use dlt_vth shift from result[0] as instance parameter delvto. */
 static int add_degmodel(struct card* deck, double* result) {
 
-    char* dtok, * gtok, * stok, *intok;
-    char* nline[3]; /* three new lines to be added to netlist */
     char* curr_line = deck->line;
-    intok = gettok_instance(&curr_line); /* skip instance name */
-    dtok = gettok_node(&curr_line); /* get drain, gate, and source tokens */
-    gtok = gettok_node(&curr_line);
-    stok = gettok_node(&curr_line);
-    if (!dtok || !gtok || !stok) {
-        fprintf(stderr, "Error: not enough tokens in instance line %s.\n", deck->line);
-        return 1;
-    }
-    /* current measurement*/
-    nline[0] = tprintf("Vm%s intern_%s %s 0\n", intok, stok, stok);
-    /* gate voltage shift */
-    nline[1] = tprintf("Vg%s intern_%s %s %e\n", intok, gtok, gtok, result[0]);
-    /* parallel drain current */
     double currdeg = (result[1] + result[2]) / 2.;
-    nline[2] = tprintf("B%s %s %s i = i(Vm%s) * %e\n", intok, dtok, stok, intok, currdeg);
-    /* modify the instance line */
-    char* instline = tprintf("%s %s intern_%s intern_%s %s\n", intok, dtok, gtok, stok, curr_line);
-    tfree(deck->line);
-    deck->line = instline;
-    /* attach to the netlist */
-    int ii;
-    for (ii = 0; ii < 3; ii++) {
-        insert_new_line(deck, nline[ii], deck->linenum + 1, deck->linenum_orig, deck->linesource);
+    bool currd = FALSE;
+    bool vts = FALSE;
+
+    if (fabs(currdeg) >= 1.) {
+        fprintf(stderr, "Warning: drain current degradation greater than 100%%\n");
     }
-    tfree(intok);
-    tfree(dtok);
-    tfree(gtok);
-    tfree(stok);
+    else if (currdeg > 0.) {
+        /* parallel drain current */
+        currd = TRUE;
+    }
+    /* gate voltage shift */
+    if (result[0] != 0.) {
+        vts = TRUE;
+    }
+
+    /* modify the instance line */
+    char* instline = NULL;
+    if (vts && currd)
+        instline = tprintf("%s delvto=%e factuo=%e\n", 
+            curr_line, result[0], 1.+ currdeg);
+    else if (vts && !currd)
+        instline = tprintf("%s delvto=%e\n", 
+            curr_line, result[0]);
+    else if (!vts && currd)
+        instline = tprintf("%s factuo=%e\n",
+            curr_line, 1.+ currdeg);
+    if (instline) {
+        tfree(deck->line);
+        deck->line = instline;
+    }
     return 0;
 }
