@@ -1,6 +1,6 @@
 test of integrated degradation monitor
 
-*Inverter sequence
+* NMOS transistor with const drain voltage
 
 .lib "$PDK_ROOT/$PDK/libs.tech/ngspice/models/cornerMOSlv.lib" mos_tt
 
@@ -9,7 +9,7 @@ test of integrated degradation monitor
 * the voltage sources: 
 Vdd vdd gnd DC 1.8
 Vss vss 0 0
-V1 in gnd pulse(0 1.8 0p 100p 100p 0.5n 2n)
+V1 in gnd dc 0 pulse(0 1.8 0p 100p 100p 0.5n 2n)
 
 xm02 vdd in vss vss sg13_lv_nmos  l=0.15u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 *adegmon1 %v([z a vss vss]) mon degmon1
