@@ -456,13 +456,14 @@ void cm_degmon(ARGS)  /* structure holding parms,
             if (T(0) > 0.99999 * tsim) {
                 /** debugging **/
                 char *thisinstance = INSTNAME;
-//                cm_message_printf("%s\n", thisinstance);
                 /**** model equations 2 ****/
                 sintegral = sintegral * tfut / tsim;
                 deg = 1. / (c * (pow(sintegral, -1.* n)));
                 /***************************/
-//                cm_message_printf("no. %d, Degradation deg = %e\n", ii, deg);
                 sintegral = 1e99; // flag final time step
+                /* only significant degradation */
+                if (fabs(deg) < 1e-6)
+                    deg = 0.;
                 loc->result[ii] = deg;
             }
             loc->sintegral[ii] = sintegral;
@@ -471,8 +472,8 @@ void cm_degmon(ARGS)  /* structure holding parms,
         /* save the degradation data for this instance */
         if (T(0) > 0.99999 * tsim) {
             nghash_insert(glohash, loc->parentname, loc->result);
-            cm_message_printf("instance %s, data: %e %e %e\n", loc->parentname, loc->result[0],
-            loc->result[1], loc->result[2]);
+//            cm_message_printf("instance %s, data: %e %e %e\n", loc->parentname, loc->result[0],
+//            loc->result[1], loc->result[2]);
         }
     }
 }
