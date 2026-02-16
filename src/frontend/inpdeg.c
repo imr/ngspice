@@ -17,6 +17,7 @@ License: Modified BSD
 #include "inpcom.h"
 
 int prepare_degsim(struct card* deck);
+int prepare_plainsim(struct card* deck);
 int clear_degsim(void);
 static int add_degmodel(struct card* deck, double* result);
 
@@ -71,7 +72,7 @@ int readdegparams (struct card *deck) {
                 agemods[ageindex].devmodel = copy(ftok);
             else {
                 fprintf(stderr, "Error: bad .agemodel syntax in line\n    %s", card->line);
-                controlled_exit(1);
+                continue;
             }
             tfree(dftok);
             tfree(f1);
@@ -81,7 +82,7 @@ int readdegparams (struct card *deck) {
                 agemods[ageindex].simmodel = copy(ftok);
             else {
                 fprintf(stderr, "Error: bad .agemodel syntax in line\n    %s", card->line);
-                controlled_exit(1);
+                continue;
             }
             tfree(dftok);
             tfree(f1);
@@ -97,11 +98,16 @@ int readdegparams (struct card *deck) {
                 char* f2 = NULL;
                 int err = 0;
                 ftok = dftok = gettok(&cut_line);
+                if (!dftok) {
+                    fprintf(stderr, "Error: bad .agemodel syntax in line\n % s", card->line);
+                    continue;
+                }
                 /* parameter name */
                 f1 = gettok_char(&ftok, '=', FALSE, FALSE);
                 if (!f1) {
                     fprintf(stderr, "Error: bad .agemodel syntax in line\n % s", card->line);
-                    controlled_exit(1);
+                    tfree(dftok);
+                    continue;
                 }
                 /* parameter value */
                 f2 = copy(ftok + 1);
@@ -125,7 +131,7 @@ int readdegparams (struct card *deck) {
         }
     }
 
-    return 0;
+    return ageindex;
 }
 
 /* Look for an X line.
@@ -302,8 +308,33 @@ int remsqrbra(struct card* deck) {
     return 0;
 }
 
+/* Remove the degradation monitors. */
+int prepare_plainsim(struct card* deck) {
+    struct card* ldeck;
+    /* skip the title line */
+    for (ldeck = deck->nextcard; ldeck; ldeck = ldeck->nextcard) {
+        char* line = ldeck->line;
+
+        if (*line == '*') {
+            continue;
+        }
+
+        /* remove the remnants of the first run */
+        if (ciprefix(".model", line) && search_plain_identifier(line, "degmon")) {
+            struct card* nextdeck = ldeck->nextcard;
+            if (nextdeck) {
+                char* nextline = nextdeck->line;
+                if (*nextline == 'a' && strstr(nextline, "degmon")) {
+                    *nextline = '*';
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 /* Remove the degradation monitors.
-   Add current measurement, delta_vg and current source.
+   Add instance parameters delvto and factuo.
    Use the data retrieved from degdatahash */
 int prepare_degsim(struct card* deck) {
     struct card* prevcard = deck, *ldeck;

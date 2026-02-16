@@ -38,6 +38,7 @@ extern NGHASHPTR modtabhash;
 extern int DCtran_step_quit(CKTcircuit* ckt);
 
 extern void setdegsim(void);
+extern void setplainsim(void);
 
 #ifdef SHARED_MODULE
 extern void exec_controls(wordlist *newcontrols);
@@ -172,7 +173,8 @@ com_resume(wordlist *wl)
 }
 
 
-/* Throw out the circuit struct and recreate it from the deck. */
+/* Throw out the circuit struct, recreate it from the deck,
+   remove the deg monitors, add degradation to instances. */
 void
 com_degsim(wordlist* wl)
 {
@@ -185,6 +187,24 @@ com_degsim(wordlist* wl)
     }
     com_remcirc(NULL);
     setdegsim();
+    inp_source_recent();
+}
+
+
+/* Throw out the circuit struct, recreate it from the deck,
+   remove the deg monitors, no change to device instances. */
+void
+com_plainsim(wordlist* wl)
+{
+    NG_IGNORE(wl);
+
+    if (ft_curckt == NULL) {
+        fprintf(cp_err, "Warning: there is no circuit loaded.\n");
+        fprintf(cp_err, "    Command 'reset' is ignored.\n");
+        return;
+    }
+    com_remcirc(NULL);
+    setplainsim();
     inp_source_recent();
 }
 
