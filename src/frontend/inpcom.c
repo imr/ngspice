@@ -1127,13 +1127,18 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         inp_check_syntax(working);
 
         /* collect .agemodel data, skip .agemodel if newcompat.de is not set */
-        readdegparams(working);
         if (newcompat.de) {
-            /* replace all [  ] by @, except for a instances */
-            remsqrbra(working);
-
-            /* Add degradation monitors to devices in X lines */
-            adddegmonitors(working);
+            int numdegmodels = readdegparams(working);
+            if (numdegmodels > 0) {
+                /* replace all [  ] by @, except for a instances */
+                remsqrbra(working);
+                /* Add degradation monitors to devices in X lines */
+                adddegmonitors(working);
+            }
+            else {
+                fprintf(stderr, "Warning: No valid agemodel data found, degradation sim not possible\n");
+                newcompat.de = FALSE; /* skip inp.c, 1101 prepare_degsim()*/
+            }
         }
 
         if (newcompat.lt && newcompat.a)

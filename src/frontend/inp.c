@@ -66,6 +66,8 @@ extern void tprint(struct card *deck);
 
 static bool wantdegsim = FALSE;
 extern int prepare_degsim(struct card* deck);
+static bool wantplainsim = FALSE;
+extern int prepare_plainsim(struct card* deck);
 
 //void inp_source_recent(void);
 //void inp_mc_free(void);
@@ -1097,10 +1099,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 #endif
            /* If compatmode is de and degsim is set by command 'degsim',
               translate the netlist by removing the monitors and adding the
-              extra degradation elements. */
-           if (wantdegsim && newcompat.de) {
-               wantdegsim = FALSE;
-               prepare_degsim(deck);
+              extra degradation elements, e.g. instance parameters. */
+           if (newcompat.de) {
+               if (wantdegsim) {
+                   wantdegsim = FALSE;
+                   prepare_degsim(deck);
+               }
+               else if (wantplainsim)
+                   prepare_plainsim(deck);
            }
 
            /* Parsing the circuit 5.
@@ -2715,6 +2721,9 @@ void setdegsim(void) {
     wantdegsim = TRUE;
 }
 
+void setplainsim(void) {
+    wantplainsim = TRUE;
+}
 #ifdef REM_UNUSED
 /* Finally get rid of unused MOS models */
 static void rem_unused_mos_models(struct card* deck) {
