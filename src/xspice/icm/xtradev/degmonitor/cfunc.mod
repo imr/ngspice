@@ -69,6 +69,7 @@ NON-STANDARD FEATURES
 struct agemod {
     char* devmodel;
     char* simmodel;
+    int type;
     int numparams;
     char *paramnames[DEGPARAMAX];
     char *paramvalstr[DEGPARAMAX];
@@ -196,6 +197,11 @@ getdata(struct agemod *agemodptr, degLocal_Data_t *loc, char *devmod)
         cm_cexit(1);
     }
 
+    if (agemodptr[no].numparams < 1) {
+        cm_message_printf("Error: Could not retrieve model parameters from the %s degradation model data!\n", devmod);
+        cm_cexit(1);
+    }
+
     /* Retrive model parameters from hash table. Sequence in pvals[i] is as set by names[i] above. */
     for (ii = 0; ii < agemodptr[no].numparams; ii++) {
         double* fval;
@@ -314,6 +320,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
 
     devmod = PARAM(devmod);
     tfut = PARAM(tfuture);
+    devtype =  PARAM(type);
     L = PARAM(L);
     tsim = TSTOP;
 
@@ -367,9 +374,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
         else if (strstr(devmod, "_pmos"))
             loc->devtype = -1;
         else {
-            loc->devtype = 0;
-            cm_message_send("Error: could not extract device type from model name\n");
-            cm_cexit(1);
+            loc->devtype = devtype;
         }
         /* retrieve the parent instance name, e.g.
         a.xtop.xcolumnblock.xcolumn@0@.xperiph2.xclkwe.xwenand.adegmon63_xi1_pmos
@@ -423,7 +428,6 @@ void cm_degmon(ARGS)  /* structure holding parms,
             vs *= -1.;
             vb *= -1.;
         }
-
 
         for (ii = 0; ii < 3; ii++) {
             double x1, x2;

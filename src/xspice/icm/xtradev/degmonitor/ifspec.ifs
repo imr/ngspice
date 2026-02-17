@@ -63,6 +63,17 @@ Vector_Bounds:      -                      -
 Null_Allowed:       yes                    no
 
 
+PARAMETER_TABLE:
+
+Parameter_Name:     type
+Description:        "model type PMOS, NMOS"
+Data_Type:          int
+Default_Value:      1
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
 STATIC_VAR_TABLE:
 
 Static_Var_Name:    locdata

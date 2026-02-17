@@ -32,6 +32,7 @@ NGHASHPTR degdatahash = NULL;
 struct agemod {
     char* devmodel;
     char* simmodel;
+    int type;
     int numparams;
     char *paramnames[DEGPARAMAX];
     char *paramvalstr[DEGPARAMAX];
@@ -80,6 +81,16 @@ int readdegparams (struct card *deck) {
             f1 = gettok_char(&ftok, '=', TRUE, FALSE);
             if (f1 && ciprefix("simmodel=", f1))
                 agemods[ageindex].simmodel = copy(ftok);
+            else {
+                fprintf(stderr, "Error: bad .agemodel syntax in line\n    %s", card->line);
+                continue;
+            }
+            tfree(dftok);
+            tfree(f1);
+            ftok = dftok = gettok(&cut_line);
+            f1 = gettok_char(&ftok, '=', TRUE, FALSE);
+            if (f1 && ciprefix("type=", f1))
+                agemods[ageindex].type = atoi(ftok);
             else {
                 fprintf(stderr, "Error: bad .agemodel syntax in line\n    %s", card->line);
                 continue;
@@ -427,6 +438,10 @@ static int add_degmodel(struct card* deck, double* result) {
         fprintf(stderr, "Warning: drain current degradation greater than 100%%\n");
     }
     else if (currdeg > 0.) {
+        fprintf(stderr, "Warning: drain current increases\n");
+        currd = TRUE;
+    }
+    else {
         /* parallel drain current */
         currd = TRUE;
     }
@@ -437,15 +452,28 @@ static int add_degmodel(struct card* deck, double* result) {
 
     /* modify the instance line */
     char* instline = NULL;
-    if (vts && currd)
+    if (vts && currd) {
         instline = tprintf("%s delvto=%e factuo=%e\n", 
             curr_line, result[0], 1.+ currdeg);
-    else if (vts && !currd)
-        instline = tprintf("%s delvto=%e\n", 
+        if (ft_ngdebug) {
+            fprintf(stdout, "Instance now has extra delvto=%e factuo=%e\n", result[0], 1. + currdeg);
+        }
+    }
+    else if (vts && !currd) {
+        instline = tprintf("%s delvto=%e\n",
             curr_line, result[0]);
-    else if (!vts && currd)
+        if (ft_ngdebug) {
+            fprintf(stdout, "Instance now has extra delvto=%e\n", result[0]);
+        }
+    }
+    else if (!vts && currd) {
         instline = tprintf("%s factuo=%e\n",
-            curr_line, 1.+ currdeg);
+            curr_line, 1. + currdeg);
+        if (ft_ngdebug) {
+            fprintf(stdout, "Instance now has extra factuo=%e\n", 1. + currdeg);
+        }
+    }
+
     if (instline) {
         tfree(deck->line);
         deck->line = instline;
