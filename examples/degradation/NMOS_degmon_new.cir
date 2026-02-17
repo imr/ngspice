@@ -23,12 +23,14 @@ pre_osdi ../lib/ngspice/psp103_nqs.osdi
 pre_osdi ../lib/ngspice/psp103.osdi
 run
 rusage
+plainsim
+#run
 *plot Vss#branch
 degsim
 run
 *set nolegend
 set xbrushwidth=2
-plot Vss#branch tran1.Vss#branch
+plot tran1.Vss#branch tran2.Vss#branch
 .endc
 
 .end
