@@ -465,7 +465,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
                 char *thisinstance = INSTNAME;
                 /**** model equations 3 ****/
                 sintegral = sintegral * tfut / tsim;
-                deg = 1. / (c * (pow(sintegral, -1.* n)));
+                deg = 1. / (c * (1. + pow(sintegral, (-1.* n))));
                 /***************************/
                 sintegral = 1e99; // flag final time step
                 /* only significant degradation */
