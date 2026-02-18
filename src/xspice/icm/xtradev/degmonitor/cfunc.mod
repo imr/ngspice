@@ -16,6 +16,7 @@ AUTHORS
 
 MODIFICATIONS   
 
+    15 Feb 2026 Holger Vogt
 
 
 SUMMARY
@@ -23,7 +24,7 @@ SUMMARY
     This file contains the model-specific routines used to
     functionally describe a degradation monitor code model.
     The model has been provided by IIS/EAS, Dresden, Germany,
-    extracted for the IHP Open PDK and its MOS devoces modelled by PSP.
+    extracted for the IHP Open PDK and its MOS devices modelled by PSP.
 
 
 INTERFACES       
@@ -361,13 +362,15 @@ void cm_degmon(ARGS)  /* structure holding parms,
             cm_message_send("Error: Could not retrieve the degradation model info!\n");
             cm_cexit(1);
         }
-
+        /**** model equations 1 ****/
+        /* constants constfac */
         for (ii=0; ii < 3; ii++) {
             loc->constfac[ii] = loc->c[ii] * loc->A[ii] * exp(loc->Ea[ii] / k / Temp) 
                 * (loc->L1[ii] + pow((1 / L / 1e6) , loc->L2[ii]));
             loc->sintegral[ii] = 0.;
             loc->prevtime[ii] = 0.;
         }
+        /***************************/
 
         if (strstr(devmod, "_nmos"))
             loc->devtype = 1;
@@ -444,7 +447,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
             }
 
             if (vd - vs > 0 && prevtime < T(0)) {
-                /**** model equations 1 ****/
+                /**** model equations 2 ****/
                 x1 = 1. / (constfac * exp (b / (vd - vs)));
                 x2 = -1. / n;
                 sintegrand = pow(x1 , x2);
@@ -460,7 +463,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
             if (T(0) > 0.99999 * tsim) {
                 /** debugging **/
                 char *thisinstance = INSTNAME;
-                /**** model equations 2 ****/
+                /**** model equations 3 ****/
                 sintegral = sintegral * tfut / tsim;
                 deg = 1. / (c * (pow(sintegral, -1.* n)));
                 /***************************/
