@@ -1,4 +1,19 @@
 ** Aging model parameters for IHP SG13 as provided in report dated Aug. 04, 2020
+* Prepared for ngspice
+
+*Syntax:
+* lines with leading * are comments (ignored)
+* parameters are in the from of 'paramname=value'
+* '+' in the first row concatenates the line with the previous line
+* In the current setting parameter VGS0 is not used.
+
+* line .agemodel devmodel=sg13_lv_nmos simmodel=HCI1 type=1 requires a fixed sequence:
+* command .agemodel will start the degradation model loading, if 'set ngbehavior=de' is set in .spiceinit.
+* parameter devmodel: respective ngspice device model
+* parameter simmodel: degradation model selector, currently HCI1 is the only model available
+* parameter type: 1 for NMOS, -1 for PMOS
+* The following model parameters may have an arbitrary sequence
+
 *HCI for sg13_lv_nmos
 .agemodel devmodel=sg13_lv_nmos simmodel=HCI1 type=1
 +VGS0=0
@@ -23,7 +38,7 @@
 +A_d_idsat=-0.107844839245913 Ea_d_idsat=0.0257704341758732 B_d_idsat=-46.0312444286233 C_d_idsat=-92.7838725425824 n_d_idsat=0.640854570017972 L1_d_idsat=2.51170963899086 L2_d_idsat=3.50942225450207
 
 
-*HCI for sg13_hv_nmos
+*HCI for sg13_hv_pmos
 .agemodel devmodel=sg13_hv_pmos simmodel=HCI1 type=-1
 +VGS0=0 
 +A_dlt_vth=5.4910035879995e-05 Ea_dlt_vth=-0.0785946157729455 B_dlt_vth=-31.5544195032415 C_dlt_vth=2.51004514070583 n_dlt_vth=0.90250786255508 L1_dlt_vth=1.2053957395248 L2_dlt_vth=6.96962623027008
