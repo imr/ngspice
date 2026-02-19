@@ -60,6 +60,8 @@ save out5u i(vmeas) i(vmeas2)
 * create and measure degradation
 * use higher stress voltage, 1.2V results in negligible degradation.
 alter Vsupp = 1.8
+
+* run the simulation to extract the degradation data 
 tran 10p 200n
 rusage
 
@@ -69,7 +71,7 @@ alter Vsupp = 1.2
 tran 10p 200n
 rusage
 
-simulate with degradation
+* simulate with degradation
 degsim
 alter Vsupp = 1.2
 tran 10p 200n
