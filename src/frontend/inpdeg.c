@@ -153,7 +153,13 @@ int readdegparams (struct card *deck) {
    Return number of degradation monitors, or 0 in case of error. */
 int adddegmonitors(struct card* deck) {
     static int degmonno;
-    double tfuture = 315336e3; /* 10 years */
+    double tfuture, dlimits;
+    if (!cp_getvar("deg_tfuture", CP_REAL, &tfuture, 0))
+        tfuture = 315360e3; /* 10 years */
+    fprintf(stdout, "Note: deg data extrapolated to %e seconds (%.1f years)\n", tfuture, tfuture / 31536e3);
+    if (!cp_getvar("deg_limits", CP_REAL, &dlimits, 0))
+        dlimits = 1e-3;
+    fprintf(stdout, "Note: deg data lower limit is %e\n", dlimits);
     int nodes = 4;
     if (agemods[0].paramhash == NULL)
         return 1;
@@ -214,8 +220,8 @@ int adddegmonitors(struct card* deck) {
                          */
                         char* aline = tprintf("adegmon%d_%s %%v([%s]) mon%d degmon%d\n", 
                             degmonno, instname, fournodes, degmonno, degmonno);
-                        char* mline = tprintf(".model degmon%d degmon (tfuture=%e %s devmod=\"%s\" instname=\"%s\"\n",
-                            degmonno, tfuture, clength, modname, instname);
+                        char* mline = tprintf(".model degmon%d degmon (tfuture=%e dlimits=%e %s devmod=\"%s\" instname=\"%s\"\n",
+                            degmonno, tfuture, dlimits, clength, modname, instname);
                         tfree(clength);
                         insert_new_line(deck, aline, 0, deck->linenum_orig, deck->linesource);
                         insert_new_line(deck, mline, 0, deck->linenum_orig, deck->linesource);

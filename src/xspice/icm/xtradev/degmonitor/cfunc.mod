@@ -288,6 +288,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double constfac;     /* static storage of const factor in model equation */
     double tfut;
     double tsim;
+    double dlimits;
     double deg;           /* monitor output */
     double sintegrand = 0;
     double sintegral;
@@ -322,6 +323,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
     devmod = PARAM(devmod);
     tfut = PARAM(tfuture);
     devtype =  PARAM(type);
+    dlimits = PARAM(dlimits);
     L = PARAM(L);
     tsim = TSTOP;
 
@@ -469,7 +471,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
                 /***************************/
                 sintegral = 1e99; // flag final time step
                 /* only significant degradation */
-                if (fabs(deg) < 1e-6)
+                if (fabs(deg) < dlimits)
                     deg = 0.;
                 loc->result[ii] = deg;
             }
