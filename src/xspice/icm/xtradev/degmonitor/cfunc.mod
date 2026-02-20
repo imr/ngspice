@@ -473,7 +473,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
                 /* only significant degradation */
                 if (fabs(deg) < dlimits)
                     deg = 0.;
-                loc->result[ii] = deg;
+                loc->result[ii] = deg * devtype;
             }
             loc->sintegral[ii] = sintegral;
             loc->prevtime[ii] = prevtime;
