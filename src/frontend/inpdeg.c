@@ -26,6 +26,8 @@ static int add_degmodel(struct card* deck, double* result);
 /* maximum number of models */
 #define DEGMODMAX 64
 
+#define DEGSUBCKT
+
 /* global pointer: results from first tran run */
 NGHASHPTR degdatahash = NULL;
 
@@ -431,6 +433,84 @@ int clear_degsim (void){
     return 0;
 }
 
+#ifdef DEGSUBCKT
+
+/* Add a 0 voltage source between internal and external source for current measurement.
+   Add a B source parallel to drain and source for current reduction.
+   Use the mean of d_idlin (result[1]) and d_idsat (result[2]) as proportional factor to current.
+   Add a voltage source between external and internal gate to apply dlt_vth shift from result[0]. */
+static int add_degmodel(struct card* deck, double* result) {
+
+    char* dtok, * gtok, * stok, * intok;
+    static int numvm = 0, numvg = 0;
+    char* nline[3]; /* three new lines to be added to netlist */
+    char* curr_line = deck->line;
+    intok = gettok_instance(&curr_line); /* skip instance name */
+    dtok = gettok_node(&curr_line); /* get drain, gate, and source tokens */
+    gtok = gettok_node(&curr_line);
+    stok = gettok_node(&curr_line);
+    if (!dtok || !gtok || !stok) {
+        fprintf(stderr, "Error: not enough tokens in instance line %s.\n", deck->line);
+        return 1;
+    }
+    double currdeg = (result[1] + result[2]) / 2.;
+    bool currd = FALSE;
+    bool vts = FALSE;
+
+    if (fabs(currdeg) >= 1.) {
+        fprintf(stderr, "Warning: drain current degradation greater than 100%%\n");
+    }
+    else {
+        /* parallel drain current */
+        currd = TRUE;
+    }
+    /* gate voltage shift */
+    if (result[0] != 0.) {
+        vts = TRUE;
+    }
+    /* gate voltage shift */
+    if (vts)
+        nline[0] = tprintf("Vg%s intern_%s %s %e\n", intok, gtok, gtok, result[0]);
+    else
+        nline[0] = NULL;
+    /* drain current reduction */
+    if (currd) {
+        /* current measurement*/
+        nline[1] = tprintf("Vm%s intern_%s %s 0\n", intok, stok, stok);
+        /* parallel drain current */
+        nline[2] = NULL;  tprintf("B%s %s %s i = i(Vm%s) * %e\n", intok, dtok, stok, intok, currdeg);
+    }
+    else
+        nline[1] = nline[2] = NULL;
+
+    /* modify the instance line */
+    char* instline;
+    if (currd && vts)
+        instline = tprintf("%s %s intern_%s intern_%s %s\n", intok, dtok, gtok, stok, curr_line);
+    else if (currd && !vts)
+        instline = tprintf("%s %s %s intern_%s %s\n", intok, dtok, gtok, stok, curr_line);
+    else if (!currd && vts)
+        instline = tprintf("%s %s intern_%s %s %s\n", intok, dtok, gtok, stok, curr_line);
+
+    if (currd || vts) {
+        tfree(deck->line);
+        deck->line = instline;
+    }
+    /* attach to the netlist */
+    int ii;
+    for (ii = 0; ii < 3; ii++) {
+        if (nline[ii])
+            insert_new_line(deck, nline[ii], deck->linenum + 1, deck->linenum_orig, deck->linesource);
+    }
+    tfree(intok);
+    tfree(dtok);
+    tfree(gtok);
+    tfree(stok);
+    return 0;
+}
+
+#else
+
 /* Use the mean of d_idlin (result[1]) and d_idsat (result[2]) plus 1 as instance parameter factuo.
    Use dlt_vth shift from result[0] as instance parameter delvto. */
 static int add_degmodel(struct card* deck, double* result) {
@@ -486,3 +566,4 @@ static int add_degmodel(struct card* deck, double* result) {
     }
     return 0;
 }
+#endif
