@@ -26,7 +26,7 @@ static int add_degmodel(struct card* deck, double* result);
 /* maximum number of models */
 #define DEGMODMAX 64
 
-#define DEGSUBCKT
+//#define DEGSUBCKT
 
 /* global pointer: results from first tran run */
 NGHASHPTR degdatahash = NULL;
