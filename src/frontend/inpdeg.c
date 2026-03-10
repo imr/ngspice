@@ -26,7 +26,7 @@ static int add_degmodel(struct card* deck, double* result);
 /* maximum number of models */
 #define DEGMODMAX 64
 
-//#define DEGSUBCKT
+#define DEGSUBCKT
 
 /* global pointer: results from first tran run */
 NGHASHPTR degdatahash = NULL;
@@ -470,15 +470,16 @@ static int add_degmodel(struct card* deck, double* result) {
     }
     /* gate voltage shift */
     if (vts)
+//        nline[0] = tprintf("Vg%d intern_%s %s %e\n", numvg++, gtok, gtok, result[0]);
         nline[0] = tprintf("Vg%s intern_%s %s %e\n", intok, gtok, gtok, result[0]);
     else
         nline[0] = NULL;
     /* drain current reduction */
     if (currd) {
-        /* current measurement*/
+        /* current measurement at source side */
         nline[1] = tprintf("Vm%s intern_%s %s 0\n", intok, stok, stok);
-        /* parallel drain current */
-        nline[2] = NULL;  tprintf("B%s %s %s i = i(Vm%s) * %e\n", intok, dtok, stok, intok, currdeg);
+        /* parallel drain current with CCCS */
+        nline[2] = tprintf("F%s %s %s Vm%s %e\n", intok, dtok, stok, intok, currdeg);
     }
     else
         nline[1] = nline[2] = NULL;
