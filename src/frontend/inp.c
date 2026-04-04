@@ -502,6 +502,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
  *  intfile = whether input is from internal array.  Values are TRUE/FALSE
  */
 {
+    extern char **Copy_of_argv; // main.c
     struct card *deck = NULL, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
     struct card *realdeck = NULL, *options = NULL, *curr_meas = NULL;
     char *tt = NULL, name[BSIZE_SP + 1], *s, *t, *temperature = NULL;
@@ -645,8 +646,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         bool with_params = FALSE;
 
 #ifndef SHARED_MODULE
-        if (ciprefix("*ng_script_with_params", deck->line)) {
-            extern char       **Copy_of_argv; // main.c
+        if (Copy_of_argv && ciprefix("*ng_script_with_params", deck->line)) {
             extern int          optind;       // Library function getopt()
             static const char   header[] = "argc = %u argv = ( ";
             wordlist           *setarg;

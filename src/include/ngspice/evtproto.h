@@ -162,4 +162,5 @@ int Evt_Parse_Node(const char *node, struct node_parse *result);
 
 void Evt_purge_free_outputs(void);
 
+void EVTdiscard(void);
 #endif

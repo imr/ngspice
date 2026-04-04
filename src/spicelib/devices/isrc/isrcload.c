@@ -81,19 +81,24 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                         V1 = here->ISRCcoeffs[0];
                         V2 = here->ISRCcoeffs[1];
                         TD = here->ISRCfunctionOrder > 2
-                           ? here->ISRCcoeffs[2] : 0.0;
+                            ? here->ISRCcoeffs[2] : 0.0;
                         TR = here->ISRCfunctionOrder > 3
-                           && here->ISRCcoeffs[3] != 0.0
-                           ? here->ISRCcoeffs[3] : ckt->CKTstep;
+                            && here->ISRCcoeffs[3] > 0.0
+                            ? here->ISRCcoeffs[3] : ckt->CKTstep;
                         TF = here->ISRCfunctionOrder > 4
-                           && here->ISRCcoeffs[4] != 0.0
-                           ? here->ISRCcoeffs[4] : ckt->CKTstep;
-                        PW = here->ISRCfunctionOrder > 5
-                           && here->ISRCcoeffs[5] != 0.0
-                           ? here->ISRCcoeffs[5] : ckt->CKTfinalTime;
+                            && here->ISRCcoeffs[4] > 0.0
+                            ? here->ISRCcoeffs[4] : ckt->CKTstep;
+                        if (here->ISRCfunctionOrder == 5) {
+                            PW = 0.0;
+                        }
+                        else {
+                            PW = here->ISRCfunctionOrder > 5
+                                && here->ISRCcoeffs[5] >= 0.0
+                                ? here->ISRCcoeffs[5] : ckt->CKTfinalTime;
+                        }
                         PER = here->ISRCfunctionOrder > 6
-                           && here->ISRCcoeffs[6] != 0.0
-                           ? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
+                            && here->ISRCcoeffs[6] > 0.0
+                            ? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
 
                         /* shift time by delay time TD */
                         time -=  TD;

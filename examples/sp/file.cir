@@ -11,10 +11,10 @@ Example circuit to read a Touchstone-format parameter file.
 
 * Original circuit for SP analysis
 
-VP2 _net0 0 dc 0 ac 0.316228 SIN(0 0.316228 1G) portnum 2 z0 50
+VP2 filter_out 0 dc 0 ac 0.316228 SIN(0 0.316228 1G) portnum 2 z0 50
 VP1 _net1 0 dc 0 ac 0.316228 SIN(0 0.316228 1G) portnum 1 z0 50
 C1 _net2 _net1  4.7P 
-C5 _net3 _net0  4.7P 
+C5 _net3 filter_out  4.7P
 C3 _net3 _net2  1P 
 C4 _net3 0  15P 
 C2 0 _net2  15P 
@@ -27,9 +27,8 @@ L1 0 _net2  66N
 
 VP3 net1 0 dc 0 ac 0.316228 ; Same as VP1 but that must not be loaded.
 ri net1 sin 50
-.param in_file="137MHz_BPF.s2p"
-X1 sin sout 0 s2p_generic touchstone=in_file
-ro sout 0 50
+X1 sin sp_model_out 0 s2p_generic touchstone="137MHz_BPF.s2p"
+ro sp_model_out 0 50
 
 * Control section, run simulations.
 
@@ -45,20 +44,22 @@ wrs2p  new_137MHz_BPF.s2p
 alter vp2 ac = 0
 AC LIN 71 107MEG 167MEG
 set xbrushwidth=2
-plot group_delay(_net0) sp1.Group_Delay group_delay(sout)
-plot db(_net0) cph(_net0) db(sout) cph(sout)
+plot group_delay(filter_out) sp1.Group_Delay group_delay(sp_model_out)
+plot db(filter_out) cph(filter_out) db(sp_model_out) cph(sp_model_out)
 .endc
 
 * Subcircuit for SP behavioral device
+* The touchstone file has:
+*   HZ S RI R 50
+*   Z1 = 50 Z2 = 50
+* so default impedences may be used with it.
 
-.SUBCKT s2p_generic  1 2 3 touchstone={touchstone}
+.SUBCKT s2p_generic  1 2 3 touchstone="device.sp2" z1=50 z2=50
 * Pin 3 is the reference plane (usually it should be connected to GND)
-* HZ S RI R 50
-* Z1 = 50 Z2 = 50
-R1N 1 100 -5.000000e+01
-R1P 100 101 100.000000
-R2N 2 200 -5.000000e+01
-R2P 200 201 100.000000
+R1N 1 100 {-z1}
+R1P 100 101 {2*z1}
+R2N 2 200 {-z2}
+R2P 200 201 {2*z2}
 
 * S11 FREQ R_I
  A0101 %vd 100 3 %vd 101 102 m_a0101

@@ -1343,6 +1343,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
     bool found_end = FALSE, shell_eol_continuation = FALSE;
     static bool biaswarn = FALSE;
     static bool hdlwarn = FALSE;
+    bool first = TRUE;
 #ifdef CIDER
     static int in_cider_model = 0;
 #endif
@@ -1403,7 +1404,15 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
 
         /* OK -- now we have loaded the next line into 'buffer'.  Process it.
          */
-         /* If input line is blank, ignore it & continue looping.  */
+        if (first) {
+            /* Files starting *ng_script are user supplied command files. */
+
+            if (ciprefix("*ng_script", buffer))
+                comfile = TRUE;
+            first = FALSE;
+        }
+
+        /* If input line is blank, ignore it & continue looping.  */
         if ((strcmp(buffer, "\n") == 0) || (strcmp(buffer, "\r\n") == 0))
             if (call_depth != 0 || (call_depth == 0 && cc != NULL)) {
                 line_number_orig++;
@@ -1792,8 +1801,10 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     ciprefix("osdi", buffer) ||
                     ciprefix("pre_osdi", buffer) ||
                     ciprefix("echo", buffer) || ciprefix("shell", buffer) ||
-                    ciprefix("source", buffer) ||ciprefix("cd", buffer) ||
-                    ciprefix("load", buffer) || ciprefix("setcs", buffer))))) {
+                    ciprefix("source", buffer) || ciprefix("cd", buffer) ||
+                    ciprefix("load", buffer) || ciprefix("setcs", buffer) ||
+                    ciprefix("strcmp", buffer) ||
+                    ciprefix("strstr", buffer))))) {
                 /* lower case for all other lines */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     *s = tolower_c(*s);

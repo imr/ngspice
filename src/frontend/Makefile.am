@@ -9,6 +9,7 @@ BUILT_SOURCES = parse-bison.h
 noinst_LTLIBRARIES = libfte.la
 
 libfte_la_SOURCES = \
+    parse-bison.y   \
     com_measure2.c  \
     com_measure2.h  \
     commands.c  \
@@ -160,7 +161,6 @@ libfte_la_SOURCES = \
     outitf.h    \
     parse.c     \
     parse.h     \
-    parse-bison.y   \
     points.c    \
     points.h    \
     postcoms.c  \

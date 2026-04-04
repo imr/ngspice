@@ -1563,6 +1563,11 @@ int main(int argc, char **argv)
                are ignored, except .save, which has been handled by ft_dotsaves()
                from within inp_spsource (), data are put into linked list dbs.
             */
+#ifdef XSPICE
+            // Do not save any XSPICE node data, as there is no way to use it.
+
+            EVTdiscard();
+#endif
             int error2 = ft_dorun(ft_rawfile);
             /* Execute the .whatever lines found in the deck, after we are done running. */
             if (ft_cktcoms(TRUE) || error2) {

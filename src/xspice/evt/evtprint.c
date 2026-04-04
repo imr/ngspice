@@ -963,6 +963,8 @@ static void set_all(CKTcircuit *ckt, Mif_Boolean_t val)
         node_table[i]->save = val;
 }
 
+void EVTdiscard(void) {set_all(g_mif_info.ckt, MIF_FALSE);}
+
 void
 EVTsave(wordlist *wl)
 {
