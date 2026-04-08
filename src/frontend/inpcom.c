@@ -1111,8 +1111,9 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
             fprintf(stderr, "    Any of the following steps may fail, if Verilog A models are involved!.\n\n");
         }
         if (ft_codemodelerror) {
-            fprintf(stderr, "Warning: code models like analog.cm have not been loaded successfully.\n");
+            fprintf(stderr, "Warning: code models like %s have not been loaded successfully.\n", ft_codemodelerror);
             fprintf(stderr, "    Any of the following steps may fail, if code models are involved!.\n\n");
+            tfree(ft_codemodelerror);
         }
 
         struct nscope *root = inp_add_levels(working);

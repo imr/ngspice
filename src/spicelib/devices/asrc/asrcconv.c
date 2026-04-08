@@ -32,7 +32,7 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++)
-                asrc_vals[i] = ckt->CKTrhsOld[here->ASRCvars[i]];
+                asrc_vals[i] = ckt->CKTrhs[here->ASRCvars[i]];
 
             if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &rhs,
                                        asrc_vals, asrc_derivs) != OK)

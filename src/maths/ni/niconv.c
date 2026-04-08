@@ -81,6 +81,15 @@ NIconvTest(CKTcircuit *ckt)
 
 #ifdef NEWCONV
     i = CKTconvTest(ckt);
+    /* The individual testers, called by CKTconvTest, set
+     * ckt->CKTnoncon and ckt->CKTtroubleElt appropriately. */
+    if (ckt->CKTnoncon != 0) {
+        ckt->CKTtroubleNode = 0;
+        return(1);
+    }
+    /* CKTconvTest early-returns nonzero 'i' on the first error
+     * in evaluating convergence (such as parameter out of range) so
+     * there may be untested devices that have not yet converged */
     if (i)
 	ckt->CKTtroubleNode = 0;
     return(i);

@@ -25,7 +25,8 @@ bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_norefprint = FALSE;
 bool ft_ngdebug = FALSE, ft_nginfo = FALSE, ft_stricterror = FALSE, ft_spiniterror = FALSE;
-bool ft_codemodelerror = FALSE, ft_osdierror = FALSE;
+bool ft_osdierror = FALSE;
+char* ft_codemodelerror = NULL;
 
 static void setdb(char *str);
 static struct variable *cp_enqvec_as_var(const char *vec_name,
@@ -283,7 +284,7 @@ cp_usrset(struct variable *var, bool isset)
     if (eq(var->va_name, "debug")) {
         if (var->va_type == CP_BOOL) {
             cp_debug = ft_simdb = ft_parsedb = ft_evdb = ft_vecdb =
-                ft_grdb = ft_gidb = ft_controldb = isset;
+                ft_grdb = ft_controldb = isset;
         } else if (var->va_type == CP_LIST) {
             for (tv = var->va_vlist; tv; tv = tv->va_next)
                 if (var->va_type == CP_STRING)
@@ -477,12 +478,12 @@ setdb(char *str)
         ft_vecdb = TRUE;
     else if (eq(str, "graf"))
         ft_grdb = TRUE;
-    else if (eq(str, "ginterface"))
-        ft_gidb = TRUE;
     else if (eq(str, "control"))
         ft_controldb = TRUE;
     else if (eq(str, "async"))
         ft_asyncdb = TRUE;
+    else if (eq(str, "shvecsearch"))
+        ft_shvecsearch = TRUE;
     else
         fprintf(cp_err, "Warning: no such debug class %s\n", str);
 }

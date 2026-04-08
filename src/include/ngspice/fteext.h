@@ -238,7 +238,6 @@ extern bool ft_parsedb;
 extern bool ft_evdb;
 extern bool ft_vecdb;
 extern bool ft_grdb;
-extern bool ft_gidb;
 extern bool ft_controldb;
 extern bool ft_asyncdb;
 extern char *ft_setkwords[];
@@ -248,8 +247,9 @@ extern bool ft_ngdebug;
 extern bool ft_nginfo;
 extern bool ft_stricterror;
 extern bool ft_spiniterror;
-extern bool ft_codemodelerror;
+extern char *ft_codemodelerror;
 extern bool ft_osdierror;
+extern bool ft_shvecsearch;
 
 /* parse.c */
 

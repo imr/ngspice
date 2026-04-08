@@ -1181,7 +1181,7 @@ pvector_info  ngGet_Vec_Info(char* vecname)
 {
     struct dvec* newvec;
 
-    if (ft_ngdebug)
+    if (ft_shvecsearch)
         fprintf(stdout, "\nGet vector info: searching for vector '%s'\n", vecname);
 
     if (!is_initialized) {

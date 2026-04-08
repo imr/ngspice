@@ -15,7 +15,7 @@ if (wl && wl->wl_word)
     if (load_opus(wl->wl_word)) {
         fprintf(stderr, "Error: Library %s couldn't be loaded!\n", wl->wl_word);
         ft_spiniterror = TRUE;
-        ft_codemodelerror = TRUE;
+        ft_codemodelerror = copy(wl->wl_word);
         if (ft_stricterror) /* if set in spinit */
             controlled_exit(EXIT_BAD);
     }

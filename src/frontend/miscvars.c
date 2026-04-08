@@ -18,9 +18,9 @@ bool ft_vecdb = FALSE;
 bool ft_simdb = FALSE;
 bool ft_evdb = FALSE;
 bool ft_grdb = FALSE;
-bool ft_gidb = FALSE;
 bool ft_controldb = FALSE;
 bool ft_asyncdb = FALSE;
+bool ft_shvecsearch = FALSE;
 
 char *ft_setkwords[] = {
 
