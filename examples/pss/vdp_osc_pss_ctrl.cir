@@ -18,8 +18,20 @@ Rnew gr gib 5k
 * Ghost node... Test for my PSS!
 *Rb bad 0   1k
 
-.tran 10e-9 20e-6 uic
-.pss 0.5e6 100e-6 1 50 10 50 5e-3 uic
+.control
+tran 10e-9 20e-6 uic
+rusage time
+plot gib xlimit 0 5u
+meas tran ptdiff TRIG v(gib) val=0 RISE=25 TARG v(gib) val=0 RISE=50
+let freq = 25.0/ptdiff
+echo frequency is $&freq
+reset
+pss 0.5e6 100e-6 1 50 10 50 5e-3 uic
+rusage time
+plot gib
+setplot pss1
+plot gib
+.endc
 
 .end
 

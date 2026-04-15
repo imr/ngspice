@@ -107,6 +107,9 @@ const char *SPerror(int type)
     case E_NOF2SRC:
 	msg = "no F2 source for IM disto analysis";
 	break;
+    case E_ERR_PSS:
+	msg = "pss failed";
+	break;
     case OK:
 	return (NULL);
     default:

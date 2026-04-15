@@ -36,6 +36,7 @@ Author: 1986 Thomas L. Quarles
 #define E_BAD_DOMAIN 15 /* output interface begin/end domain calls mismatched */
 #define E_EXISTS_BAD 16 /* error - attempt to create duplicate */
                         /* instance or model. Bail out. */
+#define E_ERR_PSS 17    /* error - during PSS. Bail out. */
 
 #define E_PRIVATE 100   /* messages above this number are private to */
                         /* the simulator and MUST be accompanied by */
