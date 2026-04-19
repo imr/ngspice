@@ -65,26 +65,27 @@ unsigned long long getAvailableMemorySize(void)
 
 #elif defined(__APPLE__) && defined(__MACH__)
 
-    mach_port_t host_port;
-    mach_msg_type_number_t host_size;
-    vm_size_t pagesize;
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/sysctl.h>
+#include <mach/mach.h>
 
-    host_port = mach_host_self();
-    host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
-    host_page_size(host_port, &pagesize);
+    mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
 
-    vm_statistics_data_t vm_stat;
+    vm_statistics64_data_t vmstats;
 
-    if (host_statistics(host_port, HOST_VM_INFO, (host_info_t) &vm_stat,
-                &host_size) != KERN_SUCCESS) {
-        fprintf(stderr, "Failed to fetch vm statistics");
+    if (host_statistics64(mach_host_self(), HOST_VM_INFO64,
+                    (host_info64_t)&vmstats, &count) == KERN_SUCCESS) {
+        // Calculate available memory (free + inactive)
+        const int page_size = PAGE_SIZE;
+        uint64_t free_memory = (uint64_t)vmstats.free_count * page_size;
+        uint64_t inactive_memory = (uint64_t)vmstats.inactive_count * page_size;
+        uint64_t available_memory = free_memory + inactive_memory;
+
+        return available_memory;
     }
-
-    /* Stats in bytes */
-/*    natural_t mem_used = (vm_stat.active_count + vm_stat.inactive_count +
-                                    vm_stat.wire_count) * pagesize; */
-    return (unsigned long long)(vm_stat.free_count * pagesize);
-//    natural_t mem_total = mem_used + mem_free;
+    else
+        return 0;
 
 #elif defined(__unix__) || defined(__unix) || defined(unix)
     /* Linux/UNIX variants. ------------------------------------------- */

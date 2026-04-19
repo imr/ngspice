@@ -33,7 +33,6 @@
 #error "Cannot define getPeakRSS( ) or getCurrentRSS( ) for an unknown OS."
 #endif
 
-
 /**
  * Returns the peak (maximum so far) resident set size (physical
  * memory use) measured in bytes, or zero if the value cannot be
@@ -72,6 +71,13 @@ unsigned long long getPeakRSS(void)
     GetProcessMemoryInfo( GetCurrentProcess( ), &info, sizeof(info) );
         return (unsigned long long) info.PeakWorkingSetSize;
 
+#elif defined(__APPLE__) && defined(__MACH__)
+    struct rusage rusage;
+    if (getrusage(RUSAGE_SELF, &rusage) == 0)
+        return (unsigned long long) rusage.ru_maxrss;
+    else
+        return 0L;
+
 #elif (defined(_AIX) || defined(__TOS__AIX__)) || (defined(__sun__) || defined(__sun) || defined(sun) && (defined(__SVR4) || defined(__svr4__)))
     /* AIX and Solaris ------------------------------------------ */
     struct psinfo psinfo;
@@ -91,10 +97,6 @@ unsigned long long getPeakRSS(void)
     return 0L;          /* Unsupported. */
 #endif
 }
-
-
-
-
 
 /**
  * Returns the current resident set size (physical memory use) measured
