@@ -31,7 +31,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
 {
     ISRCmodel *model = (ISRCmodel *) inModel;
     ISRCinstance *here;
-    double value;
+    double value = 0.0;
     double time;
     double m;
 
@@ -225,11 +225,11 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                            && here->ISRCcoeffs[4]
                            ? here->ISRCcoeffs[4] : (500./ckt->CKTfinalTime);
                         TD = here->ISRCfunctionOrder > 5
-                            ? here->ISRCcoeffs[5] : 0;
-                        PHASEM = here->ISRCfunctionOrder > 5
                             ? here->ISRCcoeffs[5] : 0.0;
-                        PHASEC = here->ISRCfunctionOrder > 6
+                        PHASEM = here->ISRCfunctionOrder > 6
                             ? here->ISRCcoeffs[6] : 0.0;
+                        PHASEC = here->ISRCfunctionOrder > 7
+                            ? here->ISRCcoeffs[7] : 0.0;
 
                         /* limit the modulation index */
                         if (MDI > FC / FM) {
@@ -251,10 +251,16 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                         phasec = PHASEC * M_PI / 180.0;
                         phasem = PHASEM * M_PI / 180.0;
 
-                        /* compute waveform value */
-                        value = VO + VA *
-                            sin((2.0 * M_PI * FC * time + phasec) +
-                            MDI * sin(2.0 * M_PI * FM * time + phasem));
+                        time -= TD;
+                        if (time <= 0) {
+                            value = 0;
+                        }
+                        else {
+                            /* compute waveform value */
+                            value = VO + VA *
+                                sin((2.0 * M_PI * FC * time + phasec) +
+                                    MDI * sin(2.0 * M_PI * FM * time + phasem));
+                        }
                     }
                     break;
 
@@ -294,6 +300,51 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                     break;
 
                     case PWL: {
+                        int    i;
+                        double end_time, itime;
+
+                        time -= here->ISRCrdelay;
+                        if (time <= here->ISRCcoeffs[0]) {
+                            value = here->ISRCcoeffs[1];
+                            break;
+                        }
+
+                        end_time =
+                            here->ISRCcoeffs[here->ISRCfunctionOrder - 2];
+                        if (time > end_time) {
+                            double period;
+
+                            if (here->ISRCrGiven) {
+                                /* Repeating. */
+
+                                period = end_time -
+                                    here->ISRCcoeffs[here->ISRCrBreakpt];
+                                time -= here->ISRCcoeffs[here->ISRCrBreakpt];
+                                time -= period * floor(time / period);
+                                time += here->ISRCcoeffs[here->ISRCrBreakpt];
+                            }
+                            else {
+                                value =
+                                    here->ISRCcoeffs[here->ISRCfunctionOrder - 1];
+                                break;
+                            }
+                        }
+
+                        for (i = 2; i < here->ISRCfunctionOrder; i += 2) {
+                            itime = here->ISRCcoeffs[i];
+                            if (itime >= time) {
+                                time -= here->ISRCcoeffs[i - 2];
+                                time /= here->ISRCcoeffs[i] -
+                                    here->ISRCcoeffs[i - 2];
+                                value = here->ISRCcoeffs[i - 1];
+                                value += time *
+                                    (here->ISRCcoeffs[i + 1] -
+                                        here->ISRCcoeffs[i - 1]);
+                                break;
+                            }
+                        }
+                        break;
+/*
                         int i;
                         if(time < *(here->ISRCcoeffs)) {
                             value = *(here->ISRCcoeffs + 1) ;
@@ -317,6 +368,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                         }
                         value = *(here->ISRCcoeffs+ here->ISRCfunctionOrder-1) ;
                         break;
+                        */
                     }
 
 /**** tansient noise routines:
@@ -390,7 +442,7 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
 
                 } // switch
             } // else (line 48)
-loadDone:
+// loadDone:
 
 /* gtri - begin - wbk - modify for supply ramping option */
 #ifdef XSPICE_EXP

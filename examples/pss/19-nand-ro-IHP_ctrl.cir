@@ -47,7 +47,7 @@ set temp=0
 option klu
 run
 rusage
-set xbrushwidth=3
+set xbrushwidth=2
 *plot i(Vss) ylimit 0 500u xlimit 50n 60n
 plot out
 plot out xlimit 50n 60n
@@ -60,8 +60,11 @@ plot mag(out)  xlimit 300Meg 2300Meg
 meas sp fmax MAX_AT out from=1e8 to=1e9
 echo
 reset
-pss 500e6 10n out 256 10 5 5e-3 uic
+pss 500e6 8n out 1024 10 5 5e-3 uic
+setplot pss3
 plot out xlimit 300Meg 2300Meg
+setplot pss2
+plot out
 inventory
 .endc
 

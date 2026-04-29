@@ -82,6 +82,7 @@ extern int MIFiSize;
 extern int MIFmSize;
 
 
-extern Mif_Info_t  g_mif_info;
+extern Mif_Info_t      g_mif_info;
+extern Mif_Private_t   g_mif_noise_cm_data;
 
 #endif

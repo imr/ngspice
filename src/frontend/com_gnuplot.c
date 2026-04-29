@@ -25,6 +25,10 @@ com_gnuplot(wordlist *wl)
     if (!wl)
         return;
 
+#ifdef HAS_PROGREP
+    SetAnalyse("gnuplot", 0);
+#endif
+
     if (cieq(fname, "temp") || cieq(fname, "tmp")) {
         fname = smktemp("gp"); /* Is this the correct name ? */
         tempf = TRUE;

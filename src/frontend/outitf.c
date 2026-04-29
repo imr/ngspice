@@ -38,6 +38,8 @@ extern int EVTsetup_plot(CKTcircuit* ckt, char* plotname);
 extern IFsimulator SIMinfo;
 extern char Spice_Build_Date[];
 
+extern char* eng(double value, int digits, bool numeric, bool bytes);
+
 extern unsigned long long getMemorySize(void);
 extern unsigned long long getPeakRSS(void);
 extern unsigned long long getCurrentRSS(void);
@@ -111,16 +113,54 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
               int numNames, IFuid *dataNames, int dataType, runDesc **plotPtr)
 {
     char *name;
+    int ret, n;
+    runDesc* plot;
 
     if (ft_curckt->ci_ckt == circuitPtr)
         name = ft_curckt->ci_name;
     else
         name = "circuit name";
 
-    return (beginPlot(analysisPtr, circuitPtr, name,
+    ret = beginPlot(analysisPtr, circuitPtr, name,
                       analName, refName, refType, numNames,
                       dataNames, dataType, FALSE,
-                      plotPtr));
+                      plotPtr);
+    plot = *plotPtr;
+    n = plot->numData;
+
+    if (!cp_getvar("no_mem_check", CP_BOOL, NULL, 0)) {
+        /* Estimate the required memory */
+        double timesteps = ft_curckt->ci_ckt->CKTfinalTime / ft_curckt->ci_ckt->CKTstep;
+        double dmemrequ = timesteps * (double)n * sizeof(double);
+        double dmemavail = (double)getAvailableMemorySize();
+        char *cmemrequ = eng(dmemrequ, 6, FALSE, TRUE);
+        char *cmemavail = eng(dmemavail, 6, FALSE, TRUE);
+        char *ctimesteps = eng(timesteps, 6, TRUE, FALSE);
+        if (dmemrequ > dmemavail) {
+#ifdef _WIN32
+            fprintf(stderr, "\nError: memory required (%sB), made of\n"
+                "       %d nodes and approximately %s time steps,\n"
+                "       is more than the memory available (%sB)!\n",
+                cmemrequ, n,ctimesteps, cmemavail);
+            fprintf(stderr, "Setting the output memory is not possible.\n");
+            tfree(cmemrequ);
+            tfree(cmemavail);
+            tfree(ctimesteps);
+            controlled_exit(1);
+#else
+            fprintf(stderr, "\nWarning: memory required (%sB), made of\n"
+                "       %d nodes and approximately %s time steps,\n"
+                "       is more than the DRAM memory available (%sB)!\n",
+                cmemrequ, n, ctimesteps, cmemavail);
+            fprintf(stderr, "       Swapping data to SSD may slow down the simulation.\n");
+            tfree(cmemrequ);
+            tfree(cmemavail);
+            tfree(ctimesteps);
+#endif
+        }
+    }
+
+    return ret;
 }
 
 
@@ -555,25 +595,6 @@ static void
 OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 {
     int i, n = run->numData;
-
-
-#ifndef __APPLE__
-    if (!cp_getvar("no_mem_check", CP_BOOL, NULL, 0)) {
-        /* Estimate the required memory */
-        int timesteps = vlength2delta(0);
-        size_t memrequ = (size_t)n * timesteps * sizeof(double);
-        size_t memavail = getAvailableMemorySize();
-
-        if (memrequ > memavail) {
-            fprintf(stderr, "\nError: memory required (%zu Bytes), made of\n"
-                "       %d nodes and approximately %d time steps,\n"
-                "       is more than the memory available (%zu Bytes)!\n",
-                memrequ, n, timesteps, memavail);
-            fprintf(stderr, "Setting the output memory is not possible.\n");
-            controlled_exit(1);
-        }
-    }
-#endif
 
     for (i = 0; i < n; i++) {
 

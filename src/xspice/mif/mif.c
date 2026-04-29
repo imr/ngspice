@@ -57,3 +57,7 @@ Mif_Info_t  g_mif_info = {
   { 0.0, 0.0,},
   { MIF_FALSE, MIF_FALSE,},
 };
+
+/* Mif_Private_t used by MIFnoise to call cm_func during noise analysis.
+ * Also accessed by cm_noise_add_source() in cm.c. */
+Mif_Private_t g_mif_noise_cm_data;

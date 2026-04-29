@@ -1491,6 +1491,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             struct card* newcard;
 
             struct compat tmpcomp;
+            memset(&tmpcomp, 0, sizeof(tmpcomp));
             bool compset = FALSE;
 
             /* special treatment of special .inc commands */
@@ -2340,13 +2341,18 @@ static char *readline(FILE *fd)
 
 /* Replace "gnd" by " 0 "
    Delimiters of gnd may be ' ' or ',' or '(' or ')',
-   may be disabled by setting variable no_auto_gnd */
+   may be disabled by setting variable no_auto_gnd.
+   If called by KiCad, replace /gnd and /0 by 0 */
 
 static void inp_fix_gnd_name(struct card *c)
 {
     bool found_subckt = FALSE;
     for (; c; c = c->nextcard) {
         char *gnd = c->line;
+
+        // if there is a comment, go to next line
+        if (*gnd == '*')
+            continue;
 
         // if inside of a subcircuit, and compatmode is ps, don't replace gnd
         if (newcompat.ps) {
@@ -2356,9 +2362,12 @@ static void inp_fix_gnd_name(struct card *c)
                 found_subckt = FALSE;
         }
 
-        // if there is a comment or no gnd, go to next line
-        if (found_subckt || (*gnd == '*') || !strstr(gnd, "gnd"))
+        // if there is a subcircuit or no gnd, go to next line
+        if (found_subckt || (!strstr(gnd, "gnd") && !strstr(gnd, "/0")))
             continue;
+
+        // a gnd node will not occur in the first token of the line
+        gnd = nexttok(gnd);
 
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
@@ -2367,6 +2376,32 @@ static void inp_fix_gnd_name(struct card *c)
                 memcpy(gnd, " 0 ", 3);
             }
             gnd += 3;
+        }
+
+        // Special treatment for KiCad: replace local /gnd and /0 by 0
+        if (newcompat.ki) {
+            /* replace local "/gnd" by "  0 " */
+            gnd = c->line;
+            // a gnd node will not occur in the first token of the line
+            gnd = nexttok(gnd);
+            while ((gnd = strstr(gnd, "/gnd")) != NULL) {
+                if ((isspace_c(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
+                        (isspace_c(gnd[4]) || gnd[4] == ')' || gnd[4] == ',')) {
+                    memcpy(gnd, "  0 ", 4);
+                }
+                gnd += 4;
+            }
+            // replace " /0 " by "  0 "
+            gnd = c->line;
+            // a gnd node will not occur in the first token of the line
+            gnd = nexttok(gnd);
+            while ((gnd = strstr(gnd, "/0")) != NULL) {
+                if ((isspace_c(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
+                    (isspace_c(gnd[2]) || gnd[2] == ')' || gnd[2] == ',')) {
+                    gnd[0] = ' ';
+                }
+                gnd += 2;
+            }
         }
 
         // now remove the extra white spaces around 0
@@ -9923,7 +9958,7 @@ static void inp_meas_control(struct card* card)
 {
     int is_control = 0;
     static int replaceno = 1;
-    struct card* prevcard;
+    struct card* prevcard = NULL;
 
     for (; card; prevcard = card, card = card->nextcard) {
 

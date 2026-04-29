@@ -30,7 +30,7 @@ void INP2N(CKTcircuit *ckt, INPtables *tab, struct card *current) {
   GENinstance *fast;      /* Pointer to the actual instance. */
   int          waslead;   /* Funny unlabeled number was found. */
   double       leadval;   /* Value of unlabeled number. */
-  INPmodel    *thismodel; /* Pointer to model description for user's model. */
+  INPmodel    *thismodel = NULL; /* Pointer to model description for user's model. */
   GENmodel    *mdfast;    /* Pointer to the actual model. */
   IFdevice    *dev;
   CKTnode     *node;

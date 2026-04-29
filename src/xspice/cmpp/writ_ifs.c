@@ -1106,7 +1106,7 @@ static int write_SPICEdev(
             "    .DEVsenPrint = NULL,\n"
             "    .DEVsenTrunc = NULL,\n"
             "    .DEVdisto = NULL,\n"
-            "    .DEVnoise = NULL,\n"
+            "    .DEVnoise = MIFnoise,\n"
             "    .DEVsoaCheck = NULL,\n"
             "    .DEVinstSize = &val_sizeofMIFinstance,\n"
             "    .DEVmodSize = &val_sizeofMIFmodel,\n"

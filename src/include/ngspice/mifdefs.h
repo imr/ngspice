@@ -84,6 +84,17 @@ struct MIFinstance {
 
     int                 inst_index;       /* Index into inst_table in evt struct in ckt */
     Mif_Callback_t      callback;         /* instance callback function */
+
+    int                 num_noise_srcs;   /* Total noise sources (declarative + programmatic) */
+    Mif_Boolean_t       noise_initialized; /* TRUE once sources discovered and allocated */
+    double              *MIFnVar;         /* Flat array [NSTATVARS * num_noise_srcs] */
+    int                 *noise_node1;     /* Positive/branch node per source */
+    int                 *noise_node2;     /* Negative/ground node per source */
+    char                **noise_src_names; /* Suffix name per source */
+    int                 noise_decl_nv_base;  /* Base index of voltage noise group, -1 if none */
+    int                 noise_decl_nc_base;  /* Base index of current noise group, -1 if none */
+    int                 noise_prog_offset;   /* Index where programmatic sources start */
+    double              *noise_prog_density; /* Reusable density array for cm_func */
 };
 
 

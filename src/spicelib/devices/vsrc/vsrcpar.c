@@ -142,8 +142,9 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCrGiven = TRUE;
 
             for ( i = 0; i < here->VSRCfunctionOrder; i += 2 ) {
-              here->VSRCrBreakpt = i;
-                  if ( here->VSRCr == *(here->VSRCcoeffs+i) ) break;
+                here->VSRCrBreakpt = i;
+                if ( here->VSRCr == *(here->VSRCcoeffs+i) )
+                    break;
             }
 
             end_time     = *(here->VSRCcoeffs + here->VSRCfunctionOrder-2);

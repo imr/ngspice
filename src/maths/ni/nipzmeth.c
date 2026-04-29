@@ -258,7 +258,7 @@ NIpzSym2(PZtrial **set, PZtrial *new)
     R_NORM(c,c_mag);
 
     if (c == 0.0 || ((a == 0.0 || c_mag < a_mag - 40)
-	    && (b = 0.0 ||c_mag < b_mag - 40))) {
+	    && (b == 0.0 || c_mag < b_mag - 40))) {
 	/*fprintf(stderr, "\t- linear (%g, %d)\n", c, c_mag);*/
 	if (a == 0.0) {
 	    a = b;

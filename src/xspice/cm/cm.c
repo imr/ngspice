@@ -926,3 +926,85 @@ bool cm_probe_node(unsigned int  conn_index,  // Connection index
     this->output_value[edata->output_subindex] = hold;
     return TRUE;
 }
+
+
+/*
+cm_noise_add_source
+
+Register a programmatic noise source during noise analysis.
+
+During N_OPEN (registering=TRUE): validates parameters, stores source info
+in the noise data registration arrays, and returns a sequential index.
+
+During N_CALC (registering=FALSE): returns the same sequential index
+without storing anything. The code model uses this index to set
+NOISE_DENSITY(index).
+*/
+
+int
+cm_noise_add_source(const char *name, int conn_index, int port_index,
+                    Mif_Noise_Src_Type_t type)
+{
+    Mif_Noise_Data_t *nd;
+    int idx;
+
+    nd = g_mif_noise_cm_data.noise;
+
+    if (!nd || !name)
+        return -1;
+
+    if (type != MIF_NOISE_CURRENT && type != MIF_NOISE_VOLTAGE &&
+        type != MIF_NOISE_CURRENT_POS && type != MIF_NOISE_CURRENT_NEG)
+        return -1;
+
+    idx = nd->next_index++;
+
+    if (!nd->registering)
+        return idx;
+
+    /* Registering mode: validate conn/port.
+     * Always store the source to keep indices aligned between N_OPEN and N_CALC.
+     * Invalid sources get conn_index = -1 so MIFnoise skips them during evaluation. */
+    {
+        MIFinstance *inst = g_mif_info.instance;
+        Mif_Boolean_t valid = MIF_TRUE;
+
+        if (conn_index < 0 || conn_index >= inst->num_conn ||
+            inst->conn[conn_index]->is_null ||
+            port_index < 0 || port_index >= inst->conn[conn_index]->size) {
+
+            fprintf(stderr, "cm_noise_add_source: invalid conn %d port %d for '%s'\n",
+                    conn_index, port_index, name);
+            valid = MIF_FALSE;
+        }
+
+        if (!valid)
+            conn_index = -1;
+    }
+
+    /* Grow arrays if needed */
+    if (nd->num_prog_srcs >= nd->max_prog_srcs) {
+        int new_max = (nd->max_prog_srcs == 0) ? 8 : nd->max_prog_srcs * 2;
+        Mif_Noise_Src_Type_t *t = TREALLOC(Mif_Noise_Src_Type_t, nd->prog_types, new_max);
+        int *c = TREALLOC(int, nd->prog_conn, new_max);
+        int *p = TREALLOC(int, nd->prog_port, new_max);
+        char **n = TREALLOC(char *, nd->prog_names, new_max);
+
+        if (!t || !c || !p || !n)
+            return -1;
+
+        nd->prog_types = t;
+        nd->prog_conn = c;
+        nd->prog_port = p;
+        nd->prog_names = n;
+        nd->max_prog_srcs = new_max;
+    }
+
+    nd->prog_types[nd->num_prog_srcs] = type;
+    nd->prog_conn[nd->num_prog_srcs] = conn_index;
+    nd->prog_port[nd->num_prog_srcs] = port_index;
+    nd->prog_names[nd->num_prog_srcs] = tprintf("_%s", name);
+    nd->num_prog_srcs++;
+
+    return idx;
+}

@@ -254,7 +254,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                            && here->VSRCcoeffs[4] /* test if not 0 */
                            ? here->VSRCcoeffs[4] : (500./ckt->CKTfinalTime);
                         TD  = here->VSRCfunctionOrder > 5
-                           ? here->VSRCcoeffs[5] : 0;
+                           ? here->VSRCcoeffs[5] : 0.0;
                         PHASEM = here->VSRCfunctionOrder > 6
                             ? here->VSRCcoeffs[6] : 0.0;
                         PHASEC = here->VSRCfunctionOrder > 7

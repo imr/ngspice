@@ -203,7 +203,7 @@ NOISEan(CKTcircuit* ckt, int restart)
                     ckt->CKTdcMaxIter);
 
                 if (error) {
-                    fprintf(stdout, "\nNOISE operating point failed -\n");
+                    fprintf(stderr, "\nError: NOISE operating point failed -\n");
                     CKTncDump(ckt);
                     return(error);
                 }
@@ -336,8 +336,9 @@ NOISEan(CKTcircuit* ckt, int restart)
 
     g_mif_info.circuit.anal_init = MIF_TRUE;
 
-    /* Tell the code models what mode we're in */
-    /* MIF_NOI is not yet supported by code models, so use their AC capabilities */
+    /* MIFnoise handles noise analysis for code models via DEVnoise.
+     * Set anal_type to MIF_AC so that MIFload generates correct AC matrix
+     * entries needed for gain computation during noise analysis. */
     g_mif_info.circuit.anal_type = MIF_AC;
 
     /* gtri - end - wbk */

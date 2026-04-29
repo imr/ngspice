@@ -18,6 +18,7 @@
 #include "ngspice/devdefs.h"
 #include "ngspice/dstring.h"
 #include "ngspice/dllitf.h"
+#include "ngspice/noisedef.h"
 #include "ngspice/evtudn.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/inertial.h"
@@ -157,10 +158,21 @@ int MIFload(
 }
 
 
+int MIFnoise(
+    int mode,
+    int operation,
+    GENmodel *inModel,
+    CKTcircuit *ckt,
+    Ndata *data,
+    double *OnDens
+	) {
+	return (coreitf->dllitf_MIFnoise)(mode,operation,inModel,ckt,data,OnDens);
+}
+
 int MIFmParam(
     int param_index,
     IFvalue *value,
-    GENmodel *inModel 
+    GENmodel *inModel
 	) {
 	return (coreitf->dllitf_MIFmParam)(param_index,value,inModel);
 }
@@ -442,6 +454,10 @@ void txfree(const void *ptr) {
 
 void cm_cexit(const int exitcode) {
 	(coreitf->dllitf_cexit)(exitcode);
+}
+
+int cm_noise_add_source(const char *name, int conn_index, int port_index, Mif_Noise_Src_Type_t type) {
+	return (coreitf->dllitf_cm_noise_add_source)(name, conn_index, port_index, type);
 }
 
 #ifdef KLU

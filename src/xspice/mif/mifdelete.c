@@ -194,5 +194,7 @@ MIFdelete(GENinstance *gen_inst)
     if (here->num_conv && here->conv)
         FREE(here->conv);
 
+    MIF_free_noise_state(here);
+
     return OK;
 }

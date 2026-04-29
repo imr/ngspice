@@ -389,6 +389,28 @@ typedef struct Mif_Inst_Var_Data_s {
 /* ************************************************************************* */
 
 
+/*
+ * Noise analysis context passed to code models via mif_private->noise.
+ * Stack-local in MIFnoise, valid only during cm_func call.
+ */
+
+typedef struct Mif_Noise_Data_s {
+    Mif_Boolean_t           registering;     /* TRUE during N_OPEN, FALSE during N_CALC */
+    int                     next_index;      /* Monotonic counter, reset before each cm_func call */
+    int                     num_prog_srcs;   /* Total programmatic sources after N_OPEN */
+    int                     max_prog_srcs;   /* Allocated capacity of registration arrays */
+    Mif_Noise_Src_Type_t    *prog_types;     /* Source type per programmatic source */
+    int                     *prog_conn;      /* Connection index per source */
+    int                     *prog_port;      /* Port index per source */
+    char                    **prog_names;    /* Source name suffix per source */
+    double                  *density;        /* Spectral density array (N_CALC, sized num_prog_srcs) */
+    double                  freq;            /* Current noise frequency in Hz */
+} Mif_Noise_Data_t;
+
+
+/* ************************************************************************* */
+
+
 
 /*
  * HERE IT IS!!!
@@ -405,6 +427,7 @@ struct Mif_Private {
     int                    num_inst_var;  /* Number of instance variables         */
     Mif_Inst_Var_Data_t    **inst_var;    /* Information about each inst variable */
     Mif_Callback_t         *callback;     /* Callback function */
+    Mif_Noise_Data_t       *noise;        /* Noise context, NULL when not in noise analysis */
 
 };
 

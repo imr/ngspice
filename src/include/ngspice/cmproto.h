@@ -112,6 +112,8 @@ Complex_t cm_complex_subtract(Complex_t x, Complex_t y);
 Complex_t cm_complex_multiply(Complex_t x, Complex_t y);
 Complex_t cm_complex_divide(Complex_t x, Complex_t y);
 
+int cm_noise_add_source(const char *name, int conn_index, int port_index, Mif_Noise_Src_Type_t type);
+
 char *cm_get_path(void);
 CKTcircuit *cm_get_circuit(void);
 

@@ -24,6 +24,10 @@ com_shell(wordlist *wl)
     int   status;
     char *shell = NULL;
 
+#ifdef HAS_PROGREP
+    SetAnalyse("shell", 0);
+#endif
+
     shell = getenv("SHELL");
     if (shell == NULL) {
         shell = SHELL;

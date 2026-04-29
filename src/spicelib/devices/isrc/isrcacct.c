@@ -184,6 +184,60 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     break;
 
                     case PWL: {
+                        if (ckt->CKTtime >= here->ISRCbreak_time) {
+                            double time, atime, end, period;
+                            int    i;
+
+                            time = ckt->CKTtime - here->ISRCrdelay;
+                            end =
+                                here->ISRCcoeffs[here->ISRCfunctionOrder - 2];
+                            if (time > end) {
+                                if (here->ISRCrGiven) {
+                                    /* Repeating. */
+
+                                    period = end -
+                                        here->ISRCcoeffs[here->ISRCrBreakpt];
+                                    time -=
+                                        here->ISRCcoeffs[here->ISRCrBreakpt];
+                                    time -= period * floor(time / period);
+                                    time +=
+                                        here->ISRCcoeffs[here->ISRCrBreakpt];
+                                }
+                                else {
+                                    here->ISRCbreak_time = ckt->CKTfinalTime;
+                                    break;
+                                }
+                            }
+
+                            /* A request for a breakpoint very close
+                             * to the current time will be ignored.
+                             * Adjust so the next corner will be
+                             * selected.
+                             */
+
+                            atime = time + ckt->CKTminBreak;
+
+                            for (i = 0;
+                                i < here->ISRCfunctionOrder;
+                                i += 2) {
+                                if (here->ISRCcoeffs[i] > atime) {
+                                    here->ISRCbreak_time =
+                                        ckt->CKTtime +
+                                        here->ISRCcoeffs[i] - time;
+                                    error = CKTsetBreak(ckt,
+                                        here->ISRCbreak_time);
+                                    if (error)
+                                        return error;
+                                    here->ISRCbreak_time -= ckt->CKTminBreak;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+/*
+                    case PWL: {
                         int i;
                         if(ckt->CKTtime < *(here->ISRCcoeffs)) {
                             if(ckt->CKTbreak) {
@@ -200,7 +254,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         }
                         break;
                     }
-
+*/
     /**** tansient noise routines:
     INoi2 2 0  DC 0 TRNOISE(10n 0.5n 0 0n) : generate gaussian distributed noise
                             rms value, time step, 0 0
@@ -320,7 +374,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
                 } // switch
             } // if ... else
-bkptset: ;
+// bkptset: ;
         } // for
     } // for
 

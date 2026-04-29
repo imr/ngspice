@@ -25,13 +25,13 @@ plot V(2) v(3)
 linearize v(3)
 fft v(3)
 let dbv3 = db(v(3))
-plot dbv3 xlimit 1Meg 5Meg
+plot dbv3 xlimit 1Meg 15Meg
 ** measure the frequency of oscillation
 meas sp fosc MAX_AT dbv3 from=1Meg to=5Meg
 ** periodic steady state sim
 pss 1e6 50e-6 3 256 10 50 5e-3
 set xbrushwidth=3
-plot v(3) ylimit 0 0.3
+plot v(3) ylimit 0 0.3 xlimit 1Meg 15Meg
 .endc
 
 .end

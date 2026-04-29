@@ -594,7 +594,7 @@ EVTprintvcd(wordlist *wl)
     char        *node_value[EPRINT_MAXARGS];
     char        *old_node_value[EPRINT_MAXARGS];
     char         node_ident[EPRINT_MAXARGS + 1];
-    char         vbuf[24][2][EPRINT_MAXARGS];   // Analog value strings
+    char         vbuf[EPRINT_MAXARGS][2][24];   // Analog value strings
 
     CKTcircuit  *ckt;
 
@@ -606,6 +606,8 @@ EVTprintvcd(wordlist *wl)
     double      this_step;
 
     char        *value;
+
+    memset(vbuf, 0, sizeof(vbuf));
 
     /* Check for the "-a" option (output analog values at timesteps)
      * and "-t nn": specifies the VCD timestep with range 1fs to 1s */
@@ -804,10 +806,10 @@ EVTprintvcd(wordlist *wl)
         if (ctx.node_vector[i]) {
             /* Analog node or expression. */
 
-            sprintf(vbuf[0][i], "%.16g", get_real(i, 0.0, &ctx));
-            node_value[i] = vbuf[0][i];
-            old_node_value[i] = vbuf[1][i];
-            strcpy(vbuf[1][i], vbuf[0][i]);
+            sprintf(vbuf[i][0], "%.16g", get_real(i, 0.0, &ctx));
+            node_value[i] = vbuf[i][0];
+            old_node_value[i] = vbuf[i][1];
+            strcpy(vbuf[i][1], vbuf[i][0]);
         } else {
             /* This must return a pointer to a statically-allocated string. */
 

@@ -1454,6 +1454,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\misc\alloc.c" />
     <ClCompile Include="..\src\misc\dstring.c" />
     <ClCompile Include="..\src\misc\dup2.c" />
+    <ClCompile Include="..\src\misc\engnotation.c" />
     <ClCompile Include="..\src\misc\getopt_long_bsd.c" />
     <ClCompile Include="..\src\misc\hash.c" />
     <ClCompile Include="..\src\misc\ivars.c" />
@@ -2620,6 +2621,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\xspice\mif\mifgetvalue.c" />
     <ClCompile Include="..\src\xspice\mif\mifload.c" />
     <ClCompile Include="..\src\xspice\mif\mifmask.c" />
+    <ClCompile Include="..\src\xspice\mif\mifnoise.c" />
     <ClCompile Include="..\src\xspice\mif\mifmdelete.c" />
     <ClCompile Include="..\src\xspice\mif\mifmpara.c" />
     <ClCompile Include="..\src\xspice\mif\mifsetup.c" />

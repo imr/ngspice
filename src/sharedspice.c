@@ -55,6 +55,8 @@ int myputs(const char* inp, FILE* f);
 int myputc(int inp, FILE* f);
 int myfputc(int inp, FILE* f);
 
+static char* get_calling_process_name(void);
+
 int
 myputs(const char* inp, FILE* f)
 {
@@ -80,6 +82,7 @@ myfputc(int inp, FILE* f)
 #include "ngspice/ngspice.h"
 #include "misc/misc_time.h"
 #include "ngspice/randnumb.h"
+#include "ngspice/compatmode.h"
 
 /*Use Windows threads if on W32 without pthreads*/
 #ifndef HAVE_LIBPTHREAD
@@ -965,12 +968,15 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         struct passwd *pw;
         pw = getpwuid(getuid());
 
-        s = tprintf("%s" DIR_PATHSEP "%s", pw->pw_dir, INITSTR);
+        if (pw) {
+            s = tprintf("%s" DIR_PATHSEP "%s", pw->pw_dir, INITSTR);
 
-        if (access(s, 0) == 0)
-            inp_source(s);
+            if (access(s, 0) == 0) {
+                inp_source(s);
+            }
 
-        tfree(s);
+            tfree(s);
+        }
     }
 #else /* ~ HAVE_PWD_H */
     /* load user's initialisation file
@@ -1049,6 +1055,16 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
 
     /* initialize display to 'no display at all'*/
     DevInit();
+
+    /* Check if we are called by Eeschema */
+    char* thisproc = get_calling_process_name();
+    if (thisproc) {
+        if( ciprefix("eeschema", thisproc))
+            newcompat.ki = TRUE;
+        else
+            newcompat.ki = FALSE;
+        tfree(thisproc);
+    }
 
 #ifdef FastRand
 // initialization and seed for FastNorm Gaussian random generator
@@ -2603,3 +2619,33 @@ static int totalreset(void)
 
     return 0;
 };
+
+char * get_calling_process_name(void) {
+#if defined(HAVE__PROC_MEMINFO)
+    char proc_name[16]; // Linux process names are limited to 15 chars + null
+    FILE* f = fopen("/proc/self/comm", "r");
+    if (f) {
+        if (fgets(proc_name, sizeof(proc_name), f)) {
+            fclose(f);
+            return copy(proc_name);
+        }
+        else
+            fclose(f);
+        return NULL;
+    }
+#elif defined(_WIN32)
+    char processPath[MAX_PATH];
+    // Passing NULL retrieves the path of the executable for the current process
+    DWORD length = GetModuleFileNameA(NULL, processPath, MAX_PATH);
+    if (length > 0) {
+        // Find the last backslash to isolate the executable name from the full path
+        char* processName = strrchr(processPath, '\\');
+        if (processName) {
+            return copy(processName + 1);
+        }
+    }
+    return NULL;
+#else
+    return NULL;
+#endif
+}

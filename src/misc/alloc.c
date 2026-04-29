@@ -75,7 +75,7 @@ tmalloc(size_t num)
   mutex_unlock(&allocMutex);
 #endif
     if (!s){
-        fprintf(stderr, "Error: malloc: can't allocate %lld bytes.\n", (long long)num);
+        fprintf(stderr, "Error: malloc: can't allocate %zu bytes.\n", num);
         fprintf(stderr, "    Not enough memory or heap corruption\n");
 #if defined HAS_WINGUI || defined SHARED_MODULE
       controlled_exit(EXIT_FAILURE);
@@ -120,7 +120,7 @@ trealloc(const void *ptr, size_t num)
 #endif
   }
   if (!s) {
-    fprintf(stderr,"Error: realloc: can't allocate %lld bytes.\n", (long long)num);
+    fprintf(stderr,"Error: realloc: can't allocate %zu bytes.\n", num);
     fprintf(stderr,"    Not enough memory or heap corruption\n");
 #if defined HAS_WINGUI || defined SHARED_MODULE
       controlled_exit(EXIT_FAILURE);

@@ -369,6 +369,8 @@ static void append (char *str)
 %token TOK_TOTAL_LOAD
 %token TOK_MESSAGE
 %token TOK_CALL_TYPE
+%token TOK_NOISE_DENSITY
+%token TOK_NOISE_FREQ
 
 %start mod_file
 
@@ -589,9 +591,14 @@ macro			: TOK_INIT
 				     subscript($3));}
 			| TOK_MESSAGE TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
-			    fprintf (mod_yyout, 
+			    fprintf (mod_yyout,
 				     "mif_private->conn[%d]->port[%s]->msg", i,
 				     subscript($3));}
+			| TOK_NOISE_DENSITY TOK_LPAREN buffered_c_code TOK_RPAREN
+			   {fprintf (mod_yyout,
+				     "mif_private->noise->density[%s]", $3);}
+			| TOK_NOISE_FREQ
+			   {fprintf (mod_yyout, "mif_private->noise->freq");}
 			;
 
 subscriptable_id	: id

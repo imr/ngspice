@@ -241,7 +241,7 @@ com_iplot(wordlist *wl)
         return;
     }
 
-    struct dbcomm *d, *td, *currentdb = NULL;
+    struct dbcomm *d, *td = NULL, *currentdb = NULL;
     double         window = 0.0;
 #ifdef XSPICE
     int            event_auto_incr = 0;
@@ -311,7 +311,7 @@ com_iplot(wordlist *wl)
 
         /* Chain in expected order. */
 
-        if (currentdb)
+        if (currentdb && td)
             td->db_also = d;
         else
             currentdb = d;

@@ -84,7 +84,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         const char *commandline, /* For xi_zoomdata() */
         int prevgraph)                /* plot id, if started from a previous plot*/
 {
-    GRAPH    *graph, *pgraph;
+    GRAPH    *graph, *pgraph = NULL;
     wordlist *wl;
 
     NG_IGNORE(nplots);
@@ -182,7 +182,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
     }
 
     /* restore data from previous graph, e.g. for zooming */
-    if (prevgraph > 0) {
+    if (prevgraph > 0 && pgraph) {
         int i;
 
         /* transmit colors */
@@ -1359,7 +1359,7 @@ void gr_iplot(struct plot *plot)
                     struct dbcomm *dd;
                     int            dup = 0;
 #ifdef XSPICE
-                    char          *offp, save_sign;
+                    char          *offp, save_sign = '\0';
 #endif
 
                     if (dc->db_nodename1 == NULL)

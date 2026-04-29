@@ -32,6 +32,8 @@ typedef struct sISRCinstance {
 
     int ISRCfunctionType;   /* code number of function type for source */
     int ISRCfunctionOrder;  /* order of the function for the source */
+    int ISRCrBreakpt;       /* pwl repeat breakpoint index */
+    double  ISRCbreak_time; /* time of most-recent breakpoint */
     double *ISRCcoeffs; /* pointer to array of coefficients */
 
     double ISRCdcValue; /* DC and TRANSIENT value of source */
@@ -51,6 +53,9 @@ typedef struct sISRCinstance {
     struct trnoise_state *ISRCtrnoise_state; /* transient noise */
     struct trrandom_state *ISRCtrrandom_state; /* transient random source */
 
+    double ISRCr;          /* pwl repeat */
+    double ISRCrdelay;     /* pwl delay period */
+
     /* needed for outputting results */
     double ISRCcurrent; /* current value */
 
@@ -64,6 +69,7 @@ typedef struct sISRCinstance {
     unsigned ISRCdGiven      :1 ;  /* flag to indicate source is a distortion input */
     unsigned ISRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
     unsigned ISRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
+    unsigned ISRCrGiven : 1;  /* flag to indicate repeating pwl */
 } ISRCinstance ;
 
 
@@ -123,11 +129,10 @@ enum {
     ISRC_D_F2,
     ISRC_VOLTS,
     ISRC_AM,
+    ISRC_R,
+    ISRC_TD,
     ISRC_CURRENT,
-};
-
-enum {
-    ISRC_TRNOISE = 25,
+    ISRC_TRNOISE,
     ISRC_TRRANDOM,
     ISRC_EXTERNAL,
 };

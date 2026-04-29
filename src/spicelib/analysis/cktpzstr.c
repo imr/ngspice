@@ -504,7 +504,7 @@ int CKTpzStrat(PZtrial** set)
             else if (Last_Move == MID_RIGHT || Last_Move == NEAR_LEFT)
                 suggestion = SPLIT_RIGHT;
             else
-                abort();	/* XXX */
+                controlled_exit(EXIT_BAD);
             Consec_Moves = 0;
         }
     }

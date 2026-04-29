@@ -92,6 +92,8 @@ struct coreInfo_t {
         int ((*dllitf_MIFbindCSCComplex) (GENmodel *, CKTcircuit *)) ;
         int ((*dllitf_MIFbindCSCComplexToReal) (GENmodel *, CKTcircuit *)) ;
 #endif
+	int       ((*dllitf_MIFnoise)(int, int, GENmodel *, CKTcircuit *, Ndata *, double *));
+	int       ((*dllitf_cm_noise_add_source)(const char *, int, int, Mif_Noise_Src_Type_t));
 };
 
 #endif

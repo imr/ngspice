@@ -26,7 +26,7 @@ plot mag(v(4)) xlimit 0 10Meg
 let maxfft=mag(v(4))
 meas sp fosc MAX_AT maxfft from=1Meg to=10Meg
 reset
-pss 1.8e6 10e-6 4 1024 10 50 5e-3 uic
+pss 1.8e6 20e-6 4 1024 10 50 5e-3 uic
 plot v(4) xlimit 0 10Meg
 .endc
 .end

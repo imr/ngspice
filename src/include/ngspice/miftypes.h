@@ -232,4 +232,16 @@ typedef struct MIFmodel MIFmodel;
 typedef void (* Mif_Callback_t)(Mif_Private_t *, Mif_Callback_Reason_t);
 
 
+/*
+ * Noise source type for MIFnoise
+ */
+
+typedef enum {
+    MIF_NOISE_CURRENT,       /* Current source between port nodes (pos_node, neg_node) */
+    MIF_NOISE_VOLTAGE,       /* Voltage source at port branch equation (branch, 0) */
+    MIF_NOISE_CURRENT_POS,   /* Current source from pos_node to ground */
+    MIF_NOISE_CURRENT_NEG,   /* Current source from neg_node to ground */
+} Mif_Noise_Src_Type_t;
+
+
 #endif

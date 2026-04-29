@@ -1,0 +1,114 @@
+/*
+================================================================================
+Public Domain
+
+SUMMARY
+
+    Interface specification for the OTA (Operational Transconductance Amplifier)
+    code model. LTSPICE-compatible parameter naming convention.
+
+    Noise is implemented via the programmatic API (cm_noise_add_source /
+    NOISE_DENSITY). Set noise_programmatic = TRUE to enable noise analysis.
+
+================================================================================
+*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_ota
+Spice_Model_Name:      ota
+Description:           "Operational Transconductance Amplifier with noise"
+
+
+PORT_TABLE:
+
+
+Port_Name:             inp                out
+Description:           "input"            "output"
+Direction:             inout              inout
+Default_Type:          gd                 g
+Allowed_Types:         [gd]               [g]
+Vector:                no                 no
+Vector_Bounds:         -                  -
+Null_Allowed:          no                 no
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     gm                  rout
+Description:        "transconductance"  "output resistance"
+Data_Type:          real                real
+Default_Value:      1.0e-3              1.0e12
+Limits:             [1e-15 -]           [0 -]
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     rin
+Description:        "input resistance"
+Data_Type:          real
+Default_Value:      1.0e12
+Limits:             [0 -]
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     en                  in_noise
+Description:        "input voltage noise density V/rtHz"  "input current noise density A/rtHz"
+Data_Type:          real                real
+Default_Value:      0.0                 0.0
+Limits:             [0 -]              [0 -]
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     enk                 ink
+Description:        "voltage noise 1/f corner Hz"  "current noise 1/f corner Hz"
+Data_Type:          real                real
+Default_Value:      0.0                 0.0
+Limits:             [0 -]              [0 -]
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     incm                incmk
+Description:        "CM current noise density A/rtHz"  "CM current noise 1/f corner Hz"
+Data_Type:          real                real
+Default_Value:      0.0                 0.0
+Limits:             [0 -]              [0 -]
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     noise_programmatic
+Description:        "enable programmatic noise sources"
+Data_Type:          boolean
+Default_Value:      TRUE
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+

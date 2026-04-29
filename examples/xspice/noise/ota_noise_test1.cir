@@ -1,0 +1,27 @@
+* noise analysis with analogue code model
+
+aota inn 0 out newota
+*.model newota ota (gm=1 rout=1e12 rin=1Meg en=31n enk=100 in_noise=100u ink=10k incm=0 incmk=2k noise_programmatic=TRUE)
+*.model newota ota (gm=1m rout=1e12 rin=1Meg en=31n enk=100 noise_programmatic=TRUE)
+*.model newota ota (gm=1m rout=1e12 rin=1Meg in_noise=2p ink=500 incm=0 incmk=500 noise_programmatic=TRUE)
+.model newota ota (gm=1m rout=1e12 rin=1Meg en=31n enk=100 in_noise=20p ink=2k incm=0 incmk=2k noise_programmatic=TRUE)
+
+Vin in 0 dc 0 ac 1 sin (0 2 1.5k)
+Rsource in inn 10k
+
+
+Rout out 0 1
+
+.control
+*tran 1u 10m
+*plot out
+noise v(out) Vin dec 10 1 10MEG
+print inoise_total onoise_total
+display
+setplot noise1
+display
+plot  loglog inoise_spectrum
+plot  loglog onoise_spectrum
+.endc
+
+.end

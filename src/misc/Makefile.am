@@ -10,6 +10,7 @@ libmisc_la_SOURCES = \
 		dup2.c		\
 		dstring.c	\
 		dup2.h		\
+		engnotation.c	\
 		hash.c		\
 		ivars.c		\
 		ivars.h		\

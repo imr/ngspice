@@ -49,6 +49,7 @@ NON-STANDARD FEATURES
 #define DC           MIF_DC
 #define AC           MIF_AC
 #define TRANSIENT    MIF_TRAN
+#define NOISE        MIF_NOI
 
 #define ANALOG       MIF_ANALOG
 #define EVENT        MIF_EVENT_DRIVEN

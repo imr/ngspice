@@ -19,6 +19,7 @@ libmifxsp_la_SOURCES = \
 	mifdelete.c \
 	mifmdelete.c \
 	mifdestr.c \
+	mifnoise.c \
 	mif.c
 
 if KLU_WANTED

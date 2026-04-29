@@ -98,4 +98,7 @@ struct coreInfo_t  coreInfo =
   MIFbindCSCComplex,
   MIFbindCSCComplexToReal
 #endif
+  ,
+  MIFnoise,
+  cm_noise_add_source
 };

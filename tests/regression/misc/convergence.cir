@@ -1,0 +1,28 @@
+* Branch currents should settle in this behavioural model of a diode
+
+.options noacct
+.options reltol=0.001 abstol=1e-12; defaults as of 2024
+
+I2 0 N01 pulse 2µ 20µ 50n 50n 50n 1µ 2µ
+R2 N01 0 50K
+.param VT=26m
+.param Isat=1e-14
+B2 N01 0 I=Isat*(exp(v(N01)/VT)-1)
+
+.control
+set savecurrents
+tran 10n 5u
+let residual = @I2[current] - @B2[i] - @R2[i]
+
+* error in current sum at a node should be
+* less than RELTOL times the 20-µA currents,
+* which is 20 nA, plus ABSTOL
+if vecmax(abs(residual)) > 20.001e-9
+  echo "ERROR: B-device convergence failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc
+.end

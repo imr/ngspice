@@ -46,6 +46,7 @@ NON-STANDARD FEATURES
 #include "ngspice/inpdefs.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
+#include "ngspice/noisedef.h"
 #include "ngspice/miftypes.h"
 
 
@@ -153,6 +154,17 @@ extern Mif_Cntl_Src_Type_t MIFget_cntl_src_type(
 );
 
 extern char *MIFcopy(char *);
+
+extern int MIFnoise(
+    int            mode,
+    int            operation,
+    GENmodel       *inModel,
+    CKTcircuit     *ckt,
+    Ndata          *data,
+    double         *OnDens
+);
+
+extern void MIF_free_noise_state(MIFinstance *here);
 
 #ifdef KLU
 extern int MIFbindCSC (GENmodel*, CKTcircuit*) ;

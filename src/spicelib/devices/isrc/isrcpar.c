@@ -123,6 +123,50 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
             break;
 
+        case ISRC_TD:
+            here->ISRCrdelay = value->rValue;
+            break;
+
+        case ISRC_R: {
+            double end_time;
+            /* Parameter r of pwl may now be parameterized:
+               if r == -1, no repetition done.
+               if r == 0, repeat forever.
+               if r == xx, repeat from time xx to last time point given. */
+            if (value->rValue < -0.5) {
+                here->ISRCrGiven = FALSE;
+                break;
+            }
+
+            /* buggy input? r is not a repetition coefficient */
+            if (!here->ISRCcoeffs || here->ISRCfunctionOrder < 2) {
+                here->ISRCrGiven = FALSE;
+                break;
+            }
+
+            here->ISRCr = value->rValue;
+            here->ISRCrGiven = TRUE;
+
+            for (i = 0; i < here->ISRCfunctionOrder; i += 2) {
+                here->ISRCrBreakpt = i;
+                if (here->ISRCr == *(here->ISRCcoeffs + i))
+                    break;
+            }
+
+            end_time = *(here->ISRCcoeffs + here->ISRCfunctionOrder - 2);
+            if (here->ISRCr >= end_time) {
+                fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source must be smaller than final time point given!\n", here->ISRCr);
+                return (E_PARMVAL);
+            }
+
+            if (here->ISRCr != *(here->ISRCcoeffs + here->ISRCrBreakpt)) {
+                fprintf(stderr, "ERROR: repeat start time value %g for pwl voltage source does not match any time point given!\n", here->ISRCr);
+                return (E_PARMVAL);
+            }
+
+            break;
+        }
+
         case ISRC_SFFM:
             if(value->v.numValue < 2)
                 return(E_BADPARM);

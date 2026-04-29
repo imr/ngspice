@@ -574,6 +574,8 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
                 here->callback(&cm_data, MIF_CB_DESTROY);
             }
 
+            MIF_free_noise_state(here);
+
             here->initialized = MIF_FALSE;
         } /* end for all instances */
     }

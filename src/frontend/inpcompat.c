@@ -65,7 +65,9 @@ void set_compat_mode(void)
     newcompat.ps = FALSE;
     newcompat.xs = FALSE;
     newcompat.lt = FALSE;
-    newcompat.ki = FALSE;
+#ifndef SHARED_MODULE
+    newcompat.ki = FALSE; /* has already been set in sharedspice.c */
+#endif
     newcompat.a = FALSE;
     newcompat.spe = FALSE;
     newcompat.isset = FALSE;
