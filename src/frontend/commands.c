@@ -283,6 +283,10 @@ struct comm spcp_coms[] = {
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       NULL,
       "library library ... : Loads a osdi library." } ,
+    { "pre_osdi", com_osdi, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      NULL,
+      "library library ... : Loads a osdi library (alias for osdi)." } ,
 #endif
 #ifdef DEVLIB
     { "use", com_use, FALSE, TRUE,

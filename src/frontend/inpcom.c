@@ -1805,6 +1805,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     ciprefix("echo", buffer) || ciprefix("shell", buffer) ||
                     ciprefix("source", buffer) || ciprefix("cd", buffer) ||
                     ciprefix("load", buffer) || ciprefix("setcs", buffer) ||
+                    ciprefix("set sourcepath", buffer) ||
                     ciprefix("strcmp", buffer) ||
                     ciprefix("strstr", buffer))))) {
                 /* lower case for all other lines */
