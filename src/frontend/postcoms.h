@@ -9,6 +9,8 @@
 void com_unlet(wordlist *wl);
 void com_load(wordlist *wl);
 void com_print(wordlist *wl);
+void com_sndprint(wordlist *wl);
+void com_sndparam(wordlist *wl);
 void com_write(wordlist *wl);
 void com_write_sparam(wordlist *wl);
 void com_transpose(wordlist *wl);

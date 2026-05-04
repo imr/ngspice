@@ -23,6 +23,8 @@ IFparm VSRCpTable[] = { /* parameters */
  IOP ("am",      VSRC_AM,        IF_REALVEC,"Amplitude modulation description"),
  IOP ("trnoise", VSRC_TRNOISE,   IF_REALVEC,"Transient noise description"),
  IOP ("trrandom", VSRC_TRRANDOM, IF_REALVEC,"random source description"),
+ IP  ("snd",     VSRC_SOUND,     IF_REALVEC,"External sound source parameters"),
+ OPU ("file",    VSRC_FILE,      IF_STRING, "External sound source filename"),
 #ifdef SHARED_MODULE
  IOP ("external", VSRC_EXTERNAL, IF_STRING,"external source description"),
 #endif

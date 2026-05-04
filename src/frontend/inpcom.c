@@ -2354,9 +2354,10 @@ static void inp_fix_gnd_name(struct card *c)
         if (*gnd == '*')
             continue;
 
-        // if inside of a subcircuit, and compatmode is ps, don't replace gnd
+        /* if inside of a subcircuit, and compatmode is ps,
+           and node gnd is on the .subckt line, don't replace gnd */
         if (newcompat.ps) {
-           if (ciprefix(".subckt", c->line))
+           if (ciprefix(".subckt", c->line) && search_plain_identifier(c->line, "gnd"))
                 found_subckt = TRUE;
             if (ciprefix(".ends", c->line))
                 found_subckt = FALSE;

@@ -136,6 +136,8 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                 if (eq(s, ".width") || ciprefix(".four", s) ||
                     eq(s, ".plot")  ||
                     eq(s, ".print") ||
+                    eq(s, ".sndprint") ||
+                    eq(s, ".sndparam") ||
                     eq(s, ".save"))
                 {
                     wl_append_word(&wl, &end, copy(dd->line));

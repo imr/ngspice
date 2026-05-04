@@ -1,0 +1,49 @@
+* jimi hendrix fuzz face - by J. Dunlop
+*
+* this netlist does not model the power-supply
+* as in the original device. a zener and cap 
+* were left out next to the "battery".
+*
+* input : V2     - pin 10
+* output: R50/51 - pin 9
+*
+* Pots: 
+*   R50+R51 = 500k [Vol]
+*  R100+R101 = 1k [Fuzz]
+*
+*----------------------------------------------
+*	SPICE 3 - NETLIST
+.options
+
+*------------- Models -------------------------
+.model NPN     NPN(Is=1.0e-16)
+
+*----------------------------------------------
+
+V_V2 10 0 dc 0.0 sine(0.0 0.3 440.0 0 0)
+R_R50 9 0 400k 
+R_R51 3 9 100k 
+R_R100 6 5 950 
+R_R101 5 0 50 
+R_R4 1 8 43k 
+R_R6 4 11 10k 
+C_C4 4 3 0.01u IC=0 
+C_C6 5 0 1u 
+Q_Q2 11 8 6 NPN 
+R_R5 1 4 330 
+Q_Q1 8 7 0 NPN 
+C_C3 7 6 47p IC=0 
+R_R3 7 6 68k 
+C_C2 7 0 1n IC=0 
+C_C1 2 10 2.2u 
+R_R1 10 0 180k 
+R_R2 2 7 100 
+V_V1 1 0 dc 9.0 
+
+*----------------------------------------------
+
+.print tran v(10) v(9)
+.tran 2.0833333333333e-05 5.0 0 2.0833333333333e-05 
+.op
+
+.END

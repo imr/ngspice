@@ -12,6 +12,8 @@ Modified: 2000 AlansFixes
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 #include "ngspice/1-f-code.h"
+#include "vsjack.h"
+
 
 
 static void copy_coeffs(VSRCinstance *here, IFvalue *value)
@@ -34,6 +36,8 @@ int
 VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     int i;
+    static char* jfile = NULL;
+
     VSRCinstance *here = (VSRCinstance *) inst;
 
     NG_IGNORE(select);
@@ -283,6 +287,34 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             tfree(here->VSRCtrrandom_state);
             here->VSRCtrrandom_state =
                 trrandom_state_init(rndtype, TS, TD, PARAM1, PARAM2);
+        }
+        break;
+
+        case VSRC_FILE: {
+            jfile = strdup(value->sValue);
+        }
+        break;
+
+        case VSRC_SOUND: {
+            int id, channel;
+            double oversampling;
+            here->VSRCfunctionType = SOUND;
+            here->VSRCfuncTGiven = TRUE;
+            copy_coeffs(here, value);
+            here->VSRCcoeffsGiven = TRUE;
+            if (!jfile) {
+                fprintf(stderr, "Warning! Need filename for sound input");
+                return(E_BADPARM);
+            }
+            if (value->v.numValue != 6) {
+                fprintf(stderr, "Warning! invalid jack args: %i\nFormat: jack(id v_off v_mult t_off channel oversampling)", value->v.numValue);
+                return (E_BADPARM);
+            }
+            id = (int)rint(here->VSRCcoeffs[0]);
+            channel = (int)rint(here->VSRCcoeffs[4]);
+            oversampling = here->VSRCcoeffs[5];
+            vsjack_open(id, jfile, channel, oversampling);
+            tfree(jfile);
         }
         break;
 

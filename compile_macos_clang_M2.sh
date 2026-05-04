@@ -47,13 +47,13 @@ if test "$1" = "d"; then
 # Builtin readline is not compatible (Big Sur), readline via Homebrew required (in /opt/homebrew/opt)
 # Standard clang does not support OpenMP, uses https://mac.r-project.org/openmp/
 
-  ../configure --with-x --enable-cider --with-readline=/opt/homebrew/opt/readline --enable-debug CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include" LDFLAGS="-m64 -g -L/opt/homebrew/opt/readline/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
+  ../configure --with-x --enable-cider --with-readline=/opt/homebrew/opt/readline --enable-debug CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/libsndfile/include -I/opt/homebrew/opt/libsamplerate/include" LDFLAGS="-m64 -g -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/libsndfile/lib -L/opt/homebrew/opt/libsamplerate/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-  ../configure --with-x --enable-cider --with-readline=/opt/homebrew/opt/readline CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/ncurses/include" LDFLAGS="-m64 -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/ncurses/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
+  ../configure --with-x --enable-cider --with-readline=/opt/homebrew/opt/readline --enable-predictor CFLAGS=" -march=native -m64 -O2 -I/opt/X11/include/freetype2 -I/opt/homebrew/opt/readline/include -I/opt/homebrew/opt/ncurses/include -I/opt/homebrew/opt/libsndfile/include -I/opt/homebrew/opt/libsamplerate/include" LDFLAGS="-m64 -L/opt/homebrew/opt/readline/lib -L/opt/homebrew/opt/ncurses/lib  -L/opt/homebrew/opt/libsndfile/lib -L/opt/homebrew/opt/libsamplerate/lib -L/opt/X11/lib -L/usr/local/lib -lomp"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 

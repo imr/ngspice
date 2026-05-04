@@ -1,0 +1,32 @@
+// installation of ngspice with wav support on Linux, Ubuntu 24.04 LTS
+sudo apt install git gcc g++ libx11-dev libxaw7-dev libreadline-dev make flex byacc
+cd Software
+git clone git://git.code.sf.net/p/ngspice/ngspice ngspice
+cd ngspice
+git checkout hv-master-43
+cd ..
+mkdir libsndfile
+cd libsndfile
+git clone https://github.com/libsndfile/libsndfile.git
+git clone https://github.com/libsndfile/libsamplerate.git
+sudo apt install autoconf autogen automake build-essential libasound2-dev   libflac-dev libogg-dev libtool libvorbis-dev libopus-dev libmp3lame-dev   libmpg123-dev pkg-config python3
+cd libsndfile
+autoreconf -vif
+./configure --enable-werror
+make
+make check
+sudo make install
+cd ../libsamplerate
+autoreconf -vif
+./configure --enable-werror
+make
+sudo make install
+cd ../../ngspice
+git pull
+git checkout hv-wave-43
+git pull
+sudo ./compile_linux.sh
+sudo ./compile_linux_shared.sh
+
+sudo apt install audacity
+
