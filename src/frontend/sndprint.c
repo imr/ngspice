@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sndfile.h>
 #include <string.h>
 #include <math.h>
 #include <inttypes.h>
 #include "sndprint.h"
 #include "ngspice/ngspice.h"
 
+#if defined(HAVE_LIBSNDFILE) && defined(HAVE_LIBSAMPLERATE)
+#include <sndfile.h>
 
 static int o_samplerate = 48000;
 static int o_sndfmt = (SF_FORMAT_WAV | SF_FORMAT_PCM_24);
@@ -323,3 +324,4 @@ double snd_get_samplerate(void) {
 
 /* vi:set ts=8 sts=2 sw=2: */
 
+#endif // HAVE_LIBSNDFILE

@@ -430,6 +430,7 @@ done:
     tfree(buf2);
 }
 
+#if defined(HAVE_LIBSNDFILE) && defined(HAVE_LIBSAMPLERATE)
 
 /* tweaked version of print - write sound-files
 */
@@ -558,6 +559,7 @@ com_sndparam(wordlist* wl)
 		snd_configure(file, srate, fmt, mult, off, oversampling);
 	return;
 }
+#endif // HAVE_LIBSNDFILE
 
 
 /* Write out some data into a ngspice raw file with 'write filename expr'.

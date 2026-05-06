@@ -2,6 +2,9 @@
 #include <assert.h>
 #include <string.h>
 
+#include "ngspice/ngspice.h"
+
+#if defined(HAVE_LIBSNDFILE) && defined(HAVE_LIBSAMPLERATE)
 /////// SNDFILE ///////
 #include <stdlib.h>
 #include <math.h>
@@ -12,7 +15,6 @@
 // the whole audio file, do it in smaller chunks
 #define VS_RESAMPLING_CHUNK 1024
 
-#include "ngspice/ngspice.h"
 #include "vsjack.h"
 
 extern char* inp_pathresolve(const char* name);
@@ -229,3 +231,15 @@ int vsjack_open(int d, char *file, int channel, double oversampling) {
 }
 
 /* vi:set ts=8 sts=4 sw=4: */
+#else // not HAVE_LIBSNDFILE
+
+double vsjack_get_value(int d, double time, double time_offset) {
+    return 0;
+}
+
+int vsjack_open(int d, char *file, int channel, double oversampling) {
+    fprintf(stderr, "Error: Ngspice built without soundfile support.\n");
+    controlled_exit(1);
+    return -1;
+}
+#endif
