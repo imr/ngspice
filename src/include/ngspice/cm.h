@@ -79,6 +79,14 @@ NON-STANDARD FEATURES
 #endif
 #endif
 
+/* Define the type and standard name of the single argument to code-model
+ * functions as macros.  These may be used to enable the use XSPICE macros
+ * in other functions of the code model.
+ */
+
+#define XSPICE_ARG_TYPE Mif_Private_t *
+#define XSPICE_ARG      mif_private
+
 /*
  * type safe variants of the <ctype.h> functions for char arguments
  */
