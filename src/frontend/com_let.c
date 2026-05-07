@@ -42,16 +42,12 @@ static char* kivec(char* rhs);
  */
 void com_let(wordlist *wl)
 {
-    char *p, *s;
+    char *line, *vec_name, *rhs, *plot_name, *index_start;
     index_range_t p_dst_index[MAXDIMS];
     int n_dst_index;
     struct pnode *names = (struct pnode *) NULL;
     struct dvec *vec_src = (struct dvec *) NULL;
-    char *rhs;
-
-    /* Start of index NULL is a flag for no index */
-    char *p_index_start = (char *) NULL;
-
+    struct plot *tplot;
 
     /* let with no arguments is equivalent to display */
     if (!wl) {
@@ -59,24 +55,26 @@ void com_let(wordlist *wl)
         return;
     }
 
-    p = wl_flatten(wl); /* Everything after let -> string */
+    line = wl_flatten(wl); /* Everything after let -> string */
 
     /* Separate vector name from RHS of assignment */
+
     n_dst_index = 0;
-    if ((rhs = strchr(p, '=')) == (char *) NULL) {
+    if ((rhs = strchr(line, '=')) == (char *) NULL) {
         fprintf(cp_err, "Error: bad let syntax\n");
-        txfree(p);
+        txfree(line);
         return;
     }
     *rhs++ = '\0';
+    vec_name = line;
 
     /* Handle indexing. At start, p = LHS; rhs = RHS. If index is found
      * p = leftmost part of orig p up to first '['. So p always
      * becomes the vector name, possibly with some spaces at the end. */
-    if ((s = strchr(p, '[')) != NULL) {
+
+    if ((index_start = strchr(vec_name, '[')) != NULL) {
         /* This null makes the dest vector name a null-terminated string */
-        *s = '\0';
-        p_index_start = s + 1;
+        *index_start++ = '\0';
     }
 
     /* "Remove" any spaces at the end of the vector name at p by stepping
@@ -85,22 +83,51 @@ void com_let(wordlist *wl)
      * the original NULL if there was no whitespace) with a NULL. */
     {
         char *q;
-        for (q = p + strlen(p) - 1; *q <= ' ' && p <= q; q--) {
-            ;
-        }
+        for (q = vec_name + strlen(vec_name) - 1;
+             *q <= ' ' && vec_name <= q;
+             q--) ;
         *++q = '\0';
     }
 
     /* Sanity check */
-    if (eq(p, "all") || strchr(p, '@') || *p == '\0' || isdigit_c(*p)) {
-        fprintf(cp_err, "Error: bad variable name \"%s\"\n", p);
+    if (eq(vec_name, "all") || strchr(vec_name, '@') ||
+        *vec_name == '\0' || isdigit_c(*vec_name)) {
+        fprintf(cp_err, "Error: bad variable name \"%s\"\n", vec_name);
         goto quit;
     }
 
     /* Locate the vector being assigned values. If NULL, the vector
      * does not exist */
-    struct dvec *vec_dst = vec_get(p);
-    if (vec_dst != (struct dvec *) NULL) {
+    struct dvec *vec_dst = vec_get(vec_name);
+
+    if (vec_dst == (struct dvec *) NULL) {
+        /* If the name has a dot (plotname.vecname), remove the plotname
+         * and check it.
+         */
+
+        plot_name = vec_name;
+        vec_name = strchr(vec_name, '.');
+        if (vec_name) {
+            *vec_name++ = '\0';
+            tplot = get_plot(plot_name);
+            if (!tplot) {
+                txfree(line);
+                return; // Error reported by get_plot().
+            }
+        } else {
+            vec_name = plot_name;
+            tplot = NULL;
+        }
+    } else if (vec_dst->v_plot != plot_cur && plot_cur) {
+        /* Found a vector in another plot, possibly 'const'.
+         * Many scripts likely depend on this so ignore only when
+         * explicitly requested.
+         */
+
+        if (!strchr(vec_name, '.') && cp_getvar("sanelet", CP_BOOL, NULL, 0))
+            vec_dst = (struct dvec *) NULL;
+        tplot = NULL;
+    } else {
         /* Fix-up dimension count and limit. Sometimes these are
          * not set properly. If not set, give the vector 1 dimension and
          * ensure the right length */
@@ -113,7 +140,7 @@ void com_let(wordlist *wl)
     }
 
     /* If the vector was indexed, find the indices */
-    if (p_index_start != (char *) NULL) {
+    if (index_start != (char *) NULL) {
         /* Test for an attempt to index an undefined vector */
         if (vec_dst == (struct dvec *) NULL) {
             fprintf(cp_err,
@@ -121,8 +148,8 @@ void com_let(wordlist *wl)
             goto quit;
         }
 
-        if (find_indices(p_index_start, vec_dst, p_dst_index) != 0) {
-            txfree(p);
+        if (find_indices(index_start, vec_dst, p_dst_index) != 0) {
+            txfree(line);
             return;
         }
         n_dst_index = vec_dst->v_numdims;
@@ -160,10 +187,12 @@ void com_let(wordlist *wl)
         }
         else
             goto quit;
-    }
-    /* evaluate the rhs expression as usual, math characters may not be used in vec names,
-       the expression parser then will complain about a syntax error */
-    else {
+    } else {
+        /* Evaluate the rhs expression as usual, math characters may not
+         * be used in vec names, so the expression parser then will complain
+         * about a syntax error.
+         */
+
         if ((names = ft_getpnames_from_string(
             rhs, TRUE)) == (struct pnode*)NULL) {
             fprintf(cp_err, "Error: RHS \"%s\" invalid\n", rhs);
@@ -192,13 +221,21 @@ void com_let(wordlist *wl)
     if (vec_dst == (struct dvec *) NULL) {
         /* p is not an existing vector. So make a new one equal to vec_src
          * in all ways, except enforce that it is a permanent vector. */
-        vec_dst = dvec_alloc(copy(p),
+        vec_dst = dvec_alloc(copy(vec_name),
                 vec_src->v_type,
                 vec_src->v_flags | VF_PERMANENT,
                 vec_src->v_length, NULL);
 
         copy_vector_data(vec_dst, vec_src);
-        vec_new(vec_dst); /* Add tp current plot */
+        if (tplot) {
+            struct plot *cplot = plot_cur;
+
+            plot_cur = tplot;
+            vec_new(vec_dst);
+            plot_cur = cplot;
+        } else {
+            vec_new(vec_dst); /* Add to current plot */
+        }
         cp_addkword(CT_VECTOR, vec_dst->v_name);
     } /* end of case of new vector */
     else {
@@ -293,7 +330,7 @@ quit:
         /* frees also vec_src, if pnode `names' is simple value */
         free_pnode(names);
     }
-    txfree(p);
+    txfree(line);
 } /* end of function com_let */
 
 
