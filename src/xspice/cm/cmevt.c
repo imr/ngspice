@@ -240,10 +240,13 @@ int  cm_event_queue(
     here = g_mif_info.instance;
     ckt  = g_mif_info.ckt;
 
-    /* If breakpoint time <= current event time, return error */
-    if(time <= g_mif_info.circuit.evt_step) {
+    /* If breakpoint time < current event time, return error. */
+
+    if (time < g_mif_info.circuit.evt_step ||
+        (time == g_mif_info.circuit.evt_step &&
+         g_mif_info.circuit.call_type == MIF_EVENT_DRIVEN)) {
         g_mif_info.errmsg =
-        "ERROR - cm_event_queue() - Event time cannot be <= current time\n";
+          "ERROR - cm_event_queue() - Event time cannot be <= current time\n";
         return(MIF_ERROR);
     }
 
