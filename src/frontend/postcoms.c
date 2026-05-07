@@ -1177,6 +1177,17 @@ DelPlotWindows(struct plot *pl)
 #endif
 }
 
+/* Helper for com_splot(). */
+
+static int new_str(wordlist **pwl, char **ps)
+{
+    *pwl = (*pwl)->wl_next;
+    if (!*pwl)
+        return 1;
+    tfree(*ps);
+    *ps = copy((*pwl)->wl_word);
+    return 0;
+}
 
 /*
  * command 'setplot'
@@ -1194,6 +1205,18 @@ com_splot(wordlist *wl)
 
     if (wl) {
         plot_setcur(wl->wl_word);
+
+        if (cieq(wl->wl_word, "new")) {
+            /* The user may also supply, name, title and typename strings.
+             * The typename is the 'true name' used in commands!
+             */
+
+            if (new_str(&wl, &plot_cur->pl_typename))
+                return;
+            if (new_str(&wl, &plot_cur->pl_title))
+                return;
+            new_str(&wl, &plot_cur->pl_name);
+        }
         return;
     }
 
