@@ -370,13 +370,11 @@ MIF_INP2A (
             /*  First, do a couple of error checks */
             if(next_token_type == MIF_LARRAY_TOK) {
                 LITERR("ERROR - Scalar connection expected, [ found");
-                printf("ERROR - Scalar connection expected, [ found.  Returning . . .");
                 gc_end();
                 return;
             }
             if(next_token_type == MIF_RARRAY_TOK) {
                 LITERR("ERROR - Unexpected ]");
-                printf("ERROR - Unexpected ].  Returning . . .");
                 gc_end();
                 return;
             }
@@ -412,7 +410,6 @@ MIF_INP2A (
             /* check for required leading array delim character [ and eat it if found */
             if(next_token_type != MIF_LARRAY_TOK) {
                 LITERR("Missing [, an array connection was expected");
-                printf("Missing [, an array connection was expected.  Returning . . .");
                 gc_end();
                 return;
             } else /* eat the [  */
@@ -448,19 +445,16 @@ MIF_INP2A (
                 or hold a non-null connection (netname) */
                 if(next_token_type == MIF_NULL_TOK) {
                     LITERR("NULL connection found where not allowed");
-                    printf("NULL connection found where not allowed. Returning . . .");
                     gc_end();
                     return;
                 }
                 if(next_token_type == MIF_LARRAY_TOK) {
                     LITERR("ERROR - Unexpected [ - Arrays of arrays not allowed");
-                    printf("ERROR - Unexpected [ - Arrays of arrays not allowed. Returning . . .");
                     gc_end();
                     return;
                 }
                 if(next_token_type == MIF_RARRAY_TOK) {
                     LITERR("ERROR - Unexpected ]");
-                    printf("ERROR - Unexpected ]. Returning . . .");
                     gc_end();
                     return;
                 }

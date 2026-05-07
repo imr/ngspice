@@ -1089,7 +1089,8 @@ void cm_d_source(ARGS)
 
             /* reset current breakpoint */
             test_double = loc->all_timepoints[*row_index];
-            cm_event_queue( test_double );
+	    if (test_double != 0)
+                cm_event_queue( test_double );
 
             /* Output new values... */
             for (i=0; i<loc->width; i++) {
@@ -1154,7 +1155,8 @@ void cm_d_source(ARGS)
 
             /* reset current breakpoint */
             test_double = loc->all_timepoints[*row_index] - 1.0e-10;
-            cm_event_queue( test_double );
+	    if (TIME != test_double)
+               cm_event_queue( test_double );
 
             /* Output new values... */
             for (i=0; i<loc->width; i++) {
