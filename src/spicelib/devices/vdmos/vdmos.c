@@ -31,6 +31,7 @@ IFparm VDMOSpTable[] = { /* parameters */
  OP( "cgd",         VDMOS_CAPGD,      IF_REAL,    "Gate-Drain capacitance"),
  OP( "cds",         VDMOS_CAPDS,      IF_REAL,    "Drain-Source capacitance"),
  OP( "idio",        VDMOS_CDIO,       IF_REAL,    "Body diode current"),
+ OP( "qdio",        VDMOS_QDIO,       IF_REAL,    "Body diode charge"),
 
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
  OPU( "gnode",      VDMOS_GNODE,      IF_INTEGER, "Number of the gate node "),
@@ -115,6 +116,8 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("xti",   VDIO_MOD_XTI,   IF_REAL,   "Body diode saturation current temperature exponent"),
  IOP("is",    VDIO_MOD_IS,    IF_REAL,   "Body diode saturation current"),
  IOP("vj",    VDIO_MOD_VJ,    IF_REAL,   "Body diode junction potential"),
+ IOP("vp",    VDIO_MOD_VP,    IF_REAL,   "Soft reverse recovery parameter"),
+
 
  /* body diode capacitance (e.g. source-drain capacitance) */
  IOPA("cjo",  VDIO_MOD_CJ,    IF_REAL,   "Zero-bias body diode junction capacitance"),

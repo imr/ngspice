@@ -24,6 +24,8 @@ VDMOStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
             CKTterr(here->VDMOSqgs,ckt,timeStep);
             CKTterr(here->VDMOSqgd,ckt,timeStep);
             CKTterr(here->VDIOcapCharge,ckt,timeStep);
+            if (model->VDIOsoftRevRecParam!=0 && here->VDIOtTransitTime!=0)
+                CKTterr(here->VDIOsrcapCharge,ckt,timeStep);
         }
     }
     return(OK);
