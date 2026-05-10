@@ -47,7 +47,7 @@ void com_let(wordlist *wl)
     int n_dst_index;
     struct pnode *names = (struct pnode *) NULL;
     struct dvec *vec_src = (struct dvec *) NULL;
-    struct plot *tplot;
+    struct plot *tplot = NULL;
 
     /* let with no arguments is equivalent to display */
     if (!wl) {
