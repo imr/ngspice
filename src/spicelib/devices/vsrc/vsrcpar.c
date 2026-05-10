@@ -296,6 +296,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         break;
 
         case VSRC_SOUND: {
+#if defined(HAVE_LIBSNDFILE) && defined(HAVE_LIBSAMPLERATE)
             int id, channel;
             double oversampling;
             here->VSRCfunctionType = SOUND;
@@ -315,6 +316,10 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             oversampling = here->VSRCcoeffs[5];
             vsjack_open(id, jfile, channel, oversampling);
             tfree(jfile);
+#else
+            fprintf(stderr, "\nError: ngspice is compiled without soundfile support!\n");
+            controlled_exit(EXIT_BAD);
+#endif
         }
         break;
 
