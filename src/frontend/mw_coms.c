@@ -14,6 +14,8 @@
 #include "runcoms.h"
 #include "spiceif.h"
 
+#include "plotting/plotting.h"
+
 /* Clears ckt and removes current circ. form database */
 
 void
@@ -82,7 +84,7 @@ com_removecirc(wordlist *wl)
 
     /* If the plot is the first one and there are no other plots */
     if (!plot_list->pl_next && strcmp(plot_list->pl_title, namecircuit) == 0)
-        plot_list = NULL;
+        plot_list = &constantplot;
 
     else if (plot_list && plot_list->pl_next) {
         p = plot_list;
