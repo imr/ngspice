@@ -5,8 +5,9 @@
 /* select major ngspice options */
 /* to undefine, replace #define by #undef and comment out */
 
-/* S parameter analysis */
-#define RFSPICE 1
+/* Define if you want soundfile (*.wav) support */
+#define HAVE_LIBSNDFILE
+#define HAVE_LIBSAMPLERATE
 
 /* Define if you want PSS analysis */
 #define WITH_PSS /**/
@@ -27,6 +28,9 @@
 
 /**********************************************************************/
 /********* Don't change entries found below ***************************/
+
+/* S parameter analysis */
+#define RFSPICE 1
 
 /* The xspice enhancements */
 #define XSPICE 1

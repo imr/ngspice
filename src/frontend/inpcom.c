@@ -9903,7 +9903,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
 int add_to_sourcepath(const char* filepath, const char* path)
 {
     char* fpath=NULL;
-    wordlist *addwl=NULL, *newwl=NULL, *startwl, *endwl;
+    wordlist *addwl=NULL, *startwl, *endwl;
 
     if ((filepath && path) || (!filepath && !path))
         return 1;
@@ -9919,24 +9919,51 @@ int add_to_sourcepath(const char* filepath, const char* path)
     else
         return 1;
 
-    startwl = newwl = wl_from_string("sourcepath=(");
-    endwl = wl_from_string(")");
+    startwl = wl_from_string("sourcepath=(");
 
-    /* add fpath to 'sourcepath' list variable */
+    /* Add expanded fpath to 'sourcepath' list variable. */
+
     if (cp_getvar("sourcepath", CP_LIST, NULL, 0)) {
-        wordlist* wl = vareval("sourcepath");
-        wl_append(newwl, wl);
-    }
-    /* new sourcepath variable */
-    else {
+        wordlist *wl, *scan, *scan_new, *next;
+
+        wl = vareval("sourcepath");
+
+        /* Are any new paths already in the list? */
+
+        for (scan = wl; scan; scan = scan->wl_next) {
+            scan_new = addwl;
+            while (scan_new) {
+                next = scan_new->wl_next;
+                if (!strcmp(scan->wl_word, scan_new->wl_word)) {
+                    /* Entries match. */
+
+                    if (scan_new == addwl)
+                        addwl = next;
+                    wl_delete_slice(scan_new, next);
+                }
+                scan_new = next;
+            }
+            if (!addwl) {
+                wl_free(wl);
+                tfree(fpath);
+                return 0; // Not an error.
+            }
+        }
+        wl_append(startwl, wl);
+    } else {
+        /* New sourcepath variable, why not use addwl here? */
+
         wordlist* wl = wl_from_string(fpath);
-        wl_append(newwl, wl);
+        wl_append(startwl, wl);
     }
     /* add new entry */
     if (addwl)
-        wl_append(newwl, addwl);
+        wl_append(startwl, addwl);
+
     /* add end section */
-    wl_append(newwl, endwl);
+
+    endwl = wl_from_string(")");
+    wl_append(startwl, endwl);
 
 //    fprintf(stdout, "Added to variable 'sourcepath':\n  %s\n", fpath);
 

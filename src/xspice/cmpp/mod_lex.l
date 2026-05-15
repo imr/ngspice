@@ -90,6 +90,7 @@ Z	[0-9A-Za-z_]
 		        }
 
 \"(\\.|[^"\\])*\"	{return TOK_IDENTIFIER;} /* Literal string. */
+\'(\\.|[^'\\])*\'	{return TOK_IDENTIFIER;}
 
 ARGS			{return TOK_ARGS;}
 INIT			{return TOK_INIT;}

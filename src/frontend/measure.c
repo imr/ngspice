@@ -119,7 +119,7 @@ com_meas(wordlist *wl)
     /* get output var name */
     wl_count = wl_count->wl_next;
     if (!wl_count) {
-        fprintf(stdout,
+        fprintf(stderr,
                 " meas %s failed!\n"
                 "   unspecified output var name\n\n", line_in);
         tfree(line_in);
@@ -130,7 +130,7 @@ com_meas(wordlist *wl)
     fail = get_measure2(wl, &result, NULL, FALSE);
 
     if (fail) {
-        fprintf(stdout, " meas %s failed!\n\n", line_in);
+        fprintf(stderr, " meas %s failed!\n\n", line_in);
         tfree(line_in);
         return;
     }

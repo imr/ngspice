@@ -36,16 +36,23 @@ else
    setcs cflags="--CFLAGS -fpic" // For g++
 end
 
-if $oscompiled = 2 | $oscompiled = 3 | $oscompiled = 8 // Windows
+if $oscompiled = 1 | $oscompiled = 2 | $oscompiled = 8 // Windows (MINGW, Cygwin, MSVC)
    set windows=1
    set dirsep1="\\"
    set dirsep2="/"
-   set vloc="C:/mingw64/bin/verilator" // Expected location on Windows
-   set run_verilator="perl $vloc"      // Verilator is a Perl script
+   if $oscompiled = 1 // MINGW: verilator is a Perl wrapper, needs MSYS2 shell
+      set run_verilator="sh -c \"verilator"
+      set run_verilator_close="\""
+   else
+      set vloc="C:/mingw64/bin/verilator" // Expected location on Windows
+      set run_verilator="perl $vloc"      // Verilator is a Perl script
+      set run_verilator_close=""
+   end
 else
    set windows=0
    set dirsep1="/"
    set run_verilator=verilator
+   set run_verilator_close=""
 end
 
 if $oscompiled = 7 // MacOS
@@ -139,7 +146,7 @@ setcs prefix="Vlng"
 
 // Run Verilator on the given input files.
 
-shell $run_verilator --Mdir $objdir --prefix $prefix $cflags --cc $argv
+shell $run_verilator --Mdir $objdir --prefix $prefix $cflags --cc $argv$run_verilator_close
 if $shellstatus > 0
     quit
 end
@@ -304,7 +311,7 @@ end
 
 shell $run_verilator --Mdir $objdir --prefix $prefix $include $cflags
 + --cc --build --exe
-+ $fn_main $fn $argv
++ $fn_main $fn $argv$run_verilator_close
 
 strcmp bad "$shellstatus" "0"
 

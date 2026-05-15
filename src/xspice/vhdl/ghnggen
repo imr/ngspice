@@ -23,7 +23,7 @@ end
 
 set noglob
 
-if $oscompiled = 2 | $oscompiled = 3 | $oscompiled = 8 // Windows
+if $oscompiled = 1 | $oscompiled = 2 | $oscompiled = 8 // Windows (MINGW, Cygwin, MSVC)
     set windows=1
     set dirsep1="\\"
     set dirsep2="/"

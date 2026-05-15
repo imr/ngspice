@@ -404,7 +404,7 @@ cx_m3avg(void* data, short int type, int length, int* newlength, short int* newt
 
         realpart(c[0]) = realpart(cc[0]);
 
-        for (i = 0; i < length; i++) {
+        for (i = 1; i < nlen; i++) {
             realpart(c[i]) = (realpart(cc[i - 1]) + realpart(cc[i + 1])) / 4. + realpart(cc[i]) / 2.;
             imagpart(c[i]) = (imagpart(cc[i - 1]) + imagpart(cc[i + 1])) / 4. + imagpart(cc[i]) / 2.;
         }

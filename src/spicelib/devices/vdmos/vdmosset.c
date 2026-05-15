@@ -251,6 +251,10 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (model->VDIOjctSatCur < ckt->CKTepsmin)
             model->VDIOjctSatCur = ckt->CKTepsmin;
 
+        if (!model->VDIOsoftRevRecParamGiven) {
+            model->VDIOsoftRevRecParam = 0.0;
+        }
+
         /* loop through all the instances of the model */
         for (here = VDMOSinstances(model); here != NULL;
             here = VDMOSnextInstance(here)) {
@@ -431,6 +435,16 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDMOStcaseNode = 0;
             }
 
+            /* rev-rec */
+            if (model->VDIOsoftRevRecParamGiven && model->VDIOsoftRevRecParam!=0 && model->VDIOtransitTime!=0) {
+                if(here->VDIOqpNode == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "qp");
+                    if(error) return(error);
+                    here->VDIOqpNode = tmp->number;
+                }
+            } else {
+                here->VDIOqpNode = 0;
+            }
             /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -487,10 +501,19 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSTemptcasePtr,  VDMOStempNode,    VDMOStcaseNode);
                 TSTALLOC(VDMOSTptpPtr,       VDMOStNodePrime,  VDMOStNodePrime);  /* Rthca between tcase and Vsrc */
                 TSTALLOC(VDMOSTptcasePtr,    VDMOStNodePrime,  VDMOStcaseNode);
-                TSTALLOC(VDMOSTcasetpPtr,    VDMOStcaseNode,    VDMOStNodePrime);
+                TSTALLOC(VDMOSTcasetpPtr,    VDMOStcaseNode,   VDMOStNodePrime);
                 TSTALLOC(VDMOSDevTdevTPtr,   VDMOSvdevTbranch, VDMOSvdevTbranch); /* Vsrc=cktTemp to gnd */
                 TSTALLOC(VDMOSDevTtpPtr,     VDMOSvdevTbranch, VDMOStNodePrime);
                 TSTALLOC(VDMOSTpdevTPtr,     VDMOStNodePrime,  VDMOSvdevTbranch);
+            }
+
+            /* rev-rec */
+            if (model->VDIOsoftRevRecParamGiven && model->VDIOsoftRevRecParam!=0 && model->VDIOtransitTime!=0) {
+                TSTALLOC(VDIOqpQpPtr      , VDIOqpNode, VDIOqpNode);
+                TSTALLOC(VDIOqpPosPrimePtr, VDIOqpNode, VDIOposPrimeNode);
+                TSTALLOC(VDIOqpNegPtr     , VDIOqpNode, VDMOSdNode);
+                TSTALLOC(VDIOposPrimeQpPtr, VDIOposPrimeNode, VDIOqpNode);
+                TSTALLOC(VDIOnegQpPtr,      VDMOSdNode, VDIOqpNode);
             }
         }
     }
@@ -538,6 +561,10 @@ VDMOSunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDMOSvdevTbranch = 0;
             }
 
+            /* rev-rec */
+            if (here->VDIOqpNode > 0)
+                CKTdltNNum(ckt, here->VDIOqpNode);
+            here->VDIOqpNode = 0;
         }
     }
     return OK;

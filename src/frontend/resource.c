@@ -74,6 +74,7 @@ init_rlimits(void)
 void
 init_time(void)
 {
+    timebegin.secs = 0;
     perf_timer_get_time(&timebegin);
 }
 

@@ -166,6 +166,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDIOtranTimeTemp1 = 0;
             model->VDIOtranTimeTemp2 = 0;
             break;
+        case VDIO_MOD_VP:
+            model->VDIOsoftRevRecParam = value->rValue;
+            model->VDIOsoftRevRecParamGiven = TRUE;
+            break;
         case VDIO_MOD_EG:
             model->VDIOeg = value->rValue;
             model->VDIOegGiven = TRUE;

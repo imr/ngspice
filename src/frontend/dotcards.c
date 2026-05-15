@@ -355,6 +355,7 @@ ft_cktcoms(bool terse)
                     fprintf(cp_err, "Error: .plot: no %s analysis found.\n",
                             plottype);
             }
+#if defined(HAVE_LIBSNDFILE) && defined(HAVE_LIBSAMPLERATE)
         } else if (eq(command->wl_word, ".sndparam")) {
             if (terse) {
                 fprintf(cp_out, ".sndparam line ignored since rawfile was produced.\n");
@@ -390,6 +391,7 @@ ft_cktcoms(bool terse)
                 if (!found)
                     fprintf(cp_err, "Error: .sndprint: no %s analysis found.\n", plottype);
             }
+#endif // Sound file support
         } else if (ciprefix(".four", command->wl_word)) {
             if (terse) {
                 fprintf(cp_out,

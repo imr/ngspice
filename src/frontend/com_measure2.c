@@ -1643,7 +1643,7 @@ get_measure2(
     *result = 0.0e0;        /* default result */
 
     if (!wl) {
-        printf("usage: measure .....\n");
+        fprintf(cp_err, "Error: no assignment found in command meas.\n");
         return MEASUREMENT_FAILURE;
     }
 
@@ -1664,11 +1664,6 @@ get_measure2(
     words = wl;
     wlTarg = NULL;
     wlWhen = NULL;
-
-    if (!words) {
-        fprintf(cp_err, "Error: no assignment found.\n");
-        return MEASUREMENT_FAILURE;
-    }
 
     precision = measure_get_precision();
     wl_cnt = 0;

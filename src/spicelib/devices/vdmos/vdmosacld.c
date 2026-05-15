@@ -156,6 +156,20 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                *(here->VDMOSSPtempPtr + 1)   += xcsT;
                *(here->VDMOSGPtempPtr + 1)   += xcgT;
             }
+            if ((here->VDIOqpNode > 0) && (model->VDIOsoftRevRecParam!=0) && (here->VDIOtTransitTime!=0)) {
+                /* QP subcircuit */
+                double gdres= *(ckt->CKTstate0 + here->VDIOresConduct);
+                double fac = here->VDIOtTransitTime / model->VDIOsoftRevRecParam;
+                double dcrrdvd = fac * gdres;
+                *(here->VDIOqpQpPtr)       += 1/model->VDIOsoftRevRecParam;
+                *(here->VDIOqpQpPtr + 1)   += here->VDIOtTransitTime * ckt->CKTomega;
+                *(here->VDIOqpPosPrimePtr) += -dcrrdvd;
+                *(here->VDIOqpNegPtr)      +=  dcrrdvd;
+                /* Gain of VCVS (1-vp)/tau * j*omega*tau = (1-vp) * j*omega */
+                double xgain = (1 - model->VDIOsoftRevRecParam) * ckt->CKTomega;
+                *(here->VDIOposPrimeQpPtr + 1) +=  xgain;
+                *(here->VDIOnegQpPtr + 1)      += -xgain;
+            }
         }
     }
     return(OK);

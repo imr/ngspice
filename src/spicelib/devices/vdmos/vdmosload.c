@@ -710,10 +710,16 @@ bypass:
             double Ith=0.0, dIth_dT=0.0;
             double dIdio_dT=0.0, dIth_dVdio=0.0;
             double vrb=0.0, dIrb_dT=0.0, dIth_dVrb=0.0;
+            /* rev-rec */
+            double cdres, gdres;
+            double vqp;
+            double capsr, gqcsr, cqcsr;
 
 #ifndef NOBYPASS
             double tol;     /* temporary for tolerance calculations */
 #endif
+
+            int revrec = ((here->VDIOqpNode > 0) && (model->VDIOsoftRevRecParam!=0) && (here->VDIOtTransitTime!=0));
 
             gbpr = here->VDIOtConductance;
 
@@ -725,13 +731,17 @@ bypass:
             Check_dio = 1;
             if (ckt->CKTmode & MODEINITSMSIG) {
                 vd = *(ckt->CKTstate0 + here->VDIOvoltage);
+                vqp = *(ckt->CKTstate0 + here->VDIOqp);
             } else if (ckt->CKTmode & MODEINITTRAN) {
                 vd = *(ckt->CKTstate1 + here->VDIOvoltage);
+                vqp = *(ckt->CKTstate1 + here->VDIOqp);
             } else if ((ckt->CKTmode & MODEINITJCT) &&
                        (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
                 vd = here->VDIOinitCond;
+                vqp=0;
             } else if (ckt->CKTmode & MODEINITJCT) {
                 vd = here->VDIOtVcrit;
+                vqp=0;
             } else {
 #ifndef PREDICTOR
                 if (ckt->CKTmode & MODEINITPRED) {
@@ -744,10 +754,20 @@ bypass:
                         *(ckt->CKTstate1 + here->VDIOconduct);
                     *(ckt->CKTstate0 + here->VDIOdIdio_dT) =
                             *(ckt->CKTstate1 + here->VDIOdIdio_dT);
+                    vqp = DEVpred(ckt,here->VDIOqp);
+                    *(ckt->CKTstate0 + here->VDIOresCurrent) =
+                            *(ckt->CKTstate1 + here->VDIOresCurrent);
+                    *(ckt->CKTstate0 + here->VDIOresConduct) =
+                            *(ckt->CKTstate1 + here->VDIOresConduct);
+                    *(ckt->CKTstate0 + here->VDIOcqcsr) =
+                            *(ckt->CKTstate1 + here->VDIOcqcsr);
+                    *(ckt->CKTstate0 + here->VDIOgqcsr) =
+                            *(ckt->CKTstate1 + here->VDIOgqcsr);
                 } else {
 #endif /* PREDICTOR */
                     vd = model->VDMOStype * (*(ckt->CKTrhsOld + here->VDIOposPrimeNode) -
                                              *(ckt->CKTrhsOld + here->VDMOSdNode));
+                    vqp = model->VDMOStype * *(ckt->CKTrhsOld+here->VDIOqpNode);
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -776,6 +796,11 @@ bypass:
                                 cd = *(ckt->CKTstate0 + here->VDIOcurrent);
                                 gd = *(ckt->CKTstate0 + here->VDIOconduct);
                                 dIdio_dT= *(ckt->CKTstate0 + here->VDIOdIdio_dT);
+                                vqp= *(ckt->CKTstate0 + here->VDIOqp);
+                                cdres= *(ckt->CKTstate0 + here->VDIOresCurrent);
+                                gdres= *(ckt->CKTstate0 + here->VDIOresConduct);
+                                cqcsr= *(ckt->CKTstate0 + here->VDIOcqcsr);
+                                gqcsr= *(ckt->CKTstate0 + here->VDIOgqcsr);
                                 goto load;
                             }
                         }
@@ -833,6 +858,10 @@ bypass:
 
             cd = cdb + ckt->CKTgmin*vd;
             gd = gdb + ckt->CKTgmin;
+            cdres = cd;
+            gdres = gd;
+            cqcsr = 0;
+            gqcsr = 0;
 
             if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
@@ -853,14 +882,35 @@ bypass:
                                  (here->VDIOtGradingCoeff / (here->VDIOtJctPot + here->VDIOtJctPot))*(vd*vd - here->VDIOtDepCap*here->VDIOtDepCap));
                     deplcap = czof2*(here->VDIOtF3 + here->VDIOtGradingCoeff*vd / here->VDIOtJctPot);
                 }
-                diffcharge = here->VDIOtTransitTime*cdb;
-                *(ckt->CKTstate0 + here->VDIOcapCharge) =
-                    diffcharge + deplcharge;
 
-                diffcap = here->VDIOtTransitTime*gdb;
-                capd = diffcap + deplcap;
+                if (revrec) {
+                    /*
+                      soft recovery with TT!=0 - add only depletion capacitance.
+                    */
+                    *(ckt->CKTstate0 + here->VDIOcapCharge) = deplcharge;
 
-                here->VDIOcap = capd;
+                    capd = deplcap;
+                    here->VDIOcap = capd;
+                    /*
+                      DIOcap is now equal only to depletion capacitance + overlap capacitance.
+                      Diffusion capacitance is modelled via Qp so there is no clear way to define it here.
+                      Now prepare the charge for the capacitor connected to the QP node 
+                    */
+                    *(ckt->CKTstate0 + here->VDIOsrcapCharge) = here->VDIOtTransitTime * vqp;
+                    capsr = here->VDIOtTransitTime;
+                } else {
+                    /*
+                      no soft recovery due to TT=0
+                    */
+                    diffcharge = here->VDIOtTransitTime*cdb;
+                    diffcap = here->VDIOtTransitTime*gdb;
+                    *(ckt->CKTstate0 + here->VDIOcapCharge) = diffcharge + deplcharge;
+                    capd = diffcap + deplcap;
+                    here->VDIOcap = capd;
+
+                    *(ckt->CKTstate0 + here->VDIOsrcapCharge) = 0;
+                    capsr = 0;
+                }
 
                 /*
                 *   store small-signal parameters
@@ -869,6 +919,7 @@ bypass:
                         (!(ckt->CKTmode & MODEUIC))) {
                     if (ckt->CKTmode & MODEINITSMSIG) {
                         *(ckt->CKTstate0 + here->VDIOcapCurrent) = capd;
+                        *(ckt->CKTstate0 + here->VDIOresConduct) = gdres;
 
                         continue;
                     }
@@ -889,6 +940,21 @@ bypass:
                         *(ckt->CKTstate1 + here->VDIOcapCurrent) =
                             *(ckt->CKTstate0 + here->VDIOcapCurrent);
                     }
+                    if (revrec) {
+                        /* soft recovery subcircuit */
+                        if (ckt->CKTmode & MODEINITTRAN) {
+                            *(ckt->CKTstate1 + here->VDIOsrcapCharge) =
+                                    *(ckt->CKTstate0 + here->VDIOsrcapCharge);
+                        }
+                        error = NIintegrate(ckt,&geq,&ceq,capsr,here->VDIOsrcapCharge);
+                        if(error) return(error);
+                        gqcsr = geq;
+                        cqcsr = *(ckt->CKTstate0 + here->VDIOsrcapCurrent);
+                        if (ckt->CKTmode & MODEINITTRAN) {
+                            *(ckt->CKTstate1 + here->VDIOsrcapCurrent) =
+                                    *(ckt->CKTstate0 + here->VDIOsrcapCurrent);
+                        }
+                    }
                 }
             }
 
@@ -905,6 +971,11 @@ bypass:
             *(ckt->CKTstate0 + here->VDIOcurrent) = cd;
             *(ckt->CKTstate0 + here->VDIOconduct) = gd;
             *(ckt->CKTstate0 + here->VDIOdIdio_dT) = dIdio_dT;
+            *(ckt->CKTstate0 + here->VDIOqp) = vqp;
+            *(ckt->CKTstate0 + here->VDIOresCurrent) = cdres;
+            *(ckt->CKTstate0 + here->VDIOresConduct) = gdres;
+            *(ckt->CKTstate0 + here->VDIOcqcsr) = cqcsr;
+            *(ckt->CKTstate0 + here->VDIOgqcsr) = gqcsr;
 
 #ifndef NOBYPASS
 load:
@@ -926,14 +997,10 @@ load:
             /*
             *   load current vector
             */
-            cdeq = cd - gd*vd;
-            if (model->VDMOStype == 1) {
-                *(ckt->CKTrhs + here->VDMOSdNode) += cdeq;
-                *(ckt->CKTrhs + here->VDIOposPrimeNode) -= cdeq;
-            } else {
-                *(ckt->CKTrhs + here->VDMOSdNode) -= cdeq;
-                *(ckt->CKTrhs + here->VDIOposPrimeNode) += cdeq;
-            }
+            cdeq = model->VDMOStype * (cd - gd*vd);
+            *(ckt->CKTrhs + here->VDMOSdNode)       += cdeq;
+            *(ckt->CKTrhs + here->VDIOposPrimeNode) -= cdeq;
+
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) +=  dIdio_dT*delTemp - dIrb_dT*delTemp;
                 *(ckt->CKTrhs + here->VDMOSdNode)       += -dIdio_dT*delTemp;
@@ -958,6 +1025,26 @@ load:
                 (*(here->VDIOPosPrimetempPtr) +=  dIdio_dT - dIrb_dT);
                 (*(here->VDMOSStempPtr)       +=  dIrb_dT);
                 (*(here->VDMOSDtempPtr)       += -dIdio_dT);
+            }
+            if (revrec) {
+                /* QP subcircuit */
+                double fac = here->VDIOtTransitTime / model->VDIOsoftRevRecParam;
+                double dcrrdvd = fac*gdres;
+                double ceqrr = -fac*cdres + cqcsr + dcrrdvd*vd - gqcsr*vqp;
+                double grr = 1/model->VDIOsoftRevRecParam;
+                *(ckt->CKTrhs + here->VDIOqpNode) -= model->VDMOStype * ceqrr;
+                *(here->VDIOqpQpPtr)       += grr + gqcsr;
+                *(here->VDIOqpPosPrimePtr) += -dcrrdvd;
+                *(here->VDIOqpNegPtr)      +=  dcrrdvd;
+                /* Contribution to diode current */
+                here->VDIOqpGain = (1 - model->VDIOsoftRevRecParam) / here->VDIOtTransitTime;
+                /* Linear contribution -(1-vp)/tau*ddt(Qp) */
+                double geqrrd = here->VDIOqpGain*gqcsr;
+                double ceqrrd = model->VDMOStype * (here->VDIOqpGain*cqcsr - geqrrd*vqp);
+                *(ckt->CKTrhs + here->VDIOposPrimeNode) += -ceqrrd;
+                *(ckt->CKTrhs + here->VDMOSdNode)       +=  ceqrrd;
+                *(here->VDIOposPrimeQpPtr)              +=  geqrrd;
+                *(here->VDIOnegQpPtr)                   += -geqrrd;
             }
         }
     }

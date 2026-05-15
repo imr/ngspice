@@ -720,15 +720,15 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         /* Just in case we were sloppy */
         v->v_numdims = 1;
         v->v_dims[0] = v->v_length;
-        if (v->v_length <= 1) {
-            fprintf(cp_err, "Error: indexing a scalar (%s)\n",
+        if (v->v_length < 1) {
+            fprintf(cp_err, "Error: indexing empty vector (%s)\n",
                     v->v_name);
             return (NULL);
         }
     }
 
     if (ind->v_length != 1) {
-        fprintf(cp_err, "Error:strchr %s is not of length 1\n",
+        fprintf(cp_err, "Error: index vector %s is not of length 1\n",
                 ind->v_name);
         return (NULL);
     }

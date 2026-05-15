@@ -586,11 +586,12 @@ resume:
     }
     /* Try to equalise the last two time steps before the breakpoint,
        if the second step would be smaller than CKTdelta otherwise.*/
-    else if (ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
+    else if (!(ckt->CKTbreaks[0] == ckt->CKTfinalTime) && ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
         ckt->CKTsaveDelta = ckt->CKTdelta;
         ckt->CKTdelta = (ckt->CKTbreaks[0] - ckt->CKTtime) / 2.;
 #ifdef STEPDEBUG
-        fprintf(stdout, "Delta equalising step at time %e with delta %e\n", ckt->CKTtime, ckt->CKTdelta);
+        fprintf(stdout, "Delta equalising step at time %e with delta %e and breakpoint at %e\n", 
+            ckt->CKTtime, ckt->CKTdelta, ckt->CKTbreaks[0]);
 #endif
     }
 
