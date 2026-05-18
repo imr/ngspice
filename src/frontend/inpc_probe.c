@@ -48,7 +48,7 @@ void inp_probe(struct card* deck)
     int skip_control = 0;
     int skip_subckt = 0;
     wordlist* probes = NULL, *probeparams = NULL, *wltmp, *allsaves = NULL;
-    wordlist *next_wl = NULL; // Fix memory leak probe-i-dev.cir
+    wordlist *next_wl = NULL;
     bool haveall = FALSE, havedifferential = FALSE, t = TRUE, havesave = FALSE;
     NGHASHPTR instances;   /* instance hash table */
     int ee = 0; /* serial number for sources */
@@ -142,7 +142,7 @@ void inp_probe(struct card* deck)
     }
     /* don't free the wl_word, they belong to the cards */
     wltmp = probes;
-    while (wltmp) { // Fix memory leak probe-i-dev.cir
+    while (wltmp) {
         next_wl = wltmp->wl_next;
         tfree(wltmp); // Do not free the wl_word
         wltmp = next_wl;
@@ -194,7 +194,7 @@ void inp_probe(struct card* deck)
         if (!instname)
             continue;
         nghash_insert(instances, instname, card);
-        tfree(instname); // Fix memory leak probe-i-dev.cir
+        tfree(instname);
     }
 
     if (haveall || probeparams == NULL) {
@@ -893,7 +893,7 @@ void inp_probe(struct card* deck)
                 tmpcard = nghash_find(instances, instname);
                 if (!tmpcard) {
                     fprintf(stderr, "Warning: Could not find the instance line for %s,\n   .probe %s will be ignored\n", instname, wltmp->wl_word);
-                    tfree(instname); // Fix memory leak probe-i-dev.cir
+                    tfree(instname);
                     continue;
                 }
                 char* thisline = tmpcard->line;
@@ -929,7 +929,7 @@ void inp_probe(struct card* deck)
                 else if (err == 3) {
                     fprintf(stderr, "Warning: Number of nodes mismatch,\n   .probe %s will be ignored\n", wltmp->wl_word);
                 }
-                tfree(instname); // Fix memory leak probe-i-dev.cir
+                tfree(instname);
                 continue;
             }
             else if (!haveall) {
@@ -948,7 +948,7 @@ void inp_probe(struct card* deck)
 
     }
     if (probeparams) {
-        wl_free(probeparams); // Fix memory leak probe-i-dev.cir
+        wl_free(probeparams);
     }
     nghash_free(instances, NULL, NULL);
 }
