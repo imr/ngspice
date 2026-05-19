@@ -278,6 +278,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     fprintf(stderr, "too many iterations without convergence: %d iter's (max iter == %d)\n",
                     iterno, maxIter);
 #endif
+                    FREE(errMsg);
                 }
                 FREE(OldCKTstate0);
                 return(E_ITERLIM);
