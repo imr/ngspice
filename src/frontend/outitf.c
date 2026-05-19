@@ -153,11 +153,11 @@ OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                 "       is more than the DRAM memory available (%sB)!\n",
                 cmemrequ, n, ctimesteps, cmemavail);
             fprintf(stderr, "       Swapping data to SSD may slow down the simulation.\n");
+            tfree(cmemrequ);
+            tfree(cmemavail);
+            tfree(ctimesteps);
 #endif
         }
-        tfree(cmemrequ);
-        tfree(cmemavail);
-        tfree(ctimesteps);
     }
 
     return ret;

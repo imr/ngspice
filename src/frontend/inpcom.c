@@ -9944,7 +9944,6 @@ int add_to_sourcepath(const char* filepath, const char* path)
                 scan_new = next;
             }
             if (!addwl) {
-                wl_free(startwl);
                 wl_free(wl);
                 tfree(fpath);
                 return 0; // Not an error.
