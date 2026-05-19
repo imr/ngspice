@@ -48,7 +48,7 @@ void inp_probe(struct card* deck)
     int skip_control = 0;
     int skip_subckt = 0;
     wordlist* probes = NULL, *probeparams = NULL, *wltmp, *allsaves = NULL;
-    wordlist *next_wl = NULL; // Fix memory leak probe-i-dev.cir
+    wordlist *next_wl = NULL;
     bool haveall = FALSE, havedifferential = FALSE, t = TRUE, havesave = FALSE;
     NGHASHPTR instances;   /* instance hash table */
     int ee = 0; /* serial number for sources */
