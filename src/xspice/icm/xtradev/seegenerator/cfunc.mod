@@ -55,7 +55,17 @@ NON-STANDARD FEATURES
 
 
   
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
+
+typedef struct pulse_info
+{
+    double iscaled; /* scaled current pulse for this port */
+    double start_time; /* pulse start time for this port */
+    double next_start_time; /* next pulse start time for this port */
+} pulse_info_t;
+
+
+/*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 static void
 cm_seegen_callback(ARGS, Mif_Callback_Reason_t reason)
@@ -74,18 +84,14 @@ cm_seegen_callback(ARGS, Mif_Callback_Reason_t reason)
             if (last_ctrl)
                 free(last_ctrl);
             STATIC_VAR (last_ctrl) = NULL;
+            pulse_info_t *pulses = STATIC_VAR (pulses);
+            if (pulses)
+               free(pulses);
             break;
         }
     }
 }
-    
-           
-/*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-
-
-
-                   
 /*==============================================================================
 
 FUNCTION void cm_seegen()
@@ -144,6 +150,10 @@ void cm_seegen(ARGS)  /* structure holding parms,
     double *last_ctrl;       /* static storage of last ctrl value */
     double tcurr = TIME;     /* current simulation time */
 
+    int ports;               /* number of output ports */
+    pulse_info_t *allpulses; /* info for pulse on each port */
+    bool have_scaled = FALSE;/* TRUE if we want to use scaled pulses */
+
     if (ANALYSIS == MIF_AC) {
         return;
     }
@@ -160,6 +170,10 @@ void cm_seegen(ARGS)  /* structure holding parms,
     angle = PARAM(angle);
     ctrlthres = PARAM(ctrlthres);
 
+    have_scaled = !PARAM_NULL(scaling) && !PARAM_NULL(scdelay);
+
+    ports = PORT_SIZE(out);
+
     if (PORT_NULL(ctrl))
         ctrl = 1;
     else
@@ -167,73 +181,145 @@ void cm_seegen(ARGS)  /* structure holding parms,
 
     if (INIT==1) {
 
+        int i;
+        double sum = 0;
+
+        if (have_scaled && PARAM_SIZE(scaling) != ports) {
+            cm_message_send("Error: Number of Output ports and Scaling don't match\n");
+            cm_cexit(1);
+        }
+
+        if (have_scaled && PARAM_SIZE(scdelay) != ports) {
+            cm_message_send("Error: Number of Output ports and SCdelay don't match\n");
+            cm_cexit(1);
+        }
+
+        if (5 * (trise + tfall) > tperiod) {
+            cm_message_send("\nError: tperiod should be at least 5 times the sum of trise and tfall\n");
+            cm_cexit(1);
+        }
+
         CALLBACK = cm_seegen_callback;
 
-        /* Allocate storage for last_t_value */
-        STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
-        last_t_value = (double *) STATIC_VAR(last_t_value);
-        /* no start if ctrl is set */
-        if (PORT_NULL(ctrl))
-            *last_t_value = tdelay;
-        else
-            *last_t_value = 1e12;
-        STATIC_VAR(pulse_number) = (int *) malloc(sizeof(int));
-        pulse_number = (int *) STATIC_VAR(pulse_number);
-        *pulse_number = 1;
-        STATIC_VAR(last_ctrl) = (double *) malloc(sizeof(double));
-        last_ctrl = (double *) STATIC_VAR(last_ctrl);
-        *last_ctrl = ctrl;
-        /* set breakpoints at first pulse start and pulse maximum times */
-        double tatmax = *last_t_value + tfall * trise * log(trise/tfall) / (trise - tfall);
-        cm_analog_set_perm_bkpt(*last_t_value);
-        cm_analog_set_perm_bkpt(tatmax);
-    }
-    else {
+        if (have_scaled) {
+            int j;
+            double del = 1e12;
 
-        last_t_value = (double *) STATIC_VAR(last_t_value);
-        pulse_number = (int *) STATIC_VAR(pulse_number);
-        last_ctrl = (double *) STATIC_VAR(last_ctrl);
+            cm_message_send("Use the scaling option\n");
 
-        /* reset the pulse sequence, to start anew upon a rising ctrl */
-        if (*last_ctrl < ctrlthres && ctrl >= ctrlthres) {
-            *last_t_value = tcurr + tdelay;
-            *pulse_number = 1;
-        }
-        *last_ctrl = ctrl;
+            allpulses = STATIC_VAR(pulses) = (pulse_info_t *) malloc(ports * sizeof(pulse_info_t));
 
-        /* the double exponential current pulse function */
-        if (tcurr < *last_t_value)
-            out = 0;
-        else {
+            /* parameter inull not specified, calculate it */
             if (inull == 0) {
                 double LETeff = let/cos(angle);
                 double Qc = 1.035e-14 * LETeff * cdepth;
                 inull = Qc / (tfall - trise);
             }
-            out = inull * (exp(-(tcurr-*last_t_value)/tfall) - exp(-(tcurr-*last_t_value)/trise));
+
+            /* pulse currents are scaled, and find minimum time delay */
+            for (i = 0; i < ports; i++){
+                sum += PARAM(scaling[i]);
+            }
+            if (sum == 0.) {
+                cm_message_send("Error: Scaling parameters are zero\n");
+                cm_cexit(1);
+            }
+
+            for (i = 0; i < ports; i++){
+                allpulses[i].iscaled = PARAM(scaling[i]) / sum * inull;
+                allpulses[i].start_time = tdelay + PARAM(scdelay[i]);
+                double tatmax = allpulses[i].start_time + tfall * trise * log(trise/tfall) / (trise - tfall);
+                cm_analog_set_perm_bkpt(allpulses[i].start_time);
+                cm_analog_set_perm_bkpt(tatmax);
+            }
         }
-        if (tcurr > *last_t_value + tperiod * 0.9) {
-            /* return some info */
-            cm_message_printf("port name: out, node pair no.: %d, \nnode names: %s, %s, pulse time: %e",
-                *pulse_number, cm_get_node_name("out", *pulse_number - 1), 
-                cm_get_neg_node_name("out", *pulse_number - 1), *last_t_value);
-            /* set the time for the next pulse */
-            *last_t_value = *last_t_value + tperiod;
-            /* set breakpoints at new pulse start and pulse maximum times */
+        else {
+            /* Allocate storage for last_t_value */
+            STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
+            last_t_value = (double *) STATIC_VAR(last_t_value);
+            /* no start if ctrl is set */
+            if (PORT_NULL(ctrl))
+                *last_t_value = tdelay;
+            else
+                *last_t_value = 1e12;
+            STATIC_VAR(last_ctrl) = (double *) malloc(sizeof(double));
+            last_ctrl = (double *) STATIC_VAR(last_ctrl);
+            *last_ctrl = ctrl;
+            STATIC_VAR(pulse_number) = (int *) malloc(sizeof(int));
+            pulse_number = (int *) STATIC_VAR(pulse_number);
+            *pulse_number = 1;
+
+            /* set breakpoints at first pulse start and pulse maximum times */
             double tatmax = *last_t_value + tfall * trise * log(trise/tfall) / (trise - tfall);
             cm_analog_set_perm_bkpt(*last_t_value);
             cm_analog_set_perm_bkpt(tatmax);
-            (*pulse_number)++;
-            if (*pulse_number > PORT_SIZE(out)) {
-                if (PARAM(perlim) == FALSE)
-                    *pulse_number = 1;
+        }
+    }
+    /* after initialization */
+    else {
+        /* individual scaling and delay */
+
+        if (have_scaled) {
+            /* */
+            int i;
+            allpulses = (pulse_info_t *) STATIC_VAR(pulses);
+            for (i = 0; i < ports; i++){
+                double tst = allpulses[i].start_time;
+                if (tcurr < tst)
+                    out = 0;
                 else
-                    *last_t_value = 1e12; /* stop any output */
+                    out = allpulses[i].iscaled * (exp(-(tcurr-tst)/tfall) - exp(-(tcurr-tst)/trise));
+                OUTPUT(out[i]) = out;
+                OUTPUT(mon) = out;
             }
         }
-        if (*pulse_number - 1 < PORT_SIZE(out)) {
-            OUTPUT(out[*pulse_number - 1]) = out;
-            OUTPUT(mon) = out;
+        /* equal pulses, period, and repetition */
+        else {
+            last_t_value = (double *) STATIC_VAR(last_t_value);
+            pulse_number = (int *) STATIC_VAR(pulse_number);
+            last_ctrl = (double *) STATIC_VAR(last_ctrl);
+
+            /* reset the pulse sequence, to start anew upon a rising ctrl */
+            if (*last_ctrl < ctrlthres && ctrl >= ctrlthres) {
+                *last_t_value = tcurr + tdelay;
+                *pulse_number = 1;
+            }
+            *last_ctrl = ctrl;
+
+            /* the double exponential current pulse function */
+            if (tcurr < *last_t_value)
+                out = 0;
+            else {
+                if (inull == 0) {
+                    double LETeff = let/cos(angle);
+                    double Qc = 1.035e-14 * LETeff * cdepth;
+                    inull = Qc / (tfall - trise);
+                }
+                out = inull * (exp(-(tcurr-*last_t_value)/tfall) - exp(-(tcurr-*last_t_value)/trise));
+            }
+            if (tcurr > *last_t_value + tperiod * 0.9) {
+                /* return some info */
+                cm_message_printf("port name: out, node pair no.: %d, \nnode names: %s, %s, pulse time: %e",
+                    *pulse_number, cm_get_node_name("out", *pulse_number - 1), 
+                    cm_get_neg_node_name("out", *pulse_number - 1), *last_t_value);
+                /* set the time for the next pulse */
+                *last_t_value = *last_t_value + tperiod;
+                /* set breakpoints at new pulse start and pulse maximum times */
+                double tatmax = *last_t_value + tfall * trise * log(trise/tfall) / (trise - tfall);
+                cm_analog_set_perm_bkpt(*last_t_value);
+                cm_analog_set_perm_bkpt(tatmax);
+                (*pulse_number)++;
+                if (*pulse_number > PORT_SIZE(out)) {
+                    if (PARAM(perlim) == FALSE)
+                        *pulse_number = 1;
+                    else
+                        *last_t_value = 1e12; /* stop any output */
+                }
+            }
+            if (*pulse_number - 1 < PORT_SIZE(out)) {
+                OUTPUT(out[*pulse_number - 1]) = out;
+                OUTPUT(mon) = out;
+            }
         }
     }
 }

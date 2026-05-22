@@ -110,6 +110,25 @@ Vector:             no                     no
 Vector_Bounds:      -                      -
 Null_Allowed:       yes                    yes
 
+
+PARAMETER_TABLE:
+
+Parameter_Name:     scaling                scdelay
+Description:        "scale the current"    "delay scaled pulses individually"
+Data_Type:          real                   real
+Default_Value:      1                      0
+Limits:             [0 1]                  [0, -]
+Vector:             yes                    yes
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    pulses
+Data_Type:          pointer
+Vector:             no
+Description:        "info on pulse for each port"
+
 STATIC_VAR_TABLE:
 
 Static_Var_Name:    last_t_value
