@@ -1,4 +1,4 @@
-* noise analysis with analogue code model
+* noise analysis with analogue code model, programmatic example
 
 aota inn 0 out newota
 *.model newota ota (gm=1 rout=1e12 rin=1Meg en=31n enk=100 in_noise=100u ink=10k incm=0 incmk=2k noise_programmatic=TRUE)
