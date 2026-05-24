@@ -1,0 +1,22 @@
+Noise in gain code model
+
+a1 in1 out1 amp1
+.model amp1 gain(in_offset=0.1 gain=5.0
++ out_offset=-0.01 noise_voltage=1u noise_corner=2k noise_exponent=2)
+
+a2 in1 out2 amp2
+.model amp2 gain(in_offset=0.1 gain=5.0
++ out_offset=-0.01 noise_voltage=2u noise_corner=1k noise_exponent=1.2)
+
+Vin1 in1 0 1 ac 1
+
+.control
+noise V(out1) vin1 dec 333 1 1e6 16
+print inoise_total onoise_total
+noise V(out2) vin1 dec 333 1 1e6 16
+print inoise_total onoise_total
+set xbrushwidth=3
+plot noise1.onoise_spectrum noise1.inoise_spectrum noise3.onoise_spectrum noise3.inoise_spectrum loglog
+.endc
+
+.end

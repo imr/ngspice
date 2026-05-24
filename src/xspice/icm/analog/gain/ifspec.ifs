@@ -53,3 +53,25 @@ Vector_Bounds:       -                   -           -
 Null_Allowed:       yes                 yes         yes
 
 
+PARAMETER_TABLE:
+
+Parameter_Name:     noise_voltage        noise_current
+Description:        "noise voltage"     "noise current"
+Data_Type:          real                real
+Default_Value:      0.0                 0.0
+Limits:             -                   -
+Vector:              no                 no
+Vector_Bounds:       -                  -
+Null_Allowed:       yes                 yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     noise_corner        noise_exponent
+Description:        "1/f corner freq"   "1/f exponent"
+Data_Type:          real                real
+Default_Value:      0.0                 1.0
+Limits:             -                   -
+Vector:              no                 no
+Vector_Bounds:       -                  -
+Null_Allowed:       yes                 yes
