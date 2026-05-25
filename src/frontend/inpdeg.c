@@ -2,7 +2,7 @@
 Read and parse the .agemodel parameters of the ngspice netlist
 Store them in a hash table ageparams
 
-Copyright Holger Vogt 2025
+Copyright Holger Vogt 2026
 License: Modified BSD
 */
 
@@ -443,7 +443,7 @@ static int add_degmodel(struct card* deck, double* result) {
 
     char* dtok, * gtok, * stok, * intok;
     static int numvm = 0, numvg = 0;
-    char* nline[3]; /* three new lines to be added to netlist */
+    char* nline[4]; /* three new lines to be added to netlist */
     char* curr_line = deck->line;
     intok = gettok_instance(&curr_line); /* skip instance name */
     dtok = gettok_node(&curr_line); /* get drain, gate, and source tokens */
@@ -469,20 +469,31 @@ static int add_degmodel(struct card* deck, double* result) {
         vts = TRUE;
     }
     /* gate voltage shift */
-    if (vts)
-//        nline[0] = tprintf("Vg%d intern_%s %s %e\n", numvg++, gtok, gtok, result[0]);
-        nline[0] = tprintf("Vg%s intern_%s %s %e\n", intok, gtok, gtok, result[0]);
-    else
-        nline[0] = NULL;
-    /* drain current reduction */
-    if (currd) {
-        /* current measurement at source side */
-        nline[1] = tprintf("Vm%s intern_%s %s 0\n", intok, stok, stok);
-        /* parallel drain current with CCCS */
-        nline[2] = tprintf("F%s %s %s Vm%s %e\n", intok, dtok, stok, intok, currdeg);
+    if (vts) {
+        /* no series voltage source, but resistor 1 Ohm with parallel current source
+           to achieve convergence */
+        nline[0] = tprintf("ig%s intern_%s intern_%s %e\n", intok, gtok, gtok, result[0]);
+        nline[1] = tprintf("rp%s intern_%s %s 1\n", intok, gtok, gtok);
     }
     else
-        nline[1] = nline[2] = NULL;
+        nline[0] = nline[1] = NULL;
+
+    /* drain current reduction */
+    if (currd) {
+#if (0)
+        /* current measurement at source side */
+        nline[2] = tprintf("vm%s intern_%s %s 0\n", intok, stok, stok);
+        /* parallel drain current with CCCS */
+        nline[3] = tprintf("f%s %s %s vm%s %e\n", intok, dtok, stok, intok, currdeg);
+#else
+        /* current measurement at source side with 1 Ohm series resistor */
+        nline[2] = tprintf("rm%s intern_%s %s 1\n", intok, stok, stok);
+        /* parallel drain current with B source */
+        nline[3] = tprintf("b%s %s %s i=v(intern_%s, %s) * %e\n", intok, dtok, stok, stok, stok, currdeg);
+#endif
+    }
+    else
+        nline[2] = nline[3] = NULL;
 
     /* modify the instance line */
     char* instline;
@@ -499,7 +510,7 @@ static int add_degmodel(struct card* deck, double* result) {
     }
     /* attach to the netlist */
     int ii;
-    for (ii = 0; ii < 3; ii++) {
+    for (ii = 0; ii < 4; ii++) {
         if (nline[ii])
             insert_new_line(deck, nline[ii], deck->linenum + 1, deck->linenum_orig, deck->linesource);
     }
