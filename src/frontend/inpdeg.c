@@ -503,6 +503,8 @@ static int add_degmodel(struct card* deck, double* result) {
         instline = tprintf("%s %s %s intern_%s %s\n", intok, dtok, gtok, stok, curr_line);
     else if (!currd && vts)
         instline = tprintf("%s %s intern_%s %s %s\n", intok, dtok, gtok, stok, curr_line);
+    else
+        goto exfunc; /* no change at all */
 
     if (currd || vts) {
         tfree(deck->line);
@@ -514,6 +516,9 @@ static int add_degmodel(struct card* deck, double* result) {
         if (nline[ii])
             insert_new_line(deck, nline[ii], deck->linenum + 1, deck->linenum_orig, deck->linesource);
     }
+
+exfunc:
+
     tfree(intok);
     tfree(dtok);
     tfree(gtok);
