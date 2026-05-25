@@ -941,10 +941,10 @@ without storing anything. The code model uses this index to set
 NOISE_DENSITY(index).
 */
 int
-cm_noise_add_source(const char *name, int conn_index, int port_index,
-                    Mif_Noise_Src_Type_t type)
+cm_noise_add_source(const char* name, int conn_index, int port_index,
+    Mif_Noise_Src_Type_t type)
 {
-    Mif_Noise_Data_t *nd;
+    Mif_Noise_Data_t* nd;
     int idx;
 
     nd = g_mif_noise_cm_data.noise;
@@ -965,7 +965,7 @@ cm_noise_add_source(const char *name, int conn_index, int port_index,
      * Always store the source to keep indices aligned between N_OPEN and N_CALC.
      * Invalid sources get conn_index = -1 so MIFnoise skips them during evaluation. */
     {
-        MIFinstance *inst = g_mif_info.instance;
+        MIFinstance* inst = g_mif_info.instance;
         Mif_Boolean_t valid = MIF_TRUE;
 
         if (conn_index < 0 || conn_index >= inst->num_conn ||
@@ -973,7 +973,7 @@ cm_noise_add_source(const char *name, int conn_index, int port_index,
             port_index < 0 || port_index >= inst->conn[conn_index]->size) {
 
             fprintf(stderr, "cm_noise_add_source: invalid conn %d port %d for '%s'\n",
-                    conn_index, port_index, name);
+                conn_index, port_index, name);
             valid = MIF_FALSE;
         }
 
@@ -984,10 +984,10 @@ cm_noise_add_source(const char *name, int conn_index, int port_index,
     /* Grow arrays if needed */
     if (nd->num_prog_srcs >= nd->max_prog_srcs) {
         int new_max = (nd->max_prog_srcs == 0) ? 8 : nd->max_prog_srcs * 2;
-        Mif_Noise_Src_Type_t *t = TREALLOC(Mif_Noise_Src_Type_t, nd->prog_types, new_max);
-        int *c = TREALLOC(int, nd->prog_conn, new_max);
-        int *p = TREALLOC(int, nd->prog_port, new_max);
-        char **n = TREALLOC(char *, nd->prog_names, new_max);
+        Mif_Noise_Src_Type_t* t = TREALLOC(Mif_Noise_Src_Type_t, nd->prog_types, new_max);
+        int* c = TREALLOC(int, nd->prog_conn, new_max);
+        int* p = TREALLOC(int, nd->prog_port, new_max);
+        char** n = TREALLOC(char*, nd->prog_names, new_max);
 
         if (!t || !c || !p || !n)
             return -1;
@@ -1006,6 +1006,7 @@ cm_noise_add_source(const char *name, int conn_index, int port_index,
     nd->num_prog_srcs++;
 
     return idx;
+}
 
 /*
 cm_get_deg_params()
