@@ -194,7 +194,7 @@ void cm_seegen(ARGS)  /* structure holding parms,
             cm_cexit(1);
         }
 
-        if (5 * (trise + tfall) > tperiod) {
+        if (!have_scaled && 5 * (trise + tfall) > tperiod) {
             cm_message_send("\nError: tperiod should be at least 5 times the sum of trise and tfall\n");
             cm_cexit(1);
         }
