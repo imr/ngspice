@@ -1,0 +1,7 @@
+This branch (jfisher/osdi-fixes) is for testing verilog-a. It's really just an ergonomic fix that I needed for testing Verilog-a.
+
+It adds 2 things. An option for the old pre_osdi syntax (I had a load of control files that used this and it was easier to just add it here - it seems to do no harm) and an option for case preservation in "set sourcepath" My sourcepath was  /projects/VA_test/ in a linux environment. This was being turned into va_test so any subsequent source or osdi lookup relative to sourcepath would fail.
+
+Adding the case preservation change to the master, in the long term would be a good thing in my opinion.
+
+Justin.
