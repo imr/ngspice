@@ -864,54 +864,57 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                                 *(ckt->CKTstate0 + here->VBICqxf2)     ;
                         }
                     }
-                    error = NIintegrate(ckt,&geq,&ceq,Qbe_Vbei,here->VBICqbe);
-                    if(error) return(error);
-                    Ibe_Vbei = Ibe_Vbei + geq;
-                    Ibe = Ibe + *(ckt->CKTstate0 + here->VBICcqbe);
+                    /* no integration, if dc sweep, but keep evaluating capacitances */
+                    if (!(ckt->CKTmode& MODEDCTRANCURVE)) {
+                        error = NIintegrate(ckt, &geq, &ceq, Qbe_Vbei, here->VBICqbe);
+                        if (error) return(error);
+                        Ibe_Vbei = Ibe_Vbei + geq;
+                        Ibe = Ibe + *(ckt->CKTstate0 + here->VBICcqbe);
 
-                    error = NIintegrate(ckt,&geq,&ceq,Qbex_Vbex,here->VBICqbex);
-                    if(error) return(error);
-                    Ibex_Vbex = Ibex_Vbex + geq;
-                    Ibex = Ibex + *(ckt->CKTstate0 + here->VBICcqbex);
+                        error = NIintegrate(ckt, &geq, &ceq, Qbex_Vbex, here->VBICqbex);
+                        if (error) return(error);
+                        Ibex_Vbex = Ibex_Vbex + geq;
+                        Ibex = Ibex + *(ckt->CKTstate0 + here->VBICcqbex);
 
-                    error = NIintegrate(ckt,&geq,&ceq,Qbc_Vbci,here->VBICqbc);
-                    if(error) return(error);
-                    Ibc_Vbci = Ibc_Vbci + geq;
-                    Ibc = Ibc + *(ckt->CKTstate0 + here->VBICcqbc);
+                        error = NIintegrate(ckt, &geq, &ceq, Qbc_Vbci, here->VBICqbc);
+                        if (error) return(error);
+                        Ibc_Vbci = Ibc_Vbci + geq;
+                        Ibc = Ibc + *(ckt->CKTstate0 + here->VBICcqbc);
 
-                    error = NIintegrate(ckt,&geq,&ceq,Qbcx_Vbcx,here->VBICqbcx);
-                    if(error) return(error);
-                    gbcx = geq;
-                    cbcx = *(ckt->CKTstate0 + here->VBICcqbcx);
+                        error = NIintegrate(ckt, &geq, &ceq, Qbcx_Vbcx, here->VBICqbcx);
+                        if (error) return(error);
+                        gbcx = geq;
+                        cbcx = *(ckt->CKTstate0 + here->VBICcqbcx);
 
-                    error = NIintegrate(ckt,&geq,&ceq,Qbep_Vbep,here->VBICqbep);
-                    if(error) return(error);
-                    Ibep_Vbep = Ibep_Vbep + geq;
-                    Ibep = Ibep + *(ckt->CKTstate0 + here->VBICcqbep);
+                        error = NIintegrate(ckt, &geq, &ceq, Qbep_Vbep, here->VBICqbep);
+                        if (error) return(error);
+                        Ibep_Vbep = Ibep_Vbep + geq;
+                        Ibep = Ibep + *(ckt->CKTstate0 + here->VBICcqbep);
 
-                    error = NIintegrate(ckt,&geq,&ceq,Qbcp_Vbcp,here->VBICqbcp);
-                    if(error) return(error);
-                    Ibcp_Vbcp = Ibcp_Vbcp + geq;
-                    Ibcp = Ibcp + *(ckt->CKTstate0 + here->VBICcqbcp);
+                        error = NIintegrate(ckt, &geq, &ceq, Qbcp_Vbcp, here->VBICqbcp);
+                        if (error) return(error);
+                        Ibcp_Vbcp = Ibcp_Vbcp + geq;
+                        Ibcp = Ibcp + *(ckt->CKTstate0 + here->VBICcqbcp);
 
-                    if (here->VBIC_selfheat)
-                    {
-                        error = NIintegrate(ckt,&geq,&ceq,Qcth_Vrth,here->VBICqcth);
-                        if(error) return(error);
-                        Icth_Vrth = geq;
-                        Icth = *(ckt->CKTstate0 + here->VBICcqcth);
-                    }
-                    if (here->VBIC_excessPhase) {
-                        //Qxf1
-                        error = NIintegrate(ckt,&geq,&ceq,Qxf1_Vxf1,here->VBICqxf1);
-                        if(error) return(error);
-                        Ixf1_Vxf1 += geq;
-                        Ixf1 += *(ckt->CKTstate0 + here->VBICcqxf1);
-                        //Qxf2
-                        error = NIintegrate(ckt,&geq,&ceq,Qxf2_Vxf2,here->VBICqxf2);
-                        if(error) return(error);
-                        Ixf2_Vxf2 += geq;
-                        Ixf2 += *(ckt->CKTstate0 + here->VBICcqxf2);
+                        if (here->VBIC_selfheat)
+                        {
+                            error = NIintegrate(ckt, &geq, &ceq, Qcth_Vrth, here->VBICqcth);
+                            if (error) return(error);
+                            Icth_Vrth = geq;
+                            Icth = *(ckt->CKTstate0 + here->VBICcqcth);
+                        }
+                        if (here->VBIC_excessPhase) {
+                            //Qxf1
+                            error = NIintegrate(ckt, &geq, &ceq, Qxf1_Vxf1, here->VBICqxf1);
+                            if (error) return(error);
+                            Ixf1_Vxf1 += geq;
+                            Ixf1 += *(ckt->CKTstate0 + here->VBICcqxf1);
+                            //Qxf2
+                            error = NIintegrate(ckt, &geq, &ceq, Qxf2_Vxf2, here->VBICqxf2);
+                            if (error) return(error);
+                            Ixf2_Vxf2 += geq;
+                            Ixf2 += *(ckt->CKTstate0 + here->VBICcqxf2);
+                        }
                     }
 
                     if(ckt->CKTmode & MODEINITTRAN) {

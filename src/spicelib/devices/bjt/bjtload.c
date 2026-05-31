@@ -797,21 +797,24 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                         *(ckt->CKTstate1 + here->BJTqbcx) =
                                 *(ckt->CKTstate0 + here->BJTqbcx) ;
                     }
-                    error = NIintegrate(ckt,&geq,&ceq,capbe,here->BJTqbe);
-                    if(error) return(error);
-                    geqcb=geqcb*ckt->CKTag[0];
-                    gpi=gpi+geq;
-                    cb=cb+*(ckt->CKTstate0 + here->BJTcqbe);
-                    error = NIintegrate(ckt,&geq,&ceq,capbc,here->BJTqbc);
-                    if(error) return(error);
-                    gmu=gmu+geq;
-                    cb=cb+*(ckt->CKTstate0 + here->BJTcqbc);
-                    cc=cc-*(ckt->CKTstate0 + here->BJTcqbc);
-                    if (model->BJTintCollResistGiven) {
-                        error = NIintegrate(ckt,&geq,&ceq,Qbcx_Vbcx,here->BJTqbcx);
-                        if(error) return(error);
-                        gbcx = geq;
-                        cbcx = *(ckt->CKTstate0 + here->BJTcqbcx);
+                    /* no integration, if dc sweep, but keep evaluating capacitances */
+                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
+                        error = NIintegrate(ckt, &geq, &ceq, capbe, here->BJTqbe);
+                        if (error) return(error);
+                        geqcb = geqcb * ckt->CKTag[0];
+                        gpi = gpi + geq;
+                        cb = cb + *(ckt->CKTstate0 + here->BJTcqbe);
+                        error = NIintegrate(ckt, &geq, &ceq, capbc, here->BJTqbc);
+                        if (error) return(error);
+                        gmu = gmu + geq;
+                        cb = cb + *(ckt->CKTstate0 + here->BJTcqbc);
+                        cc = cc - *(ckt->CKTstate0 + here->BJTcqbc);
+                        if (model->BJTintCollResistGiven) {
+                            error = NIintegrate(ckt, &geq, &ceq, Qbcx_Vbcx, here->BJTqbcx);
+                            if (error) return(error);
+                            gbcx = geq;
+                            cbcx = *(ckt->CKTstate0 + here->BJTcqbcx);
+                        }
                     }
                     if(ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->BJTcqbe) =
