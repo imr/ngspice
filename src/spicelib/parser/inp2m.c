@@ -137,7 +137,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         thismodel->INPmodType != INPtypelook("HiSIM2") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV1") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV2") &&
-        thismodel->INPmodType != INPtypelook("VDMOS"))
+        thismodel->INPmodType != INPtypelook("VDMOS") &&
+        thismodel->INPmodType != INPtypelook("bsimbulk"))
     {
         LITERR ("incorrect model type");
         return;
