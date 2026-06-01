@@ -692,14 +692,15 @@ next1:
                                     *(ckt->CKTstate0 + here->DIOsrcapCurrent);
                             }
                         }
-                    }
-                    if (selfheat)
-                    {
-                        error = NIintegrate(ckt, &gcTt, &ceqqth, model->DIOcth0, here->DIOqth);
-                        if (error) return(error);
-                        if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->DIOcqth) =
+
+                        if (selfheat)
+                        {
+                            error = NIintegrate(ckt, &gcTt, &ceqqth, model->DIOcth0, here->DIOqth);
+                            if (error) return(error);
+                            if (ckt->CKTmode & MODEINITTRAN) {
+                                *(ckt->CKTstate1 + here->DIOcqth) =
                                     *(ckt->CKTstate0 + here->DIOcqth);
+                            }
                         }
                     }
                 }
