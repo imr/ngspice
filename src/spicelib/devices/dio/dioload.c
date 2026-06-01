@@ -658,36 +658,39 @@ next1:
                             *(ckt->CKTstate1 + here->DIOcapChargeSW) =
                                     *(ckt->CKTstate0 + here->DIOcapChargeSW);
                     }
-                    error = NIintegrate(ckt,&geq,&ceq,capd,here->DIOcapCharge);
-                    if(error) return(error);
-                    gd=gd+geq;
-                    cd=cd+*(ckt->CKTstate0 + here->DIOcapCurrent);
-                    if (model->DIOresistSWGiven) {
-                        error = NIintegrate(ckt,&geq,&ceq,capdsw,here->DIOcapChargeSW);
-                        if(error) return(error);
-                        gdsw=gdsw+geq;
-                        cdsw=cdsw+*(ckt->CKTstate0 + here->DIOcapCurrentSW);
-                    }
-                    if (ckt->CKTmode & MODEINITTRAN) {
-                        *(ckt->CKTstate1 + here->DIOcapCurrent) =
-                                *(ckt->CKTstate0 + here->DIOcapCurrent);
-                        if (model->DIOresistSWGiven)
-                            *(ckt->CKTstate1 + here->DIOcapCurrentSW) =
-                                    *(ckt->CKTstate0 + here->DIOcapCurrentSW);
-                    }
-                    if (revrec) {
-                        /* soft recovery subcircuit */
-                        if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->DIOsrcapCharge) =
-                                    *(ckt->CKTstate0 + here->DIOsrcapCharge);
+                    /* no integration, if dc sweep, but keep evaluating capacitances */
+                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
+                        error = NIintegrate(ckt, &geq, &ceq, capd, here->DIOcapCharge);
+                        if (error) return(error);
+                        gd = gd + geq;
+                        cd = cd + *(ckt->CKTstate0 + here->DIOcapCurrent);
+                        if (model->DIOresistSWGiven) {
+                            error = NIintegrate(ckt, &geq, &ceq, capdsw, here->DIOcapChargeSW);
+                            if (error) return(error);
+                            gdsw = gdsw + geq;
+                            cdsw = cdsw + *(ckt->CKTstate0 + here->DIOcapCurrentSW);
                         }
-                        error = NIintegrate(ckt,&geq,&ceq,capsr,here->DIOsrcapCharge);
-                        if(error) return(error);
-                        gqcsr = geq;
-                        cqcsr = *(ckt->CKTstate0 + here->DIOsrcapCurrent);
                         if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->DIOsrcapCurrent) =
+                            *(ckt->CKTstate1 + here->DIOcapCurrent) =
+                                *(ckt->CKTstate0 + here->DIOcapCurrent);
+                            if (model->DIOresistSWGiven)
+                                *(ckt->CKTstate1 + here->DIOcapCurrentSW) =
+                                *(ckt->CKTstate0 + here->DIOcapCurrentSW);
+                        }
+                        if (revrec) {
+                            /* soft recovery subcircuit */
+                            if (ckt->CKTmode & MODEINITTRAN) {
+                                *(ckt->CKTstate1 + here->DIOsrcapCharge) =
+                                    *(ckt->CKTstate0 + here->DIOsrcapCharge);
+                            }
+                            error = NIintegrate(ckt, &geq, &ceq, capsr, here->DIOsrcapCharge);
+                            if (error) return(error);
+                            gqcsr = geq;
+                            cqcsr = *(ckt->CKTstate0 + here->DIOsrcapCurrent);
+                            if (ckt->CKTmode & MODEINITTRAN) {
+                                *(ckt->CKTstate1 + here->DIOsrcapCurrent) =
                                     *(ckt->CKTstate0 + here->DIOsrcapCurrent);
+                            }
                         }
                     }
                     if (selfheat)
