@@ -31,6 +31,12 @@ model_numnodes(int type)
         return 6;
     }
 
+    if (type == INPtypelook("bsimbulk") ||      /* 5 ; (d,g,s,b,t) */
+        type == INPtypelook("bsimcmg_va"))      /* 5 ; (d,g,s,e,t) */
+    {
+        return 5;
+    }
+
     if (type == INPtypelook("VDMOS"))       /* 3 ; VDMOSnames */
     {
         return 5;
@@ -138,7 +144,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         thismodel->INPmodType != INPtypelook("HiSIMHV1") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV2") &&
         thismodel->INPmodType != INPtypelook("VDMOS") &&
-        thismodel->INPmodType != INPtypelook("bsimbulk"))
+        thismodel->INPmodType != INPtypelook("bsimbulk") &&
+        thismodel->INPmodType != INPtypelook("bsimcmg_va"))
     {
         LITERR ("incorrect model type");
         return;
