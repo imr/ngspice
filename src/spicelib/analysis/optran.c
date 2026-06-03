@@ -484,6 +484,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op finished successfully");
         ckt->CKTmaxStep = prevmaxstepsize;
         ckt->CKTstep = prevstepsize;
+        ckt->CKTag[0] = ckt->CKTag[1] = 0.;
         return(OK);
     }
 
