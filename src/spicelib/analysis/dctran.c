@@ -449,7 +449,6 @@ DCtran(CKTcircuit *ckt,
             fprintf(stdout, "\nNote: Autostop after %e s, all measurement conditions are fulfilled.\n", ckt->CKTtime);
 
         /* Final return from tran upon success */
-        ckt->CKTag[0] = ckt->CKTag[1] = 0.;
         return(OK);
     }
     if(SPfrontEnd->IFpauseTest()) {
@@ -908,7 +907,6 @@ resume:
                 SPfrontEnd->OUTendPlot(job->TRANplot);
                 job->TRANplot = NULL;
                 UPDATE_STATS(0);
-                ckt->CKTag[0] = ckt->CKTag[1] = 0.;
                 /* return upon convergence failure */
                 return(E_TIMESTEP);
             }

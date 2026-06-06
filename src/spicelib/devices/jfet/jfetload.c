@@ -452,24 +452,21 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate1 + here->JFETqgd) =
                                 *(ckt->CKTstate0 + here->JFETqgd);
                     }
-                    /* no integration, if dc sweep, but keep evaluating capacitances */
-                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
-                        error = NIintegrate(ckt, &geq, &ceq, capgs, here->JFETqgs);
-                        if (error) return(error);
-                        ggs = ggs + geq;
-                        cg = cg + *(ckt->CKTstate0 + here->JFETcqgs);
-                        error = NIintegrate(ckt, &geq, &ceq, capgd, here->JFETqgd);
-                        if (error) return(error);
-                        ggd = ggd + geq;
-                        cg = cg + *(ckt->CKTstate0 + here->JFETcqgd);
-                        cd = cd - *(ckt->CKTstate0 + here->JFETcqgd);
-                        cgd = cgd + *(ckt->CKTstate0 + here->JFETcqgd);
-                        if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->JFETcqgs) =
+                    error = NIintegrate(ckt,&geq,&ceq,capgs,here->JFETqgs);
+                    if(error) return(error);
+                    ggs = ggs + geq;
+                    cg = cg + *(ckt->CKTstate0 + here->JFETcqgs);
+                    error = NIintegrate(ckt,&geq,&ceq,capgd,here->JFETqgd);
+                    if(error) return(error);
+                    ggd = ggd + geq;
+                    cg = cg + *(ckt->CKTstate0 + here->JFETcqgd);
+                    cd = cd - *(ckt->CKTstate0 + here->JFETcqgd);
+                    cgd = cgd + *(ckt->CKTstate0 + here->JFETcqgd);
+                    if (ckt->CKTmode & MODEINITTRAN) {
+                        *(ckt->CKTstate1 + here->JFETcqgs) =
                                 *(ckt->CKTstate0 + here->JFETcqgs);
-                            *(ckt->CKTstate1 + here->JFETcqgd) =
+                        *(ckt->CKTstate1 + here->JFETcqgd) =
                                 *(ckt->CKTstate0 + here->JFETcqgd);
-                        }
                     }
                 }
             }

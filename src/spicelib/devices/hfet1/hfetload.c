@@ -313,7 +313,7 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
              *   compute equivalent drain current source 
              */
             cd = cdrain - cgd;
-            if ( (ckt->CKTmode & (MODEDCTRANCURVE|MODETRAN|MODEINITSMSIG)) ||
+            if ( (ckt->CKTmode & (MODETRAN|MODEINITSMSIG)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ){
                 /* 
                  *    charge storage elements 
@@ -357,31 +357,28 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate1 + here->HFETAqds) =
                                 *(ckt->CKTstate0 + here->HFETAqds);        
                     }
-                    /* no integration, if dc sweep, but keep evaluating capacitances */
-                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
-                        error = NIintegrate(ckt, &geq, &ceq, capgs, here->HFETAqgs);
-                        if (error) return(error);
-                        ggspp = geq;
-                        cgspp = *(ckt->CKTstate0 + here->HFETAcqgs);
-                        cg = cg + cgspp;
-                        error = NIintegrate(ckt, &geq, &ceq, capgd, here->HFETAqgd);
-                        if (error) return(error);
-                        ggdpp = geq;
-                        cgdpp = *(ckt->CKTstate0 + here->HFETAcqgd);
-                        cg = cg + cgdpp;
-                        cd = cd - cgdpp;
-                        error = NIintegrate(ckt, &geq, &ceq, CDS, here->HFETAqds);
-                        if (error) return(error);
-                        gds += geq;
-                        cd += *(ckt->CKTstate0 + here->HFETAcqds);
-                        if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->HFETAcqgs) =
+                    error = NIintegrate(ckt,&geq,&ceq,capgs,here->HFETAqgs);
+                    if(error) return(error);
+                    ggspp = geq;
+                    cgspp = *(ckt->CKTstate0 + here->HFETAcqgs);
+                    cg = cg + cgspp;
+                    error = NIintegrate(ckt,&geq,&ceq,capgd,here->HFETAqgd);
+                    if(error) return(error);
+                    ggdpp = geq;
+                    cgdpp = *(ckt->CKTstate0 + here->HFETAcqgd);
+                    cg = cg + cgdpp;
+                    cd = cd - cgdpp;
+                    error = NIintegrate(ckt,&geq,&ceq,CDS,here->HFETAqds);
+                    if(error) return(error);
+                    gds += geq;
+                    cd  += *(ckt->CKTstate0 + here->HFETAcqds);
+                    if (ckt->CKTmode & MODEINITTRAN) {
+                        *(ckt->CKTstate1 + here->HFETAcqgs) =
                                 *(ckt->CKTstate0 + here->HFETAcqgs);
-                            *(ckt->CKTstate1 + here->HFETAcqgd) =
+                        *(ckt->CKTstate1 + here->HFETAcqgd) =
                                 *(ckt->CKTstate0 + here->HFETAcqgd);
-                            *(ckt->CKTstate1 + here->HFETAcqds) =
+                        *(ckt->CKTstate1 + here->HFETAcqds) =
                                 *(ckt->CKTstate0 + here->HFETAcqds);
-                        }
                     }
                 }
             }

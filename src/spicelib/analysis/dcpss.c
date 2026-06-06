@@ -1015,7 +1015,6 @@ shootingexit:
             FREE (err_conv) ;
             FREE (psstimes) ;
             FREE (pssvalues) ;
-            ckt->CKTag[0] = ckt->CKTag[1] = 0.;
             return (OK) ;
         }
     }

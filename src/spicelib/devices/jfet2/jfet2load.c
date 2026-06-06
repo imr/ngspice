@@ -211,7 +211,7 @@ JFET2load(GENmodel *inModel, CKTcircuit *ckt)
             cg = cg + cgd;
             cd = cd - cgd;
 
-            if ( (ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG) ) ||
+            if ( (ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG) ) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ){
                 /* 
                  *    charge storage elements 
@@ -244,29 +244,26 @@ JFET2load(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate1 + here->JFET2qds) =
                                 *(ckt->CKTstate0 + here->JFET2qds);
                     }
-                    /* no integration, if dc sweep, but keep evaluating capacitances */
-                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
-                        error = NIintegrate(ckt, &geq, &ceq, capgs, here->JFET2qgs);
-                        if (error) return(error);
-                        ggs = ggs + geq;
-                        cg = cg + *(ckt->CKTstate0 + here->JFET2cqgs);
-                        error = NIintegrate(ckt, &geq, &ceq, capgd, here->JFET2qgd);
-                        if (error) return(error);
-                        ggd = ggd + geq;
-                        cg = cg + *(ckt->CKTstate0 + here->JFET2cqgd);
-                        cd = cd - *(ckt->CKTstate0 + here->JFET2cqgd);
-                        cgd = cgd + *(ckt->CKTstate0 + here->JFET2cqgd);
-                        error = NIintegrate(ckt, &geq, &ceq, capds, here->JFET2qds);
-                        cd = cd + *(ckt->CKTstate0 + here->JFET2cqds);
-                        if (error) return(error);
-                        if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->JFET2cqgs) =
+                    error = NIintegrate(ckt,&geq,&ceq,capgs,here->JFET2qgs);
+                    if(error) return(error);
+                    ggs = ggs + geq;
+                    cg = cg + *(ckt->CKTstate0 + here->JFET2cqgs);
+                    error = NIintegrate(ckt,&geq,&ceq,capgd,here->JFET2qgd);
+                    if(error) return(error);
+                    ggd = ggd + geq;
+                    cg = cg + *(ckt->CKTstate0 + here->JFET2cqgd);
+                    cd = cd - *(ckt->CKTstate0 + here->JFET2cqgd);
+                    cgd = cgd + *(ckt->CKTstate0 + here->JFET2cqgd);
+                    error = NIintegrate(ckt,&geq,&ceq,capds,here->JFET2qds);
+                    cd = cd + *(ckt->CKTstate0 + here->JFET2cqds);
+                    if(error) return(error);
+                    if (ckt->CKTmode & MODEINITTRAN) {
+                        *(ckt->CKTstate1 + here->JFET2cqgs) =
                                 *(ckt->CKTstate0 + here->JFET2cqgs);
-                            *(ckt->CKTstate1 + here->JFET2cqgd) =
+                        *(ckt->CKTstate1 + here->JFET2cqgd) =
                                 *(ckt->CKTstate0 + here->JFET2cqgd);
-                            *(ckt->CKTstate1 + here->JFET2cqds) =
+                        *(ckt->CKTstate1 + here->JFET2cqds) =
                                 *(ckt->CKTstate0 + here->JFET2cqds);
-                        }
                     }
                 }
             }

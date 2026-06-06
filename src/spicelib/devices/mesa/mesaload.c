@@ -326,7 +326,7 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
              *   compute equivalent drain current source 
              */
             cd = cdrain - cgd;
-            if ( (ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEINITSMSIG)) ||
+            if ( (ckt->CKTmode & (MODETRAN|MODEINITSMSIG)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ){
                 /* 
                  *    charge storage elements 
@@ -362,25 +362,22 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate1 + here->MESAqgd) =
                                 *(ckt->CKTstate0 + here->MESAqgd);
                     }
-                    /* no integration, if dc sweep, but keep evaluating capacitances */
-                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
-                        error = NIintegrate(ckt, &geq, &ceq, capgs, here->MESAqgs);
-                        if (error) return(error);
-                        ggspp = geq;
-                        cgspp = *(ckt->CKTstate0 + here->MESAcqgs);
-                        cg = cg + cgspp;
-                        error = NIintegrate(ckt, &geq, &ceq, capgd, here->MESAqgd);
-                        if (error) return(error);
-                        ggdpp = geq;
-                        cgdpp = *(ckt->CKTstate0 + here->MESAcqgd);
-                        cg = cg + cgdpp;
-                        cd = cd - cgdpp;
-                        if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->MESAcqgs) =
+                    error = NIintegrate(ckt,&geq,&ceq,capgs,here->MESAqgs);
+                    if(error) return(error);
+                    ggspp = geq;
+                    cgspp = *(ckt->CKTstate0 + here->MESAcqgs);
+                    cg = cg + cgspp;
+                    error = NIintegrate(ckt,&geq,&ceq,capgd,here->MESAqgd);
+                    if(error) return(error);
+                    ggdpp = geq;
+                    cgdpp = *(ckt->CKTstate0 + here->MESAcqgd);
+                    cg = cg + cgdpp;
+                    cd = cd - cgdpp;
+                    if (ckt->CKTmode & MODEINITTRAN) {
+                        *(ckt->CKTstate1 + here->MESAcqgs) =
                                 *(ckt->CKTstate0 + here->MESAcqgs);
-                            *(ckt->CKTstate1 + here->MESAcqgd) =
+                        *(ckt->CKTstate1 + here->MESAcqgd) =
                                 *(ckt->CKTstate0 + here->MESAcqgd);
-                        }
                     }
                 }
             }
