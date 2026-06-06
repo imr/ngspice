@@ -218,7 +218,7 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
         capgd = temp;
       }
       cd = cdrain - cgd;
-      if((ckt->CKTmode & (MODETRAN|MODEINITSMSIG)) || ((ckt->CKTmode & MODETRANOP) &&
+      if((ckt->CKTmode & (MODEDCTRANCURVE|MODETRAN|MODEINITSMSIG)) || ((ckt->CKTmode & MODETRANOP) &&
         (ckt->CKTmode & MODEUIC)) ){
         /*    charge storage elements */ 
         vgs1 = *(ckt->CKTstate1 + here->HFET2vgs);
@@ -248,19 +248,22 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate1 + here->HFET2qgs) = *(ckt->CKTstate0 + here->HFET2qgs);
             *(ckt->CKTstate1 + here->HFET2qgd) = *(ckt->CKTstate0 + here->HFET2qgd);
           }
-          error = NIintegrate(ckt,&geq,&ceq,capgs,here->HFET2qgs);
-          if(error) return(error);
-          ggs = ggs + geq;
-          cg = cg + *(ckt->CKTstate0 + here->HFET2cqgs);
-          error = NIintegrate(ckt,&geq,&ceq,capgd,here->HFET2qgd);
-          if(error) return(error);
-          ggd = ggd + geq;
-          cg = cg + *(ckt->CKTstate0 + here->HFET2cqgd);
-          cd = cd - *(ckt->CKTstate0 + here->HFET2cqgd);
-          cgd = cgd + *(ckt->CKTstate0 + here->HFET2cqgd);
-          if (ckt->CKTmode & MODEINITTRAN) {
-            *(ckt->CKTstate1 + here->HFET2cqgs) = *(ckt->CKTstate0 + here->HFET2cqgs);
-            *(ckt->CKTstate1 + here->HFET2cqgd) = *(ckt->CKTstate0 + here->HFET2cqgd);
+          /* no integration, if dc sweep, but keep evaluating capacitances */
+          if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
+              error = NIintegrate(ckt, &geq, &ceq, capgs, here->HFET2qgs);
+              if (error) return(error);
+              ggs = ggs + geq;
+              cg = cg + *(ckt->CKTstate0 + here->HFET2cqgs);
+              error = NIintegrate(ckt, &geq, &ceq, capgd, here->HFET2qgd);
+              if (error) return(error);
+              ggd = ggd + geq;
+              cg = cg + *(ckt->CKTstate0 + here->HFET2cqgd);
+              cd = cd - *(ckt->CKTstate0 + here->HFET2cqgd);
+              cgd = cgd + *(ckt->CKTstate0 + here->HFET2cqgd);
+              if (ckt->CKTmode & MODEINITTRAN) {
+                  *(ckt->CKTstate1 + here->HFET2cqgs) = *(ckt->CKTstate0 + here->HFET2cqgs);
+                  *(ckt->CKTstate1 + here->HFET2cqgd) = *(ckt->CKTstate0 + here->HFET2cqgd);
+              }
           }
         }
       }
