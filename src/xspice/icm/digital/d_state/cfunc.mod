@@ -1411,6 +1411,7 @@ static int cm_read_state_file(FILE *state_file, State_Table_t *table)
                         string_type = CONTINUATION;
                     }
                     else { /* Number of tokens is incorrect */
+                        cm_message_printf("\nError:\n    Number of tokens is incorrect in line\n    %s\n", temp);
                         return 1;
                     }
                 }
@@ -1464,8 +1465,9 @@ static int cm_read_state_file(FILE *state_file, State_Table_t *table)
                  
                                 /* if this bit was not recognized, return with an error  */
                                 if (12 == bit_value) {
+                                    cm_message_printf("\nError:\n    Token %s is unknown in line\n    %s\n", token, temp);
                                     free(token);
-                                    return 1;                            
+                                    return 1;
                                 }
                                 else {
                                     /* need to store this value in the bits[] array */
@@ -1487,8 +1489,9 @@ static int cm_read_state_file(FILE *state_file, State_Table_t *table)
                      
                                     /* if this bit was not recognized, return with an error  */
                                     if (3 == bit_value) {
+                                        cm_message_printf("Bit value %s is unknown in line\n   %s\n", token, temp);
                                         free(token);
-                                        return 1;                            
+                                        return 1;
                                     }
                                     else {
                                         /* need to store this value in the inputs[] array */
@@ -1512,31 +1515,31 @@ static int cm_read_state_file(FILE *state_file, State_Table_t *table)
                                 }
                             }
                         }
-                        free(token);       
+                        free(token);
                     }
                 }
                 else { /**** continuation type loop ****/
                     /* set state value to previous state value */
 
                     table->state[i] = table->state[i - 1];
-                                                         
+
                     /* set bits values to previous bits values */
                     for (j = 0; j < table->num_outputs; j++) {
-        
+
                         /*** Store this bit value ***/
-    
+
                         cm_store_bits_value(table, i, j, bit_value);
                     }
-    
+
                     for (j=0; j<(2 + table->num_inputs); j++) {
-            
+
                         token = CNVget_token(&s, &type);
 
                         if(!token)
                             return 1;
 
                         if ( j < table->num_inputs ) {
-    
+
                             /* preset this bit location */
                             bit_value = 3;
              
@@ -1692,10 +1695,7 @@ void cm_d_state(ARGS)
         static char *open_error =
 	    "\nError:\n  D_STATE: failed to open state file.\n";
         static char *loading_error =
-	    "\nError:\n  D_STATE: state file was not read successfully.\n  "
-	    "The most common cause of this problem is a\n  "
-	    "trailing blank line in the state.in file.\n";
-
+	    "\nError:\n  D_STATE: state file was not read successfully.\n  ";
 
 
         /*** open file and count the number of vectors in it ***/
@@ -1785,7 +1785,9 @@ void cm_d_state(ARGS)
                 table->bits[i] = 0;
             for (i=0; i<(test=(table->num_inputs * table->depth)/8); i++)
                 table->inputs[i] = 0;
-            return;
+            if (state_file)
+                fclose(state_file);
+            cm_cexit(1);
         }
 
         /* close state_file */
