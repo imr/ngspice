@@ -477,7 +477,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              * vdmos capacitor model
              */
-            if (ckt->CKTmode & (MODETRAN | MODETRANOP | MODEINITSMSIG)) {
+            if (ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODETRANOP | MODEINITSMSIG)) {
                 /*
                  * calculate gate - drain, gate - source capacitors
                  * drain-source capacitor is evaluated with the body diode below
@@ -567,18 +567,24 @@ bypass:
                  *    calculate equivalent conductances and currents for
                  *    vdmos capacitors
                  */
-                error = NIintegrate(ckt, &gcgs, &ceqgs, capgs, here->VDMOSqgs);
-                if (error) return(error);
-                error = NIintegrate(ckt, &gcgd, &ceqgd, capgd, here->VDMOSqgd);
-                if (error) return(error);
-                ceqgs = ceqgs - gcgs*vgs + ckt->CKTag[0] *
-                        *(ckt->CKTstate0 + here->VDMOSqgs);
-                ceqgd = ceqgd - gcgd*vgd + ckt->CKTag[0] *
-                        *(ckt->CKTstate0 + here->VDMOSqgd);
-                if (selfheat)
-                {
-                    error = NIintegrate(ckt, &gcTt, &ceqqth, capth, here->VDMOSqth);
+                 /* no integration, if dc sweep, but keep evaluating capacitances */
+                if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
+                    error = NIintegrate(ckt, &gcgs, &ceqgs, capgs, here->VDMOSqgs);
                     if (error) return(error);
+                    error = NIintegrate(ckt, &gcgd, &ceqgd, capgd, here->VDMOSqgd);
+                    if (error) return(error);
+                    ceqgs = ceqgs - gcgs * vgs + ckt->CKTag[0] *
+                        *(ckt->CKTstate0 + here->VDMOSqgs);
+                    ceqgd = ceqgd - gcgd * vgd + ckt->CKTag[0] *
+                        *(ckt->CKTstate0 + here->VDMOSqgd);
+                    if (selfheat)
+                    {
+                        error = NIintegrate(ckt, &gcTt, &ceqqth, capth, here->VDMOSqth);
+                        if (error) return(error);
+                    }
+                }
+                else {
+                    gcgs = gcgd = ceqgs = ceqgd = 0.;
                 }
             }
 
@@ -932,27 +938,30 @@ bypass:
                         *(ckt->CKTstate1 + here->VDIOcapCharge) =
                             *(ckt->CKTstate0 + here->VDIOcapCharge);
                     }
-                    error = NIintegrate(ckt, &geq, &ceq, capd, here->VDIOcapCharge);
-                    if (error) return(error);
-                    gd = gd + geq;
-                    cd = cd + *(ckt->CKTstate0 + here->VDIOcapCurrent);
-                    if (ckt->CKTmode & MODEINITTRAN) {
-                        *(ckt->CKTstate1 + here->VDIOcapCurrent) =
-                            *(ckt->CKTstate0 + here->VDIOcapCurrent);
-                    }
-                    if (revrec) {
-                        /* soft recovery subcircuit */
+                    /* no integration, if dc sweep, but keep evaluating capacitances */
+                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
+                        error = NIintegrate(ckt, &geq, &ceq, capd, here->VDIOcapCharge);
+                        if (error) return(error);
+                        gd = gd + geq;
+                        cd = cd + *(ckt->CKTstate0 + here->VDIOcapCurrent);
                         if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->VDIOsrcapCharge) =
-                                    *(ckt->CKTstate0 + here->VDIOsrcapCharge);
+                            *(ckt->CKTstate1 + here->VDIOcapCurrent) =
+                                *(ckt->CKTstate0 + here->VDIOcapCurrent);
                         }
-                        error = NIintegrate(ckt,&geq,&ceq,capsr,here->VDIOsrcapCharge);
-                        if(error) return(error);
-                        gqcsr = geq;
-                        cqcsr = *(ckt->CKTstate0 + here->VDIOsrcapCurrent);
-                        if (ckt->CKTmode & MODEINITTRAN) {
-                            *(ckt->CKTstate1 + here->VDIOsrcapCurrent) =
+                        if (revrec) {
+                            /* soft recovery subcircuit */
+                            if (ckt->CKTmode & MODEINITTRAN) {
+                                *(ckt->CKTstate1 + here->VDIOsrcapCharge) =
+                                    *(ckt->CKTstate0 + here->VDIOsrcapCharge);
+                            }
+                            error = NIintegrate(ckt, &geq, &ceq, capsr, here->VDIOsrcapCharge);
+                            if (error) return(error);
+                            gqcsr = geq;
+                            cqcsr = *(ckt->CKTstate0 + here->VDIOsrcapCurrent);
+                            if (ckt->CKTmode & MODEINITTRAN) {
+                                *(ckt->CKTstate1 + here->VDIOsrcapCurrent) =
                                     *(ckt->CKTstate0 + here->VDIOsrcapCurrent);
+                            }
                         }
                     }
                 }
