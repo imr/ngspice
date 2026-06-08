@@ -19,14 +19,13 @@ License: Modified BSD
 int prepare_degsim(struct card* deck);
 int prepare_plainsim(struct card* deck);
 int clear_degsim(void);
-static int add_degmodel(struct card* deck, double* result);
+static int add_degmodel_sub(struct card* deck, double* result);
+static int add_degmodel_inst(struct card* deck, double* result);
 
 /* maximum number of model parameters */
 #define DEGPARAMAX 64
 /* maximum number of models */
 #define DEGMODMAX 64
-
-#define DEGSUBCKT
 
 /* global pointer: results from first tran run */
 NGHASHPTR degdatahash = NULL;
@@ -156,6 +155,11 @@ int readdegparams (struct card *deck) {
 int adddegmonitors(struct card* deck) {
     static int degmonno;
     double tfuture, dlimits;
+    if (cp_getvar("deginstance", CP_BOOL, NULL, 0))
+        fprintf(stdout, "Note: Instance parameter degradation model selected\n");
+    else
+        fprintf(stdout, "Note: Subcircuit degradation model selected\n");
+
     if (!cp_getvar("deg_tfuture", CP_REAL, &tfuture, 0))
         tfuture = 315360e3; /* 10 years */
     fprintf(stdout, "Note: deg data extrapolated to %e seconds (%.1f years)\n", tfuture, tfuture / 31536e3);
@@ -394,7 +398,10 @@ int prepare_degsim(struct card* deck) {
                 fprintf(stdout, "Instance %s, Result: %e, %e, %e\n", insttoken, result[0], result[1], result[2]);
                 /* this will add the necessary devices to
                    the netlist according to the deg model */
-                add_degmodel(prevcard, result);
+                if (cp_getvar("deginstance", CP_BOOL, NULL, 0))
+                    add_degmodel_inst(prevcard, result);
+                else
+                    add_degmodel_sub(prevcard, result);
                 no_devs++;
             }
             else if (ft_ngdebug) {
@@ -433,13 +440,11 @@ int clear_degsim (void){
     return 0;
 }
 
-#ifdef DEGSUBCKT
-
-/* Add a 0 voltage source between internal and external source for current measurement.
+/* Add a 0.1 Ohm series resistor between internal and external source for current measurement.
    Add a B source parallel to drain and source for current reduction.
    Use the mean of d_idlin (result[1]) and d_idsat (result[2]) as proportional factor to current.
    Add a voltage source between external and internal gate to apply dlt_vth shift from result[0]. */
-static int add_degmodel(struct card* deck, double* result) {
+static int add_degmodel_sub(struct card* deck, double* result) {
 
     char* dtok, * gtok, * stok, * intok;
     static int numvm = 0, numvg = 0;
@@ -486,10 +491,10 @@ static int add_degmodel(struct card* deck, double* result) {
         /* parallel drain current with CCCS */
         nline[3] = tprintf("f%s %s %s vm%s %e\n", intok, dtok, stok, intok, currdeg);
 #else
-        /* current measurement at source side with 1 Ohm series resistor */
-        nline[2] = tprintf("rm%s intern_%s %s 1\n", intok, stok, stok);
+        /* current measurement at source side with 0.1 Ohm series resistor */
+        nline[2] = tprintf("rm%s intern_%s %s 0.1\n", intok, stok, stok);
         /* parallel drain current with B source */
-        nline[3] = tprintf("b%s %s %s i=v(intern_%s, %s) * %e\n", intok, dtok, stok, stok, stok, currdeg);
+        nline[3] = tprintf("b%s %s %s i=v(intern_%s, %s) * %e * 10.0\n", intok, dtok, stok, stok, stok, currdeg);
 #endif
     }
     else
@@ -526,11 +531,10 @@ exfunc:
     return 0;
 }
 
-#else
 
 /* Use the mean of d_idlin (result[1]) and d_idsat (result[2]) plus 1 as instance parameter factuo.
    Use dlt_vth shift from result[0] as instance parameter delvto. */
-static int add_degmodel(struct card* deck, double* result) {
+static int add_degmodel_inst(struct card* deck, double* result) {
 
     char* curr_line = deck->line;
     double currdeg = (result[1] + result[2]) / 2.;
@@ -583,4 +587,3 @@ static int add_degmodel(struct card* deck, double* result) {
     }
     return 0;
 }
-#endif

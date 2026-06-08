@@ -8,6 +8,14 @@ To start a degradation sim, put flag 'de' to ngbehavior, e.g. as
 set ngbehavior=hsdea
 in .spiceinit.
 
+Two transitor model wrappers are provided to add the degradation to a standard
+transitor model: If the ngspice variable 'deginstance' is set in .spiceinit (spice.rc)
+or spinit, then instance parameters factuo (Mobilitity factor) and delvto (delta Vt0)
+are used. If not set, a subcurcuit with a small resistance in series to the source
+connection is use to measure the current, which is the multplied by the degradation
+factor and subtracted from the measured drain current. The delta VGS is added by
+a voltage source in series to the gate connection.
+
 Degradation model parameters have to be provided, as shown in the example
 file ngspice-master/examples/degradation/aging_par_ng.scs, starting with
 
