@@ -842,7 +842,13 @@ measure_minMaxAvg(
     }
 
     if (dScale->v_realdata == NULL && dScale->v_compdata == NULL) {
-        fprintf(cp_err, "Error: scale vector time, frequency or ?-sweep has no data.\n");
+        fprintf(cp_err, "Error: scale vector %s has no data.\n", dScale->v_name);
+        return MEASUREMENT_FAILURE;
+    }
+
+    if (d->v_length != dScale->v_length) {
+        fprintf(cp_err, "Error: length of scale vector (%s) does not match length of data vector (%s).\n", dScale->v_name, d->v_name);
+        fprintf(cp_err, "    Analysis is not possible.\n");
         return MEASUREMENT_FAILURE;
     }
 
