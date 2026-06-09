@@ -190,6 +190,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->DIOdIdioSW_dT) =
                                 *(ckt->CKTstate1 + here->DIOdIdioSW_dT);
                     }
+                    *(ckt->CKTstate0 + here->DIOqp) = 
+                            *(ckt->CKTstate1 + here->DIOqp);
                     vqp = DEVpred(ckt,here->DIOqp);
                     *(ckt->CKTstate0 + here->DIOresCurrent) =
                             *(ckt->CKTstate1 + here->DIOresCurrent);

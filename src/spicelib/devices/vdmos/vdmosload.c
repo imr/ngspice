@@ -760,6 +760,8 @@ bypass:
                         *(ckt->CKTstate1 + here->VDIOconduct);
                     *(ckt->CKTstate0 + here->VDIOdIdio_dT) =
                             *(ckt->CKTstate1 + here->VDIOdIdio_dT);
+                    *(ckt->CKTstate0 + here->VDIOqp) = 
+                            *(ckt->CKTstate1 + here->VDIOqp);
                     vqp = DEVpred(ckt,here->VDIOqp);
                     *(ckt->CKTstate0 + here->VDIOresCurrent) =
                             *(ckt->CKTstate1 + here->VDIOresCurrent);
