@@ -40,6 +40,8 @@ if $oscompiled = 1 | $oscompiled = 2 | $oscompiled = 8 // Windows (MINGW, Cygwin
    set windows=1
    set dirsep1="\\"
    set dirsep2="/"
+   // Extra flags to fix undefined symbols.
+   setcs cflags="-CFLAGS -std=c++14 -CFLAGS -DVL_TIME_CONTEXT $cflags"
    if $oscompiled = 1 // MINGW: verilator is a Perl wrapper, needs MSYS2 shell
       set run_verilator="sh -c \"verilator"
       set run_verilator_close="\""
@@ -55,9 +57,9 @@ else
    set run_verilator_close=""
 end
 
-if $oscompiled = 7 // MacOS
+if $oscompiled = 7 // MacOS: use clang and suppress a weak symbol.
    set macos=1
-   setcs cflags="$cflags --compiler clang"
+   setcs cflags="-CFLAGS -DVL_TIME_CONTEXT $cflags --compiler clang"
 else
    set macos=0
 end
