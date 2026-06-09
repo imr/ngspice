@@ -17,6 +17,7 @@ AUTHORS
 MODIFICATIONS   
 
     15 Feb 2026 Holger Vogt
+    09 jun 2026 Holger Vogt
 
 
 SUMMARY
@@ -59,6 +60,9 @@ NON-STANDARD FEATURES
 /* maximum number of models */
 #define DEGMODMAX 64
 
+/* current model in use */
+#define HCI_FS1
+
 
 /*=== MACROS ===========================*/
 
@@ -79,6 +83,8 @@ struct agemod {
     NGHASHPTR paramhash;
 };
 
+
+#ifdef HCI_FS1
 /* This struct is model-specific: We need three data sets for dlt_vth [0],
    d_idlin [1], and d_idsat [2] */
 typedef struct {
@@ -97,6 +103,7 @@ typedef struct {
     double *result;          /* degradation simulation result */
     char *parentname;        /* name of parent device for degmon */
 } degLocal_Data_t;
+#endif
 
 
 
@@ -122,6 +129,7 @@ cm_degmon_callback(ARGS, Mif_Callback_Reason_t reason)
     }
 }
 
+#ifdef HCI_FS1
 /* use agemods as input to set the agemodel model parameters,
    e.g. loc->A[3] */
 int
@@ -156,34 +164,9 @@ getdata(struct agemod *agemodptr, degLocal_Data_t *loc, char *devmod)
         "l1_d_idsat",
         "l2_d_idsat"
     };
-/*
-    static char *names[] = {
-        "VGS0",
-        "A_dlt_vth",
-        "Ea_dlt_vth",
-        "B_dlt_vth",
-        "C_dlt_vth",
-        "n_dlt_vth",
-        "L1_dlt_vth",
-        "L2_dlt_vth",
-        "A_d_idlin",
-        "Ea_d_idlin",
-        "B_d_idlin",
-        "C_d_idlin",
-        "n_d_idlin",
-        "L1_d_idlin",
-        "L2_d_idlin",
-        "A_d_idsat",
-        "Ea_d_idsat",
-        "B_d_idsat",
-        "C_d_idsat",
-        "n_d_idsat",
-        "L1_d_idsat",
-        "L2_d_idsat"
-    };
-*/
-    double pvals[64];
+    #endif
 
+    double pvals[64];
 
     for (no = 0; no < 64; no++) {
        if (!agemodptr[no].devmodel){
@@ -215,6 +198,7 @@ getdata(struct agemod *agemodptr, degLocal_Data_t *loc, char *devmod)
             cm_cexit(1);
         }
     }
+#ifdef HCI_FS1
     /* loc->xxx selected according to the sequence given in names[i]. */
     loc->VGS0 = pvals[0];
     loc->A[0] = pvals[1];
@@ -239,7 +223,7 @@ getdata(struct agemod *agemodptr, degLocal_Data_t *loc, char *devmod)
     loc->L1[2] = pvals[20];
     loc->L2[2] = pvals[21];
     return no;
-
+#endif
 }
 
                    
@@ -269,35 +253,44 @@ GLOBAL VARIABLES
 
 NON-STANDARD FEATURES
 
-    model source: 
+    model HCI_FS1 source:
     IIS EAS, 2025
 
 
 ==============================================================================*/
 
-/*=== CM_SEEGEN ROUTINE ===*/
+/*=== CM_DEGMON ROUTINE ===*/
 
 void cm_degmon(ARGS)  /* structure holding parms, 
                                        inputs, outputs, etc.     */
 {
+    degLocal_Data_t *loc;        /* Pointer to local static data, not to be included
+                                       in the state vector */
+
+    /* Pointer to global hash table, saving the
+       degradation sim results of the first tran sim. */
+    NGHASHPTR glohash = mif_private->circuit.deghash;
+
     double vd;            /* drain voltage */
     double vg;            /* gate voltage */
     double vs;            /* source voltage */
     double vb;            /* bulk voltage */
     double L;             /* channel length */
-    double constfac;     /* static storage of const factor in model equation */
+    double prevtime;
     double tfut;
     double tsim;
-    double dlimits;
     double deg;           /* monitor output */
-    double sintegrand = 0;
-    double sintegral;
-    double prevtime;
-    double k = 1.38062259e-5; /* Boltzmann */
-    int devtype;
 
     char *devmod;     /* PSP device model */
     char *simmod;     /* degradation model */
+    double k = 1.38062259e-5; /* Boltzmann */
+    int devtype;
+
+#ifdef HCI_FS1
+    double constfac;     /* static storage of const factor in model equation */
+    double dlimits;
+    double sintegrand = 0;
+    double sintegral;
 
     double A;             /* degradation model parameter */
     double Ea;            /* degradation model parameter */
@@ -306,13 +299,9 @@ void cm_degmon(ARGS)  /* structure holding parms,
     double L2;            /* degradation model parameter */
     double n;             /* degradation model parameter */
     double c;             /* degradation model parameter */
+#endif
 
-    degLocal_Data_t *loc;        /* Pointer to local static data, not to be included
-                                       in the state vector */
 
-    /* Pointer to global hash table, saving the
-       degradation sim results of the first tran sim. */
-    NGHASHPTR glohash = mif_private->circuit.deghash;
 
     if (ANALYSIS == MIF_AC) {
         return;
@@ -364,6 +353,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
             cm_message_send("Error: Could not retrieve the degradation model info!\n");
             cm_cexit(1);
         }
+#ifdef HCI_FS1
         /**** model equations 1 ****/
         /* constants constfac */
         for (ii=0; ii < 3; ii++) {
@@ -373,7 +363,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
             loc->prevtime[ii] = 0.;
         }
         /***************************/
-
+#endif
         if (strstr(devmod, "_nmos"))
             loc->devtype = 1;
         else if (strstr(devmod, "_pmos"))
@@ -399,12 +389,12 @@ void cm_degmon(ARGS)  /* structure holding parms,
         loc->parentname = strdup(inam);
         tfree(ipath);
 
-/*
+#ifdef DEGDEBUG
         cm_message_send(loc->parentname);
         cm_message_send(devmod);
         cm_message_send(INSTNAME);
         cm_message_send(INSTMODNAME);
-*/
+#endif
     }
     else {
 
@@ -434,6 +424,7 @@ void cm_degmon(ARGS)  /* structure holding parms,
             vb *= -1.;
         }
 
+#ifdef HCI_FS1
         for (ii = 0; ii < 3; ii++) {
             double x1, x2;
             constfac = loc->constfac[ii];
@@ -478,11 +469,14 @@ void cm_degmon(ARGS)  /* structure holding parms,
             loc->sintegral[ii] = sintegral;
             loc->prevtime[ii] = prevtime;
         }
+#endif
         /* save the degradation data for this instance */
         if (T(0) > 0.99999 * tsim) {
             nghash_insert(glohash, loc->parentname, loc->result);
-//            cm_message_printf("instance %s, data: %e %e %e\n", loc->parentname, loc->result[0],
-//            loc->result[1], loc->result[2]);
+#ifdef DEGDEBUG
+            cm_message_printf("instance %s, data: %e %e %e\n", loc->parentname, loc->result[0],
+            loc->result[1], loc->result[2]);
+#endif
         }
     }
 }
