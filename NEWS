@@ -1,3 +1,26 @@
+Ngspice-47, June ??, 2026
+============
+- New features:
+    + Update periodic state sim (PSS) and examples
+    + Update to measure available memory for all OSs
+    + Implement small signal noise simulation for code models
+    + Status display 'shell' and 'gnuplot' (Windows only).
+    + Enable printing outputs with engineering exponents
+    + If newcompat.ki is enabled, replace /gnd and /0 (local ground symbols)
+      by 0.
+    + Add instance parameters td and r to the ISRC pwl source.
+    + Do not replace GND by 0 f if GND is used inside of the subcircuit
+      and is referenced on the .subckt line, and ps is set.
+    + Add reading and writing audio files (*.wav).
+    + Add dot commands .sndprint, .sndparam.
+    + Vdmos bulk diode now has a smart recovery model
+    + Update to the SEEgenerator as describes in README.SEEgenerator
+    + No integration, if dc sweep is to return cpacitances
+    + Add sweeping dc for capacitance measurement in 
+      HFET, MEASFET, VDMOS models, correct it for BJT, VBIC, HICUM.
+    + Add two macros TSTEP and TSTOP to XSPICE.
+
+
 Ngspice-46, March 29th, 2026
 ============
 - New features:
