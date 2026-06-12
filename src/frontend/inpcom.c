@@ -6926,7 +6926,13 @@ static void inp_compat(struct card *card)
                 ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s) "
                     "%s reciproctc=1",
                     title_tok, title_tok, equation, tcrstr);
+                // comment out current variable capacitor line
+                *(card->line) = '*';
+                for (i = 0; i < 3; i++) {
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                }
             } else {                       /* capacitance formulation */
+#if (0)
                 // Exxx  n-aux 0  n2 n1  1
                 ckt_array[0] = tprintf("e%s %s_int1 0 %s %s %s", title_tok,
                     title_tok, node2, node1, mstr);
@@ -6936,15 +6942,37 @@ static void inp_compat(struct card *card)
                 ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
                     "%s reciproctc=1",
                     title_tok, node1, node2, title_tok, equation, tcrstr);
+                // comment out current variable capacitor line
+                *(card->line) = '*';
+                for (i = 0; i < 3; i++) {
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                }
+#else
+                // Gxxx  n-aux 0  n2 n1  1e9
+                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s %se9", title_tok,
+                    title_tok, node2, node1, mstr);
+                // Rxxx  n-aux 0 1e-9 ; generate voltage from injected current by Gxxx
+                ckt_array[1] = tprintf("r%s %s_int1 0 1e-9", title_tok,title_tok);
+                // Cxxx  n-aux1  n-aux2  1e-6
+                ckt_array[2] = tprintf("c%s %s_int1 %s_int2 1e-6", title_tok, title_tok, title_tok);
+                // Vxxx n-aux2 0 0 ; measure current in Cxxx
+                ckt_array[3] = tprintf("v%s %s_int2 0 0", title_tok, title_tok);
+                // Rxxxpar  n2 n1 1e15 ; generally avoid floating nodes
+                ckt_array[4] = tprintf("r%spar %s %s 1e15", title_tok, node2, node1);
+                // Bxxx  n1 n2  I = 1e6 * i(Vxxx) * equation
+                ckt_array[5] = tprintf("b%s %s %s i = 1e6 * i(v%s) * (%s) "
+                    "%s reciproctc=1",
+                    title_tok, node1, node2, title_tok, equation, tcrstr);
+                // comment out current variable capacitor line
+                *(card->line) = '*';
+                // insert new B source line immediately after current line
+                for (i = 0; i < 6; i++) {
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                }
+#endif
             }
             tfree(tcrstr);
             tfree(mstr);
-            // comment out current variable capacitor line
-            *(card->line) = '*';
-            // insert new B source line immediately after current line
-            for (i = 0; i < 3; i++) {
-                card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
-            }
 
             tfree(title_tok);
             tfree(node1);
