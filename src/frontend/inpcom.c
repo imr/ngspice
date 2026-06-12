@@ -6956,11 +6956,11 @@ static void inp_compat(struct card *card)
                 // Cxxx  n-aux1  n-aux2  1e-6
                 ckt_array[2] = tprintf("c%s %s_int1 %s_int2 1e-6", title_tok, title_tok, title_tok);
                 // Vxxx n-aux2 0 0 ; measure current in Cxxx
-                ckt_array[3] = tprintf("v%s %s_int2 0 0", title_tok, title_tok);
+                ckt_array[3] = tprintf("vcurrmeas%s %s_int2 0 0", title_tok, title_tok);
                 // Rxxxpar  n2 n1 1e15 ; generally avoid floating nodes
                 ckt_array[4] = tprintf("r%spar %s %s 1e15", title_tok, node2, node1);
                 // Bxxx  n1 n2  I = 1e6 * i(Vxxx) * equation
-                ckt_array[5] = tprintf("b%s %s %s i = 1e6 * i(v%s) * (%s) "
+                ckt_array[5] = tprintf("b%s %s %s i = 1e6 * i(vcurrmeas%s) * (%s) "
                     "%s reciproctc=1",
                     title_tok, node1, node2, title_tok, equation, tcrstr);
                 // comment out current variable capacitor line
