@@ -81,6 +81,10 @@ typedef struct sRESinstance {
     unsigned RESbv_maxGiven : 1;    /* flags indicates maximum voltage is given */
     int    RESsenParmNo;            /* parameter # for sensitivity use;
                                      * set equal to  0 if not a design parameter*/
+    int    RESdangling;             /* topology reduction: 0 = normal device;
+                bit0 => pos node dangling, bit1 => neg node dangling. A dangling
+                resistor is removed from the system and its floating node(s)
+                pinned with a unit diagonal. Set in CKTtopologyReduce(). */
 
 #ifndef NONOISE
     double RESnVar[NSTATVARS][RESNSRCS];
