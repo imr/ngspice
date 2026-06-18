@@ -64,6 +64,12 @@ typedef struct sCAPinstance {
     unsigned CAPbv_maxGiven : 1;    /* flags indicates maximum voltage is given */
     int    CAPsenParmNo;         /* parameter # for sensitivity use;
                 set equal to  0 if not a design parameter*/
+    int    CAPdangling;          /* topology reduction: 0 = normal device;
+                bit0 set => pos node is a dangling (degree-1) floating node,
+                bit1 set => neg node is a dangling floating node. A dangling
+                cap is removed from the system: it contributes no
+                charge/current and its floating node(s) are pinned with a unit
+                diagonal so the matrix stays nonsingular. Set in CKTtopologyReduce(). */
 
 #ifdef KLU
     BindElement *CAPposPosBinding ;
