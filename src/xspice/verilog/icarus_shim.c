@@ -268,6 +268,9 @@ static void *run_vvp(void *arg)
 
 /* Entry point to this shared library.  Called by d_cosim. */
 
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
+__attribute__((visibility("default")))
+#endif
 void Cosim_setup(struct co_info *pinfo)
 {
     char             *file;
