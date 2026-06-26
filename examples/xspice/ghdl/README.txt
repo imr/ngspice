@@ -27,7 +27,7 @@ mechanical quantities do not match standard units.
 
 Before a simulation can be run, the associated VHDL code must be compiled
 and an additional shared library, ghdlng.vpi must be built.  A library script
-isavailable to simplify the steps, run like this:
+is available to simplify the steps, run like this:
 
     ngspice ghnggen adc.vhd
 
