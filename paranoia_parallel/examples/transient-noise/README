@@ -1,0 +1,15 @@
+* noi-ring51-demo
+ring oszillator with one noisy inverter
+(requires 45min on a i7 860)
+
+* noi-sc-tr
+noise source sampled
+
+* noise_vnoi
+just a few 1/f and white noise sources
+
+* shot_ng
+emulation of shot noise in a diode
+
+* rts-1.cir
+random telegraph signals noise

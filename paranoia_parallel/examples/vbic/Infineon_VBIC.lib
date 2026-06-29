@@ -1,0 +1,287 @@
+***************************************************************
+* Comments for the user:
+* The VBIC Model includes the self heating effect and the user can switch selfheating on or off.
+* a) no self heating: set Rth = 0
+* b) with self heating: set Rth=80K/W + Rth_PCB (customer)
+* Note: Rth = 80 K/W includes only the thermal resistance of die and package and
+* the thermal resistance of the customer PCB must be added (Rth=80K/W + Rth_PCB)
+
+*   Infineon    Technologies    AG
+*   VBIC    MODEL   IN  SPICE   2G6 SYNTAX
+*   VALID   UP  TO  10  GHZ
+*   >>> BFP780  <<<
+*   (C) 2015    Infineon    Technologies    AG
+*   Version 1.1 October 2015
+***************************************************************
+*.OPTION TNOM=25, GMIN= 1.00e-12
+*BFP780 C B E1 E2
+.SUBCKT BFP780 1 2 3 4
+*
+CCEPAR 11 33  800E-015
+*
+LEx    30 35 3E-011
+LBx    20 2  3E-011
+LCx    10 1  3E-011
+*
+CBPAD 22 44  30E-015
+CCPAD 11 44  30E-015
+CEPAD 33 44  30E-015
+*
+LB   22 20 777E-12
+LC   10 11 777E-12
+*
+CBEPCK 20 30  5.703E-015
+CBCPCK 10 20  1.497E-014
+CCEPCK 10 30  6.032E-014
+*
+RE1 35 3 1E-03
+RE2 35 4 1E-03
+*
+Rsub1 44 30 0.2144
+Rps 44 33 0.07306
+*
+D1 33 22 Diode_fb
+D2 44 22 Diode_fbd
+*
+.MODEL Diode_fb D(
++ IS=3.5E-015
++ N=1
++ CJO=10e-15
++ RS=6.1
++ Tnom=25)
+*
+.MODEL Diode_fbd D(
++ IS=1E-015
++ N=1
++ CJO=10E-15
++ RS=1
++ Tnom=25)
+*
+Q1 11 22 33 44 M_BFP780
+*
+.ENDS BFP780
+.MODEL  M_BFP780    NPN (Level=4
++ Tnom=25
++ Cbeo=2.47E-012
++ Cje=561.3E-015
++ Pe=0.7
++ Me=0.333
++ Aje=-1
++ Wbe=1
++ Cbco=10E-015
++ Cjc=668.6E-015
++ Pc=0.54
++ Mc=0.333
++ Ajc=-1
++ Cjep=2.616E-015
++ Cjcp=900E-015
++ Ps=0.6
++ Ms=0.3
++ Ajs=-0.5
++ Fc=0.94
++ Vef=545.4
++ Ver=3.291
++ Is=2.3E-015
++ Nf=0.9855
++ Ibei=1.893E-018
++ Nei=0.9399
++ Iben=4.77E-015
++ Nen=1.361
++ Ikf=1
++ Nr=0.9912
++ Ibci=157.5E-018
++ Nci=1.1
++ Ibcn=4.929E-015
++ Ncn=1.463
++ Ikr=0.01178
++ Wsp=1
++ Isp=1E-015
++ Nfp=1
++ Ibcip=1E-015
++ Ncip=1.029
++ Ibcnp=1E-015
++ Ncnp=1
++ Ikp=1E-3
++ Ibeip=1E-015
++ Ibenp=1E-015
++ Re=0.15
++ Rcx=0.01
++ Rci=2.665
++ Qco=1E-015
++ Vo=0.0005022
++ Gamm=5.659E-012
++ Hrcf=0.21
++ Rbx=5
++ Rbi=1.964
++ Rbp=265.5
++ Rs=26.56
++ Avc1=3.97
++ Avc2=29.52
++ Tf=1.6E-012
++ Qtf=50E-3
++ Xtf=30
++ Vtf=0.7
++ Itf=1
++ Tr=1E-015
++ Td=500E-015
++ Cth=0
++ Rth=80
++ Ea=1.12
++ Eaie=1.12
++ Eaic=1.12
++ Eais=1
++ Eane=1.12
++ Eanc=1.12
++ Eans=1
++ Xre=0
++ Xrb=0
++ Xrc=0
++ Xrs=0
++ Xvo=0
++ Xis=-1.631
++ Xii=0
++ Xin=0
++ Tnf=0
++ Tavc=0.002613
++ Kfn=0
++ Afn=1
++ Bfn=1 )
+***************************************************************
+*
+*.ENDS BFP780
+***************************************************************
+* Comments for the user:
+* The VBIC Model includes the self heating effect and the user can switch selfheating on or off.
+* a) no self heating: set Rth = 0
+* b) with self heating: set Rth=20K/W + Rth_PCB (customer)
+* Note: Rth = 20 K/W includes only the thermal resistance of die and package and
+* the thermal resistance of the customer PCB must be added (Rth=20K/W + Rth_PCB)
+
+*   Infineon    Technologies    AG
+*   VBIC    MODEL
+*   VALID   UP  TO  6   GHZ
+*   >>> BFQ790  <<<
+*   (C) 2015    Infineon    Technologies    AG
+*   Version 1.0 Juni    2015
+***************************************************************
+*.OPTION TNOM=25, GMIN= 1.00e-12
+*BFQ790 C B E
+
+* without access to the external thermal node (Rth to be adjusted by the customer in the model parameter list for the transistor
+.SUBCKT BFQ790 1 2 3
+*
+* with access to external thermal node
+*.SUBCKT BFQ790 1 2 3 55
+*
+CCSPAR 11 44 1.375E-012
+LEx    30 3 4.36882E-011
+LBx    20 2 2.77681E-011
+LCx    10 1 4.265E-011
+CBEPCK 20 30  1.105E-013
+CBCPCK 10 20  1E-014
+CCEPCK 10 30  1E-015
+LB   222 20 1.02449E-009
+LC   10 11  1.89901E-009
+*
+RBL 222 22 45
+CBL 222 22  3E-011
+*
+Rsub1 44 30 0.000500184
+Rps 44 33 0.102733
+*
+*
+* without access to the external thermal node
+Q1 11 22 33 44 M_BFQ790
+*
+* with access to the thermal node
+* Q1 11 22 33 44 55 M_BFQ790
+*
+.MODEL  M_BFQ790 NPN Level=4(
++ Tnom=25
++ Cbeo=9.31E-012
++ Cje=7.693E-013
++ Pe=0.5892
++ Me=0.3115
++ Aje=-0.5
++ Wbe=1
++ Cbco=1.966E-013
++ Cjc=1E-015
++ Pc=0.5095
++ Mc=0.2797
++ Ajc=-0.5
++ Cjep=1.875E-012
++ Cjcp=2.067E-012
++ Ps=0.5086
++ Ms=0.2865
++ Ajs=-0.5
++ Fc=0.93
++ Vef=615.1
++ Ver=5.61838
++ Is=9.704E-015
++ Nf=1.001
++ Ibei=5E-017
++ Nei=1.013
++ Iben=3.609E-014
++ Nen=1.46
++ Ikf=2
++ Nr=0.9958
++ Ibci=1.001E-017
++ Nci=1.015
++ Ibcn=2.918E-014
++ Ncn=1.399
++ Ikr=0.2301
++ Wsp=1
++ Isp=1E-015
++ Nfp=1
++ Ibcip=2E-017
++ Ncip=1
++ Ibcnp=1.7E-015
++ Ncnp=1.67
++ Ikp=0.0002
++ Ibeip=7E-017
++ Ibenp=2.4E-014
++ Re=0.2
++ Rcx=0.02559
++ Rci=1.168
++ Qco=4E-015
++ Vo=0.4234
++ Gamm=2.199E-012
++ Hrcf=0.1907
++ Rbx=0.2825
++ Rbi=1.868
++ Rbp=0.001
++ Rs=10
++ Avc1=1
++ Avc2=25.84
++ Tf=3E-012
++ Qtf=0.6758
++ Xtf=0.01293
++ Vtf=0.5
++ Itf=0.1948
++ Tr=1E-015
++ Td=1E-015
++ Cth=0
++ Rth=20.05
++ Ea=1.12
++ Eaie=1.12
++ Eaic=1.12
++ Eais=1.12
++ Eane=1.12
++ Eanc=1.12
++ Eans=1.12
++ Xre=0
++ Xrb=0
++ Xrc=0
++ Xrs=0
++ Xvo=0
++ Xis=1.907
++ Xii=4.963
++ Xin=-2.837
++ Tnf=1E-006
++ Tavc=0.006705
++ Kfn=0
++ Afn=1
++ Bfn=1 )
+***************************************************************
+*
+.ENDS BFQ790

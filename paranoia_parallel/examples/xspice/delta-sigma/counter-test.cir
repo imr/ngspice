@@ -1,0 +1,42 @@
+* 10 bit synchronous digital counter
+* inhibit at overflow, no revolving
+* according to Schreier, Temes: Understanding Delta-Sigma Data Converters, 2005
+* Fig. 2.27, p. 58
+
+* clock generation
+* PULSE(V1 V2 TD TR TF PW PER)
+vclk aclk 0 dc 0 pulse(0 1 1u 2n 2n 1u 2u)
+
+* reset generation
+* single pulse, actual value stored in latch and read by DAC
+vres ars 0 dc 0 pulse(0 1 1.1m 2n 2n 1u 2.2m)
+
+vone aone 0 dc 1
+vzero azero 0 dc 0
+
+* digital one
+* digital zero
+abridge1 [aone azero] [done dzero] adc_buff
+.model adc_buff adc_bridge(in_low = 0.5 in_high = 0.5)
+
+* digital clock
+* digital reset
+abridge2 [aclk ars] [dclk dreset] adc_buff
+.model adc_buff adc_bridge(in_low = 0.5 in_high = 0.5)
+
+XCounter done done dclk dreset dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9 dout10 count10
+Xlatch dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9 dout10
++ dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 dreset
++ latch10
+Xdac dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 adacout dac10 
+
+.include count-latch-dac.cir
+
+.control
+tran 1u 2.5m
+eprint dout1 dout2 dout3 dout4  dout5 dout6 dout7 dout8 dout9 dout10 > digi4b.txt
+eprint dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 >> digi4b.txt
+plot adacout
+.endc
+
+.end

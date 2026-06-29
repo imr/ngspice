@@ -1,0 +1,30 @@
+Supply ramping option
+*
+* This circuit demonstrates the use of the option
+* "ramptime" which ramps independent sources and the
+* capacitor and inductor initial conditions from 
+* zero to their final value during the time period
+* specified.
+*
+*
+.tran 0.1 5
+.option ramptime=0.2
+*
+a1 1 0 cap
+.model cap capacitor (c=1000uf ic=1)
+r1 1 0 1k
+*
+a2 2 0 ind
+.model ind inductor (l=1H ic=1)
+r2 2 0 1.0
+*
+v1 3 0 1.0
+r3 3 0 1k
+*
+i1 4 0 1e-3
+r4 4 0 1k
+*
+v2 5 0 0.0  sin(0 1 0.3 0 0 45.0)
+r5 5 0 1k
+*
+.end

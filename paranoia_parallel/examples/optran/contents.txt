@@ -1,0 +1,12 @@
+ngspice input files using optran
+
+Pass Labs F5 turbo
+thermal simulation
+use optran for 4s and coarse steps to obtain stable temperature
+then simulate transient with high resolution
+
+HiPass3opamps_optran.cir
+Just a check with three different OpAmps
+
+TLV6001-test.cir, TLV9002-test.cir
+These OpAmp currently allow op calculation only with optran

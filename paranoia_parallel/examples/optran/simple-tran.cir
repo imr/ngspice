@@ -1,0 +1,15 @@
+* simple tran sim
+
+V1 1 0 1
+R1 1 2 1
+C1 2 0 1u
+
+.ic v(2)=0.5
+
+.control
+tran 2n 5u uic
+plot v(2)
+.endc
+
+.end
+

@@ -1,0 +1,5 @@
+set ngbehavior=ps
+* Standard ngspice init file
+alias exit quit
+* step size is limited to TSTEP in tansient simulation
+set stepsizelimit

@@ -1,0 +1,92 @@
+* 51 stage Ring-Osc. BSIM3, transient noise
+* will need 90 sec on a i7 860 with 4 threads
+* for better noise analysis simulation time may be made larger than 200n
+
+* closes the loop between inverters xinv1 and xinv5
+vin in out dc 0.5 pulse 0.5 0 0.1n 5n 1 1 1
+
+vdd dd 0 dc 0 pulse 0 2.2 0 1n 1 1 1
+
+vss ss 0 dc 0
+ve  sub  0 dc 0
+
+vpe well 0 2.2
+
+* noisy inverters
+xiinv2 dd ss sub well out25 out50 inv253
+xiinv1 dd ss sub well in out25 inv253
+
+*three very noisy inverters
+xiinv51 dd ss sub well out50 out51 inv1_2
+xiinv52 dd ss sub well out51 out52 inv1_2
+xiinv53 dd ss sub well out52 out inv1_2
+
+*output amplifier
+xiinv11 dd ss sub well out25 bufout inv2
+cout  bufout ss 0.2pF
+
+.option itl1=500 gmin=1e-15 itl4=10  noacct
+
+* .dc vdd 0 2 0.01
+.tran 80p 0.5n
+
+.save in bufout v(t1)
+
+.include modelcard.nmos
+.include modelcard.pmos
+
+.include noilib-demo.h
+
+.control
+unset ngdebug
+* first run
+save bufout  ; needed for restricting memory usage
+rusage
+run
+rusage
+plot bufout
+linearize
+fft bufout
+echo start noise in plot $curplot
+echo
+
+* next run
+* reset
+save bufout
+* original noise parameters 0.05 8p 1.0 0.001
+alter @v.xiinv51.vn1[trnoise] = [ 0 0 0 0 ] ; no noise
+alter @v.xiinv52.vn1[trnoise] = [ 0 0 0 0 ] ; no noise
+alter @v.xiinv53.vn1[trnoise] = [ 0 0 0 0 ] ; no noise
+
+run
+rusage
+plot bufout
+linearize
+fft bufout
+echo no noise in plot $curplot
+echo
+
+* next run
+* reset
+save bufout
+alter @v.xiinv51.vn1[trnoise] = [ 0.1 8p 1.5 0.002 ] ; more noise
+alter @v.xiinv52.vn1[trnoise] = [ 0.1 8p 1.5 0.002 ] ; more noise
+alter @v.xiinv53.vn1[trnoise] = [ 0.1 8p 1.5 0.002 ] ; more noise
+
+run
+rusage
+plot bufout
+linearize
+fft bufout
+echo more noise in plot $curplot
+echo
+
+set color0=white
+set color1=black
+plot mag(sp6.bufout) mag(sp2.bufout) mag(sp4.bufout) xlimit 0 2G ylimit 1e-7 1 ylog
+
+quit
+.endc
+
+
+.end

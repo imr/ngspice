@@ -1,0 +1,31 @@
+use $batchmode
+
+* use $batchmode variable to steer control flow
+*
+* start either with
+*    ngspice -b -r rawfile.raw if-batchmode.cir
+* or with
+*    ngspice if-batchmode.cir
+
+v0  1 0  dc 1
+R1  1 2  1k
+C1  2 0  1u
+
+.tran 100u 10m uic
+.print tran all
+
+.control
+
+if $?batchmode
+  echo "Info: batchmode has been set by command line option -b"
+  echo
+else
+  echo "Info: batchmode has not been set"
+  echo
+  unset ngdebug
+  tran 100u 10m uic
+  plot v(2)
+end
+
+.endc
+.end

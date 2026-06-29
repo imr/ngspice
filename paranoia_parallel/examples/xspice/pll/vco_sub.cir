@@ -1,0 +1,67 @@
+* VCO: 7 stage Ring-Osc. made of gain cells BSIM3
+* P.-H. Hsieh, J. Maxey, C.-K. K. Yang, IEEE JSSC, Sept. 2009, pp. 2488 - 2495
+* 150 MHz to 900 MHz with control voltage 2.5 to 0.5 V at 3.3 V supply
+* BSIM 3 model data for transistors in main file pll-xspice.cir
+
+***** ring oscillator as voltage controlled oscillator *************** 
+* name: ro_vco
+* aout analog out
+* dout digital out 
+* cont control voltage
+* dd supply voltage
+
+.subckt ro_vco aout dout cont dd
+* ignition circuit (not needed)
+* feedback between in and out, pulse to help start oscillation
+vin inm1 outp7 dc 0
+*vin inm1 outp7 dc 2.5 pulse 2.5 0 0.1n 5n 1 1 1
+
+*vin2 inp1 outp7 dc -0.5 pulse -0.5 0 0.1n 5n 1 1 1
+vin2 inp1 outm7 dc 0
+
+
+vss ss 0 dc 0
+ve  sub  0 dc 0
+vpe well 0 dc 3.3
+
+
+* gain cell
+.subckt gaincell dd ss sub well co in- in+ out- out+
+mn1  out- in+   ss  sub  n1  w=2u  l=0.35u  AS=3p AD=3p PS=4u PD=4u
+mn2  out- out+  ss  sub  n1  w=2u  l=0.35u  AS=3p AD=3p PS=4u PD=4u
+mn3  out+ out-  ss  sub  n1  w=2u  l=0.35u  AS=3p AD=3p PS=4u PD=4u
+mn4  out+ in-   ss  sub  n1  w=2u  l=0.35u  AS=3p AD=3p PS=4u PD=4u
+mp1  out- co    dd  well  p1  w=4u l=0.35u  AS=7p AD=7p PS=6u PD=6u
+mp2  out+ co    dd  well  p1  w=4u l=0.35u  AS=7p AD=7p PS=6u PD=6u
+.ends gaincell
+
+* inverter
+.subckt inv2 dd ss sub well in out
+mn1  out in  ss  sub  n1  w=6u  l=0.35u  AS=12p AD=12p PS=16u PD=16u
+mp1  out in  dd  well  p1  w=12u l=0.35u  AS=24p AD=24p PS=28u PD=28u
+.ends inv2
+
+* inverter
+.subckt inv1 dd ss sub well in out
+mn1  out in  ss  sub  n1  w=2u  l=0.35u  AS=3p AD=3p PS=4u PD=4u
+mp1  out in  dd  well  p1  w=4u l=0.35u  AS=7p AD=7p PS=6u PD=6u
+.ends inv1
+
+* chain of 25 inverters + output buffer
+xinv1 dd ss sub well cont inm1  inp1  outm1 outp1 gaincell 
+xinv2 dd ss sub well cont outp1 outm1 outm2 outp2 gaincell 
+xinv3 dd ss sub well cont outp2 outm2 outm3 outp3 gaincell
+xinv4 dd ss sub well cont outp3 outm3 outm4 outp4 gaincell
+xinv5 dd ss sub well cont outp4 outm4 outm5 outp5 gaincell
+xinv6 dd ss sub well cont outp5 outm5 outm6 outp6 gaincell
+xinv7 dd ss sub well cont outp6 outm6 outm7 outp7 gaincell
+* analog out (two stage buffer)
+xinv11 dd 0 sub well outm1 outm2 inv1
+xinv12 dd 0 sub well outm2 aout inv2
+cout  aout 0 0.2pF
+*digital out
+abridge1 [aout] [dout] adc_buff
+.model adc_buff adc_bridge(in_low = 'vcc*0.5' in_high = 'vcc*0.5')
+.ends ro_vco
+******************************************************************
+

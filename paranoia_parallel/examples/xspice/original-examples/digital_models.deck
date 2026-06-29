@@ -1,0 +1,20 @@
+Digital models
+*
+* This circuit contains a nand gate oscillator enabled by
+* a pulse input after 20nS.  Node 1 is an analog node.
+* Nodes 2 and 3 are digital nodes.
+*
+.tran 1e-8 1e-7
+*
+v1 1 0 0.0 pulse(0 1 2e-8 1e-9 1e-9)
+*
+r1 1 0 1k
+*
+a1 [1] [2] atod1
+.model atod1 adc_bridge (in_low=0.25 in_high=0.75
++                        rise_delay=1e-9  fall_delay=1e-9)
+*
+a2 [2 3] 3 nand
+.model nand d_nand (rise_delay=1e-9 fall_delay=1e-9)
+*
+.end

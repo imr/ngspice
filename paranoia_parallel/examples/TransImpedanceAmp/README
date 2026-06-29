@@ -1,0 +1,41 @@
+This directory holds a SPICE netlist with SPICE2 POLY constructs in
+controlled sources as typically found in vendor models.  The circuit
+is just a two-stage transimpedance amp using an AD8009,
+along with some slow components (AD780 and OP177A) to set bias
+points.  Vendor models are used for all active components.
+Successfully running this test shows that you have successfully built
+the XSpice stuff with the POLY codemodel, and that you should be able
+to simulate SPICE netlists with embedded vendor models.
+
+To run this netlist, just do the following:
+
+[localhost]# ngspice
+ngspice 1 -> source output.net
+ngspice 2 -> run
+ngspice 3 -> plot Vout2
+
+(Note that when you read in the netlist, you will get a bunch of 
+warnings saying stuff like:
+
+Warning -- Level not specified on line "()"
+Using level 1.
+
+Also, ngspice will complain about:
+
+Error on line 50 : r:u101:1 u101:40 0 1e3 tc=7e-6
+         unknown parameter (tc)
+Error on line 283 : .temp 0 25 50 75 100
+         Warning: .TEMP card obsolete - use .options TEMP and TNOM
+
+You can ignore all this stuff . . . .)
+
+You should get a pop-up window showing two square pulses (the second
+smaller than the first) with a little bit of overshoot on the rising
+and falling edges.
+
+This stuff was done as an adjunct to work on the gEDA project.
+Information about gEDA is available at http://geda.seul.org/ .
+Please direct all questions/suggestions/bugs/complaints about XSpice
+extensions to ngspice to Stuart Brorson -- mailto:sdb@cloud9.net.
+
+6.23.2002 -- SDB.

@@ -1,0 +1,31 @@
+* loop filter for pll
+* in: d_up d_down digital data
+* out: vout, vco control voltage
+* according to http://www.uwe-kerwien.de/pll/pll-schleifenfilter.htm
+
+.subckt loopfe d_U d_D vout
+
+.param loadcur=5m
+.param initcond=2.5
+
+v1 vtop 0 1
+v2 vbot 0 -1
+
+abridge-f1 [d_U d_D] [u1 d1] dac1
+.model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
++ input_load = 5.0e-12 t_rise = 1e-10
++ t_fall = 1e-10)
+
+*top switched current source
+Gtop vtop vout cur='loadcur*v(u1)'
+*bottom switched current source
+Gbot vout vbot cur='loadcur*v(d1)'
+
+*passive filter elements
+.ic v(vout)='initcond' v(c1)='initcond'
+R2 vout c1 200
+C1 c1 0 5n
+C2 vout 0 5n
+Rshunt vout 0 10000k
+
+.ends
