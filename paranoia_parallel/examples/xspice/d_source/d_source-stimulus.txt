@@ -1,0 +1,13 @@
+* time, a1 a2  a3 a4  a5 a6 a7 a8 a9 aa ab
+0n      0s 0s  Uu Uu  Uu Uu Uu Uu Uu Uu Uu
+1n      1s 0s  Uu Uu  0u Uu Uu Uu Uu Uu Uu
+2n      Us 0s  Uu Uu  0u 0u Uu Uu Uu Uu Uu
+3n      Us 0r  Uu Uu  0u 0u 0u Uu Uu Uu Uu
+4n      Us 1r  Uu Uu  0u 0u 0u 0u Uu Uu Uu
+5n      Us Ur  Uu Uu  0u 0u 0u 0u 0u Uu Uu
+6n      Us Ur  0z Uu  0u 0u 0u 0u 0u 0u Uu
+7n      Us Ur  1z Uu  0u 0u 0u 0u 0u 0u 0u
+8n      Us Ur  Uz Uu  0u 0u 0u 0u 0u 0u 0u
+9n      Us Ur  Uz 0u  0u 0u 0u 0u 0u 0u 0u
+10n     Us Ur  Uz 1u  0u 0u 0u 0u 0u 0u 0u
+11n     Us Ur  Uz Uu  0u 0u 0u 0u 0u 0u 0u

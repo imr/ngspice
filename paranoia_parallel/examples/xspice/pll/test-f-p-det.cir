@@ -1,0 +1,114 @@
+* test frequency-phase detector similar to 12040
+
+.param vcc=3.3
+.global d_d0 d_d1
+
+*PULSE(V1 V2 TD TR TF PW PER)
+v1 1 0 dc 0 pulse(0 'vcc' 10n 1n 1n 10n 20n)
+v2 2 0 dc 0 pulse(0 'vcc' 8n 1n 1n 10n 20n)
+
+*digital zero
+v3 3 0 dc 0
+abridgev1 [1 2 3] [d_sig1 d_sig2 d_d0] adc_vbuf
+.model adc_vbuf adc_bridge(in_low = 'vcc*0.5' in_high = 'vcc*0.5')
+*digital one
+ainv1 d_d0 d_d1 invd1
+.model invd1 d_inverter(rise_delay = 1e-10 fall_delay = 1e-10)
+
+Xfpdet d_sig1 d_sig2 d_U d_Un d_D d_Dn  f-p-det
+
+*.include f-p-det-sub.cir
+.include f-p-det-d-sub.cir
+
+* d to a for plotting
+abridge-w1 [d_sig1 d_sig2 d_U d_D] [s1 s2 u1 d1] dac1
+.model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
++ input_load = 5.0e-12 t_rise = 1e-10
++ t_fall = 1e-10)
+
+* loop filters
+*2nd or 3rd order, transistors as switches
+.include loop-filter-2.cir
+Xlf d_Un d_D cont loopf
+* 2nd order, Exxxx voltage controlled current sources as 'switches'
+* loop filter current sources as charge pump
+*.include loop-filter.cir
+*Xlf d_U d_D cont loopfe
+
+.control
+set xtrtol=2
+tran 0.1n 1000n
+plot s1 s2+1.2 u1+2.4 d1+3.6 xlimit 140n 200n
+.endc
+
+
+*model = bsim3v3
+*Berkeley Spice Compatibility
+* Lmin= .35 Lmax= 20 Wmin= .6 Wmax= 20
+.model N1 NMOS
+*+version = 3.2.4
++version = 3.3.0
++Level=        8
++Tnom=27.0
++Nch= 2.498E+17  Tox=9E-09 Xj=1.00000E-07
++Lint=9.36e-8 Wint=1.47e-7
++Vth0= .6322    K1= .756  K2= -3.83e-2  K3= -2.612
++Dvt0= 2.812  Dvt1= 0.462  Dvt2=-9.17e-2
++Nlx= 3.52291E-08  W0= 1.163e-6
++K3b= 2.233
++Vsat= 86301.58  Ua= 6.47e-9  Ub= 4.23e-18  Uc=-4.706281E-11
++Rdsw= 650  U0= 388.3203 wr=1
++A0= .3496967 Ags=.1    B0=0.546    B1= 1
++ Dwg = -6.0E-09 Dwb = -3.56E-09 Prwb = -.213
++Keta=-3.605872E-02  A1= 2.778747E-02  A2= .9
++Voff=-6.735529E-02  NFactor= 1.139926  Cit= 1.622527E-04
++Cdsc=-2.147181E-05
++Cdscb= 0  Dvt0w =  0 Dvt1w =  0 Dvt2w =  0
++ Cdscd =  0 Prwg =  0
++Eta0= 1.0281729E-02  Etab=-5.042203E-03
++Dsub= .31871233
++Pclm= 1.114846  Pdiblc1= 2.45357E-03  Pdiblc2= 6.406289E-03
++Drout= .31871233  Pscbe1= 5000000  Pscbe2= 5E-09 Pdiblcb = -.234
++Pvag= 0 delta=0.01
++ Wl =  0 Ww = -1.420242E-09 Wwl =  0
++ Wln =  0 Wwn =  .2613948 Ll =  1.300902E-10
++ Lw =  0 Lwl =  0 Lln =  .316394
++ Lwn =  0
++kt1=-.3  kt2=-.051
++At= 22400
++Ute=-1.48
++Ua1= 3.31E-10  Ub1= 2.61E-19 Uc1= -3.42e-10
++Kt1l=0 Prt=764.3
+
+.model P1 PMOS
+*+version = 3.2.4
++version = 3.3.0
++Level=        8
++Tnom=27.0
++Nch= 3.533024E+17  Tox=9E-09 Xj=1.00000E-07
++Lint=6.23e-8 Wint=1.22e-7
++Vth0=-.6732829 K1= .8362093  K2=-8.606622E-02  K3= 1.82
++Dvt0= 1.903801  Dvt1= .5333922  Dvt2=-.1862677
++Nlx= 1.28e-8  W0= 2.1e-6
++K3b= -0.24 Prwg=-0.001 Prwb=-0.323
++Vsat= 103503.2  Ua= 1.39995E-09  Ub= 1.e-19  Uc=-2.73e-11
++ Rdsw= 460  U0= 138.7609
++A0= .4716551 Ags=0.12
++Keta=-1.871516E-03  A1= .3417965  A2= 0.83
++Voff=-.074182  NFactor= 1.54389  Cit=-1.015667E-03
++Cdsc= 8.937517E-04
++Cdscb= 1.45e-4  Cdscd=1.04e-4
++ Dvt0w=0.232 Dvt1w=4.5e6 Dvt2w=-0.0023
++Eta0= 6.024776E-02  Etab=-4.64593E-03
++Dsub= .23222404
++Pclm= .989  Pdiblc1= 2.07418E-02  Pdiblc2= 1.33813E-3
++Drout= .3222404  Pscbe1= 118000  Pscbe2= 1E-09
++Pvag= 0
++kt1= -0.25  kt2= -0.032 prt=64.5
++At= 33000
++Ute= -1.5
++Ua1= 4.312e-9 Ub1= 6.65e-19  Uc1= 0
++Kt1l=0
+
+
+.end

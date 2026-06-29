@@ -1,0 +1,24 @@
+#{
+#   ignore_unversioned_shared_libs
+#   Memcheck:Leak
+#   ...
+#   obj:*/lib*/lib*.so
+#}
+#{
+#   ignore_versioned_shared_libs
+#   Memcheck:Leak
+#   ...
+#   obj:*/lib*/lib*.so.*
+#}
+{
+   libfontconfig
+   Memcheck:Leak
+   ...
+   obj:*/lib*/*fontconfig*
+}
+{
+   libgomp
+   Memcheck:Leak
+   ...
+   obj:*/lib*/*gomp*
+}

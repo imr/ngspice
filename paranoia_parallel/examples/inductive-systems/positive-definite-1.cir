@@ -1,0 +1,32 @@
+* indentify non-viable inductive systems (2x2 case)
+
+* (compile (concat "../../../w32/src/ngspice " buffer-file-name) t)
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../../../w32/src/ngspice " buffer-file-name) t)
+
+.subckt ind2 a1 a2 b1 b2 L11=0 L22=0 L12=0
+R1 a1 n1 1k
+L1 n1 a2 {L11}
+L2 n2 b2 {L22}
+R2 n2 a2 1k
+K12 L1 L2 {L12/sqrt(abs(L11*L22))}
+.ends
+
+v1 a 0  dc 1
+R1 a 0  1k
+R2 b 0  1k
+
+Xgood1 a 0 b 0 ind2 L11=1u L22=4u L12=1.98u
+Xbad2  a 0 b 0 ind2 L11=1u L22=4u L12=2.01u
+Xgood3 a 0 b 0 ind2 L11=1u L22=4u L12=-1.98u
+Xbad4  a 0 b 0 ind2 L11=1u L22=4u L12=-2.01u
+
+Xbad5 a 0 b 0 ind2 L11=1u L22=-4u L12=1n
+Xbad6 a 0 b 0 ind2 L11=-1u L22=4u L12=1n
+
+.control
+op
+remcirc
+quit 0
+.endc
+
+.end

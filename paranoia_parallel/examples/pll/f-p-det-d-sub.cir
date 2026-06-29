@@ -1,0 +1,16 @@
+* frequency-phase detector according to
+* http://www.uwe-kerwien.de/pll/pll-phasenvergleich.htm
+
+.subckt f-p-det d_R d_V d_U d_U_ d_D d_D_
+
+aa1 [d_U d_D] d_rset and1
+.model and1 d_and(rise_delay = 1e-10 fall_delay = 0.1e-9
++ input_load = 0.5e-12)
+
+ad1 d_d1 d_R d_d0 d_rset d_U d_U_ flop1
+ad2 d_d1 d_V d_d0 d_rset d_D d_D_ flop1
+.model flop1 d_dff(clk_delay = 1.0e-10 set_delay = 1.0e-10
++ reset_delay = 1.0e-10 ic = 2 rise_delay = 1.0e-10
++ fall_delay = 1e-10)
+
+.ends f-p-det

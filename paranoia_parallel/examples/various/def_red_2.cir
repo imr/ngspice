@@ -1,0 +1,10 @@
+Test define/let
+* function with single parameter is o.k.
+* function with two parameters leaks memory
+
+.control
+define myfcn(x,y) (y + x + 1)
+let nn = myfcn(2,3)
+.endc
+
+.end

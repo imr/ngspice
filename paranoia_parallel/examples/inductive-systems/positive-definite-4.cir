@@ -1,0 +1,80 @@
+* indentify non-viable inductive systems ("altering" case)
+
+* exercise "alter" and "indverbosity"
+
+* (compile (concat "../../../w32/src/ngspice " buffer-file-name) t)
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../../../w32/src/ngspice " buffer-file-name) t)
+
+
+V1 x 0 dc=0 ac=1
+Rx x 1 1
+R1 2 0 1k
+R2 3 0 1k
+
+L1 1 0  10u
+L2 2 0  11u
+L3 3 0  10u
+
+k12 L1 L2 0
+k23 L2 L3 0
+k13 L1 L3 0
+
+R101 101 0 1k
+L101 101 0 1u
+L102 102 0 2u
+L103 103 0 3u
+K1012 L101 L102 0.1
+K1013 L101 L103 0.2
+
+.AC LIN 5k 1k 10MEG
+
+.control
+listing e
+
+echo coupling factors 0 0 0 -- ok
+op
+
+alter k12 0.96
+alter k23 0.99
+alter k13 0.98
+echo coupling factors 0.96 0.98 0.98 -- ok
+op
+
+alter k12 0.96
+alter k23 0.99
+alter k13 0.9898988607
+echo coupling factors 0.96 0.98 0.9898988607 -- ok
+op
+
+alter k12 0.96
+alter k23 0.99
+alter k13 0.9898988608
+echo coupling factors 0.96 0.98 0.9898988608 -- not ok
+op
+
+alter k12 1
+alter k23 1
+alter k13 1
+echo coupling factors 1 1 1 -- not ok
+op
+
+echo coupling factors 1.01 1 1 -- not ok
+alter k12 1.01
+set indverbosity = 2
+echo "op with indverbosity=2"
+op
+set indverbosity = 1
+echo "op with indverbosity=1"
+op
+set indverbosity = 0
+echo "op with indverbosity=0"
+op
+ 
+destroy all
+remcirc
+ 
+quit
+
+.endc
+
+.END

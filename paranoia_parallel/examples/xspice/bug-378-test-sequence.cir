@@ -1,0 +1,47 @@
+.title PORT TYPE MODIFIERS TEST
+
+.param sel = 0 
+
+V_vss     vss  0 DC 0
+
+V_signal  pls1 0 DC 0 PULSE(0 5 1e-9 1e-9 1e-9 1e-3 2e-3)
+V_signal2 pls2 0 DC 0 PULSE(0 5 1e-9 1e-9 1e-9 2e-3 4e-3)
+
+*  Modes selected by command 'alterparam'
+.if(sel == 1)
+********************* MODE 1 ***********************
+A_ADC %v[ pls1 %vd(pls2 0)] [dpls1 dpls2] ADC
+****************************************************
+.elseif(sel == 2)
+********************* MODE 2 ***********************
+A_ADC [ %vd(pls1 0) %v(pls2)] [dpls1 dpls2] ADC
+****************************************************
+.else
+********************* MODE 3 ***********************
+A_ADC %v[ pls1 pls2] [dpls1 dpls2] ADC
+****************************************************
+.endif
+
+A_AND  [dpls1 dpls2] dand AND
+A_DAC  [dand] [aand] DAC
+
+	.model AND d_and
+	.model ADC adc_bridge
+	.model DAC dac_bridge
+
+	.control
+		tran 1e-3 4e-3
+		eprint dand
+		alterparam sel = 1
+		reset
+		tran 1e-3 4e-3
+		eprint dand
+		alterparam sel = 2
+		reset
+		tran 1e-3 4e-3
+		eprint dand
+
+		quit 0
+	.endc
+.end
+

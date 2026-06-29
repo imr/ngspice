@@ -1,0 +1,8 @@
+* memory leak test
+* derived from agaus_test.cir
+.control
+  define agauss(nom, avar, sig) (nom + avar/sig * sgauss(0))
+  let val = agauss(1e-09, 1e-10, 3)
+  quit  
+.endc
+.end

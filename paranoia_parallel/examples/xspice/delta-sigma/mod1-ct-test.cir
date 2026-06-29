@@ -1,0 +1,52 @@
+* first-order delta sigma modulator
+* continuous time
+* according to Schreier, Temes: Understanding Delta-Sigma Data Converters, 2005
+* Fig. 2.13, p. 31
+
+** signal
+.param infreq=13k inampl=0.3
+** clock
+.param clkfreq=5Meg
+** simulation time
+.param simtime = 5m
+.csparam simtime = 'simtime'
+
+** input signal
+*SIN(VO VA FREQ TD THETA)
+vin in+ in- dc 0 sin(0 'inampl' 'infreq' 0 0)
+
+* clock generation
+* PULSE(V1 V2 TD TR TF PW PER)
+vclk aclk 0 dc 0 pulse(0 1 0.1u 2n 2n '1/clkfreq/2' '1/clkfreq')
+
+* digital one
+* digital zero
+vone aone 0 dc 1
+vzero azero 0 dc 0
+abridge1 [aone azero] [done dzero] adc_buff
+.model adc_buff adc_bridge(in_low = 0.5 in_high = 0.5)
+
+* digital clock
+abridge2 [aclk] [dclk] adc_buff
+.model adc_buff adc_bridge(in_low = 0.5 in_high = 0.5)
+
+Xmod in+ in- dclk dv dvb mod1
+
+* load mod1 subcircuit
+.include mod1-ct.cir
+
+.control
+save xmod.adffq in+ in- xmod.outintp xmod.outintn
+tran 0.01u $&simtime
+* digit density vs input
+plot xmod.adffq "v(in+) - v(in-)" xlimit 0.1m 0.2m
+* modulator integrator out, digital out
+plot xmod.outintp-xmod.outintn xmod.adffq xlimit 0.140m 0.148m
+*eprint dv dclk > digi1.txt
+linearize xmod.adffq
+fft xmod.adffq
+* noise shaping 20dB/decade
+plot db(xmod.adffq) xlimit 10k 1Meg xlog ylimit -20 -120
+.endc
+
+.end

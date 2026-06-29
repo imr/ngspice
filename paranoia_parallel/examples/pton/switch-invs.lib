@@ -1,0 +1,72 @@
+* sw like an NMOS inverter with resistive load
+.subckt invertern In Out VDD DGND
+*sp out vdd in vdd swswitch on
+Rl out vdd 10k
+Cl out dgnd 0.1p
+*C2 out vdd 0.1p
+sn out dgnd in dgnd swswitch off
+.ends invertern
+
+* sw like a PMOS inverter with resistive load
+.subckt inverterp In Out VDD DGND
+sp out vdd vdd in swswitch
+Rl out 0 10k
+*Cl out dgnd 0.1p
+C2 out vdd 0.1p
+*sn out dgnd in dgnd swswitch off
+.ends inverterp
+
+* sw like a CMOS inverter
+.subckt inverter In Out VDD DGND
+sp out vdd vdd in swswitch
+Rin in 0 1e9
+Cl out dgnd 0.1p
+C2 out vdd 0.1p
+sn out dgnd in dgnd swswitch
+.ends inverter
+
+.model swswitch sw (vt=1 vh=0.1 ron=1k roff=1e12)
+.model switchn sw (vt=1 vh=0.1 ron=1k roff=1e12)
+
+* sw like a CMOS inverter with PSPICE VSWITCH
+.subckt invertervs In Out VDD DGND
+sp out vdd vdd in swn
+Rin in 0 1e9
+Cl out dgnd 0.1p
+C2 out vdd 0.1p
+sn out dgnd in dgnd swn
+.ends invertervs
+
+.MODEL SWN VSWITCH ( VON = 1.1 VOFF = 0.9 RON=1k  ROFF=1e12 )
+
+
+* sw like a CMOS inverter with PSPICE VSWITCH
+.subckt invertervs2 In Out VDD DGND
+sp out vdd vdd in swn
+Rin in 0 1e9
+Cl out dgnd 0.1p
+C2 out vdd 0.1p
+sn out dgnd in dgnd swn
+.MODEL SWN VSWITCH ( VON = 1.1 VOFF = 0.9 RON=1k  ROFF=1e12 )
+.ends invertervs2
+
+* sw like a CMOS inverter with PSPICE VSWITCH
+.subckt invertervs3 In Out VDD DGND
+sp out vdd vdd in swn2
+Rin in 0 1e9
+Cl out dgnd 0.1p
+C2 out vdd 0.1p
+sn out dgnd in dgnd swn2
+.ends invertervs3
+
+.MODEL SWN2 VSWITCH ( VON = 1.1 VOFF = 0.9 RON=1k  ROFF=1e12 )
+
+* sw like a CMOS inverter with PSPICE VSWITCH
+.subckt invertervs4 In Out VDD DGND
+sp out vdd vdd in swn
+Rin in 0 1e9
+Cl out dgnd 0.1p
+C2 out vdd 0.1p
+sn out dgnd in dgnd swn
+.MODEL SWN VSWITCH ( VON = 1.1 VOFF = 0.9 RON=2k  ROFF=1e12 )
+.ends invertervs4

@@ -1,0 +1,226 @@
+*  74hcng.lib
+*
+*  derived from 74HCxxx Model libraray for LTSPICE from www.linear.com/software
+*
+*  Revision 1.01 06/25/2018   test devices NAND, NOR, and XOR as XSPICE subcircuit for ngspice
+*
+*  All parts have been divided into three sections.
+*
+*  >--| A-D-Converter (threshold VCC1/2) |----| Event LOGIC Axx (delay) |----| OUTPUT LEVEL D-A (rise and fall times) |-->
+*
+*  Delays are given for Vcc = 2V/4.5V/6V (HC) from the
+*  Philips data sheets. http://www.philipslogic.com
+*
+*  Delays are given for Vcc = 2V/4.5V/6V .
+*  Used delay:  Td = (Tpd-Tr/2)*(4.5-0.5)/(Vcc-0.5)
+*  The gate delay has to be set to tpd minus 3ns for the input filter
+*  and another minus 3ns for Trise/2
+*    td1 = tpd  - 3ns - 3ns
+*
+
+.param vcc=5 tripdt=6n
+***********************************************************************************
+* The 74HCXX gates
+*
+* 2-input NAND gate
+* vcc 2 /4.5/5 /6
+* tpd 25n/9n/7n/7n
+* tr 19n/7n /  /6n
+.SUBCKT 74HC00  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+*Cin1 in1 0 3.5p
+*Cin2 in2 0 3.5p
+abridge2 [in1 in2] [din1 din2] adc_buff
+.model adc_buff adc_bridge(in_low = {vcc1/2.0} in_high = {vcc1/2.0})
+a6 [din1 din2] dout nand1
+.model nand1 d_nand(rise_delay = {td1} fall_delay = {td1}
++ input_load = 0.5e-12)
+abridge1 [dout] [out20] dac1
+.model dac1 dac_bridge(out_low = 0.0 out_high = {vcc1} out_undef = {vcc1/2.0}
++ input_load = 5.0e-12 t_rise = {tripdt1}
++ t_fall = {tripdt1})
+Rout out20 out {Rout}
+.ends
+
+
+* 2-input NOR gate
+* tpd 25n/9n/7n
+* tr 19n/7n/6n
+.SUBCKT 74HC02  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+*Cin1 in1 0 3.5p
+*Cin2 in2 0 3.5p
+abridge2 [in1 in2] [din1 din2] adc_buff
+.model adc_buff adc_bridge(in_low = {vcc1/2.0} in_high = {vcc1/2.0})
+a6 [din1 din2] dout nor1
+.model nor1 d_nor(rise_delay = {td1} fall_delay = {td1} input_load = 0.5e-12)
+abridge1 [dout] [out20] dac1
+.model dac1 dac_bridge(out_low = 0.0 out_high = {vcc1} out_undef = {vcc1/2.0}
++ input_load = 5.0e-12 t_rise = {tripdt1} t_fall = {tripdt1})
+Rout out20 out {Rout}
+.ends
+
+
+** 2-input AND gate
+* tpd 25n/9n/7n
+* tr 19n/7n/6n
+.SUBCKT 74HC08  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+*Cin1 in1 0 3.5p
+*Cin2 in2 0 3.5p
+abridge2 [in1 in2] [din1 din2] adc_buff
+.model adc_buff adc_bridge(in_low = {vcc1/2.0} in_high = {vcc1/2.0})
+a6 [din1 din2] dout and1
+.model and1 d_and(rise_delay = {td1} fall_delay = {td1}
++ input_load = 0.5e-12)
+abridge1 [dout] [out20] dac1
+.model dac1 dac_bridge(out_low = 0.0 out_high = {vcc1} out_undef = {vcc1/2.0}
++ input_load = 5.0e-12 t_rise = {tripdt1}
++ t_fall = {tripdt1})
+Rout out20 out {Rout}
+.ends
+**
+
+* 2-input OR gate
+* tpd 25n/9n/7n
+* tr 19n/7n/6n
+.SUBCKT 74HC32  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+*Cin1 in1 0 3.5p
+*Cin2 in2 0 3.5p
+abridge2 [in1 in2] [din1 din2] adc_buff
+.model adc_buff adc_bridge(in_low = {vcc1/2.0} in_high = {vcc1/2.0})
+a6 [din1 din2] dout or1
+.model or1 d_or(rise_delay = {td1} fall_delay = {td1} input_load = 0.5e-12)
+abridge1 [dout] [out20] dac1
+.model dac1 dac_bridge(out_low = 0.0 out_high = {vcc1} out_undef = {vcc1/2.0}
++ input_load = 5.0e-12 t_rise = {tripdt1} t_fall = {tripdt1})
+Rout out20 out {Rout}
+.ends
+
+
+* 2-input EXOR gate
+* tpd 39n/14n/11n
+* tr 19n/7n/6n
+.SUBCKT 74HC86  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param td1={1e-9*(14-3-3)*4.0/(vcc1-0.5)}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+*Cin1 in1 0 3.5p
+*Cin2 in2 0 3.5p
+abridge2 [in1 in2] [din1 din2] adc_buff
+.model adc_buff adc_bridge(in_low = {vcc1/2.0} in_high = {vcc1/2.0})
+a6 [din1 din2] dout xor3
+.model xor3 d_xor(rise_delay = {td1} fall_delay = {td1}
++ input_load = 0.5e-12)
+abridge1 [dout] [out20] dac1
+.model dac1 dac_bridge(out_low = 0.0 out_high = {vcc1} out_undef = {vcc1/2.0}
++ input_load = 5.0e-12 t_rise = {tripdt1} t_fall = {tripdt1})
+Rout out20 out {Rout}
+.ends
+
+
+*
+*============================================================================
+*
+* A hopefully real transistor level based model of the 74HCU04. The model
+* comes directly from philips. http://www.philipslogic.com/support/spice/
+* This a unbuffered inverter which is often used in LC or crystal oscillators.
+* Inverter, unbuffered
+* Original Philips model used.
+.SUBCKT 74HCU04  A Y  VCC VGND  vcc1={vcc} speed1={speed} tripdt1={tripdt}
+*Rin  A A1  200
+*Cin  A1 VGND  3p
+*XAY  A1 Y VCC VGND 74HC04_INV0
+XAY  A Y VCC VGND 74HC04_INV0
+.ends
+*
+*
+.SUBCKT 74HC04_INV0  2  3  80 90
+*IN=2, OUT=3, VCC=80, GND=90
+XINP  20  25  50  60    74HC_INP0N
+XOUTP 25  30  50  60    74HC_OUTPN
+L1  80  50   6.87NH
+L2  60  90   6.87NH
+L3   2  20   5.97NH
+L4  30   3   5.97NH
+C1  50  90   1.5P
+C2  60  90   1.5P
+C3  20  90   1.5P
+C4  3   90   1.5P
+.ENDS
+*
+.SUBCKT 74HC_INP0N  2  3  50  60
+*IN=2, OUT=3, VCC=50, GND=60
+R1  2  3  100
+MP1 3 50 50 50  MHCPEN W=20U L=2.4U AD=100P AS=100P PD=40U PS= 20U
+MN1 3 60 60 60  MHCNEN W=35U L=2.4U AD=260P AS=260P PD=70U PS= 20U
+.ENDS
+*
+.SUBCKT 74HC_OUTPN 2  3  50  60
+*IN=2, OUT=3, VCC=50, GND=60
+R1  2 4 100
+MP1 3 4 50 50  MHCPEN W=360U L=2.4U AD=400P AS=400P PD=10U PS=180U
+MN1 3 4 60 60  MHCNEN W=140U L=2.4U AD=200P AS=300P PD=10U PS=130U
+R2  4 5 50
+MP2 3 5 50 50  MHCPEN W=360U L=2.4U AD=400P AS=400P PD=10U PS=180U
+MN2 3 5 60 60  MHCNEN W=140U L=2.4U AD=200P AS=200P PD=10U PS=130U
+R3  5 6 50
+MP3 3 6 50 50  MHCPEN W=360U L=2.4U AD=400P AS=400P PD=10U PS=180U
+MN3 3 6 60 60  MHCNEN W=140U L=2.4U AD=200P AS=200P PD=10U PS=130U
+.ENDS
+************************************************
+*         NOMINAL N-Channel Transistor         *
+*            UCB-3 Parameter Set               *
+*         HIGH-SPEED CMOS Logic Family         *
+*                10-Jan.-1995                  *
+************************************************
+.Model MHCNEN NMOS (
++LEVEL = 3
++KP    = 45.3E-6
++VTO   = 0.72
++TOX   = 51.5E-9
++NSUB  = 2.8E15
++GAMMA = 0.94
++PHI   = 0.65
++VMAX  = 150E3
++RS    = 40
++RD    = 40
++XJ    = 0.11E-6
++LD    = 0.52E-6
++DELTA = 0.315
++THETA = 0.054
++ETA   = 0.025
++KAPPA = 0.0
++WD    = 0.0 )
+
+***********************************************
+*        NOMINAL P-Channel transistor         *
+*           UCB-3 Parameter Set               *
+*         HIGH-SPEED CMOS Logic Family        *
+*               10-Jan.-1995                  *
+***********************************************
+.Model MHCPEN PMOS (
++LEVEL = 3
++KP    = 22.1E-6
++VTO   = -0.71
++TOX   = 51.5E-9
++NSUB  = 3.3E16
++GAMMA = 0.92
++PHI   = 0.65
++VMAX  = 970E3
++RS    = 80
++RD    = 80
++XJ    = 0.63E-6
++LD    = 0.23E-6
++DELTA = 2.24
++THETA = 0.108
++ETA   = 0.322
++KAPPA = 0.0
++WD    = 0.0 )
+
+
+
