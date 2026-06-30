@@ -1,0 +1,17 @@
+H. Vogt, 30.06.2026
+
+
+Install IHP PDK from github at https://github.com/IHP-GmbH/IHP-Open-PDK 
+Set the environmental variables PDK_ROOT and PDK, e.g.
+
+PDK_ROOT   D:\Spice_general\IHP-Open-PDK
+PDK        ihp-sg13g2
+
+Have the OpenVAF-compiled models for MOS ready: psp103.osdi, psp103_nqs.osdi.
+
+in .spiceinit, add the following:
+
+set ngbehavior=hsa
+option KLU
+
+Run the examples.
