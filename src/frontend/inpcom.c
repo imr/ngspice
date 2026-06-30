@@ -3934,12 +3934,16 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
     char *s, *s_e, *y;
 
     s = skip_non_ws(line);
-    while (isspace_c(*s) || isquote(*s))
+    while (isspace_c(*s))
         s++;
-    for (s_e = s; *s_e && !isspace_c(*s_e) && !isquote(*s_e); s_e++)
-        ;
+    if (isquote(*s))
+        for (s_e = ++s; *s_e && !isquote(*s_e); s_e++) ;
+    else
+        for (s_e = s; *s_e && !isspace_c(*s_e) && !isquote(*s_e); s_e++) ;
     y = s_e;
-    while (isspace_c(*y) || isquote(*y))
+    if (y && isquote(*y))
+        ++y;
+    while (isspace_c(*y))
         y++;
 
     if (*y) {
@@ -3950,8 +3954,10 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
         char *y_e;
         struct library *lib;
 
-        for (y_e = y; *y_e && !isspace_c(*y_e) && !isquote(*y_e); y_e++)
-            ;
+        if (isquote(*y))
+            for (y_e = ++y; *y_e && !isquote(*y_e); y_e++) ;
+        else
+            for (y_e = y; *y_e && !isspace_c(*y_e) && !isquote(*y_e); y_e++) ;
         keep_char1 = *s_e;
         keep_char2 = *y_e;
         *s_e = '\0';
