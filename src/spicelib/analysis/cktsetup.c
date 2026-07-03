@@ -50,7 +50,8 @@ Author: 1985 Thomas L. Quarles
  * Node degree is counted GENERICALLY over every device type through the
  * GENnode() terminal array, so no device family can be missed (which would
  * wrongly prune a live node).  Only capacitors and resistors are ever removed.
- * Disable with `set no_topo_reduce` in .spiceinit. */
+ * Disable with `set no_topo_reduce` in .spiceinit. It is disabled as well if
+ * option rshunt=xx is selected.*/
 static void
 CKTtopologyReduce(CKTcircuit *ckt)
 {
@@ -62,6 +63,11 @@ CKTtopologyReduce(CKTcircuit *ckt)
 
     if (cp_getvar("no_topo_reduce", CP_BOOL, NULL, 0))
         return;
+
+#ifdef XSPICE
+    if (ckt->enh->rshunt_data.enabled)
+        return;
+#endif
 
     maxnode = ckt->CKTmaxEqNum;
     if (maxnode < 1)
@@ -79,8 +85,10 @@ CKTtopologyReduce(CKTcircuit *ckt)
             continue;
         nterm = *(DEVices[i]->DEVpublic.terms);
         if (DEVices[i]->DEVpublic.name) {
-            if (!strcmp(DEVices[i]->DEVpublic.name, "Capacitor")) captype = i;
-            else if (!strcmp(DEVices[i]->DEVpublic.name, "Resistor")) restype = i;
+            if (!strcmp(DEVices[i]->DEVpublic.name, "Capacitor"))
+                captype = i;
+            else if (!strcmp(DEVices[i]->DEVpublic.name, "Resistor"))
+                restype = i;
         }
         for (gmod = ckt->CKThead[i]; gmod; gmod = gmod->GENnextModel)
             for (ginst = gmod->GENinstances; ginst; ginst = ginst->GENnextInstance) {
@@ -110,13 +118,21 @@ CKTtopologyReduce(CKTcircuit *ckt)
                     int pn = ci->CAPposNode, nn = ci->CAPnegNode, mode = 0;
                     if (ci->CAPdangling)
                         continue;
-                    if (pn > 0 && degree[pn] == 1) mode |= 1;
-                    if (nn > 0 && degree[nn] == 1) mode |= 2;
+                    if (pn > 0 && degree[pn] == 1)
+                        mode |= 1;
+                    if (nn > 0 && degree[nn] == 1)
+                        mode |= 2;
                     if (!mode)
                         continue;
                     ci->CAPdangling = mode;
-                    if (mode & 1) degree[pn] = 0; else if (pn > 0) degree[pn]--;
-                    if (mode & 2) degree[nn] = 0; else if (nn > 0) degree[nn]--;
+                    if (mode & 1)
+                        degree[pn] = 0;
+                    else if (pn > 0)
+                        degree[pn]--;
+                    if (mode & 2)
+                        degree[nn] = 0;
+                    else if (nn > 0)
+                        degree[nn]--;
                     removed_this_pass++;
                     if (reported++ < 40)
                         fprintf(stdout,
@@ -133,13 +149,21 @@ CKTtopologyReduce(CKTcircuit *ckt)
                     int pn = ri->RESposNode, nn = ri->RESnegNode, mode = 0;
                     if (ri->RESdangling)
                         continue;
-                    if (pn > 0 && degree[pn] == 1) mode |= 1;
-                    if (nn > 0 && degree[nn] == 1) mode |= 2;
+                    if (pn > 0 && degree[pn] == 1)
+                        mode |= 1;
+                    if (nn > 0 && degree[nn] == 1)
+                        mode |= 2;
                     if (!mode)
                         continue;
                     ri->RESdangling = mode;
-                    if (mode & 1) degree[pn] = 0; else if (pn > 0) degree[pn]--;
-                    if (mode & 2) degree[nn] = 0; else if (nn > 0) degree[nn]--;
+                    if (mode & 1)
+                        degree[pn] = 0;
+                    else if (pn > 0)
+                        degree[pn]--;
+                    if (mode & 2)
+                        degree[nn] = 0;
+                    else if (nn > 0)
+                        degree[nn]--;
                     removed_this_pass++;
                     if (reported++ < 40)
                         fprintf(stdout,
