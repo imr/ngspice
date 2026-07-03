@@ -49,20 +49,25 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
                     vcap = *(ckt->CKTrhsOld+here->CAPposNode) -
                            *(ckt->CKTrhsOld+here->CAPnegNode) ;
                 }
+
+                if (here->CAPdangling) {
+                    /* Topology reduction: this cap hangs on a
+                     * floating (degree-1) node.  Remove it from the system:
+                     * pin the floating node(s) with a unit diagonal so the
+                     * matrix stays nonsingular, and contribute no charge or
+                     * current.  This eliminates the spurious LTE pressure
+                     * that otherwise drives "Timestep too small" at the
+                     * dangling node (set in CKTtopologyReduce()). */
+                    if (here->CAPdangling & 1)
+                        *(here->CAPposPosPtr) += 1.0;
+                    if (here->CAPdangling & 2)
+                        *(here->CAPnegNegPtr) += 1.0;
+                    *(ckt->CKTstate0+here->CAPqcap) = 0.0;
+                    continue;
+                }
+
                 if(ckt->CKTmode & (MODETRAN | MODEAC)) {
-                    if (here->CAPdangling) {
-                        /* Topology reduction: this cap hangs on a
-                         * floating (degree-1) node.  Remove it from the system:
-                         * pin the floating node(s) with a unit diagonal so the
-                         * matrix stays nonsingular, and contribute no charge or
-                         * current.  This eliminates the spurious LTE pressure
-                         * that otherwise drives "Timestep too small" at the
-                         * dangling node (set in CKTtopologyReduce()). */
-                        if (here->CAPdangling & 1) *(here->CAPposPosPtr) += 1.0;
-                        if (here->CAPdangling & 2) *(here->CAPnegNegPtr) += 1.0;
-                        *(ckt->CKTstate0+here->CAPqcap) = 0.0;
-                        continue;
-                    }
+
 #ifndef PREDICTOR
                     if(ckt->CKTmode & MODEINITPRED) {
                         *(ckt->CKTstate0+here->CAPqcap) =
