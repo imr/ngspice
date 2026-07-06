@@ -97,6 +97,14 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     ckt->CKTdefaultMosAS = task->TSKdefaultMosAS;
     ckt->CKTfixLimit = task->TSKfixLimit;
     ckt->CKTnoOpIter = task->TSKnoOpIter;
+    ckt->CKTresidCheckDisabled = task->TSKnoResidCheck;
+    ckt->CKTosdiStepRejectOff = task->TSKnoOsdiStepReject;
+    ckt->CKTdtClearOff = task->TSKnoDtClear;
+    ckt->CKTosdiVlim = task->TSKosdiVlim;
+    ckt->CKTosdiVlimVds = task->TSKosdiVlimVds;
+    ckt->CKTosdiVlimVgs = task->TSKosdiVlimVgs;
+    ckt->CKTosdiVlimVbs = task->TSKosdiVlimVbs;
+    ckt->CKTosdiVlimNqs = task->TSKosdiVlimNqs;
     ckt->CKTtryToCompact = task->TSKtryToCompact;
     ckt->CKTbadMos3 = task->TSKbadMos3;
     ckt->CKTkeepOpInfo = task->TSKkeepOpInfo;

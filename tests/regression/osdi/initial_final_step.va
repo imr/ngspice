@@ -1,0 +1,29 @@
+`include "disciplines.vams"
+
+module initial_final_probe(p);
+  inout p;
+  electrical p;
+
+  (*desc="counter initialized in initial_step"*)
+  real cnt;
+  (*desc="final step flag"*)
+  real is_final;
+
+  analog begin
+    @(initial_step) begin
+      cnt = 1.0;
+    end
+
+    @(timer(1.0e-3, 1.0e-3)) begin
+      cnt = cnt + 1.0;
+    end
+
+    @(final_step) begin
+      is_final = 1.0;
+      $strobe("FINAL_STEP executed at abstime=%g, cnt=%g\n", $abstime, cnt);
+    end
+
+    // Token contribution so the device stays in the node equations.
+    I(p) <+ 1.0e-6 * V(p);
+  end
+endmodule

@@ -24,6 +24,18 @@ typedef struct OsdiRegistryEntry {
 
   bool has_m;
 
+  /* OSDI v0.5 (2C) — number of absdelay transport-delay sites, guarded at
+   * load time against the published OSDI_DESCRIPTOR_SIZE so a model compiled
+   * before this field existed reads 0 (not garbage past its descriptor). */
+  uint32_t num_delay_sites;
+
+  /* OSDI 0.5 — persistent-state array (transition()/slew()/event toolkit):
+   * byte offset within the instance + slot count, both guarded against the
+   * published descriptor size.  Used to snapshot/restore the array for
+   * deferred commit (only accepted steps update the model's history). */
+  uint32_t persistent_state_offset;
+  uint32_t persistent_state_count;
+
 #ifdef KLU
   uint32_t matrix_ptr_offset;
 #endif

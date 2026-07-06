@@ -1,0 +1,12 @@
+* at_timer test
+.model at at_timer_probe
+n1 p at
+vp p 0 1
+
+.control
+pre_osdi at_timer.osdi
+tran 10u 6m
+print @n1[n_fires] @n1[last_event_time]
+quit
+.endc
+.end

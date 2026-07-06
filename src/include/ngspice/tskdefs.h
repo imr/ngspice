@@ -64,6 +64,14 @@ struct TSKtask {
     double TSKdefaultMosAS;
     unsigned int TSKfixLimit:1;
     unsigned int TSKnoOpIter:1; /* no OP iterating, go straight to gmin step */
+    unsigned int TSKnoResidCheck:1; /* `.option noresidcheck` opt-out of
+                                     * axis-4 dual-norm convergence */
+    unsigned int TSKnoOsdiStepReject:1; /* `.option noosdistepreject` disables
+                                         * axis-3 step rejection in osdiload.c
+                                         * + niiter.c */
+    unsigned int TSKnoDtClear:1;        /* `.option nodtclear` disables the
+                                         * small-dt CKTnoncon clear in
+                                         * niiter.c */
     unsigned int TSKtryToCompact:1; /* flag for LTRA lines */
     unsigned int TSKbadMos3:1; /* flag for MOS3 models */
     unsigned int TSKkeepOpInfo:1; /* flag for small signal analyses */
@@ -72,6 +80,11 @@ struct TSKtask {
     unsigned int TSKnoopac:1; /* flag for no OP calculation before AC */
     double TSKabsDv;                 /* abs limit for iter-iter voltage change */
     double TSKrelDv;                 /* rel limit for iter-iter voltage change */
+    double TSKosdiVlim;              /* `.option osdi_vlim=N` — generic */
+    double TSKosdiVlimVds;            /* `.option osdi_vlim_vds=N` */
+    double TSKosdiVlimVgs;            /* `.option osdi_vlim_vgs=N` */
+    double TSKosdiVlimVbs;            /* `.option osdi_vlim_vbs=N` */
+    double TSKosdiVlimNqs;            /* `.option osdi_vlim_nqs=N` — NQS helper nodes */
     double TSKepsmin;         /* minimum value for log */
 
 #ifdef KLU

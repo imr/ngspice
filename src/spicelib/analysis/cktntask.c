@@ -67,6 +67,9 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKdefaultMosAS    = def->TSKdefaultMosAS;
         /* fixLimit */
         tsk->TSKnoOpIter        = def->TSKnoOpIter;
+        tsk->TSKnoResidCheck    = def->TSKnoResidCheck;
+        tsk->TSKnoOsdiStepReject = def->TSKnoOsdiStepReject;
+        tsk->TSKnoDtClear       = def->TSKnoDtClear;
         tsk->TSKtryToCompact    = def->TSKtryToCompact;
         tsk->TSKbadMos3         = def->TSKbadMos3;
         tsk->TSKkeepOpInfo      = def->TSKkeepOpInfo;
@@ -74,6 +77,11 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnodeDamping     = def->TSKnodeDamping;
         tsk->TSKabsDv           = def->TSKabsDv;
         tsk->TSKrelDv           = def->TSKrelDv;
+        tsk->TSKosdiVlim        = def->TSKosdiVlim;
+        tsk->TSKosdiVlimVds     = def->TSKosdiVlimVds;
+        tsk->TSKosdiVlimVgs     = def->TSKosdiVlimVgs;
+        tsk->TSKosdiVlimVbs     = def->TSKosdiVlimVbs;
+        tsk->TSKosdiVlimNqs     = def->TSKosdiVlimNqs;
         tsk->TSKnoopac          = def->TSKnoopac;
         tsk->TSKepsmin          = def->TSKepsmin;
 
@@ -130,6 +138,9 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKdefaultMosAD    = 0;
         tsk->TSKdefaultMosAS    = 0;
         tsk->TSKnoOpIter        = 0;
+        tsk->TSKnoResidCheck    = 0;
+        tsk->TSKnoOsdiStepReject = 0;
+        tsk->TSKnoDtClear       = 0;
         tsk->TSKtryToCompact    = 0;
         tsk->TSKbadMos3         = 0;
         tsk->TSKkeepOpInfo      = 0;
@@ -137,6 +148,11 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnodeDamping     = 0;
         tsk->TSKabsDv           = 0.5;
         tsk->TSKrelDv           = 2.0;
+        tsk->TSKosdiVlim        = 0.1;
+        tsk->TSKosdiVlimVds     = 0.0;  /* 0 = inherit from osdi_vlim */
+        tsk->TSKosdiVlimVgs     = 0.0;
+        tsk->TSKosdiVlimVbs     = 0.0;
+        tsk->TSKosdiVlimNqs     = 0.0;
         tsk->TSKepsmin          = 1e-28;
 
 #ifdef KLU

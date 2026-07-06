@@ -1,0 +1,16 @@
+* transition test
+.model tr transition_probe
+n1 p tr
+
+.control
+pre_osdi transition.osdi
+tran 5u 7m
+meas tran vp_at_1 find v(p) at=1m   ; 0
+meas tran vp_at_2_5 find v(p) at=2.5m ; 0.5
+meas tran vp_at_4 find v(p) at=4m   ; 1
+meas tran vp_at_6_25 find v(p) at=6.25m ; 0.5
+meas tran vp_at_6_8 find v(p) at=6.8m ; 0
+print vp_at_1 vp_at_2_5 vp_at_4 vp_at_6_25 vp_at_6_8
+quit
+.endc
+.end

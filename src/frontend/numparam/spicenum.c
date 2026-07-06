@@ -29,6 +29,7 @@ Todo:
 #include "ngspice/fteext.h"
 #include "ngspice/stringskip.h"
 #include "ngspice/compatmode.h"
+#include "ngspice/osdi_defer.h"
 
 #ifdef SHARED_MODULE
 extern ATTRIBUTE_NORETURN void shared_exit(int status);
@@ -296,6 +297,66 @@ static bool incontrolS = 0;     /* flag control code sections */
 static bool firstsignalS = 1;
 static dico_t *dicoS = NULL;
 static dico_t *dicos_list[100];
+
+/* External accessor for the active dico_t.  Used by the OSDI deferred-
+ * evaluation path (osdi_defer.c) to invoke nupa_eval_with_scope() at
+ * instance bind time without exposing the static `dicoS` itself.  May
+ * return NULL if called before any deck has been processed. */
+dico_t *nupa_get_dico(void) {
+    return dicoS;
+}
+
+/* Public-name lookup for a real-valued numparam.  Returns 1 and sets
+ * *value on success; returns 0 if name is unknown or not a NUPA_REAL.
+ * Used by the device-line parser (spicelib/parser/inpdpar.c) so that
+ *
+ *   .param vgswp=0
+ *   vgs n2 n3 vgswp
+ *
+ * — i.e. an HSPICE-style bare-identifier value field — resolves the
+ * leading number from the global numparam dictionary instead of
+ * aborting with "unknown parameter (vgswp)".  Walks the dico's full
+ * scope stack via entrynb(), so subckt-scope params resolve too.
+ *
+ * Reentrant: returns 0 if dicoS hasn't been allocated yet (no deck
+ * processed).  Read-only on the dictionary. */
+int nupa_get_real(const char *name, double *value) {
+    if (!dicoS || !name || !value) return 0;
+    entry_t *entry = entrynb(dicoS, (char *)name);
+    if (!entry || entry->tp != NUPA_REAL) return 0;
+    *value = entry->vl;
+    return 1;
+}
+
+/* Companion writer to nupa_get_real.  Updates the value of an
+ * existing NUPA_REAL entry by name.  Used by the .dc analysis loop
+ * (dctrcurv.c) to sweep a .param across its start/stop range, then
+ * call the parser/binder hooks to push the new value through to V/I
+ * sources that referenced the param at parse time.
+ *
+ * Returns 1 on success, 0 if the name is unknown or not NUPA_REAL.
+ * Does NOT create new entries — sweeping an undefined name would
+ * mask the simulator's "unknown name" diagnostic. */
+int nupa_set_real(const char *name, double value) {
+    if (!dicoS || !name) return 0;
+    entry_t *entry = entrynb(dicoS, (char *)name);
+    if (!entry || entry->tp != NUPA_REAL) return 0;
+    entry->vl = value;
+    return 1;
+}
+
+/* See numparam.h.  Called from inp_subcktexpand's X→VA fallback to
+ * tell numparam this line is now a comment. */
+void nupa_skip_line(int linenum) {
+    if (!dicoS) return;
+    if (linenum < 0 || linenum > dicoS->linecount) return;
+    /* Force the line's stored copy to start with `*` so any later
+     * scan treats it as comment. */
+    if (dicoS->dynrefptr[linenum] && dicoS->dynrefptr[linenum][0])
+        dicoS->dynrefptr[linenum][0] = '*';
+    /* Reset the category so dispatch in nupa_eval does nothing. */
+    dicoS->dyncategory[linenum] = '?';
+}
 
 
 static void
@@ -673,6 +734,7 @@ nupa_eval(struct card *card)
     dicoS->srcline = linenum;
     dicoS->oldline = orig_linenum;
     dicoS->cardline = s;
+    dicoS->cardsource = card->linesource;
 
     c = dicoS->dyncategory[linenum];
 
@@ -687,7 +749,39 @@ nupa_eval(struct card *card)
     } else if (c == 'B') {              /* substitute braces line */
         /* nupa_substitute() may reallocate line buffer. */
 
+        /* HSPICE-style OSDI model cards (Samsung 14LPU et al.) embed
+         * `{...}` expressions on the right-hand side of `.model`
+         * params that reference per-instance geometry symbols (`l`,
+         * `w`, `nf`, `m`, `xnf`).  These cannot be evaluated at
+         * .model-parse time because no instance exists yet.  Detect
+         * them, save into the OSDI deferred-eval side table, and
+         * rewrite each such body to `{0}` in the ORIGINAL line so
+         * numparam's subsequent brace pass evaluates 0 (instead of
+         * choking on undefined `l`) and substitutes that into the
+         * corresponding MARKER placeholder.  At instance creation,
+         * osdisetup.c walks the side table and installs the proper
+         * per-instance values via OSDIparam.
+         *
+         * NOTE: we must rewrite `dynrefptr[linenum]` (the original
+         * line with `{...}` blocks still visible) rather than
+         * `card->line` (which already has MARKER placeholders — the
+         * `{` chars are gone at this point).  Numparam walks both
+         * lines in parallel during nupa_substitute. */
+        osdi_defer_preprocess_line(&dicoS->dynrefptr[linenum]);
+
+        /* HSPICE uses single-quoted string literals for some .option values
+         * (e.g. tmipath='modeldir') that look like parameter references to
+         * numparam but are not defined as parameters. Suppress errors for
+         * .option lines so these unsupported HSPICE options are silently
+         * skipped rather than printing noise or aborting the run. */
+        bool is_option_line = prefix(".option", dicoS->dynrefptr[linenum]);
+        if (is_option_line)
+            dicoS->suppress_errors = true;
         err = nupa_substitute(dicoS, dicoS->dynrefptr[linenum], &card->line);
+        if (is_option_line) {
+            dicoS->suppress_errors = false;
+            err = 0;
+        }
         s = card->line;
     } else if (c == 'X') {
         /* compute args of subcircuit, if required */

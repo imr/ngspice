@@ -1,0 +1,19 @@
+`include "disciplines.vams"
+
+module laplace_probe(y_nd, y_np, y_zd, y_zp, in);
+  inout y_nd, y_np, y_zd, y_zp, in;
+  electrical y_nd, y_np, y_zd, y_zp, in;
+
+  analog begin
+    // strictly proper low-pass filter: H(s) = 1000 / (s + 1000)
+    V(y_nd) <+ laplace_nd(V(in), {1000.0}, {1000.0, 1.0});
+    V(y_np) <+ laplace_np(V(in), {1000.0}, {-1000.0, 0.0});
+
+    // strictly proper band-pass/low-pass: H(s) = (s + 2000) / ((s + 1000)(s + 3000))
+    // zeros: {-2000, 0}
+    // poles: {-1000, 0, -3000, 0}
+    // denom coeff: constant = 3e6, s^1 = 4000, s^2 = 1
+    V(y_zd) <+ laplace_zd(V(in), {-2000.0, 0.0}, {3.0e6, 4000.0, 1.0});
+    V(y_zp) <+ laplace_zp(V(in), {-2000.0, 0.0}, {-1000.0, 0.0, -3000.0, 0.0});
+  end
+endmodule

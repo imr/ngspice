@@ -54,6 +54,14 @@ struct CKTnode {
     CKTnode *next;              /* pointer to the next node */
     unsigned int icGiven:1;     /* FLAG ic given */
     unsigned int nsGiven:1;     /* FLAG nodeset given */
+    unsigned int nogmin:1;      /* FLAG: exclude this node's diagonal from the
+                                 * dynamic/true gmin-stepping pass (LoadGmin).
+                                 * Set for OSDI model-internal nodes that back
+                                 * implicit equations (laplace/zi/idt state):
+                                 * gmin on their small-valued diagonals is not a
+                                 * harmless leak-to-ground -- it heavily damps
+                                 * the integrator-state Newton update and breaks
+                                 * convergence ("gmin stepping failed"). */
 };
 
 /* defines for node parameters */
@@ -119,6 +127,66 @@ struct CKTcircuit {
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
     double *CKTrhsSpare;        /* spare rhs value for reordering */
+
+    /* Axis 4 — Spectre/HSPICE-style absolute residual convergence check.
+     * NIconvTest gates on CKTresidConverged so that Newton declares
+     * convergence only when BOTH the solution vector AND the residual
+     * are within tolerance.  CKTresidCheckDisabled is the
+     * `.option noresidcheck` opt-out. */
+    int CKTresidConverged;
+    int CKTresidCheckDisabled;
+    /* OSDI axis-3 step rejection (OSDI v0.5 EVAL_RET_FLAG_REJECT_STEP).
+     * CKTosdiStepReject is raised inside CKTload — by an OSDI model
+     * returning REJECT_STEP, or by sanitize_jacobian when it sees a
+     * NaN/Inf Jacobian entry.  NIiter checks the latch and bails with
+     * E_ITERLIM.  CKTosdiStepRejectOff is the `.option noosdistepreject`
+     * opt-out. */
+    int CKTosdiStepReject;
+    int CKTosdiStepRejectOff;
+    /* Per-iteration count of huge-finite Jacobian entries clipped by
+     * sanitize_jacobian during CKTload.  When > 0, the model evaluation
+     * is in a numerical regime (e.g. BSIM-BULK near a singular operating
+     * point) where Newton can produce unphysical updates.  NIiter uses
+     * this to gate per-node Δv limiting (voltage-range-agnostic
+     * substitute for model-supplied $limit when the model doesn't
+     * provide one). */
+    int CKThugeJThisIter;
+    /* Axis 2 — current Newton iteration index (1-based, per-NIiter-solve),
+     * published by NIiter before each CKTload and forwarded to OSDI models
+     * via SimInfo.newton_iter for iteration-aware limiter behaviour. */
+    int CKTosdiNewtonIter;
+    /* Small-dt convergence rescue.  At very small CKTdelta during transient,
+     * sanitize-* paths in osdiload.c (and similar in other device loaders)
+     * fire spurious CKTnoncon++ events because the integration coefficient
+     * 2/dt amplifies tiny charge changes into apparent currents that exceed
+     * defensive clip thresholds.  Those increments block NIconvTest from
+     * ever running, so even a perfectly settled iterate cannot declare
+     * convergence — NIiter spins until maxIter and returns E_ITERLIM,
+     * causing dctran to cut delta to abort.
+     *
+     * When this flag is 0 (default), NIiter clears CKTnoncon after CKTload
+     * returns if CKTdelta is below 1 ps in transient mode, letting the
+     * downstream NIconvTest evaluate solution stability directly.  Genuine
+     * non-convergence still fires because NIconvTest tests |Δx| against
+     * (reltol·|x| + vntol) per node — an actually-diverging iterate fails
+     * that test regardless of CKTnoncon state. */
+    int CKTdtClearOff;
+    /* osdi_vlim: per-iteration Δv bound for OpenVA's compiler-side $limit
+     * synthesis (Mijalković-style DEVlimvds substitute applied at compile
+     * time).  Generic fallback; per-shape variants below cascade through
+     * to this when not separately set.  Default 0.1 V.  Voltage-range-
+     * agnostic — bounds Newton step magnitude, not absolute voltage. */
+    double CKTosdiVlim;
+    /* Per-MOSFET-shape variants.  OpenVA's compiler-side synthesis emits
+     * $simparam_opt("osdi_vlim_vds"/"_vgs"/"_vbs", 0.1) depending on the
+     * classified probe shape (drain-source / gate-source / body-junction).
+     * ngspice's get_simparams cascades: per-shape value if > 0, else
+     * CKTosdiVlim, else 0.1V default.  This lets the user tune each
+     * MOSFET-style probe class independently. */
+    double CKTosdiVlimVds;
+    double CKTosdiVlimVgs;
+    double CKTosdiVlimVbs;
+    double CKTosdiVlimNqs;
     double *CKTirhs;            /* current rhs value - being loaded
                                    (imag) */
     double *CKTirhsOld;         /* previous rhs value (imaginary)*/

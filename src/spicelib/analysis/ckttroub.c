@@ -71,6 +71,11 @@ CKTtrouble(CKTcircuit *ckt, char *optmsg)
 		else if (cv->TRCVvType[i] == rcode) {
 			sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
 				((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
+	    } else if (cv->TRCVvType[i] == PARAM_CODE) { /* .param sweep */
+		extern int nupa_get_real(const char *name, double *value);
+		double v = 0.0;
+		nupa_get_real(cv->TRCVvName[i], &v);
+		sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i], v);
 	    } else {
 		sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
 		    ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue);

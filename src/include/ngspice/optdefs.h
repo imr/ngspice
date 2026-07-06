@@ -92,6 +92,9 @@ enum {
     OPT_GMINSTEPS,
     OPT_MINBREAK,
     OPT_NOOPITER,
+    OPT_NORESIDCHECK,    /* `.option noresidcheck` opts out of axis-4 dual-norm
+                          * convergence (residual-vector check); revert to
+                          * SPICE3 solution-only behaviour. */
     OPT_EQNS,
     OPT_REORDTIME,
     OPT_METHOD,
@@ -136,6 +139,21 @@ enum {
     OPT_LTEABSTOL,
     OPT_LTETRTOL,
     OPT_NEWTRUNC,
+    OPT_NOOSDISTEPREJECT, /* `.option noosdistepreject` disables the axis-3
+                           * step-rejection mechanism (OSDI EVAL_RET_FLAG_REJECT_STEP
+                           * + sanitize_jacobian-driven REJECT).  Default off
+                           * (rejection active). */
+    OPT_OSDIVLIM,         /* `.option osdi_vlim=N` sets the per-iteration Δv
+                           * bound consumed by OpenVA's compiler-side $limit
+                           * synthesis.  Default 0.1 V.  Generic fallback;
+                           * per-shape variants below override when set. */
+    OPT_OSDIVLIM_VDS,     /* `.option osdi_vlim_vds=N` — drain-source-shape probes */
+    OPT_OSDIVLIM_VGS,     /* `.option osdi_vlim_vgs=N` — gate-channel-shape probes */
+    OPT_OSDIVLIM_VBS,     /* `.option osdi_vlim_vbs=N` — body-junction-shape probes */
+    OPT_OSDIVLIM_NQS,     /* `.option osdi_vlim_nqs=N` — NQS helper-node probes (V(NC)/V(N1)/V(NR)/etc — uppercase-N convention) */
+    OPT_NODTCLEAR,        /* `.option nodtclear` disables the small-dt
+                           * CKTnoncon clear in niiter.c.  See CKTdtClearOff
+                           * comment in cktdefs.h. */
 };
 
 #ifdef XSPICE

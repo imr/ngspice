@@ -1,0 +1,24 @@
+`include "disciplines.vams"
+
+module last_crossing_probe(p);
+  inout p;
+  electrical p;
+
+  real tcross;
+  real expr;
+  (*desc="time of most recent rising sin(2pi*1k*t) crossing"*)
+  real tcross_out;
+  (*desc="last abstime the model saw eval()"*)
+  real tnow_out;
+  (*desc="probe expression value"*)
+  real expr_out;
+
+  analog begin
+    expr = sin(2.0 * 3.14159265358979 * 1.0e3 * $abstime);
+    tcross = last_crossing(expr, 1);
+    tcross_out = tcross;
+    tnow_out = $abstime;
+    expr_out = expr;
+    I(p) <+ 1.0e-6 * V(p);
+  end
+endmodule

@@ -27,6 +27,12 @@ Modified: 2000  AlansFixes
 typedef struct sSMPmatrix {
     MatrixFrame *SPmatrix ;                /* pointer to sparse matrix */
 
+    /* Per-(external-row / node-number) flag: 1 => exclude this diagonal from
+     * the dynamic/true gmin-stepping pass (LoadGmin).  Built lazily in NIiter
+     * from CKTnode.nogmin (set for OSDI model-internal implicit-equation
+     * nodes); NULL => add gmin to every diagonal (legacy behaviour). */
+    char *gmin_skip ;
+
 #ifdef KLU
     KLUmatrix *SMPkluMatrix ;              /* KLU Pointer to the KLU Matrix Data Structure (only for CIDER, for the moment) */
     unsigned int CKTkluMODE:1 ;            /* KLU MODE parameter to enable KLU or not from the heuristic */

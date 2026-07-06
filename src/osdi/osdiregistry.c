@@ -398,12 +398,16 @@ extern OsdiObjectFile load_object_file(const char *input) {
     }
     descriptor_size = *OSDI_DESCRIPTOR_SIZE;
   } else {
-    // Original OpenVAF, must be version==0.3
-    if (OSDI_VERSION_MAJOR != OSDI_VERSION_MAJOR_CURR ||
-      OSDI_VERSION_MINOR != OSDI_VERSION_MINOR_CURR) {
-      printf("NGSPICE only supports OSDI v%d.%d but \"%s\" uses v%d.%d!",
-        OSDI_VERSION_MAJOR_CURR, OSDI_VERSION_MINOR_CURR, path,
-        OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
+    /* Original OpenVAF binaries don't publish OSDI_DESCRIPTOR_SIZE
+     * and must be v0.3 exactly.  OSDI_VERSION_MAJOR_CURR /
+     * OSDI_VERSION_MINOR_CURR now track the current
+     * openvaf-reloaded/OpenVA version (0.5 as of S3a) so the
+     * v0.3 check is hard-coded here. */
+    if (OSDI_VERSION_MAJOR != 0 || OSDI_VERSION_MINOR != 3) {
+      printf("NGSPICE only supports OSDI v0.3 (original OpenVAF) "
+             "or v0.4+ (OpenVAF-reloaded / OpenVA) but \"%s\" uses "
+             "v%d.%d!",
+        path, OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
       txfree(path);
       return INVALID_OBJECT;
     }
@@ -430,6 +434,18 @@ extern OsdiObjectFile load_object_file(const char *input) {
   }
 
   for (uint32_t i = 0; i < lim_table_len; i++) {
+    /* If the model provided its own limiter implementation, respect it.
+     * Two cases:
+     *   - Standard name (e.g. "pnjlim") with the canonical signature: the
+     *     model is shadowing the simulator's default with its own version.
+     *   - Custom name with a model-defined signature: the model has both the
+     *     call site (in its compiled eval()) and the implementation, so the
+     *     simulator never has to know what the signature is.
+     * In either case the simulator stays out of the way: do not overwrite
+     * func_ptr, and do not warn about an "unknown" name. */
+    if (lim_table[i].func_ptr != NULL) {
+      continue;
+    }
     int expected_args = -1;
     IS_LIM_FUN("pnjlim", 2, osdi_pnjlim)
     IS_LIM_FUN("limvds", 0, osdi_limvds)
@@ -475,6 +491,29 @@ extern OsdiObjectFile load_object_file(const char *input) {
 
     size_t inst_off = calc_osdi_instance_data_off(descr);
     size_t noise_off = calc_osdi_noise_off(descr);
+    /* OSDI v0.5 (2C) — only trust num_delay_sites if the published
+     * descriptor size actually reaches that field; a pre-2C .osdi has a
+     * smaller descriptor and reading it would dereference past its slot. */
+    uint32_t num_delay_sites =
+        (descriptor_size >= offsetof(OsdiDescriptor, num_delay_sites) +
+                                sizeof(uint32_t))
+            ? descr->num_delay_sites
+            : 0u;
+
+    /* Persistent-state offset/count: only trust them if the published
+     * descriptor actually reaches these tail fields (a pre-0.5 .osdi has a
+     * smaller descriptor). */
+    uint32_t persistent_state_count =
+        (descriptor_size >= offsetof(OsdiDescriptor, persistent_state_count) +
+                                sizeof(uint32_t))
+            ? descr->persistent_state_count
+            : 0u;
+    uint32_t persistent_state_offset =
+        (descriptor_size >= offsetof(OsdiDescriptor, persistent_state_offset) +
+                                sizeof(uint32_t))
+            ? descr->persistent_state_offset
+            : 0u;
+
     dst[i] = (OsdiRegistryEntry){
         .descriptor = descr,
         .inst_offset = (uint32_t)inst_off,
@@ -482,6 +521,9 @@ extern OsdiObjectFile load_object_file(const char *input) {
         .dt = dt,
         .temp = temp,
         .has_m = has_m,
+        .num_delay_sites = num_delay_sites,
+        .persistent_state_offset = persistent_state_offset,
+        .persistent_state_count = persistent_state_count,
 
 #ifdef KLU
         .matrix_ptr_offset = (uint32_t)calc_osdi_instance_matrix_off(descr),

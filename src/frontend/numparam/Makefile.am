@@ -8,9 +8,11 @@ libnumparam_la_SOURCES = \
 	spicenum.c	\
 	xpressn.c	\
 	mystring.c	\
+	table_param.c	\
 	general.h	\
 	numpaif.h	\
-	numparam.h
+	numparam.h	\
+	table_param.h
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

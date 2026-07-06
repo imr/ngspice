@@ -678,6 +678,46 @@ resume:
         /* time abort? */
         ckt->CKTtime += ckt->CKTdelta;
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
+        /* Non-uniform-history predictor guard.
+         *
+         * The order-2 Newton-divided-difference predictor used by
+         * NIpred (case TRAPEZOIDAL/case 2 in nipred.c) extrapolates
+         *   pred = sols[0] + (a*dd0 + b*dd1) * dt_now
+         * where
+         *   dd1 = (sols[1] - sols[2]) / dt_prev_prev
+         *   b   = -dt_now / (2 * dt_prev)
+         * `dd1` blows up when dt_prev_prev is much smaller than the
+         * other history deltas — exactly the pattern that arises
+         * just after a breakpoint cuts dt to the picosecond scale
+         * for one step and then the 1.5× growth cap re-grows dt to
+         * the nanosecond scale within a handful of accepted steps.
+         * The polynomial fit through three points with widely
+         * non-uniform x-spacings produces a nonsensical slope at
+         * the extrapolation end of the fit window, and Newton then
+         * has to undo a 0.5-1 V starting offset on the affected
+         * nodes within itl4 iterations.  Observed on TSMC22 ULP
+         * driver_lv_2v5_tb: VSN (an L1-coupled supply driving
+         * 500-finger BSIM-BULK drivers) catches a ~-0.7 V predictor
+         * over-shoot and Newton can't undo it inside Stage A's
+         * 0.5 V/iter scalar clamp.
+         *
+         * Detect the non-uniform pattern via a simple ratio sanity
+         * check on CKTdeltaOld[1] vs CKTdeltaOld[2] and force
+         * CKTorder=1 (linear extrapolation, immune to this failure
+         * mode) for the current step.  The order=2 predictor
+         * resumes naturally on the next step once the history has
+         * three smoothly-spaced samples again.
+         *
+         * Threshold of 10× chosen so smooth dt-growth sequences
+         * (e.g. the 1.5× cap, factor 1.5 per step) never trigger
+         * — only genuine breakpoint-induced discontinuities. */
+        if (ckt->CKTorder > 1 &&
+            ckt->CKTdeltaOld[1] > 0.0 && ckt->CKTdeltaOld[2] > 0.0) {
+            double r = ckt->CKTdeltaOld[1] / ckt->CKTdeltaOld[2];
+            if (r > 10.0 || r < 0.1) {
+                ckt->CKTorder = 1;
+            }
+        }
         NIcomCof(ckt);
 #ifdef PREDICTOR
         error = NIpred(ckt);
@@ -901,6 +941,29 @@ resume:
                 (void)printf("delta at delmin\n");
 #endif
             } else {
+                /* Before reporting the abort, identify the
+                 * worst-moving node so the failure message says
+                 * something useful instead of "cause unrecorded".
+                 * Standard CKTtroubleNode/Elt get reset between
+                 * NIiter calls, so we re-scan here at the exit. */
+                if (!ckt->CKTtroubleNode && !ckt->CKTtroubleElt &&
+                    ckt->CKTnodes) {
+                    CKTnode *n;
+                    double worst = 0.0;
+                    int worst_idx = 0;
+                    for (n = ckt->CKTnodes->next; n; n = n->next) {
+                        if (n->type != SP_VOLTAGE) continue;
+                        int idx = n->number;
+                        double diff = fabs(ckt->CKTrhs[idx] -
+                                           ckt->CKTrhsOld[idx]);
+                        if (diff > worst) {
+                            worst = diff;
+                            worst_idx = idx;
+                        }
+                    }
+                    if (worst_idx > 0)
+                        ckt->CKTtroubleNode = worst_idx;
+                }
                 UPDATE_STATS(DOING_TRAN);
                 errMsg = CKTtrouble(ckt, "Timestep too small");
                 SPfrontEnd->OUTendPlot(job->TRANplot);

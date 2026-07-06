@@ -301,16 +301,38 @@ do_measure(
             continue;
         }
 
+        /* HSPICE-shorthand: `.measure <result> <fn> ...` (no
+         * explicit analysis type).  When the first token doesn't
+         * match a recognized analysis type, treat it as the
+         * result name and infer the analysis from the deck.
+         * Scan ci_deck — ci_commands holds only .print/.meas/etc.,
+         * NOT .dc/.tran/.ac. */
         if (chkAnalysisType(an_type) != TRUE) {
-            if (!chk_only) {
-                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->linenum);
-                fprintf(cp_err, "       %s\n", meas_card->line);
+            const char *inferred = "tran";
+            struct card *c;
+            for (c = ft_curckt ? ft_curckt->ci_deck : NULL;
+                 c; c = c->nextcard) {
+                const char *w = c->line;
+                if (!w || *w == '*') continue;
+                if (ciprefix(".dc", w))   { inferred = "dc";   break; }
+                if (ciprefix(".ac", w))   { inferred = "ac";   break; }
+                if (ciprefix(".tran", w)) { inferred = "tran"; break; }
             }
-
-            txfree(an_type);
-            txfree(resname);
-            txfree(meastype);
-            continue;
+            char *new_resname = an_type;
+            char *new_meastype = resname;
+            char *new_extra = meastype;
+            an_type = copy(inferred);
+            resname = new_resname;
+            meastype = new_meastype;
+            /* meastype was the third gettok; shift the rest of
+             * the line back so the remaining parser sees the new
+             * meastype's argument as the next token.  The line
+             * already advanced past `meastype` (now extra), so
+             * we need to splice `extra` back into the front of
+             * `line` (concatenate with a space). */
+            char *new_line_buf = tprintf("%s %s", new_extra, line);
+            line = new_line_buf;
+            tfree(new_extra);
         }
         /* print header before evaluating first .meas line */
         else if (first_time) {
@@ -431,16 +453,30 @@ do_measure(
             continue;
         }
 
+        /* HSPICE-shorthand: same path as the first-pass fix at
+         * line 304.  Treat the original first token as resname,
+         * shift everything back one slot, and splice the old
+         * meastype back into `line` for the rest of the parser. */
         if (chkAnalysisType(an_type) != TRUE) {
-            if (!chk_only) {
-                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->linenum);
-                fprintf(cp_err, "       %s\n", meas_card->line);
+            const char *inferred = "tran";
+            struct card *c2;
+            for (c2 = ft_curckt ? ft_curckt->ci_deck : NULL;
+                 c2; c2 = c2->nextcard) {
+                const char *w = c2->line;
+                if (!w || *w == '*') continue;
+                if (ciprefix(".dc", w))   { inferred = "dc";   break; }
+                if (ciprefix(".ac", w))   { inferred = "ac";   break; }
+                if (ciprefix(".tran", w)) { inferred = "tran"; break; }
             }
-
-            txfree(an_type);
-            txfree(resname);
-            txfree(meastype);
-            continue;
+            char *new_resname2 = an_type;
+            char *new_meastype2 = resname;
+            char *new_extra2 = meastype;
+            an_type = copy(inferred);
+            resname = new_resname2;
+            meastype = new_meastype2;
+            char *new_line_buf2 = tprintf("%s %s", new_extra2, line);
+            line = new_line_buf2;
+            tfree(new_extra2);
         }
         if (strcmp(an_name, an_type) != 0) {
             txfree(an_type);
@@ -551,9 +587,42 @@ measure_parse_line(char *line)
     char *item;                         /* parsed item */
     char *long_str;                     /* concatenated string */
     char *extra_item;                   /* extra item */
+    bool shorthand_first = FALSE;       /* synth an_type token */
 
     wl = NULL;
     line = nexttok(line);
+    /* HSPICE-shorthand: `.measure <result> <fn> ...` (no
+     * explicit analysis type).  Peek at the first real token; if
+     * it isn't DC / AC / TRAN / SP, infer from the deck and
+     * synthesize a leading wordlist entry so get_measure2's
+     * positional parser (mAnalysis at [0], mName at [1],
+     * mFunction at [2]) lines up. */
+    {
+        char *probe = line;
+        char *probe_tok = gettok(&probe);
+        if (probe_tok) {
+            if (strcasecmp(probe_tok, "dc") != 0 &&
+                strcasecmp(probe_tok, "ac") != 0 &&
+                strcasecmp(probe_tok, "tran") != 0 &&
+                strcasecmp(probe_tok, "sp") != 0) {
+                const char *inferred = "tran";
+                struct card *c;
+                for (c = ft_curckt ? ft_curckt->ci_deck : NULL;
+                     c; c = c->nextcard) {
+                    const char *w = c->line;
+                    if (!w || *w == '*') continue;
+                    if (ciprefix(".dc", w))   { inferred = "dc";   break; }
+                    if (ciprefix(".ac", w))   { inferred = "ac";   break; }
+                    if (ciprefix(".tran", w)) { inferred = "tran"; break; }
+                }
+                new_item = wl_cons(copy(inferred), NULL);
+                wl = wl_append(wl, new_item);
+                shorthand_first = TRUE;
+            }
+            tfree(probe_tok);
+        }
+        (void)shorthand_first;
+    }
     do {
         item = gettok(&line);
         if (!(item))

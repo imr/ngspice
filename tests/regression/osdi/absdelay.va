@@ -1,0 +1,11 @@
+`include "disciplines.vams"
+
+module addelay(out, in);
+  inout out, in;
+  electrical out, in;
+  parameter real td    = 0.25n;   // transport delay
+  parameter real maxtd = 1n;      // ring-pruning bound
+  analog begin
+    V(out) <+ absdelay(V(in), td, maxtd);
+  end
+endmodule

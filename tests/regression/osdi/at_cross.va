@@ -1,0 +1,27 @@
+`include "disciplines.vams"
+
+module at_cross_probe(p);
+  inout p;
+  electrical p;
+
+  real probe;
+  (*desc="probe expression value (sin(2pi*1k*t))"*)
+  real probe_out;
+  (*desc="number of rising zero crossings observed via @(cross)"*)
+  real n_crossings;
+  (*desc="last $abstime where @(cross) fired"*)
+  real last_event_time;
+
+  analog begin
+    probe = sin(2.0 * 3.14159265358979 * 1.0e3 * $abstime);
+    probe_out = probe;
+
+    @(cross(probe, 1)) begin
+      n_crossings = n_crossings + 1.0;
+      last_event_time = $abstime;
+    end
+
+    // Token contribution so the device stays in the node equations.
+    I(p) <+ 1.0e-6 * V(p);
+  end
+endmodule

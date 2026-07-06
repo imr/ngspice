@@ -1,0 +1,22 @@
+* laplace test
+.model lp laplace_probe
+n1 y_nd y_np y_zd y_zp in lp
+vin in 0 dc 0 PULSE(0 1 0.1m 1u 1u 10m 20m)
+ry1 y_nd 0 1meg
+ry2 y_np 0 1meg
+ry3 y_zd 0 1meg
+ry4 y_zp 0 1meg
+
+.control
+pre_osdi laplace_filter.osdi
+tran 10u 5m
+meas tran ynd_at_1_1 find v(y_nd) at=1.1m
+meas tran ynp_at_1_1 find v(y_np) at=1.1m
+meas tran yzd_at_1_1 find v(y_zd) at=1.1m
+meas tran yzp_at_1_1 find v(y_zp) at=1.1m
+meas tran ynd_at_4_1 find v(y_nd) at=4.1m
+meas tran yzp_at_4_1 find v(y_zp) at=4.1m
+print ynd_at_1_1 ynp_at_1_1 yzd_at_1_1 yzp_at_1_1 ynd_at_4_1 yzp_at_4_1
+quit
+.endc
+.end

@@ -1,0 +1,21 @@
+`include "disciplines.vams"
+
+module at_timer_probe(p);
+  inout p;
+  electrical p;
+
+  (*desc="periodic timer fire counter"*)
+  real n_fires;
+  (*desc="last abstime where @(timer) fired"*)
+  real last_event_time;
+
+  analog begin
+    @(timer(1.0e-3, 1.0e-3)) begin
+      n_fires = n_fires + 1.0;
+      last_event_time = $abstime;
+    end
+
+    // Token contribution so the device stays in the node equations.
+    I(p) <+ 1.0e-6 * V(p);
+  end
+endmodule

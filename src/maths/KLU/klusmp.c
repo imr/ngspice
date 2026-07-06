@@ -35,7 +35,7 @@ CircuitIsDigital (void)
 #endif
 }
 
-static void LoadGmin_CSC (double **diag, unsigned int n, double Gmin) ;
+static void LoadGmin_CSC_skip (SMPmatrix *eMatrix, double Gmin) ;
 static void LoadGmin (SMPmatrix *eMatrix, double Gmin) ;
 
 typedef struct sElement {
@@ -585,7 +585,7 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
         }
 
         if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
-            LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+            LoadGmin_CSC_skip (Matrix, Gmin) ;
         }
 
         ret = klu_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx,
@@ -764,7 +764,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
         }
 
         if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
-            LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+            LoadGmin_CSC_skip (Matrix, Gmin) ;
         }
         Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
 
@@ -1768,18 +1768,34 @@ SMPcDProd (SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
  */
 
 
+/* KLU diagonal-gmin pass.  Adds Gmin to every diagonal element EXCEPT the
+ * synthesized analog-operator implicit-equation state nodes (laplace, zi, idt,
+ * transition-delay) flagged in eMatrix->gmin_skip -- gmin there over-damps
+ * the integrator-state Newton update and breaks gmin stepping (see spsmp.c
+ * LoadGmin for the full rationale).  KLU column i is the post-collapse index;
+ * the original ngspice node number is NewToOld[i] + 1 (KLU columns are 0-based,
+ * node numbers 1-based -- cf. the singular_col + 1 node reporting in this
+ * file).  When gmin_skip is NULL (no flagged nodes) this is byte-for-byte the
+ * legacy "gmin on every diagonal" behaviour. */
 static void
-LoadGmin_CSC (double **diag, unsigned int n, double Gmin)
+LoadGmin_CSC_skip (SMPmatrix *eMatrix, double Gmin)
 {
+    KLUmatrix *klu = eMatrix->SMPkluMatrix ;
+    double **diag = klu->KLUmatrixDiag ;
+    unsigned int n = klu->KLUmatrixN ;
+    char *skip = eMatrix->gmin_skip ;
+    unsigned int *new2old = klu->KLUmatrixNodeCollapsingNewToOld ;
     unsigned int i ;
 
-    if (Gmin != 0.0) {
-        for (i = 0 ; i < n ; i++) {
-            if (diag [i] != NULL) {
-                // Not all the elements on the diagonal are present, when the circuit is parsed
-                *(diag [i]) += Gmin ;
-            }
-        }
+    if (Gmin == 0.0)
+        return ;
+
+    for (i = 0 ; i < n ; i++) {
+        if (diag [i] == NULL)
+            continue ; // not all diagonal elements are present after parsing
+        if (skip && new2old && skip [new2old [i] + 1])
+            continue ;
+        *(diag [i]) += Gmin ;
     }
 }
 

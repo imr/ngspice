@@ -27,6 +27,7 @@ extern int OSDIload(GENmodel *, CKTcircuit *);
 extern int OSDItemp(GENmodel *, CKTcircuit *);
 extern int OSDIacLoad(GENmodel *, CKTcircuit *);
 extern int OSDItrunc(GENmodel *, CKTcircuit *, double *);
+extern int OSDIaccept(CKTcircuit *, GENmodel *);
 extern int OSDIpzLoad(GENmodel *, CKTcircuit *, SPcomplex *);
 extern int OSDInoise(int, int, GENmodel *, CKTcircuit *, Ndata *, double *);
 

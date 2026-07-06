@@ -331,8 +331,30 @@ measure_extract_variables(char *line)
         (strcasecmp(analysis, "TRAN") == 0)) {
         analysis = copy(analysis);
     } else {
-        /* sometimes operation is optional - for now just pick trans */
-        analysis = copy("TRAN");
+        /* HSPICE-shorthand: `.measure <result> ...` with the
+         * analysis type omitted.  The second token (held here in
+         * `analysis`) is actually the measurement function (find /
+         * trig / when / avg / ...) — not what we just gettok'd.
+         * Infer the analysis from whatever the deck declares.
+         * Defaulting to TRAN (the old behaviour) silently broke
+         * decks with a .dc analysis because the save list ended
+         * up tagged "tran" and the .dc plot saw none of those
+         * names — OUTpBeginPlot reported
+         *   Error: no data saved for D.C. Transfer curve analysis
+         * Scan ci_deck (the main card list) — ci_commands holds
+         * only .print/.plot/.meas/.op/.tf/.four/.width/.sndprint/
+         * .sndparam, NOT analysis directives. */
+        const char *inferred = "TRAN";
+        struct card *c;
+        for (c = ft_curckt ? ft_curckt->ci_deck : NULL;
+             c; c = c->nextcard) {
+            const char *w = c->line;
+            if (!w || *w == '*') continue;
+            if (ciprefix(".dc", w))   { inferred = "DC";   break; }
+            if (ciprefix(".ac", w))   { inferred = "AC";   break; }
+            if (ciprefix(".tran", w)) { inferred = "TRAN"; break; }
+        }
+        analysis = copy(inferred);
     }
 
     do {

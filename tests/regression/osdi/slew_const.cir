@@ -1,0 +1,13 @@
+* slew test const
+.model sl slew_probe(max_pos=500.0, max_neg=-500.0)
+n1 out in sl
+rout out 0 1meg
+vin in 0 dc 1.0
+
+.control
+pre_osdi slew.osdi
+tran 50u 10m
+print v(out)
+quit
+.endc
+.end

@@ -23,6 +23,7 @@ m4_define([ngspice_version],
 
 # Initialization of configure
 AC_INIT([ngspice], [ngspice_version], [http://ngspice.sourceforge.net/bugrep.html])
+AC_CONFIG_AUX_DIR([.])
 
 # Revision stamp the generated ./configure script
 AC_REVISION([$Revision: ngspice_version$])

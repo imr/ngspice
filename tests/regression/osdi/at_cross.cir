@@ -1,0 +1,12 @@
+* at_cross test
+.model ac at_cross_probe
+n1 p ac
+vp p 0 1
+
+.control
+pre_osdi at_cross.osdi
+tran 10u 6m
+print @n1[n_crossings] @n1[last_event_time]
+quit
+.endc
+.end

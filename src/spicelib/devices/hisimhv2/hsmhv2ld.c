@@ -507,11 +507,18 @@ int HSMHV2load(
       }
       else if ( ( ckt->CKTmode & (MODEINITJCT | MODEINITFIX) ) &&
                 here->HSMHV2_off ) {
-        vbs = vgs = vds = 0.0; vges = 0.0; vdbd = vsbs = 0.0;
+        /* Off-mode initial condition.  Setting everything to 0
+         * lands the device at exactly zero-bias, which is a
+         * singular point for HiSIM_HV's eval — `1/Vgs`-shape
+         * terms blow up.  Match the heuristic in the non-off
+         * INITJCT branch (line ~499) and seed a small forward
+         * bias instead.  vbs/vsbs/vdbd stay at 0 (body biased to
+         * source). */
+        vbs = vsbs = vdbd = 0.0;
+        vgs = vges = vgse = 0.1;
+        vds = vdse = 0.1;
         if (flg_subNode > 0) vsubs = 0.0;
         if( here->HSMHV2_coselfheat > 0 ) deltemp=0.0;
-        vdse = vds ;
-        vgse = vgs ;
         Qi_nqs = Qb_nqs = 0.0 ;
       }
       else {
@@ -641,6 +648,83 @@ int HSMHV2load(
 #ifndef PREDICTOR
         }
 #endif /* PREDICTOR */
+
+        /* NaN-recovery (sanity damping).
+         *
+         * Symptom: on big PDKs (Samsung 14LPU 3.3 V LDMOS as `ld3nfet`)
+         * the initial DC operating-point Newton iteration occasionally
+         * lands on bias values that make the HiSIM_HV physics produce
+         * NaN currents/conductances.  Those NaN entries are written
+         * back to the matrix, the next solve returns NaN voltages,
+         * those propagate to vbs/vgs/vds/vbse/vgse/vdse via the
+         * `rhsOld - rhsOld` subtractions above — and the per-iteration
+         * limiters (DEVfetlim, DEVlimvds, DEVpnjlim further below) are
+         * helpless because their input is already NaN.  Newton can
+         * never recover.
+         *
+         * The mechanism is structurally identical to BSIM-BULK's
+         * Miller-coupled blowup that the OpenVA `$limit` synthesis
+         * work addresses for OSDI VA modules.  HiSIM_HV is native C
+         * (not VA) so we get no help from that path.  Hand-coded
+         * recovery here, equivalent to BSIM4's internal damping:
+         * when any external-bias quantity comes back as NaN, snap
+         * each NaN value back to its state0 (last accepted) value so
+         * downstream physics + limiters can do their job on a finite
+         * input.  Per-instance, no model parameters needed, no
+         * supply-rail constants. */
+        {
+          /* Hard fallback values.  Used when state0 is itself
+           * non-finite (a previous iteration wrote NaN to state) or
+           * degenerate (LDMOS-off initialization leaves 0/0/0 — a
+           * singular point for HiSIM_HV physics).  Mirrors the
+           * MODEINITJCT heuristic at line ~499. */
+          double sf_vbs  = *(ckt->CKTstate0 + here->HSMHV2vbs);
+          double sf_vgs  = *(ckt->CKTstate0 + here->HSMHV2vgs);
+          double sf_vds  = *(ckt->CKTstate0 + here->HSMHV2vds);
+          double sf_vges = *(ckt->CKTstate0 + here->HSMHV2vges);
+          double sf_vdbd = *(ckt->CKTstate0 + here->HSMHV2vdbd);
+          double sf_vsbs = *(ckt->CKTstate0 + here->HSMHV2vsbs);
+          double sf_vbse = *(ckt->CKTstate0 + here->HSMHV2vbse);
+          double sf_vgse = *(ckt->CKTstate0 + here->HSMHV2vgse);
+          double sf_vdse = *(ckt->CKTstate0 + here->HSMHV2vdse);
+          if (isnan(sf_vbs))  sf_vbs  = 0.0;
+          if (isnan(sf_vgs))  sf_vgs  = 0.1;
+          if (isnan(sf_vds))  sf_vds  = 0.1;
+          if (isnan(sf_vges)) sf_vges = 0.1;
+          if (isnan(sf_vdbd)) sf_vdbd = 0.0;
+          if (isnan(sf_vsbs)) sf_vsbs = 0.0;
+          if (isnan(sf_vbse)) sf_vbse = 0.0;
+          if (isnan(sf_vgse)) sf_vgse = 0.1;
+          if (isnan(sf_vdse)) sf_vdse = 0.1;
+          /* Additional safety: if state0_degenerate (all-zero), bump
+           * the gate/drain values just like the INITJCT path. */
+          bool state0_degenerate =
+              (sf_vbs == 0.0 && sf_vgs == 0.0 && sf_vds == 0.0);
+          if (state0_degenerate) {
+            sf_vgs = sf_vds = sf_vges = sf_vgse = sf_vdse = 0.1;
+          }
+
+          bool any_nan =
+              isnan(vbs)  || isnan(vgs)  || isnan(vds)  ||
+              isnan(vges) || isnan(vdbd) || isnan(vsbs) ||
+              isnan(vbse) || isnan(vgse) || isnan(vdse) ||
+              isnan(vsubs) || isnan(deltemp);
+          if (any_nan) {
+            if (isnan(vbs))     vbs     = sf_vbs;
+            if (isnan(vgs))     vgs     = sf_vgs;
+            if (isnan(vds))     vds     = sf_vds;
+            if (isnan(vges))    vges    = sf_vges;
+            if (isnan(vdbd))    vdbd    = sf_vdbd;
+            if (isnan(vsbs))    vsbs    = sf_vsbs;
+            if (isnan(vbse))    vbse    = sf_vbse;
+            if (isnan(vgse))    vgse    = sf_vgse;
+            if (isnan(vdse))    vdse    = sf_vdse;
+            if (isnan(vsubs))   vsubs   = 0.0;
+            if (isnan(deltemp)) deltemp = 0.0;
+            if (ckt->CKTosdiStepReject == 0)
+              ckt->CKTosdiStepReject = 1;
+          }
+        }
 
         /* printf("HSMHV2_load: (from rhs   ) vds.. = %e %e %e %e %e %e\n",
                                                  vds,vgs,vbs,vdse,vgse,vbse); */
@@ -1056,6 +1140,23 @@ int HSMHV2load(
                 *(ckt->CKTrhsOld+here->HSMHV2sbNode));
       }
 
+      /* NaN-guard for the linear-branch voltages computed from
+       * rhsOld.  If a previous iteration corrupted the matrix and
+       * the solution returned NaN for a node, these subtractions
+       * propagate the NaN here.  vddp in particular feeds rdrift,
+       * which produces NaN Rd / Rs that then poison the stamp.
+       * Fall back to 0 (the MODEINITJCT non-off heuristic at line
+       * 1128) — equivalent to "no voltage difference across the
+       * parasitic resistors this iteration".  Combined with the
+       * input-side guard above, this severs the NaN feedback loop
+       * even for the parasitic branches. */
+      if (isnan(vddp))  vddp  = 0.0;
+      if (isnan(vggp))  vggp  = 0.0;
+      if (isnan(vssp))  vssp  = 0.0;
+      if (isnan(vbpdb)) vbpdb = 0.0;
+      if (isnan(vbpb))  vbpb  = 0.0;
+      if (isnan(vbpsb)) vbpsb = 0.0;
+
 #ifdef DEBUG_HISIMHVLD_VX
       printf( "vbd    = %12.5e\n" , vbd );
       printf( "vbs    = %12.5e\n" , vbs );
@@ -1123,14 +1224,67 @@ int HSMHV2load(
  #endif
 
       /* call model evaluation */
-      if ( HSMHV2evaluate(ivdse,ivgse,ivbse,ivds, ivgs, ivbs, vbs_jct, vbd_jct, vsubs, vddp, deltemp, here, model, ckt) == HiSIM_ERROR )
+      int ev_rc = HSMHV2evaluate(ivdse,ivgse,ivbse,ivds, ivgs, ivbs, vbs_jct, vbd_jct, vsubs, vddp, deltemp, here, model, ckt);
+      if ( ev_rc == HiSIM_ERROR )
         return (HiSIM_ERROR);
       if ( here->HSMHV2_cordrift == 1 ) {
-        if ( HSMHV2rdrift(vddp, vds, vbs, vsubs, deltemp, here, model, ckt) == HiSIM_ERROR )
-        return (HiSIM_ERROR);
+        int rd_rc = HSMHV2rdrift(vddp, vds, vbs, vsubs, deltemp, here, model, ckt);
+        if (rd_rc == HiSIM_ERROR)
+          return (HiSIM_ERROR);
       }
-      if ( HSMHV2dio(vbs_jct, vbd_jct, deltemp, here, model, ckt) == HiSIM_ERROR )
+      int dio_rc = HSMHV2dio(vbs_jct, vbd_jct, deltemp, here, model, ckt);
+      if (dio_rc == HiSIM_ERROR)
         return (HiSIM_ERROR);
+
+      /* Output-side NaN guard.  Even with all bias inputs sanitized to
+       * finite values by the input-side guard above, HiSIM_HV's
+       * eval can populate certain `here->HSMHV2_*` fields with NaN at
+       * problematic operating points (the 3.3 V LDMOS at startup
+       * being the canonical case).  If we let those NaN values flow
+       * into the matrix entries below, the next Newton iteration
+       * reads NaN voltages back, the input-side guard cleans them but
+       * the physics produces NaN again — infinite NaN feedback loop.
+       *
+       * Defense in depth: zero out any non-finite output BEFORE it
+       * touches the matrix.  This makes the device contribute zero
+       * stamp this iteration — equivalent to a step rejection from
+       * the matrix's perspective.  Combined with CKTosdiStepReject,
+       * the framework retries with a different timestep / smaller
+       * delta and the device can recover. */
+      {
+        double *outs[] = {
+          &here->HSMHV2_ids,
+          &here->HSMHV2_dIds_dVdsi, &here->HSMHV2_dIds_dVgsi,
+          &here->HSMHV2_dIds_dVbsi,
+          &here->HSMHV2_dIds_dVdse, &here->HSMHV2_dIds_dVgse,
+          &here->HSMHV2_dIds_dVbse,
+          &here->HSMHV2_qd,
+          &here->HSMHV2_dQdi_dVdsi, &here->HSMHV2_dQdi_dVgsi,
+          &here->HSMHV2_dQdi_dVbsi,
+          &here->HSMHV2_qg,
+          &here->HSMHV2_dQg_dVdsi, &here->HSMHV2_dQg_dVgsi,
+          &here->HSMHV2_dQg_dVbsi,
+          &here->HSMHV2_qs,
+          &here->HSMHV2_dQsi_dVdsi, &here->HSMHV2_dQsi_dVgsi,
+          &here->HSMHV2_dQsi_dVbsi,
+          &here->HSMHV2_dQb_dVdsi, &here->HSMHV2_dQb_dVgsi,
+          &here->HSMHV2_dQb_dVbsi,
+          &here->HSMHV2_isub,
+          &here->HSMHV2_dIsub_dVdsi, &here->HSMHV2_dIsub_dVgsi,
+          &here->HSMHV2_dIsub_dVbsi,
+          &here->HSMHV2_Rd, &here->HSMHV2_Rs,
+          &here->HSMHV2_gm, &here->HSMHV2_gds, &here->HSMHV2_gmbs,
+        };
+        bool any_nan_out = false;
+        for (size_t i = 0; i < sizeof(outs)/sizeof(outs[0]); i++) {
+          if (isnan(*outs[i]) || isinf(*outs[i])) {
+            any_nan_out = true;
+            *outs[i] = 0.0;
+          }
+        }
+        if (any_nan_out && ckt->CKTosdiStepReject == 0)
+          ckt->CKTosdiStepReject = 1;
+      }
 
 #ifdef DEBUG_HISIMHVCGG
       printf("HSMHV2_ids %e ", here->HSMHV2_ids ) ;

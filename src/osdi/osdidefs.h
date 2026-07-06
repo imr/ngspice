@@ -65,6 +65,90 @@ typedef struct OsdiExtraInstData {
   bool dt_given;
   uint32_t eval_flags;
 
+  /* OSDI v0.5 — event-driven analog operators (S3b).
+   *
+   * Per-instance scratch buffers for the SimInfo.cross_expr and
+   * .pending_events pointers.  Lazily allocated on first eval if
+   * the descriptor advertises any cross expressions or event slots.
+   * cross_expr_arr is sized to descr->num_cross_exprs; the model
+   * writes current values here.  prev_cross_expr_arr stores the
+   * last accepted value (one per slot) so the eval wrapper can
+   * detect sign flips between consecutive accepted steps.
+   *
+   * pending_events_arr is sized to descr->num_event_slots; the
+   * model writes one OsdiEventRequest per slot when it wants to
+   * schedule a future event (timer expiration, etc.).  The eval
+   * wrapper drains non-zero entries into the scheduled_events
+   * queue after each accepted eval and zeros at_time to indicate
+   * consumed.
+   *
+   * scheduled_events is the per-instance pending-event queue,
+   * sorted by at_time ascending.  scheduled_count is the live
+   * length; capacity is descr->num_event_slots (we never have
+   * more pending than the model could request in one eval).
+   *
+   * cross_init flips true after the first eval has populated
+   * prev_cross_expr_arr — suppresses a spurious "sign flip" at
+   * t=0 when prev is still zero. */
+  double *cross_expr_arr;
+  double *prev_cross_expr_arr;
+  OsdiEventRequest *pending_events_arr;
+  OsdiEventRequest *scheduled_events;       /* sorted queue */
+  uint32_t scheduled_count;
+  bool cross_init;
+
+  /* OSDI v0.5 (S3c) — abstime of the last accepted eval that
+   * latched prev_cross_expr_arr.  Used as the lower bound for
+   * interpolating the crossing time when the next eval detects a
+   * sign flip.  Default -1.0 (no prior eval); the first latched
+   * eval sets it to the eval's abstime. */
+  double prev_eval_time;
+
+  /* OSDI v0.5 — the SECOND prior accepted (time, cross_expr) sample,
+   * kept so the crossing time can be QUADRATICALLY interpolated from
+   * three points (t_prev2, t_prev, t_now) -> O(dt^3) error, instead of
+   * the 2-point linear fit -> O(dt^2).  The cross_expr VALUE already
+   * encodes both the cross-expr nonlinearity and the node-trajectory
+   * curvature, so fitting a higher-order polynomial to it (no model
+   * re-eval) sharpens the crossing time directly.  Matters for fast
+   * carriers (PWM / RF, 100 MHz+) where the crossing TIME itself is the
+   * measured quantity and a coarse local step would otherwise leave a
+   * O(dt^2) ~hundreds-of-ps error.  Default -1.0 / NULL until two
+   * accepted evals have latched; the detector falls back to the linear
+   * fit until then. */
+  double *prev2_cross_expr_arr;
+  double prev2_eval_time;
+
+  /* OSDI v0.5 (2C) — absdelay exact-transport delay rings.  Lazily
+   * allocated on first eval when descr->num_delay_sites > 0.
+   *   delay_input_arr[site] : current input written by the model each eval
+   *       (exposed as SimInfo.delay_input); pushed into the ring at accept.
+   *   delay_t[site] / delay_v[site] : grow-on-demand (time, value) ring for
+   *       each site, delay_count[site] live samples in oldest..newest order,
+   *       delay_cap[site] allocated capacity.  Pushed at each ACCEPTED step,
+   *       pruned of samples older than abstime - max_td.  SimInfo.delay_state
+   *       points back at THIS struct so SimInfo.delay_read can reach them. */
+  double *delay_input_arr;
+  double *delay_maxtd_arr;
+  /* OSDI v0.5 (2C AC delay) — last td the model passed to delay_read per site,
+   * stashed by osdi_delay_read.  At the AC operating point this holds td(OP),
+   * which OSDIacLoad uses for e^{-jw*td} on that site's delay jacobian. */
+  double *delay_td_arr;
+  double **delay_t;
+  double **delay_v;
+  uint32_t *delay_count;
+  uint32_t *delay_cap;
+
+  /* OSDI 0.5 — DEFERRED-COMMIT snapshot of the model's persistent_state array
+   * (transition()/slew()/event toolkit).  Sized to
+   * entry->persistent_state_count, lazily allocated on first eval.  Holds the
+   * value as of the last ACCEPTED step.  Each eval restores the live
+   * persistent_state from this snapshot BEFORE running the model, so predictor
+   * and Newton iterates always read the previous-accepted history and their
+   * own writes are transient; OSDIaccept copies the converged live array back
+   * into the snapshot.  persist_init flips true once seeded. */
+  double *persist_snapshot;
+  bool persist_init;
 } ALIGN(MAX_ALIGN) OsdiExtraInstData;
 
 typedef struct OsdiModelData {
@@ -111,3 +195,8 @@ double osdi_limitlog(bool init, bool *icheck, double vnew, double vold,
                      double LIM_TOL);
 double osdi_fetlim(bool init, bool *icheck, double vnew, double vold,
                    double vto);
+
+/* OSDI v0.5 (2C) — absdelay exact-transport reader (bound to
+ * SimInfo.delay_read). */
+double osdi_delay_read(const OsdiSimInfo *info, uint32_t site, double td,
+                       double max_td);

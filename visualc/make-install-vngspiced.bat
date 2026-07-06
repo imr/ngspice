@@ -55,6 +55,9 @@ copy %cmsrc%\tlines64.cm %dst%\lib\ngspice\tlines.cm
 copy xspice\verilog\ivlng.dll %dst%\lib\ngspice\ivlng.dll
 copy xspice\verilog\shim.vpi %dst%\lib\ngspice\ivlng.vpi
 
+copy ..\..\libsndfile\bin\sndfile.dll  %dst%\bin\
+copy ..\..\libsamplerate\bin\samplerate.dll  %dst%\bin\
+
 if "%2" == "fftw" goto copy2-64
 if "%3" == "fftw" goto copy2-64
 

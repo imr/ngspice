@@ -12,6 +12,7 @@
 #include "ngspice/iferrmsg.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/typedefs.h"
+#include "ngspice/fteext.h"
 
 #include "osdidefs.h"
 
@@ -109,6 +110,9 @@ extern int OSDIparam(int param, IFvalue *value, GENinstance *instPtr,
   void *dst = descr->access(inst, NULL, (uint32_t)param,
                             ACCESS_FLAG_SET | ACCESS_FLAG_INSTANCE);
 
+  /* W and L arrive already shrunk: the subcircuit's `scale` parameter
+     (applied in subckt expansion) or the model's own dimension
+     expressions multiply the drawn geometry before it reaches here. */
   return osdi_write_param(dst, value, param, descr);
 }
 

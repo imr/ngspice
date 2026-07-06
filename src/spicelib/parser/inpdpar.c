@@ -20,6 +20,68 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "inpxx.h"
 
+/* Side-channel from INPevaluate (inpeval.c) — when INPevaluate
+ * resolves a bare identifier as a .param value (HSPICE-compat path),
+ * it stashes the parameter's name here so INPdevParse can record a
+ * binding for later .dc-by-param sweeping.  Cleared by INPevaluate
+ * itself at every entry, so non-bare-param paths never see a stale
+ * value.  Read once and ignore otherwise. */
+extern char *inpeval_last_param_name;
+
+/* dpar_param_binding records "this V/I source's DC value was set
+ * from .param paramName at parse time" — used by the .dc analysis
+ * loop to push a swept value through to dependent sources.
+ *
+ * Owned strings: param_name + dev_name (allocated by us).
+ * Lifetime: file-scope list; never freed in practice (one entry per
+ * V/I source that uses a bare-param leading value — typically a
+ * handful per deck). */
+typedef struct dpar_param_binding {
+    char *param_name;
+    char *dev_name;
+    int   dev_type;    /* CKTtypelook code: VSRC or ISRC */
+    struct dpar_param_binding *next;
+} dpar_param_binding_t;
+
+static dpar_param_binding_t *dpar_binding_head = NULL;
+
+void dpar_register_binding(const char *param_name,
+                           const char *dev_name, int dev_type) {
+    if (!param_name || !dev_name) return;
+    for (dpar_param_binding_t *p = dpar_binding_head; p; p = p->next) {
+        if (p->dev_type == dev_type &&
+            strcmp(p->param_name, param_name) == 0 &&
+            strcmp(p->dev_name, dev_name) == 0)
+            return;  /* already registered — netlist re-parse */
+    }
+    dpar_param_binding_t *b = TMALLOC(dpar_param_binding_t, 1);
+    b->param_name = copy(param_name);
+    b->dev_name = copy(dev_name);
+    b->dev_type = dev_type;
+    b->next = dpar_binding_head;
+    dpar_binding_head = b;
+}
+
+/* Public accessor — called by dctrcurv.c.  Caller iterates bindings
+ * for a given param_name and updates the source's DC value field
+ * directly. */
+dpar_param_binding_t *dpar_first_param_binding(void) {
+    return dpar_binding_head;
+}
+
+const char *dpar_binding_param_name(const dpar_param_binding_t *b) {
+    return b ? b->param_name : NULL;
+}
+const char *dpar_binding_dev_name(const dpar_param_binding_t *b) {
+    return b ? b->dev_name : NULL;
+}
+int dpar_binding_dev_type(const dpar_param_binding_t *b) {
+    return b ? b->dev_type : -1;
+}
+const dpar_param_binding_t *dpar_binding_next(const dpar_param_binding_t *b) {
+    return b ? b->next : NULL;
+}
+
 static IFparm *
 find_instance_parameter(char *name, IFdevice *device)
 {
@@ -53,12 +115,23 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 
     /* check for leading value */
     *waslead = 0;
+    inpeval_last_param_name = NULL;
     *leading = INPevaluate(line, &error, 1);
 
     if (error == 0)             /* found a good leading number */
         *waslead = 1;
     else
         *leading = 0.0;
+
+    /* If INPevaluate resolved the leading value from a bare .param
+     * identifier (HSPICE-compat path), register a binding so the
+     * .dc analysis loop can push a swept value through to this
+     * device's DC field.  fast->GENname carries the device's
+     * canonical instance name (lowercased, e.g. "vgs"). */
+    if (*waslead && inpeval_last_param_name && fast && fast->GENname) {
+        dpar_register_binding(inpeval_last_param_name, fast->GENname, dev);
+    }
+    inpeval_last_param_name = NULL;
 
     wordlist *x = fast->GENmodPtr->defaults;
     for (; x; x = x->wl_next->wl_next) {
@@ -125,10 +198,29 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
         if (!p) {
             if (eq(parm, "$")) {
                 errbuf = copy("  unknown parameter ($). Check the compatibility flag!\n");
+                rtn = errbuf;
+                goto quit;
             }
-            else {
-                errbuf = tprintf("  unknown parameter (%s) \n", parm);
+            /* OSDI models may receive extra instance parameters from PDK
+             * subcircuits (e.g. 'total' from TSMC nch_mac) that the model
+             * does not define.  Skip the parameter and its value rather than
+             * aborting; this matches HSPICE/Spectre behaviour. */
+            if (device->registry_entry != NULL) {
+                while (isspace((unsigned char)**line)) (*line)++;
+                if (**line == '=') {
+                    (*line)++;
+                    while (isspace((unsigned char)**line)) (*line)++;
+                    char *endp;
+                    strtod(*line, &endp);
+                    if (endp > *line)
+                        *line = endp;
+                    else
+                        while (**line && !isspace((unsigned char)**line)) (*line)++;
+                }
+                FREE(parm);
+                continue;
             }
+            errbuf = tprintf("  unknown parameter (%s) \n", parm);
             rtn = errbuf;
             goto quit;
         }

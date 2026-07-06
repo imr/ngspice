@@ -41,6 +41,15 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_NOOPITER:
         task->TSKnoOpIter = (val->iValue != 0);
         break;
+    case OPT_NORESIDCHECK:
+        task->TSKnoResidCheck = (val->iValue != 0);
+        break;
+    case OPT_NOOSDISTEPREJECT:
+        task->TSKnoOsdiStepReject = (val->iValue != 0);
+        break;
+    case OPT_NODTCLEAR:
+        task->TSKnoDtClear = (val->iValue != 0);
+        break;
     case OPT_GMIN:
         task->TSKgmin = val->rValue;
         break;
@@ -166,6 +175,21 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_RELDV:
         task->TSKrelDv = val->rValue;
         break;
+    case OPT_OSDIVLIM:
+        task->TSKosdiVlim = val->rValue;
+        break;
+    case OPT_OSDIVLIM_VDS:
+        task->TSKosdiVlimVds = val->rValue;
+        break;
+    case OPT_OSDIVLIM_VGS:
+        task->TSKosdiVlimVgs = val->rValue;
+        break;
+    case OPT_OSDIVLIM_VBS:
+        task->TSKosdiVlimVbs = val->rValue;
+        break;
+    case OPT_OSDIVLIM_NQS:
+        task->TSKosdiVlimNqs = val->rValue;
+        break;
     case OPT_NOOPAC:
         task->TSKnoopac = (val->iValue != 0);
         break;
@@ -273,6 +297,9 @@ static IFparm OPTtbl[] = {
 #endif
  { "cshunt", OPT_CSHUNT, IF_SET|IF_REAL, "Shunt capacitor from analog nodes to ground" },
  { "noopiter", OPT_NOOPITER,IF_SET|IF_FLAG,"Go directly to gmin stepping" },
+ { "noresidcheck", OPT_NORESIDCHECK, IF_SET|IF_FLAG, "Disable axis-4 residual-vector convergence check; SPICE3-only behaviour" },
+ { "noosdistepreject", OPT_NOOSDISTEPREJECT, IF_SET|IF_FLAG, "Disable OSDI axis-3 step rejection (osdiload.c sanitize_jacobian + REJECT_STEP)" },
+ { "nodtclear", OPT_NODTCLEAR, IF_SET|IF_FLAG, "Disable small-dt CKTnoncon clear (niiter.c); revert to abort-from-spurious-noncon at dt<1ps" },
  { "gmin", OPT_GMIN,IF_SET|IF_REAL,"Minimum conductance" },
  { "gshunt", OPT_GSHUNT,IF_SET|IF_REAL,"Shunt conductance" },
  { "reltol", OPT_RELTOL,IF_SET|IF_REAL ,"Relative error tolerence"},
@@ -359,6 +386,16 @@ static IFparm OPTtbl[] = {
         "Maximum absolute iter-iter node voltage change" },
  { "reldv", OPT_RELDV, IF_SET|IF_REAL,
         "Maximum relative iter-iter node voltage change" },
+ { "osdi_vlim", OPT_OSDIVLIM, IF_SET|IF_REAL,
+        "Per-iter Δv bound for OpenVA compiler-side $limit synthesis (generic, default 0.1 V)" },
+ { "osdi_vlim_vds", OPT_OSDIVLIM_VDS, IF_SET|IF_REAL,
+        "Per-iter Δv bound for drain-source-shape probes (overrides osdi_vlim when set)" },
+ { "osdi_vlim_vgs", OPT_OSDIVLIM_VGS, IF_SET|IF_REAL,
+        "Per-iter Δv bound for gate-channel-shape probes (overrides osdi_vlim when set)" },
+ { "osdi_vlim_vbs", OPT_OSDIVLIM_VBS, IF_SET|IF_REAL,
+        "Per-iter Δv bound for body-junction-shape probes (overrides osdi_vlim when set)" },
+ { "osdi_vlim_nqs", OPT_OSDIVLIM_NQS, IF_SET|IF_REAL,
+        "Per-iter Δv bound for NQS helper-node probes — V(NC)/V(N1)/V(NR)/etc (overrides osdi_vlim when set)" },
  { "noopac", OPT_NOOPAC, IF_SET|IF_FLAG,
         "No op calculation in ac if circuit is linear" },
  { "epsmin", OPT_EPSMIN, IF_SET|IF_REAL,

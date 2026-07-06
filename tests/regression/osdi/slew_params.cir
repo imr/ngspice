@@ -1,0 +1,74 @@
+* slew model-parameter application regression test
+*
+* Guards the OSDI .model parser bug (src/spicelib/parser/inpgmod.c) where the
+* FIRST model parameter on a standard no-space card "type(p1=...,p2=...)" was
+* silently dropped: the device-type skip used INPgetNetTok, whose tokenizer
+* does NOT treat '(' as a terminator, so it grabbed "slew_probe(max_pos=..."
+* as the "type" and ate max_pos.  The dropped parameter then fell back to its
+* module default (1e3), so the affected slew edge tracked the input instead of
+* limiting.
+*
+* This test gives max_pos and max_neg DISTINCT values (400 / -700, both well
+* below the 1e3 default) and lists them in BOTH orderings (sl_a: max_pos first,
+* sl_b: max_neg first).  The input slews at 2000 V/s -- far faster than either
+* limit -- so both edges must clamp.  The measured slew rate on each edge must
+* equal the .model value; if a parameter were dropped that edge would run at
+* the 1e3 default and the corresponding assertion fails.  sl_a's rise asserts
+* max_pos-when-first; sl_b's fall asserts max_neg-when-first -- i.e. the
+* first-parameter-drop bug is caught regardless of which parameter is first.
+
+.model sl_a slew_probe(max_pos=400.0, max_neg=-700.0)
+.model sl_b slew_probe(max_neg=-700.0, max_pos=400.0)
+na outa in sl_a
+nb outb in sl_b
+ra outa 0 1meg
+rb outb 0 1meg
+vin in 0 dc 0 PULSE(0 1 1m 0.5m 0.5m 3m 10m)
+
+.control
+pre_osdi slew.osdi
+tran 20u 6m
+
+* rising-edge slope in the limiting region (input held at 1): must be +max_pos
+meas tran a_r2  find v(outa) at=2m
+meas tran a_r3  find v(outa) at=3m
+meas tran b_r2  find v(outb) at=2m
+meas tran b_r3  find v(outb) at=3m
+* falling-edge slope in the limiting region: must be max_neg
+meas tran a_f5  find v(outa) at=5m
+meas tran a_f55 find v(outa) at=5.5m
+meas tran b_f5  find v(outb) at=5m
+meas tran b_f55 find v(outb) at=5.5m
+
+let a_rise = (a_r3 - a_r2) / 1e-3
+let b_rise = (b_r3 - b_r2) / 1e-3
+let a_fall = (a_f55 - a_f5) / 0.5e-3
+let b_fall = (b_f55 - b_f5) / 0.5e-3
+
+let fail = 0
+if abs(a_rise - 400) > 20
+  echo "ERROR: model A (max_pos first) rise rate = $&a_rise V/s, expected +400 -- max_pos dropped?"
+  let fail = fail + 1
+end
+if abs(b_rise - 400) > 20
+  echo "ERROR: model B rise rate = $&b_rise V/s, expected +400"
+  let fail = fail + 1
+end
+if abs(a_fall + 700) > 35
+  echo "ERROR: model A fall rate = $&a_fall V/s, expected -700"
+  let fail = fail + 1
+end
+if abs(b_fall + 700) > 35
+  echo "ERROR: model B (max_neg first) fall rate = $&b_fall V/s, expected -700 -- max_neg dropped?"
+  let fail = fail + 1
+end
+
+if fail eq 0
+  echo "INFO: success -- both slew params apply (max_pos=400, max_neg=-700, both orderings)"
+  quit 0
+else
+  echo "ERROR: $&fail slew model-parameter assertion(s) failed"
+  quit 1
+end
+.endc
+.end

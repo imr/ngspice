@@ -8,6 +8,7 @@
 
 #include "general.h"
 #include "numparam.h"
+#include "table_param.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
@@ -92,14 +93,15 @@ static const char *fmathS =     /* all math functions */
     "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log log10 sinh cosh"
     " tanh ternary_fcn agauss sgn gauss unif aunif limit ceil floor"
     " asin acos atan asinh acosh atanh tan nint"
-    " vec var";
+    " vec var table_param";
 
 
 enum {
     XFU_SQR = 1, XFU_SQRT, XFU_SIN, XFU_COS, XFU_EXP, XFU_LN, XFU_ARCTAN, XFU_ABS, XFU_POW, XFU_PWR, XFU_MAX, XFU_MIN, XFU_INT, XFU_LOG, XFU_LOG10, XFU_SINH, XFU_COSH,
     XFU_TANH, XFU_TERNARY_FCN, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
     XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN, XFU_NINT,
-    XFU_VEC, XFU_VAR // String arguments.
+    XFU_VEC, XFU_VAR, // String arguments.
+    XFU_TABLE_PARAM   // Variadic HSPICE table_param(file, n_int, ints..., n_real, reals..., out_col).
 };
 
 
@@ -223,6 +225,9 @@ static bool message(dico_t *dico, const char *fmt, ...)
 static bool
 message(dico_t *dico, const char *fmt, ...)
 {
+    if (dico->suppress_errors)
+        return 1;
+
     va_list ap;
 
     if (dico->srcline >= 0) {
@@ -275,6 +280,7 @@ initdico(dico_t *dico)
     else
         dico->hs_compatibility = 0;
     dico->cardline = NULL;
+    dico->suppress_errors = false;
 }
 
 
@@ -817,16 +823,34 @@ operate(char op, double x, double y)
         x = ((x != 0.0) || (y != 0.0)) ? 1.0 : 0.0;
         break;
     case '=':
-        if (x == y)
-            x = u;
-        else
-            x = z;
+        /* HSPICE-compatible tolerant equality.  Strict IEEE `==`
+         * breaks foundry-PDK expressions like `(l==0.014e-6)` where
+         * `l` arrives as `14*1e-9 = 1.4000000000000001e-08` (1 ULP
+         * off from `0.014e-6 = 1.4e-08`), or as the bin midpoint
+         * `0.5*(1e-8+1.8e-8) = 1.3999999999999999e-08`.  Use a
+         * hybrid relative+absolute tolerance: differences smaller
+         * than `1e-9 * max(|x|,|y|)` or below an absolute floor of
+         * `1e-18` count as equal.  Integer comparisons (mexp==2,
+         * etc.) remain unambiguous — 1 vs 2 differ by 100% relative. */
+        {
+            double dxy = fabs(x - y);
+            double mxy = fabs(x) > fabs(y) ? fabs(x) : fabs(y);
+            if (dxy <= mxy * 1e-9 || dxy < 1e-18)
+                x = u;
+            else
+                x = z;
+        }
         break;
     case '#':                   /* <> */
-        if (x != y)
-            x = u;
-        else
-            x = z;
+        /* Symmetric with `==` above. */
+        {
+            double dxy = fabs(x - y);
+            double mxy = fabs(x) > fabs(y) ? fabs(x) : fabs(y);
+            if (dxy <= mxy * 1e-9 || dxy < 1e-18)
+                x = z;
+            else
+                x = u;
+        }
         break;
     case '>':
         if (x > y)
@@ -953,6 +977,159 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             if (kptr >= s_end) {
                 error = message(dico, "Closing \")\" not found.\n");
                 natom++;        /* shut up other error message */
+            } else if (fu == XFU_TABLE_PARAM) {
+                /* HSPICE table_param() — variadic.  Syntax:
+                 *   table_param(file, n_int, int_vals..., n_real,
+                 *               real_vals..., output_col)
+                 *
+                 * arg0 is a string: either bare "filename" or wrapped
+                 * as str("filename").  All subsequent args are
+                 * numeric expressions, parsed recursively via
+                 * formula().  Walk the comma-separated arg list
+                 * manually since the standard parser handles only
+                 * up to 3 args. */
+
+                /* Extract args by scanning for top-level commas
+                 * inside (s .. kptr). */
+                #define TP_MAX_ARGS 64
+                const char *arg_starts[TP_MAX_ARGS];
+                const char *arg_ends[TP_MAX_ARGS];
+                int n_args = 0;
+                const char *p = s;
+                const char *arg_begin = p;
+                int lvl_tp = 0;
+                while (p < kptr) {
+                    if (*p == '(') lvl_tp++;
+                    else if (*p == ')') lvl_tp--;
+                    else if (*p == ',' && lvl_tp == 0) {
+                        if (n_args < TP_MAX_ARGS) {
+                            arg_starts[n_args] = arg_begin;
+                            arg_ends[n_args] = p;
+                            n_args++;
+                        }
+                        arg_begin = p + 1;
+                    }
+                    p++;
+                }
+                if (n_args < TP_MAX_ARGS) {
+                    arg_starts[n_args] = arg_begin;
+                    arg_ends[n_args] = kptr;
+                    n_args++;
+                }
+
+                if (n_args < 3) {
+                    error = message(dico,
+                            "table_param: need at least 3 args "
+                            "(file, n_int_or_n_real, output_col).\n");
+                    natom++;
+                } else {
+                    /* Parse arg 0 as filename.  Strip optional
+                     * str(...) wrapper and surrounding quotes. */
+                    char filename[1024];
+                    const char *fp = arg_starts[0];
+                    const char *fe = arg_ends[0];
+                    while (fp < fe && isspace((unsigned char)*fp)) fp++;
+                    while (fe > fp && isspace((unsigned char)fe[-1])) fe--;
+                    /* unwrap str( ... ) */
+                    if (fe - fp > 5 &&
+                        (fp[0] == 's' || fp[0] == 'S') &&
+                        (fp[1] == 't' || fp[1] == 'T') &&
+                        (fp[2] == 'r' || fp[2] == 'R') &&
+                        fp[3] == '(' && fe[-1] == ')') {
+                        fp += 4;
+                        fe -= 1;
+                        while (fp < fe && isspace((unsigned char)*fp)) fp++;
+                        while (fe > fp && isspace((unsigned char)fe[-1])) fe--;
+                    }
+                    /* strip "..." or '...' quotes */
+                    if (fe - fp >= 2 &&
+                        ((fp[0] == '"' && fe[-1] == '"') ||
+                         (fp[0] == '\'' && fe[-1] == '\''))) {
+                        fp++;
+                        fe--;
+                    }
+                    size_t flen = (size_t)(fe - fp);
+                    if (flen >= sizeof(filename)) flen = sizeof(filename) - 1;
+                    memcpy(filename, fp, flen);
+                    filename[flen] = '\0';
+
+                    /* Evaluate the rest of the args as numbers. */
+                    double argv[TP_MAX_ARGS];
+                    int i;
+                    bool sub_err = 0;
+                    for (i = 1; i < n_args && !sub_err; i++) {
+                        argv[i] = formula(dico, arg_starts[i],
+                                          arg_ends[i], &sub_err);
+                    }
+                    if (sub_err) {
+                        error = 1;
+                        natom++;
+                    } else {
+                        /* Decode the (n_int, int_vals..., n_real,
+                         * real_vals..., output_col) shape. */
+                        int n_int = (int)argv[1];
+                        if (n_int < 0 || 2 + n_int >= n_args) {
+                            error = message(dico,
+                                    "table_param: bad n_int.\n");
+                            natom++;
+                        } else {
+                            int n_real_idx = 2 + n_int;
+                            int n_real = (int)argv[n_real_idx];
+                            int out_col_idx = n_real_idx + 1 + n_real;
+                            if (n_real < 0 ||
+                                out_col_idx >= n_args) {
+                                error = message(dico,
+                                        "table_param: bad n_real.\n");
+                                natom++;
+                            } else {
+                                double int_vals[16], real_vals[16];
+                                int j;
+                                for (j = 0; j < n_int && j < 16; j++)
+                                    int_vals[j] = argv[2 + j];
+                                for (j = 0; j < n_real && j < 16; j++)
+                                    real_vals[j] =
+                                            argv[n_real_idx + 1 + j];
+                                int out_col = (int)argv[out_col_idx];
+                                double looked_up = 0.0;
+                                /* Derive the dir of the .lib file
+                                 * that emitted this call from the
+                                 * current card's linesource. */
+                                char dir_buf[1024];
+                                const char *dir_hint = NULL;
+                                if (dico->cardsource) {
+                                    const char *src = dico->cardsource;
+                                    const char *slash = strrchr(src, '/');
+                                    if (slash) {
+                                        size_t n = (size_t)(slash - src);
+                                        if (n >= sizeof dir_buf)
+                                            n = sizeof dir_buf - 1;
+                                        memcpy(dir_buf, src, n);
+                                        dir_buf[n] = '\0';
+                                        dir_hint = dir_buf;
+                                    }
+                                }
+                                int rc = table_param_lookup(
+                                        filename,
+                                        dir_hint,
+                                        int_vals, n_int,
+                                        real_vals, n_real,
+                                        out_col,
+                                        &looked_up);
+                                if (rc) {
+                                    error = 1;
+                                    natom++;
+                                } else {
+                                    u = looked_up;
+                                }
+                            }
+                        }
+                    }
+                }
+                #undef TP_MAX_ARGS
+
+                state = S_atom;
+                s = kptr + 1;
+                fu = 0;
             } else if (fu >= XFU_VEC) {
                 struct dvec *d;
                 char        *vec_name;
@@ -1029,7 +1206,27 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             const char *s_next = fetchid(s, s_end);
             fu = keyword(fmathS, s, s_next); /* numeric function? */
             if (fu > 0) {
-                state = S_init;  /* S_init means: ignore for the moment */
+                /* The identifier matched a function keyword (e.g. `var`,
+                 * `vec`, `min`, `max`, `pow`, `table_param`).  Only treat
+                 * it as a function call if it's followed by `(` (after
+                 * optional whitespace).  Otherwise fall back to treating
+                 * it as a parameter name — foundry decks (GF55 bcd55
+                 * diode_rr.inc) use `var` as a subckt parameter, and
+                 * shadowing it with the built-in function broke
+                 * `vrb='var'` and similar chains. */
+                const char *peek = s_next;
+                while (peek < s_end && (*peek == ' ' || *peek == '\t'))
+                    peek++;
+                if (peek >= s_end || *peek != '(') {
+                    /* Not a function call — treat as identifier. */
+                    ds_clear(&tstr);
+                    pscopy(&tstr, s, s_next);
+                    u = fetchnumentry(dico, ds_get_buf(&tstr), &error);
+                    state = S_atom;
+                    fu = 0;
+                } else {
+                    state = S_init;  /* wait for the `(` to be consumed */
+                }
             } else {
                 ds_clear(&tstr);
                 pscopy(&tstr, s, s_next);
@@ -1058,6 +1255,17 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
         if (oldstate == S_binop && state == S_binop && c == '-') {
             ok = 1;
             negate = 1;
+            continue;
+        }
+        /* Symmetric to the `c == '-'` case above: a unary `+` directly
+         * following a binary operator (e.g. `0.67*+2e-8`) is a no-op
+         * sign — drop it and re-read the next token.  Foundry decks
+         * (GF55 bcd55 fixed_corner_bcdlite.inc) use this idiom for
+         * explicit-sign literals: `(sw5)*(0.67*+2e-8)`.  Without this,
+         * the unary-plus form failed with "Misplaced operator" while
+         * the unary-minus form parsed fine. */
+        if (oldstate == S_binop && state == S_binop && c == '+') {
+            ok = 1;
             continue;
         }
 
@@ -1246,6 +1454,65 @@ evaluate_expr(dico_t *dico, DSTRINGPTR qstr_p, const char *t, const char * const
 
     double_to_string(qstr_p, u);
 
+    return 0;
+}
+
+
+/* Evaluate `expr` (a brace-body string, with no enclosing { } or ' ')
+ * with the (name, value) pairs in `names`/`values` pushed onto a
+ * transient new scope on top of `dico`'s symbol stack.  Pops the scope
+ * before returning, so global state is unchanged.  Result is written
+ * to *out.  Returns 0 on success, non-zero on parse/eval error.
+ *
+ * Used by the OSDI deferred-evaluation path (osdi_defer.c): at
+ * instance bind time, push the instance's l/w/nf/m/xnf, evaluate the
+ * model-card expression that was stashed at parse time, install the
+ * scalar result via OSDIparam.  No persistent side effects on the
+ * numparam dictionary.
+ */
+int
+nupa_eval_with_scope(dico_t *dico, const char *expr,
+                     const char *const *names, const double *values,
+                     int n, double *out)
+{
+    if (!dico || !expr || !out) return 1;
+
+    /* Push a new scope. */
+    dico->stack_depth++;
+    if (dico->stack_depth >= dico->max_stack_depth) {
+        int asize = (dico->max_stack_depth *= 2);
+        dico->symbols   = TREALLOC(NGHASHPTR, dico->symbols,   asize);
+        dico->inst_name = TREALLOC(char*,     dico->inst_name, asize);
+    }
+    dico->symbols[dico->stack_depth]   = nghash_init(NGHASH_MIN_SIZE);
+    dico->inst_name[dico->stack_depth] = NULL;
+
+    /* Populate it. */
+    NGHASHPTR ht = dico->symbols[dico->stack_depth];
+    for (int i = 0; i < n; i++) {
+        entry_t *e = attrib(dico, ht, (char *)names[i], 'N');
+        if (e) {
+            e->tp = NUPA_REAL;
+            e->vl = values[i];
+            e->ivl = 0;
+            e->sbbase = NULL;
+        }
+    }
+
+    /* Evaluate. */
+    bool err = 0;
+    double v = formula(dico, expr, expr + strlen(expr), &err);
+
+    /* Pop scope: free the hash + entries we just added.  We do NOT
+     * use dicostack_pop here because that promotes locals to qualified
+     * globals; we want the scope to vanish completely. */
+    nghash_free(ht, del_attrib, NULL);
+    dico->symbols[dico->stack_depth] = NULL;
+    dico->inst_name[dico->stack_depth] = NULL;
+    dico->stack_depth--;
+
+    if (err) return 1;
+    *out = v;
     return 0;
 }
 

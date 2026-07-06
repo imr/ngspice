@@ -1,0 +1,10 @@
+`include "disciplines.vams"
+
+module limexp_probe(out, in);
+  inout out, in;
+  electrical out, in;
+
+  analog begin
+    V(out) <+ limexp(V(in)) * 1e-34;
+  end
+endmodule

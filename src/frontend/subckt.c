@@ -62,6 +62,8 @@ Modified: 2000 AlansFixes
 #include "ngspice/stringskip.h"
 #include "ngspice/compatmode.h"
 #include "ngspice/hash.h"
+#include "ngspice/inpdefs.h"  /* for INPtypelook */
+#include "numparam/numparam.h"  /* for nupa_skip_line */
 
 #include <stdarg.h>
 
@@ -101,6 +103,8 @@ static int numnodes(const char* line, struct subs* subs);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
+static bool subckt_has_scale(const char *args);
+static char *scale_geom_param(const char *line, const char *pname, int power);
 
 /* hash table to store the global nodes
  * For now its use is limited to avoid double entries in global_nodes[] */
@@ -185,6 +189,75 @@ free_global_nodes(void)
 
 
 /*-------------------------------------------------------------------
+  HSPICE element scale.  For each subcircuit that declares a `scale`
+  parameter, wrap the geometry value-expressions in its body so they
+  are multiplied by the in-scope `scale` -- lengths by scale, areas by
+  scale^2 (ad/as).  A unit cell instantiated at scale=0.855 then behaves
+  as the 0.855x physical cell, exactly how HSPICE applies a subcircuit's
+  element scale factor, and the generic, per-instance replacement for the
+  old hard-coded `geoshrink` option.  Foundry models pre-divide their
+  parasitics (ad=.../scale^2, sa=saref/scale) expecting this multiply
+  back, so the full geometry set is scaled, not just W/L.
+
+  This MUST run before numparam preparation (inp_fix_for_numparam in
+  inpcom): numparam only substitutes `'expr'`/`{expr}` it has marked, so
+  an expression added afterwards is left raw and reaches the device parser
+  as text.  Hence it is called from inp_readall(), not from the later
+  inp_subcktexpand().  Detection reads the .subckt line's parameter list,
+  which numparam has not yet stripped.  m/nf (multipliers) and
+  nrd/nrs/sca-scc (dimensionless) are left untouched; nested X calls are
+  skipped (a nested subcircuit's own definition is wrapped when its own
+  .subckt is processed).
+  -------------------------------------------------------------------*/
+void
+inp_apply_subckt_scale(struct card *deck)
+{
+    static const struct { const char *name; int pwr; } geo[] = {
+        { "w", 1 }, { "l", 1 }, { "ad", 2 }, { "as", 2 },
+        { "pd", 1 }, { "ps", 1 },
+        { "sa", 1 }, { "sb", 1 }, { "sc", 1 }, { "sd", 1 },
+    };
+    struct card *c;
+
+    for (c = deck; c; c = c->nextcard) {
+        char *s, *nm;
+        struct card *b;
+        int nest;
+        bool has;
+        if (!ciprefix(".subckt", c->line))     /* not a .subckt definition */
+            continue;
+        s = nexttok(c->line);                  /* skip the .subckt keyword */
+        nm = gettok(&s);                       /* name; s -> formal args */
+        has = (nm && subckt_has_scale(s));
+        tfree(nm);
+        if (!has)
+            continue;
+        for (b = c->nextcard, nest = 0; b; b = b->nextcard) {
+            char *ds;
+            size_t gi;
+            if (ciprefix(".subckt", b->line)) { nest++; continue; }
+            if (ciprefix(".ends", b->line)) {
+                if (nest == 0) break;          /* matching .ends */
+                nest--; continue;
+            }
+            if (nest > 0)
+                continue;                      /* inside a nested subckt */
+            ds = skip_ws(b->line);
+            if (!isalpha_c((unsigned char) *ds))
+                continue;                      /* not an element line */
+            if (tolower_c(*ds) == 'x')
+                continue;                      /* nested subckt call */
+            for (gi = 0; gi < sizeof geo / sizeof geo[0]; gi++) {
+                char *nl = scale_geom_param(b->line, geo[gi].name,
+                                            geo[gi].pwr);
+                if (nl) { tfree(b->line); b->line = nl; }
+            }
+        }
+    }
+}
+
+
+/*-------------------------------------------------------------------
   inp_subcktexpand is the top level function which translates
   .subckts into mainlined code.   Note that there are several things
   we need to do:  1. Find all .subckt definitions & stick them
@@ -231,6 +304,9 @@ inp_subcktexpand(struct card *deck) {
         fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
     }
 #endif
+
+    /* HSPICE element scale is applied earlier, in inp_apply_subckt_scale(),
+       called from inpcom before the numparam preparation pass. */
 
     nupa_signal(NUPADECKCOPY);
     /* get the subckt names from the deck */
@@ -359,9 +435,86 @@ inp_subcktexpand(struct card *deck) {
             dynMaxckt++;
     }
 
-    /* Now check to see if there are still subckt instances undefined... */
+    /* Now check to see if there are still subckt instances undefined.
+     *
+     * HSPICE convention: an `X<inst>` instance line can call EITHER a
+     * `.subckt` OR a Verilog-A module loaded via OSDI.  The target
+     * name (typically the 5th token, after the 4 node terminals) names
+     * the type.  ngspice's subckt expander only handles the .subckt
+     * case; if no .subckt matches, we'd error here.  But foundry PDKs
+     * (Samsung 14LPU, TSMC, GF) routinely embed VA-module diagnostic
+     * instances like `xesd_monitor d g s b esd_nfet_monitor ...`
+     * inside their FET subckts, expecting HSPICE-style dispatch.
+     *
+     * Compromise: if the target name is a registered OSDI device
+     * (INPtypelook ≥ 0), comment out the line.  ESD monitor modules in
+     * foundry decks are diagnostic-only — `$strobe` messages for spec
+     * violations, no current/charge contributions — so dropping them
+     * doesn't change circuit behavior, only disables the diagnostics.
+     * A proper fix would auto-generate a `.model + N-prefix` shim, but
+     * needs ngspice's OSDI dispatch to accept generic-prefix instances
+     * for non-MOSFET VA modules; that's a separate change. */
     for (c = deck; c; c = c->nextcard)
         if (ciprefix(invoke, c->line)) {
+
+            /* Try to extract the target type token from `X<name>
+             * n1 n2 ... <target>`.  For the typical foundry case with
+             * 4 nodes (d, g, s, b) it's the 5th whitespace-separated
+             * token.  Scan forward token by token; whichever token
+             * matches a registered device type wins.  Search up to a
+             * reasonable cap so we don't walk an entire line of
+             * key=value pairs. */
+            const int max_tokens_to_check = 12;
+            char *line_copy = copy(c->line);
+            char *cursor = line_copy;
+            int matched_type = -1;
+            char *matched_token = NULL;
+            for (int t = 0; t < max_tokens_to_check; t++) {
+                char *tok = gettok(&cursor);
+                if (!tok) break;
+                /* Skip key=value tokens (those come after the type). */
+                if (strchr(tok, '=')) { tfree(tok); break; }
+                int ty = INPtypelook(tok);
+                if (ty >= 0) {
+                    matched_type = ty;
+                    matched_token = tok;  /* keep — printed in warning */
+                    break;
+                }
+                tfree(tok);
+            }
+            if (matched_type >= 0) {
+                static int hspice_xva_warn_once = 0;
+                if (!hspice_xva_warn_once) {
+                    fprintf(cp_err,
+                            "Note: foundry-PDK X-instance(s) reference "
+                            "Verilog-A modules instead of subckts "
+                            "(HSPICE convention).  Commenting these "
+                            "out — they're typically diagnostic-only "
+                            "(ESD monitors etc.) and don't affect "
+                            "circuit operation.  First example: %s\n",
+                            matched_token);
+                    fprintf(cp_err,
+                            "    in line no. %d from file %s\n",
+                            c->linenum_orig, c->linesource);
+                    hspice_xva_warn_once = 1;
+                }
+                /* Comment out the line in-place. */
+                if (c->line && c->line[0])
+                    c->line[0] = '*';
+                /* numparam tracks the line independently of card->line
+                 * via dyncategory[linenum] + dynrefptr[linenum].  Both
+                 * were set during the initial nupa_copy() pass BEFORE
+                 * we got here; if we just comment-mark card->line and
+                 * leave numparam's state alone, the line still
+                 * dispatches as 'X' (subckt call) and errors with
+                 * "illegal subckt call".  Reset numparam's view too. */
+                nupa_skip_line(c->linenum);
+                tfree(matched_token);
+                tfree(line_copy);
+                continue;
+            }
+            tfree(line_copy);
+
             fprintf(cp_err, "Error: unknown subckt: %s\n", c->line);
             fprintf(cp_err, "    in line no. %d from file %s\n", c->linenum_orig, c->linesource);
 
@@ -416,6 +569,126 @@ find_ends(struct card *l)
     }
 
     return l;
+}
+
+
+/* Extract the four binning range parameters from a .model card.
+   Returns TRUE only if all four are present and evaluate cleanly. */
+static bool
+get_model_bins(char *curr_line, float *fwmin, float *fwmax,
+               float *flmin, float *flmax)
+{
+    const char *keys[4] = { " wmin=", " wmax=", " lmin=", " lmax=" };
+    float *dsts[4];
+    int i;
+
+    dsts[0] = fwmin;
+    dsts[1] = fwmax;
+    dsts[2] = flmin;
+    dsts[3] = flmax;
+
+    for (i = 0; i < 4; i++) {
+        int err;
+        char *p = strstr(curr_line, keys[i]);
+        if (!p)
+            return FALSE;
+        p += 6;
+        *dsts[i] = (float) INPevaluate(&p, &err, 0);
+        if (err)
+            return FALSE;
+    }
+    return TRUE;
+}
+
+
+/* True if the subcircuit formal-argument string declares a `scale`
+   parameter.  HSPICE applies a subcircuit's `scale` parameter as the
+   element scale factor for the MOSFETs inside it, multiplying their
+   W/L before the model bins and simulates.  Foundry MOS macro subckts
+   rely on this (e.g. TSMC `nch_mac ... scale='scale_mos'`).  Detected
+   by a word-boundary "scale" immediately followed (after optional
+   whitespace) by '=', so names like `l_scale=` / `noscale=` don't
+   match. */
+static bool
+subckt_has_scale(const char *args)
+{
+    const char *p = args;
+
+    if (!args)
+        return FALSE;
+
+    while ((p = strstr(p, "scale")) != NULL) {
+        bool left_ok = (p == args) || isspace_c((unsigned char) p[-1]);
+        const char *q = p + 5;          /* past "scale" */
+        while (isspace_c((unsigned char) *q))
+            q++;
+        if (left_ok && *q == '=')
+            return TRUE;
+        p += 5;
+    }
+    return FALSE;
+}
+
+
+/* Wrap the value-expression of geometry parameter `pname` on `line` so
+   that it is multiplied by the in-scope `scale` symbol raised to `power`
+   (1 for lengths/perimeters, 2 for areas): `pname=expr` becomes
+   `pname='(expr)*scale'` (or `*scale*scale`).  numparam evaluates the
+   result per instance, so binning and the device both see the effective,
+   scaled geometry -- this is how HSPICE applies a subcircuit's element
+   scale factor.  Handles the three value forms found in foundry models:
+   single-quoted `'expr'`, braced `{expr}`, and a bare token / number.
+   The output always uses single quotes, the form proven to resolve on an
+   expanded instance line in hs/spe mode.  Returns a newly-allocated line,
+   or NULL if `pname` is absent (value left untouched). */
+static char *
+scale_geom_param(const char *line, const char *pname, int power)
+{
+    char key[8];
+    const char *at, *vstart, *vend, *inner_b, *inner_e;
+    const char *suffix = (power == 2) ? "*scale*scale" : "*scale";
+
+    snprintf(key, sizeof key, " %s=", pname);
+    at = strstr(line, key);
+    if (!at)
+        return NULL;
+
+    vstart = at + strlen(key);
+    if (*vstart == '\'') {                  /* 'expr' (HSPICE) */
+        for (vend = vstart + 1; *vend && *vend != '\''; vend++)
+            ;
+        if (*vend != '\'')
+            return NULL;                    /* unterminated -- leave alone */
+        inner_b = vstart + 1;
+        inner_e = vend;                     /* the closing quote */
+        vend++;
+    }
+    else if (*vstart == '{') {              /* {expr} */
+        int depth = 0;
+        for (vend = vstart; *vend; vend++) {
+            if (*vend == '{')
+                depth++;
+            else if (*vend == '}') {
+                depth--;
+                if (depth == 0) { vend++; break; }
+            }
+        }
+        if (depth != 0)
+            return NULL;                    /* unbalanced -- leave alone */
+        inner_b = vstart + 1;
+        inner_e = vend - 1;                 /* the closing brace */
+    }
+    else {                                  /* bare token / number */
+        for (vend = vstart; *vend && !isspace_c((unsigned char) *vend); vend++)
+            ;
+        inner_b = vstart;
+        inner_e = vend;
+    }
+
+    return tprintf("%.*s'(%.*s)%s'%s",
+                   (int)(vstart - line), line,
+                   (int)(inner_e - inner_b), inner_b,
+                   suffix, vend);
 }
 
 
@@ -617,102 +890,73 @@ doit(struct card *deck, wordlist *modnames) {
                 if (sss) {
 //                    tprint(sss->su_def);
                     struct card *su_deck = inp_deckcopy(sss->su_def);
+
+                    /* (HSPICE element scale is applied earlier, in
+                       inp_subcktexpand(), by wrapping the subckt body's
+                       geometry expressions before the numparam passes.) */
+
                     /* If we have modern PDKs, we have to reduce the amount of memory required.
                        We try to reduce the models to the one really used.
                        Otherwise su_deck is full of unused binning models.*/
                     if ((newcompat.hs || newcompat.spe) && c->w > 0 && c->l > 0) {
-                        /* extract wmin, wmax, lmin, lmax */
                         struct card* new_deck = su_deck;
                         struct card* prev = NULL;
-                        while (su_deck) {
-                            if (!ciprefix(".model", su_deck->line)) {
-                                prev = su_deck;
-                                su_deck = su_deck->nextcard;
-                                    continue;
-                            }
+                        struct card* scan;
+                        int nmatch = 0;
 
-                            char* curr_line = su_deck->line;
+                        float csl = (float)scale * c->l;
+                        /* scale by nf */
+                        float csw = (float)scale * c->w / c->nf;
+
+                        /* Does any bin contain the instance's w/l?  These
+                           are the DRAWN dimensions off the X line; the bin
+                           ranges are post-shrink.  For PDKs that apply the
+                           shrink inside the subcircuit (l_scale='l*shrink',
+                           as foundry HV devices do) the drawn dims do not
+                           map to the bins here, so nothing matches.  In that
+                           case keep every model card and let INPgetModBin do
+                           the binning after numparam has applied the shrink
+                           to the MOS line. */
+                        for (scan = su_deck; scan; scan = scan->nextcard) {
                             float fwmin, fwmax, flmin, flmax;
-                            char *wmin = strstr(curr_line, " wmin=");
-                            if (wmin) {
-                                int err;
-                                wmin = wmin + 6;
-                                fwmin = (float)INPevaluate(&wmin, &err, 0);
-                                if (err) {
-                                    prev = su_deck;
-                                    su_deck = su_deck->nextcard;
-                                    continue;
-                                }
-                            }
-                            else {
-                                prev = su_deck;
-                                su_deck = su_deck->nextcard;
+                            if (!ciprefix(".model", scan->line))
                                 continue;
-                            }
-                            char *wmax = strstr(curr_line, " wmax=");
-                            if (wmax) {
-                                int err;
-                                wmax = wmax + 6;
-                                fwmax = (float)INPevaluate(&wmax, &err, 0);
-                                if (err) {
-                                    prev = su_deck;
-                                    su_deck = su_deck->nextcard;
-                                    continue;
-                                }
-                            }
-                            else {
+                            if (!get_model_bins(scan->line, &fwmin, &fwmax,
+                                                &flmin, &flmax))
+                                continue;
+                            if (csl >= flmin && csl < flmax &&
+                                csw >= fwmin && csw < fwmax)
+                                nmatch++;
+                        }
+
+                        /* Only when a bin matched do we drop the others (the
+                           memory optimization).  Otherwise leave su_deck
+                           untouched. */
+                        while (nmatch > 0 && su_deck) {
+                            float fwmin, fwmax, flmin, flmax;
+
+                            if (!ciprefix(".model", su_deck->line) ||
+                                !get_model_bins(su_deck->line, &fwmin, &fwmax,
+                                                &flmin, &flmax) ||
+                                (csl >= flmin && csl < flmax &&
+                                 csw >= fwmin && csw < fwmax)) {
+                                /* keep: non-model, unbinned, or matching */
                                 prev = su_deck;
                                 su_deck = su_deck->nextcard;
                                 continue;
                             }
 
-                            char* lmin = strstr(curr_line, " lmin=");
-                            if (lmin) {
-                                int err;
-                                lmin = lmin + 6;
-                                flmin = (float)INPevaluate(&lmin, &err, 0);
-                                if (err) {
-                                    prev = su_deck;
-                                    su_deck = su_deck->nextcard;
-                                    continue;
-                                }
-                            }
-                            else {
-                                prev = su_deck;
-                                su_deck = su_deck->nextcard;
-                                continue;
-                            }
-                            char* lmax = strstr(curr_line, " lmax=");
-                            if (lmax) {
-                                int err;
-                                lmax = lmax + 6;
-                                flmax = (float)INPevaluate(&lmax, &err, 0);
-                                if (err) {
-                                    prev = su_deck;
-                                    su_deck = su_deck->nextcard;
-                                    continue;
-                                }
-                            }
-                            else {
-                                prev = su_deck;
-                                su_deck = su_deck->nextcard;
-                                continue;
-                            }
-
-                            float csl = (float)scale * c->l;
-                            /* scale by nf */
-                            float csw = (float)scale * c->w / c->nf;
-                            /*fprintf(stdout, "Debug: nf = %f\n", c->nf);*/
-                            if (csl >= flmin && csl < flmax && csw >= fwmin && csw < fwmax) {
-                                /* use the current .model card */
-                                prev = su_deck;
-                                su_deck = su_deck->nextcard;
-                                continue;
-                            }
-                            else {
+                            /* out-of-bin model card: drop it */
+                            {
                                 struct card* tmpcard = su_deck->nextcard;
-                                line_free_x(prev->nextcard, FALSE);
-                                su_deck = prev->nextcard = tmpcard;
+                                if (prev) {
+                                    line_free_x(prev->nextcard, FALSE);
+                                    su_deck = prev->nextcard = tmpcard;
+                                }
+                                else {
+                                    line_free_x(new_deck, FALSE);
+                                    su_deck = new_deck = tmpcard;
+                                }
                             }
                         }
                         su_deck = new_deck;
@@ -1379,12 +1623,28 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
                 bxx_putc(&buffer, ' ');
             }
 
-            /* Next we handle the POLY (if any) */
-            /* get next token */
+            /* HSPICE compat: skip optional source-type marker
+             * (vccs/vcvs/cccs/ccvs) between output nodes and POLY.
+             * The letter `g`/`e`/`f`/`h` already encodes the type, so
+             * the marker is redundant; consume it so the downstream
+             * POLY translator (and inp2g/e/f/h) sees a clean line. */
             t = s;
             next_name = gettok_noparens(&t);
-            if ((strcmp(next_name, "POLY") == 0) ||
-                (strcmp(next_name, "poly") == 0)) {
+            if (next_name && (
+                (dev_type == 'g' && cieq(next_name, "vccs")) ||
+                (dev_type == 'e' && cieq(next_name, "vcvs")) ||
+                (dev_type == 'f' && cieq(next_name, "cccs")) ||
+                (dev_type == 'h' && cieq(next_name, "ccvs")))) {
+                s = t;
+                tfree(next_name);
+                t = s;
+                next_name = gettok_noparens(&t);
+            }
+
+            /* Next we handle the POLY (if any) */
+            if (next_name &&
+                ((strcmp(next_name, "POLY") == 0) ||
+                 (strcmp(next_name, "poly") == 0))) {
 
 #ifdef TRACE
                 printf("In translate, looking at e, f, g, h found poly\n");

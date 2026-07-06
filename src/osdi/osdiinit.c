@@ -194,6 +194,7 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   OSDIinfo->DEVtemperature = OSDItemp;
   OSDIinfo->DEVunsetup = OSDIunsetup;
   OSDIinfo->DEVload = OSDIload;
+  OSDIinfo->DEVaccept = OSDIaccept;
   OSDIinfo->DEVacLoad = OSDIacLoad;
   OSDIinfo->DEVpzLoad = OSDIpzLoad;
   OSDIinfo->DEVtrunc = OSDItrunc;

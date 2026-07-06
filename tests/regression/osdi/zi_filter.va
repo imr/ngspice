@@ -1,0 +1,13 @@
+`include "disciplines.vams"
+
+module zi_probe(y_nd, y_zd, y_np, y_zp, in);
+  inout y_nd, y_zd, y_np, y_zp, in;
+  electrical y_nd, y_zd, y_np, y_zp, in;
+
+  analog begin
+    V(y_nd) <+ zi_nd(V(in), {1.0, 0.5}, {1.0, -0.5}, 1e-3);
+    V(y_zd) <+ zi_zd(V(in), {-0.5, 0.0}, {1.0, -0.5}, 1e-3);
+    V(y_np) <+ zi_np(V(in), {1.0, 0.5}, {0.5, 0.0}, 1e-3);
+    V(y_zp) <+ zi_zp(V(in), {-0.5, 0.0}, {0.5, 0.0}, 1e-3);
+  end
+endmodule

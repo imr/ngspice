@@ -1,0 +1,2514 @@
+================================================================================
+NGSPICE — JUSTIFICATION OF CHANGES TO EXISTING (UPSTREAM) CODE
+Derived from ng_diff.txt   ·   23 existing files modified
+================================================================================
+
+PURPOSE
+  This document lists every change made to source that ALREADY EXISTED in the
+  reference tree (/home/jfisher/Downloads/ngspice_2026_05_27), each with the
+  rationale for why it was made.  New files and new OSDI code added alongside
+  existing code are NOT modifications of upstream logic and are inventoried in
+  the Appendix instead.
+
+SELECTION RULE
+  A diff hunk is shown only if it removes or replaces at least one pre-existing
+  line.  Within a shown hunk, a standalone block of 20+ newly-added lines (new
+  OSDI code that replaces nothing) is elided with a [...] marker; replacement
+  additions that directly follow a removed line are kept in full.  The complete
+  unabridged diffs remain in ng_diff.txt.
+
+--------------------------------------------------------------------------------
+[1] src/frontend/com_measure2.c
+      pre-existing lines changed: 2   (+24 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  In measure_extract_variables (the save-variable registration path called at
+  deck load), the fallback that defaulted an omitted `.measure` analysis type to
+  "TRAN" was replaced with deck-based inference (STEP 28). A new comment
+  explains the HSPICE shorthand form `.measure <result> ...` where the analysis
+  type is omitted and the second token is really the measurement function. It
+  warns that blindly defaulting to TRAN silently broke .dc decks: the save list
+  got tagged "tran", so the .dc plot matched none of those names and
+  OUTpBeginPlot reported "Error: no data saved for D.C. Transfer curve
+  analysis". The new code scans ci_deck (the main card list) for the first
+  `.dc`/`.ac`/`.tran` directive to infer the type; the comment explicitly notes
+  ci_commands must NOT be scanned because it only holds
+  .print/.plot/.meas/.op/.tf/.four/.width/.sndprint/.sndparam, not analysis
+  directives.
+
+CHANGE:
+@@ -331,8 +331,30 @@
+         (strcasecmp(analysis, "TRAN") == 0)) {
+         analysis = copy(analysis);
+     } else {
+-        /* sometimes operation is optional - for now just pick trans */
+-        analysis = copy("TRAN");
++        /* HSPICE-shorthand: `.measure <result> ...` with the
++         * analysis type omitted.  The second token (held here in
++         * `analysis`) is actually the measurement function (find /
++         * trig / when / avg / ...) — not what we just gettok'd.
++         * Infer the analysis from whatever the deck declares.
++         * Defaulting to TRAN (the old behaviour) silently broke
++         * decks with a .dc analysis because the save list ended
++         * up tagged "tran" and the .dc plot saw none of those
++         * names — OUTpBeginPlot reported
++         *   Error: no data saved for D.C. Transfer curve analysis
++         * Scan ci_deck (the main card list) — ci_commands holds
++         * only .print/.plot/.meas/.op/.tf/.four/.width/.sndprint/
++         * .sndparam, NOT analysis directives. */
++        const char *inferred = "TRAN";
++        struct card *c;
++        for (c = ft_curckt ? ft_curckt->ci_deck : NULL;
++             c; c = c->nextcard) {
++            const char *w = c->line;
++            if (!w || *w == '*') continue;
++            if (ciprefix(".dc", w))   { inferred = "DC";   break; }
++            if (ciprefix(".ac", w))   { inferred = "AC";   break; }
++            if (ciprefix(".tran", w)) { inferred = "TRAN"; break; }
++        }
++        analysis = copy(inferred);
+     }
+ 
+     do {
+
+--------------------------------------------------------------------------------
+[2] src/frontend/inp.c
+      pre-existing lines changed: 7   (+37 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Three changes. (1) In two places, the `*ng_script` comfile detection (which
+  marks user-supplied command files) now walks past leading blank/CR-LF cards
+  before testing the first real line; a new comment explains a leading blank
+  line otherwise defeated detection, referencing the identical logic in
+  inpcom.c::inp_readall (STEP 14). (2) A new guard skips `*#.` lines silently:
+  the added comment states that `*#.foo` lines are SPICE deck cards embedded for
+  other tools' backward compatibility, not ngspice commands, so they are freed
+  and skipped rather than being treated as the `pre_`/command dispatch below. It
+  captures the `prefix("*#", s)` result in a `from_hash` bool so the new
+  `.`-prefix test only fires for hash-comment lines. (3) A stray blank line was
+  added near the agauss handling (cosmetic).
+
+CHANGE:
+@@ -531,9 +531,20 @@
+     if (fp || intfile) {
+         deck = inp_readall(fp, dir_name, filename, comfile, intfile, &expr_w_temper);
+ 
+-        /* files starting with *ng_script are user supplied command files */
+-        if (deck && ciprefix("*ng_script", deck->line))
+-            comfile = TRUE;
++        /* files starting with *ng_script are user supplied command files.
++         * Walk past any leading blank cards (see same logic in
++         * inpcom.c::inp_readall) so a leading blank line doesn't
++         * defeat comfile detection. */
++        if (deck) {
++            struct card *probe = deck;
++            while (probe && probe->line &&
++                   (probe->line[0] == '\0' ||
++                    probe->line[0] == '\n' ||
++                    (probe->line[0] == '\r' && probe->line[1] == '\n')))
++                probe = probe->nextcard;
++            if (probe && ciprefix("*ng_script", probe->line))
++                comfile = TRUE;
++        }
+         /* save a copy of the deck for later reloading with 'mc_source' */
+         if (deck && !comfile) {
+         /* stored to new circuit ci_mcdeck in fcn */
+@@ -598,9 +609,18 @@
+         return 0;
+     }
+ 
+-    /* files starting with *ng_script are user supplied command files */
+-    if (ciprefix("*ng_script", deck->line))
+-        comfile = TRUE;
++    /* files starting with *ng_script are user supplied command files.
++     * Walk past any leading blank cards (see same logic above). */
++    {
++        struct card *probe = deck;
++        while (probe && probe->line &&
++               (probe->line[0] == '\0' ||
++                probe->line[0] == '\n' ||
++                (probe->line[0] == '\r' && probe->line[1] == '\n')))
++            probe = probe->nextcard;
++        if (probe && ciprefix("*ng_script", probe->line))
++            comfile = TRUE;
++    }
+ 
+     if (!comfile) {
+         /* Extract the .option lines from the deck into 'options',
+@@ -780,9 +800,18 @@
+ 
+                 /* Special control lines outside of .control section? */
+ 
+-                if (prefix("*#", s))
++                bool from_hash = prefix("*#", s);
++                if (from_hash)
+                     s = skip_ws(s + 2);
+ 
++                /* *#.foo lines are SPICE deck cards embedded for other tools'
++                 * backward compatibility, not ngspice commands. Skip silently. */
++                if (from_hash && *s == '.') {
++                    ld->nextcard = dd->nextcard;
++                    line_free(dd, FALSE);
++                    continue;
++                }
++
+                 if (ciprefix("pre_", s)) {
+                     /* Assemble all commands starting with pre_ after stripping
+                      * pre_, to be executed before circuit parsing.
+
+--------------------------------------------------------------------------------
+[3] src/frontend/inpcom.c
+      pre-existing lines changed: 37   (+245 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Broad set of parser changes. (1) Added `#include "ngspice/hash.h"` and a new
+  `NGHASHPTR fcn_hash` field to `struct function_env`, with
+  find_function/add_function/new_function_env/delete_function_env updated to
+  hash-lookup `.func` names in O(1) instead of a linear scan; comments explain
+  foundry PDKs register hundreds-to-thousands of .funcs (BCD 14LPU ~1300)
+  and find_function runs once per `(` per line, so the old scan was billions of
+  strcmp (STEP 14). (2) inp_sort_params' two nested O(N^2) loops (duplicate
+  detection and dependency scan) were rewritten around a single name->(i+1) hash
+  with a new helper `identifier_char`; a long comment documents the encoding
+  (index+1 so NULL means absent), the "latest wins" duplicate semantics, and the
+  PDK scale (N~2700 per subckt, ~500 calls). (3) `*ng_script` comfile detection
+  in inp_read and inp_readall now skips leading blank lines, with comments
+  describing the doubled-parse symptom (two "Compatibility modes"/"Circuit:"
+  headers, ~2x parse time) it prevents. (4) A new
+  `inp_apply_subckt_scale(working)` call was added before inp_fix_for_numparam,
+  with a comment on why HSPICE element scale must be wrapped before numparam
+  preparation (STEP 31). (5) A new `.alter` handler silently skips the `.alter`
+  directive and every line up to the next `.alter`/`.end` using two file-scope
+  static bools, emitting a one-shot warning; the comment explains .alter re-runs
+  with process-corner/param overrides (unimplemented) and why the whole block,
+  not just the line, must be skipped (STEP 26). (6) The line lowercaser was made
+  quote-aware via an `in_dq` flag so case-sensitive filenames inside
+  double-quoted strings (e.g. HSPICE
+  `table_param(str("./RF_COMPONENTS/foo.table"))`) survive lowercasing on Linux
+  (STEP 14); a companion change in the keepquotes path preserves content inside
+  `str("...")`. (7) In HS/HSA mode (`newcompat.hs`), `$` is now treated as an
+  end-of-line comment regardless of the preceding character, matching foundry
+  decks that write `...)'$ comment`; the original conservative space/comma/tab
+  rule is kept outside HS mode. (8) The single-to-brace quote conversion now
+  skips `.del`, `.include`, and `.inc ` lines (which take literal file paths),
+  matching the existing `.lib` skip, to avoid handing paths to numparam as
+  expressions (STEP 24, observed on GF55 bcd55 .alter decks).
+
+CHANGE:
+@@ -1072,9 +1080,22 @@
+         return cc;
+     }
+ 
+-    /* files starting with *ng_script are user supplied command files */
+-    if (cc && ciprefix("*ng_script", cc->line))
+-        comfile = TRUE;
++    /* files starting with *ng_script are user supplied command files.
++     * Walk past any leading blank cards so a `*ng_script` that follows
++     * a blank top-of-file line is still recognised.  Without this,
++     * such a file gets treated as a spice deck and the inner
++     * `.control { source ... }` triggers a second full inp_readall
++     * pass — doubling parse time on big PDK decks. */
++    {
++        struct card *probe = cc;
++        while (probe && probe->line &&
++               (probe->line[0] == '\0' ||
++                probe->line[0] == '\n' ||
++                (probe->line[0] == '\r' && probe->line[1] == '\n')))
++            probe = probe->nextcard;
++        if (probe && ciprefix("*ng_script", probe->line))
++            comfile = TRUE;
++    }
+ 
+     /* The following processing of an input file is not required for command
+        files like spinit or .spiceinit, so return command files here. */
+@@ -1406,11 +1433,28 @@
+         /* OK -- now we have loaded the next line into 'buffer'.  Process it.
+          */
+         if (first) {
+-            /* Files starting *ng_script are user supplied command files. */
+-
+-            if (ciprefix("*ng_script", buffer))
+-                comfile = TRUE;
+-            first = FALSE;
++            /* Files starting *ng_script are user supplied command files.
++             *
++             * Treat any leading blank lines as not-yet-first, so a
++             * comfile that has a blank line above `*ng_script` is
++             * still recognised.  Without this, ngspice processes
++             * such a file twice: once as the "main" deck (because
++             * comfile stays FALSE, the !comfile branch runs full
++             * parse + print_compat_mode + Circuit:), and again
++             * when its `.control { source other.net }` triggers a
++             * fresh inp_spsource for the inner netlist.  Real
++             * symptom: doubled "Compatibility modes selected" /
++             * "Circuit:" headers and ~2x parse time. */
++            bool buffer_blank = (strcmp(buffer, "\n") == 0) ||
++                                (strcmp(buffer, "\r\n") == 0) ||
++                                (buffer[0] == '\0');
++            if (buffer_blank) {
++                /* skip — re-check on the next line */
++            } else {
++                if (ciprefix("*ng_script", buffer))
++                    comfile = TRUE;
++                first = FALSE;
++            }
+         }
+ 
+         /* If input line is blank, ignore it & continue looping.  */
+@@ -1808,9 +1892,22 @@
+                     ciprefix("set sourcepath", buffer) ||
+                     ciprefix("strcmp", buffer) ||
+                     ciprefix("strstr", buffer))))) {
+-                /* lower case for all other lines */
+-                for (s = buffer; *s && (*s != '\n'); s++)
+-                    *s = tolower_c(*s);
++                /* Lower case for all other lines, but preserve the
++                 * content INSIDE double-quoted strings.  Foundry PDKs
++                 * embed case-sensitive filenames in .param/.subckt
++                 * lines via constructs like
++                 * `.param x = 'table_param(str("./RF_COMPONENTS/foo.table"), ...)'`.
++                 * Without quote preservation, the inner path gets
++                 * folded to lowercase and fails to open on Linux. */
++                bool in_dq = false;
++                for (s = buffer; *s && (*s != '\n'); s++) {
++                    if (*s == '"') {
++                        in_dq = !in_dq;
++                        continue;
++                    }
++                    if (!in_dq)
++                        *s = tolower_c(*s);
++                }
+             }
+             else {
+                 /* s points to end of buffer for all cases not treated so far
+@@ -3617,9 +3724,19 @@
+         }
+         /* outside of .control section, and not in PS mode */
+         else if (!cs && (c == '$') && !newcompat.ps) {
+-            /* The character before '&' has to be ',' or ' ' or tab.
+-               A valid numerical expression directly before '$' is not yet
+-               supported. */
++            /* HSPICE treats '$' as an end-of-line comment regardless of
++             * the preceding character — foundry decks
++             * routinely write `...)'$ comment` or `...=10u$ ...`
++             * with no separator.  In ngbehavior=hs / hsa, accept that.
++             *
++             * Outside HS mode keep the original conservative rule (only
++             * after space/comma/tab) so a literal `$` inside a token
++             * (e.g. a parameter named `foo$bar`, environment vars, etc.)
++             * isn't misread as a comment delimiter. */
++            if (newcompat.hs) {
++                d--;
++                break;
++            }
+             if ((d - 2 >= s) &&
+                     ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
+                 d--;
+@@ -4396,12 +4527,25 @@
+ 
+ static struct function *find_function(struct function_env *env, char *name)
+ {
+-    struct function *f;
+-
+-    for (; env; env = env->up)
+-        for (f = env->functions; f; f = f->next)
+-            if (strcmp(f->name, name) == 0)
++    /* Walk the env chain inner-to-outer.  At each level, hash-lookup
++     * the function name (O(1)).  Total cost is O(env_chain_depth) per
++     * call instead of O(total_funcs).  See struct function_env comment
++     * for why this matters. */
++    for (; env; env = env->up) {
++        if (env->fcn_hash) {
++            struct function *f =
++                    (struct function *)nghash_find(env->fcn_hash, name);
++            if (f)
+                 return f;
++        } else {
++            /* Fallback for envs created before the hash was added or
++             * if hash init failed (out of memory).  Same semantics as
++             * the original linear scan. */
++            for (struct function *f = env->functions; f; f = f->next)
++                if (strcmp(f->name, name) == 0)
++                    return f;
++        }
++    }
+ 
+     return NULL;
+ }
+@@ -5483,37 +5637,91 @@
+             num_params++;
+         }
+ 
+-    // look for duplicately defined parameters and mark earlier one to skip
+-    // param list is ordered as defined in netlist
++    /* Duplicate detection and dependency scanning via a single hash from
++     * param_name -> (i+1).  Replaces two nested-N^2 loops:
++     *   - duplicate-check: was O(N^2) strcmp pairs
++     *   - dependency-scan: was O(N^2 * L) search_plain_identifier calls,
++     *     scanning every other param's expression for occurrences of each
++     *     param's name
++     * Both passes are now O(N) + O(total expression chars), enabling real
++     * PDK use (BCD 14LPU's TT corner had N~2700 per subckt, called
++     * ~500 times, totalling many billions of ops in the old code).
++     *
++     * Encoding: hash stores `(void *)(intptr_t)(i + 1)` so that the NULL
++     * return value from nghash_find unambiguously means "not present"
++     * (param index 0 is a valid hit, encoded as the integer 1).
++     *
++     * For repeated names, the hash overwrites with the LATER index, so
++     * the recorded index for any name is the latest occurrence.  In the
++     * duplicate-mark pass below, every entry whose own index differs
++     * from the hash's recorded index gets skip=1, matching the original
++     * semantics (earlier duplicates are skipped, the last one wins). */
++    NGHASHPTR name_to_idx = nghash_init(num_params > 0 ? num_params : 1);
++
++    for (i = 0; i < num_params; i++)
++        nghash_insert(name_to_idx, deps[i].param_name,
++                      (void *)(intptr_t)(i + 1));
+ 
+     skipped = 0;
+     for (i = 0; i < num_params; i++) {
+-        for (j = i + 1; j < num_params; j++)
+-            if (strcmp(deps[i].param_name, deps[j].param_name) == 0)
+-                break;
+-        if (j < num_params) {
++        int latest =
++                (int)(intptr_t)nghash_find(name_to_idx, deps[i].param_name) - 1;
++        if (latest != i) {
+             deps[i].skip = 1;
+             skipped++;
+         }
+     }
+ 
+-    for (i = 0; i < num_params; i++)
+-        if (!deps[i].skip) {
+-            char *param = deps[i].param_name;
+-            for (j = 0; j < num_params; j++)
+-                if (j != i &&
+-                        search_plain_identifier(deps[j].param_str, param)) {
+-                    for (ind = 0; deps[j].depends_on[ind]; ind++)
+-                        ;
+-                    deps[j].depends_on[ind++] = param;
+-                    if (ind == DEPENDSON) {
+-                        fprintf(stderr, "Error in netlist: Too many parameter dependencies (> %d)\n", ind);
++    /* Tokenize each non-skipped param's expression once; for each
++     * identifier-shaped token, look up in name_to_idx.  If the token
++     * names another (non-skipped) param, record the dependency.  Token
++     * boundaries use the same identifier_char predicate as
++     * search_plain_identifier, so behavior matches the old code. */
++    for (j = 0; j < num_params; j++) {
++        if (deps[j].skip) continue;
++        char *expr = deps[j].param_str;
++        if (!expr) continue;
++
++        char *p = expr;
++        while (*p) {
++            while (*p && !identifier_char(*p)) p++;
++            if (!*p) break;
++            char *tok_start = p;
++            while (*p && identifier_char(*p)) p++;
++
++            char saved = *p;
++            *p = '\0';
++            int dep_idx =
++                    (int)(intptr_t)nghash_find(name_to_idx, tok_start) - 1;
++            *p = saved;
++
++            if (dep_idx >= 0 && dep_idx != j && !deps[dep_idx].skip) {
+      + ...[16 more replacement lines — full listing in ng_diff.txt]...
+                         fprintf(stderr, "    Please check your netlist.\n");
+                         controlled_exit(EXIT_BAD);
+                     }
+-                    deps[j].depends_on[ind] = NULL;
++                    deps[j].depends_on[ind + 1] = NULL;
+                 }
++            }
+         }
++    }
++
++    nghash_free(name_to_idx, NULL, NULL);
+ 
+     max_level = 0;
+     for (i = 0; i < num_params; i++) {
+
+--------------------------------------------------------------------------------
+[4] src/frontend/measure.c
+      pre-existing lines changed: 16   (+85 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  do_measure and get_measure2 gained HSPICE-shorthand handling for `.measure
+  <result> <fn> ...` with no explicit analysis type (STEP 28). In do_measure's
+  two parse passes, when the first token isn't a recognized analysis type,
+  instead of hard-erroring ("unrecognized analysis type"), the code infers the
+  type by scanning ci_deck for the first `.dc`/`.ac`/`.tran`, then re-classifies
+  the three already-gettok'd tokens (an_type/resname/meastype are actually
+  resname/meastype/first-arg) and splices the old meastype back into `line` with
+  tprintf so the rest of the parser realigns. Comments explain the
+  token-shift/splice logic and note ci_deck must be scanned (not ci_commands).
+  get_measure2 adds a `shorthand_first` bool and peeks the first token; if it
+  isn't DC/AC/TRAN/SP it synthesizes a leading inferred-analysis wordlist entry
+  so the positional parser (mAnalysis[0], mName[1], mFunction[2]) lines up.
+
+CHANGE:
+@@ -301,16 +301,38 @@
+             continue;
+         }
+ 
++        /* HSPICE-shorthand: `.measure <result> <fn> ...` (no
++         * explicit analysis type).  When the first token doesn't
++         * match a recognized analysis type, treat it as the
++         * result name and infer the analysis from the deck.
++         * Scan ci_deck — ci_commands holds only .print/.meas/etc.,
++         * NOT .dc/.tran/.ac. */
+         if (chkAnalysisType(an_type) != TRUE) {
+-            if (!chk_only) {
+-                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->linenum);
+-                fprintf(cp_err, "       %s\n", meas_card->line);
++            const char *inferred = "tran";
++            struct card *c;
++            for (c = ft_curckt ? ft_curckt->ci_deck : NULL;
++                 c; c = c->nextcard) {
++                const char *w = c->line;
++                if (!w || *w == '*') continue;
++                if (ciprefix(".dc", w))   { inferred = "dc";   break; }
++                if (ciprefix(".ac", w))   { inferred = "ac";   break; }
++                if (ciprefix(".tran", w)) { inferred = "tran"; break; }
+             }
+-
+-            txfree(an_type);
+-            txfree(resname);
+-            txfree(meastype);
+-            continue;
++            char *new_resname = an_type;
++            char *new_meastype = resname;
++            char *new_extra = meastype;
++            an_type = copy(inferred);
++            resname = new_resname;
++            meastype = new_meastype;
++            /* meastype was the third gettok; shift the rest of
++             * the line back so the remaining parser sees the new
++             * meastype's argument as the next token.  The line
++             * already advanced past `meastype` (now extra), so
++             * we need to splice `extra` back into the front of
++             * `line` (concatenate with a space). */
++            char *new_line_buf = tprintf("%s %s", new_extra, line);
++            line = new_line_buf;
++            tfree(new_extra);
+         }
+         /* print header before evaluating first .meas line */
+         else if (first_time) {
+@@ -431,16 +453,30 @@
+             continue;
+         }
+ 
++        /* HSPICE-shorthand: same path as the first-pass fix at
++         * line 304.  Treat the original first token as resname,
++         * shift everything back one slot, and splice the old
++         * meastype back into `line` for the rest of the parser. */
+         if (chkAnalysisType(an_type) != TRUE) {
+-            if (!chk_only) {
+-                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->linenum);
+-                fprintf(cp_err, "       %s\n", meas_card->line);
++            const char *inferred = "tran";
++            struct card *c2;
++            for (c2 = ft_curckt ? ft_curckt->ci_deck : NULL;
++                 c2; c2 = c2->nextcard) {
++                const char *w = c2->line;
++                if (!w || *w == '*') continue;
++                if (ciprefix(".dc", w))   { inferred = "dc";   break; }
++                if (ciprefix(".ac", w))   { inferred = "ac";   break; }
++                if (ciprefix(".tran", w)) { inferred = "tran"; break; }
+             }
+-
+-            txfree(an_type);
+-            txfree(resname);
+-            txfree(meastype);
+-            continue;
++            char *new_resname2 = an_type;
++            char *new_meastype2 = resname;
++            char *new_extra2 = meastype;
++            an_type = copy(inferred);
++            resname = new_resname2;
++            meastype = new_meastype2;
++            char *new_line_buf2 = tprintf("%s %s", new_extra2, line);
++            line = new_line_buf2;
++            tfree(new_extra2);
+         }
+         if (strcmp(an_name, an_type) != 0) {
+             txfree(an_type);
+
+--------------------------------------------------------------------------------
+[5] src/frontend/numparam/Makefile.am
+      pre-existing lines changed: 1   (+3 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Added the new source/header pair `table_param.c` and `table_param.h` to the
+  numparam build sources (STEP 15). These implement HSPICE's `table_param()`
+  multi-dimensional external-table lookup function used heavily by foundry PDKs
+  for self-heating/thermal-resistance lookups.
+
+CHANGE:
+@@ -8,9 +8,11 @@
+ 	spicenum.c	\
+ 	xpressn.c	\
+ 	mystring.c	\
++	table_param.c	\
+ 	general.h	\
+ 	numpaif.h	\
+-	numparam.h
++	numparam.h	\
++	table_param.h
+ 
+ AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+ AM_CFLAGS = $(STATIC)
+
+--------------------------------------------------------------------------------
+[6] src/frontend/numparam/xpressn.c
+      pre-existing lines changed: 11   (+278 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Several changes. (1) Added `#include "table_param.h"`, added `table_param` to
+  the fmathS function-name list, and added an XFU_TABLE_PARAM enum entry plus a
+  large variadic dispatch branch in formula() that manually splits
+  comma-separated args (up to 64), unwraps the `str(...)` filename wrapper and
+  quotes, recursively evaluates the numeric args, derives a directory hint from
+  dico->cardsource, and calls table_param_lookup() (STEP 15). (2) message() now
+  returns immediately when dico->suppress_errors is set, and
+  dico->suppress_errors is initialized false in the init path. (3) The `==` and
+  `<>` operators in operate() were changed from strict IEEE equality to a hybrid
+  relative+absolute tolerance (equal if difference <= 1e-9*max(|x|,|y|) or below
+  a 1e-18 floor); the comment explains foundry-PDK expressions like
+  `(l==0.014e-6)` fail with strict `==` because `l` arrives 1 ULP off (e.g. bin
+  midpoint 1.3999999999999999e-08), while integer comparisons remain unambiguous
+  (STEP 12). (4) When an identifier matches a function keyword, it is now
+  treated as a function call ONLY if followed by `(`; otherwise it is treated as
+  a parameter name, so GF55 decks that use `var` as a subckt parameter aren't
+  shadowed by the built-in `var` function (STEP 17). (5) A unary `+` following a
+  binary operator (e.g. `0.67*+2e-8`) is now accepted as a no-op sign, symmetric
+  with the existing unary-minus handling, fixing GF55 "Misplaced operator"
+  failures. (6) Added the `nupa_eval_with_scope()` implementation: pushes a
+  fresh symbol-table scope, populates it via attrib(), runs formula(), then
+  frees the scope with del_attrib WITHOUT promoting locals to globals, used by
+  the OSDI deferred-eval path (STEP 10).
+
+CHANGE:
+@@ -92,14 +93,15 @@
+     "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log log10 sinh cosh"
+     " tanh ternary_fcn agauss sgn gauss unif aunif limit ceil floor"
+     " asin acos atan asinh acosh atanh tan nint"
+-    " vec var";
++    " vec var table_param";
+ 
+ 
+ enum {
+     XFU_SQR = 1, XFU_SQRT, XFU_SIN, XFU_COS, XFU_EXP, XFU_LN, XFU_ARCTAN, XFU_ABS, XFU_POW, XFU_PWR, XFU_MAX, XFU_MIN, XFU_INT, XFU_LOG, XFU_LOG10, XFU_SINH, XFU_COSH,
+     XFU_TANH, XFU_TERNARY_FCN, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
+     XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN, XFU_NINT,
+-    XFU_VEC, XFU_VAR // String arguments.
++    XFU_VEC, XFU_VAR, // String arguments.
++    XFU_TABLE_PARAM   // Variadic HSPICE table_param(file, n_int, ints..., n_real, reals..., out_col).
+ };
+ 
+ 
+@@ -817,16 +823,34 @@
+         x = ((x != 0.0) || (y != 0.0)) ? 1.0 : 0.0;
+         break;
+     case '=':
+-        if (x == y)
+-            x = u;
+-        else
+-            x = z;
++        /* HSPICE-compatible tolerant equality.  Strict IEEE `==`
++         * breaks foundry-PDK expressions like `(l==0.014e-6)` where
++         * `l` arrives as `14*1e-9 = 1.4000000000000001e-08` (1 ULP
++         * off from `0.014e-6 = 1.4e-08`), or as the bin midpoint
++         * `0.5*(1e-8+1.8e-8) = 1.3999999999999999e-08`.  Use a
++         * hybrid relative+absolute tolerance: differences smaller
++         * than `1e-9 * max(|x|,|y|)` or below an absolute floor of
++         * `1e-18` count as equal.  Integer comparisons (mexp==2,
++         * etc.) remain unambiguous — 1 vs 2 differ by 100% relative. */
++        {
++            double dxy = fabs(x - y);
++            double mxy = fabs(x) > fabs(y) ? fabs(x) : fabs(y);
++            if (dxy <= mxy * 1e-9 || dxy < 1e-18)
++                x = u;
++            else
++                x = z;
++        }
+         break;
+     case '#':                   /* <> */
+-        if (x != y)
+-            x = u;
+-        else
+-            x = z;
++        /* Symmetric with `==` above. */
++        {
++            double dxy = fabs(x - y);
++            double mxy = fabs(x) > fabs(y) ? fabs(x) : fabs(y);
++            if (dxy <= mxy * 1e-9 || dxy < 1e-18)
++                x = z;
++            else
++                x = u;
++        }
+         break;
+     case '>':
+         if (x > y)
+@@ -1029,7 +1206,27 @@
+             const char *s_next = fetchid(s, s_end);
+             fu = keyword(fmathS, s, s_next); /* numeric function? */
+             if (fu > 0) {
+-                state = S_init;  /* S_init means: ignore for the moment */
++                /* The identifier matched a function keyword (e.g. `var`,
++                 * `vec`, `min`, `max`, `pow`, `table_param`).  Only treat
++                 * it as a function call if it's followed by `(` (after
++                 * optional whitespace).  Otherwise fall back to treating
++                 * it as a parameter name — foundry decks (GF55 bcd55
++                 * diode_rr.inc) use `var` as a subckt parameter, and
++                 * shadowing it with the built-in function broke
++                 * `vrb='var'` and similar chains. */
++                const char *peek = s_next;
++                while (peek < s_end && (*peek == ' ' || *peek == '\t'))
++                    peek++;
++                if (peek >= s_end || *peek != '(') {
++                    /* Not a function call — treat as identifier. */
++                    ds_clear(&tstr);
++                    pscopy(&tstr, s, s_next);
++                    u = fetchnumentry(dico, ds_get_buf(&tstr), &error);
++                    state = S_atom;
++                    fu = 0;
++                } else {
++                    state = S_init;  /* wait for the `(` to be consumed */
++                }
+             } else {
+                 ds_clear(&tstr);
+                 pscopy(&tstr, s, s_next);
+
+--------------------------------------------------------------------------------
+[7] src/frontend/subckt.c
+      pre-existing lines changed: 84   (+344 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Four feature blocks added, all commented. (1) Includes for inpdefs.h
+  (INPtypelook) and numparam.h (nupa_skip_line). (2) New function
+  `inp_apply_subckt_scale()` plus helpers `subckt_has_scale()` and
+  `scale_geom_param()` implement HSPICE element scale: for any .subckt declaring
+  a `scale` parameter, geometry value-expressions in its body are wrapped so
+  lengths are multiplied by scale and areas (ad/as) by scale^2, replacing the
+  old hard-coded `geoshrink` option; the comment stresses this must run before
+  numparam preparation (hence called from inp_readall) and details which params
+  are scaled/skipped (STEP 31). (3) In the undefined-subckt check, before
+  erroring on an unknown X-instance the code now checks whether the target token
+  names a registered OSDI device (INPtypelook >= 0) and, if so, comments the
+  line out and calls nupa_skip_line; the long comment explains foundry PDKs
+  embed Verilog-A diagnostic instances (ESD monitors) as X-calls per HSPICE
+  convention, that dropping these diagnostic-only modules doesn't change circuit
+  behavior, and why numparam's independent line state must also be reset (STEP
+  16). (4) The binning/model-pruning logic was refactored to use a new helper
+  `get_model_bins()` and, critically, to "fail open": bins are only pruned when
+  at least one bin actually matches the instance w/l, otherwise all model cards
+  are kept so INPgetModBin can bin later after numparam applies shrink; the
+  comment explains PDKs that apply shrink inside the subckt would otherwise
+  match no bin and lose all models (STEP 30). (5) In the e/f/g/h POLY
+  translation, an optional HSPICE source-type marker
+  (`vccs`/`vcvs`/`cccs`/`ccvs`) between output nodes and POLY is now peeked and
+  skipped since the device letter already encodes the type; the POLY check was
+  also guarded with `next_name &&` (STEP 29, fixes BCD thermal_branch.inc G-poly
+  parsing).
+
+CHANGE:
+@@ -359,9 +435,86 @@
+             dynMaxckt++;
+     }
+ 
+-    /* Now check to see if there are still subckt instances undefined... */
++    /* Now check to see if there are still subckt instances undefined.
++     *
++     * HSPICE convention: an `X<inst>` instance line can call EITHER a
++     * `.subckt` OR a Verilog-A module loaded via OSDI.  The target
++     * name (typically the 5th token, after the 4 node terminals) names
++     * the type.  ngspice's subckt expander only handles the .subckt
++     * case; if no .subckt matches, we'd error here.  But foundry PDKs
++     * routinely embed VA-module diagnostic
++     * instances like `xesd_monitor d g s b esd_nfet_monitor ...`
++     * inside their FET subckts, expecting HSPICE-style dispatch.
++     *
++     * Compromise: if the target name is a registered OSDI device
++     * (INPtypelook ≥ 0), comment out the line.  ESD monitor modules in
++     * foundry decks are diagnostic-only — `$strobe` messages for spec
++     * violations, no current/charge contributions — so dropping them
++     * doesn't change circuit behavior, only disables the diagnostics.
++     * A proper fix would auto-generate a `.model + N-prefix` shim, but
++     * needs ngspice's OSDI dispatch to accept generic-prefix instances
++     * for non-MOSFET VA modules; that's a separate change. */
+     for (c = deck; c; c = c->nextcard)
+         if (ciprefix(invoke, c->line)) {
+      + ...[59 lines of new OSDI code inserted here — full listing in ng_diff.txt]...
+             fprintf(cp_err, "Error: unknown subckt: %s\n", c->line);
+             fprintf(cp_err, "    in line no. %d from file %s\n", c->linenum_orig, c->linesource);
+ 
+@@ -617,102 +890,73 @@
+                 if (sss) {
+ //                    tprint(sss->su_def);
+                     struct card *su_deck = inp_deckcopy(sss->su_def);
++
++                    /* (HSPICE element scale is applied earlier, in
++                       inp_subcktexpand(), by wrapping the subckt body's
++                       geometry expressions before the numparam passes.) */
++
+                     /* If we have modern PDKs, we have to reduce the amount of memory required.
+                        We try to reduce the models to the one really used.
+                        Otherwise su_deck is full of unused binning models.*/
+                     if ((newcompat.hs || newcompat.spe) && c->w > 0 && c->l > 0) {
+-                        /* extract wmin, wmax, lmin, lmax */
+                         struct card* new_deck = su_deck;
+                         struct card* prev = NULL;
+-                        while (su_deck) {
+-                            if (!ciprefix(".model", su_deck->line)) {
+-                                prev = su_deck;
+-                                su_deck = su_deck->nextcard;
+-                                    continue;
+-                            }
++                        struct card* scan;
++                        int nmatch = 0;
+ 
+-                            char* curr_line = su_deck->line;
++                        float csl = (float)scale * c->l;
++                        /* scale by nf */
++                        float csw = (float)scale * c->w / c->nf;
++
++                        /* Does any bin contain the instance's w/l?  These
++                           are the DRAWN dimensions off the X line; the bin
++                           ranges are post-shrink.  For PDKs that apply the
++                           shrink inside the subcircuit (l_scale='l*shrink',
++                           as foundry HV devices do) the drawn dims do not
++                           map to the bins here, so nothing matches.  In that
++                           case keep every model card and let INPgetModBin do
++                           the binning after numparam has applied the shrink
++                           to the MOS line. */
++                        for (scan = su_deck; scan; scan = scan->nextcard) {
+                             float fwmin, fwmax, flmin, flmax;
+-                            char *wmin = strstr(curr_line, " wmin=");
+-                            if (wmin) {
+-                                int err;
+-                                wmin = wmin + 6;
+-                                fwmin = (float)INPevaluate(&wmin, &err, 0);
+-                                if (err) {
+-                                    prev = su_deck;
+-                                    su_deck = su_deck->nextcard;
+-                                    continue;
+-                                }
+-                            }
+-                            else {
+-                                prev = su_deck;
+-                                su_deck = su_deck->nextcard;
++                            if (!ciprefix(".model", scan->line))
+                                 continue;
+-                            }
+-                            char *wmax = strstr(curr_line, " wmax=");
+-                            if (wmax) {
+-                                int err;
+-                                wmax = wmax + 6;
+-                                fwmax = (float)INPevaluate(&wmax, &err, 0);
+-                                if (err) {
+-                                    prev = su_deck;
+-                                    su_deck = su_deck->nextcard;
+-                                    continue;
+-                                }
+-                            }
+-                            else {
+-                                prev = su_deck;
+-                                su_deck = su_deck->nextcard;
++                            if (!get_model_bins(scan->line, &fwmin, &fwmax,
++                                                &flmin, &flmax))
+                                 continue;
+-                            }
++                            if (csl >= flmin && csl < flmax &&
++                                csw >= fwmin && csw < fwmax)
++                                nmatch++;
++                        }
+ 
+-                            char* lmin = strstr(curr_line, " lmin=");
+-                            if (lmin) {
+-                                int err;
+-                                lmin = lmin + 6;
+-                                flmin = (float)INPevaluate(&lmin, &err, 0);
+-                                if (err) {
+-                                    prev = su_deck;
+-                                    su_deck = su_deck->nextcard;
+-                                    continue;
+-                                }
+-                            }
+-                            else {
+-                                prev = su_deck;
+-                                su_deck = su_deck->nextcard;
+-                                continue;
+-                            }
+-                            char* lmax = strstr(curr_line, " lmax=");
+-                            if (lmax) {
+-                                int err;
+-                                lmax = lmax + 6;
+-                                flmax = (float)INPevaluate(&lmax, &err, 0);
+-                                if (err) {
+-                                    prev = su_deck;
+-                                    su_deck = su_deck->nextcard;
+-                                    continue;
+-                                }
+-                            }
+-                            else {
+-                                prev = su_deck;
+-                                su_deck = su_deck->nextcard;
+-                                continue;
+-                            }
++                        /* Only when a bin matched do we drop the others (the
++                           memory optimization).  Otherwise leave su_deck
++                           untouched. */
++                        while (nmatch > 0 && su_deck) {
++                            float fwmin, fwmax, flmin, flmax;
+ 
+-                            float csl = (float)scale * c->l;
+-                            /* scale by nf */
+-                            float csw = (float)scale * c->w / c->nf;
+-                            /*fprintf(stdout, "Debug: nf = %f\n", c->nf);*/
+-                            if (csl >= flmin && csl < flmax && csw >= fwmin && csw < fwmax) {
+-                                /* use the current .model card */
++                            if (!ciprefix(".model", su_deck->line) ||
++                                !get_model_bins(su_deck->line, &fwmin, &fwmax,
++                                                &flmin, &flmax) ||
++                                (csl >= flmin && csl < flmax &&
++                                 csw >= fwmin && csw < fwmax)) {
++                                /* keep: non-model, unbinned, or matching */
+                                 prev = su_deck;
+                                 su_deck = su_deck->nextcard;
+                                 continue;
+                             }
+-                            else {
++
++                            /* out-of-bin model card: drop it */
++                            {
+                                 struct card* tmpcard = su_deck->nextcard;
+-                                line_free_x(prev->nextcard, FALSE);
+-                                su_deck = prev->nextcard = tmpcard;
++                                if (prev) {
++                                    line_free_x(prev->nextcard, FALSE);
++                                    su_deck = prev->nextcard = tmpcard;
++                                }
++                                else {
++                                    line_free_x(new_deck, FALSE);
++                                    su_deck = new_deck = tmpcard;
++                                }
+                             }
+                         }
+                         su_deck = new_deck;
+@@ -1379,12 +1623,28 @@
+                 bxx_putc(&buffer, ' ');
+             }
+ 
+-            /* Next we handle the POLY (if any) */
+-            /* get next token */
++            /* HSPICE compat: skip optional source-type marker
++             * (vccs/vcvs/cccs/ccvs) between output nodes and POLY.
++             * The letter `g`/`e`/`f`/`h` already encodes the type, so
++             * the marker is redundant; consume it so the downstream
++             * POLY translator (and inp2g/e/f/h) sees a clean line. */
+             t = s;
+             next_name = gettok_noparens(&t);
+-            if ((strcmp(next_name, "POLY") == 0) ||
+-                (strcmp(next_name, "poly") == 0)) {
++            if (next_name && (
++                (dev_type == 'g' && cieq(next_name, "vccs")) ||
++                (dev_type == 'e' && cieq(next_name, "vcvs")) ||
++                (dev_type == 'f' && cieq(next_name, "cccs")) ||
++                (dev_type == 'h' && cieq(next_name, "ccvs")))) {
++                s = t;
++                tfree(next_name);
++                t = s;
++                next_name = gettok_noparens(&t);
++            }
++
++            /* Next we handle the POLY (if any) */
++            if (next_name &&
++                ((strcmp(next_name, "POLY") == 0) ||
++                 (strcmp(next_name, "poly") == 0))) {
+ 
+ #ifdef TRACE
+                 printf("In translate, looking at e, f, g, h found poly\n");
+
+--------------------------------------------------------------------------------
+[8] src/maths/KLU/klusmp.c
+      pre-existing lines changed: 11   (+27 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  The KLU diagonal-gmin loader is reworked to honor the gmin_skip map. The old
+  static helper LoadGmin_CSC(diag, n, Gmin) is replaced by
+  LoadGmin_CSC_skip(SMPmatrix *eMatrix, Gmin), and both KLU factor call sites
+  (klu_refactor and the pivot-tol path) are updated to call it. A new block
+  comment explains the pass adds Gmin to every diagonal EXCEPT the synthesized
+  analog-operator implicit-equation state nodes (laplace, zi, idt,
+  transition-delay) flagged in eMatrix->gmin_skip, because gmin there over-damps
+  the integrator-state Newton update and breaks gmin stepping (cross-referencing
+  spsmp.c LoadGmin). It documents that KLU column i is the post-collapse index
+  and the original node number is NewToOld[i]+1 (KLU columns 0-based, node
+  numbers 1-based), and that with gmin_skip NULL the code is byte-for-byte the
+  legacy "gmin on every diagonal" behaviour. The body dereferences the KLU
+  matrix, reads the skip array and the NodeCollapsingNewToOld map, early-returns
+  when Gmin==0, and skips diagonals whose mapped node is flagged.
+
+CHANGE:
+@@ -35,7 +35,7 @@
+ #endif
+ }
+ 
+-static void LoadGmin_CSC (double **diag, unsigned int n, double Gmin) ;
++static void LoadGmin_CSC_skip (SMPmatrix *eMatrix, double Gmin) ;
+ static void LoadGmin (SMPmatrix *eMatrix, double Gmin) ;
+ 
+ typedef struct sElement {
+@@ -585,7 +585,7 @@
+         }
+ 
+         if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
+-            LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
++            LoadGmin_CSC_skip (Matrix, Gmin) ;
+         }
+ 
+         ret = klu_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx,
+@@ -764,7 +764,7 @@
+         }
+ 
+         if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
+-            LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
++            LoadGmin_CSC_skip (Matrix, Gmin) ;
+         }
+         Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
+ 
+@@ -1768,18 +1768,34 @@
+  */
+ 
+ 
++/* KLU diagonal-gmin pass.  Adds Gmin to every diagonal element EXCEPT the
++ * synthesized analog-operator implicit-equation state nodes (laplace, zi, idt,
++ * transition-delay) flagged in eMatrix->gmin_skip -- gmin there over-damps
++ * the integrator-state Newton update and breaks gmin stepping (see spsmp.c
++ * LoadGmin for the full rationale).  KLU column i is the post-collapse index;
++ * the original ngspice node number is NewToOld[i] + 1 (KLU columns are 0-based,
++ * node numbers 1-based -- cf. the singular_col + 1 node reporting in this
++ * file).  When gmin_skip is NULL (no flagged nodes) this is byte-for-byte the
++ * legacy "gmin on every diagonal" behaviour. */
+ static void
+-LoadGmin_CSC (double **diag, unsigned int n, double Gmin)
++LoadGmin_CSC_skip (SMPmatrix *eMatrix, double Gmin)
+ {
++    KLUmatrix *klu = eMatrix->SMPkluMatrix ;
++    double **diag = klu->KLUmatrixDiag ;
++    unsigned int n = klu->KLUmatrixN ;
++    char *skip = eMatrix->gmin_skip ;
++    unsigned int *new2old = klu->KLUmatrixNodeCollapsingNewToOld ;
+     unsigned int i ;
+ 
+-    if (Gmin != 0.0) {
+-        for (i = 0 ; i < n ; i++) {
+-            if (diag [i] != NULL) {
+-                // Not all the elements on the diagonal are present, when the circuit is parsed
+-                *(diag [i]) += Gmin ;
+-            }
+-        }
++    if (Gmin == 0.0)
++        return ;
++
++    for (i = 0 ; i < n ; i++) {
++        if (diag [i] == NULL)
++            continue ; // not all diagonal elements are present after parsing
++        if (skip && new2old && skip [new2old [i] + 1])
++            continue ;
++        *(diag [i]) += Gmin ;
+     }
+ }
+ 
+
+--------------------------------------------------------------------------------
+[9] src/maths/ni/niconv.c
+      pre-existing lines changed: 5   (+17 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  NIconvTest is extended to implement the Axis-4 dual-norm (residual)
+  convergence gate. The NEWCONV branch is restructured so that when CKTconvTest
+  returns nonzero it now returns that error inside a braced block (functionally
+  as before), and the old `#else return(0)` fallthrough is removed. A new
+  commented block ("Bürmen axis 4") then checks CKTresidConverged: dual-norm
+  convergence requires the residual to also be stable, not just the solution
+  vector, catching the SPICE3 false-convergence pathology where the iterate
+  stops moving (damping/scaling artifact) but f(x) is still nonzero. If residual
+  checking is not disabled and the residual has not converged, it clears
+  CKTtroubleNode and returns 1 (not converged); otherwise returns 0. The flag is
+  set by NIiter from CKTrhs right after CKTload and can be opted out with
+  `.option noresidcheck`. (Note: per niiter.c, CKTresidConverged is currently
+  forced to 1, so this gate is effectively a passed-through placeholder pending
+  a future opt-in.)
+
+CHANGE:
+@@ -90,10 +90,22 @@
+     /* CKTconvTest early-returns nonzero 'i' on the first error
+      * in evaluating convergence (such as parameter out of range) so
+      * there may be untested devices that have not yet converged */
+-    if (i)
+-	ckt->CKTtroubleNode = 0;
+-    return(i);
+-#else /* NEWCONV */
+-    return(0);
++    if (i) {
++        ckt->CKTtroubleNode = 0;
++        return(i);
++    }
+ #endif /* NEWCONV */
++
++    /* Bürmen axis 4: dual-norm convergence requires the residual to
++     * also be stable, not just the solution vector.  Catches the
++     * SPICE3 false-convergence pathology where the iterate stops
++     * moving (damping/scaling artifact) but f(x) is still nonzero.
++     * The flag was set by NIiter from CKTrhs immediately after
++     * CKTload.  Opt-out via `.option noresidcheck`. */
++    if (!ckt->CKTresidCheckDisabled && !ckt->CKTresidConverged) {
++        ckt->CKTtroubleNode = 0;
++        return 1;
++    }
++
++    return 0;
+ }
+
+--------------------------------------------------------------------------------
+[10] src/maths/ni/nidest.c
+      pre-existing lines changed: 3   (+3 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Cosmetic-only change. The three FREE() calls for CKTrhs, CKTrhsOld, and
+  CKTrhsSpare were re-indented (extra alignment spaces added) so their FREE
+  tokens line up. No behavioral change; the surrounding CKTirhs frees are
+  unchanged.
+
+CHANGE:
+@@ -19,9 +19,9 @@
+     if (ckt->CKTmatrix)
+ 	SMPdestroy(ckt->CKTmatrix);
+     FREE(ckt->CKTmatrix);
+-    if(ckt->CKTrhs)         FREE(ckt->CKTrhs);
+-    if(ckt->CKTrhsOld)      FREE(ckt->CKTrhsOld);
+-    if(ckt->CKTrhsSpare)    FREE(ckt->CKTrhsSpare);
++    if(ckt->CKTrhs)            FREE(ckt->CKTrhs);
++    if(ckt->CKTrhsOld)         FREE(ckt->CKTrhsOld);
++    if(ckt->CKTrhsSpare)       FREE(ckt->CKTrhsSpare);
+     if(ckt->CKTirhs)        FREE(ckt->CKTirhs);
+     if(ckt->CKTirhsOld)     FREE(ckt->CKTirhsOld);
+     if(ckt->CKTirhsSpare)   FREE(ckt->CKTirhsSpare);
+
+--------------------------------------------------------------------------------
+[11] src/osdi/Makefile.am
+      pre-existing lines changed: 1   (+3 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Adds a new source file osdi_defer.c to the libosdi build (and an empty
+  continuation line for readability). osdi_defer.c is the new helper module
+  backing the "deferred expression evaluation" feature (HSPICE-style
+  geometry-dependent model/instance parameter expressions like
+  vsat1='(l==14e-9)*A + ...') that osdisetup.c/osdiparam.c now call into.
+
+CHANGE:
+@@ -15,7 +16,8 @@
+ 	osdisetup.c \
+ 	osditrunc.c \
+ 	osdipzld.c \
+-	osdicallbacks.c
++	osdicallbacks.c \
++	osdi_defer.c
+ 
+ 
+ libosdi_la_LIBADD = $(XSPICEDLLIBS)
+
+--------------------------------------------------------------------------------
+[12] src/osdi/osdi.h
+      pre-existing lines changed: 1   (+195 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Bumps OSDI_VERSION_MINOR_CURR from 3 to 5 and adds the whole v0.5 ABI surface
+  (with comments referencing OSDI_0_5_DESIGN.md). New JACOBIAN_ENTRY_DELAY (16)
+  flag for AC delay coupling. New eval-return flags: EVAL_RET_FLAG_REJECT_STEP
+  (16, axis-3 step rejection when the model/simulator detects an ill-conditioned
+  regime), EVAL_RET_FLAG_EVENT (32) and EVAL_RET_FLAG_CROSS (64, axis-4
+  event-driven operators). New OSDI_EVENT_KIND_* discriminants
+  (CROSS/TIMER/INITIAL_STEP/FINAL_STEP). New structs OsdiEventRequest,
+  OsdiCrossExprMeta (direction/ttol/etol), and OsdiEventSlotMeta. OsdiSimInfo
+  gains tail-appended ABI-safe fields: cross_expr, pending_events,
+  at_scheduled_event, fired_event_id, scheduled_event_time (S3c sample-exact
+  crossing time), at_final_step, newton_iter (axis-2 iteration-aware $limit),
+  and the absdelay fields delay_input/delay_maxtd/delay_state/delay_read.
+  OsdiDescriptor gains previously-undeclared v0.4 fields (given_flag_*,
+  resistive/reactive jacobian entry counts, write_jacobian_array_*, inputs,
+  load_jacobian_with_offset_*) — needed so the C struct mirrors the binary
+  layout — plus v0.5 fields: num_cross_exprs/cross_expr_metadata,
+  num_event_slots/event_slot_metadata, num_delay_sites,
+  num_delay_jacobian_entries/write_jacobian_array_delay/delay_jacobian_sites,
+  and persistent_state_offset/count.
+
+CHANGE:
+@@ -18,7 +18,7 @@
+ 
+ 
+ #define OSDI_VERSION_MAJOR_CURR 0
+-#define OSDI_VERSION_MINOR_CURR 3
++#define OSDI_VERSION_MINOR_CURR 5
+ 
+ #define PARA_TY_MASK 3
+ #define PARA_TY_REAL 0
+
+--------------------------------------------------------------------------------
+[13] src/osdi/osdiload.c
+      pre-existing lines changed: 10   (+670 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  The largest change; implements most of the v0.5 runtime. $limit synthesis
+  support: NUM_SIM_PARAMS grows 10->15 adding osdi_vlim plus per-shape
+  osdi_vlim_vds/vgs/vbs/nqs $simparams, with a cascade (per-shape > generic >
+  0.1V default) that OpenVA's compiler-side $limit consumes to bound
+  per-iteration Newton delta-v on V() probes (commented as
+  voltage-range-agnostic, bounding step magnitude not rails). Adds
+  osdi_event_prepare (lazy-alloc cross/event/delay buffers onto a per-eval
+  thread-local SimInfo copy, and fire logic that pops the front scheduled event
+  when abstime >= t_event, exposing sample-exact scheduled_event_time),
+  osdi_cross_time (3-point quadratic crossing-time fit falling back to linear),
+  and osdi_event_postprocess (drain model pending_events into the sorted queue;
+  detect cross_expr sign flips per meta->direction and schedule at the
+  interpolated crossing time; shift the 2-deep history). The comments explain
+  the S3c "plan B": true back-step/bisection is impractical because dctran's /8
+  reject path skips CKTtrunc, so they fire on the first eval at/past the
+  interpolated t_event instead. Robustness: sanitize_residuals (zero only
+  NaN/Inf residuals and signal noncon; comments state finite-magnitude clamping
+  was REMOVED as physically baseless and harmful for power devices) and
+  sanitize_jacobian (zero/replace NaN Jacobian entries — diagonal replaced by
+  |I|/0.9 to bound the N-R update to ~VDD, huge-finite entries capped at 1e6
+  except transient reactive-bearing entries where large ag0*dQ/dV is physical,
+  and raising CKTosdiStepReject / CKThugeJThisIter). Transient charge fixes:
+  kill the TRAP zeroth-order-predictor sign-flip oscillation when charge equals
+  the previous accepted value, and seed the reactive state from the MODETRANOP
+  charge so the first step's dq/dt=0 (mirrors capload.c, avoiding a phantom
+  discharge transient). Deferred-commit persistent state: osdi_persist_restore
+  (restore snapshot->live before each eval) and osdi_persist_commit, plus the
+  new OSDIaccept hook that per accepted step commits persistent state and pushes
+  delay-ring samples (osdi_delay_push, geometric growth + horizon pruning).
+  INIT_LIM gating widened (MODEINITJCT|MODEINITFLOAT|MODEINITFIX, excluding
+  transient init) so $limit's clamp is bypassed while PrevState is stale during
+  DC OP finding. At the DC->transient boundary (MODEINITTRAN) prev_state is read
+  from CKTstates[1] (the rotated-away OP state) so the limiter sees delta~0 and
+  stays transparent. Also forwards newton_iter, sets at_final_step at
+  CKTfinalTime, and on EVAL_RET_FLAG_LIM/REJECT_STEP marks CKTtroubleElt,
+  increments noncon, and sets CKTosdiStepReject (gated by CKTosdiStepRejectOff).
+
+CHANGE:
+@@ -17,21 +17,25 @@
+ #include "osdi.h"
+ #include "osdidefs.h"
+ 
++#include <math.h>
+ #include <stdint.h>
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/types.h>
+ 
+-#define NUM_SIM_PARAMS 10
++#define NUM_SIM_PARAMS 15
+ char *sim_params[NUM_SIM_PARAMS + 1] = {
+-    "iniLim", "gmin", "gdev", "tnom", 
+-    "simulatorVersion", "sourceScaleFactor", 
+-    "epsmin", "reltol", "vntol", "abstol", 
++    "iniLim", "gmin", "gdev", "tnom",
++    "simulatorVersion", "sourceScaleFactor",
++    "epsmin", "reltol", "vntol", "abstol",
++    "osdi_vlim",
++    "osdi_vlim_vds", "osdi_vlim_vgs", "osdi_vlim_vbs", "osdi_vlim_nqs",
+     NULL};
+ char *sim_params_str[1] = {NULL};
+ 
+-double sim_param_vals[NUM_SIM_PARAMS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++double sim_param_vals[NUM_SIM_PARAMS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+ 
+ /* values returned by $simparam*/
+ OsdiSimParas get_simparams(const CKTcircuit *ckt) {
+@@ -42,10 +46,25 @@
+                                                       : (ckt->CKTdiagGmin);
+   double initializeLimiting = (ckt->CKTmode & MODEINITJCT) ? 1 : 0;
+ 
++  /* osdi_vlim*: per-iteration Δv bounds consumed by OpenVA's compiler-side
++   * $limit synthesis.  Each V() probe inside a branch contribution gets
++   * wrapped with a clamp |V_new - V_prev| ≤ osdi_vlim_<shape>, where
++   * <shape> is the MOSFET-style classification of the probe (vds/vgs/vbs),
++   * with osdi_vlim as the generic fallback.  Cascade: per-shape value if
++   * user set it > 0, else generic osdi_vlim, else 0.1 V default.  All
++   * voltage-range-agnostic — bounds Newton step magnitude, not supply
++   * rails. */
++  double osdi_vlim_v = (ckt->CKTosdiVlim > 0.0) ? ckt->CKTosdiVlim : 0.1;
++  double osdi_vlim_vds_v = (ckt->CKTosdiVlimVds > 0.0) ? ckt->CKTosdiVlimVds : osdi_vlim_v;
++  double osdi_vlim_vgs_v = (ckt->CKTosdiVlimVgs > 0.0) ? ckt->CKTosdiVlimVgs : osdi_vlim_v;
++  double osdi_vlim_vbs_v = (ckt->CKTosdiVlimVbs > 0.0) ? ckt->CKTosdiVlimVbs : osdi_vlim_v;
++  double osdi_vlim_nqs_v = (ckt->CKTosdiVlimNqs > 0.0) ? ckt->CKTosdiVlimNqs : osdi_vlim_v;
+   double sim_param_vals_[NUM_SIM_PARAMS] = {
+       // Verilog-A tnom is in degrees Celsius
+-      initializeLimiting, gmin, gdev, ckt->CKTnomTemp-CONSTCtoK, simulatorVersion, sourceScaleFactor, 
+-      ckt->CKTepsmin, ckt->CKTreltol, ckt->CKTvoltTol, ckt->CKTabstol };
++      initializeLimiting, gmin, gdev, ckt->CKTnomTemp-CONSTCtoK, simulatorVersion, sourceScaleFactor,
++      ckt->CKTepsmin, ckt->CKTreltol, ckt->CKTvoltTol, ckt->CKTabstol,
++      osdi_vlim_v,
++      osdi_vlim_vds_v, osdi_vlim_vgs_v, osdi_vlim_vbs_v, osdi_vlim_nqs_v };
+   memcpy(&sim_param_vals, &sim_param_vals_, sizeof(double) * NUM_SIM_PARAMS);
+   OsdiSimParas sim_params_ = {.names = sim_params,
+                               .vals = (double *)&sim_param_vals,
+@@ -54,14 +73,374 @@
+   return sim_params_;
+ }
+ 
+      + ...[241 lines of new OSDI code inserted here — full listing in ng_diff.txt]...
+ static void eval(const OsdiDescriptor *descr, const GENinstance *gen_inst,
+                  void *inst, OsdiExtraInstData *extra_inst_data,
+                  const void *model, const OsdiSimInfo *sim_info) {
+ 
+   OsdiNgspiceHandle handle =
+       (OsdiNgspiceHandle){.kind = 3, .name = gen_inst->GENname};
++
++  /* OSDI v0.5 — per-instance scratch SimInfo with event-state
++   * pointers wired up.  Originals stay shared/read-only across the
++   * OMP parallel region. */
++  OsdiSimInfo sim_info_local = *sim_info;
++  OsdiRegistryEntry *entry = osdi_reg_entry_inst(gen_inst);
++  osdi_event_prepare(extra_inst_data, descr, entry->num_delay_sites,
++                     &sim_info_local);
++
+   /* TODO initial conditions? */
+-  extra_inst_data->eval_flags = descr->eval(&handle, inst, model, sim_info);
++  extra_inst_data->eval_flags =
++      descr->eval(&handle, inst, model, &sim_info_local);
++
++  osdi_event_postprocess(extra_inst_data, descr, &sim_info_local);
++}
++
++static void sanitize_residuals(CKTcircuit *ckt, void *inst,
++                               const OsdiDescriptor *descr, bool is_tran,
++                               const char *name, double t) {
++  /* NaN/Inf in a residual means the model's eval produced a non-finite
++   * value — always a real anomaly.  Zero it out and signal non-
++   * convergence so Newton retries with a smaller step.
++   *
++   * Finite-magnitude clamping was removed: it had no physical basis.
++   * For body-diode-style "huge" residuals (V/Vt deep enough that
++   * exp(V/Vt) blows up to 1e83+ A), the model's Jacobian scales with
++   * the current itself, so Newton's update Δx = -F/J is naturally
++   * bounded by the model.  And in power designs (PMIC, LDMOS arrays,
++   * battery switches) a single OSDI instance with m × nf in the
++   * thousands can legitimately stamp hundreds-to-thousands of amps —
++   * clipping those was breaking convergence.  HSPICE and Spectre do
++   * not magnitude-clip residuals either. */
++  for (uint32_t i = 0; i < descr->num_nodes; i++) {
++    if (descr->nodes[i].resist_residual_off != UINT32_MAX) {
+      + ...[87 more replacement lines — full listing in ng_diff.txt]...
+ }
+ 
+ static void load(CKTcircuit *ckt, const GENinstance *gen_inst, void *model,
+@@ -103,7 +494,29 @@
+         NIintegrate(ckt, &dump, &dump, 0, state);
+ 
+         /* add the numeric derivative to the rhs */
+-        ckt->CKTrhs[node_mapping[i]] -= ckt->CKTstate0[state + 1];
++        double integrated = ckt->CKTstate0[state + 1];
++        double stamp;
++        if (!isfinite(integrated)) {
++          /* NaN/inf: reset history to prevent propagation */
++          ckt->CKTstate0[state + 1] = 0.0;
++          stamp = 0.0;
++          ckt->CKTnoncon++;
++        } else if (residual_react == q_old_charge) {
++          /* Charge is identical to the previous accepted value (zeroth-order
++             predictor).  TRAP gives q_dot_new = −q_dot_old, so the sign
++             flips every timestep — an artificial oscillation that reverses
++             the sign of the RHS contribution and derails the first N-R step.
++             Zero both the stamp and the stored derivative to kill it. */
++          ckt->CKTstate0[state + 1] = 0.0;
++          stamp = 0.0;
++        } else {
++          /* Finite q_dot of any magnitude is stamped as-is.  No
++             magnitude clamp — see sanitize_residuals comment for why
++             clipping was actively wrong for power devices.  Genuine
++             overflow surfaces as NaN/Inf and is caught above. */
++          stamp = integrated;
++        }
++        ckt->CKTrhs[node_mapping[i]] -= stamp;
+ 
+         if (is_init_tran) {
+           ckt->CKTstate1[state + 1] = ckt->CKTstate0[state + 1];
+@@ -132,7 +711,20 @@
+   bool is_tran = ckt->CKTmode & (MODETRAN);
+   bool is_tran_op = ckt->CKTmode & (MODETRANOP);
+   bool is_init_tran = ckt->CKTmode & MODEINITTRAN;
+-  bool is_init_junc = ckt->CKTmode & MODEINITJCT;
++  /* INIT_LIM gating: fire whenever the simulator is in any DC-OP
++   * initialization mode where PrevState may be stale (== 0).  Includes
++   * the literal first iter (MODEINITJCT), the floating-restart mode used
++   * by gmin and source stepping when normal Newton fails (MODEINITFLOAT),
++   * and the fixed-IC mode (MODEINITFIX).  All three lead the simulator
++   * to re-enter CKTload with PrevState still uninitialized, so the
++   * compiler-side $limit synthesis must bypass its per-iter Δv clamp
++   * (which would otherwise pin every V() to ±vlim of zero, derailing
++   * the OP-finding machinery).  Transient init modes (MODEINITTRAN /
++   * MODEINITPRED) are intentionally EXCLUDED — by the time transient
++   * starts the OP has converged and PrevState carries a valid value
++   * from there; the clamp is desired throughout transient. */
++  bool is_init_junc = ckt->CKTmode &
++                      (MODEINITJCT | MODEINITFLOAT | MODEINITFIX);
+ 
+   OsdiSimInfo sim_info = {
+       .paras = get_simparams(ckt),
+
+--------------------------------------------------------------------------------
+[14] src/osdi/osdiregistry.c
+      pre-existing lines changed: 6   (+48 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Relaxes and clarifies OSDI version acceptance and adds ABI-safe reads of new
+  descriptor tail fields. The old strict "must equal current major.minor" check
+  for original-OpenVAF binaries is replaced by an explicit "must be v0.3
+  exactly" test with an improved message ("supports OSDI v0.3 (original OpenVAF)
+  or v0.4+ (OpenVAF-reloaded / OpenVA)"), because VERSION_*_CURR now tracks 0.5.
+  In the limiter table it now skips (continue) any lim entry whose func_ptr is
+  already non-NULL, with a comment: models may ship their own limiter (either
+  shadowing a standard name like pnjlim or a fully custom name+signature), so
+  the simulator must not overwrite it or warn about an unknown name. Populates
+  new registry-entry fields num_delay_sites, persistent_state_offset and
+  persistent_state_count, each guarded by an offsetof-based descriptor_size
+  bounds check so a pre-2C/pre-0.5 .osdi (smaller descriptor) is treated as zero
+  rather than dereferenced past its published size.
+
+CHANGE:
+@@ -398,12 +398,16 @@
+     }
+     descriptor_size = *OSDI_DESCRIPTOR_SIZE;
+   } else {
+-    // Original OpenVAF, must be version==0.3
+-    if (OSDI_VERSION_MAJOR != OSDI_VERSION_MAJOR_CURR ||
+-      OSDI_VERSION_MINOR != OSDI_VERSION_MINOR_CURR) {
+-      printf("NGSPICE only supports OSDI v%d.%d but \"%s\" uses v%d.%d!",
+-        OSDI_VERSION_MAJOR_CURR, OSDI_VERSION_MINOR_CURR, path,
+-        OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
++    /* Original OpenVAF binaries don't publish OSDI_DESCRIPTOR_SIZE
++     * and must be v0.3 exactly.  OSDI_VERSION_MAJOR_CURR /
++     * OSDI_VERSION_MINOR_CURR now track the current
++     * openvaf-reloaded/OpenVA version (0.5 as of S3a) so the
++     * v0.3 check is hard-coded here. */
++    if (OSDI_VERSION_MAJOR != 0 || OSDI_VERSION_MINOR != 3) {
++      printf("NGSPICE only supports OSDI v0.3 (original OpenVAF) "
++             "or v0.4+ (OpenVAF-reloaded / OpenVA) but \"%s\" uses "
++             "v%d.%d!",
++        path, OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
+       txfree(path);
+       return INVALID_OBJECT;
+     }
+
+--------------------------------------------------------------------------------
+[15] src/osdi/osditrunc.c
+      pre-existing lines changed: 3   (+49 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Two timestep-control changes plus a license-header whitespace cleanup (and
+  adds <stdio.h>). First (S3b): clamp the proposed timestep against pending
+  scheduled events — for each instance with a non-empty sorted event queue, the
+  earliest event time bounds dt so the simulator lands on the event time and the
+  model's @(timer)/@(cross) body fires with at_scheduled_event=true. Second: cap
+  timestep growth to 1.2x the most recently accepted step (CKTdeltaOld[0]). The
+  comment documents the history — CKTterr is backward-looking and lets dt grow
+  across a switching transition; the factor was 2.0x originally, tightened to
+  1.5x and now to 1.2x for 22nm ULP
+  driver_lv_2v5_tb to fix a residual pinb failure at t~1.369us, since 1.2x still
+  grows ~6x over 10 accepted steps while keeping fast edges resolvable within
+  itl4.
+
+CHANGE:
+@@ -1,16 +1,17 @@
+-/* 
++/*
+  * This file is part of the OSDI component of NGSPICE.
+  * Copyright© 2022 SemiMod GmbH.
+- * 
++ *
+  * This Source Code Form is subject to the terms of the Mozilla Public
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+- * file, You can obtain one at https://mozilla.org/MPL/2.0/. 
++ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+  *
+  * Author: Pascal Kuthe <pascal.kuthe@semimod.de>
+  */
+ 
+ #include "ngspice/cktdefs.h"
+ #include "osdidefs.h"
++#include <stdio.h>
+ 
+ int OSDItrunc(GENmodel *in_model, CKTcircuit *ckt, double *timestep) {
+   OsdiRegistryEntry *entry = osdi_reg_entry_model(in_model);
+
+--------------------------------------------------------------------------------
+[16] src/spicelib/devices/hisimhv2/hsmhv2ld.c
+      pre-existing lines changed: 7   (+161 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Adds NaN-recovery ("sanity damping") guards to the HiSIM_HV LDMOS load
+  function so a single NaN in the solution vector can't cascade through its
+  5000+-line eval. Three guards, all heavily commented. (1) Off-mode
+  INITJCT/INITFIX branch: instead of seeding all biases to 0 (a singular
+  zero-bias point where 1/Vgs-shape terms blow up) it now seeds a small forward
+  bias vgs=vges=vgse=0.1, vds=vdse=0.1 (body left at 0), matching the non-off
+  INITJCT heuristic. (2) Input-side guard in the Newton branch: if any external
+  bias (vbs/vgs/vds/vges/vdbd/vsbs/vbse/vgse/vdse/vsubs/deltemp) is NaN, snap
+  each back to its state0 last-accepted value (with hard defaults if state0 is
+  itself NaN or degenerate 0/0/0), and raise CKTosdiStepReject to request a
+  smaller timestep. (3) Linear-branch guard: vddp/vggp/vssp/vbpdb/vbpb/vbpsb NaN
+  -> 0 (vddp feeds rdrift which otherwise produces NaN Rd/Rs); the comment says
+  this was the guard that finally broke the NaN feedback loop. (4) Output-side
+  guard: after HSMHV2evaluate/rdrift/dio, any non-finite here->HSMHV2_* output
+  (ids, all conductances/charges, isub, Rd/Rs, gm/gds/gmbs) is zeroed before it
+  reaches the matrix ("defense in depth"), making the device stamp zero that
+  iteration and raising CKTosdiStepReject so the framework retries. The comments
+  frame this as the native-C analogue of BSIM-BULK's OpenVA $limit machinery
+  (HiSIM_HV is native C so gets no OSDI help), validated on 14nm FinFET ld3nfet
+  5V LDMOS.
+
+CHANGE:
+@@ -507,11 +507,18 @@
+       }
+       else if ( ( ckt->CKTmode & (MODEINITJCT | MODEINITFIX) ) &&
+                 here->HSMHV2_off ) {
+-        vbs = vgs = vds = 0.0; vges = 0.0; vdbd = vsbs = 0.0;
++        /* Off-mode initial condition.  Setting everything to 0
++         * lands the device at exactly zero-bias, which is a
++         * singular point for HiSIM_HV's eval — `1/Vgs`-shape
++         * terms blow up.  Match the heuristic in the non-off
++         * INITJCT branch (line ~499) and seed a small forward
++         * bias instead.  vbs/vsbs/vdbd stay at 0 (body biased to
++         * source). */
++        vbs = vsbs = vdbd = 0.0;
++        vgs = vges = vgse = 0.1;
++        vds = vdse = 0.1;
+         if (flg_subNode > 0) vsubs = 0.0;
+         if( here->HSMHV2_coselfheat > 0 ) deltemp=0.0;
+-        vdse = vds ;
+-        vgse = vgs ;
+         Qi_nqs = Qb_nqs = 0.0 ;
+       }
+       else {
+@@ -1123,15 +1224,68 @@
+  #endif
+ 
+       /* call model evaluation */
+-      if ( HSMHV2evaluate(ivdse,ivgse,ivbse,ivds, ivgs, ivbs, vbs_jct, vbd_jct, vsubs, vddp, deltemp, here, model, ckt) == HiSIM_ERROR )
++      int ev_rc = HSMHV2evaluate(ivdse,ivgse,ivbse,ivds, ivgs, ivbs, vbs_jct, vbd_jct, vsubs, vddp, deltemp, here, model, ckt);
++      if ( ev_rc == HiSIM_ERROR )
+         return (HiSIM_ERROR);
+       if ( here->HSMHV2_cordrift == 1 ) {
+-        if ( HSMHV2rdrift(vddp, vds, vbs, vsubs, deltemp, here, model, ckt) == HiSIM_ERROR )
+-        return (HiSIM_ERROR);
++        int rd_rc = HSMHV2rdrift(vddp, vds, vbs, vsubs, deltemp, here, model, ckt);
++        if (rd_rc == HiSIM_ERROR)
++          return (HiSIM_ERROR);
+       }
+-      if ( HSMHV2dio(vbs_jct, vbd_jct, deltemp, here, model, ckt) == HiSIM_ERROR )
++      int dio_rc = HSMHV2dio(vbs_jct, vbd_jct, deltemp, here, model, ckt);
++      if (dio_rc == HiSIM_ERROR)
+         return (HiSIM_ERROR);
+ 
+      + ...[50 lines of new OSDI code inserted here — full listing in ng_diff.txt]...
+ #ifdef DEBUG_HISIMHVCGG
+       printf("HSMHV2_ids %e ", here->HSMHV2_ids ) ;
+       printf("HSMHV2_cggb %e ", here->HSMHV2_cggb ) ;
+
+--------------------------------------------------------------------------------
+[17] src/spicelib/parser/inpdomod.c
+      pre-existing lines changed: 1   (+8 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Adds support for MOS level 72 (BSIM-CMG, the FinFET CMC standard model, as an
+  OSDI module). The new case 72 looks up device type "bsimcmg_va" and, if
+  unavailable, emits a temp error telling the user to load bsimcmg.osdi before
+  the .model card. The default-case "supported levels" message is updated from
+  "...60,68,73,77" to include 72 ("...60,68,72,73,77"). Comment tags case 72 as
+  "BSIM-CMG (OSDI) - FinFET CMC standard model".
+
+CHANGE:
+@@ -389,7 +396,7 @@
+ 			    break;
+ 			default:		/* placeholder; use level xxx for the next model */
+ 			    err = INPmkTemp
+-				("Only MOS device levels 1-6,8-10,14,49,54-58,60,68,73,77 are supported in this binary\n");
++				("Only MOS device levels 1-6,8-10,14,49,54-58,60,68,72,73,77 are supported in this binary\n");
+ 			    break;
+ 			}
+ 			INPmakeMod(modname, type, image);
+
+--------------------------------------------------------------------------------
+[18] src/spicelib/parser/inpdoopt.c
+      pre-existing lines changed: 7   (+90 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Makes unknown-.option handling non-fatal and less noisy for large PDK
+  libraries, plus special-cases obsolete/artifact tokens. New static warned_opts
+  table + unknown_opt_first_seen() dedupe so each unknown option name warns only
+  once (prevents PDK decks that repeat .option lines from flooding stderr). New
+  skip_opt_value() advances past an optional "=value" so a value isn't reparsed
+  as the next keyword. "geoshrink" is now silently consumed (value ignored): the
+  comment explains the MOSFET W/L shrink is now applied generically from the
+  subcircuit's scale parameter during subckt expansion, matching HSPICE, so
+  lingering .option geoshrink=<val> is accepted but ignored. numparm__________
+  placeholder tokens (numparam string-literal artifacts) are discarded silently.
+  Unknown options no longer set optCard->error (no longer fatal); a
+  recognized-but-unimplemented HSPICE list (tmiflag, modmonte, tmipath,
+  etmiusrinput) gets a softer "Warning:" prefix while genuine typos still get
+  "Error:", so scripts can distinguish intentional pending features from
+  mistakes.
+
+CHANGE:
+@@ -6,7 +6,7 @@
+ 
+     /* INPdoOpts(ckt,option card)
+      *  parse the options off of the given option card and add them to
+-     *  the given circuit 
++     *  the given circuit
+      */
+ 
+ #include "ngspice/ngspice.h"
+@@ -26,7 +66,7 @@
+ {
+     char *line;
+     char *token;
+-    char *errmsg;
++    char *errmsg;  /* used for unimplemented-option and can't-set-option warnings */
+     IFvalue *val;
+     int error;
+     int which;
+@@ -67,14 +107,57 @@
+             }
+             continue;
+         }
+-        /* print err message only if it is not just a number */
++
++        /* geoshrink: obsolete.  The MOSFET W/L shrink is now applied
++         * generically from the subcircuit's `scale` parameter during
++         * subckt expansion (see subckt.c), matching HSPICE.  Decks that
++         * still carry `.option geoshrink=<val>` are accepted but the
++         * value is ignored — silently consume it so it isn't reparsed. */
++        if (strcmp(token, "geoshrink") == 0) {
++            while (isspace((unsigned char)*line)) line++;
++            char *endp;
++            (void) strtod(line, &endp);
++            if (endp > line)
++                line = endp;
++            continue;
++        }
++
++        /* Skip '=value' so the value string is not re-parsed as an option. */
++        skip_opt_value(&line);
++
++        /* Warn only for non-numeric tokens, and only the first time each
++         * unknown option name is encountered.  Do NOT set optCard->error:
++         * unknown options are silently ignored, not fatal card errors.
++         *
++         * INPgetTok(gobble=1) consumes the '=' before returning, so
++         * skip_opt_value above cannot see it and may leave a string value
+      + ...[5 more replacement lines — full listing in ng_diff.txt]...
+         char* ctoken = token;
+         while (*ctoken && strchr("0123456789.e+-", *ctoken))
+             ctoken++;
+-        if (*ctoken) {
+-            errmsg = tprintf("Error: unknown option %s - ignored\n", token);
+-            optCard->error = INPerrCat(optCard->error, errmsg);
+-            fprintf(stderr, "%s\n", optCard->error);
++        if (*ctoken && unknown_opt_first_seen(token)) {
++            /* Recognised-but-unimplemented HSPICE options get a softer
++             * "Warning:" prefix so user scripts that intentionally rely
++             * on these features can distinguish them from real typos.
++             * Add to this list when a new known-pending HSPICE option
++             * appears in foundry decks. */
++            static const char *const known_hspice_pending[] = {
++                "tmiflag", "modmonte", "tmipath", "etmiusrinput",
++                NULL
++            };
++            const char *const *p = known_hspice_pending;
++            bool known_pending = false;
++            for (; *p; p++) {
++                if (strcasecmp(token, *p) == 0) { known_pending = true; break; }
++            }
++            if (known_pending)
++                fprintf(stderr, "Warning: unknown option %s - ignored\n", token);
++            else
++                fprintf(stderr, "Error: unknown option %s - ignored\n", token);
+         }
+     }
+ }
+
+--------------------------------------------------------------------------------
+[19] src/spicelib/parser/inpdpar.c
+      pre-existing lines changed: 2   (+94 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Adds the parse-time binding registry that lets .dc sweep a bare .param (paired
+  with inpeval.c and dctrcurv.c). New file-scope dpar_param_binding_t list
+  records "this V/I source's DC value was set from .param <name> at parse time"
+  as (param_name, dev_name, dev_type), with dpar_register_binding() plus opaque
+  accessors (dpar_first_param_binding,
+  dpar_binding_param_name/dev_name/dev_type/next) consumed by dctrcurv.c. In
+  INPdevParse's leading-value path it clears the extern side-channel
+  inpeval_last_param_name before calling INPevaluate, and if the leading value
+  resolved from a bare .param identifier (waslead set and the side-channel
+  populated) it registers a binding tagged with fast->GENname and dev type.
+  Separately, for OSDI models (device->registry_entry != NULL) an unknown
+  instance parameter is now skipped (consume its =value) rather than aborting,
+  with a comment noting PDK subcircuits pass extra params like 'total' that the
+  model doesn't define, matching HSPICE/Spectre. The "$" unknown-parameter case
+  now errors out explicitly (goto quit).
+
+CHANGE:
+@@ -125,10 +198,29 @@
+         if (!p) {
+             if (eq(parm, "$")) {
+                 errbuf = copy("  unknown parameter ($). Check the compatibility flag!\n");
++                rtn = errbuf;
++                goto quit;
+             }
+-            else {
+-                errbuf = tprintf("  unknown parameter (%s) \n", parm);
++            /* OSDI models may receive extra instance parameters from PDK
++             * subcircuits (e.g. 'total' from nch_mac) that the model
++             * does not define.  Skip the parameter and its value rather than
++             * aborting; this matches HSPICE/Spectre behaviour. */
++            if (device->registry_entry != NULL) {
++                while (isspace((unsigned char)**line)) (*line)++;
++                if (**line == '=') {
++                    (*line)++;
++                    while (isspace((unsigned char)**line)) (*line)++;
++                    char *endp;
++                    strtod(*line, &endp);
++                    if (endp > *line)
++                        *line = endp;
++                    else
++                        while (**line && !isspace((unsigned char)**line)) (*line)++;
++                }
++                FREE(parm);
++                continue;
+             }
++            errbuf = tprintf("  unknown parameter (%s) \n", parm);
+             rtn = errbuf;
+             goto quit;
+         }
+
+--------------------------------------------------------------------------------
+[20] src/spicelib/parser/inpeval.c
+      pre-existing lines changed: 133   (+114 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Two changes to INPevaluate(). (1) HSPICE-compat bare-.param fallback: when the
+  token isn't numeric but is a valid identifier (letter/underscore start, then
+  alnum/underscore, whole-token), it looks it up in the numparam dictionary via
+  nupa_get_real and, on success, returns its value and stashes the resolved name
+  in the new extern char *inpeval_last_param_name side-channel (a static buffer)
+  so INPdevParse can register a .dc binding. This lets deck lines like "vgs n2
+  n3 vgswp" / ".dc vgswp -0.1 vgmax 0.01" use bare param names where a number is
+  expected, removing the previous requirement to quote/brace them. (2) Number
+  parsing rewritten from the old digit-by-digit accumulator
+  (mantis/expo1/expo2/expsgn + pow(10,expo)) to strtod, so results are
+  correctly-rounded IEEE-754 and bit-match formula()/fetchnumber()'s sscanf
+  "%lG", eliminating the 1-ULP drift that forced dctrcurv's brittle round-trip.
+  Preserved: separate leading sign, Fortran 'D'/'d' exponents finished by hand
+  via strtol, the SI scale suffixes (T/G/k/u/n/p/f/a and m/Meg/Mil with
+  Mil=25.4e-6), the ternary ':' early-out, and the "suffix char left unconsumed"
+  pointer semantics. Comments document each preserved behavior and why strtod
+  matches the numparam path.
+
+CHANGE:
+@@ -16,11 +26,7 @@
+ {
+     char *token;
+     char *here;
+-    double mantis;
+-    int expo1;
+-    int expo2;
+     int sign;
+-    int expsgn;
+     char *tmpline;
+ 
+     /* setup */
+@@ -37,11 +43,7 @@
+         *error = 0;
+     }
+ 
+-    mantis = 0;
+-    expo1 = 0;
+-    expo2 = 0;
+     sign = 1;
+-    expsgn = 1;
+ 
+     /* loop through all of the input token */
+     here = token;
+@@ -64,142 +118,69 @@
+         return (0);
+     }
+ 
+-    while (isdigit_c(*here)) {
+-        /* digit, so accumulate it. */
+-        mantis = 10 * mantis + *here - '0';
+-        here++;
+-    }
+-
+-    if (*here == '\0') {
+-        /* reached the end of token - done. */
+-        if (gobble) {
+-            FREE(token);
+-        } else {
+-            *line = here;
++    /* Parse the numeric magnitude with strtod so the result is the
++     * correctly-rounded IEEE-754 value.  This matches formula()'s
++     * fetchnumber() (xpressn.c, sscanf "%lG") to the bit and removes the
++     * 1-ULP drift the old digit-by-digit accumulator + pow(10, expo)
++     * produced for long mantissas.  `here` is positioned just past any
++     * leading sign, on a digit or '.', so strtod sees the unsigned
++     * magnitude and `sign` is applied separately.  A `:` (ternary) or any
++     * other non-numeric character naturally terminates strtod, preserving
++     * the old early-out behaviour. */
++    {
++        char *numend;
++        double value = strtod(here, &numend);
++
++        /* Fortran-style 'D'/'d' exponent (e.g. 1.5D3) — strtod stops at
++         * the 'D', so finish the exponent by hand to keep legacy decks
++         * working (the old code accepted D/d as an exponent marker). */
++        if (numend != here && (*numend == 'D' || *numend == 'd')) {
++            char *expend;
++            long fexp = strtol(numend + 1, &expend, 10);
++            if (expend != numend + 1) {
++                value *= pow(10.0, (double) fexp);
++                numend = expend;
++            }
+         }
+-        return ((double) mantis * sign);
+-    }
+ 
+-    if (*here == ':') {
+-        /* ':' is no longer used for subcircuit node numbering
+-           but is part of ternary function a?b:c
+-           FIXME : subcircuit models still use ':' for model numbering
+-           Will this hurt somewhere? */
+-        if (gobble) {
+-            FREE(token);
+-        } else {
+-            *line = here;
+-        }
+-        return ((double) mantis * sign);
+-    }
++        here = numend;          /* at the scale-factor suffix, or token end */
+ 
+-    /* after decimal point! */
+-    if (*here == '.') {
+-        /* found a decimal point! */
+-        here++;                 /* skip to next character */
+-
+-        if (*here == '\0') {
+-            /* number ends in the decimal point */
+-            if (gobble) {
+-                FREE(token);
++        /* Scale factor (alphabetic suffix).  As before, the suffix
++         * character is NOT consumed from the line: `here` is left pointing
++         * at it. */
++        double scale = 1.0;
++        switch (*here) {
++        case 't': case 'T': scale = 1.0e12;  break;
++        case 'g': case 'G': scale = 1.0e9;   break;
++        case 'k': case 'K': scale = 1.0e3;   break;
++        case 'u': case 'U': scale = 1.0e-6;  break;
++        case 'n': case 'N': scale = 1.0e-9;  break;
++        case 'p': case 'P': scale = 1.0e-12; break;
++        case 'f': case 'F': scale = 1.0e-15; break;
++        case 'a': case 'A': scale = 1.0e-18; break;
++        case 'm': case 'M':
++            if (((here[1] == 'E') || (here[1] == 'e')) &&
++                ((here[2] == 'G') || (here[2] == 'g'))) {
++                scale = 1.0e6;          /* Meg */
++            } else if (((here[1] == 'I') || (here[1] == 'i')) &&
++                       ((here[2] == 'L') || (here[2] == 'l'))) {
++                scale = 25.4e-6;        /* Mil */
+             } else {
+-                *line = here;
++                scale = 1.0e-3;         /* m, milli */
+             }
+-            return ((double) mantis * sign);
++            break;
++        default:
++            break;
+         }
+ 
+-        while (isdigit_c(*here)) {
+-            /* digit, so accumulate it. */
+-            mantis = 10 * mantis + *here - '0';
+-            expo1 = expo1 - 1;
+-            here++;
+-        }
+-    }
+-
+-    /* now look for "E","e",etc to indicate an exponent */
+-    if ((*here == 'E') || (*here == 'e') || (*here == 'D') || (*here == 'd')) {
+-
+-        /* have an exponent, so skip the e */
+-        here++;
+-
+-        /* now look for exponent sign */
+-        if (*here == '+')
+-            here++;             /* just skip + */
+-        else if (*here == '-') {
+-            here++;             /* skip over minus sign */
+-            expsgn = -1;        /* and make a negative exponent */
+-            /* now look for the digits of the exponent */
+-        }
+-
+-        while (isdigit_c(*here)) {
+-            expo2 = 10 * expo2 + *here - '0';
+-            here++;
+-        }
+-    }
+-
+-    /* now we have all of the numeric part of the number, time to
+-     * look for the scale factor (alphabetic)
+-     */
+-    switch (*here) {
+-    case 't':
+-    case 'T':
+-        expo1 = expo1 + 12;
+-        break;
+-    case 'g':
+-    case 'G':
+-        expo1 = expo1 + 9;
+-        break;
+-    case 'k':
+-    case 'K':
+-        expo1 = expo1 + 3;
+-        break;
+-    case 'u':
+-    case 'U':
+-        expo1 = expo1 - 6;
+-        break;
+-    case 'n':
+-    case 'N':
+-        expo1 = expo1 - 9;
+-        break;
+-    case 'p':
+-    case 'P':
+-        expo1 = expo1 - 12;
+-        break;
+-    case 'f':
+-    case 'F':
+-        expo1 = expo1 - 15;
+-        break;
+-    case 'a':
+-    case 'A':
+-        expo1 = expo1 - 18;
+-        break;
+-    case 'm':
+-    case 'M':
+-        if (((here[1] == 'E') || (here[1] == 'e')) &&
+-            ((here[2] == 'G') || (here[2] == 'g')))
+-        {
+-            expo1 = expo1 + 6;  /* Meg */
+-        } else if (((here[1] == 'I') || (here[1] == 'i')) &&
+-                   ((here[2] == 'L') || (here[2] == 'l')))
+-        {
+-            expo1 = expo1 - 6;
+-            mantis *= 25.4;     /* Mil */
++        if (gobble) {
++            FREE(token);
+         } else {
+-            expo1 = expo1 - 3;  /* m, milli */
++            *line = here;
+         }
+-        break;
+-    default:
+-        break;
+-    }
+ 
+-    if (gobble) {
+-        FREE(token);
+-    } else {
+-        *line = here;
++        return sign * value * scale;
+     }
+-
+-    return (sign * mantis *
+-            pow(10.0, (double) (expo1 + expsgn * expo2)));
+ }
+ 
+ 
+
+--------------------------------------------------------------------------------
+[21] src/spicelib/parser/inpgmod.c
+      pre-existing lines changed: 20   (+164 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  Overhauls .model handling and W/L bin selection to support OSDI models
+  (BSIM-CMG/BSIM-BULK). OSDI type-name extraction now stops at '(' (as well as
+  '='/','/whitespace) so a no-space card like ".model m slew_probe(max_pos=...)"
+  no longer swallows the first parameter as the type; comment explains
+  INPgetNetTok doesn't treat '(' as a terminator. For OSDI nmos/pmos, a
+  pmos/psoi model auto-injects TYPE=-1 before params parse (PDK can still
+  override), since commercial simulators handle polarity implicitly.
+  Unrecognized OSDI model params are silently skipped (not warned) because
+  HSPICE-converted PDK cards carry simulator-specific params (tmemod, psatbmod,
+  b0). Bin selection (INPgetModBin): now requires only L on the instance line (W
+  optional, defaulting to 0) so FinFET PDKs that bin on lmin/lmax/nfin (no W)
+  work. It accepts OSDI models as binnable (detected via dev->registry_entry)
+  alongside the classic BSIM/HiSIM families, skips candidates with illegal type
+  rather than aborting, treats wmin/wmax as optional (has_w_range), and compares
+  per-finger W (w/nf) and L against the bin ranges. Comments emphasize: 'm'
+  (parallel-instance multiplier) is deliberately NOT divided out (doing so
+  pushed large multi-instance power devices below every bin), and W/L here are
+  already EFFECTIVE/post-shrink (shrink applied upstream via subckt scale), so
+  no shrink factor is applied. On a bin match it records the bin's (lmin,lmax)
+  via osdi_defer_record_bin_range for OSDI deferred-eval. Adds a new second-pass
+  nearest-bin fallback for OSDI: if no exact width match, pick the L-matching
+  bin whose wmin/wmax is closest to the device W and warn "device W... is
+  outside all bin width ranges; using nearest bin", mirroring HSPICE/Spectre.
+
+CHANGE:
+@@ -115,13 +116,39 @@
+     INPgetNetTok(&line, &parm, 1);        /* throw away 'modname' */
+     tfree(parm);
+ 
++    bool is_osdi = false;
+ #ifdef OSDI
+     /* osdi models don't accept their device type as an argument */
+-    bool is_osdi = false;
+-    if (device->registry_entry){ 
+-        INPgetNetTok(&line, &parm, 1); /* throw away osdi */
++    if (device->registry_entry) {
++        /* Skip the OSDI device type (the module name).  We must stop at '('
++         * as well as whitespace: a no-space card like
++         *   .model m slew_probe(max_pos=500, max_neg=-500)
++         * is standard SPICE syntax, but INPgetNetTok does NOT treat '(' as a
++         * token terminator, so it would grab "slew_probe(max_pos" as the
++         * "type" and silently swallow the FIRST model parameter.  Extract just
++         * the type name, stopping at the first '(', '=', ',' or whitespace, and
++         * leave `line` pointing at the parameter list. */
++        while (*line == ' ' || *line == '\t')
++            line++;
++        char *type_start = line;
++        while (*line && *line != ' ' && *line != '\t' && *line != '(' &&
++               *line != '=' && *line != ',')
++            line++;
++        parm = copy_substring(type_start, line);
++        bool is_pmos = (strcasecmp(parm, "pmos") == 0 || strcasecmp(parm, "psoi") == 0);
+         tfree(parm);
+         is_osdi = true;
++        /* Commercial simulators handle nmos/pmos polarity implicitly.  For OSDI
++         * models with a 'type' parameter (e.g. BSIM-BULK TYPE=1/-1), inject -1
++         * before card params are parsed so the PDK can still override explicitly. */
++        if (is_pmos) {
++            IFparm *type_parm = find_model_parameter("type", device);
++            if (type_parm && (type_parm->dataType & IF_INTEGER)) {
++                IFvalue type_val;
++                type_val.iValue = -1;
++                ft_sim->setModelParm(ckt, modtmp->INPmodfast, type_parm->id, &type_val, NULL);
++            }
++        }
+     }
+ #endif
+ 
+@@ -136,8 +163,8 @@
+ 
+         if (p) {
+ #ifdef OSDI
+-            if (is_osdi && (p->dataType & IF_VECTOR)){  
+-                // we need to get rid if the leading [ in order to make sure 
++            if (is_osdi && (p->dataType & IF_VECTOR)){
++                // we need to get rid if the leading [ in order to make sure
+                 // that INPgetValue can parse the value properly
+                 // This is because, unlike other SPICEDev, OSDI models receive
+                 // array params in the syntax (param_name=[...])
+@@ -184,7 +211,11 @@
+                     perror("strtod");
+                     controlled_exit(EXIT_FAILURE);
+                 }
+-                if (endptr == parm) /* it was no number - it is really a string */
++                /* For OSDI models, PDK cards converted from HSPICE often contain
++                 * simulator-specific parameters (tmemod, psatbmod, b0, etc.) that
++                 * the public OSDI model binary does not implement.  Silently skip
++                 * them rather than flooding the output with "Model issue" lines. */
++                if (endptr == parm && !is_osdi)
+                     err = INPerrCat(err,
+                                     tprintf("unrecognized parameter (%s) - ignored",
+                                             parm));
+@@ -274,9 +305,22 @@
+ 
+     *model = NULL;
+ 
+-    /* read W and L. If not on the instance line, leave */
+-    if (!parse_line(line, instance_tokens, 2, parse_values, parse_found))
+-        return NULL;
++    /* Read L (required) and W (optional).  FinFET PDKs (BCD 14LPU
++     * et al.) have no W on the instance line — only `l=` and
++     * `nfin=` — and their `.model` cards bin on `lmin/lmax/nfinmin/
++     * nfinmax`, not on W.  Previously this function bailed out as
++     * soon as W was missing, which prevented bin selection for any
++     * FinFET model.  Now: require only L, and if W is absent set it
++     * to 0 (any model with a real `wmin/wmax` range still gets a
++     * sensible has_w_range==true check and rejects this instance,
++     * which matches HSPICE's behaviour of "instance W=0 ≠ any
++     * wmin/wmax range starting above 0"). */
++    if (!parse_line(line, instance_tokens, 1, parse_values, parse_found))
++        return NULL;  /* No `l=` either — really not a MOSFET-shape line. */
++
++    /* Now try to read W; if absent, w stays at parse_values[1]=0. */
++    parse_values[1] = 0.;
++    parse_line(line, instance_tokens, 2, parse_values, parse_found);
+ 
+     /* This is for reading nf. If nf is not available, set to 1 if in HSPICE or Spectre compatibility mode */
+     if (!parse_line(line, instance_tokens, 3, parse_values, parse_found)) {
+@@ -301,13 +345,30 @@
+     l = parse_values[0] * scale;
+     w = parse_values[1] / parse_values[2] * scale;
+ 
++    /* OSDI bin selection: compare per-finger W (w / nf, already applied
++     * above) against the bin's wmin/wmax.  Do NOT divide by m — `m` is a
++     * parallel-instance multiplier (the whole device is replicated m
++     * times), so the per-finger geometry is unchanged by it.  Commercial
++     * Foundries BSIM-BULK decks author their wmin/wmax tables
++     * against the HSPICE/Spectre convention of per-finger W only, so an
++     * additional /m here would push the effective W below every bin's
++     * lower bound for any moderately-large multi-instance device. */
++
+     for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
+ 
+         if (model_name_match(name, modtmp->INPmodName) < 2)
+             continue;
+ 
+-        /* skip if not binnable */
+-        if (modtmp->INPmodType != INPtypelook("BSIM3") &&
++        /* if illegal device type, skip this candidate rather than aborting */
++        if (modtmp->INPmodType < 0)
++            continue;
++
++        /* skip if not binnable: accept OSDI models (detected via registry_entry)
++         * as well as the classic BSIM/HiSIM families that have always been supported */
++        IFdevice *dev = ft_sim->devices[modtmp->INPmodType];
++        bool is_osdi = (dev->registry_entry != NULL);
++        if (!is_osdi &&
++            modtmp->INPmodType != INPtypelook("BSIM3") &&
+             modtmp->INPmodType != INPtypelook("BSIM3v32") &&
+             modtmp->INPmodType != INPtypelook("BSIM3v0") &&
+             modtmp->INPmodType != INPtypelook("BSIM3v1") &&
+@@ -322,19 +383,38 @@
+             continue;
+         }
+ 
+-        /* if illegal device type */
+-        if (modtmp->INPmodType < 0) {
+-            *model = NULL;
+-            return tprintf("Unknown device type for model %s\n", name);
+-        }
++        /* parse lmin/lmax from the model line; wmin/wmax are optional.
++         * parse_line returns FALSE if any requested token is absent, so call
++         * it unconditionally and inspect parse_found[] individually. */
++        parse_line(modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found);
+ 
+-        if (!parse_line(modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found))
+-            continue;
++        if (!parse_found[0] || !parse_found[1])
++            continue;   /* lmin/lmax are required for bin selection */
+ 
+         lmin = parse_values[0]; lmax = parse_values[1];
+-        wmin = parse_values[2]; wmax = parse_values[3];
+ 
+-        if (in_range(l, lmin, lmax) && in_range(w, wmin, wmax)) {
++        bool has_w_range = parse_found[2] && parse_found[3];
++        if (has_w_range) {
++            wmin = parse_values[2]; wmax = parse_values[3];
++        }
++
++        /* Compare the per-finger W (already w/nf above) and L against
++         * the bin's wmin/wmax and lmin/lmax.  Foundry .lib files
++         * author bin boundaries in POST-SHRINK
++         * (EFFECTIVE) dimensions: e.g. 22nm ULP nch.1 wmax=2.5651µm
++         * = drawn 3µm × shrink 0.855.  The shrink is applied upstream in
++         * subckt expansion (the subcircuit's `scale` parameter multiplies
++         * the device W/L) or by the model's own dimension expressions, so
++         * the W/L parsed here are already EFFECTIVE — no shrink factor is
++         * applied at this point.
++         *
++         * `m` is intentionally NOT in the calculation — it is a
++         * parallel-instance multiplier (the whole device is replicated
++         * m times), so per-finger geometry is unchanged by it. */
++        double w_cmp = w;
++        double l_cmp = l;
++
++        if (in_range(l_cmp, lmin, lmax) && (!has_w_range || in_range(w_cmp, wmin, wmax))) {
+             /* create unless model is already defined */
+             if (!modtmp->INPmodfast) {
+                 int error = create_model(ckt, modtmp, tab);
+
+--------------------------------------------------------------------------------
+[22] visualc/vngspice-fftw.vcxproj
+      pre-existing lines changed: 18   (+33 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  MSVC project file for the FFTW-enabled ngspice build. Changes wire in the
+  libsndfile/libsamplerate audio libraries and a new source file across the
+  Debug and Release configurations: added
+  `..\..\libsamplerate\include;..\..\libsndfile\include` to
+  AdditionalIncludeDirectories; added `sndfile.lib;samplerate.lib` to
+  AdditionalDependencies; added `../../libsamplerate/lib;../../libsndfile/lib`
+  to AdditionalLibraryDirectories; and added PostBuildEvent commands copying
+  `sndfile.dll` and `samplerate.dll` into the output dir. It also enables
+  `/openmp:llvm` and, in the item lists, adds a new source file
+  `..\src\spicelib\devices\vsrc\vsjack.c` (JACK audio voltage source) plus the
+  `com_fileio.h`/`com_fileio.c` frontend file entries.
+
+CHANGE:
+@@ -305,7 +305,7 @@
+     </Midl>
+     <ClCompile>
+       <Optimization>Disabled</Optimization>
+-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <MinimalRebuild>false</MinimalRebuild>
+       <ExceptionHandling>
+@@ -323,7 +323,7 @@
+       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Windows</SubSystem>
+       <HeapReserveSize>0</HeapReserveSize>
+@@ -335,10 +335,12 @@
+       </DataExecutionPrevention>
+       <TargetMachine>MachineX64</TargetMachine>
+       <LargeAddressAware>true</LargeAddressAware>
+-      <AdditionalLibraryDirectories>KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
++      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PostBuildEvent>
+       <Command>
++      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
++      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
+       copy /y "..\..\fftw-3.3-dll64\libfftw3-3.dll" "$(OutDir)"
+       make-install-vngspiced.bat $(OutDir) fftw 64
+       </Command>
+@@ -358,7 +360,7 @@
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+       <WholeProgramOptimization>true</WholeProgramOptimization>
+-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <MinimalRebuild>false</MinimalRebuild>
+       <ExceptionHandling>
+@@ -376,7 +378,7 @@
+       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Windows</SubSystem>
+       <HeapReserveSize>0</HeapReserveSize>
+@@ -393,10 +395,13 @@
+       </DataExecutionPrevention>
+       <TargetMachine>MachineX64</TargetMachine>
+       <LargeAddressAware>true</LargeAddressAware>
+-      <AdditionalLibraryDirectories>KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
++      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PostBuildEvent>
+       <Command>
++
++      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
++      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
+       copy /y "..\..\fftw-3.3-dll64\libfftw3-3.dll" "$(OutDir)"
+       make-install-vngspice.bat $(OutDir) fftw 64
+       </Command>
+@@ -511,7 +516,7 @@
+     </Midl>
+     <ClCompile>
+       <Optimization>Disabled</Optimization>
+-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONSOLE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <MinimalRebuild>false</MinimalRebuild>
+       <ExceptionHandling>
+@@ -529,7 +534,7 @@
+       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Console</SubSystem>
+       <HeapReserveSize>0</HeapReserveSize>
+@@ -541,10 +546,12 @@
+       </DataExecutionPrevention>
+       <TargetMachine>MachineX64</TargetMachine>
+       <LargeAddressAware>true</LargeAddressAware>
+-      <AdditionalLibraryDirectories>KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
++      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PostBuildEvent>
+       <Command>
++      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
++      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
+       copy /y "..\..\fftw-3.3-dll64\libfftw3-3.dll" "$(OutDir)"
+       make-install-vngspiced.bat $(OutDir) fftw 64
+       </Command>
+@@ -564,7 +571,7 @@
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+       <WholeProgramOptimization>true</WholeProgramOptimization>
+-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <MinimalRebuild>false</MinimalRebuild>
+       <ExceptionHandling>
+@@ -582,7 +589,7 @@
+       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Console</SubSystem>
+       <HeapReserveSize>0</HeapReserveSize>
+@@ -597,7 +604,7 @@
+       </DataExecutionPrevention>
+       <TargetMachine>MachineX64</TargetMachine>
+       <LargeAddressAware>true</LargeAddressAware>
+-      <AdditionalLibraryDirectories>KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
++      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PostBuildEvent>
+       <Command>
+@@ -673,7 +680,7 @@
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+       <WholeProgramOptimization>true</WholeProgramOptimization>
+-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;USE_OMP;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <MinimalRebuild>false</MinimalRebuild>
+       <ExceptionHandling>
+@@ -693,7 +700,7 @@
+       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Windows</SubSystem>
+       <HeapReserveSize>0</HeapReserveSize>
+@@ -710,10 +717,12 @@
+       </DataExecutionPrevention>
+       <TargetMachine>MachineX64</TargetMachine>
+       <LargeAddressAware>true</LargeAddressAware>
+-      <AdditionalLibraryDirectories>KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
++      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PostBuildEvent>
+       <Command>
++      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
++      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
+       copy /y "..\..\fftw-3.3-dll64\libfftw3-3.dll" "$(OutDir)"
+       make-install-vngspice.bat $(OutDir) fftw 64
+       </Command>
+@@ -785,7 +794,7 @@
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+       <WholeProgramOptimization>true</WholeProgramOptimization>
+-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;..\..\fftw-3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;USE_OMP;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <MinimalRebuild>false</MinimalRebuild>
+       <ExceptionHandling>
+@@ -805,7 +814,7 @@
+       <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Console</SubSystem>
+       <HeapReserveSize>0</HeapReserveSize>
+@@ -820,10 +829,12 @@
+       </DataExecutionPrevention>
+       <TargetMachine>MachineX64</TargetMachine>
+       <LargeAddressAware>true</LargeAddressAware>
+-      <AdditionalLibraryDirectories>KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
++      <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PostBuildEvent>
+       <Command>
++      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
++      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
+       copy /y "..\..\fftw-3.3-dll64\libfftw3-3.dll" "$(OutDir)"
+       make-install-vngspice.bat $(OutDir) fftw 64
+       </Command>
+
+--------------------------------------------------------------------------------
+[23] visualc/vngspice.vcxproj
+      pre-existing lines changed: 4   (+15 additive OSDI lines in this file; standalone blocks omitted below, full diff in ng_diff.txt)
+--------------------------------------------------------------------------------
+WHY:
+  MSVC project file for the standard (non-FFTW) ngspice build, changed the same
+  way as the FFTW variant. Across its multiple configurations it adds
+  PostBuildEvent `copy` commands for `sndfile.dll` and `samplerate.dll` into the
+  OutDir, adds `sndfile.lib;samplerate.lib` to link dependencies (with the
+  corresponding libsamplerate/libsndfile lib directories), and turns on
+  `/openmp:llvm` in one config's AdditionalOptions. In the item groups it adds
+  the `..\src\frontend\com_fileio.h` include and `..\src\frontend\com_fileio.c`
+  compile entries (repositioned in the list). These support the audio file I/O
+  features.
+
+CHANGE:
+@@ -383,7 +385,7 @@
+       <CompileAs>Default</CompileAs>
+       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+       <LanguageStandard>stdcpp14</LanguageStandard>
+-      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
++      <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
+     </ClCompile>
+     <Link>
+       <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
+@@ -779,7 +787,8 @@
+       <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+     </Link>
+     <PostBuildEvent>
+-      <Command>make-install-vngspice.bat $(OutDir)</Command>
++      <Command>
++      make-install-vngspice.bat $(OutDir)</Command>
+     </PostBuildEvent>
+     <Manifest>
+       <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
+@@ -885,7 +897,6 @@
+     <ClInclude Include="..\src\frontend\com_shift.h" />
+     <ClInclude Include="..\src\frontend\com_state.h" />
+     <ClInclude Include="..\src\frontend\com_strcmp.h" />
+-    <ClInclude Include="..\src\frontend\com_fileio.h" />
+     <ClInclude Include="..\src\frontend\com_unset.h" />
+     <ClInclude Include="..\src\frontend\com_wr_ic.h" />
+     <ClInclude Include="..\src\frontend\control.h" />
+@@ -1498,7 +1510,6 @@
+     <ClCompile Include="..\src\frontend\com_shift.c" />
+     <ClCompile Include="..\src\frontend\com_state.c" />
+     <ClCompile Include="..\src\frontend\com_strcmp.c" />
+-    <ClCompile Include="..\src\frontend\com_fileio.c" />
+     <ClCompile Include="..\src\frontend\com_sysinfo.c" />
+     <ClCompile Include="..\src\frontend\com_unset.c" />
+     <ClCompile Include="..\src\frontend\com_wr_ic.c" />
+
+================================================================================
+APPENDIX — NEW OSDI CODE (excluded from the justification body above)
+================================================================================
+
+A. New files (entire file is new OSDI code):
+   - src/frontend/numparam/table_param.c           (+507)
+  New module implementing HSPICE/commercial-style `table_param()` for numparam
+  expression evaluation — multi-dimensional parameter lookup from an external
+  `.table` file with linear interpolation.
+   - src/frontend/numparam/table_param.h           (+71)
+  Public header for the new table_param module.
+   - src/include/ngspice/osdi_defer.h              (+132)
+  Public header for the new OSDI deferred-evaluation side table.
+   - src/osdi/osdi_defer.c                         (+608)
+  Implementation of the OSDI deferred-evaluation side table declared in
+  osdi_defer.h.
+
+B. Existing files that received ONLY additive OSDI code (no pre-existing line
+   was changed — nothing to justify as a modification):
+   - src/frontend/numparam/numparam.h              (+47)
+  Two new fields on `dico_t`: `const char* cardsource` (read-only, owned by the
+  card; used by table_param() to resolve relative .table paths against the
+  directory of the emitting .lib) and `bool suppress_errors` (when true,
+  message() becomes a no-op).
+   - src/frontend/numparam/spicenum.c              (+94)
+  Added `#include "ngspice/osdi_defer.h"` and five new functions with extensive
+  comments.
+   - src/frontend/subckt.h                         (+1)
+  Added the prototype `void inp_apply_subckt_scale(struct card *deck);` so the
+  new HSPICE element-scale pass in subckt.c can be called from inpcom.c before
+  numparam preparation (STEP 31).
+   - src/include/ngspice/cktdefs.h                 (+68)
+  Two structs gain fields to support the OSDI convergence-rescue work.
+   - src/include/ngspice/optdefs.h                 (+18)
+  New entries are added to the options enum to expose the convergence-rescue and
+  OSDI limiter machinery as `.option` settings.
+   - src/include/ngspice/osdiitf.h                 (+12)
+  The OsdiRegistryEntry struct gains three new tail-appended uint32_t fields for
+  OSDI v0.5 features, each with an ABI-safety comment.
+   - src/include/ngspice/smpdefs.h                 (+6)
+  The sSMPmatrix struct gains a new member `char *gmin_skip`.
+   - src/include/ngspice/trcvdefs.h                (+17)
+  Adds HSPICE-compatible `.param`-name sweeping to the .dc analysis.
+   - src/include/ngspice/tskdefs.h                 (+13)
+  The task struct gains new option flags and doubles mirroring the new `.option`
+  settings, each commented with the keyword it backs.
+   - src/maths/ni/niiter.c                         (+173)
+  NIiter gains the bulk of the convergence-rescue logic, heavily commented.
+   - src/maths/sparse/spsmp.c                      (+9)
+  The classic sparse-matrix LoadGmin is updated to honor gmin_skip, and cleanup
+  added.
+   - src/osdi/osdiacld.c                           (+35)
+  Adds AC-analysis stamping of absdelay's exact transport-delay term ("OSDI v0.5
+  2C AC delay").
+   - src/osdi/osdicallbacks.c                      (+65)
+  Adds osdi_delay_read(), the absdelay exact-transport reader bound to
+  SimInfo.delay_read and called by the model mid-eval to obtain x(abstime - td)
+  by linear interpolation over the instance's per-site (time,value) ring.
+   - src/osdi/osdidefs.h                           (+89)
+  Greatly extends OsdiExtraInstData with per-instance scratch/state for the new
+  v0.5 features, all lazily allocated on first eval and heavily commented.
+   - src/osdi/osdiext.h                            (+1)
+  Declares the new extern OSDIaccept(CKTcircuit*, GENmodel*) — the DEVaccept
+  hook that records accepted-step delay inputs into the transport rings and
+  commits deferred persistent state.
+   - src/osdi/osdiinit.c                           (+1)
+  Wires the new OSDIaccept function into the device info table
+  (OSDIinfo->DEVaccept = OSDIaccept) so ngspice's CKTaccept calls it once per
+  accepted transient step.
+   - src/osdi/osdiparam.c                          (+4)
+  Includes ngspice/fteext.h and adds a clarifying comment on the
+  instance-parameter setter noting that W and L arrive ALREADY shrunk — the
+  subcircuit's `scale` parameter (applied during subckt expansion) or the
+  model's own dimension expressions have already multiplied the drawn geometry
+  before it reaches osdi_write_param.
+   - src/osdi/osdisetup.c                          (+212)
+  Implements the deferred-expression (HSPICE-style geometry-dependent parameter)
+  machinery.
+   - src/spicelib/analysis/cktdojob.c              (+8)
+  CKTdojob() (which copies a finished task's settings into the live CKTcircuit)
+  now propagates eight new task fields into the circuit: the three
+  convergence-rescue opt-out flags (CKTresidCheckDisabled from TSKnoResidCheck,
+  CKTosdiStepRejectOff from TSKnoOsdiStepReject, CKTdtClearOff from
+  TSKnoDtClear) and the five OSDI per-iteration voltage-limit reals (CKTosdiVlim
+  plus the per-probe-shape overrides CKTosdiVlimVds/Vgs/Vbs/Vnqs).
+   - src/spicelib/analysis/cktntask.c              (+16)
+  CKTnewTask() gains initialization for the same eight new task fields.
+   - src/spicelib/analysis/cktsopt.c               (+37)
+  CKTsetOpt() adds parsing/dispatch for eight new .option keywords.
+   - src/spicelib/analysis/ckttroub.c              (+5)
+  CKTtrouble() (which builds the failure/trouble diagnostic message for DC-sweep
+  aborts) gains a new branch handling TRCVvType == PARAM_CODE, i.e.
+   - src/spicelib/analysis/dctran.c                (+63)
+  Two additions to the transient loop.
+   - src/spicelib/analysis/dctrcurv.c              (+242)
+  Implements the new HSPICE-compatible ".dc <paramname>" sweep (PARAM_CODE).
+   - visualc/make-install-vngspice.bat             (+3)
+  Windows/VisualC install-copy batch script (release build) that stages DLLs
+  into the install tree.
+   - visualc/make-install-vngspiced.bat            (+3)
+  Identical in purpose to make-install-vngspice.bat but for the debug ("d")
+  build variant.

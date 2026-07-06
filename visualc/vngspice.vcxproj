@@ -348,6 +348,8 @@
     </Link>
     <PostBuildEvent>
       <Command>
+      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
+      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"                              
       make-install-vngspiced.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
@@ -383,7 +385,7 @@
       <CompileAs>Default</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/openmp:llvm %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>sndfile.lib;samplerate.lib;psapi.lib;KLU_COMPLEX.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -407,6 +409,8 @@
     </Link>
     <PostBuildEvent>
       <Command>
+      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
+      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
       make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
@@ -556,6 +560,8 @@
     </Link>
     <PostBuildEvent>
       <Command>
+      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
+      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
       make-install-vngspiced.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
@@ -726,6 +732,8 @@
     </Link>
     <PostBuildEvent>
       <Command>
+      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
+      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"
       make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
@@ -779,7 +787,8 @@
       <AdditionalLibraryDirectories>../../libsamplerate/lib;../../libsndfile/lib;KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>make-install-vngspice.bat $(OutDir)</Command>
+      <Command>
+      make-install-vngspice.bat $(OutDir)</Command>
     </PostBuildEvent>
     <Manifest>
       <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
@@ -837,6 +846,8 @@
     </Link>
     <PostBuildEvent>
       <Command>
+      copy /y "..\..\libsndfile\bin\sndfile.dll" "$(OutDir)"
+      copy /y "..\..\libsamplerate\bin\samplerate.dll" "$(OutDir)"                              
       make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
@@ -869,6 +880,7 @@
     <ClInclude Include="..\src\frontend\com_dump.h" />
     <ClInclude Include="..\src\frontend\com_echo.h" />
     <ClInclude Include="..\src\frontend\com_fft.h" />
+    <ClInclude Include="..\src\frontend\com_fileio.h" />
     <ClInclude Include="..\src\frontend\com_ghelp.h" />
     <ClInclude Include="..\src\frontend\com_gnuplot.h" />
     <ClInclude Include="..\src\frontend\com_hardcopy.h" />
@@ -885,7 +897,6 @@
     <ClInclude Include="..\src\frontend\com_shift.h" />
     <ClInclude Include="..\src\frontend\com_state.h" />
     <ClInclude Include="..\src\frontend\com_strcmp.h" />
-    <ClInclude Include="..\src\frontend\com_fileio.h" />
     <ClInclude Include="..\src\frontend\com_unset.h" />
     <ClInclude Include="..\src\frontend\com_wr_ic.h" />
     <ClInclude Include="..\src\frontend\control.h" />
@@ -1482,6 +1493,7 @@
     <ClCompile Include="..\src\frontend\com_dump.c" />
     <ClCompile Include="..\src\frontend\com_echo.c" />
     <ClCompile Include="..\src\frontend\com_fft.c" />
+    <ClCompile Include="..\src\frontend\com_fileio.c" />
     <ClCompile Include="..\src\frontend\com_ghelp.c" />
     <ClCompile Include="..\src\frontend\com_gnuplot.c" />
     <ClCompile Include="..\src\frontend\com_hardcopy.c" />
@@ -1498,7 +1510,6 @@
     <ClCompile Include="..\src\frontend\com_shift.c" />
     <ClCompile Include="..\src\frontend\com_state.c" />
     <ClCompile Include="..\src\frontend\com_strcmp.c" />
-    <ClCompile Include="..\src\frontend\com_fileio.c" />
     <ClCompile Include="..\src\frontend\com_sysinfo.c" />
     <ClCompile Include="..\src\frontend\com_unset.c" />
     <ClCompile Include="..\src\frontend\com_wr_ic.c" />

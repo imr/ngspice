@@ -29,6 +29,148 @@ Modified: 1999 Paolo Nenzi
 static double actval, actdiff;
 #endif
 
+/* Sweeping a .param: we update the numparam dictionary AND any V/I
+ * source's DC value that was bound to this param at parse time.
+ * Bindings come from inpdpar.c's dpar_register_binding() table; we
+ * read them via the opaque accessors below.  nupa_get_real /
+ * nupa_set_real live in frontend/numparam/spicenum.c. */
+extern int nupa_get_real(const char *name, double *value);
+extern int nupa_set_real(const char *name, double value);
+
+typedef struct dpar_param_binding dpar_param_binding_t;
+extern dpar_param_binding_t *dpar_first_param_binding(void);
+extern const char *dpar_binding_param_name(const dpar_param_binding_t *b);
+extern const char *dpar_binding_dev_name(const dpar_param_binding_t *b);
+extern int dpar_binding_dev_type(const dpar_param_binding_t *b);
+extern const dpar_param_binding_t *dpar_binding_next(const dpar_param_binding_t *b);
+
+/* Push `value` into the DC field of every V/I source bound to the
+ * named .param.  Lookup matches on the (param_name, dev_type) pair
+ * recorded by dpar_register_binding at INPdevParse time, then finds
+ * the actual instance by name in CKThead[dev_type].  Mirrors how
+ * the existing source-name sweep path mutates VSRCdcValue/
+ * ISRCdcValue directly. */
+static void dctrcurv_push_param_to_bindings(
+    CKTcircuit *ckt, const char *param_name, double value,
+    int vcode, int icode)
+{
+    const dpar_param_binding_t *b;
+    for (b = dpar_first_param_binding(); b; b = dpar_binding_next(b)) {
+        if (strcmp(dpar_binding_param_name(b), param_name) != 0) continue;
+        int dt = dpar_binding_dev_type(b);
+        const char *devn = dpar_binding_dev_name(b);
+        if (dt == vcode && vcode >= 0) {
+            VSRCmodel *m;
+            VSRCinstance *here;
+            for (m = (VSRCmodel *)ckt->CKThead[vcode]; m; m = VSRCnextModel(m))
+                for (here = VSRCinstances(m); here; here = VSRCnextInstance(here)) {
+                    if (here->VSRCname && strcmp(here->VSRCname, devn) == 0) {
+                        here->VSRCdcValue = value;
+                        here->VSRCdcGiven = 1;
+                        goto next_binding;
+                    }
+                }
+        } else if (dt == icode && icode >= 0) {
+            ISRCmodel *m;
+            ISRCinstance *here;
+            for (m = (ISRCmodel *)ckt->CKThead[icode]; m; m = ISRCnextModel(m))
+                for (here = ISRCinstances(m); here; here = ISRCnextInstance(here))
+                    if (here->ISRCname && strcmp(here->ISRCname, devn) == 0) {
+                        here->ISRCdcValue = value;
+                        here->ISRCdcGiven = 1;
+                        goto next_binding;
+                    }
+        }
+    next_binding:;
+    }
+}
+
+/* Forward decl for the parse-time binding registry — defined in
+ * src/spicelib/parser/inpdpar.c. */
+extern void dpar_register_binding(const char *param_name,
+                                  const char *dev_name, int dev_type);
+
+/* Scan the original (un-substituted) deck for device lines that
+ * mention `param_name` as a bare identifier in the value position
+ * and register a binding for each match.  Numparam pre-substitutes
+ * bare-identifier values in V/I/R device lines BEFORE INPdevParse
+ * is called, so the parse-time bind path (inpeval.c +
+ * inpdpar.c::INPdevParse) can't capture them — by the time the
+ * parser sees the line, the original `.param` name has been
+ * replaced with its numeric value.  This deck-text scan recovers
+ * the binding at .dc setup time using the saved actualLine text
+ * via `ft_curckt->ci_origdeck`.
+ *
+ * Match rules: the value field is the LAST whitespace-delimited
+ * token before the end of the (trimmed) line.  We accept it as a
+ * binding when it equals `param_name` exactly (case-insensitive)
+ * and the device name's first letter is v/V/i/I (voltage or
+ * current source).  No expression context — `.dc paramName` only
+ * propagates to sources whose value field is literally
+ * `paramName`, not to `2*paramName` or `paramName+0.1`. */
+static void dctrcurv_scan_deck_for_bindings(const char *param_name,
+                                            int vcode, int icode)
+{
+    if (!ft_curckt) return;
+    struct card *c;
+    for (c = ft_curckt->ci_origdeck ? ft_curckt->ci_origdeck : ft_curckt->ci_deck;
+         c; c = c->nextcard) {
+        const char *line = c->line;
+        if (!line || !*line) continue;
+        if (*line == '*' || *line == '.' || *line == '+') continue;
+        /* Classify by first letter — only V/I sources are bindable. */
+        int dev_type = -1;
+        if (*line == 'v' || *line == 'V')      dev_type = vcode;
+        else if (*line == 'i' || *line == 'I') dev_type = icode;
+        else continue;
+        if (dev_type < 0) continue;
+        /* Extract dev name (first token, lowercased to match
+         * GENname's canonical form). */
+        const char *name_end = line;
+        while (*name_end && *name_end != ' ' && *name_end != '\t')
+            name_end++;
+        size_t name_len = (size_t)(name_end - line);
+        if (name_len == 0 || name_len > 63) continue;
+        char dev_name_buf[64];
+        for (size_t i = 0; i < name_len; i++) {
+            char ch = line[i];
+            if (ch >= 'A' && ch <= 'Z') ch = (char)(ch - 'A' + 'a');
+            dev_name_buf[i] = ch;
+        }
+        dev_name_buf[name_len] = '\0';
+        /* Trim trailing whitespace and grab the last token of the
+         * line — that's the value field (ngspice / HSPICE put the
+         * source value at end-of-line for simple DC sources). */
+        const char *end = line + strlen(line);
+        while (end > line && (end[-1] == ' ' || end[-1] == '\t' ||
+                              end[-1] == '\n' || end[-1] == '\r'))
+            end--;
+        const char *last = end;
+        while (last > line && last[-1] != ' ' && last[-1] != '\t')
+            last--;
+        /* Strip `{...}` braces if present — inpcom.c wraps bare
+         * param refs in V/I source values into `{name}` for
+         * numparam-driven substitution.  We want the inner name. */
+        if (last < end && *last == '{' && end[-1] == '}') {
+            last++;
+            end--;
+        }
+        size_t tok_len = (size_t)(end - last);
+        size_t plen = strlen(param_name);
+        bool match = (tok_len == plen);
+        if (match) {
+            for (size_t i = 0; i < plen; i++) {
+                char a = last[i], b = param_name[i];
+                if (a >= 'A' && a <= 'Z') a = (char)(a - 'A' + 'a');
+                if (b >= 'A' && b <= 'Z') b = (char)(b - 'A' + 'a');
+                if (a != b) { match = false; break; }
+            }
+        }
+        if (!match) continue;
+        dpar_register_binding(param_name, dev_name_buf, dev_type);
+    }
+}
+
 
 int
 DCtrCurv(CKTcircuit *ckt, int restart)
@@ -150,6 +292,33 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             goto found;
         }
 
+        /* HSPICE-compat: sweep a .param.  If the name matches a
+         * NUPA_REAL entry in the numparam global dictionary, push
+         * the start value into the dictionary AND into any V/I
+         * source whose DC field was bound to this .param.
+         *
+         * Bindings are recovered by scanning the original (un-
+         * substituted) deck text in `ft_curckt->ci_origdeck` —
+         * numparam pre-substitutes bare-identifier values in V/I/R
+         * device lines BEFORE INPdevParse runs, so the parse-time
+         * registry from inpdpar.c can't capture them. */
+        {
+            double cur_val;
+            if (nupa_get_real(job->TRCVvName[i], &cur_val)) {
+                dctrcurv_scan_deck_for_bindings(
+                    job->TRCVvName[i], vcode, icode);
+                job->TRCVvSave[i] = cur_val;
+                job->TRCVvType[i] = PARAM_CODE;
+                job->TRCVvElt[i]  = NULL;
+                job->TRCVstepCount[i] = 0;
+                nupa_set_real(job->TRCVvName[i], job->TRCVvStart[i]);
+                dctrcurv_push_param_to_bindings(
+                    ckt, job->TRCVvName[i], job->TRCVvStart[i],
+                    vcode, icode);
+                goto found;
+            }
+        }
+
         SPfrontEnd->IFerrorf (ERR_FATAL,
                 "DC Transfer Function: Voltage source, current source, or "
                 "resistor named \"%s\" is not in the circuit",
@@ -185,6 +354,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "temp-sweep", UID_OTHER, NULL);
     else if (job->TRCVvType[0] == rcode)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "res-sweep", UID_OTHER, NULL);
+    else if (job->TRCVvType[0] == PARAM_CODE)
+        SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "param-sweep", UID_OTHER, NULL);
     else
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "?-sweep", UID_OTHER, NULL);
 
@@ -261,6 +432,19 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     break;
                 goto nextstep;
             }
+        } else if (job->TRCVvType[i] == PARAM_CODE) { /* param sweep */
+            double cur_val = 0.0;
+            nupa_get_real(job->TRCVvName[i], &cur_val);
+            if (SGN(job->TRCVvStep[i]) *
+                (cur_val - job->TRCVvStop[i]) > DBL_EPSILON * 1e+03)
+            {
+                i++;
+                firstTime = 1;
+                ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT;
+                if (i > job->TRCVnestLevel)
+                    break;
+                goto nextstep;
+            }
         }
 
         while (--i >= 0)
@@ -279,6 +463,12 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     job->TRCVvStart[i];
                 RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]), FALSE);
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
+            } else if (job->TRCVvType[i] == PARAM_CODE) {
+                job->TRCVstepCount[i] = 0;
+                nupa_set_real(job->TRCVvName[i], job->TRCVvStart[i]);
+                dctrcurv_push_param_to_bindings(
+                    ckt, job->TRCVvName[i], job->TRCVvStart[i],
+                    vcode, icode);
             }
 
         /* Rotate state vectors. */
@@ -376,6 +566,11 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ckt->CKTtime = ((RESinstance *)(job->TRCVvElt[0]))->RESresist;
         else if (job->TRCVvType[0] == TEMP_CODE)
             ckt->CKTtime = ckt->CKTtemp - CONSTCtoK;
+        else if (job->TRCVvType[0] == PARAM_CODE) {
+            double v = 0.0;
+            nupa_get_real(job->TRCVvName[0], &v);
+            ckt->CKTtime = v;
+        }
 
 #ifdef XSPICE
         /* If first time through, call CKTdump to output Operating Point info */
@@ -465,6 +660,49 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 
             inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
+        } else if (job->TRCVvType[i] == PARAM_CODE) { /* param sweep */
+            /* Exact arithmetic: cur_val = start + N*step instead of
+             * accumulating += step.  Accumulation drifts by ~N ULP
+             * over N iterations and prevents `.measure when X=stop`
+             * from finding the endpoint.
+             *
+             * Even start+N*step isn't bit-exact when start/step
+             * aren't representable in binary FP (start=-0.1,
+             * step=0.01 → -0.1+340*0.01 ≈ 3.2999999... not 3.3).
+             * On the LAST accepted iteration (the one whose NEXT
+             * would trigger the stop check), snap cur_val to stop
+             * exactly so the saved row's X-value is bit-exact.
+             * GF55 bcd55 isoednfet's `.measure when v(n2)=3.3`
+             * relies on this. */
+            job->TRCVstepCount[i]++;
+            double cur_val = job->TRCVvStart[i] +
+                job->TRCVstepCount[i] * job->TRCVvStep[i];
+            /* Snap to stop ONLY on the iter that lands within one
+             * step of stop AND whose successor would overshoot.
+             * Without the cur-side guard, every iter past stop
+             * keeps getting snapped back to stop and the loop's
+             * own stop-check (top of for(;;)) never triggers. */
+            double next_val = job->TRCVvStart[i] +
+                (job->TRCVstepCount[i] + 1) * job->TRCVvStep[i];
+            double sign = SGN(job->TRCVvStep[i]);
+            double cur_offset = sign * (cur_val - job->TRCVvStop[i]);
+            double next_offset = sign * (next_val - job->TRCVvStop[i]);
+            if (next_offset > DBL_EPSILON * 1e+03 &&
+                cur_offset <= DBL_EPSILON * 1e+03) {
+                /* Snap to stop exactly.  INPevaluate (the .dc stop and
+                 * the measure `when X = <param>` RHS) and formula()'s
+                 * fetchnumber (which stores the .param's value via
+                 * sscanf "%lG") now BOTH parse numbers through strtod, so
+                 * they round identically: the snapped TRCVvStop is already
+                 * bit-equal to the m_val the measure compares against.
+                 * (Previously the two paths differed by 1 ULP and this had
+                 * to route the snap through INPevaluate's "% 23.15e"
+                 * round-trip to match -- see inpeval.c.) */
+                cur_val = job->TRCVvStop[i];
+            }
+            nupa_set_real(job->TRCVvName[i], cur_val);
+            dctrcurv_push_param_to_bindings(
+                ckt, job->TRCVvName[i], cur_val, vcode, icode);
         }
 
         if (SPfrontEnd->IFpauseTest()) {
@@ -500,6 +738,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ckt->CKTtemp = job->TRCVvSave[i];
             inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
+        } else if (job->TRCVvType[i] == PARAM_CODE) {
+            nupa_set_real(job->TRCVvName[i], job->TRCVvSave[i]);
+            dctrcurv_push_param_to_bindings(
+                ckt, job->TRCVvName[i], job->TRCVvSave[i], vcode, icode);
         }
 
     SPfrontEnd->OUTendPlot (plot);

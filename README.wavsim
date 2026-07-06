@@ -21,6 +21,12 @@ http://gareus.org/oss/spicesound/start
 
 Example files are available at \examples\wave
 
+Compiling for MS Windows, 64 bit, with VS2022 or VS2026:
+Download https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2-win64.zip
+Expand libsndfile-1.2.2-win64 into same level as ngspice, rename the directory to libsndfile.
+Download https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2-win64.zip
+Expand libsamplerate-0.2.2-win64 into same level as ngspice, rename the directory to libsamplerate.
+
 Compiling for macOS M2 requires installing libsndfile and libsamplerate from Homebrew.
 compile_macos_clang_M2.sh has been enhanced by adding
 -I/opt/homebrew/opt/libsndfile/include -I/opt/homebrew/opt/libsamplerate/include

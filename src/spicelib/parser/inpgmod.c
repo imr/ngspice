@@ -14,6 +14,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/fteext.h"
 #include "ngspice/compatmode.h"
 #include "ngspice/devdefs.h"
+#include "ngspice/osdi_defer.h"
 #include "inpxx.h"
 #include <errno.h>
 #include <stdio.h>
@@ -115,13 +116,39 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
     INPgetNetTok(&line, &parm, 1);        /* throw away 'modname' */
     tfree(parm);
 
+    bool is_osdi = false;
 #ifdef OSDI
     /* osdi models don't accept their device type as an argument */
-    bool is_osdi = false;
-    if (device->registry_entry){ 
-        INPgetNetTok(&line, &parm, 1); /* throw away osdi */
+    if (device->registry_entry) {
+        /* Skip the OSDI device type (the module name).  We must stop at '('
+         * as well as whitespace: a no-space card like
+         *   .model m slew_probe(max_pos=500, max_neg=-500)
+         * is standard SPICE syntax, but INPgetNetTok does NOT treat '(' as a
+         * token terminator, so it would grab "slew_probe(max_pos" as the
+         * "type" and silently swallow the FIRST model parameter.  Extract just
+         * the type name, stopping at the first '(', '=', ',' or whitespace, and
+         * leave `line` pointing at the parameter list. */
+        while (*line == ' ' || *line == '\t')
+            line++;
+        char *type_start = line;
+        while (*line && *line != ' ' && *line != '\t' && *line != '(' &&
+               *line != '=' && *line != ',')
+            line++;
+        parm = copy_substring(type_start, line);
+        bool is_pmos = (strcasecmp(parm, "pmos") == 0 || strcasecmp(parm, "psoi") == 0);
         tfree(parm);
         is_osdi = true;
+        /* Commercial simulators handle nmos/pmos polarity implicitly.  For OSDI
+         * models with a 'type' parameter (e.g. BSIM-BULK TYPE=1/-1), inject -1
+         * before card params are parsed so the PDK can still override explicitly. */
+        if (is_pmos) {
+            IFparm *type_parm = find_model_parameter("type", device);
+            if (type_parm && (type_parm->dataType & IF_INTEGER)) {
+                IFvalue type_val;
+                type_val.iValue = -1;
+                ft_sim->setModelParm(ckt, modtmp->INPmodfast, type_parm->id, &type_val, NULL);
+            }
+        }
     }
 #endif
 
@@ -136,8 +163,8 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
         if (p) {
 #ifdef OSDI
-            if (is_osdi && (p->dataType & IF_VECTOR)){  
-                // we need to get rid if the leading [ in order to make sure 
+            if (is_osdi && (p->dataType & IF_VECTOR)){
+                // we need to get rid if the leading [ in order to make sure
                 // that INPgetValue can parse the value properly
                 // This is because, unlike other SPICEDev, OSDI models receive
                 // array params in the syntax (param_name=[...])
@@ -184,7 +211,11 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
                     perror("strtod");
                     controlled_exit(EXIT_FAILURE);
                 }
-                if (endptr == parm) /* it was no number - it is really a string */
+                /* For OSDI models, PDK cards converted from HSPICE often contain
+                 * simulator-specific parameters (tmemod, psatbmod, b0, etc.) that
+                 * the public OSDI model binary does not implement.  Silently skip
+                 * them rather than flooding the output with "Model issue" lines. */
+                if (endptr == parm && !is_osdi)
                     err = INPerrCat(err,
                                     tprintf("unrecognized parameter (%s) - ignored",
                                             parm));
@@ -274,9 +305,22 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
 
     *model = NULL;
 
-    /* read W and L. If not on the instance line, leave */
-    if (!parse_line(line, instance_tokens, 2, parse_values, parse_found))
-        return NULL;
+    /* Read L (required) and W (optional).  FinFET PDKs (Samsung 14LPU
+     * et al.) have no W on the instance line — only `l=` and
+     * `nfin=` — and their `.model` cards bin on `lmin/lmax/nfinmin/
+     * nfinmax`, not on W.  Previously this function bailed out as
+     * soon as W was missing, which prevented bin selection for any
+     * FinFET model.  Now: require only L, and if W is absent set it
+     * to 0 (any model with a real `wmin/wmax` range still gets a
+     * sensible has_w_range==true check and rejects this instance,
+     * which matches HSPICE's behaviour of "instance W=0 ≠ any
+     * wmin/wmax range starting above 0"). */
+    if (!parse_line(line, instance_tokens, 1, parse_values, parse_found))
+        return NULL;  /* No `l=` either — really not a MOSFET-shape line. */
+
+    /* Now try to read W; if absent, w stays at parse_values[1]=0. */
+    parse_values[1] = 0.;
+    parse_line(line, instance_tokens, 2, parse_values, parse_found);
 
     /* This is for reading nf. If nf is not available, set to 1 if in HSPICE or Spectre compatibility mode */
     if (!parse_line(line, instance_tokens, 3, parse_values, parse_found)) {
@@ -301,13 +345,30 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
     l = parse_values[0] * scale;
     w = parse_values[1] / parse_values[2] * scale;
 
+    /* OSDI bin selection: compare per-finger W (w / nf, already applied
+     * above) against the bin's wmin/wmax.  Do NOT divide by m — `m` is a
+     * parallel-instance multiplier (the whole device is replicated m
+     * times), so the per-finger geometry is unchanged by it.  TSMC and
+     * GlobalFoundries BSIM-BULK decks author their wmin/wmax tables
+     * against the HSPICE/Spectre convention of per-finger W only, so an
+     * additional /m here would push the effective W below every bin's
+     * lower bound for any moderately-large multi-instance device. */
+
     for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
         if (model_name_match(name, modtmp->INPmodName) < 2)
             continue;
 
-        /* skip if not binnable */
-        if (modtmp->INPmodType != INPtypelook("BSIM3") &&
+        /* if illegal device type, skip this candidate rather than aborting */
+        if (modtmp->INPmodType < 0)
+            continue;
+
+        /* skip if not binnable: accept OSDI models (detected via registry_entry)
+         * as well as the classic BSIM/HiSIM families that have always been supported */
+        IFdevice *dev = ft_sim->devices[modtmp->INPmodType];
+        bool is_osdi = (dev->registry_entry != NULL);
+        if (!is_osdi &&
+            modtmp->INPmodType != INPtypelook("BSIM3") &&
             modtmp->INPmodType != INPtypelook("BSIM3v32") &&
             modtmp->INPmodType != INPtypelook("BSIM3v0") &&
             modtmp->INPmodType != INPtypelook("BSIM3v1") &&
@@ -322,19 +383,38 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
             continue;
         }
 
-        /* if illegal device type */
-        if (modtmp->INPmodType < 0) {
-            *model = NULL;
-            return tprintf("Unknown device type for model %s\n", name);
-        }
+        /* parse lmin/lmax from the model line; wmin/wmax are optional.
+         * parse_line returns FALSE if any requested token is absent, so call
+         * it unconditionally and inspect parse_found[] individually. */
+        parse_line(modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found);
 
-        if (!parse_line(modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found))
-            continue;
+        if (!parse_found[0] || !parse_found[1])
+            continue;   /* lmin/lmax are required for bin selection */
 
         lmin = parse_values[0]; lmax = parse_values[1];
-        wmin = parse_values[2]; wmax = parse_values[3];
 
-        if (in_range(l, lmin, lmax) && in_range(w, wmin, wmax)) {
+        bool has_w_range = parse_found[2] && parse_found[3];
+        if (has_w_range) {
+            wmin = parse_values[2]; wmax = parse_values[3];
+        }
+
+        /* Compare the per-finger W (already w/nf above) and L against
+         * the bin's wmin/wmax and lmin/lmax.  Foundry .lib files (TSMC,
+         * GlobalFoundries, Samsung) author bin boundaries in POST-SHRINK
+         * (EFFECTIVE) dimensions: e.g. TSMC 22nm ULP nch.1 wmax=2.5651µm
+         * = drawn 3µm × shrink 0.855.  The shrink is applied upstream in
+         * subckt expansion (the subcircuit's `scale` parameter multiplies
+         * the device W/L) or by the model's own dimension expressions, so
+         * the W/L parsed here are already EFFECTIVE — no shrink factor is
+         * applied at this point.
+         *
+         * `m` is intentionally NOT in the calculation — it is a
+         * parallel-instance multiplier (the whole device is replicated
+         * m times), so per-finger geometry is unchanged by it. */
+        double w_cmp = w;
+        double l_cmp = l;
+
+        if (in_range(l_cmp, lmin, lmax) && (!has_w_range || in_range(w_cmp, wmin, wmax))) {
             /* create unless model is already defined */
             if (!modtmp->INPmodfast) {
                 int error = create_model(ckt, modtmp, tab);
@@ -343,7 +423,71 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
             }
 
             *model = modtmp;
+            /* Stash the bin's (lmin, lmax) for OSDIsetup's deferred-eval
+             * pre-pass, which needs a representative L within the bin's
+             * range to make Samsung-PDK expressions like
+             * `(l==14n)*X + (l==16n)*Y` evaluate to non-zero. */
+            if (is_osdi)
+                osdi_defer_record_bin_range(modtmp->INPmodName, lmin, lmax);
             return NULL;
+        }
+    }
+
+    /* Second pass for OSDI models: if no exact bin match was found (device W
+     * is outside all bin width ranges), pick the l-matching bin whose wmin/wmax
+     * is closest to the device width.  This mirrors HSPICE/Spectre behaviour. */
+    {
+        double    best_w_dist = -1.0;   /* negative = "no candidate yet" */
+        INPmodel *best_mod    = NULL;
+
+        for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
+
+            if (model_name_match(name, modtmp->INPmodName) < 2)
+                continue;
+            if (modtmp->INPmodType < 0)
+                continue;
+
+            IFdevice *dev = ft_sim->devices[modtmp->INPmodType];
+            if (dev->registry_entry == NULL)
+                continue;   /* nearest-bin fallback only for OSDI models */
+
+            parse_line(modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found);
+            if (!parse_found[0] || !parse_found[1])
+                continue;
+            lmin = parse_values[0]; lmax = parse_values[1];
+            /* Same convention as the primary pass: the W/L parsed here
+             * are already EFFECTIVE (shrink applied upstream). */
+            if (!in_range(l, lmin, lmax))
+                continue;
+
+            double w_c = w;
+            double w_dist;
+            if (!parse_found[2] || !parse_found[3]) {
+                w_dist = 0.0;
+            } else {
+                wmin = parse_values[2]; wmax = parse_values[3];
+                if (w_c < wmin)       w_dist = wmin - w_c;
+                else if (w_c > wmax)  w_dist = w_c - wmax;
+                else                  w_dist = 0.0;
+            }
+
+            if (best_w_dist < 0.0 || w_dist < best_w_dist) {
+                best_w_dist = w_dist;
+                best_mod    = modtmp;
+            }
+        }
+
+        if (best_mod) {
+            fprintf(stderr,
+                    "Warning: OSDI model '%s': device W=%.3g is outside all bin"
+                    " width ranges; using nearest bin\n",
+                    name, w);
+            if (!best_mod->INPmodfast) {
+                int error = create_model(ckt, best_mod, tab);
+                if (error)
+                    return NULL;
+            }
+            *model = best_mod;
         }
     }
 

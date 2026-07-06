@@ -1,0 +1,14 @@
+* noise test
+.model nt noise_test_probe
+n1 p 0 nt
+r1 in p 1k
+vsrc in 0 dc 0 ac 1
+
+.control
+pre_osdi noise_test.osdi
+noise v(p) vsrc dec 1 1 10meg
+setplot noise1
+print onoise_spectrum[0] onoise_spectrum[3] onoise_spectrum[6]
+quit
+.endc
+.end

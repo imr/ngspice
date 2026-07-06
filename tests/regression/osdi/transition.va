@@ -1,0 +1,13 @@
+`include "disciplines.vams"
+
+module transition_probe(p);
+  inout p;
+  electrical p;
+
+  real lvl;
+
+  analog begin
+    lvl = ($abstime >= 6.0e-3) ? 0.0 : (($abstime >= 2.0e-3) ? 1.0 : 0.0);
+    V(p) <+ transition(lvl, 0.0, 1.0e-3, 0.5e-3);
+  end
+endmodule

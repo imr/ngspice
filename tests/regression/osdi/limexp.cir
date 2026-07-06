@@ -1,0 +1,20 @@
+* limexp test
+.model lp limexp_probe
+n1 out in lp
+vin in 0 dc 0
+rout out 0 1meg
+
+.control
+pre_osdi limexp.osdi
+alter vin dc 79.0
+op
+print v(out)
+alter vin dc 80.0
+op
+print v(out)
+alter vin dc 81.0
+op
+print v(out)
+quit
+.endc
+.end

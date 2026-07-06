@@ -6,6 +6,7 @@ libosdi_la_SOURCES =	\
 	osdi.h		\
 	osdidefs.h	\
 	osdiext.h	\
+\
 	osdiinit.c	\
 	osdiload.c	\
 	osdiacld.c \
@@ -15,7 +16,8 @@ libosdi_la_SOURCES =	\
 	osdisetup.c \
 	osditrunc.c \
 	osdipzld.c \
-	osdicallbacks.c
+	osdicallbacks.c \
+	osdi_defer.c
 
 
 libosdi_la_LIBADD = $(XSPICEDLLIBS)

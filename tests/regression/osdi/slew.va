@@ -1,0 +1,12 @@
+`include "disciplines.vams"
+
+module slew_probe(out, in);
+  inout out, in;
+  electrical out, in;
+  parameter real max_pos = 1.0e3;
+  parameter real max_neg = -1.0e3;
+
+  analog begin
+    I(out) <+ (V(out) - slew(V(in), max_pos, max_neg)) / 1.0;
+  end
+endmodule

@@ -1,0 +1,24 @@
+* zi test
+.model zp zi_probe
+n1 y_nd y_zd y_np y_zp in zp
+vin in 0 dc 1
+ry1 y_nd 0 1meg
+ry2 y_zd 0 1meg
+ry3 y_np 0 1meg
+ry4 y_zp 0 1meg
+
+.control
+pre_osdi zi_filter.osdi
+tran 10u 4.5m
+meas tran ynd_at_0_5m find v(y_nd) at=0.5m
+meas tran yzd_at_0_5m find v(y_zd) at=0.5m
+meas tran ynd_at_1_5m find v(y_nd) at=1.5m
+meas tran yzd_at_1_5m find v(y_zd) at=1.5m
+meas tran ynd_at_2_5m find v(y_nd) at=2.5m
+meas tran yzd_at_2_5m find v(y_zd) at=2.5m
+meas tran ynd_at_3_5m find v(y_nd) at=3.5m
+meas tran yzd_at_3_5m find v(y_zd) at=3.5m
+print ynd_at_0_5m yzd_at_0_5m ynd_at_1_5m yzd_at_1_5m ynd_at_2_5m yzd_at_2_5m ynd_at_3_5m yzd_at_3_5m
+quit
+.endc
+.end

@@ -23,6 +23,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/compatmode.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/dstring.h"
+#include "ngspice/hash.h"
 #include "ngspice/dvec.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteext.h"
@@ -98,6 +99,12 @@ struct function_env
         int num_parameters;
         const char *accept;
     } *functions;
+    /* Hash on `name` for O(1) lookup in find_function.  Foundry PDKs
+     * register hundreds-to-thousands of .funcs (Samsung 14LPU's TT
+     * corner has ~1300), and find_function is called once per `(` in
+     * every line during macro expansion — the linear scan was billions
+     * of strcmp on real decks. */
+    NGHASHPTR fcn_hash;
 };
 
 struct func_temper
@@ -143,6 +150,7 @@ static void inp_reorder_params(
 static int inp_split_multi_param_lines(struct card *deck, int line_number);
 static void inp_sort_params(struct card *param_cards,
         struct card *card_bf_start, struct card *s_c, struct card *e_c);
+static int identifier_char(char c);
 static void inp_compat(struct card *deck);
 static void inp_bsource_compat(struct card *deck);
 static bool inp_temper_compat(struct card *card);
@@ -1072,9 +1080,22 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         return cc;
     }
 
-    /* files starting with *ng_script are user supplied command files */
-    if (cc && ciprefix("*ng_script", cc->line))
-        comfile = TRUE;
+    /* files starting with *ng_script are user supplied command files.
+     * Walk past any leading blank cards so a `*ng_script` that follows
+     * a blank top-of-file line is still recognised.  Without this,
+     * such a file gets treated as a spice deck and the inner
+     * `.control { source ... }` triggers a second full inp_readall
+     * pass — doubling parse time on big PDK decks. */
+    {
+        struct card *probe = cc;
+        while (probe && probe->line &&
+               (probe->line[0] == '\0' ||
+                probe->line[0] == '\n' ||
+                (probe->line[0] == '\r' && probe->line[1] == '\n')))
+            probe = probe->nextcard;
+        if (probe && ciprefix("*ng_script", probe->line))
+            comfile = TRUE;
+    }
 
     /* The following processing of an input file is not required for command
        files like spinit or .spiceinit, so return command files here. */
@@ -1119,6 +1140,12 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
         struct nscope *root = inp_add_levels(working);
 
         inp_probe(working);
+
+        /* HSPICE element scale: wrap geometry in `scale`-declaring subckt
+           bodies BEFORE numparam preparation, so numparam evaluates the
+           effective dimensions per instance (see subckt.c).  Must precede
+           inp_fix_for_numparam(), which marks the expressions to substitute. */
+        inp_apply_subckt_scale(working);
 
         inp_fix_for_numparam(subckt_w_params, working);
 
@@ -1406,11 +1433,28 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         /* OK -- now we have loaded the next line into 'buffer'.  Process it.
          */
         if (first) {
-            /* Files starting *ng_script are user supplied command files. */
-
-            if (ciprefix("*ng_script", buffer))
-                comfile = TRUE;
-            first = FALSE;
+            /* Files starting *ng_script are user supplied command files.
+             *
+             * Treat any leading blank lines as not-yet-first, so a
+             * comfile that has a blank line above `*ng_script` is
+             * still recognised.  Without this, ngspice processes
+             * such a file twice: once as the "main" deck (because
+             * comfile stays FALSE, the !comfile branch runs full
+             * parse + print_compat_mode + Circuit:), and again
+             * when its `.control { source other.net }` triggers a
+             * fresh inp_spsource for the inner netlist.  Real
+             * symptom: doubled "Compatibility modes selected" /
+             * "Circuit:" headers and ~2x parse time. */
+            bool buffer_blank = (strcmp(buffer, "\n") == 0) ||
+                                (strcmp(buffer, "\r\n") == 0) ||
+                                (buffer[0] == '\0');
+            if (buffer_blank) {
+                /* skip — re-check on the next line */
+            } else {
+                if (ciprefix("*ng_script", buffer))
+                    comfile = TRUE;
+                first = FALSE;
+            }
         }
 
         /* If input line is blank, ignore it & continue looping.  */
@@ -1481,6 +1525,46 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             }
             tfree(buffer);
             continue;
+        }
+        /* HSPICE .alter: re-runs the simulation with the lib section
+         * and parameter overrides defined between this .alter and the
+         * next .alter / .end.  Not implemented in ngspice — silently
+         * skip the directive line AND every line that follows until
+         * the next .alter (skip continues) or .end (stop skipping;
+         * let .end terminate the deck normally).  Without this, the
+         * contained `.del lib '...'` / `.lib '...' <section>` lines
+         * would re-load a different process corner on top of the
+         * already-loaded main circuit.  Single warning per deck. */
+        {
+            static bool alter_warned = FALSE;
+            static bool in_alter_block = FALSE;
+            if (in_alter_block) {
+                /* `.end` closes the alter block AND the deck — let
+                 * the main loop process it.  Another `.alter` opens
+                 * a new alter block — keep skipping. */
+                if (ciprefix(".end", buffer) && !ciprefix(".ends", buffer)) {
+                    in_alter_block = FALSE;
+                    /* fall through to normal processing of .end */
+                } else {
+                    /* still inside an alter block — skip this line */
+                    tfree(buffer);
+                    continue;
+                }
+            }
+            if (ciprefix(".alter", buffer)) {
+                if (!alter_warned) {
+                    fprintf(cp_err, "Warning: Dot command .alter is not "
+                                    "implemented; .alter blocks "
+                                    "(re-simulation with process corner "
+                                    "/ parameter overrides) are skipped.\n");
+                    fprintf(cp_err, "    This message will be posted "
+                                    "only once!\n\n");
+                    alter_warned = TRUE;
+                }
+                in_alter_block = TRUE;
+                tfree(buffer);
+                continue;
+            }
         }
         /* now handle .include statements */
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
@@ -1808,9 +1892,22 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     ciprefix("set sourcepath", buffer) ||
                     ciprefix("strcmp", buffer) ||
                     ciprefix("strstr", buffer))))) {
-                /* lower case for all other lines */
-                for (s = buffer; *s && (*s != '\n'); s++)
-                    *s = tolower_c(*s);
+                /* Lower case for all other lines, but preserve the
+                 * content INSIDE double-quoted strings.  Foundry PDKs
+                 * embed case-sensitive filenames in .param/.subckt
+                 * lines via constructs like
+                 * `.param x = 'table_param(str("./RF_COMPONENTS/foo.table"), ...)'`.
+                 * Without quote preservation, the inner path gets
+                 * folded to lowercase and fails to open on Linux. */
+                bool in_dq = false;
+                for (s = buffer; *s && (*s != '\n'); s++) {
+                    if (*s == '"') {
+                        in_dq = !in_dq;
+                        continue;
+                    }
+                    if (!in_dq)
+                        *s = tolower_c(*s);
+                }
             }
             else {
                 /* s points to end of buffer for all cases not treated so far
@@ -3512,6 +3609,16 @@ void inp_casefix(char *string)
             if (*string == '"') {
                 if (!keepquotes)
                     *string++ = ' ';
+                else
+                    string++;  /* keepquotes: preserve opening " and
+                                  ALSO preserve content inside quotes
+                                  (case-sensitive filenames in str("...")
+                                  for HSPICE table_param et al.).
+                                  Without this, the loop below entered
+                                  AT the opening quote and exited
+                                  immediately, leaving the inner chars
+                                  to be lowercased by the outer-loop
+                                  case-folding. */
                 while (*string && *string != '"')
                     string++;
                 if (*string == '\0')
@@ -3617,9 +3724,19 @@ static void inp_stripcomments_line(char *s, bool cs, bool inc)
         }
         /* outside of .control section, and not in PS mode */
         else if (!cs && (c == '$') && !newcompat.ps) {
-            /* The character before '&' has to be ',' or ' ' or tab.
-               A valid numerical expression directly before '$' is not yet
-               supported. */
+            /* HSPICE treats '$' as an end-of-line comment regardless of
+             * the preceding character — foundry decks (Samsung 14LPU,
+             * TSMC, GF) routinely write `...)'$ comment` or `...=10u$ ...`
+             * with no separator.  In ngbehavior=hs / hsa, accept that.
+             *
+             * Outside HS mode keep the original conservative rule (only
+             * after space/comma/tab) so a literal `$` inside a token
+             * (e.g. a parameter named `foo$bar`, environment vars, etc.)
+             * isn't misread as a comment delimiter. */
+            if (newcompat.hs) {
+                d--;
+                break;
+            }
             if ((d - 2 >= s) &&
                     ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
                 d--;
@@ -3876,6 +3993,18 @@ static void inp_fix_for_numparam(
     for (; c; c = c->nextcard) {
 
         if (*(c->line) == '*' || ciprefix(".lib", c->line))
+            continue;
+
+        /* `.del lib '<path>' <section>` and `.include` / `.inc`
+         * take literal file paths; skip the single-to-brace quote
+         * conversion that would otherwise hand the path to
+         * numparam as an expression and trigger
+         *   Number format error: "../path...} <section>"
+         * Observed on GF55 bcd55 sample_netlist/isoednfet_5p0_lr.sp
+         * which uses `.del lib '../models/design_wrapper.lib'` in
+         * .alter blocks.  Matches the existing `.lib` skip above. */
+        if (ciprefix(".del", c->line) ||
+            ciprefix(".include", c->line) || ciprefix(".inc ", c->line))
             continue;
 
         /* exclude lines between .control and .endc from getting quotes
@@ -4389,6 +4518,8 @@ static struct function *new_function(struct function_env *env, char *name)
 
     f->next = env->functions;
     env->functions = f;
+    if (env->fcn_hash)
+        nghash_insert(env->fcn_hash, name, f);
 
     return f;
 }
@@ -4396,12 +4527,25 @@ static struct function *new_function(struct function_env *env, char *name)
 
 static struct function *find_function(struct function_env *env, char *name)
 {
-    struct function *f;
-
-    for (; env; env = env->up)
-        for (f = env->functions; f; f = f->next)
-            if (strcmp(f->name, name) == 0)
+    /* Walk the env chain inner-to-outer.  At each level, hash-lookup
+     * the function name (O(1)).  Total cost is O(env_chain_depth) per
+     * call instead of O(total_funcs).  See struct function_env comment
+     * for why this matters. */
+    for (; env; env = env->up) {
+        if (env->fcn_hash) {
+            struct function *f =
+                    (struct function *)nghash_find(env->fcn_hash, name);
+            if (f)
                 return f;
+        } else {
+            /* Fallback for envs created before the hash was added or
+             * if hash init failed (out of memory).  Same semantics as
+             * the original linear scan. */
+            for (struct function *f = env->functions; f; f = f->next)
+                if (strcmp(f->name, name) == 0)
+                    return f;
+        }
+    }
 
     return NULL;
 }
@@ -4826,6 +4970,9 @@ static struct function_env *new_function_env(struct function_env *up)
 
     env->up = up;
     env->functions = NULL;
+    /* Initial size is a guess; nghash grows automatically.  Big PDK
+     * envs reach ~1300 funcs, so start with 256 to reduce rehashes. */
+    env->fcn_hash = nghash_init(256);
 
     return env;
 }
@@ -4835,6 +4982,13 @@ static struct function_env *delete_function_env(struct function_env *env)
 {
     struct function_env *up = env->up;
     struct function *f;
+
+    /* Free the hash first.  Pass NULL for both freers — the function
+     * pointers inside the hash are owned by the linked list (freed
+     * below), and the keys are owned by the function structs (freed
+     * by free_function). */
+    if (env->fcn_hash)
+        nghash_free(env->fcn_hash, NULL, NULL);
 
     for (f = env->functions; f;) {
         struct function *here = f;
@@ -5483,37 +5637,91 @@ static void inp_sort_params(struct card *param_cards,
             num_params++;
         }
 
-    // look for duplicately defined parameters and mark earlier one to skip
-    // param list is ordered as defined in netlist
+    /* Duplicate detection and dependency scanning via a single hash from
+     * param_name -> (i+1).  Replaces two nested-N^2 loops:
+     *   - duplicate-check: was O(N^2) strcmp pairs
+     *   - dependency-scan: was O(N^2 * L) search_plain_identifier calls,
+     *     scanning every other param's expression for occurrences of each
+     *     param's name
+     * Both passes are now O(N) + O(total expression chars), enabling real
+     * PDK use (Samsung 14LPU's TT corner had N~2700 per subckt, called
+     * ~500 times, totalling many billions of ops in the old code).
+     *
+     * Encoding: hash stores `(void *)(intptr_t)(i + 1)` so that the NULL
+     * return value from nghash_find unambiguously means "not present"
+     * (param index 0 is a valid hit, encoded as the integer 1).
+     *
+     * For repeated names, the hash overwrites with the LATER index, so
+     * the recorded index for any name is the latest occurrence.  In the
+     * duplicate-mark pass below, every entry whose own index differs
+     * from the hash's recorded index gets skip=1, matching the original
+     * semantics (earlier duplicates are skipped, the last one wins). */
+    NGHASHPTR name_to_idx = nghash_init(num_params > 0 ? num_params : 1);
+
+    for (i = 0; i < num_params; i++)
+        nghash_insert(name_to_idx, deps[i].param_name,
+                      (void *)(intptr_t)(i + 1));
 
     skipped = 0;
     for (i = 0; i < num_params; i++) {
-        for (j = i + 1; j < num_params; j++)
-            if (strcmp(deps[i].param_name, deps[j].param_name) == 0)
-                break;
-        if (j < num_params) {
+        int latest =
+                (int)(intptr_t)nghash_find(name_to_idx, deps[i].param_name) - 1;
+        if (latest != i) {
             deps[i].skip = 1;
             skipped++;
         }
     }
 
-    for (i = 0; i < num_params; i++)
-        if (!deps[i].skip) {
-            char *param = deps[i].param_name;
-            for (j = 0; j < num_params; j++)
-                if (j != i &&
-                        search_plain_identifier(deps[j].param_str, param)) {
-                    for (ind = 0; deps[j].depends_on[ind]; ind++)
-                        ;
-                    deps[j].depends_on[ind++] = param;
-                    if (ind == DEPENDSON) {
-                        fprintf(stderr, "Error in netlist: Too many parameter dependencies (> %d)\n", ind);
+    /* Tokenize each non-skipped param's expression once; for each
+     * identifier-shaped token, look up in name_to_idx.  If the token
+     * names another (non-skipped) param, record the dependency.  Token
+     * boundaries use the same identifier_char predicate as
+     * search_plain_identifier, so behavior matches the old code. */
+    for (j = 0; j < num_params; j++) {
+        if (deps[j].skip) continue;
+        char *expr = deps[j].param_str;
+        if (!expr) continue;
+
+        char *p = expr;
+        while (*p) {
+            while (*p && !identifier_char(*p)) p++;
+            if (!*p) break;
+            char *tok_start = p;
+            while (*p && identifier_char(*p)) p++;
+
+            char saved = *p;
+            *p = '\0';
+            int dep_idx =
+                    (int)(intptr_t)nghash_find(name_to_idx, tok_start) - 1;
+            *p = saved;
+
+            if (dep_idx >= 0 && dep_idx != j && !deps[dep_idx].skip) {
+                /* avoid recording the same dependency twice for this
+                 * expression (e.g. `a + 2*a`); scan the small list */
+                bool already = false;
+                for (ind = 0; deps[j].depends_on[ind]; ind++)
+                    if (deps[j].depends_on[ind] ==
+                        deps[dep_idx].param_name) {
+                        already = true;
+                        break;
+                    }
+                if (!already) {
+                    deps[j].depends_on[ind] = deps[dep_idx].param_name;
+                    if (ind + 1 == DEPENDSON) {
+                        fprintf(stderr,
+                                "Error in netlist: Too many parameter "
+                                "dependencies (> %d)\n",
+                                ind + 1);
                         fprintf(stderr, "    Please check your netlist.\n");
                         controlled_exit(EXIT_BAD);
                     }
-                    deps[j].depends_on[ind] = NULL;
+                    deps[j].depends_on[ind + 1] = NULL;
                 }
+            }
         }
+    }
+
+    nghash_free(name_to_idx, NULL, NULL);
 
     max_level = 0;
     for (i = 0; i < num_params; i++) {

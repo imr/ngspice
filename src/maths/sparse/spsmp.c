@@ -299,6 +299,7 @@ SMPnewMatrixForCIDER (SMPmatrix *Matrix, int size, int complex)
 void
 SMPdestroy(SMPmatrix *Matrix)
 {
+    SP_FREE( Matrix->gmin_skip );
     spDestroy( Matrix->SPmatrix );
 }
 
@@ -460,6 +461,7 @@ static void
 LoadGmin(SMPmatrix *eMatrix, double Gmin)
 {
     MatrixPtr Matrix = eMatrix->SPmatrix;
+    char *skip = eMatrix->gmin_skip;
     int I;
     ArrayOfElementPtrs Diag;
     ElementPtr diag;
@@ -470,6 +472,13 @@ LoadGmin(SMPmatrix *eMatrix, double Gmin)
     if (Gmin != 0.0) {
 	Diag = Matrix->Diag;
 	for (I = Matrix->Size; I > 0; I--) {
+	    /* Skip OSDI internal (implicit-equation) node diagonals -- gmin
+	     * there over-damps the integrator-state Newton update and breaks
+	     * gmin stepping.  Matrix->Diag is indexed by internal row I; map
+	     * back to the external node number to look up the per-node flag. */
+	    if (skip && Matrix->IntToExtRowMap &&
+		skip[Matrix->IntToExtRowMap[I]])
+		continue;
 	    if ((diag = Diag[I]) != NULL)
 		diag->Real += Gmin;
 	}

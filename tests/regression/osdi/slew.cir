@@ -1,0 +1,21 @@
+* slew test
+.model sl slew_probe(max_pos=500.0, max_neg=-500.0)
+n1 out in sl
+rout out 0 1meg
+vin in 0 dc 0 PULSE(0 1 2m 1m 1m 5m 10m)
+
+.control
+pre_osdi slew.osdi
+tran 50u 10m
+meas tran vout_at_2 find v(out) at=2m
+meas tran vout_at_2_5 find v(out) at=2.5m
+meas tran vout_at_3 find v(out) at=3m
+meas tran vout_at_4 find v(out) at=4m
+meas tran vout_at_7 find v(out) at=7m
+meas tran vout_at_7_5 find v(out) at=7.5m
+meas tran vout_at_8 find v(out) at=8m
+meas tran vout_at_9 find v(out) at=9m
+print vout_at_2 vout_at_2_5 vout_at_3 vout_at_4 vout_at_7 vout_at_7_5 vout_at_8 vout_at_9
+quit
+.endc
+.end

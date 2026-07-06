@@ -1,0 +1,9 @@
+`include "disciplines.vams"
+module test_ddt(out, in);
+  inout out, in;
+  electrical out, in, nx;
+  branch (nx) b;
+  analog begin
+    V(out) <+ ddt(V(in));
+  end
+endmodule

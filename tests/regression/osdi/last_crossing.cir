@@ -1,0 +1,16 @@
+* last_crossing test
+.model lc last_crossing_probe
+n1 p lc
+vp p 0 1
+
+.control
+pre_osdi last_crossing.osdi
+save all @n1[tcross_out]
+tran 10u 2.5m
+meas tran tcross_0_5 find @n1[tcross_out] at=0.5m
+meas tran tcross_1_5 find @n1[tcross_out] at=1.5m
+meas tran tcross_2_2 find @n1[tcross_out] at=2.2m
+print tcross_0_5 tcross_1_5 tcross_2_2
+quit
+.endc
+.end

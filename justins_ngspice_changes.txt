@@ -1,0 +1,962 @@
+Changes in NGSPICE
+==================
+
+
+This file started out life as a notepad of the changes I was making for OpenVA. As it turned out, there was a lot more work than I had anticipated, and this file is now a bit of a mess. Though I've done my best to get rid of any double entries or things I changed, then changed back.
+
+It's worth pointing out that the testing I did with foundry models was specifically aimed at work I have a vested interest in. In other words, I know I can simulate with reasonably good accuracy in things like switching converters and Class D amplifier drivers using commercial processes with BSIM6 or HiCuM devices, but I've not looked at much else. Bandgaps, comparators, opamps etc - I've not had time to do a full sweep of this stuff.
+
+Also worth pointing out - there are references made here to commercial foundry models. I used these for debugging, but due to strict NDA's, these can't be shared here. If you're wondering what references like "driver_lv_2v5_tb" are - those are my test benches that use commercial foundry files. 
+
+In OpenVA, I created a bunch of test files for each VA function, and those functions appear to be ok. That doesn't mean everything will work for you. It just means my tests worked. I'm sure there are bugs. I did test with some slightly more complicated VA models; some comparator models and some opamps with laplace functions for instance, and these all looked good to me. Again - your models might show up the limitations of this work.
+
+Treat this document with a pinch of salt. It'll give you a reasonably good idea of what I did and why, but it's not a bible! I've tried to comment the code base as I've made changes - but I've NOT run any Spice regressions except the OpenVA tests I've been working on. I have double checked some past projects which do seem to work, so I'm reasonably confident that this branch doesn't break absolutely everything, but I'm not the NGSPICE grand guru, so I leave that up to those who know far more than I ever will.
+
+==========================================
+
+Summary
+-------
+This branch adds the simulator-side support for compiler-side `$limit` synthesis on OSDI Verilog-A models — the mechanism that lets unmodifiable CMC models (BSIM-BULK 106.2, PSP, HiCuM, ...) converge in transient analysis the way C-coded BSIM4 already does.  The compiler-side work happens in OpenVA (the upstream-divergent fork of OpenVAF maintained in:
+
+https://sourceforge.net/projects/openva/
+
+NGSPICE provides the ABI, the runtime parameters, and the matrix-level safety nets that make the compiled limiters effective.
+
+The original symptom that drove this work:
+
+    doAnalyses: TRAN:  Timestep too small;
+    time = 1.00082e-07, timestep = 1.25e-21: cause unrecorded.
+
+...during a two-stage 0.9V CMOS inverter chain (22nm BSIM6).  The root cause turned out to be Newton divergence triggered by Miller-coupled fast turn-on of the stage-2 PMOS — the predicted iterate ran V(g) out to -1.8e34 V over twelve iterations, the BSIM-BULK eval went non-finite, sanitize_jacobian fired step rejection on every retry, dctran cut delta to 1e-20 with no recovery, abort. The fix is a combination of (a) compiler-side limiter clamping V() reads on the OpenVA side and (b) the simulator-side machinery below to wire that limiter, sanitize the residual/Jacobian path, and tame the timestep controller.
+
+My goal across all of this work was to keep NGSPICE voltage-range-agnostic.  No hardcoded `OSDI_V_HI = 1.8` / `OSDI_V_LO = -0.7` rails anywhere in the C — the same binary has to work for 0.9V core CMOS, 5V LDMOS, and 40V power devices without per-PDK tuning, the way commercial simulators do. I notice that there is no hard coded voltage levels in the Verilog-A files supplied by the big foundries, but commercial simulators can handle it, as can BSIM 4 in NGSPICE. So I wanted the same functionality for Verilog-A BSIM6 in NGSPICE as we already have for BSIM4.
+
+
+STEP 1: src/include/NGSPICE/cktdefs.h
+--------------------------------------
+New fields on struct CKTcircuit_:
+
+    int    CKTosdiStepReject       /* set by OSDI eval / sanitize when the
+                                      iterate is structurally invalid */
+    int    CKTosdiStepRejectOff    /* `.option noosdistepreject` opt-out */
+    int    CKThugeJThisIter        /* count of |J_ij| > 1e6 entries clipped */
+    int    CKTdtClearOff           /* `.option nodtclear` opt-out */
+    double CKTosdiVlim             /* generic per-iter Δv bound */
+    double CKTosdiVlimVds          /* per-shape overrides */
+    double CKTosdiVlimVgs
+    double CKTosdiVlimVbs
+    double CKTosdiVlimNqs
+
+REASON:
+
+The OSDI runtime needs both transient-time flags (set during CKTload, read by NIiter) and persistent options (set by `.option` at parse, read by osdiload.c::get_simparams).  Putting them on CKTcircuit_ keeps the data flow trivial: load handlers and convergence-rescue paths share state without globals.
+
+
+STEP 2: src/include/NGSPICE/optdefs.h, src/spicelib/analysis/cktsopt.c
+-----------------------------------------------------------------------
+Enum + table additions for the new `.option` knobs:
+
+    OPT_NOOSDISTEPREJECT  → `.option noosdistepreject`   (flag)
+    OPT_NODTCLEAR         → `.option nodtclear`          (flag)
+    OPT_OSDIVLIM          → `.option osdi_vlim = N`      (real, V)
+    OPT_OSDIVLIM_VDS      → `.option osdi_vlim_vds = N`  (real, V)
+    OPT_OSDIVLIM_VGS      → `.option osdi_vlim_vgs = N`  (real, V)
+    OPT_OSDIVLIM_VBS      → `.option osdi_vlim_vbs = N`  (real, V)
+    OPT_OSDIVLIM_NQS      → `.option osdi_vlim_nqs = N`  (real, V)
+
+REASON:
+
+Two flag opts (noosdistepreject, nodtclear) gate the convergence-rescue paths in osdiload.c / niiter.c — left ON by default, opt-out for users who want raw failure modes.  Five real opts feed the compiler-side limiter via the OSDI simparam cascade (see STEP 4).  Default of 0 means "not set"; the cascade in osdiload.c falls back to a 0.1V generic value when nothing is configured.
+
+
+STEP 3: src/maths/ni/niiter.c
+------------------------------
+Two new rescue paths inserted after the inner CKTload() call.
+
+3a. Small-dt CKTnoncon clear (gated by !ckt->CKTdtClearOff)
+At very small CKTdelta during transient, the integration coefficient 2/dt amplifies tiny charge changes into apparent currents that exceed osdiload.c's defensive 1 A clip.  The clip's CKTnoncon++ then blocks NIconvTest, so a perfectly settled iterate cannot converge — NIiter spins until maxIter, dctran cuts delta, eventually aborts.
+
+When CKTdelta < 1 ps and we are in MODETRAN, clear CKTnoncon so the downstream NIconvTest can evaluate solution stability directly. Genuine divergence still fires because NIconvTest tests |Δx| against (reltol·|x| + vntol) per node — a truly diverging iterate fails that test regardless of CKTnoncon state.
+
+3b. Axis-3 step rejection
+If CKTload set CKTosdiStepReject (because an OSDI model raised EVAL_RET_FLAG_REJECT_STEP, or sanitize_jacobian saw a NaN/Inf entry), return E_ITERLIM immediately so dctran cuts CKTdelta by 8 and retries with a better-conditioned predicted state.  This is what lets the compiler-side limiter recover from a momentarily wild iterate — the model signals "this point is junk, give me a smaller step" instead of silently emitting garbage charges.
+
+Both paths reset their flags (CKTosdiStepReject, CKThugeJThisIter) at the top of the iteration loop.
+
+
+STEP 4: src/osdi/osdiload.c
+----------------------------
+This is the bulk of the OSDI runtime work. 
+
+4a. sim_params cascade (lines 28-68)
+Extended NUM_SIM_PARAMS from 10 to 15.  Added five names — osdi_vlim, osdi_vlim_vds, osdi_vlim_vgs, osdi_vlim_vbs, osdi_vlim_nqs — and a fallback cascade in get_simparams():
+
+        osdi_vlim_v   = CKTosdiVlim    > 0 ? CKTosdiVlim    : 0.1
+        osdi_vlim_<S> = CKTosdiVlim<S> > 0 ? CKTosdiVlim<S> : osdi_vlim_v
+
+The OSDI-compiled model reads these via `$simparam_opt("osdi_vlim_<S>", 0.1)`; the compiler emits per-probe-shape names so the user can tune each probe class independently via `.option`.
+
+4b. sanitize_residuals (line 91)
+Walks every node's resistive (and reactive, if transient) residual after eval().  NaN/Inf gets zeroed and bumps CKTnoncon — those are model anomalies and Newton needs to retry with a smaller step.
+
+Finite-magnitude clamp is now at OSDI_I_MAX_FINITE = 1 GA. This is a backstop (don't panic!).  No CKTnoncon++ on the magnitude clip.  An earlier version used 1 A with CKTnoncon++; that broke convergence for power designs — a PMIC driver, automotive battery switch, or motor-control LDMOS array with m × nf in the thousands can legitimately stamp hundreds-to-thousands of amps on a terminal node, and clipping such currents to 1 A while flagging non- convergence left the Jacobian and residual inconsistent, blocking Newton at OP.  Real anomalies still surface through the NaN/Inf path and through sanitize_jacobian's NaN handling (which raises CKTosdiStepReject).
+
+4c. sanitize_jacobian (line 124)
+Same idea but for Jacobian entries.  NaN diagonal → gmin or, if a finite residual is available for the node, max(gmin, |I|/0.9) (keeps Newton step bounded to ~one supply rail per iter).  NaN off-diagonal → 0.  Finite |J_ij| > 1e6 S clipped to ±1e6 (diag) or 0 (off-diag).
+
+On NaN, raises CKTosdiStepReject (unless `.option noosdistepreject`). NaN/Inf in a Jacobian entry means the model's eval diverged at the predicted operating point — no amount of clipping can save a falsified linearization; only retrying at a smaller predicted step will fix it.
+
+4d. load(): reactive integration sanitization (lines ~250-300)
+    For each node's reactive residual, run NIintegrate to get q_dot, then:
+      - NaN/Inf integrated → reset state to 0, stamp 0, bump CKTnoncon
+      - residual_react == q_old_charge → TRAP would produce an artificial sign-flipped oscillation; zero the stamp to break it
+      - |q_dot| > OSDI_I_MAX_FINITE (1 GA backstop) → cap stamp, preserve true derivative in state for history; NO CKTnoncon increment (power devices legitimately swing reactive current at kA scale during fast switching — see 4b for the same rationale on the resistive path).
+
+4e. EVAL_RET_FLAG_LIM and EVAL_RET_FLAG_REJECT_STEP handling (lines ~454-473)
+The OSDI ABI return-flag handling.  LIM (set by the compiler-emitted StoreLimit callback when a $limit clamp actually changed a probe value) increments CKTnoncon so Newton keeps iterating rather than accepting the clamped iterate as converged.  REJECT_STEP raises CKTosdiStepReject (which niiter.c::3b consumes) and the simulator cuts delta on the next pass.
+
+
+STEP 5: src/osdi/osditrunc.c
+-----------------------------
+A 2× per-step growth cap on the timestep returned by OSDItrunc.
+
+REASON:
+CKTterr is backward-looking: just before a switching transition it sees smooth, low-curvature charge history and recommends a step that spans the entire transition in one shot.  That single huge step puts the predictor outside the model's validity envelope before the limiter ever gets to fire.
+
+Cap growth at 2× the most recently accepted step (CKTdeltaOld[0]) so fast edges are approached gradually.  This is a Spectre-style envelope control, not a hardcoded voltage bound — it remains voltage-range- agnostic because the criterion is purely relative (`max_step <= 2 * prev_step`).
+
+
+STEP 7: src/osdi/osdiregistry.c
+--------------------------------
+Inside the limiter-symbol resolution loop in load_object_file: if a limiter entry already has func_ptr set, skip the canonical-name dispatch.
+
+REASON:
+OpenVA emits limiter implementations for any analog function tagged `(* osdi_limiter = "<name>" *)` — including custom names that have no meaning in the simulator.  The compiled .osdi binary already binds the function pointer; the simulator must respect that binding and not warn about unknown names or overwrite the model-supplied pointer with a built-in (pnjlim, limvds, fetlim, ...).  This is what lets a Verilog-A model entirely own its limiter implementation when it has one.
+
+
+STEP 8: src/frontend/commands.c + src/frontend/inpcom.c
+--------------------------------------------------------
+
+This I got wrong the first time!
+  - commands.c: the earlier `pre_osdi` command alias (a second name for com_osdi) has been REMOVED.  `pre_` is NGSPICE's documented command PREFIX (manual 13.5.56) -- `pre_osdi <file>` already means "run `osdi <file>` before the circuit is parsed", handled generically in inp.c by stripping `pre_` and queueing the remainder.  Registering `pre_osdi` as a command name was redundant and collided semantically with that prefix. Our .control decks now use the plain `osdi` command (loaded before the `source` of the netlist), which is the correct form for a control script; the documented `pre_osdi` PREFIX form remains available for netlist-body use via inp.c.  All testbench decks + the tests/bin/NGSPICE.pm harness were swapped pre_osdi -> osdi.
+  - inpcom.c keeps `osdi` AND `pre_osdi` in the case-preservation exception list (so file-path case survives the preprocessor's lowercasing) -- the `pre_osdi` entry still serves the legitimate documented PREFIX form.  Also adds `set sourcepath` to that list for the same reason.
+
+
+STEP 9: src/spicelib/parser/inpgmod.c + related
+------------------------------------------------
+OSDI model handling at parse time:
+  - INPgetModBin: support W-binning of OSDI models with optional wmin/wmax.  Bin selection compares per-finger W only (w/nf); `m` is NOT applied — it is a parallel-instance multiplier, not a per-finger subdivider, so the per-finger geometry that the bin tables are written against is unchanged by it.  An earlier version of this fork did divide by m here; that turned out to push moderately-large multi-instance devices (e.g. m=266 power PMOS arrays) below every bin's lower W bound and broke binning silently. 22nm BSIM6 and BCD BSIM-BULK decks author wmin/wmax against the commercial simulators per-finger convention.
+  - INPgetModBin: bins are authored in EFFECTIVE (post-shrink) dimensions; instance W/L arrive already effective (the commercial simulators subckt `scale` is applied to the device expressions before numparam, see STEP 31), so bin matching compares w/l directly.  A second-pass nearest-bin fallback handles legitimate over-range cases (e.g. drawn L below the foundry minimum) with a Warning print.
+  - INPdevParse: skip unknown instance parameters silently for OSDI models instead of erroring out — necessary because the OSDI parameter set comes from the compiled binary, not from a static IFparm[] table
+  - parser fix for BSIM-BULK (level 77) model type lookup and bin selection — upstream's MOSFET path assumed BSIM4 was the only level using `nmos`/`pmos` keywords
+  - numparam: suppress error messages for `.option` lines with unknown parameters (compatible with commercial simulators decks that probe options we don't recognize) and ignore substitution errors for string-valued options
+  - INPdoOpts: deduplicate unknown-option warnings and skip the `=value` token after a flagged unknown name
+  - INPdoOpts: a small static allowlist of commercial simulators options that we recognize but do not yet implement (`tmiflag`, `modmonte`, `tmipath`, `etmiusrinput`) is matched case-insensitively and downgraded from `Error:` to `Warning:` in the unknown-option message, so users can tell a known-pending feature apart from a real typo at a glance.  Extend the array in inpdoopt.c when a new such option appears in foundry decks.
+
+
+STEP 10: src/osdi/osdi_defer.{c,h} + src/osdi/osdisetup.c
+          + src/frontend/numparam/{spicenum.c,xpressn.c,numparam.h}
+-------------------------------------------------------------------
+Deferred evaluation of `.model` card `{...}` expressions that reference per-instance geometry symbols (`l`, `w`, `nf`, `m`, `xnf`, `l_calc`).
+
+The need: commercial simulators and Spectre let a `.model` card author per-bin parameters as expressions over the instance geometry, e.g.
+
+    .model egnfet_s2 nmos (level=72 ...
+    +    eotacc = {(l<=1e-7)*4.04e-9 + (l>1e-7)*(l<=1.5e-7)*(...) + ...}
+    +    rdsw   = {(xnf<=3)*215.93 + (xnf>3)*(xnf<=4)*(...) + ...}
+    +    ... ~20 more)
+
+These expressions reference symbols that are not bound at parse time — they are populated per instantiation from `l=...`, `w=...`, `nf=...` on each device line.  commercial simulators defers the evaluation to instance-bind time and substitutes the resolved values.  NGSPICE's numparam, in contrast, evaluates `{...}` eagerly at parse and errors out with `Undefined parameter [l]`, blocking every foundry PDK card that uses this idiom (14nm FinFET, 22nm BSIM6, BCD, ...).
+
+Mechanism (four layers, three of them new):
+
+  1. PARSE-TIME DETECTION (numparam preprocessor).  Before numparam walks a `.model` card and turns each `{...}` into a `numparm____` MARKER, `osdi_defer_preprocess_line()` scans the *original* line (`dicoS->dynrefptr[linenum]`, NOT `card->line` which has already been rewritten with MARKERs).  For each `{body}` or `'body'` whose body contains a bare identifier in the recognized set (`l`, `w`, `nf`, `m`, `xnf`, `l_calc`), it:
+
+       - registers `(model_name, param_name, body)` in a static linked list (`g_defer_head`) for later use, and
+       - rewrites the brace body in-place to `{0}` so numparam still sees a syntactically-valid expression, evaluates it to 0, and substitutes that 0 into the MARKER slot.
+
+Only level 72 (BSIM-CMG) and level 77 (BSIM-BULK) model cards participate; extend `osdi_defer.c` if new OSDI MOS levels appear. `expr_refs_instance_geom()` does identifier-boundary checks so `slope`, `nfb`, etc. don't trigger false positives.
+
+  2. EVAL-WITH-SCOPE HELPER (xpressn.c).  `nupa_eval_with_scope()` pushes a fresh symbol-table scope onto numparam's stack, populates it with `(name, value)` pairs via `attrib()`, runs `formula()` to evaluate an expression in that scope, then pops and frees the scope.  No persistent side effects — does NOT promote any names to the qualified-name table.  Used by the OSDI-side eval (layer 3) and by anything else that needs a transient binding (commercial simulators-style runtime expressions).
+
+An external accessor `nupa_get_dico()` exposes the static `dicoS` for callers outside numparam (e.g. `osdi_defer.c`) that need to invoke `nupa_eval_with_scope()` without seeing the symbol directly.
+
+  3. MODEL-LEVEL PRE-EVAL (osdisetup.c::OSDIsetup).  Before the first `setup_model()` callback runs on a BSIM-CMG / BSIM-BULK model, `OSDIsetup` walks the deferred-table for that model and writes each evaluated expression into the *model* storage slot at a representative default geometry (L=30nm, W=100nm, NF=1, M=1). Chosen to land in the middle of typical FinFET bins so range- check expressions of the form `(l<=1e-7)*A + (l>1e-7)*B` etc. produce in-range physical values.  Without this, setup_model's parameter-range validation rejects the `0` placeholder that layer 1 wrote (BSIM-CMG aborts with `Parameter EOTACC is out of bounds!` etc.).  Per-instance values override in layer 4.
+
+  4. PER-INSTANCE BIND (osdisetup.c::OSDItemp).  In the inner loop after `setup_model()`, OSDItemp reads each instance's actual `l`, `w`, `nf`, `m` via `read_inst_real()`, then re-evaluates every deferred expression at those values and installs the result onto the instance slot via `write_inst_real()` with `ACCESS_FLAG_SET | ACCESS_FLAG_INSTANCE`.  This is what makes two instances of the same model with different L/W produce correctly-binned parameter values, the way commercial simulators do it.
+
+Why both a model-level default and a per-instance bind: setup_model runs before any instance is examined, so it cannot see real geometry — but its range-check is what raises bounds errors.  Layer 3 satisfies the check with a representative default.  Layer 4 then installs the real per-instance values onto the instance storage slots (which OSDI's `descr->access()` keeps separate from model storage), so the actual eval inside setup_instance and the load callbacks sees the correct per-instance L/W/NF.
+
+Helper layout in osdisetup.c: `find_param_idx()`, `read_inst_real()`, `write_inst_real()`, `write_model_real()`, plus the two `apply_deferred_param*` callbacks and their context structs, all live above `OSDIsetup` (forward visibility) and are shared by both OSDIsetup and OSDItemp.
+
+xnf and l_calc: BSIM-CMG model cards use `xnf` as a synonym for `nf` (commercial simulators convention) and `l_calc` as the foundry-computed effective length (`l + p_la` in the subckt wrapper).  The eval-scope binds `xnf = nf` and `l_calc = l` so cards that reference these symbols evaluate correctly.
+
+Validated end-to-end on a bare 14nm FinFET inverter (no PDK subckt wrapper): 22 deferred params per model resolve cleanly at default geometry, no bounds errors, transient runs to completion.  Pre-existing BSIM-BULK paths are unaffected: the preprocessor returns early for any model card without `{...}` braces in deferred-eligible param positions, and `osdi_defer_has()` returns false for them at setup time, skipping the whole pre-eval / re-bind machinery.
+
+ADDITIONS (2026-05-19 — 14nm FinFET full PDK end-to-end work):
+
+10a. SUBCKT-SCOPE SNAPSHOT.  commercial simulators-style PDKs (14nm FinFET et al.) put `.model` cards INSIDE a `.subckt` body and let the model's expressions reference subckt-scope `.param` symbols.  For 14nm FinFET's nfet bin:
+
+           vsat1 = ((281630)+(181990.0)*exp(-1*(l_calc+xl_nfet)/
+                    (4.7639e-008)))*(1+vsat_nfet/11259)*velsat_mult
+
+`xl_nfet`, `vsat_nfet`, `velsat_mult` are passed to the subckt via its `params:` list and resolved per-instance at subckt expansion time.  They are not in the global .param dictionary, and the layer-2 `nupa_eval_with_scope()` only pushes the six reserved instance-geom symbols.  Without a snapshot the expression fails with `Undefined parameter [xl_nfet]` and defaults to 0, leading to runaway BSIM-CMG behavior (VSAT1=0 gives unbounded drift current, source-stepping drives 18854V on gate nodes, full Newton blowup).
+
+Fix: `osdi_defer_register()` now snapshots subckt-scope bindings AT REGISTRATION TIME.  By that point the surrounding subckt has been expanded per-instance, so `entrynb(dico, ...)` resolves identifiers like `xl_nfet` to the value bound by THIS subckt instance's params list.  The snapshot is per-entry (each subckt instance produces its own per-instance .model card with a unique prefix like `x2.xmn1:nfet.0`, so each gets its own snapshot — multi-flavor PDKs work correctly without cross-instance contamination).
+
+       Implementation:
+         - `OsdiDeferEntry` extended with `(n_snap, snap_names, snap_values)`.
+         - `capture_scope_snapshot()` walks the expression for identifiers, skips reserved instance-geom names AND known math keywords (exp, log, sqrt, etc.), looks each up via `entrynb()` (walks the dico's scope stack), and snapshots NUPA_REAL values into the entry.
+         - `osdi_defer_eval()` looks up its entry by `expr_text` pointer equality (caller got the pointer from us via `osdi_defer_for_model`'s callback), then pushes snap (lower priority) + base l/w/nf/m/xnf/l_calc (higher priority — base wins on name conflict) into one merged scope before calling `nupa_eval_with_scope()`.
+         - `osdi_defer_clear()` frees the snap arrays.
+
+       Behavior for non-affected paths:
+         - BSIM4 / BSIM3 / HiSIM / HiSIM_HV / native MOS: never enter `osdi_defer_preprocess_line()` (level filter rejects them) → never register → entire mechanism is a no-op.
+         - OSDI models whose .model expressions don't reference subckt-scope params (most level-72 / level-77 PDKs): snap captures nothing → eval falls into the original code path → identical behavior.
+
+10b. BIN-RANGE SYMMETRIC PREFIX STRIP.  `INPgetModBin` records bin ranges keyed by `modtmp->INPmodName`, which carries the subckt-path prefix (`x3.xmn1:nfet.0`).  `osdi_defer_get_bin_ range()` originally only stripped the prefix on the QUERY side — so a runtime lookup for `x3.xmn1:nfet.0` against a stored `x3.xmn1:nfet.0` produced `strcasecmp("x3.xmn1:nfet.0", "nfet.0")` and missed.  Without the bin range, OSDIsetup fell back to a hardcoded `default_l = 30e-9` for model-level pre-eval, which made 14nm FinFET's `(l==14n)*X + (l==16n)*Y`-style expressions return 0 (neither equality test fires at 30nm), and BSIM-CMG's setup_model auto-bumped MEXP=0 → 2 with a warning.  Fixed by stripping the `<subckt-path>:` prefix on BOTH sides of the comparison.
+
+10c. FLOAT-TOLERANT `==` / `<>` IN NUMPARAM.  See STEP 12 for the fix in `xpressn.c::operate`.  The relationship to deferred eval: even with snap (10a) and bin range (10b) in place, `(l == 0.014e-6)` evaluated to 0 because bin midpoint `0.5*(1e-8+1.8e-8) = 1.3999999999999999e-08` is 1 ULP off from `0.014e-6 = 1.4e-08`, and instance `l=14n` parses as `14 * 1e-9 = 1.4000000000000001e-08` (also 1 ULP off). Strict IEEE `==` fails in both directions; commercial simulators-compatible tolerance lets both shapes match.  Without all three fixes, 14nm FinFET fails Newton convergence even though every individual layer looks correct.
+
+
+STEP 11: src/spicelib/parser/inp2m.c (model_numnodes)
+------------------------------------------------------
+Add OSDI BSIM-BULK and BSIM-CMG to `model_numnodes()` returning 5:
+
+    if (type == INPtypelook("bsimbulk") ||      /* 5 ; (d,g,s,b,t) */
+        type == INPtypelook("bsimcmg_va"))      /* 5 ; (d,g,s,e,t) */
+    {
+        return 5;
+    }
+
+Without this, the parser fell through to the default `return 4` for OSDI BSIM-BULK / BSIM-CMG model types.  The two functions in `INP2M()` that consume this count then bound only 4 ports on the GENinstance — the 5th port (temperature / extra contact) was left unbound.  Empirically this manifested as drain/source mis-bind on PMOS instances of BSIM-BULK (symptom: simple CMOS inverters drew many amperes in steady state and failed to switch rail-to-rail — the body diode forward-biased through the supply).
+
+The fix aligns the parser's port count with the OSDI device's declared port count.  With model_numnodes=4, the loop at inp2m.c:158 set up only 4 GENnode slots; the OSDI runtime's node_mapping[] then read past the bound region for port 5 and picked up a stale/wrong node index, effectively short-circuiting the body to an unrelated node.  With numnodes=5, port 5 is explicitly initialized (to -1 if the instance line has only 4 node tokens, the conventional "unconnected" default) and the runtime's mapping is well-defined.
+
+This was the root cause of something that happened earlier: BSIM6 / BSIM-BULK "PMOS inverter drawing amps" 
+
+
+STEP 12: src/frontend/numparam/xpressn.c (operate)
+---------------------------------------------------
+commercial simulators-style tolerance for `==` (case `'='`) and `<>` (case `'#'`) on floating-point operands.  Strict IEEE bit-equality breaks foundry-PDK expressions of the form `(l == 0.014e-6) * X + (l == 0.016e-6) * Y` because instance `l=14n` parses as `14 * 1e-9 = 1.400000000000001e-08` (1 ULP above 1.4e-08), and the bin midpoint `0.5*(1e-8+1.8e-8) = 1.39999999999999e-08` (1 ULP below).  Either way the literal `0.014e-6 = 1.4e-08` exact comparison fails and the expression returns 0.
+
+New equality rule (applied to both `==` and `<>` symmetrically):
+
+|x - y| <= max(|x|, |y|) * 1e-9   OR   |x - y| < 1e-18
+
+  - 1e-9 relative tolerance is generous enough to absorb several ULPs of accumulated rounding through a chain of `*` / `+` / `exp` operations.
+  - 1e-18 absolute floor handles values right at zero (no relative scale to compare against).
+  - Integer comparisons stay unambiguous: `mexp == 2` checks the distance between e.g. 1.0 and 2.0, which is 100% relative — far beyond 1e-9.
+
+Verified safe for:
+  - 14nm FinFET tb_driver: 236,939 transient rows, 0 errors.
+  - 22nm BSIM6 ULP driver_tb: 2,505 rows, 0 errors (was passing before).
+  - 22nm BSIM6 ULP driver_lv (with `osdi` loader added): 2,280 rows.
+  - 22nm BSIM6 RF driver (with `osdi` loader added): 2,224 rows.
+  - BCD sample test: see STEP 17 — passes after two additional numparam fixes (`*+` and `var`-as-identifier).
+
+
+STEP 13: src/spicelib/devices/hisimhv2/hsmhv2ld.c
+--------------------------------------------------
+NaN-guards around HiSIM_HV (LDMOS, level=73) load function.  The testbench symptom: at the first DC OP iteration of a foundry deck that mixes HiSIM_HV LDMOS (5V driver output stage) with BSIM-CMG core CMOS, the LDMOS load function received NaN voltage inputs from `rhsOld[]` because upstream BSIM-CMG instances had produced NaN solutions during source stepping (caused by VSAT1=0 — see STEP 10's deferred-eval failure modes, since fixed).  Once a NaN enters the solution vector, HiSIM_HV's 5000+-line eval cascades it through every subsequent device.
+
+Pragmatic guards added (each with a `static int n = 0; if (n++ < 20)` cap on diagnostic printf to prevent log explosion):
+
+  - Input-side guard in the else / Newton branch (around line 645): vbs/vgs/vds/vges/vdbd/vsbs/vbse/vgse/vdse/vsubs/deltemp NaN → state0 fallback, with hard non-NaN defaults if state0 itself is degenerate (0/0/0) or NaN.
+  - MODEINITJCT off-mode path (around line 508): bump zero-voltage sentinel to 0.1 V instead of 0.0 V to keep junction-diode log arguments finite.
+  - Linear-branch voltage NaN-guard (line 1165): vddp / vggp / vssp / vbpdb / vbpb / vbpsb (the device's internal-branch voltages derived from rhsOld) NaN → 0.0 before being passed to HSMHV2evaluate / HSMHV2rdrift / HSMHV2dio.  This was the guard that finally broke the feedback loop: at iteration 2 (MODEINITFIX) `rhsOld[dNode] - rhsOld[dNodePrime]` would propagate NaN into the eval, the eval would return clean values for ids/gm/qd but rdrift would compute Rd from the NaN vddp directly, producing Rd=-nan and re-injecting NaN into the stamp.
+  - Output-side guard after HSMHV2evaluate: zero NaN entries in HSMHV2_ids, _dIds_dVdsi, _dIds_dVgsi, _qd, _qg, _Rd, _Rs etc. before they're stamped into the matrix.
+
+Validated with 14nm FinFET's ld3nfet (HiSIM_HV type=28, 5V LDMOS driver): pre-eval shows vddp=0 (post-guard) instead of NaN, eval returns finite ids=186µA at DC OP, transient runs to completion.
+
+
+STEP 14: src/frontend/inpcom.c (parser performance + commercial simulators compat)
+--------------------------------------------------------------------
+Several parse-time performance and commercial simulators-compatibility fixes that were needed for loading large foundry PDKs end-to-end.  14nm FinFET's tt-corner deck is ~190k lines and triggered every one of these as a hot path.
+
+  - `inp_sort_params` O(N²) → O(N) hash.  Two nested-N² loops (duplicate-detection + dependency-scan via `search_plain_identifier`) replaced with a single `NGHASHPTR` from param_name → (i+1) used for both passes.  14nm FinFET's TT corner calls this ~500 times with N up to 2700; pre-fix this was the dominant runtime cost (~10 min of total parse).  Now O(N) + O(Σ expression chars) per call.
+
+  - `find_function` O(N) → O(1) hash.  Added `NGHASHPTR fcn_hash` to `struct function_env`, populated alongside the existing linked list of `.func`s.  `find_function` was being called once per `(` per line during macro expansion (millions of times).  14nm FinFET's TT corner loads ~1300 `.func`s into env at top level, so the old linear scan was averaging ~1300 strcmps per call.  Pre-fix runs hit 7.6M calls × ~1300 = ~10 billion strcmp operations.  With the hash, lookup is O(env_chain_depth) per call.  The linked list is kept for ownership/iteration; freed last in `delete_function_env`.
+
+  - `$`-as-end-of-line comment relaxed in newcompat.hs mode. Previously `inp_stripcomments_line` required ` `, `,`, or `\t` immediately before `$` for it to be recognized as a comment.  14nm FinFET's `nwres.inc:62`-style `...)'$ comment` has `'` (single quote) immediately before `$` and so was NOT stripped, leaking `$` into the brace expression handed to numparam and producing a cascade of `Preparing expression for numparam / What is this? / $)*(...)` errors.  In HS mode `$` is now accepted as a comment regardless of preceding char. Non-HS modes are unchanged (conservative).
+
+  - `inp_casefix` keepquotes preserves inner content case.  When the `keepquotes` flag was set, the function preserved the surrounding `"` characters but still lowercased the content between them.  Foundry PDKs put case-sensitive file names inside `str("...")` calls (e.g. `str("./RF_COMPONENTS/ egnfet_SHE.table")`); lower-casing breaks fopen on case- sensitive file systems.  Added `string++` in the keepquotes branch so the while-loop's inner-skip advances to the closing quote and preserves the inner content.
+
+  - `inp_read` line-by-line lowercaser made quote-aware.  Before `inp_casefix` runs, `inp_read`'s line-by-line lowercaser unconditionally lowered every char on the line (with a small `.lib`/`.inc`/control-cmd exception list).  `.param` lines containing `table_param(str("..."))` fell into "all other lines" and got their path arguments lowercased.  Added `in_dq` quote tracking so chars inside double-quoted strings are preserved.
+
+  - Comfile `*ng_script` detection past leading blank lines (3 places: `inpcom.c::inp_read`, `inpcom.c::inp_readall`, `inp.c::inp_spsource`).  Previously the test inspected only the FIRST line read from the file.  If the file had leading blank line(s) (14nm FinFET's `tran` control file does), comfile detection failed and the file was treated as a spice deck. The `.control { source other.net }` block STILL ran (which is why things "worked"), but it triggered a SECOND full inp_readall/inp_spsource pass for the inner netlist — doubling parse time and producing two `Note: Compatibility modes` / `Circuit:` headers.  Now: walk past leading blanks before the `ciprefix("*ng_script", ...)` test.
+
+
+STEP 15: src/frontend/numparam/table_param.{c,h}
+                + src/frontend/numparam/xpressn.c::formula() (XFU_TABLE_PARAM)
+                + src/frontend/numparam/spicenum.c (cardsource plumbing)
+------------------------------------------------------------------
+commercial simulators's `table_param()` function — multi-dimensional lookup from an external `.table` file with linear interpolation.  14nm FinFET's PDK uses it ~1300 times across `fets.lib`, `fets_rf.lib`, `fets_hf.lib`, etc. for self-heating thermal-resistance lookup (e.g. `rth0_n = table_param(str("./RF_COMPONENTS/egnfet_SHE.table"), 2, xnf_clamp, nfin_clamp, 1, l_clamp, 1)`).  Without this, every RF/self-heating param ends up undefined and the cascade kills PDK read.
+
+Implementation:
+  - `table_param.c/h` (new): parses the .table file (header line declares column names + types, data rows follow), caches the parsed result in an `NGHASHPTR` keyed by filename, does multi- dim interpolation (integer keys exact-match, real keys linear-interpolate between bracketing rows; tensor-product multilinear for n_real > 1), clamps out-of-range queries (matches commercial simulators's no-extrapolation policy).
+  - `xpressn.c::formula()`: new XFU_TABLE_PARAM enum entry and `else if (fu == XFU_TABLE_PARAM)` branch.  Parses variadic args (up to 64), strips the `str(...)` wrapper and quotes from the filename arg, evaluates the remaining args via recursive `formula()`, and calls `table_param_lookup()`.
+  - `spicenum.c::nupa_eval`: sets `dicoS->cardsource = card->linesource` so xpressn's XFU_TABLE_PARAM dispatch can derive `dir_hint` from the calling card's source-file directory.
+  - `table_param_lookup` path resolution order: absolute → `inp_pathresolve` (sourcepath + cwd) → relative to `dir_hint` (the .lib's directory — matches commercial simulators's behavior of resolving relative paths against the file that emitted the call) → relative to `inputdir`.
+
+`numparam.h` adds the `cardsource` field to `dico_t` and the `nupa_skip_line()` declaration.
+
+
+STEP 16: src/frontend/subckt.c (X-prefix → OSDI VA-module fallback)
+--------------------------------------------------------------------
+14nm FinFET's PDK uses `X<name>` to instantiate both subckts AND Verilog-A modules (commercial simulators convention).  NGSPICE's `inp_subcktexpand` only knew how to handle `X<name>` → subckt; an X-instance whose target is a registered OSDI device emitted "Cannot find subcircuit" and aborted the deck.
+
+Fix: when an `X<name>` instance's target type isn't a `.subckt`, call `INPtypelook(target)` on the token after the instance's nodes.  If it's a registered OSDI device (e.g. `esd_nfet_monitor` after the testbench loads `esd_modules.osdi`), comment out the line and warn once per session.  The commercial simulators convention is that `X<name>` calls either a `.subckt` OR a Verilog-A module; NGSPICE's expander only handled the former.  For diagnostic-only modules (ESD monitors emit `$strobe` for spec violations, no current/ charge contributions) the comment-out is semantically safe.
+
+A more complete fix would auto-synthesize a `.model + device-prefix` shim so the OSDI dispatch can attach to a non-MOSFET VA module, but that needs the OSDI runtime to accept generic-prefix instances; left for a future change.
+
+The X-prefix fallback also calls `nupa_skip_line(linenum)` to mark the now-commented line inert from numparam's perspective — otherwise numparam still tries to dispatch the line as a subckt call ("X" category) and emits "illegal subckt call" / "Cannot find subcircuit".
+
+
+STEP 17: src/frontend/numparam/xpressn.c (formula parser dispatch)
+-------------------------------------------------------------------
+Two BCD read fixes in the inner formula-parser loop. Both were uncovered by running the BCD sample `NLDMOS`, which loads `fixed_corner_bcdlite.inc` (twelve-way switch chains of the form `(sw0)*(0)+(sw1)*(0)+ (sw2)*(±X)+...+(sw11)*(0.67*±X)`) and `diode_rr.inc` (subckt parameters with chained references including a parameter named `var`).  Before these fixes the sample produced 443 errors / 180 "Expression err".  After: 0 errors, 1,212 transient rows.
+
+17a. UNARY `+` AFTER A BINARY OPERATOR.  The state-machine pair
+check at the top of the inner loop handles `binop binop -` specially — it absorbs the `-` as a unary-minus on the next atom (sets `negate = 1`, `continue`):
+
+         if (oldstate == S_binop && state == S_binop && c == '-') {
+             ok = 1;
+             negate = 1;
+             continue;
+         }
+
+There was no symmetric branch for unary `+`.  `5*+3`, `0.67*+2e-8`, `1+2*+3` all failed with "Misplaced operator" while `5*-3`, `0.67*-2e-8`, `1+2*-3` parsed fine.  Foundry BCD's fixed-corner switch chains use explicit `+` signs for readability (`(sw4)*(0.67*+0.08)` next to `(sw5)*(0.67*-0.08)`), so the asymmetry blocked the whole PDK.
+
+Fix: add the symmetric branch right below the `-` one.  No `negate` flag needed — unary `+` is a no-op sign; just absorb the token and continue.
+
+17b. FUNCTION-KEYWORD VS. IDENTIFIER DISAMBIGUATION.  When numparam
+sees an identifier in the formula loop, it tests it against `fmathS` (the list of built-in function names: sqrt, sin, exp, ..., min, max, pow, var, vec, table_param, etc.).  If the name matches, `state = S_init` waits for the `(` to start argument parsing.
+
+But the code did NOT check whether `(` actually follows.  If the identifier happens to match a keyword but is being used as a parameter name (no `(`), the parser silently dropped it — leaving `state = S_init` with no atom on the stack, and produced "Expression err: <name>" / "Cannot compute substitute" downstream.
+
+Foundry decks use this pattern routinely.  A foundry BCD diode_rr.inc declares the subckt parameter chain:
+
+         + var = 0.0
+         + vrb = 'var'
+         + vb  = 'vrb'
+
+When numparam evaluates `vrb='var'`, the identifier `var` matches the built-in `var(...)` (read an NGSPICE variable) and gets classified as a function, then never resolves.
+
+Fix: peek past the identifier and whitespace; only treat as a function call if the next non-space char is `(`. Otherwise fall back to `fetchnumentry()` for the parameter lookup, and reset `fu = 0`.
+
+Verified together:
+  - Foundry BCD sample: 1,212 rows, 0 errors (was 443 errors with 180 Expression err before this session).
+  - 14nm FinFET tb_driver: 236,340 rows, 0 errors, 0 warnings — unaffected (no `*+` or keyword-as-identifier uses).
+  - 22nm BSIM6 ULP driver_tb: 2,505 rows, 0 errors — unaffected.
+
+Both fixes are conservative.  17a only fires when `state` is already advancing from binop to binop, and only adds an absorbing branch for `+` that mirrors the existing `-` branch.  17b only changes behavior when an identifier matches a function keyword AND has no `(` following — previously a silent failure, now a working identifier lookup.
+
+
+STEP 18: src/osdi/osdi.h, osdiregistry.c (OSDI 0.5 ABI bump)
+-------------------------------------------------------------
+S3a of the OSDI 0.5 event-driven operators rollout — see https://sourceforge.net/projects/openva/ /OSDI_0_5_DESIGN.md for the full design. The 0.5 minor bump adds the simulator surface that compiler-side emission of `last_crossing`, `@(cross())`, `@(timer())`, and `@(initial_step)`/`@(final_step)` needs.  All new fields are appended (struct tails), so 0.4 binaries still load against the 0.5 layout — the loader's bounds-checked descriptor-size read in osdiregistry.c handles the size mismatch gracefully.
+
+18a. EVAL_RET_FLAG additions and version bump.
+OSDI_VERSION_MINOR_CURR: 3 → 5. New return-flag bits the model ORs into the eval-return word: EVAL_RET_FLAG_EVENT = 32 — model populated entries in sim_info->pending_events[] this eval and wants the runtime to schedule them. EVAL_RET_FLAG_CROSS = 64 — model wrote one or more cross_expr[] slots this eval and wants the runtime to run direction-aware sign-flip detection against the previous accepted iterate. Existing flags (LIM=1, FATAL=2, FINISH=4, STOP=8, REJECT_STEP=16) are unchanged.  32/64 was chosen during the design phase (originally 16/32) specifically to dodge the existing REJECT_STEP=16 bit — collision-free is more important than contiguous numbering.
+
+18b. OsdiSimInfo tail extension (4 new fields appended at offset 72):
+double *cross_expr           — per-instance array sized by descr->num_cross_exprs, lazily allocated by the runtime. OsdiEventRequest *pending_events — per-instance scratch array sized by descr->num_event_slots, written by the model when it wants to request a future event. uint32_t at_scheduled_event  — non-zero on the eval where the runtime fires a previously- scheduled event.  Functions as a bool widened to u32 for ABI stability. uint32_t fired_event_id      — meaningful only when at_scheduled_event != 0; indexes descr->event_slot_metadata. sizeof(OsdiSimInfo) grows from 72 to 96 bytes.
+
+18c. New ABI structs (declared inline above OsdiDescriptor):
+OsdiEventRequest { double at_time; uint32_t event_id; uint32_t kind; }  — model→runtime: "fire an event of `kind` (CROSS/TIMER/...) at simulator time `at_time` with discriminant `event_id`." OsdiCrossExprMeta { int32_t direction; double ttol; double etol; uint32_t event_id; }  — per-cross_expr metadata: direction is +1 / -1 / 0 (rising / falling / any), ttol/etol are the desired bisection tolerances (0.0 = simulator default), event_id links the cross slot to a downstream event_slot. OsdiEventSlotMeta { uint32_t kind; char *name; }  — per-event- slot metadata: kind is OSDI_EVENT_KIND_CROSS / TIMER / INITIAL_STEP / FINAL_STEP, name is a diagnostic string surfaced in logs.
+
+18d. OsdiDescriptor tail extension (4 new fields after the 0.4 v0.4
+ABI block): uint32_t num_cross_exprs; OsdiCrossExprMeta *cross_expr_metadata; uint32_t num_event_slots; OsdiEventSlotMeta *event_slot_metadata; sizeof(OsdiDescriptor) = 344 bytes.
+
+18e. OSDI_EVENT_KIND_* discriminants — CROSS=1, TIMER=2,
+INITIAL_STEP=3, FINAL_STEP=4.  Used by the runtime to dispatch the right body when a scheduled event fires.
+
+18f. osdiregistry.c: hard-coded the v0.3 strict-equality compatibility
+check that previously used the symbolic OSDI_VERSION_MAJOR_CURR / MINOR_CURR macros.  Bumping those macros to 0/5 would have made the "original OpenVAF v0.3" detection branch dead code, so the literal `0/3` is now used instead — the branch's purpose is to identify true 0.3 binaries, not "the current ABI."
+
+S3a is purely declarative.  The runtime that acts on these new fields ships in STEP 19.
+
+
+STEP 19: src/osdi/osdiload.c, osditrunc.c, osdidefs.h (OSDI 0.5 event runtime)
+-------------------------------------------------------------------------------
+S3b — the per-instance event-state machine that turns the new SimInfo fields and ret-flag bits into actual behavior.  Built on top of the STEP 18 declarations; nothing else in NGSPICE needs to change to support a 0.5-aware model.
+
+19a. OsdiExtraInstData extension (osdidefs.h).  Per-instance state
+the runtime maintains independent of the model: double *cross_expr_arr        — array of size num_cross_exprs, aliased into sim_info->cross_expr every eval so the model writes here directly. double *prev_cross_expr_arr   — value at the previous accepted eval; the runtime compares cross_expr_arr against this to detect direction-matched flips. OsdiEventRequest *pending_events_arr — model-writable scratch for new event requests. OsdiEventRequest *scheduled_events — sorted-by-at_time queue of events the runtime has already accepted from pending_events_arr and not yet fired. uint32_t scheduled_count      — live entries in scheduled_events. bool cross_init               — guards flip detection until at least one prior eval has latched prev_cross_expr_arr. ExtraInstData grows from 24 to 64 bytes; all-zero default is a valid quiescent state (NULL pointers, no scheduled events).
+
+19b. osdi_event_prepare() (osdiload.c).  Runs immediately before
+     descr->eval each call:
+        - lazy-allocates cross_expr_arr / pending_events_arr / scheduled_events the first time num_cross_exprs or num_event_slots is non-zero for an instance,
+        - wires sim_info_local->cross_expr / pending_events to point at the per-instance arrays,
+        - peeks the front-of-queue scheduled event: if its at_time matches the current abstime within 1 ps, sets at_scheduled_event=1, fired_event_id=meta.event_id, and pops the event.
+
+19c. osdi_event_postprocess() (osdiload.c).  Runs immediately after
+     descr->eval returns:
+        - if eval_flags & EVAL_RET_FLAG_EVENT, drains pending_events_arr[] into scheduled_events (sorted insert by at_time);
+        - if eval_flags & EVAL_RET_FLAG_CROSS and cross_init is true, compares cross_expr_arr[i] vs prev_cross_expr_arr[i] direction-aware (meta.direction > 0 needs prev<0 && curr>=0, etc.) and on a flip schedules a CROSS event at the current abstime (S3c will refine this to true bisection);
+        - latches cross_expr_arr → prev_cross_expr_arr and sets cross_init = true.
+
+19d. eval() wrapper (osdiload.c).  Wraps each descr->eval call in
+osdi_event_prepare / postprocess, using a per-eval mutable OsdiSimInfo copy (sim_info_local) so the cross_expr / pending_events pointer wiring is per-instance and safe under OMP.
+
+19e. OSDItrunc dt clamp (osditrunc.c).  Before letting the LTE
+truncation routine grow dt unboundedly, peek the front of scheduled_events for each instance.  If a scheduled event is in the future and closer than the LTE-proposed timestep, clamp dt so the next step lands exactly on the event time.  This is what makes the prepare()-time abstime-match fire reliably — the break-point math is done in the truncation layer, the event match in the prepare layer.  Combined with the existing 1.5× growth cap (STEP 5), dt smoothly closes on each scheduled event.
+
+Verification: a hand-rolled synthetic-timer OSDI library (https://sourceforge.net/projects/openva/ /integration_tests/SYNTH_TIMER) advertises num_event_slots=1, schedules a TIMER 1 ns from the first eval, and checks that NGSPICE fires the event with at_scheduled_event=1, fired_event_id=0 at exactly t=1 ns.  Trace shows the dt-clamp closing onto t=1ns and the model's event-fire detection landing on that step.
+
+S3c (true sample-exact bisection on cross-flip) is deferred — for now the cross event fires at the post-flip step's abstime, accuracy = local dt.  The infrastructure is in place to swap in a bracket-and-midpoint loop when the accuracy demand justifies it.
+
+
+Future cleanups
+----------------
+- The 0.7 V / 0.9 V references inside sanitize_jacobian (clamping NaN diagonal conductance by a "supply-rail-like" denominator) are still pragmatic constants.  They are not used as voltage limits per se, but they are the closest thing to a voltage-rail assumption left in the file and should eventually be replaced by something derived from the per-instance Jacobian column scaling.
+- Once the upstream OSDI ABI exposes per-iteration delta-V information natively, the per-shape simparams in 4a become a fallback path; the limiter will read the bound directly from the ABI.
+
+
+STEP 20: src/osdi/osdi.h, osdiload.c, osdidefs.h (OSDI 0.5 sample-exact cross events — S3c plan B)
+--------------------------------------------------------------------------------------------------
+S3b's cross-event fire was off by one local dt: the runtime detected the sign flip during the eval that overshot the crossing and scheduled the event at that step's abstime, so the model saw at_scheduled_event = 1 some `dt` past the actual zero. For a 1 kHz sine sampled at 10 us, that's ~5.8 us of error on every fire — fine for "did something cross?" semantics but useless if the model wants the time of the crossing for phase / period / arrival accounting.
+
+S3c was originally going to be true bisection: on flip, set the [t_lower, t_upper] bracket, signal REJECT_STEP, let OSDItrunc clamp dt to the bracket midpoint, narrow until convergence, but that collided with dctran's reject path:
+
+  - REJECT_STEP routes through CKTosdiStepReject, which raises CKTnoncon, which makes niiter return E_ITERLIM.
+  - dctran handles E_ITERLIM by backing CKTtime up by CKTdelta AND cutting CKTdelta /= 8.
+  - dctran does NOT call CKTtrunc between rejected retries (it jumps via `goto resume:` which only runs setup, not truncation).
+  - So the OSDItrunc bisection dt-clamp never gets the chance to drive dt toward the bracket midpoint; the /8 shrinkage compounds unchecked and ten rejections later the simulator aborts with "Timestep too small".
+
+Plan B replaces bisection with linear interpolation done inline in postprocess: t_cross = t_prev + dt * |prev| / (|prev| + |curr|). The current step still accepts; the event sits in scheduled_events at t_cross even though t_cross < CKTtime; prepare()'s fire check relaxes from a fabs-equality window to "abstime >= t_event - 1ps"; and the model latches the true crossing time from a new SimInfo field rather than abstime.
+
+20a. OsdiSimInfo tail extension (osdi.h, +8 bytes; struct grows
+96 -> 104).  Single trailing double:
+
+       double scheduled_event_time;
+
+Defined when at_scheduled_event != 0; carries the t_event the runtime scheduled (linear-interp crossing time for CROSS events; the model-provided at_time for TIMER events).  Zero when no event is firing.  Existing 0.5 binaries that don't read this field continue working — the bounds-checked descriptor read in osdiregistry.c accepts the new SimInfo size, and the leading fields keep the same offsets.
+
+20b. OsdiExtraInstData (osdidefs.h) gains `double prev_eval_time`.
+The abstime of the last accepted eval that latched prev_cross_expr_arr.  Used as the lower-bound t_prev for the linear-interp formula.  Default -1.0 means "no prior eval"; postprocess gates flip detection on it being >= 0 so the first eval (where prev_cross_expr_arr is still zero) doesn't trigger a spurious crossing.
+
+20c. osdi_event_prepare (osdiload.c) relaxes the match window from
+
+fabs(t_event - abstime) < 1e-12
+
+to
+
+abstime >= t_event - 1e-12
+
+and on fire, also writes the popped event's at_time into sim_info_local->scheduled_event_time before calling descr->eval.  Cross events almost always fall BETWEEN two simulator steps so the exact-equality window from S3b would have meant the cross event never fired with linear-interp scheduling.  Timer events still fire on the exact match because they're scheduled via CKTsetBreak-style integer time-multiples; nothing changes for them.
+
+20d. osdi_event_postprocess (osdiload.c) replaces the S3b
+"schedule at current abstime" stub with the linear-interp formula.  Falls back to abstime when |prev|+|curr| would be zero (both endpoints exactly zero — degenerate, fire-now is the safest default).  cross_init still gates against the first eval's all-zero prev_cross_expr_arr.
+
+20e. osditrunc.c — no net change.  The earlier "OSDItrunc bisection
+dt-clamp" experiment is reverted.  The scheduled-event dt-clamp from STEP 19 still runs; it just sees cross events whose at_time may be in the past relative to CKTtime (negative dt_to_event, no clamp).  That's fine: the event fires on whatever step happens to be at or past t_event.
+
+Verified residual error: a SYNTH_CROSS hand-rolled OSDI model that writes sin(2*pi*1k*t) to cross_expr[0] and dumps the bisected time on fire shows t_cross = 1.000000271358e-3 / 2.000000271358e-3 on the first two rising zeros — 271 picosecond residual vs the analytic 1 ms / 2 ms.  That's the second-order Taylor error of linear interp against the sine curvature; for a 1 kHz sine sampled at 10 us the predicted residual is ~80 ps so we're roughly in the right magnitude.  S3b's residual was the full local dt ≈ 5.85 us, so plan B is ~20,000x better despite leaving the simulator's step controller entirely untouched.
+
+True bisection — accuracy bounded by meta.ttol / etol rather than the linear-interp error — would need either:
+  - a new CKT field (e.g. CKTosdiNextDelta) that osdiload could set to override dctran's /8 shrinkage between rejected retries, or
+  - inline midpoint probes via descr->eval with the contribution flags cleared (cheap for $abstime-driven cross expressions, accurate-but-stale for V()-driven ones because the network state would be pinned to the post-flip step). Both are larger changes than plan B and aren't justified until a model in the corpus actually needs sub-ns crossing accuracy.
+
+
+STEP 21: src/maths/ni/niiter.c (stagnation-gated Stage B damping)
+=====================================================================
+
+The two-stage Newton-step limiter introduced in STEP 9 fixed pinb / net_7 oscillation on 22nm BSIM6 ULP by:
+
+Stage A — scalar damping when max|Δv| exceeds dv_max (CKTabsDv, default 0.5 V). Stage B — past iter 3, progressively halve dv_max (down to ~8 mV by iter 10) so any oscillating Newton damps out.
+
+Stage A is fine.  Stage B's UNCONDITIONAL halving was breaking the opposite failure mode on the same testbench: the VSN node — an L1 (2.7 nH) coupled supply driving a 500-finger-multi BSIM-BULK driver — naturally needs ~100 mV swings per Newton iteration to track each switching transition (the inductor kick is V = L·di/dt ≈ 1.8 V).  By iter 10 the dv_max cap had collapsed to 8 mV and the clamp prevented Newton from moving enough per iteration to reach the solution within itl4 = 10, even though max|Δv| was DECREASING monotonically iter-to- iter.  Newton was converging in spirit but artificially under- corrected to look like it was failing.  dctran's failure handler cut CKTdelta by 8 fourteen times in succession (5e-9 → 6.25e-21), well below CKTdelmin, and the run aborted at t ≈ 1.382 µs / 42851 rows.
+
+Fix: gate Stage B on a STAGNATION test.  Track the previous iteration's pre-clamp max|Δv| in a local NIiter variable; on each iter past 3, only apply the progressive halving when
+
+max_dv > 0.7 · prev_max_dv
+
+i.e. max|Δv| isn't dropping by at least 30% iter-to-iter.  When Newton is making real monotonic progress, dv_max stays at the full CKTabsDv and Newton steps at its natural rate.  When Newton is oscillating or stuck (max_dv flat or growing), Stage B kicks in as before.
+
+Why 0.7: well-conditioned systems converge quadratically (ratios <<0.5), stiff systems linearly (ratios ~0.5).  0.7 catches both as "making progress" while flagging slow / flat as stagnating.  Could relax to 0.8 if a future workload shows it.
+
+Why track PRE-clamp max_dv: post-clamp max_dv is pinned at dv_max whenever Stage A fires, which destroys the iteration-trend signal. Pre-clamp tracks Newton's actual residual norm.
+
+Pinb / net_7 regression preserved: when Newton truly oscillates, the ratio stays near 1.0 (the oscillation amplitude doesn't decrease without damping), Stage B fires on schedule, and the test passes the same way it did under STEP 9 + STEP 7.
+
+Acceptance criterion: 22nm BSIM6 ULP driver_lv_2v5_tb must run to the full 10 µs / convergence, not abort at 1.382 µs.  14nm FinFET (236,939 rows) and BCD (1,212 rows) must continue to pass.
+
+STEP 21b update (STEP 21 alone insufficient): the Stage-B gating made Newton's damping schedule more permissive but the failure mode was upstream of Newton — see STEP 22 below.
+
+
+STEP 22: src/spicelib/analysis/dctran.c (non-uniform-history predictor guard)
+=============================================================================
+
+Newton iteration converges from a STARTING POINT supplied by the predictor (NIpred).  Order-2 Newton-divided-difference for trapezoidal integration:
+
+  b   = -dt_now / (2 * dt_prev)
+  a   = 1 - b
+  dd0 = (sols[0] - sols[1]) / dt_prev
+  dd1 = (sols[1] - sols[2]) / dt_prev_prev
+  pred = sols[0] + (a*dd0 + b*dd1) * dt_now
+
+This is ok when dt_prev and dt_prev_prev are within an order of magnitude.  It is NOT ok after the simulator has just been around a breakpoint:
+
+  - At a breakpoint the dctran logic at line 488 cuts dt to pico-second scale and sets CKTorder=1.
+  - One step later, line 822-830 bumps CKTorder back to 2 if the LTE test passes at the cut dt.
+  - The 1.5× OSDItrunc growth cap then re-grows dt to the nanosecond scale over the next ~15 accepted steps.
+  - But after the FIRST few steps in that growth sequence, dt_prev_prev still records the picosecond cut step from the breakpoint.  The dd1 term — (sols[1] - sols[2]) / dt_prev_prev — gets dividing by a value 100×–10000× smaller than dt_prev, so dd1 magnitudes blow up to ~10^10 V/s for any node whose state changed across the breakpoint.
+
+Concrete numbers from the 22nm BSIM6 ULP failure at t = 1.38187 µs:
+dt_prev      = 4.66 ns  (just-accepted big step) dt_prev_prev = 21 ps    (the cut step at the previous breakpoint) Newton-divided-difference dd1 for VSN ≈ 0.5 V / 21 ps = 2.4e10 V/s b * dd1 * dt_now ≈ -0.057 * 2.4e10 * 0.53 ns ≈ -0.72 V Predictor starts Newton at VSN ≈ sols[0] - 0.72 V.
+
+Newton then has to undo a 0.72 V starting offset within itl4 = 10 iterations, against Stage A's 0.5 V/iter scalar clamp — possible in principle (2 iters at 0.5 V each gets you within 0.28 V), but the overshoot also propagates to coupled nodes (the driver subcircuit's internal nodes pinb / net_6 / net_7 etc. all see correlated wrong predictions), and the multi-node simultaneous correction within Stage A's proportional structure burns more iterations than itl4 allows.
+
+Fix: in dctran.c, just before NIcomCof, sanity-check the step-size history:
+
+  if (CKTorder > 1 &&
+      CKTdeltaOld[1] > 0 && CKTdeltaOld[2] > 0) {
+      double r = CKTdeltaOld[1] / CKTdeltaOld[2];
+      if (r > 10.0 || r < 0.1)
+          CKTorder = 1;
+  }
+
+When dt_prev / dt_prev_prev is more than 10× off in either direction, force CKTorder=1 for this step.  NIpred at order=1 is plain linear extrapolation from sols[0..1] — immune to the dd1-blowup pathway because it doesn't use sols[2] at all. dctran's existing order-bump logic at line 822-830 will resume order=2 on the next step once dt_prev_prev catches up to the post-breakpoint step scale.
+
+Threshold of 10× chosen so smooth dt-growth sequences (the 1.5× OSDItrunc cap, factor 1.5 per step) never trigger — only genuine breakpoint-induced discontinuities in dt history.  A future refinement could derive the threshold from the integration order itself (the order-2 truncation error is exact when dt is uniform and degrades as ratio^2), but 10× is well inside the safe range.
+
+Round-2 verification: 22nm BSIM6 ULP advanced from 42851 rows (abort at VSN, t = 1.382 µs) to 43344 rows (abort at PINB, t = 1.369 µs). VSN convergence resolved; PINB still failing — see STEP 23 below. 14nm FinFET: 256,194 rows, full pass (better than the 236,939 pre-S8 baseline — the smaller-dt-growth-per-step pattern from STEP 22 lets more steps land in transients).
+
+
+STEP 23: src/osdi/osditrunc.c (growth cap tightened from 1.5× → 1.2×)
+=====================================================================
+
+Round-1 + round-2 fixes resolved the order-2-predictor blowup on VSN but exposed a residual pinb / net_7 failure at t ≈ 1.369 µs on 22nm BSIM6 ULP — (the 2.0× → 1.5× tightening of OSDItrunc's growth cap).  The pinb failure mode per the project_pinb_clamp_oscillation memory is
+
+CKTterr sees low charge curvature in the quiet between switching edges → allows dt to grow → at the next sharp edge Newton can't track a 0.5 V swing in the grown dt → step rejected → /8 cuts.
+
+1.5× growth allows dt to reach the user's max step in 10-15 accepted steps starting from a ~10 ps post-breakpoint cut.  In the quiet 5-6 ns between switching edges of the 150 MHz pulse train, that's plenty of headroom for dt to saturate at 5 ns, then choke on the next edge.  1.2× growth keeps dt much smaller in the same window — 10 ps × 1.2^12 ≈ 90 ps after 12 steps — so the next sharp edge sees a Newton linearization at ~100 ps scale, easily tracking sub-V swings.
+
+Trade-off: more accepted steps per simulation (slower wall clock, larger raw files).  14nm FinFET still runs in similar time (256,194 rows vs. pre-S8 236,939 — within tens of percent).  22nm BSIM6 acceptance is the gating criterion.
+
+
+STEP 24: src/frontend/inpcom.c (skip quote-to-brace on .del / .include)
+=======================================================================
+
+inp_change_quotes converts single quotes to braces line-by-line for commercial simulators-compat handling, so that `r1 a b r='100*scale'` becomes `r1 a b r={100*scale}` and numparam evaluates the expression.
+
+Side effect: lines like .del lib '../models/design_wrapper.lib' FET_tt_post get rewritten to .del lib {../models/design_wrapper.lib} FET_tt_post and numparam (correctly) reports Number format error: "../models/design_wrapper.lib} fet_tt_post"
+
+The existing `.lib` skip at line 3949 prevented this for top-level `.lib '...'` lines but did NOT match `.del lib '...'` (used inside `.alter` blocks) or `.include '...'` / `.inc '...'`.  Observed on BCD sample_netlist, which uses `.del lib '../models/design_wrapper.lib' <section>` to switch process corner between alter blocks.
+
+Fix: extend the skip list to `.del`, `.include`, `.inc ` (with trailing space on `.inc` to avoid accidentally matching `.include` or future commands starting with `.inc...`).
+
+Acceptance criterion: BCD sample_netlist parses without "Number format error" on the .del lib lines. 14nm FinFET + 22nm BSIM6 ULP unchanged.
+
+
+STEP 25: src/frontend/numparam/{spicenum.c,numparam.h},
+src/spicelib/parser/inpeval.c (commercial simulators-style bare .param identifier as numeric value)
+==========================================================================
+
+commercial simulators accepts a bare .param identifier wherever a numeric literal is expected:
+
+  .param vgswp=0 vgmax=3.3
+  vgs n2 n3 vgswp                       <-- bare param as V-source value
+  .dc vgswp -0.1 vgmax 0.01             <-- bare params as .dc sweep
+                                            start/stop
+
+Pre-fix, INPevaluate (src/spicelib/parser/inpeval.c) only knew how to parse numbers; numparam's existing single-to-brace quote pass handled `'vgswp'` / `{vgswp}` but not the bare form.  When INPevaluate failed on `vgswp`, INPdevParse fell through to its parameter-name loop, treated `vgswp` as a device instance-parameter name, found no such V- source parm, and aborted:
+
+Error on line 49 or its substitute: vgs n2 n3 vgswp unknown parameter (vgswp)
+
+Fix.  Add a public lookup helper to numparam:
+
+int nupa_get_real(const char *name, double *value);     (spicenum.c)
+
+— wraps the static dicoS via entrynb(); returns 1 + sets *value if the name resolves to a NUPA_REAL, otherwise 0.
+
+In INPevaluate, when the first non-sign character isn't a digit / `.` (the existing "not a number" branch), check whether the token matches the identifier pattern [A-Za-z_][A-Za-z0-9_]* AND is a known NUPA_REAL.  If so, advance `*line` past the identifier and return its value with error = 0.  Otherwise fall through to the existing "number looks like just a sign" error path.
+
+This catches the bare-identifier case for ALL INPevaluate callers (device-line leading values, INPgetValue across .dc / .ac / .tran / .measure / device parameters, etc.) with one localized change.  No new keywords reserved; identifiers that aren't .param names continue to error in the same way as before.
+
+Safety: only fires when number-parse outright failed (no digit/sign/ dot prefix).  Numeric literals are unaffected.  `{expr}` and `'expr'` forms continue to be handled upstream by the quote-to-brace pass + numparam dispatch — INPevaluate never sees them.
+
+Acceptance criterion: BCD sample_netlist parses past line 49 (`vgs n2 n3 vgswp`) AND line 61 (`.dc vgswp -0.1 vgmax 0.01`).  14nm FinFET + 22nm BSIM6 ULP unchanged.
+
+
+STEP 26: src/frontend/inpcom.c (commercial simulators .alter blocks → silently skipped)
+========================================================================
+
+commercial simulators `.alter <label>` re-runs the simulation with the section of the deck following it (typically `.del lib ... / .lib ... <corner>` to swap a process corner) as overrides on the already-loaded main circuit.  NGSPICE doesn't implement .alter and reports:
+
+Error on line 63 or its substitute: .alter fff unimplemented dot command '.alter'
+
+Pre-fix, the test deck terminated with a fatal error before any analysis could run.  Per memory's existing convention for .biaschk (silently warned-and-skipped at inpcom.c:1514), do the same for .alter — but with one difference: .alter introduces a CONTAINED BLOCK that runs until the next .alter or .end.  The block contains `.del lib '<path>' <section>` / `.lib '<path>' <section>` lines that would, if processed in isolation, re-load a different corner on top of the already-loaded one — so we have to skip the WHOLE block, not just the .alter line.
+
+Implementation: two file-scope static bools.  When `.alter` is seen, emit a one-shot warning and set `in_alter_block = TRUE`.  Subsequent non-`.end` lines are silently dropped until either another `.alter` (starts a new alter block — keep skipping) or `.end` (closes the deck — clear the flag and let .end fall through to the main loop's processing).  `.ends` (subckt terminator) is explicitly NOT treated as `.end` here.
+
+Single warning per deck.  No state carries across decks beyond what inpcom.c's other one-shot warnings already do.
+
+Acceptance criterion: BCD sample_netlist runs through to .end without a fatal at .alter, completes the .dc sweep + .measure, and writes results.  14nm FinFET + 22nm BSIM6 ULP unchanged (neither uses .alter).
+
+
+STEP 27: commercial simulators-compat `.dc paramName ...` sweep
+=================================================
+
+NGSPICE's .dc analysis only knows how to sweep voltage sources, current sources, resistors, and `temp`.  commercial simulators additionally allows
+
+  .param vgswp=0 vgmax=3.3
+  vgs n2 n3 vgswp
+  .dc vgswp -0.1 vgmax 0.01
+
+— sweep a .param across a range, and every V/I source whose DC value was set from that .param picks up the new value on each step. Without this, the BCD testbench aborts:
+
+Fatal error: DC Transfer Function: Voltage source, current source, or resistor named "vgswp" is not in the circuit
+
+Implementation across four files:
+
+  1. src/include/NGSPICE/trcvdefs.h Define PARAM_CODE = 1022 next to the existing TEMP_CODE = 1023.
+
+  2. src/frontend/numparam/spicenum.c + numparam.h Add `int nupa_set_real(const char *name, double value)` — a writer companion to nupa_get_real that updates an existing NUPA_REAL entry's `vl`.  Refuses to create new entries (would mask the simulator's "unknown name" diagnostic).
+
+  3. src/spicelib/parser/inpdpar.c + inpeval.c Maintain a parse-time table of (paramName, devName, devType) bindings.  When INPevaluate's commercial simulators-compat path (STEP 25) resolves a bare identifier from numparam, it stashes the resolved name in a static `inpeval_last_param_name` slot; INPdevParse reads that immediately after each INPevaluate call and registers a binding tagged with the device's GENname and dev-type code.
+
+Public accessors `dpar_first_param_binding / dpar_binding_param_name / dev_name / dev_type / next` let dctrcurv.c iterate without exposing the struct.
+
+  4. src/spicelib/analysis/dctrcurv.c + ckttroub.c New PARAM_CODE branch alongside vcode / icode / rcode / TEMP_CODE in every place the others appear:
+       - setup: nupa_get_real lookup as last resort before erroring.
+       - step / stop-condition check: nupa_get_real reads the current value, compares against TRCVvStop.
+       - nest-level reset: nupa_set_real to start value, then dctrcurv_push_param_to_bindings to propagate to every V/I source bound to this param.
+       - increment: bump by TRCVvStep, push to bindings.
+       - cleanup: restore TRCVvSave (the parse-time value) and push.
+       - varUid: "param-sweep".
+       - ckttroub.c troubled-domain message: read current value.
+
+`dctrcurv_push_param_to_bindings` walks the dpar_binding list for the swept param's name, finds each VSRC / ISRC instance by name in `ckt->CKThead[vcode/icode]`, and mutates VSRCdcValue / VSRCdcGiven (or ISRCdcValue / ISRCdcGiven) directly — same pattern as the existing source-name sweep path.
+
+Scope limits:
+  - Only the leading-numeric value of V/I sources is bound.  Other commercial simulators constructs that reference .params (PULSE/SIN parameters, expression-valued device parameters etc.) still need the {expr} / 'expr' form to participate in re-evaluation; bare identifiers there fall through to the existing temper-style pipeline.
+  - The dpar_binding list is process-global and never freed.  In practice a deck registers a handful of bindings; not a concern for batch runs.  A multi-deck interactive session would accumulate entries — acceptable trade-off for simplicity.
+
+Acceptance criterion: BCD 5V PLDMOS runs the `.dc vgswp -0.1 vgmax 0.01` sweep, completes the two `.measure` statements (idsat_uA/um, idoff_pA/um), and exits 0.  14nm FinFET + 22nm BSIM6 ULP unchanged (neither uses .dc-on-param).
+
+
+STEP 28: commercial simulators-shorthand `.measure` analysis-type inference
+=============================================================
+
+commercial simulators accepts
+
+  .measure vtlin find v(n2) when ...
+
+with the {DC|AC|TRAN} analysis-type token omitted.  NGSPICE historically defaulted to TRAN in this case in two places:
+
+src/frontend/com_measure2.c::measure_extract_variables Save-var registration (called from ft_savedotargs at deck load time).  When defaulting to TRAN, the save names were tagged "tran" — fine for a tran deck, fatal for a deck whose analysis is .dc, because OUTpBeginPlot then sees zero matching save vars under the "DC" tag, and reports Error: no data saved for D.C. Transfer curve analysis; analysis not run
+
+src/frontend/measure.c::do_measure Measurement-eval parser (called from ft_cktcoms after the analysis ran).  Hard-errored on the unknown first token: Error: unrecognized analysis type 'vtlin' for the following .meas statement on line 58884
+
+Fix.  Both call sites infer the analysis type by scanning `ft_curckt->ci_commands` once for the first .dc / .ac / .tran directive; fall back to TRAN if none found.  In do_measure, the parser additionally re-classifies its three already-gettok'd tokens — what looked like an_type / resname / meastype is actually resname / meastype / first-argument — and splices the first-argument back into `line` so the rest of the parser sees the original structure.
+
+Scope limits:
+  - Defaults to the FIRST analysis directive found.  A deck with both .tran and .dc + shorthand .measure attaches all such measures to whichever appeared first.  Decks that need both should keep the explicit `DC` / `TRAN` keyword.
+  - The shorthand splice in do_measure allocates a new line buffer that isn't freed.  Acceptable for one-pass parsing.
+
+Acceptance criterion: BCD 5V NLDMOS completes the .dc sweep, all four .measure statements report values, and exits 0.  14nm FinFET + 22nm BSIM6 ULP unchanged (both already use explicit-typed .measure / .write within .control sections).
+
+
+Verification (2026-06-09 round 12, final):
+22nm BSIM6 ULP driver_lv_2v5_tb: 482,785 rows, 0 errors 14nm FinFET tb_driver: 325,966 rows, 0 errors BCD NLDMOS: 1,212 rows, 0 errors, all four .measure values produced (sample_netlist_ng/ path).  Updates to STEPs 21-28 verified working end-to-end across all three PDKs.
+
+Update to STEPs 25 + 27 (commercial simulators-shorthand .measure analysis-type inference / .dc paramName sweep): the inferred-analysis scan must walk `ft_curckt->ci_deck` (the main card list) rather than `ft_curckt->ci_commands` (which only holds .print/.plot/.meas/ .op/.tf/.four/.width/.sndprint/.sndparam).  Original STEP 28 called out the wrong list; corrected during round-9 debugging.
+
+STEP 27 .dc-by-param expanded to recover bindings via deck text scan (dctrcurv.c::dctrcurv_scan_deck_for_bindings) using `ft_curckt->ci_origdeck` (the pre-substitution copy saved by inp.c::inp_spsource as `deck->actualLine = realdeck` from `inp_deckcopy(deck)` at line 633, BEFORE inp_subcktexpand's nupa_copy substitutes bare-identifier values).  Each device line whose first letter is v/V/i/I and whose LAST whitespace-token matches the swept param (with optional `{...}` strip) registers a binding.  Parse-time INPdevParse hooks remain as a no-op fallback for the rare case where numparam doesn't pre-substitute.
+
+STEP 27 endpoint correctness: PARAM_CODE sweep uses `cur_val = start + N*step` plus a snap-to-stop when the next iteration would overshoot, with the snapped value routed through numparam's "% 23.15e  " format then re-parsed via INPevaluate so it lands on the SAME FP value the measure side's INPevaluate2 will see when the m_val expression (`vmax` etc.) is substituted.  Without the parse-back round-trip, `.dc paramName -0.1 vmax 0.01` + `.measure ... when X=vmax` could miss by 1 ULP because formula() (sscanf %lG, correctly rounded) and INPevaluate (digit-by-digit accumulator) take different roundoff paths.
+
+BCD 1212 rows: dec sweep produces 341 rows.  The remaining ~871 rows come from .measure-generated synthetic save vectors that NGSPICE creates per `par('expr')` expression to make those addressable in `.measure ... find par('...') / when par('...')` contexts.  Same count commercial simulators produces for the same deck.
+
+
+================================================================
+
+STEP 29: subckt.c — skip commercial simulators source-type marker before POLY
+================================================================
+
+Path:   src/frontend/subckt.c Lines:  ~1461-1477 (new block) plus 1480 (added next_name && guard) Where:  inside the case 'e'/'f'/'g'/'h' translation branch, after the output-node translation loop, before the POLY peek.
+
+Problem
+-------
+BCD HV NMOS devices instantiate thermal_branch.inc, which defines two polynomial VCCSs with commercial simulators-style syntax:
+
+    Gtnode 0 tnode vccs poly(2) d2 d1 d s 0 0 0 0 'expr' m=nf
+    Gshe   s d   vccs poly(2) tnode 0 d2 d1 0 0 0 0 'expr' m=nf
+
+The `vccs` literal is commercial simulators's optional source-type marker between the two output nodes and the POLY descriptor.  NGSPICE's subckt translator's e/f/g/h case reads N output nodes, then peeks the next token expecting `POLY`.  Finding `vccs` instead, it falls into the dim=1 branch and consumes `vccs` then `poly` as the two controlling nodes.  The post-translation line therefore reads:
+
+    g.xmn1.gtnode 0 xmn1.tnode xmn1.vccs xmn1.poly 2) d2 d1 d s ...
+
+— `vccs` and `poly` scoped as if they were node names, `(2)` left as garbage tokens (the `(` is consumed by gettok_node, the `)` and `2` survive as `2)`).  Then inp2g.c parses 4 nodes (`0`,`xmn1.tnode`,`xmn1.vccs`,`xmn1.poly`) and PARSECALL on the remainder hits `(2) d2 d1 ...`, reports "unknown parameter (d2)".
+
+Result: every isoednfet HV deck except 5p0_lr fails parse (8p0_lr, 10p0_lr, 12p0_lr, 12p0_reg, 20p0_lr_sw, 20p0_reg_sw — 6 NMOS files).  Plus isoedpfet_20p0_reg_sw (1 PMOS).  5p0_lr and 12p0_hybrid pass because their subcircuits don't include thermal_branch.
+
+Fix
+---
+After translating the output nodes and before the POLY peek, insert a peek-and-skip for the commercial simulators source-type marker:
+
+    t = s;
+    next_name = gettok_noparens(&t);
+    if (next_name && (
+        (dev_type == 'g' && cieq(next_name, "vccs")) ||
+        (dev_type == 'e' && cieq(next_name, "vcvs")) ||
+        (dev_type == 'f' && cieq(next_name, "cccs")) ||
+        (dev_type == 'h' && cieq(next_name, "ccvs")))) {
+        s = t;                          /* commit consumption */
+        tfree(next_name);
+        t = s;
+        next_name = gettok_noparens(&t);
+    }
+
+Then the existing POLY check guards `next_name &&` (in case the
+line ended after the source-type marker — defensive, not
+expected in real decks).  The marker is consumed but NOT
+emitted: the device-letter (g/e/f/h) already encodes the type,
+so the downstream XSPICE ENHtranslate_poly translator sees a
+clean `G n+ n- POLY(N) <controls> <coeffs>` line — its existing
+"is the 4th token 'poly'?" detector at inpcom.c:8046 works
+unchanged.
+
+Acceptance criterion
+--------------------
+All 7 affected BCD *_ng.sp decks (6 NMOS + 1 PMOS) parse past the thermal_branch.inc G-poly lines.  Downstream success depends on the per-deck model bin / convergence (see STEP 30 for the PMOS bin issue), but the parser stops being the obstacle.
+
+
+Verification (2026-06-10, post-rebuild):
+Re-ran every sample_netlist_ng/*.sp deck individually. Result: 27/30 pass clean (up from 18 pre-fix).  Specifically for the 7 vccs/poly targets: isoednfet_8p0_lr.sp:        1,932 rows  PASS isoednfet_10p0_lr.sp:       1,212 rows  PASS isoednfet_12p0_lr.sp:       1,452 rows  PASS isoednfet_12p0_reg.sp:      1,452 rows  PASS isoednfet_20p0_lr_sw.sp:    1,452 rows  PASS isoednfet_20p0_reg_sw.sp:   1,452 rows  PASS isoedpfet_20p0_reg_sw.sp:      33 rows  PASS Plus several PMOS HV decks that previously appeared stuck on gmin under CPU contention also pass when given exclusive runtime (10p0_lr 3417 rows, 8p0_lr 2737 rows, 12p0_hybrid 4097 rows, 12p0_lr 4097 rows).  Previously-passing decks all still pass (no regression on the 18 working baseline). Three remain: 5V PLDMOS and 20V PLDMOS fail with "could not find a valid modelname" (separate bin/ scoping issue, not parser); isoedpfet_12p0_reg.sp times out at 90s in gmin stepping (likely test-deck sweep polarity wrong for this device — see project memory).
+
+
+
+================================================================
+
+STEP 30: subckt.c — bin-pruning must fail open, not closed
+================================================================
+
+Path:   src/frontend/subckt.c Where:  doit() pass 2, the "reduce binning models" block that runs for hs/spe compat when the X invocation line carries literal w= and l= values (c->w > 0 && c->l > 0). Plus two new static helpers above doit(): get_model_bins(), get_model_basename().
+
+Problem
+-------
+BCD 5V PLDMOS and 20V PLDMOS failed with "could not find a valid modelname" while every NMOS sibling passed.  The PMOS/NMOS asymmetry had nothing to do with device type:
+
+  - NMOS testbench:  xmn1 ... nldmos_5 l={lm} w={wm}
+  - PMOS testbench:  xmp1 ... pldmos_5 l=0.222u w=11.11u
+
+inpcom.c parses literal w=/l= off X lines into card->w/card->l (INPevaluate fails on the {braced} NMOS values, leaving w=l=0). In doit() pass 2, when card->w/l are nonzero, the copied subckt body is pruned: every .model card whose [lmin,lmax)x[wmin,wmax) bin does not contain (scale*l, scale*w/nf) is DELETED — a memory optimization for big binned PDKs ("su_deck is full of unused binning models").
+
+For BCD HV devices the X-line dimensions are DRAWN values; the subcircuit rescales them internally via numparam (l_scale='l*shrink_factor', shrink_factor=0.9) before its MOS line, and the model card's bin limits are POST-shrink.  Drawn 0.222u vs lmax=2.01e-7 -> no bin matches -> the device's ONLY model card was deleted from the copy.  Downstream, modtranslate saw no .model in the body (so neither the card nor the M-line reference got the xmp1: scope prefix) and INPgetModBin had nothing to bind -> "could not find a valid modelname".
+
+The existing safety check (if (!su_deck) error) only catches a COMPLETELY emptied copy, which never happens because device lines survive.  22nm BSIM6/14nm FinFET never hit this because their X lines carry {braced} parameter dims -> card->w stays 0 -> pruning is skipped entirely.
+
+Fix
+---
+Restructure the pruning into two passes:
+
+Pass 1: for every binned .model card in the copy, test the bin against (scale*l, scale*w/nf).  Record the model BASE NAME (name minus a trailing '.<digits>' binning suffix, cf. model_name_match()) of every card that matches, in a wordlist.
+
+Pass 2: delete an out-of-bin .model card ONLY when its base name is in the matched list, i.e. only when a better bin of the same model family was identified.  If no bin of a name matched, the X-line w/l are simply not comparable to the bin ranges (in-subckt shrink, as above) — keep all bins of that name and let INPgetModBin choose after numparam expansion, which is the exact path the brace-valued decks already use.
+
+Also fixes a latent null-deref: the old code did prev->nextcard with prev==NULL if the first card of a subckt body was a prunable .model.  And it no longer deletes binned models of OTHER families (e.g. a binned parasitic diode model) whose ranges are in different units than the MOS w/l being tested.
+
+Memory impact: none for the PDKs that motivated the optimization (22nm BSIM6 / 14nm FinFET either skip the block or still prune to the same single bin).  BCD keeps its one model card per device.
+
+20V PLDMOS also needed a one-line deck fix: the _ng port kept `vg s g vgswp` from the commercial simulators original but dropped the original's `.param vgswp=0` when converting the `.dc vgswp` param sweep to a direct `dc ... VG` source sweep.  Added `.param vgswp=0` to the deck (testbench bug, not a simulator issue; pristine original in /techfiles has the param).
+
+Verification (2026-06-10, post-rebuild)
+---------------------------------------
+5V PLDMOS:      1,313 rows (was: modelname error) 20V PLDMOS:     33 rows, matches reg_sw sibling (was: modelname error) Full 30-deck sample_netlist_ng sweep + 22nm BSIM6 ULP driver_lv_2v5_tb + 14nm FinFET tb_driver re-run: results recorded below after completion.
+
+
+================================================================
+
+STEP 31: remove hard-coded geoshrink; honor commercial simulators subckt `scale`
+Note: I added a hard -oded geoshrink because I misunderstood the commercial simulator methodology. I made a big mess! I reverted it and went in a different direction, but it needs to be checked. 
+================================================================
+
+Paths:  src/frontend/subckt.c        (inp_apply_subckt_scale + scale_geom_param:
+wrap geometry in scale-declaring subckt bodies) src/frontend/subckt.h         (declare inp_apply_subckt_scale) src/frontend/inpcom.c         (call inp_apply_subckt_scale before inp_fix_for_numparam; drop geoshrink parse) src/frontend/inp.c            (drop geoshrink option parse x2) src/spicelib/parser/inpgmod.c (drop geoshrink from bin select) src/osdi/osdiparam.c          (drop geoshrink from OSDI geom) src/frontend/spiceif.c        (drop geoshrink pre-scan) src/spicelib/parser/inpdoopt.c (geoshrink now silently ignored)
+
+Problem
+-------
+`geoshrink` was a NGSPICE-Justin-invented `.option` I got that completely wrong! (Set in the 22nm BSIM6 NGSPICE wrapper as `.option geoshrink=0.855`).  The C read it from a cp_var in two functional places -- INPgetModBin (multiply instance W/L before bin comparison) and osdiparam (multiply W/L before writing to the OSDI model) -- to convert DRAWN instance dimensions to the EFFECTIVE (post-shrink) dimensions the foundry bins and models expect.
+
+geoshrink is NOT commercial simulators syntax; it is a per-PDK hack hard-coded into the simulator.  The 22nm BSIM6 commercial simulators model carries no `.option scale`, no `.option geoshrink`, and no device `scale=`: it relies on commercial simulators's element-scale convention, where a subcircuit that declares a `scale` parameter applies it as the geometry scale factor for the MOSFETs inside it.  22nm BSIM6's device macros are `.subckt nch_mac ... scale= 'scale_mos'` (scale_mos = 0.855).  BCD process instead bakes the shrink into the device-line dimension expressions via numparam (l_scale='l*shrink_factor'), so its expanded M-line already carries effective dims and needs no option at all.
+
+Why the device line is not enough (the key fact)
+-------------------------------------------------
+22nm BSIM6's actual device line is: main n1 n2 n3 n4 nch w='w+dw*nf' l=ll ...   (dw=0, ll=(l+dl)*...) There is NO `*scale` on w/l -- the drawn dimensions go to the model unscaled.  The 0.855 enters ONLY through the subckt header's reserved `scale='scale_mos'`, which commercial simulators applies as an element scale factor. The model is written FOR that round-trip: it pre-divides its own parasitics expecting the simulator to multiply them back, e.g. sd='2*_dmcg/scale'   -> expanded sd = 6.265e-8/0.855 = 7.327e-8 ad='(...)/scale*(.../scale)'  (i.e. .../scale^2) sa='saref/scale'  sb='sbref/scale' The `.model nch.N` bins are authored in POST-shrink dims (lmin=4.275e-7 = 5e-7*0.855).  So the simulator MUST apply the full commercial simulators element-scale table -- lengths *scale, areas *scale^2 -- to both bin selection and the device.  Scaling only w/l would leave the parasitics wrong by scale^2.  (Confirmed against the expanded deck: numparam DOES resolve the subckt `scale` formal to 0.855 -- the earlier `w={(...)*(scale)}` wrap failed only because it mangled the single-quoted commercial simulators expression `'w+dw*nf'`, not because of scoping.)
+
+Fix
+---
+Generic, per-instance, no foundry tokens matched.  inp_apply_subckt_scale() walks the deck; for each subckt that declares a `scale` formal (subckt_has_scale: word-boundary `scale=`, so `l_scale=`, `noscale=`, and the `scale_mos` token in a value do NOT match) it wraps every geometry value-expression in that subckt's BODY so it is multiplied by the in-scope `scale`:
+
+    pname=expr  ->  pname='(expr)*scale'        (lengths/perimeters)
+    pname=expr  ->  pname='(expr)*scale*scale'  (areas)
+
+    w l pd ps sa sb sc sd : *scale
+    ad as                 : *scale*scale
+    (nrd nrs m nf sca scb scc delvto mulu0 total : untouched)
+
+numparam then evaluates the EFFECTIVE geometry per instance, which feeds bin selection (inpgmod), OSDI (osdiparam) and built-in BSIM naturally -- none need any scale logic of their own.  scale_geom_param() handles the three value forms in foundry models: single-quoted `'expr'`, braced `{expr}`, and a bare token/number; output is always single-quoted.
+
+WHERE it must run: inpcom's inp_readall(), immediately BEFORE inp_fix_for_numparam().
+
+* NOT in doit()/inp_subcktexpand(): numparam (nupa_copy) runs first and converts each `'expr'`/`{expr}` into a placeholder it later evaluates; an expression wrapped after that is left raw and reaches the device parser as text ("unknown parameter (')").  Verified: a wrap added in doit produced `w='(2u)*scale'` literally in the expanded deck. * NOT detected from sss->su_args in doit(): by then numparam has STRIPPED the `params: scale=...` off the .subckt line, so su_args is just the node list ("d g s b ") and the `scale=` is gone (verified via DBG). * NOT gated on newcompat.hs: a netlist sourced from a .control block (the 22nm BSIM6 flow: `NGSPICE -b tran` -> `source ...net`) reaches doit() with hs still FALSE even though the "hs" banner printed.  geoshrink survived this only because it was ungated.
+
+inp_fix_for_numparam() is where expressions are marked for substitution, so wrapping just before it (and before the .subckt param list is stripped) is the one site where both detection works and numparam evaluates the result.  .lib/.include content is already flattened into `working` by then.
+
+IMPORTANT (why the first attempt failed): a standalone tag `hsscale={scale}` appended to the instance line does NOT resolve -- numparam evaluates `{}`/`'...'` inside .param definitions and inside a parameter's value-expression, but it drops a bare inline `{scale}` token on a spliced instance line.  Wrapping the EXISTING value- expression (`w='(w+dw*nf)*scale'`) DOES resolve (verified: w='2u*scale' in a scale=0.5 subckt -> 1e-6; self-ref `ad='(ad)*scale*scale'` with a .param ad -> *0.25; bare `l='(ll)*scale'` -> *scale).  So the carrier must be the expression, not a tag.
+
+This is per-instance: a multi-flavor deck with different per-subckt scales stays correct (geoshrink, a single global, could not do this), and applies to ANY geometric element in the subckt, not just one MOSFET -- commercial simulators's "whole subcircuit resized" (distinct from the M multiplier / replication, left untouched).
+
+NOTE vs geoshrink: the old geoshrink scaled ONLY W and L (osdiparam comment: "Apply geoshrink to W and L"); the parasitics ad/as/pd/ps/ sa/sb/sd were left at their pre-scale .param values -- i.e. ad was too small by scale^2.  This fix scales the full geometry set per commercial simulators, so it is MORE correct than the geoshrink build and its row count may differ slightly from the geoshrink-era 482828 (W/L dominate, so it should be near it, and far from the broken 493587 drawn-geometry run).
+
+geoshrink is deleted from inpgmod.c (w_cmp/l_cmp use w/l directly), osdiparam.c (write W/L unchanged), and the option parsers in inp.c / spiceif.c.  inpdoopt.c keeps `geoshrink` as a silently-ignored no-op so PDK wrappers that still emit `.option geoshrink=...` (e.g. 22nm BSIM6's embedded_usage.l) don't raise unknown-option warnings -- the subckt `scale` now does the real work.
+
+Coverage across foundries (verified by model inspection):
+22nm BSIM6 ULP : 52 `.subckt ... scale='scale_mos'` macros (all flavors scale_mos*=0.855) -> hsscale tag applied. BCD: shrink baked via shrink_factor expressions; no scale formal -> no tag -> untouched. 14nm FinFET : no scale, FinFET (bins on l/nfin) -> untouched. SMIC 90nm     : BSIM4, no scale, bins in DRAWN dims -> untouched.
+
+(VERIFIED 2026-06-11)
+--------------------------------
+22nm BSIM6 ULP driver_lv_2v5_tb: 486493 rows, 0 errors, 6 warnings.
+  - Moved off the broken drawn-geometry 493587.
+  - Within 0.8% of the geoshrink-era 482828; the small difference is the correct parasitic scaling geoshrink omitted (geoshrink scaled only W/L; this scales ad/as by scale^2 etc., shifting junction caps and the adaptive timestep).  Warnings dropped 40 -> 6.
+  - Expanded `main`: w 8.999e-5 -> 7.695e-5 (x0.855), l 3e-8 -> 2.565e-8, ad 3.447e-12 -> 2.520e-12 (x0.855^2).  Exactly the commercial simulators table. BCD nldmos_5: 1212 rows, 0 errors -- UNCHANGED (no scale formal; shrink stays in its own shrink_factor expressions). 14nm FinFET tb_driver: 325966 rows, 0 errors, 0 warnings -- UNCHANGED (no scale formal, FinFET).
+
+Earlier dead ends (do NOT reintroduce): tag `hsscale={scale}` (numparam drops it); wrap in doit() (too late for numparam); detect via su_args in doit() (scale= already stripped); gate on newcompat.hs (false for .control-sourced decks).
+
+
+================================================================
+
+STEP 32: unify INPevaluate number parsing with formula() (strtod)
+================================================================
+
+Paths:  src/spicelib/parser/inpeval.c        (INPevaluate -> strtod)
+src/spicelib/analysis/dctrcurv.c      (drop snap-to-stop round-trip)
+
+Problem
+-------
+NGSPICE parses numeric literals through two independent code paths that rounded the SAME decimal string to slightly different doubles:
+
+  - INPevaluate() (inpeval.c) accumulated the mantissa digit-by-digit (mantis = 10*mantis + digit) and multiplied by pow(10, expo) at the end.  For long mantissas / non-representable exponents this drifts up to 1 ULP off the correctly-rounded value.
+  - formula() / numparam's fetchnumber() (xpressn.c) uses sscanf "%lG" (== strtod), which IS correctly rounded.
+
+So `.param x = 3.3` (stored via %lG) and a `.dc`/device value `3.3` (via INPevaluate) could end up 1 ULP apart.  dctrcurv.c's `.dc` param sweep papered over this for `.measure when X = <param>`: when it snapped the last swept value to the stop, it round-tripped the stop through "% 23.15e" + INPevaluate so the saved row bit-matched the measure RHS (which parses via INPevaluate).  "Works, but brittle."
+
+Fix
+---
+INPevaluate now parses the numeric magnitude with strtod() -- the same correctly-rounded parse fetchnumber() already uses -- so the two paths agree to the bit.  Kept around strtod: the leading sign (applied separately), the commercial simulators bare-`.param` identifier fallback, the SI scale suffix (T/G/k/u/n/p/f/a, m / Meg / Mil with Mil = x25.4e-6), and the "suffix char is left unconsumed" pointer semantics.  A `:` (ternary) or any other non-numeric char terminates strtod naturally, preserving the old early-outs.  Fortran 'D'/'d' exponents (e.g. 1.5D3), which strtod does not handle, are finished by hand with strtol so legacy decks keep working.  The old digit-by-digit accumulator + mantis/expo1/expo2/expsgn state are gone.  (The separate 4k7-style RKM parser further down inpeval.c is unrelated and untouched.)
+
+With both paths unified, dctrcurv.c's snap-to-stop drops the "% 23.15e"+INPevaluate round-trip and just assigns cur_val = TRCVvStop -- now already bit-equal to the measure m_val.
+
+Acceptance (VERIFIED 2026-06-11)
+--------------------------------
+  - BCD sample_netlist_ng: 30/30 pass, 0 errors.  (These decks are DC curve traces / `dc ... plot`, not .measure-based -- the older note about idsat/idlin from these _ng decks was stale.)
+  - 22nm BSIM6 ULP driver_lv_2v5_tb: 476973 rows (was 476961), 0 errors -- +12 rows is the expected 1-ULP FP-sensitivity nudging the adaptive timestep; nothing regressed.
+  - 14nm FinFET tb_driver: 325966 rows, 0 errors -- UNCHANGED.
+  - PARAM_CODE snap-to-stop, verified with a dedicated deck (`.param psw` swept via `.dc psw 0 3.3 0.3`, bare-param-bound vsrc): the endpoint lands on EXACTLY 3.300000e+00 (= strtod("3.3"), not the 3.2999.../3.3000...3 that N*step accumulation gives), and meas-dc `when v(n2)=<bracketed exact value>` finds it.  (`when v(n2)=3.3` at the very last sweep point reports "out of interval" -- an NGSPICE measure-interpolation boundary, same before/after, not a regression.)
+
+
+================================================================
+
+STEP 33: OSDI at_final_step signal for @(final_step)
+================================================================
+
+Paths:  src/osdi/osdi.h        (OsdiSimInfo: append at_final_step)
+src/osdi/osdiload.c     (set it on the final transient timepoint)
+
+A Verilog-A `@(final_step)` body must run on the LAST transient timepoint, which only the simulator knows.  Append a `uint32_t at_final_step` field to the TAIL of OsdiSimInfo (after scheduled_event_time, field index 11) and set it to 1 in osdiload.c whenever is_tran && AlmostEqualUlps(ckt->CKTtime, ckt->CKTfinalTime, 100) i.e. the eval(s) of the timepoint that dctran's hard breakpoint at CKTfinalTime lands exactly on.  0 every other eval.
+
+ABI: append-only, so older .osdi binaries (which never read field 11) keep working unchanged -- verified bsimbulk.osdi recompiles byte- identical (md5 7ff363ad) because its GEPs only touch fields 0..10.
+
+The OpenVA side (openva_changes.txt) mirrors the field in the OsdiSimInfo LLVM type + osdi_0_4.h, adds ParamKind::AtFinalStep (reads field 11), and gates the @(final_step) body on at_final_step != 0 plus a persistent "already-ran" flag so it fires exactly once across the final step's Newton iterations -- the mirror image of the @(initial_step) gating.
+
+Verified: a @(final_step) model fires exactly once at t = tstop (n=1); BCD/22nm BSIM6 OSDI decks unchanged under the new 11-field SimInfo.
+
+
+================================================================
+
+STEP 34: OSDI @(cross) quadratic crossing-time interpolation
+================================================================
+
+Paths:  src/osdi/osdidefs.h     (OsdiExtraInstData: 2nd prior cross sample)
+src/osdi/osdiload.c      (osdi_cross_time: 3-point quadratic fit)
+
+Plan B (STEP 20) scheduled a cross event at a 2-point LINEAR-interpolated crossing time: O(dt^2) error.  For fast carriers (PWM/RF, 100 MHz+, ~5 ns period) where the crossing TIME is the measured quantity, which is too coarse -- ~270 ps on a coarse local step is 5.4% of a 5 ns period.
+
+Fix: keep a 2-deep history of (time, cross_expr) samples and, on a sign flip, fit a 3-point QUADRATIC to the cross_expr VALUE and take the in-bracket root -- O(dt^3).  The cross_expr value already folds in BOTH the cross-expr nonlinearity AND the node-trajectory curvature, so a higher-order fit of the value alone sharpens the crossing time with NO model re-evaluation and NO instance-state risk (the re-eval approach floated in STEP 20 needs state save/restore; this avoids it entirely). osdi_cross_time() falls back to linear for a degenerate quadratic (near-zero leading coeff, negative discriminant, no in-bracket root) and during startup (< 3 samples).  NGSPICE-only; no OSDI ABI change.
+
+Verified (1 GHz sine cross_expr, zeros at k*0.5 ns, controlled maxstep): 200 ps step (~5 pts/period): err <= 5.5 ps  (linear would be ~100+ ps) 100 ps step:                 err ~ 0.5 ps 50 ps step:                 err ~ 0.06 ps Error falls ~8-10x per halving of dt -> O(dt^3) confirmed (linear is 4x). Comfortably inside the 10 ps target at coarse sampling.
+
+SEPARATE bug found AND fixed (OpenVA side, see openva_changes.txt): last_crossing()'s latched value reset to -1 between crossings -- its latch used a CKTstates state slot that rotates out, same failure mode as the old @(timer) n_fires counter.  Fixed by routing the latch through the persistent-state-in-instance-memory slot in the hir_lower last_crossing lowering.  Pure OpenVA / instance-memory -- no NGSPICE ABI change. Verified: last_crossing now HOLDS the (sub-ps-accurate) crossing time between crossings (0 stale -1 reads); bsimbulk.osdi byte-identical.
+
+
+================================================================
+
+STEP 35: OSDI axis 2 — Newton iteration count exposed to models
+================================================================
+
+Paths:  src/maths/ni/niiter.c            (publish iterno)
+src/include/NGSPICE/cktdefs.h     (CKTosdiNewtonIter field) src/osdi/osdi.h                   (OsdiSimInfo.newton_iter, field 12) src/osdi/osdiload.c               (populate per eval)
+
+The compiler-side $limit synthesis (OpenVA) and model-authored limiters had no way to see HOW HARD the Newton solve is working -- the limit magnitude was fixed (per-device TOXE-derived or per-shape simparam) but not iteration-aware.  Axis 2 closes that: NIiter publishes the current Newton iteration index and OSDI forwards it to the model each eval, so a limiter can tighten when the iterate is struggling (the principled form of the earlier fixed-VLIM sweeps).
+
+- niiter.c: at the Newton-loop top (before each CKTload, next to the CKTnoncon / CKTosdiStepReject / CKThugeJThisIter resets) publish ckt->CKTosdiNewtonIter = iterno + 1.  1-based, the iteration the upcoming load computes; resets to 1 each NIiter call so it is per-Newton-solve, not cumulative.
+- cktdefs.h: int CKTosdiNewtonIter.
+- osdi.h: uint32_t newton_iter appended to the OsdiSimInfo tail (field 12, after at_final_step).  ABI-safe: older .osdi binaries that never read it stay compatible (verified -- 14nm FinFET's old-header models run unchanged on the new binary).
+- osdiload.c: .newton_iter = (uint32_t)ckt->CKTosdiNewtonIter in the per-eval sim_info initializer.
+
+OpenVA side (see openva_changes.txt) reads it as ParamKind::NewtonIter and tightens the synthesized clamp hyperbolically with iteration count.
+
+Validated end-to-end (new NGSPICE + adaptive bsimbulk.osdi):
+0.9V LV inverter (inverter_tb/tran): 1930 rows, runs full 1us, 0 err (historical plateau was 131 rows / abort at 100 ns). 22nm BSIM6 driver_lv_2v5_tb: 477010 rows, 0 err (was ~476973 -- no regress). 14nm FinFET tb_driver: 325966 rows, 0 err (old-header osdi -- back-compat).
+
+
+================================================================
+
+STEP 36: OSDI absdelay exact transport — simulator-managed ring
+================================================================
+
+Paths:  src/osdi/osdi.h         (descriptor num_delay_sites; SimInfo
+delay_input/delay_maxtd/delay_state/delay_read) src/osdi/osdidefs.h      (OsdiExtraInstData per-site rings + decl) src/osdi/osdicallbacks.c (osdi_delay_read: interpolating reader) src/osdi/osdiload.c      (lazy alloc + SimInfo wiring; osdi_delay_push + OSDIaccept accept-hook) src/osdi/osdiext.h       (OSDIaccept decl) src/osdi/osdiinit.c      (DEVaccept = OSDIaccept) src/osdi/osdiregistry.c  (descriptor-size-guarded num_delay_sites) src/include/NGSPICE/osdiitf.h (OsdiRegistryEntry.num_delay_sites)
+
+OpenVA absdelay was a (2,2) Pade approximant -> rings on edges faster than ~1/tau (serdes/transmission-line use is exactly that regime).  Replaced with a TRUE transport delay backed by a simulator-managed per-instance (time,value) ring:
+- Model writes its current input to SimInfo.delay_input[site] each eval and reads x(abstime-td) via SimInfo.delay_read = osdi_delay_read (linear interp over the ring; interpolates toward the current input for td<dt so small delays are exact).
+- OSDIaccept (registered as DEVaccept, fired once per ACCEPTED step from CKTaccept) pushes (CKTtime, delay_input[site]) into each ring -> only the converged trajectory is recorded (the model can't tell accept from a Newton iterate; the simulator can).  osdi_delay_push grows geometrically and prunes samples older than abstime - max_td (the chosen dynamic-grow+prune policy; max_td<0 -> 1<<22 ceiling).
+- ABI-SAFETY GUARD: descriptor field num_delay_sites is read only when the published OSDI_DESCRIPTOR_SIZE reaches it (osdiregistry.c offsetof check), cached in OsdiRegistryEntry; a pre-2C .osdi reads 0, not garbage.  All new descriptor/SimInfo fields are tail-appended.
+
+Verified (new NGSPICE): absdelay of a 10 ps-edge PULSE delayed 0.25 ns -> v(out) = v(in) shifted 0.2507 ns (0.7 ps err at 2 ps maxstep), range [0,1] exactly -- NO Pade ringing.  No regression: 22nm BSIM6 driver_lv_2v5_tb 477010/0 and 14nm FinFET tb_driver 325966/0 with their PRE-2C models on the new binary (the guard in action).
+
+KNOWN LIMITATION: time-domain mechanism -> delays in transient only; AC reduces to the instantaneous input (no e^-jwtd).  AC delay = follow-up. -> RESOLVED in STEP 37 below.
+
+
+STEP 37: OSDI absdelay exact AC phase delay — e^{-jw*td} stamp
+================================================================
+
+Paths:  src/osdi/osdi.h          (JACOBIAN_ENTRY_DELAY=16; descriptor tail:
+num_delay_jacobian_entries, write_jacobian_array_delay, delay_jacobian_sites) src/osdi/osdidefs.h      (OsdiExtraInstData.delay_td_arr) src/osdi/osdiload.c      (alloc delay_td_arr alongside the rings) src/osdi/osdicallbacks.c (osdi_delay_read stashes the clamped td) src/osdi/osdiacld.c      (the AC stamp, in OSDIacLoad)
+
+Companion to STEP 36.  The transport ring makes absdelay exact in TRANSIENT; this makes it exact in AC.  G+jwC cannot represent the transcendental delay e^{-jw*td}, so OpenVA emits the delay jacobian VALUE V = ddx(-input) (real, computed at the OP) as a tail-appended descriptor array, and the simulator supplies the frequency factor: for each jacobian entry flagged JACOBIAN_ENTRY_DELAY, OSDIacLoad stamps V*cos(w*td) into the real part and V*(-sin(w*td)) into the imag part of the complex matrix element.  td(site) is the per-instance operating-point delay captured by osdi_delay_read into delay_td_arr.  ABI-guarded by entry->num_delay_sites (the STEP 36 guard), so a pre-AC-delay .osdi never touches the new tail fields; transient unchanged.
+
+Verified: integration_tests/ABSDELAY/absdelay_ac (td=0.25 ns) -> |v(out)|=1 at all frequencies with phase = -w*td exactly (-90deg @1GHz, -180deg @2GHz); transient still 0.2509 ns.  NB the kT/q $limit synthesis (OpenVA a16d2c7) is OpenVA-side only -- no NGSPICE change, so no STEP here for it.
+
+
+STEP 38: exclude OSDI analog-operator state nodes from gmin stepping
+================================================================
+(pairs with OpenVA realize_cascade_real_roots for laplace_*/zi_*)
+
+Paths:  src/include/NGSPICE/cktdefs.h   (CKTnode.nogmin:1 flag)
+src/include/NGSPICE/smpdefs.h   (sSMPmatrix.gmin_skip, char* by node#) src/osdi/osdisetup.c            (set nogmin on implicit_equation_* nodes) src/maths/ni/niiter.c           (build gmin_skip from CKTnodes once) src/maths/sparse/spsmp.c        (LoadGmin honors skip; SMPdestroy frees) src/maths/KLU/klusmp.c          (LoadGmin_CSC_skip honors skip)
+
+Problem.  A multi-pole laplace_*/zi_* OpenVA model realizes its transfer function as cascaded internal implicit-equation state nodes.  NGSPICE's dynamic/true gmin stepping (LoadGmin) adds CKTdiagGmin to EVERY matrix diagonal.  For a real circuit node that is a harmless leak-to-ground; for an integrator state node whose resistive diagonal is the pole value -p_k (small, or zero for a pole at the origin) it CORRUPTS the state equation, so as gmin climbs during the homotopy the poles shift and Newton diverges ("gmin stepping failed").   `option gminsteps=0` converges, default stepping fails. (The realization is the OpenVA cascade -- which fixes the prior SINGULAR-matrix failure; this is the other, NGSPICE, half: making the cascade converge under gmin stepping.)
+
+Fix:  Flag the synthesized state nodes and skip them in the diagonal-gmin pass.
+  - CKTnode.nogmin:1 -- new flag bit.
+  - osdisetup.c: in the internal-node creation loop, set tmp->nogmin ONLY when the OSDI node name begins "implicit_equation_" (the name OpenVA emits for SimUnknownKind::Implicit; physical internal nodes -- BSIM RD/RS, NQS -- keep their real Verilog-A names and are left alone, so PDK DC convergence is unaffected).  This name-based discrimination is the robustness crux: flagging "all internal nodes" would strip gmin stepping from physical parasitic nodes that need it.
+  - niiter.c: at the top of NIiter, lazily build matrix->gmin_skip -- a char array indexed by node number, 1 where node->nogmin.  Cached on the matrix; TMALLOC zero-fills; NULL == legacy "gmin on every diagonal".
+  - spsmp.c LoadGmin: Diag is indexed by internal row I; map back to the node number via Matrix->IntToExtRowMap[I] and skip when gmin_skip[ext].  Free gmin_skip in SMPdestroy (SP_FREE -- matches the TMALLOC allocator).
+  - klusmp.c: LoadGmin_CSC_skip subsumes (and replaces) the old LoadGmin_CSC at the two non-CIDER factor sites.  KLU column i is post-collapse; the node number is NodeCollapsingNewToOld[i] + 1 (KLU cols 0-based, node numbers 1-based -- cf. singular_col+1 reporting).  When gmin_skip/NewToOld is NULL it is byte-for-byte the legacy "gmin on every diagonal" loop, so non-OSDI and CIDER paths are unchanged.
+
+

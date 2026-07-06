@@ -90,10 +90,22 @@ NIconvTest(CKTcircuit *ckt)
     /* CKTconvTest early-returns nonzero 'i' on the first error
      * in evaluating convergence (such as parameter out of range) so
      * there may be untested devices that have not yet converged */
-    if (i)
-	ckt->CKTtroubleNode = 0;
-    return(i);
-#else /* NEWCONV */
-    return(0);
+    if (i) {
+        ckt->CKTtroubleNode = 0;
+        return(i);
+    }
 #endif /* NEWCONV */
+
+    /* Bürmen axis 4: dual-norm convergence requires the residual to
+     * also be stable, not just the solution vector.  Catches the
+     * SPICE3 false-convergence pathology where the iterate stops
+     * moving (damping/scaling artifact) but f(x) is still nonzero.
+     * The flag was set by NIiter from CKTrhs immediately after
+     * CKTload.  Opt-out via `.option noresidcheck`. */
+    if (!ckt->CKTresidCheckDisabled && !ckt->CKTresidConverged) {
+        ckt->CKTtroubleNode = 0;
+        return 1;
+    }
+
+    return 0;
 }

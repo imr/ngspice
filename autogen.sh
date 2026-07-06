@@ -117,7 +117,7 @@ fi
 
 echo "Removing files to be remade"
 rm -f Makefile.in aclocal.m4 ar-lib config.guess config.sub
-rm -f depcomp install-sh ltmain.sh missing ylwrap
+rm -f depcomp install-sh install.sh ltmain.sh missing ylwrap
 rm -r -f autom4te.cache
 
 echo "Running $LIBTOOLIZE"

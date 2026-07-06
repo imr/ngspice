@@ -17,6 +17,7 @@
 
 #include "osdi.h"
 #include "osdidefs.h"
+#include "ngspice/osdi_defer.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -178,7 +179,128 @@ static int init_matrix(SMPmatrix *matrix, const OsdiDescriptor *descr,
       *jacobian_ptr_react = ptr + 1;
     }
   }
+
   return (OK);
+}
+
+/* Look up a parameter slot by case-insensitive name.  Returns the
+ * param_opvar index, or (uint32_t)-1 if not found.  Used by the
+ * deferred-eval per-instance binding to find named instance parameters
+ * (l, w, nf, m) and the model-param slots that hold the deferred-
+ * expression results. */
+static uint32_t
+find_param_idx(const OsdiDescriptor *descr, const char *name) {
+  for (uint32_t i = 0; i < descr->num_params + descr->num_opvars; i++) {
+    for (uint32_t j = 0; j < descr->param_opvar[i].num_alias + 1; j++) {
+      if (descr->param_opvar[i].name[j] &&
+          strcasecmp(descr->param_opvar[i].name[j], name) == 0) {
+        return i;
+      }
+    }
+  }
+  return (uint32_t)-1;
+}
+
+/* Read a Real-typed instance parameter by its param index.  Returns the
+ * value as double, or `dflt` if the index is invalid or the type is
+ * non-Real. */
+static double
+read_inst_real(const OsdiDescriptor *descr, void *inst, void *model,
+               uint32_t idx, double dflt) {
+  if (idx == (uint32_t)-1) return dflt;
+  OsdiParamOpvar *p = &descr->param_opvar[idx];
+  if ((p->flags & PARA_TY_MASK) != PARA_TY_REAL || p->len) return dflt;
+  uint32_t flags = ACCESS_FLAG_READ;
+  if (idx < descr->num_instance_params) flags |= ACCESS_FLAG_INSTANCE;
+  void *src = descr->access(inst, model, idx, flags);
+  if (!src) return dflt;
+  return *(double *)src;
+}
+
+/* Write a Real-typed parameter on the instance level (override of model
+ * default).  Used to install the per-instance value computed from a
+ * deferred expression. */
+static void
+write_inst_real(const OsdiDescriptor *descr, void *inst, uint32_t idx,
+                double value) {
+  if (idx == (uint32_t)-1) return;
+  OsdiParamOpvar *p = &descr->param_opvar[idx];
+  if ((p->flags & PARA_TY_MASK) != PARA_TY_REAL || p->len) return;
+  void *dst = descr->access(inst, NULL, idx,
+                            ACCESS_FLAG_SET | ACCESS_FLAG_INSTANCE);
+  if (dst) *(double *)dst = value;
+}
+
+/* Write a Real-typed parameter on the MODEL level.  Used to populate
+ * the deferred-eval results into model storage BEFORE setup_model runs
+ * so its parameter-range validation sees sensible values.  Per-instance
+ * overrides happen separately in the OSDItemp inner loop. */
+static void
+write_model_real(const OsdiDescriptor *descr, void *model, uint32_t idx,
+                 double value) {
+  if (idx == (uint32_t)-1) return;
+  OsdiParamOpvar *p = &descr->param_opvar[idx];
+  if ((p->flags & PARA_TY_MASK) != PARA_TY_REAL || p->len) return;
+  void *dst = descr->access(NULL, model, idx, ACCESS_FLAG_SET);
+  if (dst) *(double *)dst = value;
+}
+
+/* Read a Real-typed MODEL-level parameter, returning `dflt` if absent
+ * or not a Real scalar.  Used by the deferred-eval pre-pass to pick a
+ * representative L within each model's lmin/lmax range, so model
+ * expressions of the form `(l==14e-9)*A + (l==16e-9)*B` evaluate to
+ * a non-zero value rather than 0 (which BSIM-CMG's setup_model
+ * rejects with "Parameter VSAT1 = 0 is not positive" etc.). */
+static double
+read_model_real(const OsdiDescriptor *descr, void *model, uint32_t idx,
+                double dflt) {
+  if (idx == (uint32_t)-1) return dflt;
+  OsdiParamOpvar *p = &descr->param_opvar[idx];
+  if ((p->flags & PARA_TY_MASK) != PARA_TY_REAL || p->len) return dflt;
+  void *src = descr->access(NULL, model, idx, ACCESS_FLAG_READ);
+  if (!src) return dflt;
+  return *(double *)src;
+}
+
+/* Callback ctx + handler for model-level pre-eval.  Writes to `model`
+ * storage with a default representative geometry so setup_model's
+ * bound check passes. */
+typedef struct {
+  const OsdiDescriptor *descr;
+  void *model;
+  double l, w, nf, m;
+} defer_model_apply_ctx;
+
+static void
+apply_deferred_param_to_model(const char *param_name,
+                              const char *expr_text,
+                              void *cb_arg) {
+  defer_model_apply_ctx *c = (defer_model_apply_ctx *)cb_arg;
+  double v = 0.0;
+  if (osdi_defer_eval(expr_text, c->l, c->w, c->nf, c->m, &v) != 0) return;
+  uint32_t idx = find_param_idx(c->descr, param_name);
+  write_model_real(c->descr, c->model, idx, v);
+}
+
+/* Per-callback closure for per-instance binding: resolved geometry and
+ * the OSDI access plumbing needed to install each evaluated expression. */
+typedef struct {
+  const OsdiDescriptor *descr;
+  void *inst;
+  double l, w, nf, m;
+} defer_apply_ctx;
+
+static void
+apply_deferred_param(const char *param_name,
+                     const char *expr_text,
+                     void *cb_arg) {
+  defer_apply_ctx *c = (defer_apply_ctx *)cb_arg;
+  double v = 0.0;
+  if (osdi_defer_eval(expr_text, c->l, c->w, c->nf, c->m, &v) != 0) {
+    return;
+  }
+  uint32_t idx = find_param_idx(c->descr, param_name);
+  write_inst_real(c->descr, c->inst, idx, v);
 }
 
 int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
@@ -210,6 +332,43 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
     void *model = osdi_model_data(gen_model);
+
+    /* Apply deferred-eval to MODEL storage with representative default
+     * geometry before setup_model runs.  setup_model validates parameter
+     * ranges and would otherwise reject the `0` placeholders that
+     * osdi_defer_preprocess_line writes onto deferred-param slots.
+     *
+     * Per-model default L: BSIM-CMG/Samsung 14LPU expressions look like
+     *   vsat1 = '((l==0.014e-6)*X + (l==0.016e-6)*Y) * ...'
+     * For these to evaluate to a NON-ZERO valid value at pre-eval time
+     * (so setup_model accepts), the chosen L must satisfy at least one
+     * of the `(l==...)` checks.  Read the model's lmin/lmax (already
+     * populated by the .model parse) and pick the midpoint.  Samsung's
+     * 14LPU nfet.0 has lmin=10nm, lmax=18nm → midpoint=14nm, exactly
+     * the L the expression looks for.  For models without lmin/lmax,
+     * fall back to 30nm (the original constant default). */
+    if (osdi_defer_has(gen_model->GENmodName)) {
+      /* Pick a representative L within this model's bin range.  The
+       * (lmin, lmax) was recorded by INPgetModBin during bin
+       * selection — see osdi_defer_record_bin_range.  We can't read
+       * lmin/lmax from OSDI param storage because they're SPICE-side
+       * bin-selection hints, not Verilog-A model params (BSIM-CMG's
+       * .va file doesn't declare them). */
+      double lmin_v = 0.0, lmax_v = 0.0;
+      double default_l = 30e-9;
+      if (osdi_defer_get_bin_range(gen_model->GENmodName,
+                                   &lmin_v, &lmax_v)
+          && lmin_v > 0.0 && lmax_v > lmin_v) {
+        default_l = 0.5 * (lmin_v + lmax_v);
+      }
+
+      defer_model_apply_ctx mctx = {
+        .descr = descr, .model = model,
+        .l = default_l, .w = 100e-9, .nf = 1.0, .m = 1.0,
+      };
+      osdi_defer_for_model(gen_model->GENmodName,
+                           apply_deferred_param_to_model, &mctx);
+    }
 
     /* setup model parameter (setup_model)*/
     handle = (OsdiNgspiceHandle){.kind = 1, .name = gen_model->GENmodName};
@@ -273,6 +432,21 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         }
         if (error)
           return (error);
+        /* Exclude ONLY the synthesized analog-operator implicit-equation state
+         * nodes (laplace, zi, idt, transition-delay) from gmin stepping.  Their
+         * resistive diagonal is the realized pole value -p_k -- small, or zero
+         * for a pole at the origin -- so the dynamic gmin-stepping pass (LoadGmin)
+         * over-damps the state Newton update and the homotopy fails ("gmin
+         * stepping failed").  Physical model-internal nodes (e.g. BSIM RD/RS
+         * parasitic and NQS charge nodes) are NOT flagged: they have real
+         * resistive diagonals and legitimately benefit from gmin stepping, so
+         * excluding them would regress PDK DC convergence.  OpenVA names the
+         * synthesized state nodes "implicit_equation_<N>" (osdi metadata.rs);
+         * physical nodes keep their real Verilog-A node names. */
+        if (descr->nodes[i].name &&
+            strncmp(descr->nodes[i].name, "implicit_equation_", 18) == 0) {
+          tmp->nogmin = 1;
+        }
         node_ids[i] = (uint32_t)tmp->number;
         // TODO nodeset?
       }
@@ -317,6 +491,12 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
        gen_model = gen_model->GENnextModel) {
     void *model = osdi_model_data(gen_model);
 
+    /* Model-level deferred-eval defaults were already installed by
+     * OSDIsetup before its first setup_model call.  No need to repeat
+     * here; setup_model on a temperature step re-reads from the model
+     * slots that OSDIsetup populated.  Per-instance overrides happen
+     * later in this loop. */
+
     handle = (OsdiNgspiceHandle){.kind = 4, .name = gen_model->GENmodName};
     descr->setup_model((void *)&handle, model, sim_params, &init_info);
     res = handle_init_info(init_info, descr);
@@ -325,9 +505,41 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
       continue;
     }
 
+    /* Pre-resolve the four per-instance geometry param indices for this
+     * model's descriptor.  These map names to OSDI param slots; values
+     * are read per-instance inside the loop.  -1 means the model
+     * doesn't expose the symbol — the deferred expression will fall
+     * back to the default 0 for it. */
+    const char *model_name = gen_model->GENmodName;
+    bool has_deferred = osdi_defer_has(model_name);
+    uint32_t idx_l = 0, idx_w = 0, idx_nf = 0, idx_m = 0;
+    if (has_deferred) {
+      idx_l  = find_param_idx(descr, "l");
+      idx_w  = find_param_idx(descr, "w");
+      idx_nf = find_param_idx(descr, "nf");
+      idx_m  = find_param_idx(descr, "m");
+    }
+
     for (gen_inst = gen_model->GENinstances; gen_inst != NULL;
          gen_inst = gen_inst->GENnextInstance) {
       void *inst = osdi_instance_data(entry, gen_inst);
+
+      /* Deferred-expression evaluation per instance.  Runs BEFORE
+       * setup_instance so the model sees the actual computed values.
+       * Skipped entirely (no map lookup, no syscalls) when this
+       * model has no deferred entries — the common case for non-
+       * HSPICE-style OSDI PDKs like TSMC22 BSIM-BULK. */
+      if (has_deferred) {
+        defer_apply_ctx ctx = {
+          .descr = descr,
+          .inst  = inst,
+          .l  = read_inst_real(descr, inst, model, idx_l,  0.0),
+          .w  = read_inst_real(descr, inst, model, idx_w,  0.0),
+          .nf = read_inst_real(descr, inst, model, idx_nf, 1.0),
+          .m  = read_inst_real(descr, inst, model, idx_m,  1.0),
+        };
+        osdi_defer_for_model(model_name, apply_deferred_param, &ctx);
+      }
 
       // special handleing for temperature parameters
       double temp = ckt->CKTtemp;

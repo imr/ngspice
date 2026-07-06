@@ -1,0 +1,13 @@
+`include "disciplines.vams"
+
+module noise_test_probe(p, n);
+  inout p, n;
+  electrical p, n;
+
+  analog begin
+    I(p, n) <+ V(p, n) / 1000.0;
+    I(p, n) <+ white_noise(1e-20, "thermal_floor");
+    I(p, n) <+ flicker_noise(1e-15, 1.0, "flicker");
+    I(p, n) <+ noise_table({1.0, 1e-22, 1e3, 1e-21, 1e6, 1e-20}, "inline_table");
+  end
+endmodule

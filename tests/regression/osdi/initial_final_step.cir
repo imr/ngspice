@@ -1,0 +1,12 @@
+* initial_final_step test
+.model ifs initial_final_probe
+n1 p ifs
+vp p 0 1
+
+.control
+pre_osdi initial_final_step.osdi
+tran 10u 6.5m
+print @n1[cnt] @n1[is_final]
+quit
+.endc
+.end

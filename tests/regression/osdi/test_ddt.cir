@@ -1,0 +1,12 @@
+* test ddt
+.model td test_ddt
+n1 out in td
+rout out 0 1meg
+vin in 0 dc 1.0
+.control
+pre_osdi test_ddt.osdi
+tran 10p 100p
+print v(in) v(out)
+quit
+.endc
+.end

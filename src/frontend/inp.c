@@ -531,9 +531,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     if (fp || intfile) {
         deck = inp_readall(fp, dir_name, filename, comfile, intfile, &expr_w_temper);
 
-        /* files starting with *ng_script are user supplied command files */
-        if (deck && ciprefix("*ng_script", deck->line))
-            comfile = TRUE;
+        /* files starting with *ng_script are user supplied command files.
+         * Walk past any leading blank cards (see same logic in
+         * inpcom.c::inp_readall) so a leading blank line doesn't
+         * defeat comfile detection. */
+        if (deck) {
+            struct card *probe = deck;
+            while (probe && probe->line &&
+                   (probe->line[0] == '\0' ||
+                    probe->line[0] == '\n' ||
+                    (probe->line[0] == '\r' && probe->line[1] == '\n')))
+                probe = probe->nextcard;
+            if (probe && ciprefix("*ng_script", probe->line))
+                comfile = TRUE;
+        }
         /* save a copy of the deck for later reloading with 'mc_source' */
         if (deck && !comfile) {
         /* stored to new circuit ci_mcdeck in fcn */
@@ -598,9 +609,18 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         return 0;
     }
 
-    /* files starting with *ng_script are user supplied command files */
-    if (ciprefix("*ng_script", deck->line))
-        comfile = TRUE;
+    /* files starting with *ng_script are user supplied command files.
+     * Walk past any leading blank cards (see same logic above). */
+    {
+        struct card *probe = deck;
+        while (probe && probe->line &&
+               (probe->line[0] == '\0' ||
+                probe->line[0] == '\n' ||
+                (probe->line[0] == '\r' && probe->line[1] == '\n')))
+            probe = probe->nextcard;
+        if (probe && ciprefix("*ng_script", probe->line))
+            comfile = TRUE;
+    }
 
     if (!comfile) {
         /* Extract the .option lines from the deck into 'options',
@@ -780,8 +800,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
                 /* Special control lines outside of .control section? */
 
-                if (prefix("*#", s))
+                bool from_hash = prefix("*#", s);
+                if (from_hash)
                     s = skip_ws(s + 2);
+
+                /* *#.foo lines are SPICE deck cards embedded for other tools'
+                 * backward compatibility, not ngspice commands. Skip silently. */
+                if (from_hash && *s == '.') {
+                    ld->nextcard = dd->nextcard;
+                    line_free(dd, FALSE);
+                    continue;
+                }
 
                 if (ciprefix("pre_", s)) {
                     /* Assemble all commands starting with pre_ after stripping
@@ -939,6 +968,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     tfree(tt);
                     return 1;
                 }
+
 
             /* replace agauss(x,y,z) in each b-line by suitable value, one for all */
             bool statlocal = cp_getvar("statlocal", CP_BOOL, NULL, 0);

@@ -380,6 +380,13 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			       err = tprintf("Device type HiSIMHV version %s not available in this binary\n", ver);
 			    }
 			    break;
+			case 72:	/* BSIM-CMG (OSDI) — FinFET CMC standard model */
+			    type = INPtypelook("bsimcmg_va");
+			    if (type < 0) {
+			        err = INPmkTemp
+			            ("Device type bsimcmg_va not available - load bsimcmg.osdi before .model\n");
+			    }
+			    break;
 			case 77:	/* BSIM-BULK (OSDI) */
 			    type = INPtypelook("bsimbulk");
 			    if (type < 0) {
@@ -389,7 +396,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    break;
 			default:		/* placeholder; use level xxx for the next model */
 			    err = INPmkTemp
-				("Only MOS device levels 1-6,8-10,14,49,54-58,60,68,73,77 are supported in this binary\n");
+				("Only MOS device levels 1-6,8-10,14,49,54-58,60,68,72,73,77 are supported in this binary\n");
 			    break;
 			}
 			INPmakeMod(modname, type, image);

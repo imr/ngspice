@@ -1,0 +1,23 @@
+* absdelay test
+.model adm addelay
+n1 out in adm
+rout out 0 1meg
+vin in 0 PULSE(0 1 1n 10p 10p 2n 4n)
+
+.control
+pre_osdi absdelay.osdi
+tran 50p 6n
+meas tran vin_at_0_5 find v(in) at=0.5n
+meas tran vout_at_0_5 find v(out) at=0.5n
+meas tran vin_at_1_1 find v(in) at=1.1n
+meas tran vout_at_1_1 find v(out) at=1.1n
+meas tran vin_at_1_4 find v(in) at=1.4n
+meas tran vout_at_1_4 find v(out) at=1.4n
+meas tran vin_at_3_1 find v(in) at=3.1n
+meas tran vout_at_3_1 find v(out) at=3.1n
+meas tran vin_at_3_4 find v(in) at=3.4n
+meas tran vout_at_3_4 find v(out) at=3.4n
+print vin_at_0_5 vout_at_0_5 vin_at_1_1 vout_at_1_1 vin_at_1_4 vout_at_1_4 vin_at_3_1 vout_at_3_1 vin_at_3_4 vout_at_3_4
+quit
+.endc
+.end
