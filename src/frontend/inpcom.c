@@ -1403,6 +1403,13 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             continue;
         }
 
+        /* Strip a UTF-8 byte order mark at the start of a line -- i.e. at
+           the start of a file written by a Windows editor.  A BOM is never
+           legal SPICE syntax; left in place it glues to the first token
+           (fatal ".subckt/.ends mismatch" class errors in included libs). */
+        if (!intfile && strncmp(buffer, "\xEF\xBB\xBF", 3) == 0)
+            memmove(buffer, buffer + 3, strlen(buffer + 3) + 1);
+
         /* OK -- now we have loaded the next line into 'buffer'.  Process it.
          */
         if (first) {
