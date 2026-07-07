@@ -25,10 +25,41 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
 {
     VSRCinstance *here = (VSRCinstance*)inst;
     static char *msg = "Current and power not available in ac analysis";
-    int temp;
+    int temp, funtype = 0;
     double *v, *w;
 
     NG_IGNORE(select);
+
+    /* VSRC function types and instance parameter numbers are different. */
+    switch (which) {
+    case VSRC_PULSE:
+        funtype = PULSE;
+        break;
+    case VSRC_SINE:
+        funtype = SINE;
+        break;
+    case VSRC_EXP:
+        funtype = EXP;
+        break;
+    case VSRC_PWL:
+        funtype = PWL;
+        break;
+    case VSRC_SFFM:
+        funtype = SFFM;
+        break;
+    case VSRC_AM:
+        funtype = AM;
+        break;
+    case VSRC_TRNOISE:
+        funtype = TRNOISE;
+        break;
+    case VSRC_TRRANDOM:
+        funtype = TRRANDOM;
+        break;
+    case VSRC_SOUND:
+        funtype = SOUND;
+        break;
+    }
 
     switch(which) {
         case VSRC_DC:
@@ -49,6 +80,18 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case VSRC_TRNOISE:
         case VSRC_TRRANDOM:
         case VSRC_SOUND:
+            if (here->VSRCfunctionType != funtype) {
+                value->v.vec.rVec = TMALLOC(double, 1);
+                value->v.vec.rVec[0] = 0;
+            }
+            else {
+                temp = value->v.numValue = here->VSRCfunctionOrder;
+                v = value->v.vec.rVec = TMALLOC(double, here->VSRCfunctionOrder);
+                w = here->VSRCcoeffs;
+                while (temp--)
+                    *v++ = *w++;
+            }
+            return (OK);
         case VSRC_FCN_COEFFS:
             temp = value->v.numValue = here->VSRCfunctionOrder;
             v = value->v.vec.rVec = TMALLOC(double, here->VSRCfunctionOrder);
