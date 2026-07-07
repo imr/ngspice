@@ -908,23 +908,49 @@ bogus2(dgen *dg, IFparm *p, int i)
 }
 
 
+/* Free the vector that askInstanceQuest/askModelQuest allocates for an
+ * IF_VECTOR parameter (e.g. a source's pulse/pwl/ac coefficient list, TMALLOC'd
+ * in vsrcask.c).  The show param printers query per element, so without this
+ * the vector is re-allocated and leaked on every call -- O(n^2) and, for the
+ * long coefficient lists of stimulus sources, tens of GB. */
+static void
+free_if_vec(IFparm *p, IFvalue *val)
+{
+    if (!(p->dataType & IF_VECTOR))
+        return;
+    switch ((p->dataType & IF_VARTYPES) & ~IF_VECTOR) {
+    case IF_FLAG:
+    case IF_INTEGER:  tfree(val->v.vec.iVec); break;
+    case IF_REAL:     tfree(val->v.vec.rVec); break;
+    case IF_COMPLEX:  tfree(val->v.vec.cVec); break;
+    case IF_STRING:   tfree(val->v.vec.sVec); break;
+    case IF_INSTANCE: tfree(val->v.vec.uVec); break;
+    default: break;
+    }
+}
+
+
 int
 printvals(dgen *dg, IFparm *p, int i)
 {
     IFvalue     val;
-    int         n;
+    int         n, error;
+
+    memset(&val, 0, sizeof(val));   /* avoid garbage v.numValue -> runaway loop */
 
     if (dg->flags & DGEN_INSTANCE)
-        ft_sim->askInstanceQuest
+        error = ft_sim->askInstanceQuest
             (ft_curckt->ci_ckt, dg->instance, p->id, &val, &val);
     else
-        ft_sim->askModelQuest
+        error = ft_sim->askModelQuest
             (ft_curckt->ci_ckt, dg->model, p->id, &val, &val);
 
-    if (p->dataType & IF_VECTOR)
+    if ((p->dataType & IF_VECTOR) && !error)
         n = val.v.numValue;
     else
         n = 1;
+    if (n < 0)
+        n = 0;
 
     if (((p->dataType & IF_VARTYPES) & ~IF_VECTOR) == IF_COMPLEX)
         n *= 2;
@@ -934,6 +960,7 @@ printvals(dgen *dg, IFparm *p, int i)
             fprintf(cp_out, "         -");
         else
             fprintf(cp_out, "          ");
+        free_if_vec(p, &val);
         return 0;
     }
 
@@ -992,6 +1019,7 @@ printvals(dgen *dg, IFparm *p, int i)
         }
     }
 
+    free_if_vec(p, &val);
     return n - 1;
 }
 
@@ -1002,6 +1030,10 @@ printvals_old(dgen *dg, IFparm *p, int i)
     IFvalue     val;
     int         n, error;
 
+    /* zero val: askInstanceQuest may leave it untouched on error, and a
+     * garbage v.numValue would make the caller's element loop run "forever" */
+    memset(&val, 0, sizeof(val));
+
     if (dg->flags & DGEN_INSTANCE)
         error = ft_sim->askInstanceQuest
             (ft_curckt->ci_ckt, dg->instance, p->id, &val, &val);
@@ -1009,10 +1041,12 @@ printvals_old(dgen *dg, IFparm *p, int i)
         error = ft_sim->askModelQuest
             (ft_curckt->ci_ckt, dg->model, p->id, &val, &val);
 
-    if (p->dataType & IF_VECTOR)
+    if ((p->dataType & IF_VECTOR) && !error)
         n = val.v.numValue;
     else
         n = 1;
+    if (n < 0)
+        n = 0;
 
     if (((p->dataType & IF_VARTYPES) & ~IF_VECTOR) == IF_COMPLEX)
         n *= 2;
@@ -1022,6 +1056,7 @@ printvals_old(dgen *dg, IFparm *p, int i)
             fprintf(cp_out, "         -");
         else
             fprintf(cp_out, "          ");
+        free_if_vec(p, &val);
         return 0;
     }
 
@@ -1082,6 +1117,7 @@ printvals_old(dgen *dg, IFparm *p, int i)
         }
     }
 
+    free_if_vec(p, &val);
     return n - 1;
 }
 
