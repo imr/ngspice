@@ -914,8 +914,6 @@ printvals(dgen *dg, IFparm *p, int i)
     IFvalue     val;
     int         n;
 
-    memset(&val, 0, sizeof val);
-
     if (dg->flags & DGEN_INSTANCE)
         ft_sim->askInstanceQuest
             (ft_curckt->ci_ckt, dg->instance, p->id, &val, &val);
@@ -993,8 +991,6 @@ printvals(dgen *dg, IFparm *p, int i)
             fprintf(cp_out, " %s", " ******** ");
         }
     }
-    if (p->dataType & IF_VECTOR)
-        tfree(val.v.vec.rVec);
 
     return n - 1;
 }
