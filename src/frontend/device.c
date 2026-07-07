@@ -1053,9 +1053,9 @@ printvals_old(dgen *dg, IFparm *p, int i)
 
     if (i >= n) {
         if (i == 0)
-            fprintf(cp_out, "         -");
+            fprintf(cp_out, "                     -");
         else
-            fprintf(cp_out, "          ");
+            fprintf(cp_out, "                      ");
         free_if_vec(p, &val);
         return 0;
     }
