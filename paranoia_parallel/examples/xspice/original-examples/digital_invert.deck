@@ -1,0 +1,23 @@
+Digital inversions
+*
+.tran 1e-8 1e-6
+*
+v1 1 0 0.0 pulse(0 1 0 1e-8 1e-8 0.25e-6 0.5e-6)
+r1 1 0 1k
+*
+a1 [1] [2] adc
+.model adc adc_bridge
+*
+a2  2  3 inv
+a3  2 ~4 inv
+a4 ~2  5 inv
+a5 ~2 ~6 inv
+.model inv d_inverter
+*
+a6 [2 ~4] 7 nand
+.model nand d_nand
+*
+a8 [2 3 4 5 6 7] [12 13 14 15 16 17] dac
+.model dac dac_bridge
+*
+.end

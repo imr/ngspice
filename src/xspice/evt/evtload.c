@@ -159,7 +159,6 @@ int EVTload_with_event(
 
     g_mif_info.ckt = ckt;
     g_mif_info.instance = inst;
-    g_mif_info.errmsg = "";
     g_mif_info.circuit.call_type = MIF_EVENT_DRIVEN;
 
     if(inst->initialized)
@@ -249,6 +248,13 @@ int EVTload_with_event(
 
     mod_type = MIFmodPtr(inst)->MIFmodType;
     DEVices[mod_type]->DEVpublic.cm_func (&cm_data);
+
+    if (g_mif_info.errmsg && g_mif_info.errmsg[0] &&
+        cp_getvar("noisyxspice", CP_BOOL, NULL, 0)) {
+        fprintf(stderr, "XSPICE instance %s: %s",
+                inst->MIFname, g_mif_info.errmsg);
+        g_mif_info.errmsg = NULL;
+    }
 
 
     /* ****************************** */

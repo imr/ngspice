@@ -39,6 +39,23 @@ As literature please see for example
     Single-Event Effects, from Space to Accelerator Environments
     Springer 2025
 
+There is an alternative pulse variant possible by setting the parameters scdelay and scaling.
+In advanced process nodes a single particle hit with its electron/hole pairs generated may
+influence not only a single node, but several neighboring nodes as well, may be a little less
+and with a small delay. This behaviour may be emulated by connecting SEEgen to a central node
+and some surrounding nodes. These will get a portion of the charge carriers, with a possible
+(small) delay. The .model line
+
+.model seemod1 seegen (tdelay = 400p tperiod=500p tfall='tfall' trise='trise' let='let' cdepth='d'
++ perlim=TRUE ctrlthres=0 scaling=[1, 0.5, 0.25, 0.125] scdelay=[0, 10p, 20p, 30p])
+
+now contain the arrays scaling and scdelay. The nummber of array elements has to equal the number
+of ports. Scaling will distribute the LET onto the different nodes with each weight given.
+Scdelay will delay each port relative to the parameter tdelay. Parameters tperiod, perlim, and
+ctrlthres are ignored for now. As the netlist does not contain information on the location of the
+nodes in the layout, the user has to provide these data be selecting the proper nodes and pulse
+scaling.
+
 Detailed description (will be added to the manual):
 
 NAME_TABLE:
@@ -130,6 +147,25 @@ Limits:             [0 1.57079]            -
 Vector:             no                     no
 Vector_Bounds:      -                      -
 Null_Allowed:       yes                    yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     scaling                scdelay
+Description:        "scale the current"    "delay scaled pulses individually"
+Data_Type:          real                   real
+Default_Value:      1                      0
+Limits:             [0 1]                  [0, -]
+Vector:             yes                    yes
+Vector_Bounds:      -                      -
+Null_Allowed:       yes                    yes
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    pulses
+Data_Type:          pointer
+Vector:             no
+Description:        "info on pulse for each port"
 
 STATIC_VAR_TABLE:
 

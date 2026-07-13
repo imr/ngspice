@@ -25,6 +25,16 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = RESinstances(model); here != NULL ;
                 here = RESnextInstance(here)) {
 
+            if (here->RESdangling) {
+                /* Topology reduction: dangling (degree-1) resistor.
+                 * Remove it from the system, pin the floating node(s) with a
+                 * unit diagonal (set in CKTtopologyReduce()). */
+                if (here->RESdangling & 1) *(here->RESposPosPtr) += 1.0;
+                if (here->RESdangling & 2) *(here->RESnegNegPtr) += 1.0;
+                here->REScurrent = 0.0;
+                continue;
+            }
+
             here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) -
                                 *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
 

@@ -13,8 +13,14 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
+#include "ngspice/gendefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/fteext.h"
+#include "ngspice/cpextern.h"
+
+/* device headers needed by CKTtopologyReduce() to mark dangling passives */
+#include "../devices/cap/capdefs.h"
+#include "../devices/res/resdefs.h"
 
 #ifdef XSPICE
 #include "ngspice/enh.h"
@@ -28,6 +34,175 @@ Author: 1985 Thomas L. Quarles
 #define CKALLOC(var,size,type) \
     if(size && ((var = TMALLOC(type, size)) == NULL)){\
             return(E_NOMEM);\
+}
+
+/* Topology reduction for removing dangling capacitors and resistors.
+ *
+ * A node whose only connection is a single passive terminal (a degree-1
+ * "dangling" node, e.g. the dead end of an opamp compensation cap) carries no
+ * steady current/charge, but its row becomes ill-conditioned as the timestep
+ * shrinks and shows up as a spurious "Timestep too small" abort.  Commercial
+ * fast simulators simply remove such elements from the matrix.  This
+ * pass does the same: it finds dangling passive leaves and marks the owning
+ * capacitor/resistor so that, at load time, the device contributes nothing and
+ * its floating node is pinned with a unit diagonal (kept nonsingular).
+ *
+ * Node degree is counted GENERICALLY over every device type through the
+ * GENnode() terminal array, so no device family can be missed (which would
+ * wrongly prune a live node).  Only capacitors and resistors are ever removed.
+ * Disable with `set no_topo_reduce` in .spiceinit. It is disabled as well if
+ * option rshunt=xx is selected.*/
+static void
+CKTtopologyReduce(CKTcircuit *ckt)
+{
+    int i, t, nterm, maxnode, removed_total = 0, reported = 0;
+    int captype = -1, restype = -1;
+    int *degree;
+    GENmodel *gmod;
+    GENinstance *ginst;
+
+    if (cp_getvar("no_topo_reduce", CP_BOOL, NULL, 0))
+        return;
+
+#ifdef XSPICE
+    if (ckt->enh->rshunt_data.enabled)
+        return;
+#endif
+
+    maxnode = ckt->CKTmaxEqNum;
+    if (maxnode < 1)
+        return;
+
+    degree = TMALLOC(int, maxnode + 1);
+    if (!degree)
+        return;
+    for (i = 0; i <= maxnode; i++)
+        degree[i] = 0;
+
+    /* complete, type-agnostic node degree over all device terminals */
+    for (i = 0; i < DEVmaxnum; i++) {
+        if (!DEVices[i] || !ckt->CKThead[i] || !DEVices[i]->DEVpublic.terms)
+            continue;
+        nterm = *(DEVices[i]->DEVpublic.terms);
+        if (DEVices[i]->DEVpublic.name) {
+            if (!strcmp(DEVices[i]->DEVpublic.name, "Capacitor"))
+                captype = i;
+            else if (!strcmp(DEVices[i]->DEVpublic.name, "Resistor"))
+                restype = i;
+        }
+        for (gmod = ckt->CKThead[i]; gmod; gmod = gmod->GENnextModel)
+            for (ginst = gmod->GENinstances; ginst; ginst = ginst->GENnextInstance) {
+                int *nodes = GENnode(ginst);
+                for (t = 0; t < nterm; t++) {
+                    int nd = nodes[t];
+                    if (nd > 0 && nd <= maxnode)
+                        degree[nd]++;
+                }
+            }
+    }
+
+    if (captype < 0 && restype < 0) {
+        FREE(degree);
+        return;
+    }
+
+    /* Leaf-prune to a fixpoint: removing a dangling passive can drop its other
+     * node to degree 1, exposing the next leaf of a dangling chain. */
+    for (;;) {
+        int removed_this_pass = 0;
+
+        if (captype >= 0) {
+            CAPmodel *cm;
+            for (cm = (CAPmodel *)ckt->CKThead[captype]; cm; cm = CAPnextModel(cm))
+                for (CAPinstance *ci = CAPinstances(cm); ci; ci = CAPnextInstance(ci)) {
+                    int pn = ci->CAPposNode, nn = ci->CAPnegNode, mode = 0;
+                    if (ci->CAPdangling)
+                        continue;
+                    if (pn > 0 && degree[pn] == 1)
+                        mode |= 1;
+                    if (nn > 0 && degree[nn] == 1)
+                        mode |= 2;
+                    if (!mode)
+                        continue;
+                    ci->CAPdangling = mode;
+                    if (mode & 1)
+                        degree[pn] = 0;
+                    else if (pn > 0)
+                        degree[pn]--;
+                    if (mode & 2)
+                        degree[nn] = 0;
+                    else if (nn > 0)
+                        degree[nn]--;
+                    removed_this_pass++;
+                    if (ft_stricterror) {
+                        fprintf(stderr,
+                            "Dangling capacitor %s "
+                            "(floating node %s) found in netlist.\n", ci->CAPname,
+                            (char*)CKTnodName(ckt, (mode & 2) ? nn : pn));
+                    }
+                    else if (reported++ < 40)
+                        fprintf(stdout,
+                            "Topology reduction: removed dangling capacitor %s "
+                            "(floating node %s)\n", ci->CAPname,
+                            (char *)CKTnodName(ckt, (mode & 2) ? nn : pn));
+                }
+        }
+
+        if (restype >= 0) {
+            RESmodel *rm;
+            for (rm = (RESmodel *)ckt->CKThead[restype]; rm; rm = RESnextModel(rm))
+                for (RESinstance *ri = RESinstances(rm); ri; ri = RESnextInstance(ri)) {
+                    int pn = ri->RESposNode, nn = ri->RESnegNode, mode = 0;
+                    if (ri->RESdangling)
+                        continue;
+                    if (pn > 0 && degree[pn] == 1)
+                        mode |= 1;
+                    if (nn > 0 && degree[nn] == 1)
+                        mode |= 2;
+                    if (!mode)
+                        continue;
+                    ri->RESdangling = mode;
+                    if (mode & 1)
+                        degree[pn] = 0;
+                    else if (pn > 0)
+                        degree[pn]--;
+                    if (mode & 2)
+                        degree[nn] = 0;
+                    else if (nn > 0)
+                        degree[nn]--;
+                    removed_this_pass++;
+                    if (ft_stricterror) {
+                        fprintf(stderr,
+                            "Dangling resistor %s "
+                            "(floating node %s) found in netlist.\n", ri->RESname,
+                            (char*)CKTnodName(ckt, (mode & 2) ? nn : pn));
+                    }
+                    else if (reported++ < 40)
+                        fprintf(stdout,
+                            "Topology reduction: removed dangling resistor %s "
+                            "(floating node %s)\n", ri->RESname,
+                            (char*)CKTnodName(ckt, (mode & 2) ? nn : pn));
+                }
+        }
+
+        removed_total += removed_this_pass;
+        if (!removed_this_pass)
+            break;
+    }
+
+    if (removed_total) {
+        if (ft_stricterror) {
+            fprintf(stderr, "\nError: %d dangling passive(s) found.\n "
+                "    Please correct the netlist.\n", removed_total);
+            FREE(degree);
+            controlled_exit(EXIT_BAD);
+        }
+
+        fprintf(stdout, "Topology reduction: %d dangling passive(s) removed "
+            "from the matrix.\n", removed_total);
+    }
+
+    FREE(degree);
 }
 
 int
@@ -115,6 +290,13 @@ CKTsetup(CKTcircuit *ckt)
             if(error) return(error);
         }
     }
+
+    /* Topology reduction for removing dangling capacitors and resistors:
+     * mark dangling (degree-1) passive leaves
+     * for removal.  Done after all device setups (so the node degrees are
+     * complete) but before the matrix is converted/bound for the linear
+     * solver -- it only changes load-time stamping, not the matrix structure. */
+    CKTtopologyReduce(ckt);
 
 #ifdef XSPICE
   /* gtri - begin - Setup for adding rshunt option resistors */

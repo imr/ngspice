@@ -2611,96 +2611,99 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->HICUMqcth) =
                                 *(ckt->CKTstate0 + here->HICUMqcth) ;
                     }
+                    /* no integration, if dc sweep, but keep evaluating capacitances */
+                    if (!(ckt->CKTmode & MODEDCTRANCURVE)) {
+                        //Integrate all charges and add the displacement current to the branch currents
+                        //Qrbi
+                        error = NIintegrate(ckt, &geq, &ceq, Qrbi_Vbpbi, here->HICUMqrbi);
+                        if (error) return(error);
+                        Ibpbi_Vbpbi += geq;
+                        Ibpbi += *(ckt->CKTstate0 + here->HICUMcqrbi);
+                        //Qjei
+                            error = NIintegrate(ckt, &geq, &ceq, Cjei, here->HICUMqjei);
+                            if (error) return(error);
+                            Ibiei_Vbiei += geq;
+                            Ibiei += *(ckt->CKTstate0 + here->HICUMcqjei);
+                        //Qdeix
+                        if (!model->HICUMnqs) {
+                            error = NIintegrate(ckt, &geq, &ceq, Qdeix_Vbiei, here->HICUMqf);
+                            if (error) return(error);
+                            Ibiei_Vbiei += geq;
+                            Ibiei_Vxf = 0;
+                            Ibiei += *(ckt->CKTstate0 + here->HICUMcqf);
+                        }
+                        else { //Qdeix is now a function of Vxf(t)
+                            error = NIintegrate(ckt, &geq, &ceq, Qdeix_Vxf, here->HICUMqf);
+                            if (error) return(error);
+                            Ibiei_Vxf = geq;
+                            Ibiei += *(ckt->CKTstate0 + here->HICUMcqf);
+                        }
+                        //Qr
+                        error = NIintegrate(ckt, &geq, &ceq, Qr_Vbici, here->HICUMqr);
+                        if (error) return(error);
+                        Ibici_Vbici += geq;
+                        Ibici += *(ckt->CKTstate0 + here->HICUMcqr);
+                        //Qjci
+                        error = NIintegrate(ckt, &geq, &ceq, Cjci, here->HICUMqjci);
+                        if (error) return(error);
+                        Ibici_Vbici += geq;
+                        Ibici += *(ckt->CKTstate0 + here->HICUMcqjci);
+                        //Qjep
+                        error = NIintegrate(ckt, &geq, &ceq, Cjep, here->HICUMqjep);
+                        if (error) return(error);
+                        Ibpei_Vbpei += geq;
+                        Ibpei += *(ckt->CKTstate0 + here->HICUMcqjep);
+                        //Qjcx_i
+                        error = NIintegrate(ckt, &geq, &ceq, Cjcx_i, here->HICUMqjcx0_i);
+                        if (error) return(error);
+                        Ibci_Vbci = geq;
+                        Ibci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i);
+                        //Qjcx_ii
+                        error = NIintegrate(ckt, &geq, &ceq, Cjcx_ii, here->HICUMqjcx0_ii);
+                        if (error) return(error);
+                        Ibpci_Vbpci += geq;
+                        Ibpci += *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii);
+                        //Qdsu
+                        error = NIintegrate(ckt, &geq, &ceq, Qdsu_Vbpci, here->HICUMqdsu);
+                        if (error) return(error);
+                        Ibpci_Vbpci += geq;
+                        Ibpci += *(ckt->CKTstate0 + here->HICUMcqdsu);
+                        //Qjs
+                        error = NIintegrate(ckt, &geq, &ceq, Cjs, here->HICUMqjs);
+                        if (error) return(error);
+                        Isici_Vsici += geq;
+                        Isici += *(ckt->CKTstate0 + here->HICUMcqjs);
+                        //Qscp
+                        error = NIintegrate(ckt, &geq, &ceq, Cscp, here->HICUMqscp);
+                        if (error) return(error);
+                        Isc_Vsc = geq;
+                        Isc = *(ckt->CKTstate0 + here->HICUMcqscp);
+                        if (model->HICUMnqs) {
+                            //Qxf1
+                            error = NIintegrate(ckt, &geq, &ceq, Qxf1_Vxf1, here->HICUMqxf1);
+                            if (error) return(error);
+                            Ixf1_Vxf1 += geq;
+                            Ixf1 += *(ckt->CKTstate0 + here->HICUMcqxf1);
+                            //Qxf2
+                            error = NIintegrate(ckt, &geq, &ceq, Qxf2_Vxf2, here->HICUMqxf2);
+                            if (error) return(error);
+                            Ixf2_Vxf2 += geq;
+                            Ixf2 += *(ckt->CKTstate0 + here->HICUMcqxf2);
+                            //Qxf
+                            error = NIintegrate(ckt, &geq, &ceq, Qxf_Vxf, here->HICUMqxf);
+                            if (error) return(error);
+                            Ixf_Vxf += geq;
+                            Ixf += *(ckt->CKTstate0 + here->HICUMcqxf);
+                        }
 
-                    //Integrate all charges and add the displacement current to the branch currents
-                    //Qrbi
-                    error = NIintegrate(ckt,&geq,&ceq,Qrbi_Vbpbi,here->HICUMqrbi);
-                    if(error) return(error);
-                    Ibpbi_Vbpbi += geq;
-                    Ibpbi += *(ckt->CKTstate0 + here->HICUMcqrbi);
-                    //Qjei
-                    error = NIintegrate(ckt,&geq,&ceq,Cjei,here->HICUMqjei);
-                    if(error) return(error);
-                    Ibiei_Vbiei += geq;
-                    Ibiei += *(ckt->CKTstate0 + here->HICUMcqjei);
-                    //Qdeix
-                    if (!model->HICUMnqs) {
-                        error = NIintegrate(ckt,&geq,&ceq,Qdeix_Vbiei,here->HICUMqf);
-                        if(error) return(error);
-                        Ibiei_Vbiei += geq;
-                        Ibiei_Vxf    = 0;
-                        Ibiei += *(ckt->CKTstate0 + here->HICUMcqf);
-                    } else { //Qdeix is now a function of Vxf(t)
-                        error = NIintegrate(ckt,&geq,&ceq,Qdeix_Vxf,here->HICUMqf);
-                        if(error) return(error);
-                        Ibiei_Vxf = geq;
-                        Ibiei     += *(ckt->CKTstate0 + here->HICUMcqf);
-                    }
-                    //Qr
-                    error = NIintegrate(ckt,&geq,&ceq,Qr_Vbici,here->HICUMqr);
-                    if(error) return(error);
-                    Ibici_Vbici += geq;
-                    Ibici += *(ckt->CKTstate0 + here->HICUMcqr);
-                    //Qjci
-                    error = NIintegrate(ckt,&geq,&ceq,Cjci,here->HICUMqjci);
-                    if(error) return(error);
-                    Ibici_Vbici += geq;
-                    Ibici += *(ckt->CKTstate0 + here->HICUMcqjci);
-                    //Qjep
-                    error = NIintegrate(ckt,&geq,&ceq,Cjep,here->HICUMqjep);
-                    if(error) return(error);
-                    Ibpei_Vbpei += geq;
-                    Ibpei += *(ckt->CKTstate0 + here->HICUMcqjep);
-                    //Qjcx_i
-                    error = NIintegrate(ckt,&geq,&ceq,Cjcx_i,here->HICUMqjcx0_i);
-                    if(error) return(error);
-                    Ibci_Vbci = geq;
-                    Ibci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i);
-                    //Qjcx_ii
-                    error = NIintegrate(ckt,&geq,&ceq,Cjcx_ii,here->HICUMqjcx0_ii);
-                    if(error) return(error);
-                    Ibpci_Vbpci += geq;
-                    Ibpci += *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii);
-                    //Qdsu
-                    error = NIintegrate(ckt,&geq,&ceq,Qdsu_Vbpci,here->HICUMqdsu);
-                    if(error) return(error);
-                    Ibpci_Vbpci += geq;
-                    Ibpci += *(ckt->CKTstate0 + here->HICUMcqdsu);
-                    //Qjs
-                    error = NIintegrate(ckt,&geq,&ceq,Cjs,here->HICUMqjs);
-                    if(error) return(error);
-                    Isici_Vsici += geq;
-                    Isici       += *(ckt->CKTstate0 + here->HICUMcqjs);
-                    //Qscp
-                    error = NIintegrate(ckt,&geq,&ceq,Cscp,here->HICUMqscp);
-                    if(error) return(error);
-                    Isc_Vsc = geq;
-                    Isc     = *(ckt->CKTstate0 + here->HICUMcqscp);
-                    if (model->HICUMnqs) {
-                        //Qxf1
-                        error = NIintegrate(ckt,&geq,&ceq,Qxf1_Vxf1,here->HICUMqxf1);
-                        if(error) return(error);
-                        Ixf1_Vxf1 += geq;
-                        Ixf1 += *(ckt->CKTstate0 + here->HICUMcqxf1);
-                        //Qxf2
-                        error = NIintegrate(ckt,&geq,&ceq,Qxf2_Vxf2,here->HICUMqxf2);
-                        if(error) return(error);
-                        Ixf2_Vxf2 += geq;
-                        Ixf2 += *(ckt->CKTstate0 + here->HICUMcqxf2);
-                        //Qxf
-                        error = NIintegrate(ckt,&geq,&ceq,Qxf_Vxf,here->HICUMqxf);
-                        if(error) return(error);
-                        Ixf_Vxf += geq;
-                        Ixf += *(ckt->CKTstate0 + here->HICUMcqxf);
-                    }
-
-                    if (model->HICUMselfheat)
-                    {
-                        //Qth
-                        error = NIintegrate(ckt,&geq,&ceq,here->HICUMcth_scaled,here->HICUMqcth);
-                        if(error) return(error);
-                        Icth_Vrth = geq;
-                        Icth = *(ckt->CKTstate0 + here->HICUMcqcth);
+                        if (model->HICUMselfheat)
+                        {
+                            //Qth
+                            error = NIintegrate(ckt, &geq, &ceq, here->HICUMcth_scaled, here->HICUMqcth);
+                            if (error) return(error);
+                            Icth_Vrth = geq;
+                            Icth = *(ckt->CKTstate0 + here->HICUMcqcth);
+                        }
                     }
 
                     if(ckt->CKTmode & MODEINITTRAN) {

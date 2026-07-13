@@ -1,0 +1,12 @@
+To run example relax_osc_st.cir, please download the device spice libs Opamps_Comparators_ST.lib
+from https://www.st.com/resource/en/cad_symbol_library/opamps_comparators_st.zip
+
+To run example Optimos_out.cir, please download the device spice libs  OptiMOS5_30V_PSpice.lib
+from https://www.infineon.com/cms/en/product/promopages/power-mosfet-simulation-models/, especially
+https://www.infineon.com/dgdl/Infineon-SimulationModel_OptiMOS_PowerMOSFET_PSpice_30V_N-Channel-SM-v01_00-EN.zip?fileId=5546d46256fb43b3015746ca67ac0fd3
+
+And don't forget to add
+set ngbehavior=ps
+to spinit or .spiceinit to obtain PSPICE compatibility for the included (using .include) device libraries
+
+See ngspice manual chapt. 16.13.5 for details on the PSPICE Compatibility mode.

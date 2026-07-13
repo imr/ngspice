@@ -1,0 +1,33 @@
+* (exec-spice "ngspice %s" t)
+
+v1  1 0  dc 2 ac 1
+v2  200 0 dc=1
+
+R1  1 2  1k
+R2  2 0  1k tc1=0.001 ; tc2=1e-5
+
+R10 1 20 1k
+R20 20 0 '1k*v(200)' tc1=0.001 ; tc2=1e-5
+
+.temp 127.0
+
+.control
+listing e
+
+op
+let gold = 2/(1+1000/1100)
+print v(2) v(20) gold
+
+noise v(2) v1 dec 1 1kHz 1kHz
+let r = 1/(1/1000 + 1/1100)
+let gold = sqrt(4*boltz*(273.15+127.0)*r)
+print all gold
+
+noise v(20) v1 dec 1 1kHz 1kHz
+print all
+
+ac dec 1 1kHz 1kHz
+let gold = 1/(1+1000/1100)
+print v(2) v(20) gold
+
+.endc

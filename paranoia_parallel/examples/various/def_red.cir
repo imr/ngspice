@@ -1,0 +1,19 @@
+Test define/alter
+* function with single parameter is o.k.
+* function with two parameters leaks memory
+
+R1 1 0 myres
+.model myres res(r=1)
+v1 1 0 1
+
+.control
+define myfcn(x,y) (y + x + 1)
+op
+print all
+altermod @r1[r] = myfcn(2,2)
+op
+print all
+
+.endc
+
+.end

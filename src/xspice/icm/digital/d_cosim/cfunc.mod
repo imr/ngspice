@@ -118,7 +118,7 @@ static void callback(ARGS, Mif_Callback_Reason_t reason)
     }
 }
 
-/* A utility function used to open static libraries, trying an installation
+/* A utility function used to open dynamic libraries, trying an installation
  * directory and different file extenstions.
  */
 

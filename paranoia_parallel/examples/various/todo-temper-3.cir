@@ -1,0 +1,23 @@
+* try temper
+
+* (exec-spice "ngspice %s" t)
+
+.model dplain d is={temper >= 25 ? 1e-10 : (temper+1)*1e-11}
+.model dref   d is=1e-10
+
+
+Iin  1 0  dc = -1mA
+Dref 1 0  dref
+e2   2 0 1 0 1
+D2   2 0  dplain
+e3   3 0 1 0 1
+D3   3 0  dref area={temper >= 25 ? (temper+100)/100 : 2 }
+
+.control
+dc temp 0 125 1.0
+plot e2#branch/@iin[dc]
+plot e3#branch/@iin[dc]
+*quit 0
+.endc
+
+.end

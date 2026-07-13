@@ -1,0 +1,50 @@
+.TITLE DIGITAL RING OSCILLATOR, 9 stages, NAND gates, enable
+
+.OPTIONS NOACCT NOINIT NOMOD NOPAGE METHOD=gear XTRTOL=7
+.PARAM TEMP=25 VDD=3.3
+
+.subckt ringOsc int_di1 a_clock d_en0 riseDelay=200e-12 fallDelay=200e-12
+    A_ring_osc0 [int_di1 d_en0] int_di2 CM_NAND0
+    A_ring_osc1 [int_di2 d_en0] int_di3 CM_NAND0
+    A_ring_osc2 [int_di3 d_en0] int_di4 CM_NAND0
+    A_ring_osc3 [int_di4 d_en0] int_di5 CM_NAND0
+    A_ring_osc4 [int_di5 d_en0] int_di6 CM_NAND0
+    A_ring_osc5 [int_di6 d_en0] int_di7 CM_NAND0
+    A_ring_osc6 [int_di7 d_en0] int_di8 CM_NAND0
+    A_ring_osc7 [int_di8 d_en0] int_di9 CM_NAND0
+    A_ring_osc8 [int_di9 d_en0] int_di1 CM_NAND0
+
+    .model CM_NAND0 d_nand ( rise_delay= {riseDelay} fall_delay= {fallDelay} )
+    A_adc1 [%vd(a_clock 0)] [d_en0] ADC
+    * oscillation starts only if no unknown logic state is produced at d_en0
+    .model ADC adc_bridge in_low='VDD/2' in_high='VDD/2'
+.ends
+
+* analogue output
+abridge1 [node1] [aout] dac1
+.model dac1 dac_bridge( out_low = 0 out_high = {VDD} out_undef = {VDD/2}
++ input_load = 5.0e-12 t_rise = 200e-12 t_fall = 200e-12 )
+
+* calling the r.o.
+X1 node1 node2 node3 ringOsc riseDelay=200e-12 fallDelay=200e-12
+* enable signal
+V_en node2 0 PULSE(0 3.3 30n 1n 1n 40n 80n) 
+
+.control
+    tran 200p 200n
+* sim time and memory usage
+    rusage
+* plot and display the digital data
+    plot node1 node3 digitop
+    set xbrushwidth=2
+    plot node1 node3 digitop xlimit 60n 80n
+    edisplay
+* frequency and delay (measure 10 periods)
+    meas tran tdiff TRIG v(aout) VAL=1.65 RISE=2 TARG v(aout) VAL=1.65 RISE=12
+    let freq = 10/tdiff*1e-9
+    let del = 1/freq/9/2
+    echo The oscillation frequency is $&freq GHz, the gate delay is $&del ns
+.endc
+
+.endc
+.end

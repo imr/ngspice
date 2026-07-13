@@ -1,0 +1,72 @@
+.title KiCad schematic
+.include "models/TL072-dual.lib"
+.include "models/opa1612c-dual.lib"
+.include "models/opa1656c-dual.lib"
+V1 Net-_C1-Pad2_ GND dc 0 ac 1
+V2 15+ GND dc 15
+V3 GND 15- dc 15
+C2 Net-_C2-Pad1_ Net-_C1-Pad1_ 330n
+C1 Net-_C1-Pad1_ Net-_C1-Pad2_ 330n
+C3 Net-_C3-Pad1_ Net-_C3-Pad2_ 330n
+C4 Net-_C4-Pad1_ Net-_C3-Pad2_ 330n
+R8 Net-_C4-Pad1_ Net-_R7-Pad1_ 2780
+R3 Net-_C2-Pad1_ Net-_R2-Pad1_ 2780
+R2 Net-_R2-Pad1_ GND 2780
+R1 Net-_R1-Pad1_ Net-_C1-Pad1_ 2780
+R6 Net-_R10-Pad1_ Net-_C3-Pad2_ 2780
+R7 Net-_R7-Pad1_ GND 2780
+R10 Net-_R10-Pad1_ TL072_OUT 10k
+R4 GND Net-_R1-Pad1_ 2780
+R9 GND Net-_R10-Pad1_ 2780
+R11 TL072_OUT GND 100k
+XU1 Net-_C3-Pad1_ Net-_R1-Pad1_ Net-_C2-Pad1_ 15- Net-_C4-Pad1_ Net-_R10-Pad1_ TL072_OUT 15+ TL072c
+R5 Net-_R1-Pad1_ Net-_C3-Pad1_ 10k
+C6 Net-_C6-Pad1_ Net-_C5-Pad1_ 330n
+C5 Net-_C5-Pad1_ Net-_C1-Pad2_ 330n
+C7 Net-_C7-Pad1_ Net-_C7-Pad2_ 330n
+C8 Net-_C8-Pad1_ Net-_C7-Pad2_ 330n
+R19 Net-_C8-Pad1_ Net-_R18-Pad1_ 2780
+R14 Net-_C6-Pad1_ Net-_R13-Pad1_ 2780
+R13 Net-_R13-Pad1_ GND 2780
+R12 Net-_R12-Pad1_ Net-_C5-Pad1_ 2780
+R17 Net-_R17-Pad1_ Net-_C7-Pad2_ 2780
+R18 Net-_R18-Pad1_ GND 2780
+R21 Net-_R17-Pad1_ OPA1656_OUT 10k
+R15 GND Net-_R12-Pad1_ 2780
+R20 GND Net-_R17-Pad1_ 2780
+R22 OPA1656_OUT GND 100k
+XU2 Net-_C7-Pad1_ Net-_R12-Pad1_ Net-_C6-Pad1_ 15- Net-_C8-Pad1_ Net-_R17-Pad1_ OPA1656_OUT 15+ OPA1656c
+R16 Net-_R12-Pad1_ Net-_C7-Pad1_ 10k
+C10 Net-_C10-Pad1_ Net-_C10-Pad2_ 330n
+C9 Net-_C10-Pad2_ Net-_C1-Pad2_ 330n
+C11 Net-_C11-Pad1_ Net-_C11-Pad2_ 330n
+C12 Net-_C12-Pad1_ Net-_C11-Pad2_ 330n
+R30 Net-_C12-Pad1_ Net-_R29-Pad1_ 2780
+R25 Net-_C10-Pad1_ Net-_R24-Pad1_ 2780
+R24 Net-_R24-Pad1_ GND 2780
+R23 Net-_R23-Pad1_ Net-_C10-Pad2_ 2780
+R28 Net-_R28-Pad1_ Net-_C11-Pad2_ 2780
+R29 Net-_R29-Pad1_ GND 2780
+R32 Net-_R28-Pad1_ OPA1612_OUT 10k
+R26 GND Net-_R23-Pad1_ 2780
+R31 GND Net-_R28-Pad1_ 2780
+R33 OPA1612_OUT GND 100k
+XU3 Net-_C11-Pad1_ Net-_R23-Pad1_ Net-_C10-Pad1_ 15- Net-_C12-Pad1_ Net-_R28-Pad1_ OPA1612_OUT 15+ OPA1612c
+R27 Net-_R23-Pad1_ Net-_C11-Pad1_ 10k
+*.ac dec 1k 1 10k 
+
+*.options reltol=0.01 rshunt=1e12
+
+.control
+*op
+optran 0 0 0 100n 10u 0
+*op
+*print all
+ac dec 10 100 10Meg 
+set color0=white
+set xbrushwidth=2
+plot db(OPA1612_OUT) db(OPA1656_OUT) db(TL072_OUT)
+plot cph(OPA1612_OUT) cph(OPA1656_OUT) cph(TL072_OUT)
+.endc
+
+.end

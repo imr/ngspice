@@ -1403,6 +1403,13 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             continue;
         }
 
+        /* Strip a UTF-8 byte order mark at the start of a line -- i.e. at
+           the start of a file written by a Windows editor.  A BOM is never
+           legal SPICE syntax; left in place it glues to the first token
+           (fatal ".subckt/.ends mismatch" class errors in included libs). */
+        if (!intfile && strncmp(buffer, "\xEF\xBB\xBF", 3) == 0)
+            memmove(buffer, buffer + 3, strlen(buffer + 3) + 1);
+
         /* OK -- now we have loaded the next line into 'buffer'.  Process it.
          */
         if (first) {
@@ -3934,12 +3941,16 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
     char *s, *s_e, *y;
 
     s = skip_non_ws(line);
-    while (isspace_c(*s) || isquote(*s))
+    while (isspace_c(*s))
         s++;
-    for (s_e = s; *s_e && !isspace_c(*s_e) && !isquote(*s_e); s_e++)
-        ;
+    if (isquote(*s))
+        for (s_e = ++s; *s_e && !isquote(*s_e); s_e++) ;
+    else
+        for (s_e = s; *s_e && !isspace_c(*s_e) && !isquote(*s_e); s_e++) ;
     y = s_e;
-    while (isspace_c(*y) || isquote(*y))
+    if (y && isquote(*y))
+        ++y;
+    while (isspace_c(*y))
         y++;
 
     if (*y) {
@@ -3950,8 +3961,10 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
         char *y_e;
         struct library *lib;
 
-        for (y_e = y; *y_e && !isspace_c(*y_e) && !isquote(*y_e); y_e++)
-            ;
+        if (isquote(*y))
+            for (y_e = ++y; *y_e && !isquote(*y_e); y_e++) ;
+        else
+            for (y_e = y; *y_e && !isspace_c(*y_e) && !isquote(*y_e); y_e++) ;
         keep_char1 = *s_e;
         keep_char2 = *y_e;
         *s_e = '\0';
@@ -6926,7 +6939,13 @@ static void inp_compat(struct card *card)
                 ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s) "
                     "%s reciproctc=1",
                     title_tok, title_tok, equation, tcrstr);
+                // comment out current variable capacitor line
+                *(card->line) = '*';
+                for (i = 0; i < 3; i++) {
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                }
             } else {                       /* capacitance formulation */
+#if (0)
                 // Exxx  n-aux 0  n2 n1  1
                 ckt_array[0] = tprintf("e%s %s_int1 0 %s %s %s", title_tok,
                     title_tok, node2, node1, mstr);
@@ -6936,15 +6955,37 @@ static void inp_compat(struct card *card)
                 ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
                     "%s reciproctc=1",
                     title_tok, node1, node2, title_tok, equation, tcrstr);
+                // comment out current variable capacitor line
+                *(card->line) = '*';
+                for (i = 0; i < 3; i++) {
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                }
+#else
+                // Gxxx  n-aux 0  n2 n1  1e9
+                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s %se9", title_tok,
+                    title_tok, node2, node1, mstr);
+                // Rxxx  n-aux 0 1e-9 ; generate voltage from injected current by Gxxx
+                ckt_array[1] = tprintf("r%s %s_int1 0 1e-9", title_tok,title_tok);
+                // Cxxx  n-aux1  n-aux2  1e-6
+                ckt_array[2] = tprintf("c%s %s_int1 %s_int2 1e-6", title_tok, title_tok, title_tok);
+                // Vxxx n-aux2 0 0 ; measure current in Cxxx
+                ckt_array[3] = tprintf("vcurrmeas%s %s_int2 0 0", title_tok, title_tok);
+                // Rxxxpar  n2 n1 1e15 ; generally avoid floating nodes
+                ckt_array[4] = tprintf("r%spar %s %s 1e15", title_tok, node2, node1);
+                // Bxxx  n1 n2  I = 1e6 * i(Vxxx) * equation
+                ckt_array[5] = tprintf("b%s %s %s i = 1e6 * i(vcurrmeas%s) * (%s) "
+                    "%s reciproctc=1",
+                    title_tok, node1, node2, title_tok, equation, tcrstr);
+                // comment out current variable capacitor line
+                *(card->line) = '*';
+                // insert new B source line immediately after current line
+                for (i = 0; i < 6; i++) {
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
+                }
+#endif
             }
             tfree(tcrstr);
             tfree(mstr);
-            // comment out current variable capacitor line
-            *(card->line) = '*';
-            // insert new B source line immediately after current line
-            for (i = 0; i < 3; i++) {
-                card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber, card->linesource);
-            }
 
             tfree(title_tok);
             tfree(node1);

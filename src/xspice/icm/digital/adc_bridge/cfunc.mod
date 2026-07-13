@@ -8,28 +8,21 @@ Public Domain
 Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 PROJECT A-8503-405
-               
 
-AUTHORS                      
-
+AUTHORS
     6 June 1991     Jeffrey P. Murray
 
-
-MODIFICATIONS   
-
+MODIFICATIONS
     26 Sept 1991    Jeffrey P. Murray
-                                   
 
 SUMMARY
 
-    This file contains the functional description of the adc_bridge
-    code model.
+    This file contains the functional description of the adc_bridge code model.
 
+INTERFACES
 
-INTERFACES       
+    FILE                 ROUTINE CALLED
 
-    FILE                 ROUTINE CALLED     
-                                    
     CM.c                 void *cm_analog_alloc()
                          void *cm_analog_get_ptr()
 
@@ -37,67 +30,40 @@ INTERFACES
                          void *cm_event_get_ptr()
                          int  cm_event_queue()
 
-
-
-
 REFERENCED FILES
-
     Inputs from and outputs to ARGS structure.
-                     
 
 NON-STANDARD FEATURES
-
     NONE
 
 ===============================================================================*/
 
 /*=== INCLUDE FILES ====================*/
 
-
-                                      
-
 /*=== CONSTANTS ========================*/
-
-
-
 
 /*=== MACROS ===========================*/
 
-
-
-  
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
-
-    
-           
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-
-
-
-
-
-                   
 /*==============================================================================
 
 FUNCTION cm_adc_bridge()
 
-AUTHORS                      
-
+AUTHORS
     6 June 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
-
+MODIFICATIONS
     26 Sept 1991    Jeffrey P. Murray
 
 SUMMARY
-
     This function implements the adc_bridge code model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     CM.c                 void *cm_analog_alloc()
                          void *cm_analog_get_ptr()
@@ -107,15 +73,12 @@ INTERFACES
                          int  cm_event_queue()
 
 RETURNED VALUE
-    
     Returns inputs and outputs via ARGS structure.
 
 GLOBAL VARIABLES
-    
     NONE
 
 NON-STANDARD FEATURES
-
     NONE
 
 ==============================================================================*/
@@ -131,231 +94,196 @@ NON-STANDARD FEATURES
 *   Last Modified 7/26/91         J.P.Murray    *
 ************************************************/
 
-
-void cm_adc_bridge(ARGS) 
-
+static Digital_State_t get_out_value(double in, double low, double high)
 {
-    double  in_low,        /* analog output value corresponding to '0' 
+    if (low <= high) {
+        /* Normal operation. */
+
+        if (in >= high)
+            return ONE;
+        else if (in <= low)
+            return ZERO;
+    } else {
+        /* (low > high)! Schmitt triger. */
+
+        if (in >= low)
+            return ONE;
+        else if (in <= high)
+            return ZERO;
+    }
+    return UNKNOWN;
+}
+
+void cm_adc_bridge(ARGS)
+{
+    double         in_low,  /* analog output value corresponding to '0'
                                digital input    */
-           in_high,        /* analog output value corresponding to '1' 
+                  in_high;  /* analog output value corresponding to '1' 
                                digital input    */
-      current_time,        /* the current time value    */
-               *in,        /* base address of array holding all digital output 
-                               values plus their previous values    */            
-           *in_old;        /* base address of array holding previous
-                               output values    */            
+    int                 i,  /* generic loop counter index */
+                  size_in,  /* number of input ports */
+                 size_out;  /* number of output ports */
 
-
-    int           i,        /* generic loop counter index */
-	           size;        /* number of input & output ports */
-         
-                        
-
-   Digital_State_t   *out,  /* base address of array holding all input 
+   Digital_State_t   *out,  /* base address of array holding all output
                                values plus their previous values */
-                 *out_old,  /* base address of array holding previous
-                               input values */
                      test;  /* temp holding variable for digital states */
 
-
-
-
-
-    /* determine "width" of the node bridge... */
-
-    size = PORT_SIZE(in);               
     in_high = PARAM(in_high);
     in_low = PARAM(in_low);
 
-            
+    /* determine "width" of the node bridge... */
 
+    size_in = PORT_SIZE(in);
+    size_out = PORT_SIZE(out);
 
     if (INIT) {  /*** Test for INIT == TRUE. If so, allocate storage, etc. ***/
+        if (size_in != size_out) {
+            if (size_in != 1) {
+                cm_message_printf("Error: %d input ports with %d outputs",
+                                  size_in, size_out);
+            } else if (in_low >= in_high) {
+                cm_message_printf("Error: bad threshold values (low > high)");
+            }
+        }
 
-
-        /* Allocate storage for inputs */
-        cm_analog_alloc(0, size * (int) sizeof(double));
-                      
         /* Allocate storage for outputs */
-        cm_event_alloc(1, size * (int) sizeof(Digital_State_t));
 
-        /* Get analog addresses */        
-        in = in_old = (double *) cm_analog_get_ptr(0,0);
+        cm_event_alloc(0, size_out * (int) sizeof(Digital_State_t));
 
         /* Get discrete addresses */
-        out = out_old = (Digital_State_t *) cm_event_get_ptr(1,0);
+
+        out = (Digital_State_t *) cm_event_get_ptr(0,0);
+
+        /* Ensure output on first call. */
+
+        for (i = 0; i < size_out; i++)
+            out[i] = UNKNOWN + 1;
+        return;
     }
 
-    else {    /*** This is not an initialization pass...retrieve storage
-                   addresses and calculate new outputs, if required. ***/
+    /*** This is not an initialization pass...retrieve storage
+         addresses and calculate new outputs, if required. ***/
 
+    out = (Digital_State_t *) cm_event_get_ptr(0, 0);
 
-        /** Retrieve previous values... **/
+    if (size_in != size_out) {
+        if (size_in != 1) {
+            if (size_in < size_out)
+                size_out = size_in;
+            else
+                size_in = size_out;
+        } else {
+            double in;
 
-        /* assign discrete addresses */
-        in = (double *) cm_analog_get_ptr(0,0);
-        in_old = (double *) cm_analog_get_ptr(0,1);
+            /* Single-input, multi-bit output option. */
 
-        /* assign analog addresses */
-        out = (Digital_State_t *) cm_event_get_ptr(1,0);
-        out_old = (Digital_State_t *) cm_event_get_ptr(1,1);
-
-    }
-                            
-
-    /* read current input values */
-    for (i=0; i<size; i++) {
-        in[i] = INPUT(in[i]);
-    }
-
-
-    /*** If TIME == 0.0, bypass calculations ***/
-    if (0.0 != TIME) {                                            
-    
-        switch (CALL_TYPE) {
-    
-        case ANALOG:    /** analog call...check for breakpoint calls. **/
-    
-            /* loop through all inputs... */
-            for (i=0; i<size; i++) {
-            
-                if (in[i] <= in_low) {    /* low output required */
-    
-                    test = ZERO;
-    
-                    if ( test != out_old[i] ) {   
+            in = (INPUT(in[0]) - in_low) / (in_high - in_low);
+            switch (CALL_TYPE) {
+            case ANALOG:
+                for (i = 0; i < size_out; i++) {
+                    test = (in >= 0.5);
+                    if (test != out[i]) {
                         /* call for event breakpoint... */
-                        current_time = TIME;
-                        cm_event_queue(current_time);
-                    }                               
-                    else {
-                        /* no change since last time */
+
+                        cm_event_queue(TIME);
+                        break;
                     }
-    
+                    if (test)
+                        in -= 0.5;
+                    in *= 2.0;
                 }
-                else {
-                    if (in[i] >= in_high) {    /* high output required */
-    
-                        test = ONE;        
-    
-                        if ( test != out_old[i] ) {   
-                            /* call for event breakpoint... */
-                            current_time = TIME;
-                            cm_event_queue(current_time);
-                        }                               
-                        else {
-                            /* no change since last time */
+                break;
+
+            case EVENT:    /** discrete call...lots to do **/
+                for (i = 0; i < size_out; i++) {
+                    test = (in >= 0.5);
+                    if (test != out[i]) {
+                        switch (test) {
+                        case ZERO:
+                            OUTPUT_DELAY(out[i]) = PARAM(fall_delay);
+                            break;
+                        case ONE:
+                            OUTPUT_DELAY(out[i]) = PARAM(rise_delay);
+                            break;
+                        default:
+                            break;
                         }
-    
-                    }
-                    else {    /* unknown output required */
-    
-                        if ( UNKNOWN != out_old[i] ) {   
-                            
-                            /* call for event breakpoint... */
-                            current_time = TIME;
-                            cm_event_queue(current_time);
-                        }
-                        else {
-                            /* no change since last time */
-                        }
-                    }
-                }
-            }          
-            
-            break;
-               
-    
-    
-        case EVENT:    /** discrete call...lots to do **/
-    
-            /* loop through all inputs... */
-            for (i=0; i<size; i++) {
-            
-                if (in[i] <= in_low) {    /* low output required */
-    
-                    out[i] = ZERO;
-    
-                    if ( out[i] != out_old[i] ) {   
-                        /* post changed value */
-                        OUTPUT_STATE(out[i]) = ZERO;        
-                        OUTPUT_DELAY(out[i]) = PARAM(fall_delay);        
-                    }                               
-                    else {
-                        /* no change since last time */
+                        out[i] = test;
+                        OUTPUT_STATE(out[i]) = test;
+                        OUTPUT_STRENGTH(out[i]) = STRONG;
+                    } else {
                         OUTPUT_CHANGED(out[i]) = FALSE;
                     }
-    
+                    if (test)
+                        in -= 0.5;
+                    in *= 2.0;
                 }
-                else {
-                    if (in[i] >= in_high) {    /* high output required */
-    
-                        out[i] = ONE;        
-    
-                        if ( out[i] != out_old[i] ) {   
-                            /* post changed value */
-                            OUTPUT_STATE(out[i]) = ONE;        
-                            OUTPUT_DELAY(out[i]) = PARAM(rise_delay);        
-                        }                               
-                        else {
-                            /* no change since last time */
-                            OUTPUT_CHANGED(out[i]) = FALSE;
-                        }
-    
-                    }
-                    else {    /* unknown output required */
-    
-                        out[i] = UNKNOWN;        
-    
-                        if ( UNKNOWN != out_old[i] ) {   
-                            
-                            /* post changed value */
-                            OUTPUT_STATE(out[i]) = UNKNOWN;        
-    
-                            switch (out_old[i]) {
-                            case ONE:
-                                OUTPUT_DELAY(out[i]) = PARAM(fall_delay);        
-                                break;
-    
-                            case ZERO:
-                                OUTPUT_DELAY(out[i]) = PARAM(rise_delay);        
-                                break;
-                            case UNKNOWN: /* should never get here! */
-                                break;
-                            }
-                        }
-                        else {
-                            /* no change since last time */
-                            OUTPUT_CHANGED(out[i]) = FALSE;
-                        }
-                    }
+                break;
+            default:
+                break;
+            }
+            return;
+        }
+    }
+
+    /* Normal, multiple single-bit conversion output option. */
+
+    switch (CALL_TYPE) {
+        case ANALOG:    /** analog call...check for breakpoint calls. **/
+            /* loop through all inputs... */
+
+            for (i = 0; i < size_out; i++) {
+                test = get_out_value(INPUT(in[i]), in_low, in_high);
+                if (test != out[i]) {
+                    /* call for event breakpoint... */
+
+                    cm_event_queue(TIME);
+                    break;
                 }
-                /* regardless, output the strength */
-                OUTPUT_STRENGTH(out[i]) = STRONG;        
-            }          
+            }
+            break;
+
+        case EVENT:    /** discrete call...lots to do **/
+            /* loop through all inputs... */
+
+            for (i = 0; i < size_out; i++) {
+                test = get_out_value(INPUT(in[i]), in_low, in_high);
+                if (test != out[i]) {
+                    /* Post changed value. */
+
+                    OUTPUT_STATE(out[i]) = test;
+                    switch (test) {
+                    case ZERO:
+                        OUTPUT_DELAY(out[i]) = PARAM(fall_delay);
+                        break;
+                    case ONE:
+                        OUTPUT_DELAY(out[i]) = PARAM(rise_delay);
+                        break;
+                    default:
+                        if (in_low > in_high) {
+                            /* Input is in hysteresis band. */
+
+                            OUTPUT_CHANGED(out[i]) = FALSE;
+                            continue;
+                        }
+                        if (out[i] == ZERO)
+                            OUTPUT_DELAY(out[i]) = PARAM(rise_delay);
+                        else
+                            OUTPUT_DELAY(out[i]) = PARAM(fall_delay);
+                        break;
+                    }
+                    out[i] = test;
+                    /* Regardless, output the strength */
+
+                    OUTPUT_STRENGTH(out[i]) = STRONG;
+                } else {
+                    /* no change since last time */
+
+                    OUTPUT_CHANGED(out[i]) = FALSE;
+                }
+            }
             break;
         default:
             break;
-        }
-    }
-    else {  /*** TIME == 0.0 => set outputs to input value... ***/
-        /* loop through all inputs... */
-        for (i=0; i<size; i++) {
-
-            if (in[i] <= in_low) {    /* low output required */
-                OUTPUT_STATE(out[i]) = out[i] = ZERO;
-            }
-            else 
-            if (in[i] >= in_high) {   /* high output required */
-                OUTPUT_STATE(out[i]) = out[i] = ONE;
-            }
-            else {
-                OUTPUT_STATE(out[i]) = out[i] = UNKNOWN;
-            }
-            OUTPUT_STRENGTH(out[i]) = STRONG;        
-        }
     }
 }
-
-
-

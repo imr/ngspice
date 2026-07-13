@@ -1,0 +1,25 @@
+Engineering suffixes
+*
+* This circuit contains a code model which accepts several
+* parameters of various types and prints them.  The values
+* specified on the .model card use engineering suffixes on
+* the numeric parameters.
+*
+.op
+*
+r1 1 0 1k
+r2 2 0 1k
+r3 1 2 1k
+*
+a1 [1 2] mod
+.model mod print_param_types 
++  integer=2k
++  real=3.0u
++  complex=< 4.0f 5.0mil >
++  string=six
++  integer_array=[7meg 8]
++  real_array=[9.0n 10.0p]
++  complex_array=[< 11.0t 12.0g > < 13.0m 14.0 >]
++  string_array=[fifteen sixteen]
+*
+.end

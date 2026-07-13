@@ -207,6 +207,15 @@ MIFload(
            cm_data.circuit.t[i] = 0.0;
        }
     }
+    /* transient or operating point */
+    if (anal_type == MIF_TRAN || anal_type == MIF_DC) {
+        cm_data.circuit.tstep = ckt->CKTstep;
+        cm_data.circuit.tstop = ckt->CKTfinalTime;
+    }
+    else {
+       cm_data.circuit.tstep = 0.0;
+       cm_data.circuit.tstop = 0.0;
+    }
     
     cm_data.circuit.call_type = MIF_ANALOG;
     cm_data.circuit.temperature = ckt->CKTtemp - 273.15;
@@ -236,7 +245,6 @@ MIFload(
             /* Prepare the data needed by the cm_.. functions                    */
             /* ***************************************************************** */
             g_mif_info.instance = here;
-            g_mif_info.errmsg = "";
 
             if(here->initialized) {
                 cm_data.circuit.init = MIF_FALSE;
@@ -451,6 +459,13 @@ MIFload(
             if((anal_type != MIF_AC) &&
                (g_mif_info.auto_partial.global || g_mif_info.auto_partial.local))
                     MIFauto_partial(here, DEVices[mod_type]->DEVpublic.cm_func, &cm_data);
+
+            if (g_mif_info.errmsg && g_mif_info.errmsg[0] &&
+                cp_getvar("noisyxspice", CP_BOOL, NULL, 0)) {
+                fprintf(stderr, "XSPICE instance %s: %s",
+                        g_mif_info.instance->MIFname, g_mif_info.errmsg);
+                g_mif_info.errmsg = NULL;
+            }
 
             /* ***************************************************************** */
             /* Loop through all connections on this instance and */

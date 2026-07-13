@@ -1,0 +1,44 @@
+* sw ring-oscillators
+
+.control
+destroy all
+run
+plot I(vmeasure)
+plot V(Osc_out) 
+rusage
+quit
+.endc
+
+.ic v(N017)=0.25
+.tran 50p 4n 50p uic
+*.option method=gear maxord=3
+
+VDD VDD2 0 DC 3
+
+VMEASURE VDD2 VDD dc 0
+
+cvdd vdd 0 1e-18
+XX1 N017 N001 VDD 0 invertervs
+XX2 N001 N002 VDD 0 inverter
+XX3 N002 N003 VDD 0 invertervs
+XX4 N003 N004 VDD 0 invertervs2
+XX5 N004 N005 VDD 0 invertervs3
+XX6 N005 N006 VDD 0 invertervs4
+XX7 N006 N007 VDD 0 inverter
+XX8 N007 N008 VDD 0 invertervs
+XX9 N008 N009 VDD 0 invertervs2
+XX10 N009 N010 VDD 0 invertervs3
+XX11 N010 N011 VDD 0 invertervs4
+XX12 N011 N012 VDD 0 inverter
+XX13 N012 N013 VDD 0 invertervs
+XX14 N013 N014 VDD 0 invertervs2
+XX15 N014 N015 VDD 0 invertervs3
+XX16 N015 N016 VDD 0 invertervs4
+XX17 N016 N017 VDD 0 inverter
+
+* amplify
+XX18 N017 Osc_out VDD 0 invertervs3
+
+.include switch-invs.lib
+
+.end

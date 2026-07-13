@@ -1,0 +1,68 @@
+* model name check
+
+V1 1 0 1
+R1 1 2 1k
+
+D1 2 0 DMOD
+.model DMOD D (is=1e-13 bv=50)
+* o.k.
+
+D2 2 0 _DMOD
+.model _DMOD D (is=1e-13 bv=50)
+* o.k.
+
+D3 2 0 1n4001
+.model 1n4001 D (is=1e-13 bv=50)
+* o.k.
+
+D4 2 0 22N4
+.model 22N4 D (is=1e-13 bv=50)
+* o.k.
+
+D5 2 0 1e34
+.model 1e34 D (is=1e-13 bv=50)
+* not o.k.
+
+D6 2 0 74ls4444
+.model 74ls4444 D (is=1e-13 bv=50)
+* o.k.
+
+D7 2 0 ^274ls4444
+.model ^274ls4444 D (is=1e-13 bv=50)
+* not o.k.
+
+D8 2 0 74!4444
+.model 74!4444 D (is=1e-13 bv=50)
+* o.k.
+
+D9 2 0 12p4444
+.model 12p4444 D (is=1e-13 bv=50)
+* o.k.
+
+D10 2 0 17n
+.model 17n D (is=1e-13 bv=50)
+* not o.k.
+
+D11 2 0 17nB
+.model 17nB D (is=1e-13 bv=50)
+* o.k.
+
+D12 2 0 17e12n
+.model 17e12n D (is=1e-13 bv=50)
+* not o.k.
+
+D13 2 0 17e12Meg
+.model 17e12Meg D (is=1e-13 bv=50)
+* not o.k.
+
+D14 2 0 17e12Megg
+.model 17e12Megg D (is=1e-13 bv=50)
+* o.k.
+
+D15 2 0 20.5pF
+.model 20.5pF D (is=1e-13 bv=50)
+* not o.k.
+
+.end
+
+

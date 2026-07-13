@@ -1,0 +1,10 @@
+variables case sensitivity in echo cmd
+.control
+set              NameList  =  ( plus125C plus25C minus55C )
+let              j         =  2
+*setcs              thisName  =  $NameList[$&j]
+set              thisName  =  $NameList[3]
+echo             "thisName: $thisName"
+echo             "thisname: $thisname"
+.endc
+.end

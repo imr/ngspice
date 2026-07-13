@@ -1,0 +1,4 @@
+R1 1 0 res
+R2 2 0 res
+R3 3 0 res
+.model res r r=1

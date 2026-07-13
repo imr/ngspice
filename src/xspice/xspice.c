@@ -56,6 +56,12 @@ struct coreInfo_t  coreInfo =
   cm_message_send,
   cm_netlist_get_c,
   cm_netlist_get_l,
+  cm_irreversible,
+  cm_get_node_name,
+  cm_get_neg_node_name,
+  cm_probe_node,
+  cm_schedule_output,
+  cm_getvar,
   cm_complex_set,
   cm_complex_add,
   cm_complex_subtract,
@@ -73,7 +79,7 @@ struct coreInfo_t  coreInfo =
   txfree,
   tmalloc,
   trealloc,
-  txfree
+  txfree,
 #else
   GC_malloc,
   tcalloc,
@@ -81,15 +87,14 @@ struct coreInfo_t  coreInfo =
   no_free,
   GC_malloc,
   GC_realloc,
-  no_free
+  no_free,
 #endif
+  cexit,
 #ifdef KLU
-  ,
   MIFbindCSC,
   MIFbindCSCComplex,
-  MIFbindCSCComplexToReal
+  MIFbindCSCComplexToReal,
 #endif
-  ,
   MIFnoise,
   cm_noise_add_source
 };
