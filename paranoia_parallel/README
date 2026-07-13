@@ -3,9 +3,6 @@ How to run paranoia_parallel
 Install valgrind
 Install parallel
 
-Extract paranoia_parallel.7z into a directory of your choice.
-In a terminal window, cd into the directory chosen.
-
 Edit runtest.sh, line 14, -jx, with x being the physical cores available on your machine.
 
 Run ./paranoia_table_generators.sh 
@@ -13,4 +10,6 @@ to generate some input tables (only required once in the beginning).
 
 Run ./runtests.sh paranoia_test_extra.sh ./working
 
-
+The ./working subdirectory will contain a testfile script for each test.
+Each test creates .log and .vlog files in the paranoia_parallel directory.
+Before runtests.sh, you might want to remove any old .log and .vlog files.
