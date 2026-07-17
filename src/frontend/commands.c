@@ -48,6 +48,7 @@
 #include "com_plot.h"
 #include "com_setscale.h"
 #include "com_gnuplot.h"
+#include "com_pyplot.h"
 #include "com_state.h"
 #include "com_chdir.h"
 #include "com_echo.h"
@@ -212,6 +213,10 @@ struct comm spcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       NULL,
       "file plotargs : Send plot to gnuplot." } ,
+    { "pyplot", com_pyplot, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "[file] plotargs : Send plot to matplotlib (file name optional)." } ,
     { "wrdata", com_write_simple, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, NLOTS,
       NULL,
@@ -759,6 +764,10 @@ struct comm nutcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       NULL,
       "file plotargs : Send plot to gnuplot." } ,
+    { "pyplot", com_pyplot, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "[file] plotargs : Send plot to matplotlib (file name optional)." } ,
     { "wrdata", com_write_simple, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, NLOTS,
       NULL,

@@ -15,6 +15,7 @@
 #include "points.h"
 #include "agraf.h"
 #include "gnuplot.h"
+#include "pyplot.h"
 #include "graf.h"
 
 static bool sameflag;
@@ -1224,6 +1225,20 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
                        xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
                        ylabel ? ylabel : ft_typabbrev(y_type),
                        gtype, ptype, vecs);
+        rtn = TRUE;
+        goto quit;
+    }
+
+    if (devname && eq(devname, "pyplot")) {
+        /* Enhancement-94: interface to matplotlib */
+        ft_pyplot(xlims, ylims,
+                  xdelta ? *xdelta : 0.0,
+                  ydelta ? *ydelta : 0.0,
+                  hcopy,
+                  title ? title : vecs->v_plot->pl_title,
+                  xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
+                  ylabel ? ylabel : ft_typabbrev(y_type),
+                  gtype, ptype, vecs);
         rtn = TRUE;
         goto quit;
     }

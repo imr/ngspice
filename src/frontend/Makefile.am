@@ -41,6 +41,8 @@ libfte_la_SOURCES = \
     com_ghelp.h \
     com_gnuplot.h   \
     com_gnuplot.c   \
+    com_pyplot.h    \
+    com_pyplot.c    \
     com_hardcopy.c  \
     com_hardcopy.h  \
     com_help.c  \

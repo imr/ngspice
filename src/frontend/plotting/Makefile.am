@@ -9,6 +9,8 @@ libplotting_la_SOURCES = \
 	clip.h		\
 	gnuplot.c	\
 	gnuplot.h	\
+	pyplot.c	\
+	pyplot.h	\
 	graf.c		\
 	graf.h		\
 	graphdb.c	\
