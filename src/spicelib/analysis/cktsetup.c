@@ -24,6 +24,10 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef XSPICE
 #include "ngspice/enh.h"
+/* XSPICE code models store their terminals in the MIF conn/port tree, not in
+ * the generic GENnode() array, and report DEVpublic.terms == 0.  CKTtopologyReduce()
+ * walks that tree explicitly so code-model nodes are counted. */
+#include "ngspice/mifdefs.h"
 #endif
 
 #ifdef USE_OMP
@@ -49,9 +53,13 @@ Author: 1985 Thomas L. Quarles
  *
  * Node degree is counted GENERICALLY over every device type through the
  * GENnode() terminal array, so no device family can be missed (which would
- * wrongly prune a live node).  Only capacitors and resistors are ever removed.
- * Disable with `set no_topo_reduce` in .spiceinit. It is disabled as well if
- * option rshunt=xx is selected.*/
+ * wrongly prune a live node).  XSPICE code models are the one exception: they
+ * report DEVpublic.terms == 0 and keep their node numbers in the MIF conn/port
+ * tree rather than in GENnode(), so they are walked separately below -- without
+ * that, a node touched only by a code model would look floating and its passive
+ * would be wrongly pruned.  Only capacitors and resistors are ever removed.
+ * Disable with `set no_topo_reduce` in .spiceinit. It is disabled as well
+ * if option rshunt=xx is selected.*/
 static void
 CKTtopologyReduce(CKTcircuit *ckt)
 {
@@ -81,7 +89,7 @@ CKTtopologyReduce(CKTcircuit *ckt)
 
     /* complete, type-agnostic node degree over all device terminals */
     for (i = 0; i < DEVmaxnum; i++) {
-        if (!DEVices[i] || !ckt->CKThead[i] || !DEVices[i]->DEVpublic.terms)
+        if (!DEVices[i] || !ckt->CKThead[i])
             continue;
         nterm = *(DEVices[i]->DEVpublic.terms);
         if (DEVices[i]->DEVpublic.name) {
@@ -90,6 +98,49 @@ CKTtopologyReduce(CKTcircuit *ckt)
             else if (!strcmp(DEVices[i]->DEVpublic.name, "Resistor"))
                 restype = i;
         }
+
+#ifdef XSPICE
+        /* XSPICE code models: DEVpublic.terms is 0 and GENnode() does not hold
+         * their nodes, so the generic walk below would count nothing for them.
+         * Walk the MIF conn/port tree and count every analog port's pos/neg node
+         * instead.  Event-driven (digital) and vsource-current ports leave these
+         * at 0 (calloc'd) and are skipped by the nd > 0 test.
+         *
+         * A code-model instance IS a MIFinstance, so it is identified by its
+         * instance size -- a plain compile-time integer (sizeof(MIFinstance))
+         * that is identical across the .cm modules.  A function-pointer test
+         * (DEVsetup == MIFsetup) is NOT reliable here: code models linked into
+         * separate .cm shared objects carry their own copy of MIFsetup, so the
+         * pointers differ from this translation unit's. */
+        if (DEVices[i]->DEVinstSize &&
+            *(DEVices[i]->DEVinstSize) == (int) sizeof(MIFinstance)) {
+            for (gmod = ckt->CKThead[i]; gmod; gmod = gmod->GENnextModel)
+                for (ginst = gmod->GENinstances; ginst; ginst = ginst->GENnextInstance) {
+                    MIFinstance *mif = (MIFinstance *) ginst;
+                    int c, p;
+                    for (c = 0; c < mif->num_conn; c++) {
+                        Mif_Conn_Data_t *conn = mif->conn[c];
+                        if (!conn || conn->is_null)
+                            continue;
+                        for (p = 0; p < conn->size; p++) {
+                            Mif_Port_Data_t *port = conn->port[p];
+                            int nd;
+                            if (!port || port->is_null)
+                                continue;
+                            nd = port->smp_data.pos_node;
+                            if (nd > 0 && nd <= maxnode) degree[nd]++;
+                            nd = port->smp_data.neg_node;
+                            if (nd > 0 && nd <= maxnode) degree[nd]++;
+                        }
+                    }
+                }
+            continue;   /* code model handled; skip the generic terminal walk */
+        }
+#endif
+
+        if (!DEVices[i]->DEVpublic.terms)
+            continue;
+        nterm = *(DEVices[i]->DEVpublic.terms);
         for (gmod = ckt->CKThead[i]; gmod; gmod = gmod->GENnextModel)
             for (ginst = gmod->GENinstances; ginst; ginst = ginst->GENnextInstance) {
                 int *nodes = GENnode(ginst);
