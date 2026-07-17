@@ -144,7 +144,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                             deltat = phase * PER;
                             while (deltat > 0)
                                 deltat -= PER;
-                            /* shift time by pase (neg. for pos. phase value) */
+                            /* shift time by phase (neg. for pos. phase value) */
                             time += deltat;
                         }
                         else if (PHASE > 0.0) { /* 7th parameter is number of pulses */
