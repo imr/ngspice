@@ -58,7 +58,7 @@ Author: 1985 Thomas L. Quarles
  * tree rather than in GENnode(), so they are walked separately below -- without
  * that, a node touched only by a code model would look floating and its passive
  * would be wrongly pruned.  Only capacitors and resistors are ever removed.
- * Disable with `set no_topo_reduce` in .spiceinit. It is disabled as well
+ * Enable with `set topo_reduce` in .spiceinit. It is disabled always
  * if option rshunt=xx is selected.*/
 static void
 CKTtopologyReduce(CKTcircuit *ckt)
@@ -69,7 +69,7 @@ CKTtopologyReduce(CKTcircuit *ckt)
     GENmodel *gmod;
     GENinstance *ginst;
 
-    if (cp_getvar("no_topo_reduce", CP_BOOL, NULL, 0))
+    if (!cp_getvar("topo_reduce", CP_BOOL, NULL, 0))
         return;
 
 #ifdef XSPICE
