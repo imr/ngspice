@@ -250,6 +250,10 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
           fprintf(stderr, "WARNING - Rshunt option too small.  Ignored.\n");
         }
         break;
+#else
+    case OPT_ENH_RSHUNT:
+        fprintf(stderr, "WARNING - Option Rshunt available only with XSPICE enabled.\n");
+        break;
 #endif
 /* gtri - end - wbk - add new options */
     default:
