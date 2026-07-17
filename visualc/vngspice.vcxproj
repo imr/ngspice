@@ -890,6 +890,7 @@
     <ClInclude Include="..\src\frontend\com_measure2.h" />
     <ClInclude Include="..\src\frontend\com_option.h" />
     <ClInclude Include="..\src\frontend\com_plot.h" />
+    <ClInclude Include="..\src\frontend\com_pyplot.h" />
     <ClInclude Include="..\src\frontend\com_rehash.h" />
     <ClInclude Include="..\src\frontend\com_set.h" />
     <ClInclude Include="..\src\frontend\com_setscale.h" />
@@ -1503,6 +1504,7 @@
     <ClCompile Include="..\src\frontend\com_measure2.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
+    <ClCompile Include="..\src\frontend\com_pyplot.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
@@ -1580,6 +1582,7 @@
     <ClCompile Include="..\src\frontend\plotting\plotit.c" />
     <ClCompile Include="..\src\frontend\plotting\plotting.c" />
     <ClCompile Include="..\src\frontend\plotting\pvec.c" />
+    <ClCompile Include="..\src\frontend\plotting\pyplot.c" />
     <ClCompile Include="..\src\frontend\plotting\x11.c" />
     <ClCompile Include="..\src\frontend\points.c" />
     <ClCompile Include="..\src\frontend\postcoms.c" />
