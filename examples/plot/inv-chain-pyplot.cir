@@ -1,0 +1,34 @@
+.title Inverter chain with pyplot
+
+.tran 10n 1000n
+XU30 out1 Vin Vcc 0 inv
+XU32 out2 out1 Vcc 0 inv
+XU33 out3 out2 Vcc 0 inv
+
+.subckt inv out in vcc gnd
+M1 out in gnd gnd N1
+M2 out in vcc vcc N2
+C1 out gnd 0.1p
+.model N1 NMOS level=8 version=3.3.0
+.model n2 PMOS level=8 version=3.3.0
+.ends
+
+
+VDC1 Vcc 0 DC 5
+Vin1 Vin 0 pulse 0 5 0 10n 10n 240n 500n
+
+.option noinit
+
+.control
+run
+pyplot py1 Vin out1+6 out2+12 out3+18 title 'no. 1'
+set pyplot_subplots=1
+pyplot py2 Vin out1 out2 out3 title 'no. 2'
+
+unset pyplot_subplots
+pyplot Vin out1+6 out2+12 out3+18 title 'no. 3'
+set pyplot_subplots=2
+pyplot Vin out1 out2 out3 title 'no. 4'
+quit
+.endc
+.end
