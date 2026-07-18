@@ -7,13 +7,13 @@ set xbrushwidth=3
 set pointchars='o'
 set curplottitle="combplot pointplot boxesplot"
 plot vec1 vs vec2  combplot
-gnuplot gpout  vec1 vs vec2  combplot
-pyplot pyout vec1 vs vec2  combplot
+gnuplot gpout1  vec1 vs vec2  combplot
+pyplot pyout1 vec1 vs vec2  combplot
 plot vec1 vs vec2  boxesplot ; this is not (yet) working
-gnuplot gpout  vec1 vs vec2  boxesplot
-pyplot pyout vec1 vs vec2  boxesplot
+gnuplot gpout2  vec1 vs vec2  boxesplot
+pyplot pyout2 vec1 vs vec2  boxesplot
 plot vec1 vs vec2  pointplot
-gnuplot gpout  vec1 vs vec2  pointplot
-pyplot pyout vec1 vs vec2  pointplot
+gnuplot gpout3  vec1 vs vec2  pointplot
+pyplot pyout3 vec1 vs vec2  pointplot
 .endc
 .end
