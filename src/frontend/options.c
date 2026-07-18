@@ -383,7 +383,8 @@ cp_usrset(struct variable *var, bool isset)
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplotname")) {
         if (plot_cur && (var->va_type == CP_STRING)) {
-            FREE(plot_cur->pl_name);
+            if (!eq(plot_cur->pl_name, "constants")) /* not malloced! */
+                FREE(plot_cur->pl_name);
             plot_cur->pl_name = copy(var->va_string);
         }
         else
@@ -391,7 +392,8 @@ cp_usrset(struct variable *var, bool isset)
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplottitle")) {
         if (plot_cur && (var->va_type == CP_STRING)) {
-            FREE(plot_cur->pl_title);
+            if (!eq(plot_cur->pl_title, "Constant values")) /* not malloced! */
+                FREE(plot_cur->pl_title);
             plot_cur->pl_title = copy(var->va_string);
         }
         else
