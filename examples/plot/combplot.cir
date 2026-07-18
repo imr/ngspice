@@ -1,0 +1,19 @@
+.title combplot pointplot boxesplot 
+
+.control
+let vec1 = 2 * vector(10)
+let vec2 = vector(10)
+set xbrushwidth=3
+set pointchars='o'
+set curplottitle="combplot pointplot boxesplot"
+plot vec1 vs vec2  combplot
+gnuplot gpout  vec1 vs vec2  combplot
+pyplot pyout vec1 vs vec2  combplot
+plot vec1 vs vec2  boxesplot ; this is not (yet) working
+gnuplot gpout  vec1 vs vec2  boxesplot
+pyplot pyout vec1 vs vec2  boxesplot
+plot vec1 vs vec2  pointplot
+gnuplot gpout  vec1 vs vec2  pointplot
+pyplot pyout vec1 vs vec2  pointplot
+.endc
+.end
