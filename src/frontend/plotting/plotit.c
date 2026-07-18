@@ -633,6 +633,17 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             pfound = TRUE;
         }
     }
+    if (getflag(wl, "boxesplot")) {
+        if (pfound) {
+            fprintf(cp_err,
+                "Warning: too many plot types given. "
+                "\"combplot\" is ignored.\n");
+        }
+        else {
+            ptype = PLOT_BOXES;
+            pfound = TRUE;
+        }
+    }
     if (getflag(wl, "pointplot")) {
         if (pfound) {
             fprintf(cp_err,
