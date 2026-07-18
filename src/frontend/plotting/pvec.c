@@ -63,6 +63,10 @@ pvec(struct dvec *d)
         strcat(buf, ", plot = comb");
         break;
 
+    case PLOT_BOXES:
+        strcat(buf, ", plot = boxes");
+        break;
+
     case PLOT_POINT:
         strcat(buf, ", plot = point");
         break;

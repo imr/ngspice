@@ -476,8 +476,10 @@ void ft_gnuplot(double *xlims, double *ylims,
         if(nolegend)
             fprintf(file, "set key off\n");
 
-        if (plottype == PLOT_COMB) {
+        if (plottype == PLOT_BOXES) {
             strcpy(plotstyle, "boxes");
+        } else if (plottype == PLOT_COMB) {
+            strcpy(plotstyle, "impulses");
         } else if (plottype == PLOT_POINT) {
             if (markers) {
                 // fprintf(file, "Markers: True\n");
