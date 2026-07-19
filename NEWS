@@ -23,6 +23,9 @@ Ngspice-47, June ??, 2026
     + new capabilities to the adc/dac_bridge XSPICE code models:
       multi-bit ADC or DAC, Schmitt trigger
     + Paranoia_Parallel: a test suite for more than 100 test circuits
+    + Add dangling-passive topology reduction, use by 'set topo_reduce'
+    + Adds a 'pyplot' command that renders simulated vectors with
+      Python's matplotlib
 
 
 Ngspice-46, March 29th, 2026
