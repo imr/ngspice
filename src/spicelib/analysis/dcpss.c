@@ -4620,13 +4620,17 @@ resume:
 	}
 #endif
 
-        if (ckt->CKTbreaks [1] - ckt->CKTbreaks [0] == 0)
-            ckt->CKTdelta = ckt->CKTdelmin ;
+        if (ckt->CKTbreaks[1] - ckt->CKTbreaks[0] == 0) {
+//            ckt->CKTdelta = ckt->CKTdelmin;
+        }
         else
             ckt->CKTdelta = MIN (ckt->CKTdelta, .1 * MIN (ckt->CKTsaveDelta,
             ckt->CKTbreaks[1] - ckt->CKTbreaks[0]));
 
         if(firsttime) {
+            /* set a breakpoint to reduce ringing of current in devices */
+            if (ckt->CKTmode & MODEUIC)
+                CKTsetBreak(ckt, ckt->CKTstep);
             ckt->CKTdelta /= 10;
 #ifdef STEPDEBUG
             PSSDBG( "delta cut for initial timepoint\n");
@@ -4698,9 +4702,10 @@ resume:
     }
     /* Try to equalise the last two time steps before the breakpoint,
        if the second step would be smaller than CKTdelta otherwise.*/
-    else if (ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
+    else if (!AlmostEqualUlps(ckt->CKTtime + ckt->CKTdelta, ckt->CKTfinalTime, 100)
+        && ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
         ckt->CKTsaveDelta = ckt->CKTdelta;
-        ckt->CKTdelta = (ckt->CKTbreaks[0] - ckt->CKTtime) / 2.;
+        ckt->CKTdelta = (ckt->CKTbreaks[0] - ckt->CKTtime) / 2.0;
         #ifdef STEPDEBUG
             PSSDBG( "Delta equalising step at time %e with delta %e\n", ckt->CKTtime, ckt->CKTdelta);
         #endif
