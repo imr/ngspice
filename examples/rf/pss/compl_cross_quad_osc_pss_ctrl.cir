@@ -38,6 +38,8 @@ reset
 pss 400e6 100n 1 1024 10 10 5e-3 uic
 set xbrushwidth=3
 plot mag(i1) arrowplot
+setplot pss1
+plot i1
 .endc
 
 .end

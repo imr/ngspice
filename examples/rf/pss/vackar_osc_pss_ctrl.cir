@@ -22,12 +22,12 @@ plot v(4)
 linearize v(4)
 fft v(4)
 set xbrushwidth=3
-plot mag(v(4)) xlimit 0 10Meg
+plot mag(v(4)) xlimit 0 10Meg ylimit 0 6
 let maxfft=mag(v(4))
 meas sp fosc MAX_AT maxfft from=1Meg to=10Meg
 reset
 pss 1.8e6 20e-6 4 1024 10 50 5e-3 uic
-plot mag(v(4)) arrowplot xlimit 0 10Meg
+plot mag(v(4)) arrowplot xlimit 0 10Meg ylimit 0 6
 .endc
 .end
 

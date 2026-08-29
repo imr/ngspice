@@ -29,7 +29,7 @@ plot dbv3 ylimit -120 0 xlimit 1Meg 18Meg
 ** measure the frequency of oscillation
 meas sp fosc MAX_AT dbv3 from=1Meg to=5Meg
 ** periodic steady state sim
-pss 1e6 50e-6 3 256 10 50 5e-3
+pss 1e6 100e-6 3 256 10 50 5e-3
 set xbrushwidth=3
 plot db(v(3)) arrowplot ylimit -120 0 xlimit 1Meg 18Meg
 .endc
