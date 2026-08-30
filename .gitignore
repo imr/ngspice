@@ -19,6 +19,7 @@ Makefile.in
 \#*#
 
 /autom4te.cache
+/build
 /compile
 /config.guess
 /config.log
