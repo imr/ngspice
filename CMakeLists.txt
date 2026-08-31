@@ -33,12 +33,28 @@ foreach(_needed NgspiceOptions NgspiceDependencies NgspiceConfigHeader
 endforeach()
 
 # --- version, taken from configure.ac so there is a single source of truth ---
+# Development branches carry a suffix, e.g. ngspice_major_version = [47+].
+# Keep that string for PACKAGE_VERSION, but project() accepts digits and dots
+# only, so strip everything else for the numeric version.
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/configure.ac" _cfg_ac)
-string(REGEX MATCH "m4_define\\(\\[ngspice_major_version\\], *\\[([0-9]+)\\]" _m "${_cfg_ac}")
-set(NGSPICE_VERSION_MAJOR "${CMAKE_MATCH_1}")
-string(REGEX MATCH "m4_define\\(\\[ngspice_minor_version\\], *\\[([0-9]+)\\]" _m "${_cfg_ac}")
-set(NGSPICE_VERSION_MINOR "${CMAKE_MATCH_1}")
+string(REGEX MATCH "m4_define\\(\\[ngspice_major_version\\], *\\[([^]]+)\\]" _m "${_cfg_ac}")
+set(NGSPICE_VERSION_MAJOR_FULL "${CMAKE_MATCH_1}")
+string(REGEX MATCH "m4_define\\(\\[ngspice_minor_version\\], *\\[([^]]+)\\]" _m "${_cfg_ac}")
+set(NGSPICE_VERSION_MINOR_FULL "${CMAKE_MATCH_1}")
 unset(_cfg_ac)
+
+string(REGEX REPLACE "[^0-9].*$" "" NGSPICE_VERSION_MAJOR "${NGSPICE_VERSION_MAJOR_FULL}")
+string(REGEX REPLACE "[^0-9].*$" "" NGSPICE_VERSION_MINOR "${NGSPICE_VERSION_MINOR_FULL}")
+# note: a plain if(NOT NGSPICE_VERSION_MINOR) would fire on the literal "0"
+if(NGSPICE_VERSION_MAJOR STREQUAL "" OR NGSPICE_VERSION_MINOR STREQUAL "")
+    message(FATAL_ERROR
+        "could not read the version from configure.ac "
+        "(major='${NGSPICE_VERSION_MAJOR_FULL}', "
+        "minor='${NGSPICE_VERSION_MINOR_FULL}')")
+endif()
+
+# what configure.ac assembles as ngspice_version
+set(NGSPICE_VERSION_STRING "${NGSPICE_VERSION_MAJOR_FULL}.${NGSPICE_VERSION_MINOR_FULL}")
 
 project(ngspice
         VERSION ${NGSPICE_VERSION_MAJOR}.${NGSPICE_VERSION_MINOR}
@@ -202,7 +218,7 @@ endif()
 # Summary
 # ---------------------------------------------------------------------------
 message(STATUS "")
-message(STATUS "ngspice ${PROJECT_VERSION} -- CMake configuration")
+message(STATUS "ngspice ${NGSPICE_VERSION_STRING} -- CMake configuration")
 get_property(_ngspice_multi GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(_ngspice_multi)
     list(GET CMAKE_CONFIGURATION_TYPES 0 _ngspice_first_cfg)
@@ -228,6 +244,8 @@ message(STATUS "  XSPICE ............. ${NGSPICE_ENABLE_XSPICE}")
 message(STATUS "  code models ........ ${NGSPICE_ENABLE_CODEMODELS}")
 message(STATUS "  CIDER .............. ${NGSPICE_ENABLE_CIDER}")
 message(STATUS "  OSDI ............... ${NGSPICE_ENABLE_OSDI}")
+message(STATUS "  RFSPICE (S-param) .. ${NGSPICE_ENABLE_RFSPICE}")
+message(STATUS "  PSS ................ ${NGSPICE_ENABLE_PSS}")
 message(STATUS "  KLU ................ ${NGSPICE_ENABLE_KLU} (${NGSPICE_KLU_PROVIDER})")
 message(STATUS "  FFTW3 .............. ${NGSPICE_HAVE_FFTW3}")
 message(STATUS "  OpenMP ............. ${NGSPICE_ENABLE_OPENMP}")

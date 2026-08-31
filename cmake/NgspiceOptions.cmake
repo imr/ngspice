@@ -24,7 +24,9 @@ option(NGSPICE_ENABLE_CIDER       "CIDER numerical device models"         OFF)
 option(NGSPICE_ENABLE_OSDI        "OSDI / OpenVAF model loading"          ON)
 option(NGSPICE_ENABLE_NDEV        "NDEV external device interface"        OFF)
 option(NGSPICE_ENABLE_PSS         "Periodic steady state analysis"        OFF)
-option(NGSPICE_ENABLE_RFSPICE     "S-parameter (RF) analysis"             OFF)
+# configure.ac: "if test x$enable_sp = xno ... else AC_DEFINE(RFSPICE)",
+# i.e. on unless --disable-sp is given.
+option(NGSPICE_ENABLE_RFSPICE     "S-parameter (RF) analysis"             ON)
 option(NGSPICE_ENABLE_SENSE2      "Old sense2 sensitivity analysis"       OFF)
 option(NGSPICE_ENABLE_CMATHTESTS  "Build the cmaths self tests"           OFF)
 option(NGSPICE_ENABLE_OLDAPPS     "Build ngnutmeg/ngsconvert/... "        OFF)
