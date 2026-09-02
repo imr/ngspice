@@ -185,6 +185,9 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDIO_MOD_VP:
             value->rValue = model->VDIOsoftRevRecParam;
             return(OK);
+        case VDIO_MOD_QPSCALE:
+            value->rValue = model->VDIOqpscale;
+            return(OK);
         /* SOA */
         case VDMOS_MOD_VGS_MAX:
             value->rValue = model->VDMOSvgsMax;

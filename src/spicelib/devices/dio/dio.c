@@ -31,7 +31,8 @@ IFparm DIOpTable[] = { /* parameters */
  OP("id",      DIO_CURRENT,IF_REAL, "Diode current"),
  OPR("c",     DIO_CURRENT,IF_REAL, "Diode current"),
  OP("gd",   DIO_CONDUCT,IF_REAL, "Diode conductance"),
- OP("cd",   DIO_CAP, IF_REAL, "Diode capacitance"),
+ OP("cd",   DIO_CAP, IF_REAL, "Diode sidewall capacitance"),
+ OP("cdsw",   DIO_CAPSW, IF_REAL, "Diode capacitance"),
  OPU("charge", DIO_CHARGE, IF_REAL, "Diode capacitor charge"),
  OPUR("qd", DIO_CHARGE, IF_REAL, "Diode capacitor charge"),
  OPU("capcur", DIO_CAPCUR, IF_REAL, "Diode capacitor current"),
@@ -123,6 +124,11 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
  IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
  IOP( "vp",   DIO_MOD_VP,   IF_REAL, "Soft reverse recovery parameter"),
+ IOP( "qpscale", DIO_MOD_QPSCALE, IF_REAL, "Scaling factor Diff Charge"),
+
+/* self heating */
+ IOPX("rth0",  DIO_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
+ IOPX("cth0",  DIO_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
 
  /* SOA parameters */
  IOPX( "fv_max",   DIO_MOD_FV_MAX,  IF_REAL, "maximum voltage in forward direction"),
@@ -131,9 +137,6 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPX( "te_max",   DIO_MOD_TE_MAX,  IF_REAL, "temperature"),
  IOPX( "pd_max",   DIO_MOD_PD_MAX,  IF_REAL, "maximum power dissipation"),
 
-/* self heating */
- IOPX("rth0",  DIO_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
- IOPX("cth0",  DIO_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
 /* scaled parasitic capacitances level 3 model */
  IOP( "lm",  DIO_MOD_LM,  IF_REAL, "Length of metal capacitor (level=3)"),
  IOP( "lp",  DIO_MOD_LP,  IF_REAL, "Length of polysilicon capacitor (level=3)"),

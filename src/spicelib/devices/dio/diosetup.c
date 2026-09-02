@@ -225,7 +225,14 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if (!model->DIOsoftRevRecParamGiven) {
             model->DIOsoftRevRecParam = 0.0;
         }
-
+        if (!model->DIOqpscaleGiven) {
+            model->DIOqpscale = 1e6;
+        } else if (!(model->DIOqpscale > 0.0)) {
+            SPfrontEnd->IFerrorf(ERR_WARNING,
+                "%s: qpscale must be positive, using default 1e6 instead",
+                model->DIOmodName);
+            model->DIOqpscale = 1e6;
+        }
         /* set lower limit of saturation current */
         if (model->DIOsatCur < ckt->CKTepsmin)
             model->DIOsatCur = ckt->CKTepsmin;
@@ -326,6 +333,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
             if(!here->DIOmGiven) {
                 here->DIOm = 1;
+            } else if (!(here->DIOm > 0.0)) {
+                SPfrontEnd->IFerrorf(ERR_WARNING,
+                    "%s: m must be positive, using 1 instead", here->DIOname);
+                here->DIOm = 1.0;
             }
 
             here->DIOcmetal = 0.0;
@@ -333,8 +344,8 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (model->DIOlevel == 3) {
                 double wm, lm, wp, lp;
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
-                    here->DIOarea = (here->DIOw+model->DIOmaskOffset) * (here->DIOl+model->DIOmaskOffset) * here->DIOm * scale * scale;
-                    here->DIOpj = (2 * (here->DIOw+model->DIOmaskOffset) + 2 * (here->DIOl+model->DIOmaskOffset)) * here->DIOm * scale;
+                    here->DIOarea = (here->DIOw+model->DIOmaskOffset) * (here->DIOl+model->DIOmaskOffset) * scale * scale;
+                    here->DIOpj = (2 * (here->DIOw+model->DIOmaskOffset) + 2 * (here->DIOl+model->DIOmaskOffset)) * scale;
                 }
                 if (here->DIOwidthMetalGiven)
                     wm = here->DIOwidthMetal;
@@ -358,6 +369,11 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->DIOcpoly = CONSTepsSiO2 / model->DIOpolyOxideThick  * here->DIOm
                                   * (wp * scale + model->DIOpolyMaskOffset)
                                   * (lp * scale + model->DIOpolyMaskOffset);
+            }
+            if (!(here->DIOarea > 0.0)) {
+                SPfrontEnd->IFerrorf(ERR_WARNING,
+                    "%s: area must be positive, using 1 instead", here->DIOname);
+                here->DIOarea = 1.0;
             }
             here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea * here->DIOm;
             here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea * here->DIOm;
@@ -416,7 +432,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             /* rev-rec */
-            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+            if (DIOrevrecMod(model)) {
                 if(here->DIOqpNode == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->DIOname, "qp");
                     if(error) return(error);
@@ -425,9 +441,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             } else {
                 here->DIOqpNode = 0;
             }
-
-
-            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
@@ -451,7 +464,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(DIOposSwPrimePosSwPrimePtr,DIOposSwPrimeNode,DIOposSwPrimeNode);
             }
 
-            if (selfheat) {
+            if (DIOselfheatMod(model)) {
                 TSTALLOC(DIOtempPosPtr,      DIOtempNode,     DIOposNode);
                 TSTALLOC(DIOtempPosPrimePtr, DIOtempNode,     DIOposPrimeNode);
                 TSTALLOC(DIOtempNegPtr,      DIOtempNode,     DIOnegNode);
@@ -465,14 +478,18 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                     TSTALLOC(DIOposSwPrimeTempPtr, DIOposSwPrimeNode, DIOtempNode);
                 }
             }
-            
+
             /* rev-rec */
-            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+            if (DIOrevrecMod(model)) {
                 TSTALLOC(DIOqpQpPtr      , DIOqpNode, DIOqpNode);
                 TSTALLOC(DIOqpPosPrimePtr, DIOqpNode, DIOposPrimeNode);
                 TSTALLOC(DIOqpNegPtr     , DIOqpNode, DIOnegNode);
                 TSTALLOC(DIOposPrimeQpPtr, DIOposPrimeNode, DIOqpNode);
                 TSTALLOC(DIOnegQpPtr,      DIOnegNode, DIOqpNode);
+                if (DIOselfheatMod(model)) {
+                    TSTALLOC(DIOtempQpPtr,     DIOtempNode, DIOqpNode);
+                    TSTALLOC(DIOqpTempPtr,     DIOqpNode, DIOtempNode);
+                }
             }
         }
     }
@@ -494,23 +511,24 @@ DIOunsetup(
                 here=DIOnextInstance(here))
         {
 
-            if (here->DIOposPrimeNode > 0
-              && here->DIOposPrimeNode != here->DIOposNode)
-                CKTdltNNum(ckt, here->DIOposPrimeNode);
-                here->DIOposPrimeNode = 0;
+            /* rev-rec */
+            if (here->DIOqpNode > 0) {
+                CKTdltNNum(ckt, here->DIOqpNode);
+                here->DIOqpNode = 0;
+            }
 
-            if(model->DIOresistSWGiven) {
-                /* separate sidewall */
-                if (here->DIOposSwPrimeNode > 0
-                  && here->DIOposSwPrimeNode != here->DIOposNode)
-                    CKTdltNNum(ckt, here->DIOposSwPrimeNode);
+            /* separate sidewall */
+            if (here->DIOposSwPrimeNode > 0
+              && here->DIOposSwPrimeNode != here->DIOposNode) {
+                CKTdltNNum(ckt, here->DIOposSwPrimeNode);
                 here->DIOposSwPrimeNode = 0;
             }
 
-            /* rev-rec */
-            if (here->DIOqpNode > 0)
-                CKTdltNNum(ckt, here->DIOqpNode);
-                here->DIOqpNode = 0;
+            if (here->DIOposPrimeNode > 0
+              && here->DIOposPrimeNode != here->DIOposNode) {
+                CKTdltNNum(ckt, here->DIOposPrimeNode);
+                here->DIOposPrimeNode = 0;
+            }
 
         }
     }

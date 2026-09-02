@@ -13,6 +13,24 @@ Modified by Paolo Nenzi 2003, Dietmar Warning 2012 and Arpad Buermen 2025
 #include "ngspice/noisedef.h"
 
             /* data structures used to describe diodes */
+#define VOLT_TEMP_TOL_FACTOR 1e4 /* Needed in load bypass section */
+
+/* only model param dependent - usable in setup, bindCSC - before node exist*/
+#define DIOrevrecMod(mod) \
+    ((mod)->DIOsoftRevRecParamGiven && \
+     (mod)->DIOsoftRevRecParam != 0.0 && \
+     (mod)->DIOtransitTime != 0.0)
+
+#define DIOselfheatMod(mod) \
+    ((mod)->DIOrth0Given)
+
+/* complete condition - for load, ask, acld, pzld */
+#define DIOrevrec(inst) \
+    ((inst)->DIOqpNode > 0 && DIOrevrecMod(DIOmodPtr(inst)))
+
+#define DIOselfheat(inst) \
+    ((inst)->DIOtempNode > 0 && \
+     (inst)->DIOthermal && DIOselfheatMod(DIOmodPtr(inst)))
 
 /* indices to array of diode noise  sources */
 
@@ -72,6 +90,10 @@ typedef struct sDIOinstance {
     double *DIOposSwPrimePosSwPrimePtr; /* pointer to sparse matrix at
                             * (positive prime sidewall,positive prime sidewall) */
 
+    /* separate sidewall */
+    double *DIOtempPosSwPrimePtr;
+    double *DIOposSwPrimeTempPtr;
+
     /* self heating */
     double *DIOtempPosPtr;
     double *DIOtempPosPrimePtr;
@@ -80,9 +102,6 @@ typedef struct sDIOinstance {
     double *DIOposTempPtr;
     double *DIOposPrimeTempPtr;
     double *DIOnegTempPtr;
-    /* separate sidewall */
-    double *DIOtempPosSwPrimePtr;
-    double *DIOposSwPrimeTempPtr;
 
     /* rev-rec */
     double *DIOqpQpPtr;
@@ -90,12 +109,15 @@ typedef struct sDIOinstance {
     double *DIOqpNegPtr;
     double *DIOposPrimeQpPtr;
     double *DIOnegQpPtr;
+    double *DIOtempQpPtr;
+    double *DIOqpTempPtr;
 
     double DIOcap;   /* stores the diode capacitance */
     double DIOcapSW; /* stores the diode Sw capacitance */
 
     /* rev-rec */
-    double DIOqpGain;/* converts iterated diffcharge current */
+    double DIOqpGainScaled;/* converts iterated diffcharge current */
+    double DIOcurFactor;/* Current factor  */
 
     double *DIOsens; /* stores the perturbed values of geq and ceq in ac
                          sensitivity analyis */
@@ -181,6 +203,7 @@ typedef struct sDIOinstance {
     double DIOdIth_dVrs;
     double DIOdIth_dVrssw;
     double DIOdIth_dVdio;
+    double DIOdIth_dVdioSw;
     double DIOdIth_dT;
     double DIOgcTt;
     double DIOdIrs_dT;
@@ -253,6 +276,8 @@ typedef struct sDIOinstance {
     BindElement *DIOqpNegBinding;
     BindElement *DIOposPrimeQpBinding;
     BindElement *DIOnegQpBinding;
+    BindElement *DIOtempQpBinding;
+    BindElement *DIOqpTempBinding;
 #endif
 
 } DIOinstance ;
@@ -264,11 +289,12 @@ typedef struct sDIOinstance {
 #define DIOvoltage DIOstate
 #define DIOcurrent DIOstate+1
 #define DIOconduct DIOstate+2
-#define DIOvoltageSW DIOstate+3
-#define DIOcurrentSW DIOstate+4
-#define DIOconductSW DIOstate+5
-#define DIOcapCharge DIOstate+6
-#define DIOcapCurrent DIOstate+7
+#define DIOcapCharge DIOstate+3
+#define DIOcapCurrent DIOstate+4
+
+#define DIOvoltageSW DIOstate+5
+#define DIOcurrentSW DIOstate+6
+#define DIOconductSW DIOstate+7
 #define DIOcapChargeSW DIOstate+8
 #define DIOcapCurrentSW DIOstate+9
 
@@ -283,10 +309,9 @@ typedef struct sDIOinstance {
 #define DIOqp DIOstate+17
 #define DIOresCurrent DIOstate+18
 #define DIOresConduct DIOstate+19
-#define DIOcqcsr DIOstate+20
-#define DIOgqcsr DIOstate+21
+#define DIOgqcsr DIOstate+20
 
-#define DIOnumStates 22
+#define DIOnumStates 21
 
 #define DIOsensxp DIOstate+22    /* charge sensitivities and their derivatives.
                                   * +23 for the derivatives - pointer to the
@@ -366,6 +391,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOrecSatCurGiven : 1;
     unsigned DIOrecEmissionCoeffGiven : 1;
     unsigned DIOsoftRevRecParamGiven : 1;
+    unsigned DIOqpscaleGiven : 1;
 
     unsigned DIOrth0Given :1;
     unsigned DIOcth0Given :1;
@@ -443,6 +469,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOrecSatCur; /* Recombination saturation current */
     double DIOrecEmissionCoeff; /* Recombination emission coefficient */
     double DIOsoftRevRecParam; /* Soft reverse recovery parameter */
+    double DIOqpscale; /* Soft reverse recovery parameter scales the diff charge */
 
     double DIOrth0;
     double DIOcth0;
@@ -479,6 +506,7 @@ enum {
     DIO_QUEST_SENS_CPLX,
     DIO_QUEST_SENS_DC,
     DIO_CAP,
+    DIO_CAPSW,
     DIO_PJ,
     DIO_W,
     DIO_L,
@@ -552,6 +580,8 @@ enum {
     DIO_MOD_ISR,
     DIO_MOD_NR,
     DIO_MOD_VP,
+    DIO_MOD_QPSCALE,
+
     DIO_MOD_RTH0,
     DIO_MOD_CTH0,
 

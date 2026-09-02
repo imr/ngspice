@@ -5,8 +5,8 @@ Model Author: 1995 Colin McAndrew Motorola
 Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 **********/
 
-#ifndef VBIC
-#define VBIC
+#ifndef NGSPICE_VBICDEFS_H
+#define NGSPICE_VBICDEFS_H
 
 #include "ngspice/cktdefs.h"
 #include "ngspice/ifsim.h"
@@ -28,6 +28,7 @@ enum {
     VBICRSNOIZ,
     VBICICNOIZ,
     VBICIBNOIZ,
+    VBICIBEXNOIZ,
     VBICIBEPNOIZ,
     VBICICCPNOIZ,
     VBICFLBENOIZ,
@@ -127,10 +128,6 @@ typedef struct sVBICinstance {
                              * (emitter prime,emitter prime) */
     double *VBICsubsSISubsSIPtr;    /* pointer to sparse matrix at
                              * (substrate prime, substrate prime) */
-    double *VBICemitEIXfPtr;   /* pointer to sparse matrix at
-                             * (emitter prime,xf) */
-    double *VBICbaseBIXfPtr;   /* pointer to sparse matrix at
-                             * (base prime,xf) */
 
     double *VBICbaseEmitPtr; /* pointer to sparse matrix at
                              * (base,emit) */
@@ -248,12 +245,7 @@ typedef struct sVBICinstance {
     double *VBICxf1Xf2Ptr;
 
     double *VBICxf2Xf1Ptr;
-    double *VBICxf2TempPtr;
-    double *VBICxf2BaseBIPtr;
-    double *VBICxf2EmitEIPtr;
-    double *VBICxf2CollCIPtr;
     double *VBICxf2Xf2Ptr;
-    double *VBICemitXf2Ptr;
     double *VBICemitEIXf2Ptr;
     double *VBICcollCIXf2Ptr;
 
@@ -478,61 +470,63 @@ typedef struct sVBICinstance {
 
 #define VBICqbcx   VBICstate+44
 #define VBICcqbcx  VBICstate+45
+#define VBICgqbcx  VBICstate+46
 
-#define VBICqbep    VBICstate+46
-#define VBICcqbep   VBICstate+47
-#define VBICcqbepci VBICstate+48
+#define VBICqbep    VBICstate+47
+#define VBICcqbep   VBICstate+48
+#define VBICcqbepci VBICstate+49
 
-#define VBICqbeo  VBICstate+49
-#define VBICcqbeo VBICstate+50
-#define VBICgqbeo VBICstate+51
+#define VBICqbeo  VBICstate+50
+#define VBICcqbeo VBICstate+51
+#define VBICgqbeo VBICstate+52
 
-#define VBICqbco  VBICstate+52
-#define VBICcqbco VBICstate+53
-#define VBICgqbco VBICstate+54
+#define VBICqbco  VBICstate+53
+#define VBICcqbco VBICstate+54
+#define VBICgqbco VBICstate+55
 
-#define VBICibcp      VBICstate+55
-#define VBICibcp_Vbcp VBICstate+56
+#define VBICgqbeci  VBICstate+56
+#define VBICgqbepci VBICstate+57
 
-#define VBICiccp      VBICstate+57
-#define VBICiccp_Vbep VBICstate+58
-#define VBICiccp_Vbci VBICstate+59
-#define VBICiccp_Vbcp VBICstate+60
+#define VBICibcp      VBICstate+58
+#define VBICibcp_Vbcp VBICstate+59
 
-#define VBICqbcp      VBICstate+61
-#define VBICcqbcp     VBICstate+62
+#define VBICiccp      VBICstate+60
+#define VBICiccp_Vbep VBICstate+61
+#define VBICiccp_Vbci VBICstate+62
+#define VBICiccp_Vbcp VBICstate+63
 
-#define VBICircx_Vrcx VBICstate+63
-#define VBICirbx_Vrbx VBICstate+64
-#define VBICirs_Vrs   VBICstate+65
-#define VBICire_Vre   VBICstate+66
+#define VBICqbcp      VBICstate+64
+#define VBICcqbcp     VBICstate+65
 
-#define VBICqcth      VBICstate+67 /* thermal capacitor charge */
-#define VBICcqcth     VBICstate+68 /* thermal capacitor current */
+#define VBICircx_Vrcx VBICstate+66
+#define VBICirbx_Vrbx VBICstate+67
+#define VBICirs_Vrs   VBICstate+68
+#define VBICire_Vre   VBICstate+69
 
-#define VBICvrth      VBICstate+69
-#define VBICicth_Vrth VBICstate+70
+#define VBICqcth      VBICstate+70 /* thermal capacitor charge */
+#define VBICcqcth     VBICstate+71 /* thermal capacitor current */
 
-#define VBICqxf1      VBICstate+71
-#define VBICcqxf1     VBICstate+72
-#define VBICgqxf1     VBICstate+73
+#define VBICvrth      VBICstate+72
+#define VBICicth_Vrth VBICstate+73
 
-#define VBICixf1      VBICstate+74
-#define VBICixf1_Vbei VBICstate+75
-#define VBICixf1_Vbci VBICstate+76
-#define VBICixf1_Vxf1 VBICstate+77
-#define VBICixf1_Vxf2 VBICstate+78
-#define VBICixf1_Vrth VBICstate+79
+#define VBICqxf1      VBICstate+74
+#define VBICcqxf1     VBICstate+75
 
-#define VBICqxf2      VBICstate+80
-#define VBICcqxf2     VBICstate+81
-#define VBICgqxf2     VBICstate+82
+#define VBICixf1      VBICstate+76
+#define VBICixf1_Vbei VBICstate+77
+#define VBICixf1_Vbci VBICstate+78
+#define VBICixf1_Vxf1 VBICstate+79
+#define VBICixf1_Vxf2 VBICstate+80
+#define VBICixf1_Vrth VBICstate+81
 
-#define VBICixf2      VBICstate+83
-#define VBICixf2_Vxf1 VBICstate+84
-#define VBICixf2_Vxf2 VBICstate+85
+#define VBICqxf2      VBICstate+82
+#define VBICcqxf2     VBICstate+83
 
-#define VBICnumStates 86
+#define VBICixf2      VBICstate+84
+#define VBICixf2_Vxf1 VBICstate+85
+#define VBICixf2_Vxf2 VBICstate+86
+
+#define VBICnumStates 87
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
@@ -731,9 +725,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     unsigned VBICfNexpAGiven : 1;
     unsigned VBICfNexpBGiven : 1;
     unsigned VBICtempExpREGiven : 1;
-    unsigned VBICtempExpRBGiven : 1;
     unsigned VBICtempExpRBIGiven : 1;
-    unsigned VBICtempExpRCGiven : 1;
     unsigned VBICtempExpRCIGiven : 1;
     unsigned VBICtempExpRSGiven : 1;
     unsigned VBICtempExpVOGiven : 1;
@@ -871,9 +863,7 @@ enum {
     VBIC_MOD_AFN,
     VBIC_MOD_BFN,
     VBIC_MOD_XRE,
-    VBIC_MOD_XRB,
     VBIC_MOD_XRBI,
-    VBIC_MOD_XRC,
     VBIC_MOD_XRCI,
     VBIC_MOD_XRS,
     VBIC_MOD_XVO,
@@ -911,7 +901,6 @@ enum {
     VBIC_MOD_TVBBE2,
     VBIC_MOD_TNBBE,
     VBIC_MOD_EBBE,
-    VBIC_MOD_DTEMP,
     VBIC_MOD_VERS,
     VBIC_MOD_VREF,
     VBIC_MOD_VBE_MAX,
@@ -924,9 +913,14 @@ enum {
     VBIC_MOD_SELFT,
 };
 
+/* model questions */
+enum {
+    VBIC_MOD_TYPE = 301,
+};
+
 /* device questions */
 enum {
-    VBIC_QUEST_COLLNODE = 221,
+    VBIC_QUEST_COLLNODE = 401,
     VBIC_QUEST_BASENODE,
     VBIC_QUEST_EMITNODE,
     VBIC_QUEST_SUBSNODE,
@@ -958,15 +952,6 @@ enum {
     VBIC_QUEST_CBCP,
     VBIC_QUEST_QBE,
     VBIC_QUEST_QBC,
-};
-
-/* model questions */
-enum {
-    VBIC_MOD_COLLCONDUCT = 301,
-    VBIC_MOD_BASECONDUCT,
-    VBIC_MOD_EMITTERCONDUCT,
-    VBIC_MOD_SUBSTRATECONDUCT,
-    VBIC_MOD_TYPE,
 };
 
 #include "vbicext.h"

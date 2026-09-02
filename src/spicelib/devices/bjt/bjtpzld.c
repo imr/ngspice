@@ -23,6 +23,7 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double gpi;
     double gmu;
     double go;
+    double gdsub;
     double xgm;
     double gm;
     double gx;
@@ -46,6 +47,7 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             gmu= *(ckt->CKTstate0 + here->BJTgmu);
             gm= *(ckt->CKTstate0 + here->BJTgm);
             go= *(ckt->CKTstate0 + here->BJTgo);
+            gdsub = *(ckt->CKTstate0 + here->BJTgdsub);
             Irci_Vrci = *(ckt->CKTstate0 + here->BJTirci_Vrci);
             Irci_Vbci = *(ckt->CKTstate0 + here->BJTirci_Vbci);
             Irci_Vbcx = *(ckt->CKTstate0 + here->BJTirci_Vbcx);
@@ -101,6 +103,10 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->BJTbaseColPrimePtr + 1) +=       m * ((-xcbx) * (s->imag));
             *(here->BJTcolPrimeBasePtr) +=           m * ((-xcbx) * (s->real));
             *(here->BJTcolPrimeBasePtr + 1) +=       m * ((-xcbx) * (s->imag));
+            *(here->BJTsubstConSubstConPtr)       += m * (gdsub);
+            *(here->BJTsubstSubstPtr)             += m * (gdsub);
+            *(here->BJTsubstConSubstPtr)          += m * (-gdsub);
+            *(here->BJTsubstSubstConPtr)          += m * (-gdsub);
             if (model->BJTintCollResistGiven) {
                 *(here->BJTcollCXcollCXPtr)    += m *  Irci_Vrci;
                 *(here->BJTcollCXColPrimePtr)  += m * -Irci_Vrci;

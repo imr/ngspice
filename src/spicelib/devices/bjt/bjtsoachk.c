@@ -41,12 +41,12 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
         for (here = BJTinstances(model); here; here = BJTnextInstance(here)) {
 
-            vbe = fabs(ckt->CKTrhsOld[here->BJTbasePrimeNode] -
-                ckt->CKTrhsOld[here->BJTemitPrimeNode]);
-            vbc = fabs(ckt->CKTrhsOld[here->BJTbasePrimeNode] -
-                ckt->CKTrhsOld[here->BJTcolPrimeNode]);
-            vce = fabs(ckt->CKTrhsOld[here->BJTcolPrimeNode] -
-                ckt->CKTrhsOld[here->BJTemitPrimeNode]);
+            vbe = fabs(ckt->CKTrhsOld[here->BJTbaseNode] -
+                ckt->CKTrhsOld[here->BJTemitNode]);
+            vbc = fabs(ckt->CKTrhsOld[here->BJTbaseNode] -
+                ckt->CKTrhsOld[here->BJTcolNode]);
+            vce = fabs(ckt->CKTrhsOld[here->BJTcolNode] -
+                ckt->CKTrhsOld[here->BJTemitNode]);
 
             if (vbe > model->BJTvbeMax)
                 if (warns_vbe < maxwarns) {
@@ -72,7 +72,7 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     warns_vce++;
                 }
 
-            ic = fabs(*(ckt->CKTstate0 + here->BJTcc));
+            ic = here->BJTm*fabs(*(ckt->CKTstate0 + here->BJTcc));
             if (ic > fabs(model->BJTicMax))
                 if (warns_ic < maxwarns) {
                     soa_printf(ckt, (GENinstance*)here,
@@ -81,7 +81,7 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     warns_ic++;
                 }
 
-            ib = fabs(*(ckt->CKTstate0 + here->BJTcb));
+            ib = here->BJTm*fabs(*(ckt->CKTstate0 + here->BJTcb));
             if (ib > fabs(model->BJTibMax))
                 if (warns_ib < maxwarns) {
                     soa_printf(ckt, (GENinstance*)here,
@@ -105,7 +105,7 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                 );
                 if ((ckt->CKTcurrentAnalysis & DOING_TRAN) && !(ckt->CKTmode &
                     MODETRANOP)) {
-                    pd += *(ckt->CKTstate0 + here->BJTcqsub) *
+                    pd += fabs(*(ckt->CKTstate0 + here->BJTcqsub)) *
                         fabs(*(ckt->CKTrhsOld + here->BJTsubstConNode) -
                             *(ckt->CKTrhsOld + here->BJTsubstNode));
                 }
@@ -122,7 +122,7 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     if (pd > pd_max) {
                         soa_printf(ckt, (GENinstance*)here,
                             "Pd=%.4g W has exceeded Pd_max=%.4g W\n        at Vce=%.4g V, Ib=%.4g A, Ic=%.4g A, and Te=%.4g C\n",
-                            pow, pd_max, vce, ib, ic, here->BJTtemp - CONSTCtoK);
+                            pd, pd_max, vce, ib, ic, here->BJTtemp - CONSTCtoK);
                         warns_pd++;
                     }
                 }

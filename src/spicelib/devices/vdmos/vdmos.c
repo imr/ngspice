@@ -112,12 +112,16 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("rb",    VDIO_MOD_RB,    IF_REAL,   "Body diode ohmic resistance"),
  IOP("n",     VDIO_MOD_N,     IF_REAL,   "Body diode emission coefficient"),
  IOP("tt",    VDIO_MOD_TT,    IF_REAL,   "Body diode transit time"),
+ IOPA("ttt1", VDIO_MOD_TTT1, IF_REAL, "Transit Time 1st order temp. coeff."),
+ IOPA("ttt2", VDIO_MOD_TTT2, IF_REAL, "Transit Time 2nd order temp. coeff."),
  IOP("eg",    VDIO_MOD_EG,    IF_REAL,   "Body diode activation energy for temperature effect on Is"),
  IOP("xti",   VDIO_MOD_XTI,   IF_REAL,   "Body diode saturation current temperature exponent"),
  IOP("is",    VDIO_MOD_IS,    IF_REAL,   "Body diode saturation current"),
  IOP("vj",    VDIO_MOD_VJ,    IF_REAL,   "Body diode junction potential"),
+ IOP("tm1",   VDIO_MOD_TM1,  IF_REAL, "Grading coefficient 1st temp. coeff."),
+ IOP("tm2",   VDIO_MOD_TM2,  IF_REAL, "Grading coefficient 2nd temp. coeff."),
  IOP("vp",    VDIO_MOD_VP,    IF_REAL,   "Soft reverse recovery parameter"),
-
+ IOP("qpscale", VDIO_MOD_QPSCALE, IF_REAL, "Scaling factor Diff Charge"),
 
  /* body diode capacitance (e.g. source-drain capacitance) */
  IOPA("cjo",  VDIO_MOD_CJ,    IF_REAL,   "Zero-bias body diode junction capacitance"),
@@ -153,7 +157,7 @@ char *VDMOSnames[] = {
     "Drain",
     "Gate",
     "Source",
-    "Temp",
+    "TjK",
     "Tcase"
 };
 

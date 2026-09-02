@@ -26,7 +26,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
     VBICmodel *model = (VBICmodel *)inModel;
     VBICinstance *here;
-    double p[108], pnom[108], TAMB;
+    double p[107], pnom[107], TAMB;
     double vt;
 
     /*  loop through all the bipolar models */
@@ -36,9 +36,9 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
         for (here = VBICinstances(model); here != NULL ;
                 here=VBICnextInstance(here)) {
 
-            if(!here->VBICtempGiven) here->VBICtemp = ckt->CKTtemp;
-
-            if(here->VBICdtempGiven) here->VBICtemp = here->VBICtemp + here->VBICdtemp;
+            if (!here->VBICtempGiven)
+                here->VBICtemp = ckt->CKTtemp
+                               + (here->VBICdtempGiven ? here->VBICdtemp : 0.0);
 
             TAMB = here->VBICtemp - CONSTCtoK;
 
@@ -168,12 +168,11 @@ int vbic_4T_et_cf_t(double *p, double *pnom, double *TAMB)
         p[103]=pnom[103];
         p[105]=pnom[105];
         p[106]=pnom[106];
-        p[107]=pnom[107];
 
 /*      Temperature mappings for model parameters */
 
         Tini=2.731500e+02+pnom[0];
-        Tdev=(2.731500e+02+(*TAMB))+pnom[105];
+        Tdev=(2.731500e+02+(*TAMB));
         Vtv=1.380662e-23*Tdev/1.602189e-19;
         rT=Tdev/Tini;
         dT=Tdev-Tini;
@@ -337,6 +336,6 @@ int vbic_4T_et_cf_t(double *p, double *pnom, double *TAMB)
         p[3]=pnom[3]*xvar1;
         xvar1=-p[98]/(p[99]*Vtv);
         p[104]=exp(xvar1);
-        p[0]=(*TAMB)+p[105];
+        p[0]=(*TAMB);
         return(0);
 }

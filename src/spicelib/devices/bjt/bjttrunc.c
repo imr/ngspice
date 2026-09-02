@@ -33,6 +33,10 @@ BJTtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
             if (model->BJTintCollResistGiven) {
                 CKTterr(here->BJTqbcx,ckt,timeStep);
             }
+            if (model->BJTbaseFractionBCcap < 1.0) {
+                CKTterr(here->BJTqbx, ckt, timeStep);
+            }
+
         }
     }
     return(OK);

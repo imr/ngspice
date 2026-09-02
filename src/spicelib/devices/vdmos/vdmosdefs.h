@@ -15,11 +15,32 @@ VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 #include "ngspice/noisedef.h"
 
 /* declarations for VDMOSFETs */
+#define VDMOS_TEMP_MIN -100.0 /* Second guard against extreme device temeperature */
+#define VDMOS_TEMP_MAX 1000.0 /* in Newton iteration */
+#define VOLT_TEMP_TOL_FACTOR 1e4 /* Needed in load bypass section */
+
+/* only model param dependent - usable in setup, bindCSC - before node exist*/
+#define VDIOrevrecMod(mod) \
+    ((mod)->VDIOsoftRevRecParamGiven && \
+     (mod)->VDIOsoftRevRecParam != 0.0 && \
+     (mod)->VDIOtransitTime != 0.0)
+
+#define VDMOSselfheatMod(mod) \
+    ((mod)->VDMOSrthjcGiven)
+
+/* complete condition - for load, ask, acld, pzld */
+#define VDIOrevrec(inst) \
+    ((inst)->VDIOqpNode > 0 && VDIOrevrecMod(VDMOSmodPtr(inst)))
+
+#define VDMOSselfheat(inst) \
+    ((inst)->VDMOStempNode > 0 && \
+     (inst)->VDMOSthermal && VDMOSselfheatMod(VDMOSmodPtr(inst)))
 
 /* indices to the array of MOSFET(1) noise sources */
 
 enum {
     VDMOSRDNOIZ = 0,
+    VDMOSRGNOIZ,
     VDMOSRSNOIZ,
     VDMOSIDNOIZ,
     VDMOSFLNOIZ,
@@ -61,7 +82,7 @@ typedef struct sVDMOSinstance {
     double VDMOSqsResistance;    /*resistance of drain: set in temp*/
     double VDMOSgateConductance;    /*conductance of gate(or 0):set in setup*/
     double VDMOSdsConductance;    /*conductance of drain to source:set in setup*/
-    double VDMOStemp;    /* operating temperature of this instance */
+    double VDMOStemp;    /* ambient temperature of this instance (K) */
     double VDMOSdtemp;   /* operating temperature of the instance relative to circuit temperature*/
     int    VDMOSthermal;  /* flag indicate self heating on */
 
@@ -98,11 +119,8 @@ typedef struct sVDMOSinstance {
     double VDIOtF2;
     double VDIOtF3;
 
-    /* rev-rec */
-    double VDIOqpGain;/* converts iterated diffcharge current */
-
+    /* self heating */
     double VDMOSTempSH;      /* for portability of SH temp to noise analysis */
-
     double VDMOSgmT;
     double VDMOSgtempg;
     double VDMOSgtempd;
@@ -110,6 +128,16 @@ typedef struct sVDMOSinstance {
     double VDMOScgT;
     double VDMOScdT;
     double VDMOScth;         /* current alias power */
+
+    double VDMOSdIrd_dT;      /* d(I_Rd)/dT                            */
+    double VDMOSdIrs_dT;      /* d(I_Rs)/dT                            */
+    double VDMOSdIth_dVrd;    /* d(P_Rd)/d(Vrd)                        */
+    double VDMOSdIth_dVrs;    /* d(P_Rs)/d(Vrs)                        */
+    double VDMOSdIth_dTres;   /* dIrd_dT*Vrd + dIrs_dT*Vrs             */
+
+    /* rev-rec */
+    double VDIOqpGainScaled;/* converts iterated diffcharge current */
+    double VDIOcurFactor;/* Current factor  */
 
 /*
  * naming convention:
@@ -220,13 +248,6 @@ typedef struct sVDMOSinstance {
                               (source node, diode prime node) */
     double *VDIORPsPtr;    /* pointer to sparse matrix element at
                               (diode prime node, source node) */
-    /* rev-rec */
-    double *VDIOqpQpPtr;
-    double *VDIOqpPosPrimePtr;
-    double *VDIOqpNegPtr;
-    double *VDIOposPrimeQpPtr;
-    double *VDIOnegQpPtr;
-
     /* self heating */
     double *VDMOSTemptempPtr;   /* Transistor thermal contribution */
     double *VDMOSTempdpPtr;
@@ -252,6 +273,15 @@ typedef struct sVDMOSinstance {
     double *VDMOSDevTdevTPtr;   /* for VdevTemp */
     double *VDMOSDevTtpPtr;
     double *VDMOSTpdevTPtr;
+
+    /* rev-rec */
+    double *VDIOqpQpPtr;
+    double *VDIOqpPosPrimePtr;
+    double *VDIOqpNegPtr;
+    double *VDIOposPrimeQpPtr;
+    double *VDIOnegQpPtr;
+    double *VDIOtempQpPtr;
+    double *VDIOqpTempPtr;
 
 #ifdef KLU
     BindElement *VDMOSDdBinding ;
@@ -279,6 +309,7 @@ typedef struct sVDMOSinstance {
     BindElement *VDIOSrpBinding ;
     BindElement *VDIORPsBinding ;
     BindElement *VDIORPrpBinding ;
+    /* self heating */
     BindElement *VDMOSTemptempBinding ;
     BindElement *VDMOSTempdpBinding ;
     BindElement *VDMOSTempspBinding ;
@@ -307,13 +338,15 @@ typedef struct sVDMOSinstance {
     BindElement *VDIOqpNegBinding;
     BindElement *VDIOposPrimeQpBinding;
     BindElement *VDIOnegQpBinding;
+    BindElement *VDIOtempQpBinding;
+    BindElement *VDIOqpTempBinding;
 #endif
 
 } VDMOSinstance ;
 
 #define VDMOSvgs VDMOSstates+ 0   /* gate-source voltage */
 #define VDMOSvds VDMOSstates+ 1   /* drain-source voltage */
-#define VDMOSdelTemp VDMOSstates+ 2 /* thermal voltage over rth0 */
+#define VDMOStj VDMOSstates+ 2 /* thermal voltage over rth0 */
 
 #define VDMOScapgs VDMOSstates+3  /* gate-source capacitor value */
 #define VDMOSqgs VDMOSstates+ 4   /* gate-source capacitor charge */
@@ -330,10 +363,10 @@ typedef struct sVDMOSinstance {
 #define VDIOcapCharge VDMOSstates+ 12
 #define VDIOcapCurrent VDMOSstates+ 13
 
+/* self heating */
 #define VDMOScapth VDMOSstates+ 14 /* thermal capacitor value */
 #define VDMOSqth VDMOSstates+ 15   /* thermal capacitor charge */
 #define VDMOScqth VDMOSstates+ 16  /* thermal capacitor current */
-
 #define VDIOdIdio_dT VDMOSstates+ 17
 
 /* rev-rec */
@@ -411,6 +444,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDIOtrb1;
     double VDIOtrb2;
     double VDIOsoftRevRecParam; /* Soft reverse recovery parameter VP */
+    double VDIOqpscale; /* Soft reverse recovery parameter scales the diff charge */
 
     double VDMOStcvth;
     double VDMOSrthjc;
@@ -467,6 +501,8 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 
     unsigned VDIOjctSatCurGiven :1;
     unsigned VDIOgradCoeffGiven    :1;
+    unsigned VDIOgradCoeffTemp1Given : 1;
+    unsigned VDIOgradCoeffTemp2Given : 1;
     unsigned VDIOdepletionCapCoeffGiven :1;
     unsigned VDIObvGiven   :1;
     unsigned VDIOibvGiven   :1;
@@ -476,6 +512,8 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDIOresistanceGiven :1;
     unsigned VDIOnGiven   :1;
     unsigned VDIOtransitTimeGiven :1;
+    unsigned VDIOtranTimeTemp1Given : 1;
+    unsigned VDIOtranTimeTemp2Given : 1;
     unsigned VDIOegGiven   :1;
     unsigned VDIOxtiGiven   :1;
     unsigned VDIOtrb1Given :1;
@@ -509,6 +547,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSidr_maxGiven  :1;
     unsigned VDMOSderatingGiven  :1;
     unsigned VDIOsoftRevRecParamGiven : 1;
+    unsigned VDIOqpscaleGiven : 1;
 } VDMOSmodel;
 
 #ifndef NMOS
@@ -562,6 +601,8 @@ enum {
     VDIO_MOD_VJ,
     VDIO_MOD_CJ,
     VDIO_MOD_MJ,
+    VDIO_MOD_TM1,
+    VDIO_MOD_TM2,
     VDIO_MOD_FC,
     VDIO_MOD_RB,
     VDIO_MOD_BV,
@@ -569,11 +610,14 @@ enum {
     VDIO_MOD_NBV,
     VDIO_MOD_N,
     VDIO_MOD_TT,
+    VDIO_MOD_TTT1,
+    VDIO_MOD_TTT2,
     VDIO_MOD_EG,
     VDIO_MOD_XTI,
     VDIO_MOD_TRB1,
     VDIO_MOD_TRB2,
     VDIO_MOD_VP,
+    VDIO_MOD_QPSCALE,
     VDMOS_MOD_TCVTH,
     VDMOS_MOD_RTHJC,
     VDMOS_MOD_RTHCA,

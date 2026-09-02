@@ -46,6 +46,12 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if(!model->BJTsatCurGiven) {
             model->BJTsatCur = 1e-16;
+        } else {
+            if (model->BJTsatCur <= 0.0) {
+              fprintf(stderr, "Warning: %s: IS <= 0 - set to its default value: 1e-16\n",
+                    model->BJTmodName);
+              model->BJTsatCur = 1e-16;
+            } 
         }
         if(!model->BJTBEsatCurGiven) { /* temp update will decide of IS usage */
             model->BJTBEsatCur = 0.0;
@@ -124,8 +130,16 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTjunctionExpBCGiven) {
             model->BJTjunctionExpBC = .33;
         }
-        if(!model->BJTbaseFractionBCcapGiven) {
-            model->BJTbaseFractionBCcap = 1;
+        if (!model->BJTbaseFractionBCcapGiven) {
+            model->BJTbaseFractionBCcap = 1.0;
+        } else if (model->BJTbaseFractionBCcap < 0.0) {
+            fprintf(stderr, "Warning: %s: XCJC = %g outside range 0...1 - set to 0\n",
+                    model->BJTmodName, model->BJTbaseFractionBCcap);
+            model->BJTbaseFractionBCcap = 0.0;
+        } else if (model->BJTbaseFractionBCcap > 1.0) {
+            fprintf(stderr, "Warning: %s: XCJC = %g outside range 0...1 - set to 1\n",
+                    model->BJTmodName, model->BJTbaseFractionBCcap);
+            model->BJTbaseFractionBCcap = 1.0;
         }
         if(!model->BJTtransitTimeRGiven) {
             model->BJTtransitTimeR = 0;
@@ -173,10 +187,18 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTepiChargeGiven) {
             model->BJTepiCharge = 0.0;
         }
-        if(!model->BJTtlevGiven) {
+        if (!model->BJTtlevGiven) {
+            model->BJTtlev = 0;
+        } else if (model->BJTtlev != 0 && model->BJTtlev != 1 && model->BJTtlev != 3) {
+            fprintf(stderr, "Warning: %s: TLEV=%d not available - set to 0\n",
+                    model->BJTmodName, model->BJTtlev);
             model->BJTtlev = 0;
         }
-        if(!model->BJTtlevcGiven) {
+        if (!model->BJTtlevcGiven) {
+            model->BJTtlevc = 0;
+        } else if (model->BJTtlevc != 0 && model->BJTtlevc != 1) {
+            fprintf(stderr, "Warning: %s: TLEVC=%d not available - set to 0\n",
+                    model->BJTmodName, model->BJTtlevc);
             model->BJTtlevc = 0;
         }
         if(!model->BJTtbf1Given) {
@@ -333,7 +355,8 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->BJTnkf = 0.5;
         } else {
           if (model->BJTnkf > 1.0) {
-            printf("Warning: NKF has been set to its maximum value: 1.0\n");
+            fprintf(stderr, "Warning: %s: NKF has been set to its maximum value: 1.0\n",
+                  model->BJTmodName);
             model->BJTnkf = 1.0;
           } 
         }

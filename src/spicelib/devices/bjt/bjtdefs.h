@@ -13,11 +13,13 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/noisedef.h"
 
 /* structures to describe Bipolar Junction Transistors */
+#define VCRIT_DISABLED 50.0 /* pnjlimit should prevent neg. drift of subs node */
 
 /* indices to array of BJT noise sources */
 
 enum {
     BJTRCNOIZ = 0,
+    BJTRCINOIZ,
     BJTRBNOIZ,
     BJT_RE_NOISE,
     BJTICNOIZ,
@@ -348,44 +350,45 @@ typedef struct sBJTinstance {
 #define BJTvbc BJTstate+1
 #define BJTvbcx BJTstate+2
 #define BJTvrci BJTstate+3
-#define BJTcc BJTstate+4
-#define BJTcb BJTstate+5
-#define BJTgpi BJTstate+6
-#define BJTgmu BJTstate+7
-#define BJTgm BJTstate+8
-#define BJTgo BJTstate+9
-#define BJTqbe BJTstate+10
-#define BJTcqbe BJTstate+11
-#define BJTqbc BJTstate+12
-#define BJTcqbc BJTstate+13
-#define BJTqsub BJTstate+14
-#define BJTcqsub BJTstate+15
-#define BJTqbx BJTstate+16
-#define BJTcqbx BJTstate+17
-#define BJTgx BJTstate+18
-#define BJTcexbc BJTstate+19
-#define BJTgeqcb BJTstate+20
-#define BJTgcsub BJTstate+21
-#define BJTgeqbx BJTstate+22
-#define BJTvsub BJTstate+23
-#define BJTcdsub BJTstate+24
-#define BJTgdsub BJTstate+25
-#define BJTirci BJTstate+26
-#define BJTirci_Vrci BJTstate+27
-#define BJTirci_Vbci BJTstate+28
-#define BJTirci_Vbcx BJTstate+29
-#define BJTqbcx BJTstate+30
-#define BJTcqbcx BJTstate+31
-#define BJTgbcx BJTstate+32
+#define BJTvbx BJTstate+4
+#define BJTcc BJTstate+5
+#define BJTcb BJTstate+6
+#define BJTgpi BJTstate+7
+#define BJTgmu BJTstate+8
+#define BJTgm BJTstate+9
+#define BJTgo BJTstate+10
+#define BJTqbe BJTstate+11
+#define BJTcqbe BJTstate+12
+#define BJTqbc BJTstate+13
+#define BJTcqbc BJTstate+14
+#define BJTqsub BJTstate+15
+#define BJTcqsub BJTstate+16
+#define BJTqbx BJTstate+17
+#define BJTcqbx BJTstate+18
+#define BJTgx BJTstate+19
+#define BJTcexbc BJTstate+20
+#define BJTgeqcb BJTstate+21
+#define BJTgcsub BJTstate+22
+#define BJTgeqbx BJTstate+23
+#define BJTvsub BJTstate+24
+#define BJTcdsub BJTstate+25
+#define BJTgdsub BJTstate+26
+#define BJTirci BJTstate+27
+#define BJTirci_Vrci BJTstate+28
+#define BJTirci_Vbci BJTstate+29
+#define BJTirci_Vbcx BJTstate+30
+#define BJTqbcx BJTstate+31
+#define BJTcqbcx BJTstate+32
+#define BJTgbcx BJTstate+33
 
-#define BJTnumStates 33
+#define BJTnumStates 34
 
-#define BJTsensxpbe BJTstate+33 /* charge sensitivities and their
-                   derivatives. +34 for the derivatives -
+#define BJTsensxpbe BJTstate+34 /* charge sensitivities and their
+                   derivatives. +35 for the derivatives -
                    pointer to the beginning of the array */
-#define BJTsensxpbc BJTstate+35
-#define BJTsensxpsub BJTstate+37
-#define BJTsensxpbx BJTstate+39
+#define BJTsensxpbc BJTstate+36
+#define BJTsensxpsub BJTstate+38
+#define BJTsensxpbx BJTstate+40
 
 #define BJTnumSenStates 8
 
@@ -504,18 +507,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTtns1;
     double BJTtns2;
     double BJTnkf;
-    double BJTinvEarlyVoltF;    /* inverse of BJTearlyVoltF */
-    double BJTinvEarlyVoltR;    /* inverse of BJTearlyVoltR */
-    double BJTinvRollOffF;  /* inverse of BJTrollOffF */
-    double BJTinvRollOffR;  /* inverse of BJTrollOffR */
-    double BJTcollectorConduct; /* collector conductance */
-    double BJTemitterConduct;   /* emitter conductance */
     double BJTtransitTimeVBCFactor; /* */
     double BJTexcessPhaseFactor;
-    double BJTf2;
-    double BJTf3;
-    double BJTf6;
-    double BJTf7;
     double BJTtis1;
     double BJTtis2;
     double BJTtise1;
@@ -866,20 +859,19 @@ enum {
     BJT_QUEST_CBX,
     BJT_QUEST_CSUB,
     BJT_QUEST_GDSUB,
+    BJT_QUEST_VAF,
+    BJT_QUEST_VAR,
+    BJT_QUEST_GRC,
+    BJT_QUEST_GRE,
+    BJT_QUEST_IKF,
+    BJT_QUEST_IKR,
 };
 
 /* model questions */
 enum {
-    BJT_MOD_INVEARLYF = 301,
-    BJT_MOD_INVEARLYR,
-    BJT_MOD_INVROLLOFFF,
-    BJT_MOD_INVROLLOFFR,
-    BJT_MOD_COLCONDUCT,
-    BJT_MOD_EMITTERCONDUCT,
-    BJT_MOD_TRANSVBCFACT,
+    BJT_MOD_TRANSVBCFACT = 301,
     BJT_MOD_EXCESSPHASEFACTOR,
     BJT_MOD_TYPE,
-    BJT_MOD_QUEST_SUBS,
 };
 
 #include "bjtext.h"

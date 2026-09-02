@@ -477,10 +477,6 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->VBICebbe = value->rValue;
             mods->VBICebbeGiven = TRUE;
             break;
-        case VBIC_MOD_DTEMP:
-            mods->VBIClocTempDiff = value->rValue;
-            mods->VBIClocTempDiffGiven = TRUE;
-            break;
         case VBIC_MOD_VERS:
             mods->VBICrevVersion = value->rValue;
             mods->VBICrevVersionGiven = TRUE;

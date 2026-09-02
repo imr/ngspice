@@ -249,6 +249,11 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOsoftRevRecParam = value->rValue;
             model->DIOsoftRevRecParamGiven = TRUE;
             break;
+        case DIO_MOD_QPSCALE:
+            model->DIOqpscale = value->rValue;
+            model->DIOqpscaleGiven = TRUE;
+            break;
+
         case  DIO_MOD_RTH0:
             model->DIOrth0 = value->rValue;
             model->DIOrth0Given = TRUE;

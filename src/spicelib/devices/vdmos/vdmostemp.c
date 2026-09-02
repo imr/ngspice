@@ -14,7 +14,7 @@ VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTcircuit *ckt) {
+void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double TjK, CKTcircuit *ckt) {
 
     VDMOSmodel *model = (VDMOSmodel*)inModel;
 
@@ -38,12 +38,12 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
 
     xfc = log(1 - model->VDIOdepletionCapCoeff);
 
-    double arg;     /* 1 - fc */
+    double arg;
 
-    double dt = Temp - model->VDMOStnom;
+    double dt = TjK - model->VDMOStnom;
 
     /* vdmos temperature model */
-    ratio = Temp/model->VDMOStnom;
+    ratio = TjK/model->VDMOStnom;
     here->VDMOStTransconductance = model->VDMOStransconductance 
                                    * here->VDMOSm * pow(ratio, model->VDMOSmu);
 
@@ -69,11 +69,11 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
     if (model->VDMOSqsGiven)
         here->VDMOSqsResistance = model->VDMOSqsResistance / here->VDMOSm * pow(ratio, model->VDMOStexp1);
 
-    vt = Temp * CONSTKoverQ;
-    fact2 = Temp/REFTEMP;
-    kt = Temp * CONSTboltz;
-    egfet = 1.16-(7.02e-4*Temp*Temp)/
-            (Temp+1108);
+    vt = TjK * CONSTKoverQ;
+    fact2 = TjK/REFTEMP;
+    kt = TjK * CONSTboltz;
+    egfet = 1.16-(7.02e-4*TjK*TjK)/
+            (TjK+1108);
     arg = -egfet/(kt+kt)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
     pbfact = -2*vt *(1.5*log(fact2)+CHARGE*arg);
 
@@ -84,7 +84,7 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
     double pbo, gmaold;
     double gmanew, factor;
     double tBreakdownVoltage, vte, cbv;
-    double xbv, xcbv, tol, iter;
+    double xbv, xcbv, tol;
     double arg1_dT, arg2, arg2_dT;
 
     /* Junction grading temperature adjust */
@@ -100,15 +100,15 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
     here->VDIOtJctPot = pbfact + fact2*pbo;
     gmanew = (here->VDIOtJctPot - pbo) / pbo;
     here->VDIOtJctCap *= 1 + here->VDIOtGradingCoeff*
-        (400e-6*(Temp - REFTEMP) - gmanew);
+        (400e-6*(TjK - REFTEMP) - gmanew);
 
     vte = model->VDIOn*vt;
 
-    arg1 = ((Temp / model->VDMOStnom) - 1) * model->VDIOeg / vte;
+    arg1 = ((TjK / model->VDMOStnom) - 1) * model->VDIOeg / vte;
     arg1_dT = model->VDIOeg / (vte*model->VDMOStnom)
-              - model->VDIOeg*(Temp/model->VDMOStnom -1)/(vte*Temp);
-    arg2 = model->VDIOxti / model->VDIOn * log(Temp / model->VDMOStnom);
-    arg2_dT = model->VDIOxti / model->VDIOn / Temp;
+              - model->VDIOeg*(TjK/model->VDMOStnom -1)/(vte*TjK);
+    arg2 = model->VDIOxti / model->VDIOn * log(TjK / model->VDMOStnom);
+    arg2_dT = model->VDIOxti / model->VDIOn / TjK;
     here->VDIOtSatCur = here->VDMOSm * model->VDIOjctSatCur * exp(arg1 + arg2);
     here->VDIOtSatCur_dT = here->VDMOSm * model->VDIOjctSatCur * exp(arg1 + arg2) * (arg1_dT + arg2_dT);
 
@@ -126,8 +126,8 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
 
     /* limit junction potential to max of 1/FC */
     if (here->VDIOtDepCap > 2.5) {
-        here->VDIOtJctPot = 2.5 / model->VDIOn;
-        here->VDIOtDepCap = model->VDIOn*here->VDIOtJctPot;
+        here->VDIOtJctPot = 2.5 / model->VDIOdepletionCapCoeff;
+        here->VDIOtDepCap = model->VDIOdepletionCapCoeff*here->VDIOtJctPot;
         SPfrontEnd->IFerrorf(ERR_WARNING,
             "%s: junction potential VJ too large, limited to %f",
             model->VDMOSmodName, here->VDIOtJctPot);
@@ -154,7 +154,7 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
             tol = ckt->CKTreltol*cbv;
             xbv = tBreakdownVoltage - model->VDIObrkdEmissionCoeff*vt*log(1 + cbv /
                 (here->VDIOtSatCur));
-            for (iter = 0; iter < 25; iter++) {
+            for (int iter = 0; iter < 25; iter++) {
                 xbv = tBreakdownVoltage - model->VDIObrkdEmissionCoeff*vt*log(cbv /
                     (here->VDIOtSatCur) + 1 - xbv / vt);
                 xcbv = here->VDIOtSatCur *
@@ -178,11 +178,24 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
     factor = 1.0 + (model->VDIOtrb1) * dt
                  + (model->VDIOtrb2 * dt * dt);
     here->VDIOtConductance = here->VDIOconductance / factor;
-    here->VDIOtConductance_dT = -here->VDIOconductance * (model->VDIOtrb1 + model->VDIOtrb2 * dt) / (factor*factor);
+    here->VDIOtConductance_dT = -here->VDIOconductance 
+                           * (model->VDIOtrb1 + 2 * model->VDIOtrb2 * dt) / (factor*factor);
 
     here->VDIOtF2 = exp((1 + here->VDIOtGradingCoeff)*xfc);
     here->VDIOtF3 = 1 - model->VDIOdepletionCapCoeff*
         (1 + here->VDIOtGradingCoeff);
+
+    /* Scaled parameter for soft recovery model */
+    if (VDIOrevrec(here)) {
+        double qps = model->VDIOqpscale / (here->VDMOSm);
+        here->VDIOqpGainScaled = (1 - model->VDIOsoftRevRecParam)
+                              / (here->VDIOtTransitTime * qps);
+        here->VDIOcurFactor = here->VDIOtTransitTime / model->VDIOsoftRevRecParam
+                           * qps;
+    } else {
+        here->VDIOqpGainScaled = 0.0;
+        here->VDIOcurFactor = 0.0;
+    }
 }
 
 int

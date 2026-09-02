@@ -35,6 +35,7 @@ BJTnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
     double lnNdens[BJTNSRCS];
     int i;
     double dtemp;
+    double vrci, grci;
 
     /* define the names of the noise sources */
 
@@ -42,6 +43,7 @@ BJTnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
         /* Note that we have to keep the order consistent with the
            strchr definitions in BJTdefs.h */
         "_rc",        /* noise due to rc */
+        "_rci",       /* noise due to rci */
         "_rb",        /* noise due to rb */
         "_re",        /* noise due to re */
         "_ic",        /* noise due to ic */
@@ -93,6 +95,16 @@ BJTnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
                         ckt, THERMNOISE, inst->BJTcollCXNode, inst->BJTcolNode,
                         inst->BJTtcollectorConduct * inst->BJTm, dtemp);
 
+                    vrci = *(ckt->CKTstate0 + inst->BJTvrci);
+                    if (vrci != 0.0)
+                        grci = *(ckt->CKTstate0 + inst->BJTirci) / vrci;
+                    else
+                        grci = *(ckt->CKTstate0 + inst->BJTirci_Vrci);
+
+                    NevalSrcInstanceTemp(&noizDens[BJTRCINOIZ], &lnNdens[BJTRCINOIZ],
+                        ckt, THERMNOISE, inst->BJTcollCXNode, inst->BJTcolPrimeNode,
+                        MAX(grci, 0.0) * inst->BJTm, dtemp);
+
                     NevalSrcInstanceTemp(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],
                         ckt, THERMNOISE, inst->BJTbasePrimeNode, inst->BJTbaseNode,
                         *(ckt->CKTstate0 + inst->BJTgx) * inst->BJTm, dtemp);
@@ -120,13 +132,14 @@ BJTnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
                         log(MAX(noizDens[BJTFLNOIZ], N_MINLOG));
 
                     noizDens[BJTTOTNOIZ] = noizDens[BJTRCNOIZ] +
+                        noizDens[BJTRCINOIZ] +
                         noizDens[BJTRBNOIZ] +
                         noizDens[BJT_RE_NOISE] +
                         noizDens[BJTICNOIZ] +
                         noizDens[BJTIBNOIZ] +
                         noizDens[BJTFLNOIZ];
                     lnNdens[BJTTOTNOIZ] =
-                        log(noizDens[BJTTOTNOIZ]);
+                        log(MAX(noizDens[BJTTOTNOIZ], N_MINLOG));
 
                    *OnDens += noizDens[BJTTOTNOIZ];
 

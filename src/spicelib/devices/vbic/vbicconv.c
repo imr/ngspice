@@ -83,26 +83,42 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvrbi = Vrbi - *(ckt->CKTstate0 + here->VBICvrbi);
             delvrbp = Vrbp - *(ckt->CKTstate0 + here->VBICvrbp);
             delvbcp = Vbcp - *(ckt->CKTstate0 + here->VBICvbcp);
+            double delvrth = 0.0;
+            if (here->VBIC_selfheat)
+                delvrth = *(ckt->CKTrhsOld + here->VBICtempNode)
+                        - *(ckt->CKTstate0 + here->VBICvrth);
+            double delvxf2 = 0.0;
+            if (here->VBIC_excessPhase)
+                delvxf2 = *(ckt->CKTrhsOld + here->VBICxf2Node)
+                        - *(ckt->CKTstate0 + here->VBICvxf2);
             ibehat = *(ckt->CKTstate0 + here->VBICibe) + 
-                     *(ckt->CKTstate0 + here->VBICibe_Vbei)*delvbei;
+                     *(ckt->CKTstate0 + here->VBICibe_Vbei)*delvbei + here->VBICibe_Vrth*delvrth +
+                     *(ckt->CKTstate0 + here->VBICgqbeci) *delvbci;
             ibexhat = *(ckt->CKTstate0 + here->VBICibex) + 
-                     *(ckt->CKTstate0 + here->VBICibex_Vbex)*delvbex;
+                     *(ckt->CKTstate0 + here->VBICibex_Vbex)*delvbex + here->VBICibex_Vrth*delvrth;
             icieihat = *(ckt->CKTstate0 + here->VBICiciei) + 
-                     *(ckt->CKTstate0 + here->VBICiciei_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICiciei_Vbci)*delvbci;
+                     *(ckt->CKTstate0 + here->VBICiciei_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICiciei_Vbci)*delvbci +
+                     *(ckt->CKTstate0 + here->VBICiciei_Vxf2)*delvxf2 + *(ckt->CKTstate0 + here->VBICiciei_Vrth)*delvrth;
             ibchat = *(ckt->CKTstate0 + here->VBICibc) + 
-                     *(ckt->CKTstate0 + here->VBICibc_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICibc_Vbci)*delvbci;
+                     *(ckt->CKTstate0 + here->VBICibc_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICibc_Vbci)*delvbci +
+                     here->VBICibc_Vrth*delvrth;
             ibephat = *(ckt->CKTstate0 + here->VBICibep) + 
-                     *(ckt->CKTstate0 + here->VBICibep_Vbep)*delvbep;
+                     *(ckt->CKTstate0 + here->VBICibep_Vbep)*delvbep + here->VBICibep_Vrth*delvrth +
+                     *(ckt->CKTstate0 + here->VBICgqbepci)*delvbci;
             ircihat = *(ckt->CKTstate0 + here->VBICirci) + *(ckt->CKTstate0 + here->VBICirci_Vrci)*delvrci +
-                     *(ckt->CKTstate0 + here->VBICirci_Vbcx)*delvbcx + *(ckt->CKTstate0 + here->VBICirci_Vbci)*delvbci;
+                     *(ckt->CKTstate0 + here->VBICirci_Vbcx)*delvbcx + *(ckt->CKTstate0 + here->VBICirci_Vbci)*delvbci +
+                     here->VBICirci_Vrth*delvrth;
             irbihat = *(ckt->CKTstate0 + here->VBICirbi) + *(ckt->CKTstate0 + here->VBICirbi_Vrbi)*delvrbi +
-                     *(ckt->CKTstate0 + here->VBICirbi_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICirbi_Vbci)*delvbci;
+                     *(ckt->CKTstate0 + here->VBICirbi_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICirbi_Vbci)*delvbci +
+                     here->VBICirbi_Vrth*delvrth;
             irbphat = *(ckt->CKTstate0 + here->VBICirbp) + *(ckt->CKTstate0 + here->VBICirbp_Vrbp)*delvrbp +
-                     *(ckt->CKTstate0 + here->VBICirbp_Vbep)*delvbep + *(ckt->CKTstate0 + here->VBICirbp_Vbci)*delvbci;
+                     *(ckt->CKTstate0 + here->VBICirbp_Vbep)*delvbep + *(ckt->CKTstate0 + here->VBICirbp_Vbci)*delvbci +
+                     here->VBICirbp_Vrth*delvrth;
             ibcphat = *(ckt->CKTstate0 + here->VBICibcp) + 
-                     *(ckt->CKTstate0 + here->VBICibcp_Vbcp)*delvbcp;
+                     *(ckt->CKTstate0 + here->VBICibcp_Vbcp)*delvbcp + here->VBICibcp_Vrth*delvrth;
             iccphat = *(ckt->CKTstate0 + here->VBICiccp) + *(ckt->CKTstate0 + here->VBICiccp_Vbep)*delvbep + 
-                     *(ckt->CKTstate0 + here->VBICiccp_Vbci)*delvbci + *(ckt->CKTstate0 + here->VBICiccp_Vbcp)*delvbcp;
+                     *(ckt->CKTstate0 + here->VBICiccp_Vbci)*delvbci + *(ckt->CKTstate0 + here->VBICiccp_Vbcp)*delvbcp +
+                     here->VBICiccp_Vrth*delvrth;
             Ibe  = *(ckt->CKTstate0 + here->VBICibe);
             Ibex = *(ckt->CKTstate0 + here->VBICibex);
             Iciei = *(ckt->CKTstate0 + here->VBICiciei);

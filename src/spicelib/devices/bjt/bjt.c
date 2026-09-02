@@ -29,6 +29,8 @@ IFparm BJTpTable[] = { /* parameters */
  OPU("substnode",BJT_QUEST_SUBSTNODE,IF_INTEGER, "Number of substrate node"),
  OPU("colprimenode",BJT_QUEST_COLPRIMENODE,IF_INTEGER,
 						"Internal collector node"),
+ OPU("colcxnode",BJT_QUEST_COLLCXNODE,IF_INTEGER,
+						"Internal collector node(quasi saturation)"),
  OPU("baseprimenode",BJT_QUEST_BASEPRIMENODE,IF_INTEGER,"Internal base node"),
  OPU("emitprimenode",BJT_QUEST_EMITPRIMENODE,IF_INTEGER,
 						"Internal emitter node"),
@@ -57,6 +59,7 @@ IFparm BJTpTable[] = { /* parameters */
  OPU("cqsub", BJT_QUEST_CQSUB, IF_REAL, "Cap. due to charge storage in Subs. jct."),
  OPU("cqbx", BJT_QUEST_CQBX, IF_REAL, "Cap. due to charge storage in B-X jct."),
  OPU("cexbc",BJT_QUEST_CEXBC,IF_REAL, "Total Capacitance in B-X junction"),
+ OPU("ft", BJT_QUEST_FT, IF_REAL, "Approximated transit frequency"),
 
  OPU("qbe",  BJT_QUEST_QBE,  IF_REAL, "Charge storage B-E junction"),
  OPU("qbc",  BJT_QUEST_QBC,  IF_REAL, "Charge storage B-C junction"),
@@ -71,13 +74,20 @@ IFparm BJTpTable[] = { /* parameters */
  OPU("sens_ph",   BJT_QUEST_SENS_PH,   IF_REAL,    "sensitivity of ac phase"),
  OPU("sens_cplx", BJT_QUEST_SENS_CPLX, IF_COMPLEX, "ac sensitivity"),
  IOPU("temp",     BJT_TEMP,            IF_REAL,    "instance temperature"),
- IOPU("dtemp",    BJT_DTEMP,           IF_REAL,    "instance temperature delta from circuit")
+ IOPU("dtemp",    BJT_DTEMP,           IF_REAL,    "instance temperature delta from circuit"),
+ OPU("vaf", BJT_QUEST_VAF, IF_REAL, "Forward Early voltage at instance temperature"),
+ OPU("var", BJT_QUEST_VAR, IF_REAL, "Reverse Early voltage at instance temperature"),
+ OPU("collectorconduct",BJT_QUEST_GRC,IF_REAL,"Collector conductance, scaled and at instance temperature"),
+ OPU("emitterconduct", BJT_QUEST_GRE,IF_REAL, "Emitter conductance, scaled and at instance temperature"),
+ OPU("ikf", BJT_QUEST_IKF, IF_REAL, "Forward knee current, scaled and at instance temperature"),
+ OPU("ikr", BJT_QUEST_IKR, IF_REAL, "Reverse knee current, scaled and at instance temperature"),
+
 };
 
 IFparm BJTmPTable[] = { /* model parameters */
  OP("type",  BJT_MOD_TYPE, IF_STRING, "NPN or PNP"),
- IOPU("npn", BJT_MOD_NPN,  IF_FLAG, "NPN type device"),
- IOPU("pnp", BJT_MOD_PNP,  IF_FLAG, "PNP type device"),
+ IP("npn", BJT_MOD_NPN,  IF_FLAG, "NPN type device"),
+ IP("pnp", BJT_MOD_PNP,  IF_FLAG, "PNP type device"),
  IOPU("subs", BJT_MOD_SUBS, IF_INTEGER, "Vertical or Lateral device"),
  IOP("tnom", BJT_MOD_TNOM, IF_REAL, "Parameter measurement temperature"),
  IOPR("tref", BJT_MOD_TNOM, IF_REAL, "Parameter measurement temperature"),
@@ -136,12 +146,6 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("fc",   BJT_MOD_FC,   IF_REAL, "Forward bias junction fit parameter"),
  IOP("kf", BJT_MOD_KF, IF_REAL, "Flicker Noise Coefficient"),
  IOP("af", BJT_MOD_AF, IF_REAL,"Flicker Noise Exponent"),
- OPU("invearlyvoltf",BJT_MOD_INVEARLYF,IF_REAL,"Inverse early voltage:forward"),
- OPU("invearlyvoltr",BJT_MOD_INVEARLYR,IF_REAL,"Inverse early voltage:reverse"),
- OPU("invrollofff", BJT_MOD_INVROLLOFFF, IF_REAL,"Inverse roll off - forward"),
- OPU("invrolloffr", BJT_MOD_INVROLLOFFR, IF_REAL,"Inverse roll off - reverse"),
- OPU("collectorconduct",BJT_MOD_COLCONDUCT,IF_REAL,"Collector conductance"),
- OPU("emitterconduct", BJT_MOD_EMITTERCONDUCT,IF_REAL, "Emitter conductance"),
  OPU("transtimevbcfact",BJT_MOD_TRANSVBCFACT,IF_REAL,"Transit time VBC factor"),
  OPU("excessphasefactor",BJT_MOD_EXCESSPHASEFACTOR,IF_REAL, "Excess phase fact."),
  IOP("iss", BJT_MOD_ISS, IF_REAL, "Substrate Jct. Saturation Current"),

@@ -40,7 +40,7 @@ DIObindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 CREATE_KLU_BINDING_TABLE(DIOposSwPrimeNegPtr,DIOposSwPrimeNegBinding,DIOposSwPrimeNode,DIOnegNode);
                 CREATE_KLU_BINDING_TABLE(DIOposSwPrimePosSwPrimePtr,DIOposSwPrimePosSwPrimeBinding,DIOposSwPrimeNode,DIOposSwPrimeNode);
             }
-            if ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given)) {
+            if (DIOselfheatMod(model)) {
                 CREATE_KLU_BINDING_TABLE(DIOtempPosPtr,      DIOtempPosBinding,      DIOtempNode,     DIOposNode);
                 CREATE_KLU_BINDING_TABLE(DIOtempPosPrimePtr, DIOtempPosPrimeBinding, DIOtempNode,     DIOposPrimeNode);
                 CREATE_KLU_BINDING_TABLE(DIOtempNegPtr,      DIOtempNegBinding,      DIOtempNode,     DIOnegNode);
@@ -55,12 +55,16 @@ DIObindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
             /* rev-rec */
-            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+            if (DIOrevrecMod(model)) {
                 CREATE_KLU_BINDING_TABLE(DIOqpQpPtr      , DIOqpQpBinding      , DIOqpNode, DIOqpNode);
                 CREATE_KLU_BINDING_TABLE(DIOqpPosPrimePtr, DIOqpPosPrimeBinding, DIOqpNode, DIOposPrimeNode);
                 CREATE_KLU_BINDING_TABLE(DIOqpNegPtr     , DIOqpNegBinding     , DIOqpNode, DIOnegNode);
                 CREATE_KLU_BINDING_TABLE(DIOposPrimeQpPtr, DIOposPrimeQpBinding, DIOposPrimeNode, DIOqpNode);
                 CREATE_KLU_BINDING_TABLE(DIOnegQpPtr     , DIOnegQpBinding     , DIOnegNode, DIOqpNode);
+                if (DIOselfheatMod(model)) {
+                    CREATE_KLU_BINDING_TABLE(DIOtempQpPtr     , DIOtempQpBinding     , DIOtempNode, DIOqpNode);
+                    CREATE_KLU_BINDING_TABLE(DIOqpTempPtr     , DIOqpTempBinding     , DIOqpNode, DIOtempNode);
+                }
             }
         }
     }
@@ -97,7 +101,7 @@ DIObindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposSwPrimeNegPtr,DIOposSwPrimeNegBinding,DIOposSwPrimeNode,DIOnegNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposSwPrimePosSwPrimePtr,DIOposSwPrimePosSwPrimeBinding,DIOposSwPrimeNode,DIOposSwPrimeNode);
             }
-            if ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given)) {
+            if (DIOselfheatMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempPosPtr,      DIOtempPosBinding,      DIOtempNode,     DIOposNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempPosPrimePtr, DIOtempPosPrimeBinding, DIOtempNode,     DIOposPrimeNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempNegPtr,      DIOtempNegBinding,      DIOtempNode,     DIOnegNode);
@@ -112,12 +116,16 @@ DIObindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
             /* rev-rec */
-            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+            if (DIOrevrecMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOqpQpPtr      , DIOqpQpBinding      , DIOqpNode, DIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOqpPosPrimePtr, DIOqpPosPrimeBinding, DIOqpNode, DIOposPrimeNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOqpNegPtr     , DIOqpNegBinding     , DIOqpNode, DIOnegNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOposPrimeQpPtr, DIOposPrimeQpBinding, DIOposPrimeNode, DIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOnegQpPtr     , DIOnegQpBinding     , DIOnegNode, DIOqpNode);
+                if (DIOselfheatMod(model)) {
+                    CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOtempQpPtr     , DIOtempQpBinding     , DIOtempNode, DIOqpNode);
+                    CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(DIOqpTempPtr     , DIOqpTempBinding     , DIOqpNode, DIOtempNode);
+                }
             }
         }
     }
@@ -154,7 +162,7 @@ DIObindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposSwPrimeNegPtr,DIOposSwPrimeNegBinding,DIOposSwPrimeNode,DIOnegNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposSwPrimePosSwPrimePtr,DIOposSwPrimePosSwPrimeBinding,DIOposSwPrimeNode,DIOposSwPrimeNode);
             }
-            if ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given)) {
+            if (DIOselfheatMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempPosPtr,      DIOtempPosBinding,      DIOtempNode,     DIOposNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempPosPrimePtr, DIOtempPosPrimeBinding, DIOtempNode,     DIOposPrimeNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempNegPtr,      DIOtempNegBinding,      DIOtempNode,     DIOnegNode);
@@ -169,12 +177,16 @@ DIObindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
             /* rev-rec */
-            if (model->DIOsoftRevRecParamGiven && model->DIOsoftRevRecParam!=0 && model->DIOtransitTime!=0) {
+            if (DIOrevrecMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOqpQpPtr      , DIOqpQpBinding      , DIOqpNode, DIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOqpPosPrimePtr, DIOqpPosPrimeBinding, DIOqpNode, DIOposPrimeNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOqpNegPtr     , DIOqpNegBinding     , DIOqpNode, DIOnegNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOposPrimeQpPtr, DIOposPrimeQpBinding, DIOposPrimeNode, DIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOnegQpPtr     , DIOnegQpBinding     , DIOnegNode, DIOqpNode);
+                if (DIOselfheatMod(model)) {
+                    CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOtempQpPtr     , DIOtempQpBinding     , DIOtempNode, DIOqpNode);
+                    CONVERT_KLU_BINDING_TABLE_TO_REAL(DIOqpTempPtr     , DIOqpTempBinding     , DIOqpNode, DIOtempNode);
+                }
             }
         }
     }

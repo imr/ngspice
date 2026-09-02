@@ -160,16 +160,19 @@ DEVlimitlog(
     double LIM_TOL,
     int *check)
 {
-    static bool shown = FALSE;
     *check = 0;
-    if (!shown && (isnan (deltemp) || isnan (deltemp_old)))
+    if (isnan(deltemp) || isnan(deltemp_old))
     {
-        fprintf(stderr, "\n\nThe temperature limiting function received NaN.\n");
-        fprintf(stderr, "Please check your power dissipation and improve your heat sink Rth!\n");
-        fprintf(stderr, "    This message will be shown only once.\n\n");
-        deltemp = 0.0;
+        /* Recover with the best value at hand and force another iteration.
+         * Falling back to a fixed 0.0 would throw away a perfectly usable
+         * state and, for callers using an absolute temperature, jump to 0 C.
+         */
         *check = 1;
-        shown = TRUE;
+        if (!isnan(deltemp_old))
+            return deltemp_old;         /* solver delivered NaN          */
+        if (!isnan(deltemp))
+            return deltemp;             /* stored state is unusable      */
+        return 0.0;                     /* nothing usable at all         */
     }
     /* Logarithmic damping of deltemp beyond LIM_TOL */
     if (deltemp > deltemp_old + LIM_TOL) {
@@ -182,7 +185,6 @@ DEVlimitlog(
     }
     return deltemp;
 }
-
 int
 ACM_SourceDrainResistances(
 int ACM,

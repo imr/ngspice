@@ -28,7 +28,6 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     double ratlog;
     double ratio1;
     double factlog;
-    double bfactor=1.0;
     double factor;
     double fact1,fact2;
     double pbo,pbfact;
@@ -53,8 +52,10 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
         } else {
             model->BJTtransitTimeVBCFactor = 0;
         }
-        model->BJTexcessPhaseFactor = (model->BJTexcessPhase/
-            (180.0/M_PI)) * model->BJTtransitTimeF;
+        /* uses model->BJTtransitTimeF deliberately: SPICE2 heritage, and no
+           reference simulator documents a temperature dependence for PTF */
+        model->BJTexcessPhaseFactor = (model->BJTexcessPhase/(180.0/M_PI))
+                                    * model->BJTtransitTimeF;
         if(model->BJTdepletionCapCoeffGiven) {
             if(model->BJTdepletionCapCoeff>.9999)  {
                 model->BJTdepletionCapCoeff=.9999;
@@ -176,8 +177,9 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                     factor = exp(factlog / model->BJTemissionCoeffR);
                     here->BJTBCtSatCur = model->BJTBCsatCur * factor;
                 } else {
-                    here->BJTBCtSatCur = here->BJTtSatCur;
+                    here->BJTBCtSatCur = here->BJTtSatCur / here->BJTarea;
                 }
+                factor = exp(factlog / model->BJTemissionCoeffS);
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = model->BJTsubSatCur * factor;
             } else if (model->BJTtlev == 3) {
@@ -190,7 +192,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
                     here->BJTBCtSatCur = pow(model->BJTBCsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
                 } else {
-                    here->BJTBCtSatCur = here->BJTtSatCur;
+                    here->BJTBCtSatCur = here->BJTtSatCur / here->BJTarea;
                 }
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = pow(model->BJTsubSatCur,(1+model->BJTtiss1*dt+model->BJTtiss2*dt*dt));
@@ -228,6 +230,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
+            double bfactor=1.0;
             if (model->BJTtlev == 0) {
                 bfactor = exp(ratlog*model->BJTbetaExp);
             } else if (model->BJTtlev == 1) {

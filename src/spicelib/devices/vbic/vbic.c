@@ -179,7 +179,6 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("tvbbe2",VBIC_MOD_TVBBE2,IF_REAL, "Quadratic temperature coefficient of VBBE"),
  IOP("tnbbe", VBIC_MOD_TNBBE, IF_REAL, "Temperature coefficient of NBBE"),
  IOP("ebbe",  VBIC_MOD_EBBE,  IF_REAL, "exp(-VBBE/(NBBE*Vtv))"),
- IOP("dtemp", VBIC_MOD_DTEMP, IF_REAL, "Locale Temperature difference"),
  IOP("vers",  VBIC_MOD_VERS,  IF_REAL, "Revision Version"),
  IOP("vref",  VBIC_MOD_VREF,  IF_REAL, "Reference Version"),
  IOP("vbe_max", VBIC_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),

@@ -38,8 +38,7 @@ DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
             delvd=vd- *(ckt->CKTstate0 + here->DIOvoltage);
 
-            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
-            if (selfheat)
+            if (DIOselfheat(here))
                 delTemp = *(ckt->CKTrhsOld + here->DIOtempNode);
             else
                 delTemp = 0.0;
@@ -51,14 +50,23 @@ DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
             cd= *(ckt->CKTstate0 + here->DIOcurrent);
 
+            if (DIOrevrec(here)) {
+                double vqp = *(ckt->CKTrhsOld + here->DIOqpNode);
+                double delvqp = vqp - *(ckt->CKTstate0 + here->DIOqp);
+                double iqp    = here->DIOqpGainScaled * *(ckt->CKTstate0 + here->DIOsrcapCurrent);
+                double geqrrd = here->DIOqpGainScaled * *(ckt->CKTstate0 + here->DIOgqcsr);
+                cd    += iqp;
+                cdhat += iqp + geqrrd * delvqp;
+            }
+
             if (model->DIOresistSWGiven) {
                 vdsw = *(ckt->CKTrhsOld+here->DIOposSwPrimeNode)-
                         *(ckt->CKTrhsOld + here->DIOnegNode);
 
-                delvd=vdsw- *(ckt->CKTstate0 + here->DIOvoltageSW);
+                double delvdsw=vdsw- *(ckt->CKTstate0 + here->DIOvoltageSW);
 
                 cdhatsw= *(ckt->CKTstate0 + here->DIOcurrentSW) + 
-                         *(ckt->CKTstate0 + here->DIOconductSW) * delvd +
+                         *(ckt->CKTstate0 + here->DIOconductSW) * delvdsw +
                          *(ckt->CKTstate0 + here->DIOdIdioSW_dT) * deldelTemp;
 
                 cdsw= *(ckt->CKTstate0 + here->DIOcurrentSW);

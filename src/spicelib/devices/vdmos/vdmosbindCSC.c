@@ -54,7 +54,7 @@ VDMOSbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(VDIORPsPtr,  VDIORPsBinding,  VDIOposPrimeNode, VDMOSsNode);
             CREATE_KLU_BINDING_TABLE(VDIORPrpPtr, VDIORPrpBinding, VDIOposPrimeNode, VDIOposPrimeNode);
 
-            if ((here->VDMOSthermal) && (model->VDMOSrthjcGiven)) {
+            if (VDMOSselfheatMod(model)) {
                 CREATE_KLU_BINDING_TABLE(VDMOSTemptempPtr, VDMOSTemptempBinding, VDMOStempNode,   VDMOStempNode);  /* Transistor thermal contribution */
                 CREATE_KLU_BINDING_TABLE(VDMOSTempdpPtr,   VDMOSTempdpBinding,   VDMOStempNode,   VDMOSdNodePrime);
                 CREATE_KLU_BINDING_TABLE(VDMOSTempspPtr,   VDMOSTempspBinding,   VDMOStempNode,   VDMOSsNodePrime);
@@ -81,12 +81,16 @@ VDMOSbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 CREATE_KLU_BINDING_TABLE(VDMOSTpdevTPtr,     VDMOSTpdevTBinding,     VDMOStNodePrime,  VDMOSvdevTbranch);
             }
             /* rev-rec */
-            if (model->VDIOsoftRevRecParamGiven && model->VDIOsoftRevRecParam!=0 && model->VDIOtransitTime!=0) {
+            if (VDIOrevrecMod(model)) {
                 CREATE_KLU_BINDING_TABLE(VDIOqpQpPtr      , VDIOqpQpBinding      , VDIOqpNode, VDIOqpNode);
                 CREATE_KLU_BINDING_TABLE(VDIOqpPosPrimePtr, VDIOqpPosPrimeBinding, VDIOqpNode, VDIOposPrimeNode);
                 CREATE_KLU_BINDING_TABLE(VDIOqpNegPtr     , VDIOqpNegBinding     , VDIOqpNode, VDMOSdNode);
                 CREATE_KLU_BINDING_TABLE(VDIOposPrimeQpPtr, VDIOposPrimeQpBinding, VDIOposPrimeNode, VDIOqpNode);
                 CREATE_KLU_BINDING_TABLE(VDIOnegQpPtr     , VDIOnegQpBinding     , VDMOSdNode, VDIOqpNode);
+                if (VDMOSselfheatMod(model)) {
+                    CREATE_KLU_BINDING_TABLE(VDIOtempQpPtr     , VDIOtempQpBinding     , VDMOStempNode, VDIOqpNode);
+                    CREATE_KLU_BINDING_TABLE(VDIOqpTempPtr     , VDIOqpTempBinding     , VDIOqpNode, VDMOStempNode);
+                }
             }
         }
     }
@@ -137,7 +141,7 @@ VDMOSbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIORPsPtr,  VDIORPsBinding,  VDIOposPrimeNode, VDMOSsNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIORPrpPtr, VDIORPrpBinding, VDIOposPrimeNode, VDIOposPrimeNode);
 
-            if ((here->VDMOSthermal) && (model->VDMOSrthjcGiven)) {
+            if (VDMOSselfheatMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTemptempPtr, VDMOSTemptempBinding, VDMOStempNode,   VDMOStempNode);  /* Transistor thermal contribution */
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTempdpPtr,   VDMOSTempdpBinding,   VDMOStempNode,   VDMOSdNodePrime);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTempspPtr,   VDMOSTempspBinding,   VDMOStempNode,   VDMOSsNodePrime);
@@ -164,12 +168,16 @@ VDMOSbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSTpdevTPtr,     VDMOSTpdevTBinding,     VDMOStNodePrime,  VDMOSvdevTbranch);
             }
             /* rev-rec */
-            if (model->VDIOsoftRevRecParamGiven && model->VDIOsoftRevRecParam!=0 && model->VDIOtransitTime!=0) {
+            if (VDIOrevrecMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOqpQpPtr      , VDIOqpQpBinding      , VDIOqpNode, VDIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOqpPosPrimePtr, VDIOqpPosPrimeBinding, VDIOqpNode, VDIOposPrimeNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOqpNegPtr     , VDIOqpNegBinding     , VDIOqpNode, VDMOSdNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOposPrimeQpPtr, VDIOposPrimeQpBinding, VDIOposPrimeNode, VDIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOnegQpPtr     , VDIOnegQpBinding     , VDMOSdNode, VDIOqpNode);
+                if (VDMOSselfheatMod(model)) {
+                    CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOtempQpPtr     , VDIOtempQpBinding     , VDMOStempNode, VDIOqpNode);
+                    CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIOqpTempPtr     , VDIOqpTempBinding     , VDIOqpNode, VDMOStempNode);
+                }
             }
         }
     }
@@ -220,7 +228,7 @@ VDMOSbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIORPsPtr,  VDIORPsBinding,  VDIOposPrimeNode, VDMOSsNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIORPrpPtr, VDIORPrpBinding, VDIOposPrimeNode, VDIOposPrimeNode);
 
-            if ((here->VDMOSthermal) && (model->VDMOSrthjcGiven)) {
+            if (VDMOSselfheatMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTemptempPtr, VDMOSTemptempBinding, VDMOStempNode,   VDMOStempNode);  /* Transistor thermal contribution */
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTempdpPtr,   VDMOSTempdpBinding,   VDMOStempNode,   VDMOSdNodePrime);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTempspPtr,   VDMOSTempspBinding,   VDMOStempNode,   VDMOSsNodePrime);
@@ -247,12 +255,16 @@ VDMOSbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSTpdevTPtr,     VDMOSTpdevTBinding,     VDMOStNodePrime,  VDMOSvdevTbranch);
             }
             /* rev-rec */
-            if (model->VDIOsoftRevRecParamGiven && model->VDIOsoftRevRecParam!=0 && model->VDIOtransitTime!=0) {
+            if (VDIOrevrecMod(model)) {
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOqpQpPtr      , VDIOqpQpBinding      , VDIOqpNode, VDIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOqpPosPrimePtr, VDIOqpPosPrimeBinding, VDIOqpNode, VDIOposPrimeNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOqpNegPtr     , VDIOqpNegBinding     , VDIOqpNode, VDMOSdNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOposPrimeQpPtr, VDIOposPrimeQpBinding, VDIOposPrimeNode, VDIOqpNode);
                 CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOnegQpPtr     , VDIOnegQpBinding     , VDMOSdNode, VDIOqpNode);
+                if (VDMOSselfheatMod(model)) {
+                    CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOtempQpPtr     , VDIOtempQpBinding     , VDMOStempNode, VDIOqpNode);
+                    CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIOqpTempPtr     , VDIOqpTempBinding     , VDIOqpNode, VDMOStempNode);
+                }
             }
         }
     }

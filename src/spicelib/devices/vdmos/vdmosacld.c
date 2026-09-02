@@ -29,13 +29,10 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double GmT;
     double xcsT, xcTt;
 
-    int selfheat;
-
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here!= NULL;
                 here = VDMOSnextInstance(here)) {
 
-            selfheat = (here->VDMOSthermal) && (model->VDMOSrthjcGiven);
             if (here->VDMOSmode < 0) {
                 xnrm=0;
                 xrev=1;
@@ -45,26 +42,26 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if (here->VDMOSmode >= 0) {
-                GmT = model->VDMOStype * here->VDMOSgmT;
-                cgT  = model->VDMOStype * here->VDMOScgT;
-                cdT  = model->VDMOStype * here->VDMOScdT;
-                // Everything is computed for m parallel instances... so scale cthj accordingly
-                cTt = here->VDMOSm * model->VDMOScthj;
-                gTtg  = here->VDMOSgtempg;
-                gTtdp = here->VDMOSgtempd;
-                gTtt  = here->VDMOSgtempT;
-                gTtsp = - (gTtg + gTtdp);
+                GmT   =  model->VDMOStype * here->VDMOSgmT;
+                cgT   =  model->VDMOStype * here->VDMOScgT;
+                cdT   =  model->VDMOStype * here->VDMOScdT;
+                gTtg  =  here->VDMOSgtempg;
+                gTtdp =  here->VDMOSgtempd;
+                gTtt  =  here->VDMOSgtempT;
+                gTtsp = -(gTtg + gTtdp);
             } else {
-                GmT = -model->VDMOStype * here->VDMOSgmT;
-                cgT  = -model->VDMOStype * here->VDMOScgT;
-                cdT  = -model->VDMOStype * here->VDMOScdT;
-                // Everything is computed for m parallel instances... so scale cthj accordingly
-                cTt = - here->VDMOSm * model->VDMOScthj;
-                gTtg  = -here->VDMOSgtempg;
-                gTtdp = -here->VDMOSgtempd;
-                gTtt  = -here->VDMOSgtempT;
-                gTtsp = gTtg + gTtdp;
+                /* Reverse operation: Drain and Source change their role,
+                   sign remains - identically vdmosload.c   */
+                GmT   = -model->VDMOStype * here->VDMOSgmT;
+                cgT   =  model->VDMOStype * here->VDMOScgT;
+                cdT   = -model->VDMOStype * here->VDMOScdT;
+                gTtg  =  here->VDMOSgtempg;
+                gTtsp =  here->VDMOSgtempd;
+                gTtt  =  here->VDMOSgtempT;
+                gTtdp = -(gTtg + gTtsp);
             }
+            /* heat capacity - no impact by mode */
+            cTt = here->VDMOSm * model->VDMOScthj;
 
             /*
              *     VDMOS cap model parameters
@@ -131,44 +128,66 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDIORPsPtr) -= gspr;
             *(here->VDIORPdPtr) -= geq;
             *(here->VDIORPdPtr +1) -= xceq;
-            if (selfheat)
-            {
-                // Everything is computed for m parallel instances... so scale gthjc and gthja accordingly
+
+            if (VDMOSselfheat(here)) {
+                /* The body diode's thermal coupling (dIth_dVdio, dIdio_dT,
+                   dIth_dVrb, dIrb_dT) is deliberately omitted here: an AC or
+                   PZ operating point with a conducting body diode does not
+                   occur in practice.  See vdmosload.c for the full set.     */
+                double dIrd_dT = here->VDMOSdIrd_dT;
+                double dIrs_dT = here->VDMOSdIrs_dT; 
+                double dIth_dVrd = here->VDMOSdIth_dVrd; 
+                double dIth_dVrs = here->VDMOSdIth_dVrs; 
+                double dIrx_dT_Vrx = here->VDMOSdIth_dTres; 
+
+                /* Everything is computed for m parallel instances...
+                   so scale gthjc and gthja accordingly */
                 double gthjc = here->VDMOSm / model->VDMOSrthjc;
                 double gthca = here->VDMOSm / model->VDMOSrthca;
-               *(here->VDMOSDPtempPtr)       +=  GmT;
-               *(here->VDMOSSPtempPtr)       += -GmT;
-               *(here->VDMOSTemptempPtr)     +=  gTtt + gthjc;
-               *(here->VDMOSTempgpPtr)       +=  gTtg;
-               *(here->VDMOSTempdpPtr)       +=  gTtdp;
-               *(here->VDMOSTempspPtr)       +=  gTtsp;
-               *(here->VDMOSTemptcasePtr)    += -gthjc;
-               *(here->VDMOSTcasetempPtr)    += -gthjc;
-               *(here->VDMOSTcasetcasePtr)   +=  gthjc + gthca;
-               *(here->VDMOSTptpPtr)         +=  gthca;
-               *(here->VDMOSTptcasePtr)      += -gthca;
-               *(here->VDMOSTcasetpPtr)      += -gthca;
-               *(here->VDMOSDevTtpPtr)       +=  1.0;
-               *(here->VDMOSTpdevTPtr)       +=  1.0;
+                *(here->VDMOSDtempPtr)        +=  dIrd_dT;
+                *(here->VDMOSDPtempPtr)       +=  GmT - dIrd_dT;
+                *(here->VDMOSStempPtr)        +=  dIrs_dT;
+                *(here->VDMOSSPtempPtr)       += -GmT - dIrs_dT;
+                *(here->VDMOSTemptempPtr)     += -gTtt - dIrx_dT_Vrx + gthjc;
+                *(here->VDMOSTempgpPtr)       += -gTtg;
+                *(here->VDMOSTempdPtr)        += -dIth_dVrd;
+                *(here->VDMOSTempsPtr)        += -dIth_dVrs;
+                *(here->VDMOSTempdpPtr)       += -gTtdp + dIth_dVrd;
+                *(here->VDMOSTempspPtr)       += -gTtsp + dIth_dVrs;
+                *(here->VDMOSTemptcasePtr)    += -gthjc;
+                *(here->VDMOSTcasetempPtr)    += -gthjc;
+                *(here->VDMOSTcasetcasePtr)   +=  gthjc + gthca;
+                *(here->VDMOSTptpPtr)         +=  gthca;
+                *(here->VDMOSTptcasePtr)      += -gthca;
+                *(here->VDMOSTcasetpPtr)      += -gthca;
+                *(here->VDMOSDevTtpPtr)       +=  1.0;
+                *(here->VDMOSTpdevTPtr)       +=  1.0;
 
-               *(here->VDMOSTemptempPtr + 1) += xcTt;
-               *(here->VDMOSDPtempPtr + 1)   += xcdT;
-               *(here->VDMOSSPtempPtr + 1)   += xcsT;
-               *(here->VDMOSGPtempPtr + 1)   += xcgT;
+                *(here->VDMOSTemptempPtr + 1) += xcTt;
+                *(here->VDMOSDPtempPtr + 1)   += xcdT;
+                *(here->VDMOSSPtempPtr + 1)   += xcsT;
+                *(here->VDMOSGPtempPtr + 1)   += xcgT;
             }
-            if ((here->VDIOqpNode > 0) && (model->VDIOsoftRevRecParam!=0) && (here->VDIOtTransitTime!=0)) {
+
+            if (VDIOrevrec(here)) {
                 /* QP subcircuit */
                 double gdres= *(ckt->CKTstate0 + here->VDIOresConduct);
-                double fac = here->VDIOtTransitTime / model->VDIOsoftRevRecParam;
-                double dcrrdvd = fac * gdres;
+                double dcrrdvd = here->VDIOcurFactor * gdres;
                 *(here->VDIOqpQpPtr)       += 1/model->VDIOsoftRevRecParam;
                 *(here->VDIOqpQpPtr + 1)   += here->VDIOtTransitTime * ckt->CKTomega;
                 *(here->VDIOqpPosPrimePtr) += -dcrrdvd;
                 *(here->VDIOqpNegPtr)      +=  dcrrdvd;
-                /* Gain of VCVS (1-vp)/tau * j*omega*tau = (1-vp) * j*omega */
-                double xgain = (1 - model->VDIOsoftRevRecParam) * ckt->CKTomega;
+                /* AC: gqcsr -> j*omega*capsr, capsr = TT */
+                double xgain = here->VDIOqpGainScaled * here->VDIOtTransitTime * ckt->CKTomega;
                 *(here->VDIOposPrimeQpPtr + 1) +=  xgain;
                 *(here->VDIOnegQpPtr + 1)      += -xgain;
+                if (VDMOSselfheat(here)) {
+                    double vdop = *(ckt->CKTstate0 + here->VDIOvoltage);
+                    *(here->VDIOqpTempPtr) += -model->VDMOStype * here->VDIOcurFactor
+                                           * *(ckt->CKTstate0 + here->VDIOdIdio_dT);
+                    *(here->VDIOtempQpPtr + 1) += -model->VDMOStype * vdop * here->VDIOqpGainScaled
+                                               * here->VDIOtTransitTime * ckt->CKTomega;
+                }
             }
         }
     }

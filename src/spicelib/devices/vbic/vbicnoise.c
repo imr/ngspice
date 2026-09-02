@@ -52,6 +52,7 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
         "_rs",              /* noise due to rs */
         "_ic",              /* noise due to ic */
         "_ib",              /* noise due to ib */
+        "_ibex",            /* noise due to ibex */
         "_ibep",            /* noise due to ibep */
         "_iccp",            /* noise due to iccp */
         "_1overfbe",        /* flicker (1/f) noise ibe */
@@ -99,6 +100,9 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                     else
                         dtemp = inst->VBICdtemp;
 
+                    if (inst->VBIC_selfheat)
+                        dtemp += *(ckt->CKTstate0 + inst->VBICvrth);
+
                     NevalSrcInstanceTemp(&noizDens[VBICRCNOIZ],&lnNdens[VBICRCNOIZ],
                                  ckt,THERMNOISE,inst->VBICcollCXNode,inst->VBICcollNode,
                                  *(ckt->CKTstate0 + inst->VBICircx_Vrcx), dtemp);
@@ -120,7 +124,7 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                                  *(ckt->CKTstate0 + inst->VBICire_Vre), dtemp);
 
                     NevalSrcInstanceTemp(&noizDens[VBICRBPNOIZ],&lnNdens[VBICRBPNOIZ],
-                                 ckt,THERMNOISE,inst->VBICemitEINode,inst->VBICemitNode,
+                                 ckt,THERMNOISE,inst->VBICbaseBPNode,inst->VBICcollCXNode,
                                  *(ckt->CKTstate0 + inst->VBICirbp_Vrbp), dtemp);
 
                     NevalSrcInstanceTemp(&noizDens[VBICRSNOIZ],&lnNdens[VBICRSNOIZ],
@@ -134,6 +138,10 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                     NevalSrc(&noizDens[VBICIBNOIZ],&lnNdens[VBICIBNOIZ],
                                  ckt,SHOTNOISE,inst->VBICbaseBINode, inst->VBICemitEINode,
                                  *(ckt->CKTstate0 + inst->VBICibe));
+
+                    NevalSrc(&noizDens[VBICIBEXNOIZ],&lnNdens[VBICIBEXNOIZ],
+                                 ckt,SHOTNOISE,inst->VBICbaseBXNode, inst->VBICemitEINode,
+                                 *(ckt->CKTstate0 + inst->VBICibex));
 
                     NevalSrc(&noizDens[VBICIBEPNOIZ],&lnNdens[VBICIBEPNOIZ],
                                  ckt,SHOTNOISE,inst->VBICbaseBXNode, inst->VBICbaseBPNode,
@@ -171,14 +179,17 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
                                             noizDens[VBICRBINOIZ] +
                                             noizDens[VBICRENOIZ] +
                                             noizDens[VBICRBPNOIZ] +
+                                            noizDens[VBICRSNOIZ] +
                                             noizDens[VBICICNOIZ] +
                                             noizDens[VBICIBNOIZ] +
+                                            noizDens[VBICIBEXNOIZ] +
                                             noizDens[VBICIBEPNOIZ] +
+                                            noizDens[VBICICCPNOIZ] +
                                             noizDens[VBICFLBENOIZ] +
                                             noizDens[VBICFLBEPNOIZ];
 
                     lnNdens[VBICTOTNOIZ] = 
-                                 log(noizDens[VBICTOTNOIZ]);
+                                 log(MAX(noizDens[VBICTOTNOIZ],N_MINLOG));
 
                     *OnDens += noizDens[VBICTOTNOIZ];
 

@@ -339,9 +339,6 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case VBIC_MOD_EBBE:
             value->rValue = here->VBICebbe;
             return(OK);
-        case VBIC_MOD_DTEMP:
-            value->rValue = here->VBIClocTempDiff;
-            return(OK);
         case VBIC_MOD_VERS:
             value->rValue = here->VBICrevVersion;
             return(OK);

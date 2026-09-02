@@ -28,6 +28,7 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
                 here=DIOnextInstance(here)) {
+
             gspr=here->DIOtConductance;
             geq= *(ckt->CKTstate0 + here->DIOconduct);
             xceq= *(ckt->CKTstate0 + here->DIOcapCurrent) * ckt->CKTomega;
@@ -59,30 +60,29 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->DIOposSwPrimeNegPtr + 1) -= xceq;
             }
 
-            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
-            if (selfheat) {
+            if (DIOselfheat(here)) {
                 double dIth_dVrs = here->DIOdIth_dVrs;
                 double dIth_dVdio = here->DIOdIth_dVdio;
                 double dIth_dT = here->DIOdIth_dT;
-                double gcTt = here->DIOgcTt;
                 double dIrs_dT = here->DIOdIrs_dT;
                 double dIdio_dT = *(ckt->CKTstate0 + here->DIOdIdio_dT);
                 (*(here->DIOtempPosPtr)      += -dIth_dVrs);
                 (*(here->DIOtempPosPrimePtr) += -dIth_dVdio + dIth_dVrs);
                 (*(here->DIOtempNegPtr)      +=  dIth_dVdio);
-                (*(here->DIOtempTempPtr)     += -dIth_dT + 1/model->DIOrth0 + gcTt);
+                /* thermal capacitance: cth0 is a model constant, the transient
+                   companion values gcTt/DIOcqth have no meaning here */
+                (*(here->DIOtempTempPtr)     += -dIth_dT + 1/model->DIOrth0);
+                (*(here->DIOtempTempPtr + 1) +=  model->DIOcth0 * ckt->CKTomega);
                 (*(here->DIOposTempPtr)      +=  dIrs_dT);
                 (*(here->DIOposPrimeTempPtr) +=  dIdio_dT - dIrs_dT);
                 (*(here->DIOnegTempPtr)      += -dIdio_dT);
 
-                double xgcTt= *(ckt->CKTstate0 + here->DIOcqth) * ckt->CKTomega;
-                (*(here->DIOtempTempPtr + 1) +=  xgcTt);
-
                 if (model->DIOresistSWGiven) {
-                    double dIth_dVrssw = here->DIOdIth_dVrs;
-                    double dIth_dVdioSw = here->DIOdIth_dVdio;
-                    double dIrssw_dT = here->DIOdIrs_dT;
-                    double dIdioSw_dT = *(ckt->CKTstate0 + here->DIOdIdio_dT);
+                    /* dIth_dT already holds bottom + sidewall, do not add again */
+                    double dIth_dVrssw = here->DIOdIth_dVrssw;
+                    double dIth_dVdioSw = here->DIOdIth_dVdioSw;
+                    double dIrssw_dT = here->DIOdIrssw_dT;
+                    double dIdioSw_dT = *(ckt->CKTstate0 + here->DIOdIdioSW_dT);
                     (*(here->DIOtempPosPtr)        += -dIth_dVrssw);
                     (*(here->DIOtempPosSwPrimePtr) += -dIth_dVdioSw + dIth_dVrssw);
                     (*(here->DIOtempNegPtr)        +=  dIth_dVdioSw);
@@ -91,19 +91,25 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
                     (*(here->DIOnegTempPtr)        += -dIdioSw_dT);
                 }
             }
-            if ((here->DIOqpNode > 0) && (model->DIOsoftRevRecParam!=0) && (here->DIOtTransitTime!=0)) {
+            if (DIOrevrec(here)) {
                 /* QP subcircuit */
                 double gdres= *(ckt->CKTstate0 + here->DIOresConduct);
-                double fac = here->DIOtTransitTime / model->DIOsoftRevRecParam;
-                double dcrrdvd = fac * gdres;
+                double dcrrdvd = here->DIOcurFactor * gdres;
                 *(here->DIOqpQpPtr)       += 1/model->DIOsoftRevRecParam;
                 *(here->DIOqpQpPtr + 1)   += here->DIOtTransitTime * ckt->CKTomega;
                 *(here->DIOqpPosPrimePtr) += -dcrrdvd;
                 *(here->DIOqpNegPtr)      +=  dcrrdvd;
-                /* Gain of VCVS (1-vp)/tau * j*omega*tau = (1-vp) * j*omega */
-                double xgain = (1 - model->DIOsoftRevRecParam) * ckt->CKTomega;
+                /* AC: gqcsr -> j*omega*capsr, capsr = TT */
+                double xgain = here->DIOqpGainScaled * here->DIOtTransitTime * ckt->CKTomega;
                 *(here->DIOposPrimeQpPtr + 1) +=  xgain;
                 *(here->DIOnegQpPtr + 1)      += -xgain;
+                if (DIOselfheat(here)) {
+                    double vdop = *(ckt->CKTstate0 + here->DIOvoltage);
+                    *(here->DIOqpTempPtr) += -here->DIOcurFactor
+                                           * *(ckt->CKTstate0 + here->DIOdIdio_dT);
+                    *(here->DIOtempQpPtr + 1) += -vdop * here->DIOqpGainScaled
+                                               * here->DIOtTransitTime * ckt->CKTomega;
+                }
             }
         }
     }
