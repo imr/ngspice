@@ -1,5 +1,5 @@
 .title KiCad schematic
-.include "D:/Spice_general/KiCad-1000/HB/amp2n2222/2N2222A.txt"
+.include "2N2222A.txt"
 .param freq=1.5Meg
 .csparam freq={freq}
 R4 Net-_Q1-B_ 0 2.2k

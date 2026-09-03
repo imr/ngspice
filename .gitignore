@@ -92,5 +92,9 @@ test_cases/diode/__pycache__/*
 test_cases/diode/test_osdi/*
 test_cases/diode/test_built_in/*
 
+examples/rf/**/*.data
+examples/rf/**/*.py
+examples/rf/**/*.plt
+
 build*/
 prof/
