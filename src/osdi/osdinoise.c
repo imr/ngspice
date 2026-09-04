@@ -38,7 +38,12 @@ static double *noise_dens = NULL;
 static double *noise_dens_ln = NULL;
 static uint32_t noise_dense_len = 0;
 
-#define nVar(i, j) noise_vals[i * descr->num_noise_src + j]
+/* The per instance noise state buffer is allocated in osdiregistry.c as
+ * NSTATVARS * (num_noise_src + 1) doubles: one column per noise source plus
+ * one extra column holding the per instance total. The row stride must
+ * therefore be num_noise_src + 1, not num_noise_src -- otherwise
+ * nVar(OUTNOIZ, num_noise_src) aliases nVar(INNOIZ, 0). */
+#define nVar(i, j) noise_vals[(i) * (descr->num_noise_src + 1) + (j)]
 /*
  * OSDInoise (mode, operation, firstModel, ckt, data, OnDens)
  *
@@ -69,9 +74,19 @@ int OSDInoise(int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
   }
 
   if (noise_dense_len < descr->num_noise_src) {
-    noise_dens = realloc(noise_dens, descr->num_noise_src * sizeof(double));
-    noise_dens_ln =
-        realloc(noise_dens_ln, descr->num_noise_src * sizeof(double));
+    double *tmp;
+
+    tmp = realloc(noise_dens, descr->num_noise_src * sizeof(double));
+    if (!tmp)
+      return (E_NOMEM);
+    noise_dens = tmp;
+
+    tmp = realloc(noise_dens_ln, descr->num_noise_src * sizeof(double));
+    if (!tmp)
+      return (E_NOMEM);
+    noise_dens_ln = tmp;
+
+    noise_dense_len = descr->num_noise_src;
   }
 
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
@@ -109,9 +124,9 @@ int OSDInoise(int mode, int operation, GENmodel *inModel, CKTcircuit *ckt,
             }
             // TOTAL noise
             NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", gen_inst->GENname,
-                             " ");
+                             "");
             NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", gen_inst->GENname,
-                             " ");
+                             "");
             break;
           }
         }
