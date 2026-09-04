@@ -408,8 +408,10 @@ extern OsdiObjectFile load_object_file(const char *input) {
     // Check descriptor size, must be >= descriptor size from the header file
     descriptor_size = *OSDI_DESCRIPTOR_SIZE;
     if (descriptor_size < expected_descriptor_size) {
-      printf("NGSPICE requires an OSDI descriptor size of at least %zu bytes but \"%s\" uses %zu!",
-        sizeof(OsdiDescriptor), path, descriptor_size);
+      printf("NGSPICE expects at least %zu bytes for an OSDI v%d.%d descriptor "
+             "but \"%s\" has %zu!\n",
+             expected_descriptor_size, OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR,
+             path, descriptor_size);
       txfree(path);
       return INVALID_OBJECT;
     }
@@ -462,11 +464,6 @@ extern OsdiObjectFile load_object_file(const char *input) {
   }
 
   OsdiRegistryEntry *dst = TMALLOC(OsdiRegistryEntry, OSDI_NUM_DESCRIPTORS);
-
-  /* Size of one OsdiAbsDelayInfo struct as exported from OpenVAF:
-   * { y_node: u32, z_node: u32, td_offset: u32 } = 12 bytes */
-  const size_t absdelay_info_size = 12;
-  uint32_t absdelay_info_offset = 0;
 
   char* desc_ptr = (char*)OSDI_DESCRIPTORS;
   for (uint32_t i = 0; i < OSDI_NUM_DESCRIPTORS; i++) {
