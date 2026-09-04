@@ -97,7 +97,9 @@ extern int OSDIparam(int param, IFvalue *value, GENinstance *instPtr,
       return (OK);
     }
     if (param == (int)entry->temp) {
-      inst->temp = value->rValue;
+      /* given in degrees Celsius, like the temp parameter of every built-in
+       * device and like .option temp; the model expects Kelvin */
+      inst->temp = value->rValue + CONSTCtoK;
       inst->temp_given = true;
       return (OK);
     }
