@@ -95,6 +95,7 @@ test_cases/diode/test_built_in/*
 examples/rf/**/*.data
 examples/rf/**/*.py
 examples/rf/**/*.plt
+examples/rf/**/*.png
 
 build*/
 prof/
