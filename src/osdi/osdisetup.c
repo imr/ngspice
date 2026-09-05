@@ -343,8 +343,11 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
           extra->delay_jac_y_cx[k]  = NULL;
           extra->delay_jac_z_cx[k]  = NULL;
           extra->delay_hist[k]  = NULL;
-          if (!extra->delay_jac_y[k] || !extra->delay_jac_z[k])
+          if (!extra->delay_jac_y[k] || !extra->delay_jac_z[k]) {
+            free(node_repr);
+            free(node_ids);
             return E_NOMEM;
+          }
         }
       }
 
@@ -431,6 +434,27 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
   return res;
 }
 
+/* Release the absdelay buffers of one instance. OSDIunsetup runs before
+ * every OSDIsetup, so without this each analysis leaks a fresh set and
+ * orphans the previous one. tfree clears the pointers, so a second unsetup
+ * is a no-op and the next setup starts from a known state. */
+static void free_absdelay_data(OsdiExtraInstData *extra, uint32_t n) {
+  if (extra->delay_hist) {
+    for (uint32_t k = 0; k < n; k++) {
+      tfree(extra->delay_hist[k]);
+    }
+    tfree(extra->delay_hist);
+  }
+  extra->delay_hist_cap = 0;
+
+  tfree(extra->delay_jac_y);
+  tfree(extra->delay_jac_z);
+  tfree(extra->delay_jac_y_csc);
+  tfree(extra->delay_jac_z_csc);
+  tfree(extra->delay_jac_y_cx);
+  tfree(extra->delay_jac_z_cx);
+}
+
 /* delete internal nodes
  */
 extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
@@ -447,6 +471,11 @@ extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
     for (gen_inst = gen_model->GENinstances; gen_inst != NULL;
          gen_inst = gen_inst->GENnextInstance) {
       void *inst = osdi_instance_data(entry, gen_inst);
+
+      if (entry->experimental && descr->absdelay_count > 0) {
+        free_absdelay_data(osdi_extra_instance_data(entry, gen_inst),
+                           descr->absdelay_count);
+      }
 
       // reset is collapsible
       bool *collapsed = (bool *)(((char *)inst) + descr->collapsed_offset);
