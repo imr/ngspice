@@ -57,7 +57,7 @@ libfte_la_SOURCES = \
     com_loadpull.h  \
     com_optimize.c  \
     com_optimize.h  \
-    snp2va.cpp  \
+    snp2va.c  \
     snp2va.h  \
     com_presnp.c  \
     com_qpss.c  \

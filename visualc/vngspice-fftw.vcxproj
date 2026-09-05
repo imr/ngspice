@@ -298,6 +298,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -350,6 +351,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -509,6 +511,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -561,6 +564,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -670,6 +674,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -784,6 +789,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>

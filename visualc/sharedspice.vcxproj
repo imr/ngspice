@@ -291,7 +291,7 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-      </Command>
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -333,6 +333,7 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -375,7 +376,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-      </Command>
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Full</Optimization>
@@ -503,7 +504,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-      </Command>
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Full</Optimization>
@@ -549,6 +550,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <CustomBuildStep>
