@@ -349,6 +349,8 @@ static void load(CKTcircuit *ckt, const GENinstance *gen_inst, void *model,
 extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   GENmodel *gen_model;
   GENinstance *gen_inst;
+  /* first instance that asked for limiting, for the non-convergence report */
+  GENinstance *trouble_inst = NULL;
 
   bool is_init_smsig = ckt->CKTmode & MODEINITSMSIG;
   bool is_dc = ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE);
@@ -454,6 +456,10 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
       } else if (entry->experimental && descr->absdelay_count > 0) {
         absdelay_stamp_dc(inst, extra_inst_data, entry, descr);
       }
+      if (!trouble_inst &&
+          (extra_inst_data->eval_flags & EVAL_RET_FLAG_LIM)) {
+        trouble_inst = gen_inst;
+      }
       eval_flags |= extra_inst_data->eval_flags;
     }
   }
@@ -481,6 +487,10 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
         } else if (entry->experimental && descr->absdelay_count > 0) {
           absdelay_stamp_dc(inst, extra_inst_data, entry, descr);
         }
+        if (!trouble_inst &&
+            (extra_inst_data->eval_flags & EVAL_RET_FLAG_LIM)) {
+          trouble_inst = gen_inst;
+        }
         eval_flags |= extra_inst_data->eval_flags;
       }
     }
@@ -494,7 +504,8 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
 
   if (eval_flags & EVAL_RET_FLAG_LIM) {
     ckt->CKTnoncon++;
-    ckt->CKTtroubleElt = gen_inst;
+    /* gen_inst is NULL here, both loops have run to the end */
+    ckt->CKTtroubleElt = trouble_inst;
   }
 
   if (eval_flags & EVAL_RET_FLAG_STOP) {
