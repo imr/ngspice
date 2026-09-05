@@ -52,9 +52,7 @@ Makefile.in
 /src/maths/cmaths/test_cx_mag
 /src/maths/cmaths/test_cx_ph
 
-/src/spicelib/devices/adms/*/*.*
-!/src/spicelib/devices/adms/admst/*.*
-!/src/spicelib/devices/adms/*/admsva/*.*
+src/frontend/snp2va.cpp
 
 /src/ngmakeidx
 /src/ngmultidec
