@@ -125,6 +125,27 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
   return num_nodes;
 }
 
+/* For every node index returned by collapse_nodes, find the descriptor index
+ * of the node that represents it. Needed because collapsing renumbers the
+ * nodes: descr->nodes[i] is only correct while nothing has been collapsed.
+ * collapse_nodes keeps the smaller index as representative. */
+static void repr_nodes(const OsdiDescriptor *descr, void *inst, uint32_t *repr,
+                       uint32_t num_nodes) {
+  uint32_t *node_mapping =
+      (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
+
+  for (uint32_t i = 0; i < num_nodes; i++) {
+    repr[i] = UINT32_MAX;
+  }
+
+  for (uint32_t i = 0; i < descr->num_nodes; i++) {
+    uint32_t mapped = node_mapping[i];
+    if (mapped < num_nodes && repr[mapped] == UINT32_MAX) {
+      repr[mapped] = i;
+    }
+  }
+}
+
 /* replace node mapping local to the current instance (created by
  * collapse_nodes) with global node indicies allocated with CKTmkVolt */
 static void write_node_mapping(const OsdiDescriptor *descr, void *inst,
@@ -199,6 +220,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
   /* setup a temporary buffer */
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
+  uint32_t *node_repr = TMALLOC(uint32_t, descr->num_nodes);
 
   /* determine the number of states required by each instance */
   int num_states = (int)descr->num_states;
@@ -263,18 +285,23 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
       /* setup the instance nodes */
 
       uint32_t num_nodes = collapse_nodes(descr, inst, connected_terminals);
+      repr_nodes(descr, inst, node_repr, num_nodes);
       /* copy terminals */
       memcpy(node_ids, gen_inst + 1, sizeof(int) * connected_terminals);
       /* create internal nodes as required */
       for (uint32_t i = connected_terminals; i < num_nodes; i++) {
+        const OsdiNode *node = &descr->nodes[node_repr[i]];
         // TODO handle currents  correctly
-        if (descr->nodes[i].is_flow) {
-          error = CKTmkCur(ckt, &tmp, gen_inst->GENname, descr->nodes[i].name);
+        if (node->is_flow) {
+          error = CKTmkCur(ckt, &tmp, gen_inst->GENname, node->name);
         } else {
-          error = CKTmkVolt(ckt, &tmp, gen_inst->GENname, descr->nodes[i].name);
+          error = CKTmkVolt(ckt, &tmp, gen_inst->GENname, node->name);
         }
-        if (error)
+        if (error) {
+          free(node_repr);
+          free(node_ids);
           return (error);
+        }
         node_ids[i] = (uint32_t)tmp->number;
         // TODO nodeset?
       }
@@ -283,6 +310,8 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
       /* now that we have the node mapping we can create the matrix entries */
       err = init_matrix(matrix, descr, inst);
       if (err) {
+        free(node_repr);
+        free(node_ids);
         return err;
       }
 
@@ -326,6 +355,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     }
   }
 
+  free(node_repr);
   free(node_ids);
 
   return res;
