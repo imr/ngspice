@@ -135,6 +135,8 @@ static double absdelay_lookup(const OsdiExtraInstData *extra, uint32_t k,
 static void absdelay_stamp_dc(void *inst, OsdiExtraInstData *extra,
                                const OsdiRegistryEntry *entry,
                                const OsdiDescriptor *descr) {
+  NG_IGNORE(entry);
+
   uint32_t n = descr->absdelay_count;
   uint32_t *node_mapping =
       (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
@@ -156,6 +158,9 @@ static void absdelay_stamp_tran(CKTcircuit *ckt, GENinstance *gen_inst,
                                 const OsdiRegistryEntry *entry,
                                 const OsdiDescriptor *descr,
                                 bool is_init_tran) {
+  NG_IGNORE(gen_inst);
+  NG_IGNORE(entry);
+
   uint32_t n = descr->absdelay_count;
   if (n == 0)
     return;
