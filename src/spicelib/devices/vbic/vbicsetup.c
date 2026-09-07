@@ -293,6 +293,9 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->VBICthermalCapacitanceGiven) {
             model->VBICthermalCapacitance = 0.0;
         }
+        if((model->VBICthermalResistGiven) && (model->VBICthermalCapacitance < 1e-12)) {
+            model->VBICthermalCapacitance = 1e-12;
+        }
         if(!model->VBICpunchThroughVoltageBCGiven) {
             model->VBICpunchThroughVoltageBC = 0.0;
         }
@@ -472,9 +475,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                    && (model->VBICthermalResist > 0.0)
                    && (!model->VBICselftGiven || model->VBICselft == 1);
 
-            if((model->VBICthermalResistGiven) && (model->VBICthermalCapacitance < 1e-12))
-                model->VBICthermalCapacitance = 1e-12;
-
             if((model->VBICdelayTimeFGiven) && (model->VBICdelayTimeF > 0.0)) {
                 here->VBIC_excessPhase = 1;
             } else {
@@ -511,8 +511,14 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     here->VBICxf2Node = tmp->number;
                 }
             } else {
-                here->VBICxf1Node = 0;
+                /* Excess Phase was evtl. active on last setup - add
+                 * node delete instead only reset number. */
+                if (here->VBICxf2Node > 0)
+                    CKTdltNNum(ckt, here->VBICxf2Node);
                 here->VBICxf2Node = 0;
+                if (here->VBICxf1Node > 0)
+                    CKTdltNNum(ckt, here->VBICxf1Node);
+                here->VBICxf1Node = 0;
             }
 
 /* macro to make elements with built in test for out of memory */
@@ -635,7 +641,16 @@ VBICunsetup(
         for (here = VBICinstances(model); here != NULL;
                 here=VBICnextInstance(here))
         {
-            if (here->VBICbaseBINode > 0)
+ 
+            if (here->VBICxf2Node > 0)
+                CKTdltNNum(ckt, here->VBICxf2Node);
+            here->VBICxf2Node = 0;
+
+            if (here->VBICxf1Node > 0)
+                CKTdltNNum(ckt, here->VBICxf1Node);
+            here->VBICxf1Node = 0;
+
+           if (here->VBICbaseBINode > 0)
                 CKTdltNNum(ckt, here->VBICbaseBINode);
             here->VBICbaseBINode = 0;
 
@@ -666,16 +681,6 @@ VBICunsetup(
                 && here->VBICcollCXNode != here->VBICcollNode)
                 CKTdltNNum(ckt, here->VBICcollCXNode);
             here->VBICcollCXNode = 0;
-
-            if (here->VBIC_excessPhase) {
-                if(here->VBICxf1Node > 0)
-                    CKTdltNNum(ckt, here->VBICxf1Node);
-                here->VBICxf1Node = 0;
-
-                if(here->VBICxf2Node > 0)
-                    CKTdltNNum(ckt, here->VBICxf2Node);
-                here->VBICxf2Node = 0;
-            }
 
         }
     }
