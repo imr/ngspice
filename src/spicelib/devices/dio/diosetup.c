@@ -464,7 +464,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(DIOposSwPrimePosSwPrimePtr,DIOposSwPrimeNode,DIOposSwPrimeNode);
             }
 
-            if (DIOselfheatMod(model)) {
+            if (DIOselfheat(here)) {
                 TSTALLOC(DIOtempPosPtr,      DIOtempNode,     DIOposNode);
                 TSTALLOC(DIOtempPosPrimePtr, DIOtempNode,     DIOposPrimeNode);
                 TSTALLOC(DIOtempNegPtr,      DIOtempNode,     DIOnegNode);
@@ -480,13 +480,13 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             }
 
             /* rev-rec */
-            if (DIOrevrecMod(model)) {
+            if (DIOrevrec(here)) {
                 TSTALLOC(DIOqpQpPtr      , DIOqpNode, DIOqpNode);
                 TSTALLOC(DIOqpPosPrimePtr, DIOqpNode, DIOposPrimeNode);
                 TSTALLOC(DIOqpNegPtr     , DIOqpNode, DIOnegNode);
                 TSTALLOC(DIOposPrimeQpPtr, DIOposPrimeNode, DIOqpNode);
                 TSTALLOC(DIOnegQpPtr,      DIOnegNode, DIOqpNode);
-                if (DIOselfheatMod(model)) {
+                if (DIOselfheat(here)) {
                     TSTALLOC(DIOtempQpPtr,     DIOtempNode, DIOqpNode);
                     TSTALLOC(DIOqpTempPtr,     DIOqpNode, DIOtempNode);
                 }
