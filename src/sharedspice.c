@@ -1185,7 +1185,7 @@ char *ngCM_Input_Path(const char* path)
         txfree(Infile_Path);
         Infile_Path = copy(path);
     }
-    fprintf(stdout, "Note: Codel model file loading path is %s\n", Infile_Path);
+    fprintf(stdout, "Note: Codemodel file loading path is %s\n", Infile_Path);
     return Infile_Path;
 }
 
