@@ -486,6 +486,9 @@ eval_opt(struct card* deck)
             }
         }
     }
+    // if cshunt option wasn't given, remove variables
+    if (!has_cshunt)
+        cp_remvar("cshunt_value");
 }
 
 /* The routine to source a spice input deck. We read the deck in, take
