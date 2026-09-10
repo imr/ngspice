@@ -1404,6 +1404,7 @@ copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va
     <ClInclude Include="..\src\spicelib\parser\inppas2.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas3.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas4.h" />
+    <ClInclude Include="..\src\spicelib\parser\inppas5.h" />
     <ClInclude Include="..\src\spicelib\parser\inpxx.h" />
     <ClInclude Include="..\src\winmain.h" />
     <ClInclude Include=".\src\include\inttypes.h" />
@@ -2855,6 +2856,7 @@ copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va
     <ClCompile Include="..\src\spicelib\parser\inppas2.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas3.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas4.c" />
+    <ClCompile Include="..\src\spicelib\parser\inppas5.c" />
     <ClCompile Include="..\src\spicelib\parser\inppname.c" />
     <ClCompile Include="..\src\spicelib\parser\inpptree.c" />
     <ClCompile Include="..\src\spicelib\parser\inpsymt.c" />

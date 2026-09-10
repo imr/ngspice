@@ -191,6 +191,9 @@ if_inpdeck(struct card *deck, INPtables **tab)
     /* If option cshunt is given, add capacitors to each voltage node */
     INPpas4(ckt, *tab);
 
+    /* If option rshunt is given, add resistors to each voltage node */
+    INPpas5(ckt, *tab);
+
     /* Fill in .NODESET and .IC data.
      * nodeset/ic of non-existent nodes is rejected.  */
     INPpas3(ckt, deck->nextcard,

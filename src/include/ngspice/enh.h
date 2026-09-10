@@ -75,20 +75,11 @@ struct Enh_Conv_Limit {
 };
 
 
-struct Enh_Rshunt {
-    Mif_Boolean_t    enabled;      /* True if rshunt option used */
-    double           gshunt;       /* 1.0 / rshunt */
-    int              num_nodes;    /* Number of nodes in matrix */
-    double           **diag;       /* Pointers to matrix diagonals */
-};
-
-
 struct Enh_Ckt_Data {
     Enh_Bkpt_t       breakpoint;   /* Data used by dynamic breakpoints */
     Enh_Ramp_t       ramp;         /* New options added to simulator */
     Enh_Conv_Debug_t conv_debug;   /* Convergence debug info dumping data */
     Enh_Conv_Limit_t conv_limit;   /* Convergence limiting info */
-    Enh_Rshunt_t     rshunt_data;  /* Shunt conductance from nodes to ground */
 };
 
 
