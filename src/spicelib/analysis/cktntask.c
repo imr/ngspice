@@ -57,6 +57,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKvoltTol         = def->TSKvoltTol;
         tsk->TSKgmin            = def->TSKgmin;
         tsk->TSKgshunt          = def->TSKgshunt;
+        tsk->TSKrshunt          = def->TSKrshunt;
         tsk->TSKcshunt          = def->TSKcshunt;
         /* delmin */
         tsk->TSKtrtol           = def->TSKtrtol;
@@ -93,6 +94,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         /* use the application defaults */
         tsk->TSKgmin            = 1e-12;
         tsk->TSKgshunt          = 0;
+        tsk->TSKrshunt          = 1e30;
         tsk->TSKcshunt          = -1;
         tsk->TSKabstol          = 1e-12;
         tsk->TSKreltol          = 1e-3;

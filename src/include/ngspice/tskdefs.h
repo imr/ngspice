@@ -54,6 +54,7 @@ struct TSKtask {
     unsigned int TSKnewtrunc:1; /* voltage controlled truncation */
     double TSKgmin;
     double TSKgshunt;   /* shunt conductance (CKTdiagGmin) */
+    double TSKrshunt;   /* shunt resistor to ground */
     double TSKcshunt;   /* shunt capacitor to ground */
     double TSKdelmin;
     double TSKtrtol;

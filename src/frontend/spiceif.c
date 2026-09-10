@@ -1524,6 +1524,7 @@ void com_snload(wordlist *wl)
     _t(CKTgmin);
     _t(CKTgshunt);
     _t(CKTcshunt);
+    _t(CKTrshunt);
     _t(CKTdelmin);
     _t(CKTtrtol);
     _t(CKTfinalTime);
