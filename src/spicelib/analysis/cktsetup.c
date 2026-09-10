@@ -38,17 +38,6 @@ CKTsetup(CKTcircuit *ckt)
 #ifdef USE_OMP
     int nthreads = 2;
 #endif
-#ifdef XSPICE
- /* gtri - begin - Setup for adding rshunt option resistors */
-    CKTnode *node;
-    int     num_nodes;
- /* gtri - end - Setup for adding rshunt option resistors */
-
-#ifdef KLU
-    BindElement BindNode, *matched, *BindStruct ;
-    size_t nz ;
-#endif
-#endif
 
     SMPmatrix *matrix;
 
@@ -116,39 +105,6 @@ CKTsetup(CKTcircuit *ckt)
         }
     }
 
-#ifdef XSPICE
-  /* gtri - begin - Setup for adding rshunt option resistors */
-
-    if(ckt->enh->rshunt_data.enabled) {
-
-        /* Count number of voltage nodes in circuit */
-        for(num_nodes = 0, node = ckt->CKTnodes; node; node = node->next)
-            if((node->type == SP_VOLTAGE) && (node->number != 0))
-                num_nodes++;
-
-        /* Allocate space for the matrix diagonal data */
-        if(num_nodes > 0) {
-            FREE(ckt->enh->rshunt_data.diag);
-            ckt->enh->rshunt_data.diag =
-                 TMALLOC(double *, num_nodes);
-        }
-
-        /* Set the number of nodes in the rshunt data */
-        ckt->enh->rshunt_data.num_nodes = num_nodes;
-
-        /* Get/create matrix diagonal entry following what RESsetup does */
-        for(i = 0, node = ckt->CKTnodes; node; node = node->next) {
-            if((node->type == SP_VOLTAGE) && (node->number != 0)) {
-                ckt->enh->rshunt_data.diag[i] =
-                      SMPmakeElt(matrix,node->number,node->number);
-                i++;
-            }
-        }
-    }
-
-    /* gtri - end - Setup for adding rshunt option resistors */
-#endif
-
 #ifdef KLU
     if (ckt->CKTmatrix->CKTkluMODE)
     {
@@ -161,28 +117,6 @@ CKTsetup(CKTcircuit *ckt)
         for (i = 0 ; i < DEVmaxnum ; i++)
             if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
-
-#ifdef XSPICE
-        if (ckt->enh->rshunt_data.num_nodes > 0) {
-            BindStruct = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
-            nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ ;
-            for(i = 0, node = ckt->CKTnodes; node; node = node->next) {
-                if((node->type == SP_VOLTAGE) && (node->number != 0)) {
-                    BindNode.COO = ckt->enh->rshunt_data.diag [i] ;
-                    BindNode.CSC = NULL ;
-                    BindNode.CSC_Complex = NULL ;
-                    matched = (BindElement *) bsearch (&BindNode, BindStruct, nz, sizeof (BindElement), BindCompare) ;
-                    if (!matched) {
-                        fprintf (stderr, "Error: Ptr %p not found in BindStruct Table\n", ckt->enh->rshunt_data.diag [i]) ;
-                        ckt->enh->rshunt_data.diag[i] = NULL;
-                    }
-                    else
-                        ckt->enh->rshunt_data.diag [i] = matched->CSC ;
-                    i++;
-                }
-            }
-        }
-#endif
 
     } else {
         fprintf (stdout, "Using SPARSE 1.3 as Direct Linear Solver\n") ;

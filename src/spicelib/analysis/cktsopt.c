@@ -244,15 +244,6 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         g_mif_info.auto_partial.global = MIF_TRUE;
         break;
 
-    case OPT_ENH_RSHUNT:
-        if(val->rValue > 1.0e-30) {
-          ckt->enh->rshunt_data.enabled = MIF_TRUE;
-          ckt->enh->rshunt_data.gshunt = 1.0 / val->rValue;
-        }
-        else {
-          fprintf(stderr, "WARNING - Rshunt option too small.  Ignored.\n");
-        }
-        break;
 #else
     case OPT_ENH_RSHUNT:
         fprintf(stderr, "WARNING - Option Rshunt available only with XSPICE enabled.\n");
@@ -275,7 +266,6 @@ static IFparm OPTtbl[] = {
  { "convstep", OPT_ENH_CONV_STEP, IF_SET|IF_REAL, "Fractional step allowed by code model inputs between iterations" },
  { "convabsstep", OPT_ENH_CONV_ABS_STEP, IF_SET|IF_REAL, "Absolute step allowed by code model inputs between iterations" },
  { "autopartial", OPT_MIF_AUTO_PARTIAL, IF_SET|IF_FLAG, "Use auto-partial computation for all models" },
- { "rshunt", OPT_ENH_RSHUNT, IF_SET|IF_REAL, "Shunt resistance from analog nodes to ground" },
 /* gtri - end   - wbk - add new options */
 #endif
  { "cshunt", OPT_CSHUNT, IF_SET|IF_REAL, "Shunt capacitor from analog nodes to ground" },

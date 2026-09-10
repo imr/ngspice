@@ -432,6 +432,7 @@ eval_opt(struct card* deck)
     struct card* card;
     bool has_seed = FALSE;
     bool has_cshunt = FALSE;
+    bool has_rshunt = FALSE;
 
     for (card = deck; card; card = card->nextcard) {
         char* line = card->line;
@@ -485,10 +486,30 @@ eval_opt(struct card* deck)
                 has_cshunt = TRUE;
             }
         }
+
+        begtok = strstr(line, "rshunt=");
+        if (begtok)
+            begtok = &begtok[7]; /*skip rshunt=*/
+        if (begtok) {
+            int err = 0;
+            if (has_rshunt)
+                fprintf(cp_err, "Warning: Multiple '.option rshunt=val' found!\n");
+            /* option rshunt=val*/
+            double sr = INPevaluate(&begtok, &err, 0);
+            if (sr <= 0 || err)
+                fprintf(cp_err, "Warning: Cannot convert 'option cshunt=%s' to resistor value, skipped!\n", begtok);
+            else {
+                cp_vset("rshunt_value", CP_REAL, &sr);
+                has_rshunt = TRUE;
+            }
+        }
     }
-    // if cshunt option wasn't given, remove variables
+    // if cshunt option wasn't given, remove variable
     if (!has_cshunt)
         cp_remvar("cshunt_value");
+    // if rshunt option wasn't given, remove variable
+    if (!has_rshunt)
+        cp_remvar("rshunt_value");
 }
 
 /* The routine to source a spice input deck. We read the deck in, take
