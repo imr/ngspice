@@ -32,7 +32,7 @@ CKTdisto (CKTcircuit *ckt, int mode)
     switch(mode) {
 
     case D_SETUP:
-
+#ifdef OSDI
 	    /* Enhancement-62: distortion analysis needs per-device Taylor
 	       coefficients (DEVdisto); Verilog-A (OSDI) devices only expose
 	       first derivatives through the OSDI ABI, so their
@@ -48,7 +48,7 @@ CKTdisto (CKTcircuit *ckt, int mode)
 		        DEVices[i]->DEVpublic.name);
 		}
 	    }
-
+#endif
 	    for (i=0;i<DEVmaxnum;i++) {
 		if ( DEVices[i] && DEVices[i]->DEVdisto && ckt->CKThead[i] ) {
 		    error = DEVices[i]->DEVdisto (mode, ckt->CKThead[i], ckt);
