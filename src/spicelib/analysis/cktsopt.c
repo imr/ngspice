@@ -178,6 +178,9 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_CSHUNT:
         task->TSKcshunt = val->rValue;
         break;
+    case OPT_RSHUNT:
+        task->TSKrshunt = val->rValue;
+        break;
 
 #ifdef KLU
     case OPT_SPARSE:
@@ -243,11 +246,6 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_MIF_AUTO_PARTIAL:
         g_mif_info.auto_partial.global = MIF_TRUE;
         break;
-
-#else
-    case OPT_ENH_RSHUNT:
-        fprintf(stderr, "WARNING - Option Rshunt available only with XSPICE enabled.\n");
-        break;
 #endif
 /* gtri - end - wbk - add new options */
     default:
@@ -269,6 +267,7 @@ static IFparm OPTtbl[] = {
 /* gtri - end   - wbk - add new options */
 #endif
  { "cshunt", OPT_CSHUNT, IF_SET|IF_REAL, "Shunt capacitor from analog nodes to ground" },
+ { "rshunt", OPT_RSHUNT, IF_SET|IF_REAL, "Shunt resistor from analog nodes to ground" },
  { "noopiter", OPT_NOOPITER,IF_SET|IF_FLAG,"Go directly to gmin stepping" },
  { "gmin", OPT_GMIN,IF_SET|IF_REAL,"Minimum conductance" },
  { "gshunt", OPT_GSHUNT,IF_SET|IF_REAL,"Shunt conductance" },

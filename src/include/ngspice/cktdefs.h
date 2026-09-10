@@ -222,6 +222,7 @@ struct CKTcircuit {
     int CKTnewtrunc;            /* enable lte (local truncation error) based on voltages */
     double CKTgmin;             /* .options GMIN */
     double CKTgshunt;           /* .options RSHUNT */
+    double CKTrshunt;           /* .options RSHUNT */
     double CKTcshunt;           /* .options CSHUNT */
     double CKTdelmin;           /* minimum time step for tran analysis */
     double CKTtrtol;            /* .options TRTOL */

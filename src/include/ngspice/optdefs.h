@@ -125,6 +125,7 @@ enum {
     OPT_INDVERBOSITY,
     OPT_EPSMIN,
     OPT_CSHUNT,
+    OPT_RSHUNT,
 
 #ifdef KLU
     OPT_SPARSE,
@@ -150,7 +151,6 @@ enum {
     OPT_ENH_CONV_ABS_STEP,
     OPT_ENH_CONV_STEP,
     OPT_MIF_AUTO_PARTIAL,
-    OPT_ENH_RSHUNT,
 };
 
 /* gtri - end   - wbk - add new options */
