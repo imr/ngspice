@@ -92,6 +92,7 @@ com_option(wordlist *wl)
         printf("diaggmin (stepping) = %g\n", circuit->CKTdiagGmin);
         printf("gshunt = %g\n", circuit->CKTgshunt);
         printf("cshunt = %g\n", circuit->CKTcshunt);
+        printf("rshunt = %g\n", circuit->CKTrshunt);
 
         printf("delmin = %g\n", circuit->CKTdelmin);
 
