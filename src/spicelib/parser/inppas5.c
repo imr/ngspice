@@ -79,13 +79,9 @@ void INPpas5(CKTcircuit *ckt, INPtables *tab)
            /* the top node, second node is gnd automatically */
             (*(ft_sim->bindNode))(ckt, fast, 1, node);
 
-            /* value of the capacitance */
+            /* value of the resistance */
             ptemp.rValue = rsval;
             error = INPpName("resistance", &ptemp, ckt, mytype, fast);
-
-            /* add device numbers for statistics */
-            ckt->CKTstat->STATdevNum[mytype].instNum++;
-            ckt->CKTstat->STATtotalDev++;
 
             nadded++;
         }
