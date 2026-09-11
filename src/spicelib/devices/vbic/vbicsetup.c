@@ -239,11 +239,15 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->VBICtempExpREGiven) {
             model->VBICtempExpRE = 0.0;
         }
+
+        if(!model->VBICtempExpRBGiven) model->VBICtempExpRB  = 0.0;
+        if(!model->VBICtempExpRCGiven) model->VBICtempExpRC  = 0.0;
+
         if(!model->VBICtempExpRBIGiven) {
-            model->VBICtempExpRBI = 0.0;
+            model->VBICtempExpRBI = model->VBICtempExpRB;
         }
         if(!model->VBICtempExpRCIGiven) {
-            model->VBICtempExpRCI = 0.0;
+            model->VBICtempExpRCI = model->VBICtempExpRC;
         }
         if(!model->VBICtempExpRSGiven) {
             model->VBICtempExpRS = 0.0;
@@ -315,13 +319,13 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBICtempExpIKF = 0.0;
         }
         if(!model->VBICtempExpRCXGiven) {
-            model->VBICtempExpRCX = 0.0;
+            model->VBICtempExpRCX = model->VBICtempExpRC;
         }
         if(!model->VBICtempExpRBXGiven) {
-            model->VBICtempExpRBX = 0.0;
+            model->VBICtempExpRBX = model->VBICtempExpRB;
         }
         if(!model->VBICtempExpRBPGiven) {
-            model->VBICtempExpRBP = 0.0;
+            model->VBICtempExpRBP = model->VBICtempExpRC;
         }
         if(!model->VBICsepISRRGiven) {
             model->VBICsepISRR = 1.0;

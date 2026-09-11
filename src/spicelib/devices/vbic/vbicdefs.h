@@ -649,6 +649,9 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICrevVersion;
     double VBICrefVersion;
 
+    double VBICtempExpRB; /* Fallback for XRBX and XRBI */
+    double VBICtempExpRC; /* Fallback for XRCX, XRCI and XRBP */
+
     double VBICvbeMax; /* maximum voltage over B-E junction */
     double VBICvbcMax; /* maximum voltage over B-C junction */
     double VBICvceMax; /* maximum voltage over C-E branch */
@@ -752,6 +755,8 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     unsigned VBICtempExpRCXGiven : 1;
     unsigned VBICtempExpRBXGiven : 1;
     unsigned VBICtempExpRBPGiven : 1;
+    unsigned VBICtempExpRBGiven :1;
+    unsigned VBICtempExpRCGiven :1;
     unsigned VBICsepISRRGiven : 1;
     unsigned VBICtempExpXISRGiven : 1;
     unsigned VBICdearGiven : 1;
@@ -911,6 +916,8 @@ enum {
     VBIC_MOD_VBCFWD_MAX,
     VBIC_MOD_VSUBFWD_MAX,
     VBIC_MOD_SELFT,
+    VBIC_MOD_XRB,
+    VBIC_MOD_XRC,
 };
 
 /* model questions */
