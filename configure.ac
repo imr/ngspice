@@ -1259,7 +1259,14 @@ if test "x$enable_ngparse" = xyes; then
     AC_MSG_RESULT([ngparse deck expander included (built by make via cargo)])
     AC_DEFINE([USE_NGPARSE], [1], [Use the ngparse deck expander])
     NGPARSE_CFLAGS="-I$NGPARSE_DIR/include"
-    NGPARSE_LIBS="$NGPARSE_LIB -lpthread -ldl -lm"
+    # The ngparse Rust staticlib pulls in the platform runtime.  -ldl is POSIX-only; on Windows (mingw) the Rust std lib instead needs the Win32
+    # import libraries below.
+    case $host_os in
+        *mingw* | *msys* | *cygwin* )
+            NGPARSE_LIBS="$NGPARSE_LIB -lpthread -lm -ladvapi32 -lbcrypt -lkernel32 -lntdll -luserenv -lws2_32 -ldbghelp -luser32 -lole32 -loleaut32 -lpsapi -lshell32" ;;
+        * )
+            NGPARSE_LIBS="$NGPARSE_LIB -lpthread -ldl -lm" ;;
+    esac
     AC_SUBST([NGPARSE_CFLAGS])
     AC_SUBST([NGPARSE_LIBS])
     AC_SUBST([NGPARSE_DIR])
