@@ -14,7 +14,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+////new for windows///
+#ifdef _WIN32
+#include <io.h>       /* _get_osfhandle */
+#include <windows.h>  /* GetFinalPathNameByHandleA */
+#endif
+//// end new for windows///
 #include "../misc/mktemp.h"
 #include "ngparse.h"  /* the ngparse Rust ABI */
 
@@ -127,6 +132,36 @@ char *ngparse_glue_realpath(FILE *fp, const char *filename)
      * skips, exactly as before. Only resolve a real, named file. */
     if (!filename)
         return NULL;
+/////////new for windows//////////
+#ifdef _WIN32
+    /* Windows has no /proc: recover the path ngspice actually opened from the underlying OS handle via GetFinalPathNameByHandle -- the Win32 equivalent
+     * of reading /proc/self/fd.  Without this, "source foo.net" located through "set sourcepath = (dir)" would hand ngparse the bare relative name, which
+     * does not exist in the process cwd. */
+    if (fp) {
+        HANDLE h = (HANDLE) _get_osfhandle(fileno(fp));
+        if (h != INVALID_HANDLE_VALUE) {
+            char buf[PATH_MAX];
+            DWORD n = GetFinalPathNameByHandleA(h, buf, sizeof buf - 1,
+                                                FILE_NAME_NORMALIZED | VOLUME_NAME_DOS);
+            if (n > 0 && n < sizeof buf) {
+                char *p = buf;
+                /* Strip the extended-length prefix:
+                 * "\\?\UNC\srv\shr\..." -> "\\srv\shr\...",
+                 * "\\?\C:\..."          -> "C:\...". */
+                if (strncmp(p, "\\\\?\\UNC\\", 8) == 0) {
+                    p += 6;
+                    p[0] = '\\';
+                    p[1] = '\\';
+                } else if (strncmp(p, "\\\\?\\", 4) == 0) {
+                    p += 4;
+                }
+                if (access(p, R_OK) == 0)
+                    return copy(p);
+            }
+        }
+    }
+#else
+/////////end new for windows//////////
     if (fp) {
         char proc[64];
         char buf[PATH_MAX];
@@ -145,6 +180,7 @@ char *ngparse_glue_realpath(FILE *fp, const char *filename)
                 return copy(buf);
         }
     }
+#endif
     return copy(filename ? filename : "");
 }
 
