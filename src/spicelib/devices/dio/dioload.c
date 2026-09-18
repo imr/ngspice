@@ -598,7 +598,7 @@ next1:
                     deplcapSW = czeroSW*sargSW;
                 } else {
                     czof2SW=czeroSW/here->DIOtF2SW;
-                    deplchargeSW = czeroSW*here->DIOtF1+czof2SW*(here->DIOtF3SW*(vdx-here->DIOtDepSWCap)+
+                    deplchargeSW = czeroSW*here->DIOtF1SW+czof2SW*(here->DIOtF3SW*(vdx-here->DIOtDepSWCap)+
                                    (model->DIOgradingSWCoeff/(here->DIOtJctSWPot+here->DIOtJctSWPot))*(vdx*vdx-here->DIOtDepSWCap*here->DIOtDepSWCap));
                     deplcapSW = czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vdx/here->DIOtJctSWPot);
                 }

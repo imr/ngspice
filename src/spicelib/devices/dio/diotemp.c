@@ -53,6 +53,7 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     factor = 1.0 + (model->DIOgradCoeffTemp1 * dt)
                  + (model->DIOgradCoeffTemp2 * dt * dt);
     here->DIOtGradingCoeff = model->DIOgradingCoeff * factor;
+    here->DIOtGradingCoeffSW = model->DIOgradingSWCoeff * factor;
 
     /* this part gets really ugly - I won't even try to
      * explain these equations */
@@ -194,6 +195,9 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     /* same for Depletion Capacitance */
     here->DIOtDepCap=model->DIOdepletionCapCoeff*
             here->DIOtJctPot;
+    here->DIOtF1SW=here->DIOtJctSWPot*
+            (1-exp((1-here->DIOtGradingCoeffSW)*xfcs))/
+            (1-here->DIOtGradingCoeffSW);
     here->DIOtDepSWCap=model->DIOdepletionSWcapCoeff*
             here->DIOtJctSWPot;
     /* and Vcrit */

@@ -164,6 +164,7 @@ typedef struct sDIOinstance {
     double DIOtJctSWCap;     /* temperature adjusted sidewall junction capacitance */
     double DIOtTransitTime;  /* temperature adjusted transit time */
     double DIOtGradingCoeff; /* temperature adjusted grading coefficient (MJ) */
+    double DIOtGradingCoeffSW; /* temperature adjusted grading coefficient sidewall (MJSW) */
     double DIOtConductance;    /* temperature adjusted series conductance */
     double DIOtConductance_dT; /* temperature adjusted series conductance temperature derivative */
     double DIOtConductanceSW;    /* temperature adjusted sw series conductance */
@@ -185,6 +186,7 @@ typedef struct sDIOinstance {
     double DIOtVcrit;   /* temperature adjusted V crit */
     double DIOtVcritSW; /* temperature adjusted V crit sidewall*/
     double DIOtF1;      /* temperature adjusted f1 */
+    double DIOtF1SW;    /* temperature adjusted f1 sidewall */
     double DIOtBrkdwnV; /* temperature adjusted breakdown voltage */
 
     double DIOtF2;     /* coeff. for capacitance equation precomputation */
