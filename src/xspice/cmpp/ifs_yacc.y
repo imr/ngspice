@@ -194,17 +194,15 @@ find_conn_ref (char *name)
    return 0;
 }
 
-typedef enum {C_DOUBLE, C_BOOLEAN, C_POINTER, C_UNDEF} Ctype_Class_t;
+typedef enum {C_DOUBLE, C_POINTER, C_UNDEF} Ctype_Class_t;
 
 /*---------------------------------------------------------------------------*/
 static Ctype_Class_t get_ctype_class (Port_Type_t type)
 {
    switch (type) {
    case USER_DEFINED:
-      return C_POINTER;
-      break;
    case DIGITAL:
-      return C_BOOLEAN;
+      return C_POINTER;
       break;
    default:
       return C_DOUBLE;
