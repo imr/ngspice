@@ -171,6 +171,7 @@ static void inp_fix_temper_in_param(struct card *deck);
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn);
 static int inp_vdmos_model(struct card *deck);
 static void inp_check_syntax(struct card *deck);
+static char *skip_token(const char *s);
 
 static char *inp_spawn_brace(char *s);
 
@@ -222,33 +223,27 @@ static void inp_poly_err(struct card *deck);
 #if defined(CIDER) || defined(XSPICE)
 static char *keep_case_of_cider_param(char *buffer)
 {
-    int numq = 0, keep_case = 0;
+    int keep_case = 0;
     char *s = 0;
+
     /* Retain the case of strings enclosed in double quotes for
        output rootfile and doping infile params within Cider .model
        statements. Also for the ic.file filename param in an element
        instantiation statement.
        No nested double quotes.
     */
+
     for (s = buffer; *s && (*s != '\n'); s++) {
-        if (*s == '\"') {
-            numq++; 
+        if (keep_case && *s == '\\' && s[1] == '\"') {
+            /* Escaped quote. */
+
+            ++s;
+            continue;
         }
-    }
-    if (numq == 2) {
-        /* One pair of double quotes */
-        for (s = buffer; *s && (*s != '\n'); s++) {
-            if (*s == '\"') {
-                keep_case = (keep_case == 0 ? 1 : 0); 
-            }
-            if (!keep_case) {
-                *s = tolower_c(*s);
-            }
-        }
-    } else {
-        for (s = buffer; *s && (*s != '\n'); s++) {
+        if (*s == '\"')
+            keep_case ^= 1;
+        if (!keep_case)
             *s = tolower_c(*s);
-        }
     }
     return s;
 }
@@ -274,6 +269,28 @@ static char* make_lower_case_copy(char* inbuf)
         *s = tolower_c(*s);
     }
     return rets;
+}
+
+static int is_special_model(char *buf, const char * const *models)
+{
+    int len;
+    const char *s, * const *ep;
+
+    if (!ciprefix(".model", buf)) {
+        return 0;
+    }
+    s = skip_token(buf);
+    if (!s || !*s)
+        return 0;
+    s = skip_token(s);
+    if (!s || !*s)
+        return 0;
+    for (ep = models; *ep; ep++) {
+        len = strlen(*ep);
+        if (!strncasecmp(s, *ep, len))
+            return 1;
+    }
+    return 0;
 }
 #endif
 
@@ -397,44 +414,25 @@ static int is_cider_model(char *buf)
        Otherwise it will be missed if on a continuation line.
        This should be rare.
     */
-    char *s;
-    if (!ciprefix(".model", buf)) {
-        return 0;
-    }
-    s = make_lower_case_copy(buf);
-    if (!s) return 0;
-    if (strstr(s, "numos") || strstr(s, "numd") || strstr(s, "nbjt")) {
-        tfree(s);
-        return 1;
-    } else {
-        tfree(s);
-        return 0;
-    }
+    static const char * const models[] = {"numos", "numd", "nbjt"};
+
+    return is_special_model(buf, models);
 }
 #endif
 #ifdef XSPICE
 static int is_xspice_model(char* buf)
 {
-    /* Expect filesource, table2d, table3d, d_state, d_source, d_process, d_cosim
-       to be on the same line as the .model.
-       Otherwise it will be missed if on a continuation line.
+    /* Identify XSPICE models with string parameters.
+       Expect identifier to be on the same line as the .model,
+       otherwise it will be missed if on a continuation line.
        This should be rare.
     */
-    char* s;
-    if (!ciprefix(".model", buf)) {
-        return 0;
-    }
-    s = make_lower_case_copy(buf);
-    if (!s) return 0;
-    if (strstr(s, "filesource") || strstr(s, "table2d") || strstr(s, "table3d") || 
-        strstr(s, "d_state") || strstr(s, "d_source") || strstr(s, "d_process") || strstr(s, "d_cosim")) {
-        tfree(s);
-        return 1;
-    }
-    else {
-        tfree(s);
-        return 0;
-    }
+
+    static const char * const models[] =
+        {"filesource", "vcd_source", "table2d", "table3d", "xfer", "d_state",
+         "d_source", "d_process", "d_cosim", 0};
+
+    return is_special_model(buf, models);
 }
 #endif
 
@@ -1310,7 +1308,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
     return cc;
 }
 
-static char *skip_token(char *s)
+static char *skip_token(const char *s)
 {
     s = skip_ws(s);      /* Advance past space chars. */
     s = skip_non_ws(s);  /* Skip over token. */
@@ -3499,68 +3497,50 @@ static char *inp_spawn_brace(char *s)
   non-printable character is the only character in a line,
   replace it by '*'. Leave quotes in .param, .subckt and x
   (subcircuit instance) cards to allow string-valued parameters.
-  If there is a XSPICE code model .model line with file input,
-  keep quotes and case for the file path.
   *-------------------------------------------------------------------------*/
 
 void inp_casefix(char *string)
 {
 #ifdef HAVE_CTYPE_H
+    static const char * const keepers[] =
+        {".param", ".model", ".subckt", "x", 0};
+    const char * const *ep;
+    bool keepquotes = 0;
+
+    if (!string)
+        return; // FIX ME - move to top
+
     /* single non-printable character */
-    if (string && !isspace_c(*string) && !isprint_c(*string) &&
-            (string[1] == '\0' || isspace_c(string[1]))) {
+
+    if (!isspace_c(*string) && !isprint_c(*string) &&
+        (string[1] == '\0' || isspace_c(string[1]))) {
         *string = '*';
         return;
     }
-    if (string) {
-        bool keepquotes;
 
-#ifdef XSPICE
-        char* tmpstr = NULL;
-
-        /* Special treatment of code model file input. */
-
-        if (ciprefix(".model", string))
-            tmpstr = strstr(string, "file=\"");
-
-#endif
-        /* Allow string params */
-        keepquotes = ciprefix(".param", string);
-        /* Allow string param in .subckt lines */
-        keepquotes = keepquotes || (ciprefix(".subckt", string) && (strstr(string, "=\"")));
-        /* Keep quoted strings in X lines */
-        keepquotes = keepquotes || (*string == 'x' && strchr(string, '\"'));
-
-        while (*string) {
-#ifdef XSPICE
-            /* exclude file name inside of quotes from getting lower case,
-               keep quotes to enable spaces in file path */
-            if (string == tmpstr) {
-                string = string + 6; // past first quote
-                while (*string && *string != '"')
-                    string++;
-                if (*string)
-                    string++; // past second quote
-                if (*string == '\0')
-                    break;
-            }
-#endif
-            if (*string == '"') {
-                if (!keepquotes)
-                    *string++ = ' ';
-                while (*string && *string != '"')
-                    string++;
-                if (*string == '\0')
-                    continue; /* needed if string is "something ! */
-                if (*string == '"' && !keepquotes)
-                    *string = ' ';
-            }
-            if (*string && !isspace_c(*string) && !isprint_c(*string))
-                *string = '_';
-            if (isupper_c(*string))
-                *string = tolower_c(*string);
-            string++;
+    for (ep = keepers; *ep; ep++) {
+        if (ciprefix(*ep, string)) {
+            keepquotes = true;
+            break;
         }
+    }
+
+    while (*string) {
+        if (*string == '"') {
+            if (!keepquotes)
+                *string++ = ' ';
+            while (*++string && *string != '"')
+                ;
+            if (*string == '\0')
+                break; /* needed if string is "something ! */
+            if (!keepquotes)
+                *string++ = ' ';
+        }
+        if (*string && !isspace_c(*string) && !isprint_c(*string))
+            *string = '_';
+        if (isupper_c(*string))
+            *string = tolower_c(*string);
+        string++;
     }
 #endif
 }
