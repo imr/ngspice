@@ -5,16 +5,19 @@ a MOS transistor, for monitoring (reading and integrating) the
 stress voltages on the device.
 
 To start a degradation sim, put flag 'de' to ngbehavior, e.g. as
+
 set ngbehavior=hsdea
+
 in .spiceinit.
 
-Two transitor model wrappers are provided to add the degradation to a standard
-transitor model: If the ngspice variable 'deginstance' is set in .spiceinit (spice.rc)
+Two transistor model extensions are provided to add the degradation to a standard
+transistor model: If the ngspice variable 'deginstance' is set in .spiceinit (spice.rc)
 or spinit, then instance parameters factuo (Mobilitity factor) and delvto (delta Vt0)
-are used. If not set, a subcurcuit with a small resistance in series to the source
-connection is use to measure the current, which is the multplied by the degradation
-factor and subtracted from the measured drain current. The delta VGS is added by
-a voltage source in series to the gate connection.
+are used. If not set, a subcircuit acts as a wrapper to the standard transistor instance
+with a small resistance in series to the source connection to measure the transistor
+current, which is then multplied by the degradation factor and subtracted from the
+measured drain current. The delta VGS is added by a voltage source in series to the
+gate connection.
 
 Degradation model parameters have to be provided, as shown in the example
 file ngspice-master/examples/degradation/aging_par_ng.scs, starting with
@@ -24,14 +27,16 @@ file ngspice-master/examples/degradation/aging_par_ng.scs, starting with
 + <other parameters>
 
 A code model monitor like
+
 adegmon1 %v([z a vss vss]) mon degmon1
 .model degmon1 degmon (tfuture=315336e4 l=0.15e-6 devmod="sg13_lv_nmos")
+
 will automatically be added to each MOS device (here of type sg13_lv_nmos).
 A .agemodel command with devmodel=sg13_lv_nmos is required (see aging_par_ng.scs).
 
 The simulation model names by 'simmodel=HCI1' is coded into the above
 cited code model monitor (see ngspice-master\src\xspice\icm\xtradev\degmonitor
-with its 2 files cfunc.mod and ifspec.ifs.
+with its 2 files cfunc.mod and ifspec.ifs).
 
 The output is a list of the 3 degradation parameters provided by the HCI1 model.
 
