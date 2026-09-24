@@ -31,7 +31,7 @@ Instead of NULL, one may give a control signal to aseegen1, to start the pulse s
 After a transient simulation, plotting the data output versus a non-radiated device
 may reveal the SEE influence.
 
-Several examples are gieven in ./src/axamples/xspice/see: inverters, SRAM cell, opamp,
+Several examples are given in ./src/axamples/xspice/see: inverters, SRAM cell, opamp,
 also as loop with varying LET to detect the threshold. 
 
 As literature please see for example
@@ -227,3 +227,10 @@ Example ngspice usage (without control, ctrl replaced by NULL, parameters as off
 
 aseegen2 NULL mon [%id(n1 m1) %id(n5 n6) %id(n6 n7) %i(isingle) ] seemod2
 .model seemod2 seegen (tdelay = 0 tperiod=0 ctrlthres=0.5 inull=0 tfall=500p trise=20p perlim=FALSE)
+
+Examples may use devices from the Open IHP PDK, thus its installation is required before running
+a circuit simulation.
+Clone the PDK from https://github.com/IHP-GmbH/IHP-Open-PDK. 
+Set the environmental variables PDK (to ihp-sg13g2) and PDK_ROOT (to the location of IHP-Open-PDK, e.g. D:\Spice_general\IHP-Open-PDK).
+
+
