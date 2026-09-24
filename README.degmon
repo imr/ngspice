@@ -42,3 +42,6 @@ The output is a list of the 3 degradation parameters provided by the HCI1 model.
 
 Examples are provided in ngspice-master\examples\degradation
 
+As the examples are using the Open PDK from IHP, you will have to install it before you may run them.
+Clone the PDK from https://github.com/IHP-GmbH/IHP-Open-PDK. 
+Set the environmental variables PDK (to ihp-sg13g2) and PDK_ROOT (to the location of IHP-Open-PDK, e.g. D:\Spice_general\IHP-Open-PDK).
