@@ -205,30 +205,30 @@ NON-STANDARD FEATURES
 void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 {
     double *out;                 /* pointer to the output */
-	double *in;                  /* pointer to the input */
-	double in_offset;            /* input offset */
-	double *gain;                /* pointer to the gain */
-	double **den_coefficient;    /* dynamic array that holds the denominator
-									coefficients */
-	double **old_den_coefficient;/* dynamic array that holds the old 
-									denonminator coefficients */
-	double **num_coefficient;    /* dynamic array that holds the numerator
-									coefficients */
-	double **old_num_coefficient;/* dynamic array that holds the old numerator
-									coefficients */
-	double factor;               /* gain factor in case the highest
-									denominator coefficient is not 1 */
+    double *in;                  /* pointer to the input */
+    double in_offset;            /* input offset */
+    double *gain;                /* pointer to the gain */
+    double **den_coefficient;    /* dynamic array that holds the denominator
+                                    coefficients */
+    double **old_den_coefficient;/* dynamic array that holds the old 
+                                    denonminator coefficients */
+    double **num_coefficient;    /* dynamic array that holds the numerator
+                                    coefficients */
+    double **old_num_coefficient;/* dynamic array that holds the old numerator
+                                    coefficients */
+    double factor;               /* gain factor in case the highest
+                                    denominator coefficient is not 1 */
     double **integrator;         /* outputs of the integrators       */
-	double **old_integrator;     /* previous integrator outputs      */
-	double null;                 /* dummy pointer for use with the
-									integrate function               */
-	double pout_pin;             /* partial out wrt in               */
-	/*double total_gain;*/           /* not used, currently-used with ITP stuff */
+    double **old_integrator;     /* previous integrator outputs      */
+    double null;                 /* dummy pointer for use with the
+                                    integrate function               */
+    double pout_pin;             /* partial out wrt in               */
+    /*double total_gain;*/           /* not used, currently-used with ITP stuff */
     double temp;                 /* temporary variable used with the 
-									correct type of AC value */
-	double frac;                 /* holds fractional part of a divide */
-	double divide_integer;       /* integer part of a modf used in AC */
-	double denormalized_freq;    /* denormalization constant...the nominal
+                                    correct type of AC value */
+    double frac;                 /* holds fractional part of a divide */
+    double divide_integer;       /* integer part of a modf used in AC */
+    double denormalized_freq;    /* denormalization constant...the nominal
                                     corner or center frequencies specified
                                     by the model coefficients will be 
                                     denormalized by this amount. Thus, if
@@ -237,14 +237,14 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
                                     a value of 1000.0 for denormalized_freq
                                     will cause the model to shift the corner
                                     freq. to 2.0 * pi * 1000.0 */
-	double *old_gain;            /* pointer to the gain if the highest order
-								    denominator coefficient is not factored out */ 	
+    double *old_gain;            /* pointer to the gain if the highest order
+                                    denominator coefficient is not factored out */ 	
 
     Mif_Complex_t ac_gain, acc_num, acc_den;
                                                    
     int i;                       /* generic loop counter index */
-	int den_size;                /* size of the denominator coefficient array */
-	int num_size;                /* size of the numerator coefficient array */ 
+    int den_size;                /* size of the denominator coefficient array */
+    int num_size;                /* size of the numerator coefficient array */ 
 
     char *num_size_error="\n***ERROR***\nS_XFER: Numerator coefficient array size greater than\ndenominator coefficiant array size.\n";
 
@@ -274,12 +274,6 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
        
         /* Allocate rotational storage for integrator outputs, in & out */
 
-
-/*****  The following two lines may be unnecessary in the final version *****/
-
-/*  We have to allocate memory and use cm_analog_alloc, because the ITP variables
-	are not functional */
-
         integrator     = (double **) calloc((size_t) den_size, sizeof(double *));
         old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
 
@@ -294,14 +288,9 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         for (i=0; i < (2*den_size + num_size + 3); i++)
               cm_analog_alloc(i,sizeof(double));
 
-   /*     ITP_VAR_SIZE(den) = den_size;  */
 
-     /*   gain = (double *) calloc(1,sizeof(double));
-        ITP_VAR(total_gain) = gain;
-        ITP_VAR_SIZE(total_gain) = 1.0;  */
+        // Retrieve pointers
 
-		// Retrieve pointers
-        
         for (i=0; i<den_size; i++) {
             integrator[i]     = (double *) cm_analog_get_ptr(i,0);
             old_integrator[i] = (double *) cm_analog_get_ptr(i,0);
@@ -322,10 +311,10 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
         gain = (double *) cm_analog_get_ptr(2*den_size+num_size+2,0);
 
-    }else { /* Allocation was not necessary...retrieve previous values */
-    
+    } else { /* Allocation was not necessary...retrieve previous values */
+
         /* Set pointers to storage locations for in, out, and integrators...*/
- 
+
         integrator = (double **) calloc((size_t) den_size, sizeof(double *));
         old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
 
@@ -336,40 +325,35 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         }
         out = (double *) cm_analog_get_ptr(2*den_size+num_size,0);   
         in = (double *) cm_analog_get_ptr(2*den_size+num_size+1,0);   
-    
-    
+
         /* Set den_coefficient & gain pointers to ITP values */
         /* for denominator coefficients & gain...      */
 
         old_den_coefficient = (double **) calloc((size_t) den_size, sizeof(double *));
         den_coefficient = (double **) calloc((size_t) den_size, sizeof(double *));
 
-		for(i=den_size;i<2*den_size;i++){
+        for(i=den_size;i<2*den_size;i++){
             old_den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,1);
-		    den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,0);
+            den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,0);
             *(den_coefficient[i-den_size]) = *(old_den_coefficient[i-den_size]);
-		} 
+        }
 
         num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
-		old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
+        old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
 
-		for(i=2*den_size;i<2*den_size+num_size;i++){
-		    old_num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,1);
-			num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,0);
-			*(num_coefficient[i-2*den_size]) = *(old_num_coefficient[i-2*den_size]);
-		} 
+        for(i=2*den_size;i<2*den_size+num_size;i++){
+            old_num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,1);
+            num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,0);
+            *(num_coefficient[i-2*den_size]) = *(old_num_coefficient[i-2*den_size]);
+        }
 
         /* gain has to be stored each time since it could possibly change
-		   if the highest order denominator coefficient isn't zero.  This
-		   is a hack until the ITP variables work */
+           if the highest order denominator coefficient isn't zero. */
 
         old_gain = (double *) cm_analog_get_ptr(2*den_size+num_size+2,1);  
         gain = (double *) cm_analog_get_ptr(2*den_size+num_size+2,0);  
 
-		*gain = *old_gain;
-
-        /* gain = ITP_VAR(total_gain); */
-    
+        *gain = *old_gain;
     }
 
 
@@ -384,15 +368,13 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
                                          /* actual highest integrator...it  */
                                          /* is NOT a true state variable.   */
             if ( PARAM_NULL(int_ic) ) {
-                // *(integrator[i]) = *(old_integrator[i]) = PARAM(int_ic[0]);
-				*(integrator[i]) = *(old_integrator[i]) = 0;
+                *(integrator[i]) = *(old_integrator[i]) = 0;
             }                                                
             else {
                 *(integrator[i]) = *(old_integrator[i]) = 
                                    PARAM(int_ic[den_size - 2 - i]);
             }
         }
-
 
         /*** Read in coefficients and denormalize, if required ***/
 
@@ -412,13 +394,10 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
             }
         }
 
-
-
         /* Test denominator highest order coefficient...if that value   */
         /* is other than 1.0, then divide all denominator coefficients  */
         /* and the gain by that value...                                */
-		// if ( (factor = PARAM(den_coeff[den_size-1])) != 1.0 ) {
-		if ( (factor = *den_coefficient[den_size-1]) != 1.0 ) {
+        if ( (factor = *den_coefficient[den_size-1]) != 1.0 ) {
             for (i=0; i<den_size; i++) {
                 *(den_coefficient[i]) = *(den_coefficient[i]) / factor;
             }
@@ -430,49 +409,9 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         }
         
     }
-                                 
 
     /**** DC & Transient Analyses **************************/
     if (ANALYSIS != MIF_AC) {     
-
-        /**** DC Analysis - Not needed JPM 10/29/91 *****************/
-/*        if (ANALYSIS == MIF_DC) {    
-            
-            ?* Test to see if a term exists for the zero-th order
-               denom coeff...       
-
-            ?* division by zero if output              
-            ?* num_coefficient[0]/den_coefficient[0],  
-            ?* so output init. conds. instead...       
-            if ( 0.0 == *(den_coefficient[0])) {    
-                                            
-                                            
-                *out = 0.0;
-                for (i=0; i<num_size; i++) {
-                    *out = *out + ( *(old_integrator[i]) * 
-                                    *(num_coefficient[i]) ); 
-                }
-                *out = *gain * *out;
-                pout_pin = *(old_integrator[1]);
-
-            }
-
-            ?* Zero-th order den term != 0.0, so output 
-            ?*    num_coeff[0]/den_coeff[0]...          
-            else {                      
-                                        
-                *out = *gain * ( INPUT(in) + 
-                                 in_offset) * ( *(num_coefficient[0]) /
-                                                *(den_coefficient[0]) );
-                pout_pin = 0.0;
-            }
-        }
- 
-
-
-        else {   
-*/
-
 
         /**** Transient & DC Analyses ****************************/
 
@@ -481,8 +420,6 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
              offset and gain....                         ***/
 
         *in = *gain * (INPUT(in)+in_offset);
-
-
 
         /*** Obtain the "new" input to the Controller 
              Canonical topology, then propagate through
@@ -501,9 +438,6 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
                           *(integrator[den_size-1]) - 
                           *(old_integrator[i]) * *(den_coefficient[i]);
         }
-
-    
- 
 
        /* Propagate the new input through each integrator in succession. */
         
@@ -600,13 +534,13 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         AC_GAIN(out,in) = ac_gain;
     }
 
-	  /* free all allocated memory */
-		if(integrator) free(integrator);
-		if(old_integrator) free(old_integrator);
-		if(den_coefficient) free(den_coefficient);
-		if(old_den_coefficient) free(old_den_coefficient);
-		if(num_coefficient) free(num_coefficient);
-		if(old_num_coefficient) free(old_num_coefficient);
+    /* free all allocated memory */
+    if(integrator) free(integrator);
+    if(old_integrator) free(old_integrator);
+    if(den_coefficient) free(den_coefficient);
+    if(old_den_coefficient) free(old_den_coefficient);
+    if(num_coefficient) free(num_coefficient);
+    if(old_num_coefficient) free(old_num_coefficient);
 }
 
 
