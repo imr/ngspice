@@ -246,9 +246,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
     int den_size;                /* size of the denominator coefficient array */
     int num_size;                /* size of the numerator coefficient array */ 
 
-    char *num_size_error="\n***ERROR***\nS_XFER: Numerator coefficient array size greater than\ndenominator coefficiant array size.\n";
-
-
+    char *num_size_error="\nError in code model S_XFER:\n Numerator coefficient array size greater than\n denominator coefficiant array size.\n";
+    char *int_ic_size_error="Error in code model S_XFER:\n Integrator initial coefficient array size not equal to\n denominator coefficiant array size - 1.\n";
 
     /** Retrieve frequently used parameters (used by all analyses)... **/
 
@@ -264,7 +263,14 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
     if ( num_size > den_size ) {
         cm_message_send(num_size_error);
-        return;
+        cm_cexit(1);
+    }
+
+    if (!(PARAM_NULL(int_ic))) {
+        if (PARAM_SIZE(int_ic) != den_size - 1) {
+            cm_message_send(int_ic_size_error);
+            cm_cexit(1);
+        }
     }
 
     /** Test for INIT; if so, allocate storage, otherwise, retrieve previous       **/
