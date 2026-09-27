@@ -414,7 +414,7 @@ static int is_cider_model(char *buf)
        Otherwise it will be missed if on a continuation line.
        This should be rare.
     */
-    static const char * const models[] = {"numos", "numd", "nbjt"};
+    static const char * const models[] = {"numos", "numd", "nbjt", 0};
 
     return is_special_model(buf, models);
 }
