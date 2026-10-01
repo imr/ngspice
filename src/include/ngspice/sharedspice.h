@@ -316,15 +316,40 @@ typedef int (GetISRCData)(double*, double, char*, int, void*);
 */
 
 /* ask for new delta time depending on synchronization requirements */
+
 typedef int (GetSyncData)(double, double*, double, int, int, int, void*);
 /*
-   double      actual time (ckt->CKTtime)
-   double*     delta time (ckt->CKTdelta)
-   double      old delta time (olddelta)
-   int         redostep (as set by ngspice)
+   double      actual time (ckt->CKTtime), the end time of the previous
+               (loc == 0) or current (loc - 1) step.
+   double*     pointer to ckt->CKTdelta, the length of the current step.
+               The user may set a new ckt->CKTdelta, smaller than that
+               suggested by ngspice. That may be necessary after failed
+               convergence or excess truncation has been detected
+               (redostep = 1) although then the newly suggested ckt-CKTdelta
+               has already been divided by 8 and integration order decreased.
+   double      old delta time (olddelta) or zero.
+   int         if 0, converged,
+               if 1, either no convergence or excess truncation error.
+               The step must be redone with new ckt->CKTdelta.
+               If 1, loc is also 1.
    int         identification number of calling ngspice shared lib
-   int         location of call for synchronization in dctran.c
+   int         location of function call in dctran.c:
+                0: after breakpoint handling with new step starting;
+                1: at end of loop, solver processing for the step complete.
+                   If !redostep, step may be accepted.
    void*       return pointer received from caller
+
+   The return value is ignored when loc is zero or redo is set, otherwise:
+   return value 0 - normal continuation with next time step.
+   return value 1 - continue processing the current time step.
+                    For time synchronization, if the actual, converged
+                    ckt->CKTtime is beyond the optimum common time,
+                    choose our own ckt->CKTdelta, smaller than olddelta,
+                    and return 1.
+
+    Whereas redostep is set by ngspice, the user may decide via the callback
+    to redo the most recent step for other reasons. This is accomplished by
+    returning a 1 with the callback function.
 */
 
 #ifdef XSPICE

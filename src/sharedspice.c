@@ -2417,40 +2417,48 @@ getisrcval(double time, char *iname)
     }
 }
 
+/* sharedsync(double *pckttime, double *pcktdelta, double olddelta,
+              double finalt, double delmin,
+              int redostep, int *rejected, int loc).
+    Time control with user callback.
 
-/*
-    return value 1: continue with new time step, ckt->CKTtime + ckt->CKTdelta will be
-                    done next automatically.
-                    For time synchronization we may choose our own ckt->CKTdelta, being
-                    smaller than the one suggested by ngspice.
-    return value 0: will redo the most recent time step. We may subtract olddelta and
-                    continue with new ckt-CKTdelta.
-                    This is necessary if non-convergence has been detected (redostep = 1).
-                    The newly suggested ckt-CKTdelta has already been divided by 8.
-                    This is also enforced if the truncation error is too large.
-                    The newly suggested ckt-CKTdelta may be accompanied by an increase
-                    of integration order.
-                    For time synchronization, if the actual, converged ckt-CKTtime is
-                    beyond the optimum common time, we subtract olddelta and then choose
-                    our own ckt->CKTdelta, being smaller than olddelta.
-    Whereas redostep is set by ngspice, the user may decide via the callback function,
-    to redo the most recent step because of other reasons. This is accomplished by
-    returning a 1 with the callback function.
+    pckttime  pointer to ckt->CKTtime, the end time of the previous (loc == 0)
+              or current step.
+    cktdelta  pointer to ckt->CKTdelta, the length of the current step.
+              The user may set a new ckt->CKTdelta, smaller than that
+              suggested by ngspice. That may be necessary after failed
+              convergence or excess truncation has been detected (redostep = 1)
+              although then the newly suggested ckt-CKTdelta has already been
+              divided by 8. Then the newly suggested ckt-CKTdelta
+              is accompanied by an decrease of integration order.
 
-*/
-
-/*
-    ckttime   pointer to ckt->CKTtime, which already has been used trying to achieve
-              convergence, after olddelta had been added in the previous step.
-    cktdelta  pointer to newly defined ckt->CKTdelta, e.g. by recognizing truncation errors
     olddelta  old ckt->CKTdelta, has already been added in the previous step.
+              Updatted after the (loc == 0) call and zero in it.  FIX?
     finalt    final time CKTfinaltime
     delmin    minimum delta CKTdelmin
     redostep  if 0, converged,
               if 1, either no convergence, need to redo with new ckt->CKTdelta
               or ckt->CKTdelta has been reduced by truncation errors too large.
-    rejected  pointer to ckt->CKTstat->STATrejected, counts rejected time points.
-    loc       location of function call in dctran.c: 0: after breakpoint handling, 1: at end of for loop
+              If 1, loc is also 1.
+    rejected  pointer to ckt->CKTstat->STATrejected, that counts
+              rejected time points.
+    loc       location of function call in dctran.c:
+                0: after breakpoint handling with new step starting;
+                1: at end of loop, solver processing for the step complete.
+                   If !redostep, step may be accepted.
+
+    The return value is ignored when loc is zero, otherwise
+    return value 0 - normal continuation with next or re-done time step.
+    return value 1 - restart processing the current time step
+                     with the user's ckt->CKTdelta, assumed smaller than
+                     olddelta. Used for time synchronization,
+                     if the actual, converged ckt->CKTtime is beyond
+                     the optimum common time. Recovery from convergence
+                     failure is the same.
+
+    Whereas redostep is set by ngspice, the user may decide via the callback
+    to redo the most recent step for other reasons. This is accomplished by
+    returning a 1 with the callback function.
 */
 
 int
