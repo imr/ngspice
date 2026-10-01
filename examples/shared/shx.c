@@ -91,7 +91,7 @@ bool not_yet = true;
 
 static unsigned int sd_limit = 10, sd_count, sd_list;
 static unsigned int se_limit = 10, se_count;
-static unsigned int sq_limit = 10, sq_count, sq_ask;
+static unsigned int sq_limit = 10, sq_count, sq_ask, sq_cask;
 
 /* Automatic ramp of source query replies. */
 
@@ -224,6 +224,7 @@ static void help(char *cmd) {
          "  /aplot\t\tList plot names.\n"
          "  /avec <plot_name>\tList vectors in plot.\n"
          "  /bgr\t\t\tQuery background thread.\n"
+         "  /cask\t\t\tStop and ask for action at sync call (toggles).\n"
          "  /cplot\t\tShow name of current plot.\n"
          "  /dlim <limit>\t\tSet output limit for SendData CB.\n"
          "  /elim <limit>\t\tSet output limit for SendEvtData CB.\n"
@@ -236,7 +237,11 @@ static void help(char *cmd) {
          "\t\t\tAuto-ramp sources\n"
          "  /vec <vector>\t\tQuery vector.\n"
          "  /xnode <node ...>\tRequest raw event callbacks for event node.\n"
-         "All other input is passed to Ngspice.\n");
+         "All other input is passed to Ngspice.\n"
+#if !defined(_MSC_VER)
+         "To send an absolute path to Ngspice, start with \"//\"."
+#endif
+         );
 }
 
 static void aevt(char *cmd) {
@@ -281,6 +286,12 @@ static void cplot(char *cmd) {
     printf("Current plot: %s\n", ngSpice_CurPlot_handle());
 }
 
+static void cask(char *cmd) {
+    sq_cask ^= 1;
+    printf("Prompting at sync points is now %s.\n",
+           sq_cask ? "on" : "off");
+}
+
 static void dlim(char *cmd) {
     sd_limit = atoi(cmd);
     sd_count = 0;
@@ -313,8 +324,6 @@ static void reset(char *cmd) {
 }
 
 static void sask(char *cmd) {
-    pvector_info vp;
-
     sq_ask ^= 1;
     printf("Prompting for V/ISRC values is now %s.\n",
            sq_ask ? "on" : "off");
@@ -405,7 +414,7 @@ static void local(char *cmd)
         const char *cmd;
         void       (*fn)(char *);
     }     table[] = { E(help),          // First, so that just "/" works.
-                      E(aevt), E(avec), E(aplot), E(bgr), E(cplot),
+                      E(aevt), E(avec), E(aplot), E(bgr), E(cask), E(cplot),
                       E(dlim), E(elim), E(lvals), E(reset), E(sask), E(slim),
                       E(sramp), E(vec), E(xnode),
                      { NULL, NULL }};
@@ -484,7 +493,7 @@ int main(int argc, char **argv)
 
         /* Check for a locally-executed command. */
 
-        if (comd[0] == '/') {
+        if (comd[0] == '/' && comd[1] != '/') {
             local(comd + 1);
             continue;
         }
@@ -499,6 +508,7 @@ int main(int argc, char **argv)
            may set no_bg to 0 already here. Risk: if starting the simulation fails, we never
            may leave the waiting loop. As an alternative callback function ng_thread_runs()
            will set no_bg to 0. This has to happen within the first 200ms waiting time. */
+
         if (cieq("bg_run", comd))
             no_bg = false;
 
@@ -660,13 +670,14 @@ static int ng_rawevt(double time, void *valp, void *userData, int last)
 
 static int ng_srcdata(double *vp, double time, char *source, int id, void *udp)
 {
-    if (sq_limit > sq_count) {
+    if (sq_ask || sq_limit > sq_count) {
         ++sq_count;
         printf("V or ISRC request: source %s at time %g\n", source, time);
         if (sq_ask) {
-            getLine("Value: ", comd, sizeof(comd));
+            if (getLine("Value: ", comd, sizeof comd))
+                exit(0);;
             if (!strncmp("/s", comd, 2)) {
-                /* Allow "/sask" as respone. */
+                /* Allow "/sask" as response. */
 
                 sq_ask = 0;
             } else {
@@ -695,14 +706,41 @@ static int ng_srcdata(double *vp, double time, char *source, int id, void *udp)
 }
 
 static int ng_syncdata(double time, double *deltap, double old_delta,
-                       int redo, int loc, int id, void *udp)
+                       int redo, int id, int loc, void *udp)
 {
-    if (sd_limit > sd_count) {
+    float new_delta;
+    int   rv;
+
+    if (sq_ask || sd_limit > sd_count) {
         ++sd_count;
-        printf("Sync data redo %d delta %g (old %g) location %d at %g\n",
-               redo, *deltap, old_delta, loc, time);
+        printf("Sync data loc %d redo %d delta %g (old %g) at %g\n",
+               loc, redo, *deltap, old_delta, time);
     }
     sim_time = time;
+    if (sq_cask) {
+        if (getLine("Sync - enter return value and new delta: ",
+                    comd, sizeof comd)) {
+            exit(0);
+        }
+        if (!strncmp("/c", comd, 2)) {
+            /* Allow "/cask" as response. */
+
+            sq_cask = 0;
+            return 0;
+        } else {
+            switch (sscanf(comd, "%d %g", &rv, &new_delta)) {
+            case 1:
+                return rv;
+                break;
+            case 2:
+                *deltap = new_delta;
+                return rv;
+                break;
+            default:
+                return 0;
+            }
+        }
+    }
     return 0;
 }
 
@@ -783,10 +821,8 @@ ciprefix(const char *p, const char *s)
     return (true);
 }
 
-/* read a line from console input
-   source:
-   https://stackoverflow.com/questions/4023895/how-to-read-string-entered-by-user-in-c
-   */
+/* Read a line from console input. */
+
 #define OK       0
 #define NO_INPUT 1
 
