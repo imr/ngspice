@@ -451,8 +451,6 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
             cm_analog_integrate(*(integrator[i]),(integrator[i-1]),&null);
         }
 
-
-
         /* Calculate the output based on the new integrator values... */
 
         *out = 0.0;
@@ -460,15 +458,16 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
             *out = *out + ( *(integrator[i]) * 
                             *(num_coefficient[i]) );
         }
-        pout_pin = *(integrator[1]);
-        
+
+        if (den_size < 2)
+            pout_pin = 0;
+        else
+            pout_pin = *(integrator[1]);
 
         /** Output values for DC & Transient **/
 
         OUTPUT(out) = *out;          
         PARTIAL(out,in) = pout_pin; 
-        // cm_analog_auto_partial(); // Removed again. Seems to have problems.
-
     }
 
     /**** AC Analysis ************************************/
