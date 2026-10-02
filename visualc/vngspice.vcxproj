@@ -307,8 +307,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -361,8 +361,8 @@ copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -521,8 +521,8 @@ copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -575,8 +575,8 @@ copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -685,8 +685,8 @@ copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -802,8 +802,8 @@ copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
