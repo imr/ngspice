@@ -79,19 +79,14 @@ initw(void)
     double totsqr, nomsqr;
     unsigned int coa;
 
-    /* initialize the uniform generator */
-    srand((unsigned int) getpid());
-    // srand(17);
-    TausSeed();
-
     ScaleGauss = 1.;
     newpools = 1;
 
     /* set up the two pools */
-    pool1 = TMALLOC(double, n);
-    pool2 = TMALLOC(double, n);
-    addrif = TMALLOC(unsigned int, (n + NOTRANS));
-    addrib = TMALLOC(unsigned int, (n + NOTRANS));
+    pool1 = TREALLOC(double, pool1, n);
+    pool2 = TREALLOC(double, pool2, n);
+    addrif = TREALLOC(unsigned int, addrif, (n + NOTRANS));
+    addrib = TREALLOC(unsigned int, addrib, (n + NOTRANS));
 
     /* fill the first pool with normally distributed values */
     PolarGauss(&pool1[0], &pool1[1]);

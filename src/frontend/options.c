@@ -226,7 +226,7 @@ inp_getopts(struct card *deck)
         next = dd->nextcard;
         /* .option with params is excluded here. These options will be handled
         after parameter substitution by INP2dot(), dot_options(), and INPdoOpts(). */
-        if (ciprefix(".opt", dd->line) && !strchr(dd->line, '{')) {
+        if ((ciprefix(".opt", dd->line) && !strchr(dd->line, '{')) || ciprefix("option", dd->line)) {
             inp_casefix(dd->line);
             if (last)
                 last->nextcard = dd->nextcard;

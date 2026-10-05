@@ -467,6 +467,9 @@ eval_opt(struct card* deck)
                     has_seed = TRUE;
                 }
             }
+#if defined(WaGauss)
+            initw();
+#endif
             tfree(token);
         }
 
@@ -626,13 +629,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     if (ciprefix("*ng_script", deck->line))
         comfile = TRUE;
 
+    /* Extract the .option or option lines from the deck into 'options',
+        and remove them from the deck. Exceptions are .option with params. */
+    options = inp_getopts(deck);
+    /* Check for .option seed=[val|random] and set the random number generator.
+        Check for .option cshunt=val and set a global variable cshunt_value */
+    eval_opt(options);
+
     if (!comfile) {
-        /* Extract the .option lines from the deck into 'options',
-           and remove them from the deck. Exceptions are .option with params. */
-        options = inp_getopts(deck);
-        /* Check for .option seed=[val|random] and set the random number generator.
-           Check for .option cshunt=val and set a global variable cshunt_value */
-        eval_opt(options);
         /* copy a deck before subckt substitution. */
         realdeck = inp_deckcopy(deck);
 

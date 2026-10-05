@@ -318,7 +318,7 @@ com_sseed(wordlist *wl)
     }
 
     if (seedinfo)
-        printf("\nSeed value for random number generator is set to %d\n", newseed);
+        fprintf(stdout, "\nNote: Seed value for random number generator is set to %d\n", newseed);
 }
 
 
