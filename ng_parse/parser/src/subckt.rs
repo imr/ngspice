@@ -241,8 +241,53 @@ fn split_positional(rest: &str) -> (Vec<String>, &str) {
             j
         }
     };
-    let positional = rest[..split].split_whitespace().map(str::to_string).collect();
+    let positional = split_ws_keep_exprs(&rest[..split]);
     (positional, &rest[split..])
+}
+
+/// Split on whitespace while keeping a quoted (`'...'`, `"..."`) or braced
+/// (`{...}`) expression as ONE token even when it contains spaces. A behavioral
+/// value like `'max(min(a,b), c)'` (TSMC resistor models) must survive as a
+/// single positional token; plain `split_whitespace()` shatters it at the first
+/// embedded space, truncating the equation. Bare parens are deliberately NOT
+/// tracked, so `POLY( 2 )` and similar still split exactly as before.
+fn split_ws_keep_exprs(s: &str) -> Vec<String> {
+    let b = s.as_bytes();
+    let n = b.len();
+    let mut toks = Vec::new();
+    let mut i = 0;
+    while i < n {
+        while i < n && (b[i] as char).is_whitespace() {
+            i += 1;
+        }
+        if i >= n {
+            break;
+        }
+        let start = i;
+        let mut q = 0u8;
+        let mut brace = 0i32;
+        while i < n {
+            let c = b[i];
+            if q != 0 {
+                if c == q {
+                    q = 0;
+                }
+            } else if c == b'\'' || c == b'"' {
+                q = c;
+            } else if c == b'{' {
+                brace += 1;
+            } else if c == b'}' {
+                if brace > 0 {
+                    brace -= 1;
+                }
+            } else if brace == 0 && (c as char).is_whitespace() {
+                break;
+            }
+            i += 1;
+        }
+        toks.push(s[start..i].to_string());
+    }
+    toks
 }
 
 /// Is `s` a single identifier-like token — a string/keyword model value such as
