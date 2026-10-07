@@ -39,6 +39,85 @@ fn part_str(p: &Part) -> String {
     }
 }
 
+/// Extract identifier-like tokens (param names, function names) from an expression
+/// string, normalized via `key()`. Used only for the global/local draw
+/// classification in `compute_global_shared`.
+fn ident_tokens(s: &str) -> HashSet<String> {
+    let b = s.as_bytes();
+    let mut out = HashSet::new();
+    let mut i = 0;
+    while i < b.len() {
+        let c = b[i] as char;
+        if c.is_ascii_alphabetic() || c == '_' {
+            let st = i;
+            while i < b.len() && {
+                let d = b[i] as char;
+                d.is_ascii_alphanumeric() || d == '_'
+            } {
+                i += 1;
+            }
+            out.insert(key(&s[st..i]));
+        } else {
+            i += 1;
+        }
+    }
+    out
+}
+
+/// Does this rhs contain a statistical draw function literally?
+fn rhs_has_draw(s: &str) -> bool {
+    let l = s.to_ascii_lowercase();
+    l.contains("agauss(")
+        || l.contains("gauss(")
+        || l.contains("aunif(")
+        || l.contains("unif(")
+        || l.contains("limit(")
+}
+
+/// Classify the GLOBAL statistical params (shared process draws) out of the
+/// top-level `.param` set. A param is global-shared iff it is (transitively) a
+/// statistical draw AND it is referenced by at least one OTHER top-level `.param`.
+/// See the `global_shared` field of `SubcktExpander` for the full rationale.
+///
+/// `raw` is the top-level param map (name -> rhs), already `key()`-normalized.
+fn compute_global_shared(raw: &HashMap<String, String>) -> HashSet<String> {
+    // 1. Statistical closure: params that literally draw, plus any param whose rhs
+    //    (transitively) references a statistical param.
+    let mut stat: HashSet<String> = raw
+        .iter()
+        .filter(|(_, rhs)| rhs_has_draw(rhs))
+        .map(|(n, _)| key(n))
+        .collect();
+    loop {
+        let mut added = false;
+        for (n, rhs) in raw {
+            let kn = key(n);
+            if stat.contains(&kn) {
+                continue;
+            }
+            if ident_tokens(rhs).iter().any(|id| stat.contains(id)) {
+                stat.insert(kn);
+                added = true;
+            }
+        }
+        if !added {
+            break;
+        }
+    }
+    // 2. Params referenced by at least one OTHER top-level param's rhs.
+    let mut referenced: HashSet<String> = HashSet::new();
+    for (owner, rhs) in raw {
+        let ko = key(owner);
+        for id in ident_tokens(rhs) {
+            if id != ko && raw.contains_key(&id) {
+                referenced.insert(id);
+            }
+        }
+    }
+    // 3. Global-shared = statistical AND referenced-by-top-level.
+    stat.intersection(&referenced).cloned().collect()
+}
+
 fn binop_str(op: BinOp) -> &'static str {
     match op {
         BinOp::Add => "+",
@@ -582,6 +661,20 @@ pub struct SubcktExpander {
     /// (the scope's memoization caches cannot cross threads, so each worker gets
     /// its own — same values, empty caches).
     global_raw: Arc<HashMap<String, String>>,
+    /// GLOBAL statistical params: top-level `.param`s whose value is (transitively)
+    /// a statistical draw AND which are referenced by at least one OTHER top-level
+    /// `.param`. These represent a SHARED process draw (one per MC run, common to
+    /// every device) — e.g. TSMC's `random1_res -> par1_res_rpo -> a1_disres_rpo`
+    /// feeding `r_rnodwo_m`. They must NOT be inlined per instance (that gives each
+    /// device its own draw -> global variation becomes uncorrelated). Instead they
+    /// are emitted ONCE as shared `.param` cards and referenced by NAME everywhere,
+    /// so ngspice draws each once and all instances share it. A draw consumed only
+    /// inside a `.subckt` body (local mismatch, e.g. `par_res` in `factmis`) is NOT
+    /// in this set and stays inlined per instance.
+    global_shared: Arc<HashSet<String>>,
+    /// The global-shared param definitions in DECK ORDER (name, raw rhs), used to
+    /// emit the shared `.param` cards (see `global_shared`).
+    global_shared_defs: Arc<Vec<(String, String)>>,
     root: Rc<Scope>,
     out: Vec<String>,
     /// Parameters that could not be resolved and were therefore DROPPED from the
@@ -764,13 +857,25 @@ impl SubcktExpander {
             root.add_raw("vt", "(temper + 273.15) * 8.6173303e-5".to_string());
             root.add_raw("gmin", "1e-12".to_string());
         }
-        for (n, rhs) in global_params {
-            root.add_raw(&n, rhs);
+        for (n, rhs) in &global_params {
+            root.add_raw(n, rhs.clone());
         }
         // Snapshot the root's raw params (scale + globals) so worker threads can
         // rebuild an equivalent fresh root; the caches are intentionally not
         // captured (they are per-thread memoization, rebuilt on demand).
         let global_raw = Arc::new(root.raw.borrow().clone());
+
+        // Classify GLOBAL statistical params (shared process draws) vs local
+        // (per-instance) ones (see the `global_shared` field).
+        let global_shared = Arc::new(compute_global_shared(&global_raw));
+        // Keep the shared defs in DECK ORDER for emitting `.param` cards later.
+        let global_shared_defs: Arc<Vec<(String, String)>> = Arc::new(
+            global_params
+                .iter()
+                .filter(|(n, _)| global_shared.contains(&key(n)))
+                .cloned()
+                .collect(),
+        );
 
         // Resolved once, against the root, where `.option scale` cannot be shadowed
         // by any subckt's own `scale` param.
@@ -781,6 +886,8 @@ impl SubcktExpander {
             globals: Arc::new(globals),
             funcs,
             global_raw,
+            global_shared,
+            global_shared_defs,
             root: Rc::clone(&root),
             out: Vec::new(),
             drops: RefCell::new(Vec::new()),
@@ -870,6 +977,36 @@ impl SubcktExpander {
         }
     }
 
+    /// A partial-evaluated symbolic result must be KEPT (not folded to its nominal)
+    /// if it is genuinely runtime (`has_runtime`) OR if it references a GLOBAL-shared
+    /// param by NAME — that name is a deferred shared draw whose value is NOT the
+    /// nominal. Without the second clause, a top-level computed param like
+    /// `r_rnodwo_m = 131 + 6.5752*a1_disres_rpo` (where `a1_disres_rpo` is now a
+    /// by-name global reference) folds to 131, collapsing the global process
+    /// variation to zero.
+    fn sym_keeps(&self, s: &str) -> bool {
+        Self::has_runtime(s) || ident_tokens(s).iter().any(|id| self.global_shared.contains(id))
+    }
+
+    /// Build the shared `.param` cards for the global statistical params (see the
+    /// `global_shared` field). Each rhs is partial-evaluated in the ROOT scope, so
+    /// constants fold, references to OTHER global-shared params stay symbolic (by
+    /// name), and the `agauss()` draw itself stays symbolic — leaving ngspice to
+    /// draw it ONCE at top level and share it across every instance.
+    fn global_shared_cards(&self) -> Vec<String> {
+        let nmap: HashMap<String, String> = HashMap::new();
+        let locals: HashMap<String, Part> = HashMap::new();
+        let mut cards = Vec::with_capacity(self.global_shared_defs.len());
+        for (name, rhs) in self.global_shared_defs.iter() {
+            let val = match parse(rhs) {
+                Ok(e) => part_str(&self.partial(&e, &self.root, &nmap, "", &locals, 0)),
+                Err(_) => rhs.clone(),
+            };
+            cards.push(format!(".param {name}={val}"));
+        }
+        cards
+    }
+
     /// Run expansion, returning the resolved flat card stream plus any parameters
     /// that had to be dropped (see [`Expanded::drops`]).
     pub fn expand(mut self) -> Expanded {
@@ -928,6 +1065,17 @@ impl SubcktExpander {
                 cards.insert(k, s.to_string());
             }
         }
+        // Emit the GLOBAL statistical params as SHARED `.param` cards: drawn ONCE
+        // by ngspice (top-level, correlated across every device) and referenced by
+        // name wherever they were used. Without this, each instance inlines its own
+        // `agauss()` and global process variation becomes uncorrelated device-to-
+        // device (the exact bug this fixes). Inserted at position 0 for the same
+        // reason as the pspice injection above: `cards` excludes the title (the glue
+        // prepends it), and a later position could land inside a leading `.control`.
+        let shared = self.global_shared_cards();
+        for (k, c) in shared.into_iter().enumerate() {
+            cards.insert(k, c);
+        }
         let drops = self
             .drops
             .into_inner()
@@ -960,6 +1108,8 @@ impl SubcktExpander {
         let globals = &self.globals;
         let funcs = &self.funcs;
         let global_raw = &self.global_raw;
+        let global_shared = &self.global_shared;
+        let global_shared_defs = &self.global_shared_defs;
         let local_models = &local_models;
         let option_scale = self.option_scale;
         let cfg = self.cfg;
@@ -979,6 +1129,8 @@ impl SubcktExpander {
                             globals: Arc::clone(globals),
                             funcs: Arc::clone(funcs),
                             global_raw: Arc::clone(global_raw),
+                            global_shared: Arc::clone(global_shared),
+                            global_shared_defs: Arc::clone(global_shared_defs),
                             root,
                             out: Vec::new(),
                             drops: RefCell::new(Vec::new()),
@@ -1523,6 +1675,15 @@ impl SubcktExpander {
                 if let Some(p) = locals.get(&k) {
                     return p.clone();
                 }
+                // GLOBAL statistical param: a SHARED process draw. Reference it by
+                // NAME rather than inlining its (statistical) definition, so every
+                // instance that uses it points at the SAME `.param` card and ngspice
+                // draws it once per run (correlated across devices). Inlining here is
+                // exactly what made global MC uncorrelated. (A function-arg local of
+                // the same name, handled just above, still wins.) See `global_shared`.
+                if self.global_shared.contains(&k) {
+                    return Part::Sym(name.clone());
+                }
                 // Memoized verdict (see Scope::partial_cache). Skipped whenever
                 // function-arg locals are live: a raw definition partial-evaluated
                 // under non-empty `locals` can bind identifiers to those args, so
@@ -1554,7 +1715,7 @@ impl SubcktExpander {
                                     let p = self.partial(
                                         &e, scope, nmap, prefix, locals, depth + 1,
                                     );
-                                    if matches!(&p, Part::Sym(s) if Self::has_runtime(s)) {
+                                    if matches!(&p, Part::Sym(s) if self.sym_keeps(s)) {
                                         out = p;
                                     }
                                 }
@@ -1979,8 +2140,12 @@ impl SubcktExpander {
                     out.push(format!("{}={}", a.name, fmt_num(v)));
                 }
                 Part::Sym(s) => {
-                    // behavioral value -> keep braced; pure-unresolved param -> drop
-                    if Self::has_runtime(&s) {
+                    // behavioral value OR a reference to a shared global draw -> keep
+                    // braced; pure-unresolved param -> drop. (`sym_keeps` adds the
+                    // global-shared case: a param like diode `area=...a1_disres_rpo...`
+                    // references a by-name shared draw that ngspice resolves via the
+                    // emitted `.param`, so it must NOT be dropped as "unresolved".)
+                    if self.sym_keeps(&s) {
                         // scale/multiply symbolically so runtime exprs stay correct
                         let s = if kn == "m" && mult != 1.0 {
                             format!("({s})*{}", fmt_num(mult))
