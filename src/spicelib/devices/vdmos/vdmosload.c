@@ -441,13 +441,21 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 double rd = rd0T + rd1T * (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
                 double drd_dT = drd0T_dT + drd1T_dT * (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
                 if (rd > 0) {
+                    double vqs = vdsn + fabs(model->VDMOSqsVoltage);
+                    double drd_dvdsn = rd1T * fabs(model->VDMOSqsVoltage) / (vqs*vqs);
+                    double Vrd = *(ckt->CKTrhsOld + here->VDMOSdNode) -
+                                 *(ckt->CKTrhsOld + here->VDMOSdNodePrime);
                     here->VDMOSdrainConductance = 1 / rd + ckt->CKTgmin;
                     dgdrain_dT = -drd_dT / (rd*rd);
+                    /* d(I_Rd)/d(V(d)-V(s)), used by the small-signal loads */
+                    here->VDMOSgdq = -model->VDMOStype * Vrd * drd_dvdsn / (rd*rd);
                 } else {
                     here->VDMOSdrainConductance = 1 / rd0T;
                     dgdrain_dT = -drd0T_dT / (rd0T*rd0T);
+                    here->VDMOSgdq = 0.0;
                 }
             } else {
+                here->VDMOSgdq = 0.0;
                 if (rd0T > 0) {
                     here->VDMOSdrainConductance = 1 / rd0T;
                     dgdrain_dT = -drd0T_dT / (rd0T*rd0T);

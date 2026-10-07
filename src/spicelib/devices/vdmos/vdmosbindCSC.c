@@ -47,6 +47,7 @@ VDMOSbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 
             CREATE_KLU_BINDING_TABLE(VDMOSDsPtr, VDMOSDsBinding, VDMOSdNode, VDMOSsNode);
             CREATE_KLU_BINDING_TABLE(VDMOSSdPtr, VDMOSSdBinding, VDMOSsNode, VDMOSdNode);
+            CREATE_KLU_BINDING_TABLE(VDMOSDPsPtr, VDMOSDPsBinding, VDMOSdNodePrime, VDMOSsNode);
 
             CREATE_KLU_BINDING_TABLE(VDIORPdPtr,  VDIORPdBinding,  VDIOposPrimeNode, VDMOSdNode);
             CREATE_KLU_BINDING_TABLE(VDIODrpPtr,  VDIODrpBinding,  VDMOSdNode,       VDIOposPrimeNode);
@@ -134,6 +135,7 @@ VDMOSbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
 
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSDsPtr, VDMOSDsBinding, VDMOSdNode, VDMOSsNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSSdPtr, VDMOSSdBinding, VDMOSsNode, VDMOSdNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDMOSDPsPtr, VDMOSDPsBinding, VDMOSdNodePrime, VDMOSsNode);
 
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIORPdPtr,  VDIORPdBinding,  VDIOposPrimeNode, VDMOSdNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VDIODrpPtr,  VDIODrpBinding,  VDMOSdNode,       VDIOposPrimeNode);
@@ -221,6 +223,7 @@ VDMOSbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSDsPtr, VDMOSDsBinding, VDMOSdNode, VDMOSsNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSSdPtr, VDMOSSdBinding, VDMOSsNode, VDMOSdNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(VDMOSDPsPtr, VDMOSDPsBinding, VDMOSdNodePrime, VDMOSsNode);
 
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIORPdPtr,  VDIORPdBinding,  VDIOposPrimeNode, VDMOSdNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VDIODrpPtr,  VDIODrpBinding,  VDMOSdNode,       VDIOposPrimeNode);

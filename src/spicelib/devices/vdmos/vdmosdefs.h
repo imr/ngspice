@@ -135,6 +135,8 @@ typedef struct sVDMOSinstance {
     double VDMOSdIth_dVrs;    /* d(P_Rs)/d(Vrs)                        */
     double VDMOSdIth_dTres;   /* dIrd_dT*Vrd + dIrs_dT*Vrs             */
 
+    double VDMOSgdq;          /* quasi-saturation: d(I_Rd)/d(V(d)-V(s)) */
+
     /* rev-rec */
     double VDIOqpGainScaled;/* converts iterated diffcharge current */
     double VDIOcurFactor;/* Current factor  */
@@ -237,6 +239,8 @@ typedef struct sVDMOSinstance {
                                (source node, drain node) */
     double *VDMOSSdPtr;    /* pointer to sparse matrix element at
                                (drain node, source node) */
+    double *VDMOSDPsPtr;   /* pointer to sparse matrix element at
+                               (drain prime node, source node) */
     /* body diode */
     double *VDIORPdPtr;    /* pointer to sparse matrix element at
                                (diode prime node, drain node) */
@@ -304,6 +308,7 @@ typedef struct sVDMOSinstance {
     BindElement *VDMOSGPgBinding ;
     BindElement *VDMOSDsBinding ;
     BindElement *VDMOSSdBinding ;
+    BindElement *VDMOSDPsBinding ;
     BindElement *VDIORPdBinding ;
     BindElement *VDIODrpBinding ;
     BindElement *VDIOSrpBinding ;

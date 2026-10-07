@@ -111,6 +111,11 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSSPdpPtr) -= here->VDMOSgds+xrev*(here->VDMOSgm);
             *(here->VDMOSDsPtr) += (-here->VDMOSdsConductance);
             *(here->VDMOSSdPtr) += (-here->VDMOSdsConductance);
+            /* quasi-saturation: drain resistor current controlled by V(d)-V(s) */
+            *(here->VDMOSDdPtr)  += here->VDMOSgdq;
+            *(here->VDMOSDsPtr)  -= here->VDMOSgdq;
+            *(here->VDMOSDPdPtr) -= here->VDMOSgdq;
+            *(here->VDMOSDPsPtr) += here->VDMOSgdq;
             /* gate resistor */
             *(here->VDMOSGgPtr) += (here->VDMOSgateConductance);
             *(here->VDMOSGPgpPtr) += (here->VDMOSgateConductance);
