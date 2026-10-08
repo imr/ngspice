@@ -497,6 +497,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             TSTALLOC(VDMOSDsPtr, VDMOSdNode, VDMOSsNode);
             TSTALLOC(VDMOSSdPtr, VDMOSsNode, VDMOSdNode);
+            TSTALLOC(VDMOSDPsPtr, VDMOSdNodePrime, VDMOSsNode);
 
             TSTALLOC(VDIORPdPtr,  VDIOposPrimeNode, VDMOSdNode);
             TSTALLOC(VDIODrpPtr,  VDMOSdNode,       VDIOposPrimeNode);
