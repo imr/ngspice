@@ -631,7 +631,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
     /* Extract the .option or option lines from the deck into 'options',
         and remove them from the deck. Exceptions are .option with params. */
-    options = inp_getopts(deck);
+    options = inp_getopts(deck, comfile);
     /* Check for .option seed=[val|random] and set the random number generator.
         Check for .option cshunt=val and set a global variable cshunt_value */
     eval_opt(options);

@@ -218,7 +218,52 @@ cp_usrvars(void)
 
 /* Extract the .option lines from the deck */
 struct card *
-inp_getopts(struct card *deck)
+inp_getopts(struct card *deck, bool comfile)
+{
+    struct card *last = NULL, *opts = NULL, *dd, *next = NULL;
+
+    for (dd = deck->nextcard; dd; dd = next) {
+        next = dd->nextcard;
+        if (comfile) {
+        /* only .option seed, cshunt, rshunt are handled here. */
+            if ((ciprefix(".opt", dd->line) || ciprefix("option", dd->line)) &&
+            (strstr(dd->line, "seed=") || strstr(dd->line, "cshunt=") || strstr(dd->line, "rshunt="))){
+                inp_casefix(dd->line);
+                if (last)
+                    last->nextcard = dd->nextcard;
+                else
+                    deck->nextcard = dd->nextcard;
+                dd->nextcard = opts;
+                opts = dd;
+            }
+            else {
+                last = dd;
+            }
+        }
+        /* .option with params is excluded here. These options will be handled
+        after parameter substitution by INP2dot(), dot_options(), and INPdoOpts(). */
+        else {
+            if ((ciprefix(".opt", dd->line) && !strchr(dd->line, '{')) || ciprefix("option", dd->line)) {
+                inp_casefix(dd->line);
+                if (last)
+                    last->nextcard = dd->nextcard;
+                else
+                    deck->nextcard = dd->nextcard;
+                dd->nextcard = opts;
+                opts = dd;
+            }
+            else {
+                last = dd;
+            }
+        }
+    }
+
+    return (opts);
+}
+
+/* Extract the .option lines from the deck */
+struct card *
+inp_getopts_special(struct card *deck)
 {
     struct card *last = NULL, *opts = NULL, *dd, *next = NULL;
 
@@ -226,7 +271,7 @@ inp_getopts(struct card *deck)
         next = dd->nextcard;
         /* .option with params is excluded here. These options will be handled
         after parameter substitution by INP2dot(), dot_options(), and INPdoOpts(). */
-        if ((ciprefix(".opt", dd->line) && !strchr(dd->line, '{')) || ciprefix("option", dd->line)) {
+        if ((ciprefix(".opt", dd->line) || ciprefix("option", dd->line)) && ciprefix("seed=", dd->line) ){
             inp_casefix(dd->line);
             if (last)
                 last->nextcard = dd->nextcard;
@@ -241,7 +286,6 @@ inp_getopts(struct card *deck)
 
     return (opts);
 }
-
 
 /* copy the given option line,
  *   (presumably from a comfile, e.g. spinit or .spiceinit)
