@@ -6977,7 +6977,7 @@ static void inp_compat(struct card *card)
                 }
 #else
                 // Gxxx  n-aux 0  n2 n1  1e9
-                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s %se9", title_tok,
+                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s 1e9 m=%s", title_tok,
                     title_tok, node2, node1, mstr);
                 // Rxxx  n-aux 0 1e-9 ; generate voltage from injected current by Gxxx
                 ckt_array[1] = tprintf("r%s %s_int1 0 1e-9", title_tok,title_tok);
