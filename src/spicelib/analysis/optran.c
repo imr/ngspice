@@ -479,7 +479,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
 #endif
 
     /* We are finished */
-    if(AlmostEqualUlps( optime, opfinaltime, 100 ) ) {
+    if (optime >= opfinaltime || AlmostEqualUlps( optime, opfinaltime, 100)) {
         tfree(opbreaks);
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op finished successfully");
         ckt->CKTmaxStep = prevmaxstepsize;
@@ -567,8 +567,9 @@ resume:
 #ifdef STEPDEBUG
         printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",opbreaks[0], optime, ckt->CKTminBreak);
 #endif
-        if(AlmostEqualUlps(opbreaks[0], optime, 100) ||
-           opbreaks[0] <= optime + ckt->CKTminBreak) {
+        if ((AlmostEqualUlps(opbreaks[0], optime, 100) ||
+             opbreaks[0] <= optime + ckt->CKTminBreak) &&
+            opbreaks[0] < opfinaltime) {
 #ifdef STEPDEBUG
             printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",opbreaks[0]);
             printf("    ckt_time: %g    ckt_min_break: %g\n",optime, ckt->CKTminBreak);

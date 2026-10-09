@@ -504,7 +504,8 @@ DCtran(CKTcircuit *ckt,
        before tran is started.*/
         flag_autostop = check_autostop("tran");
     /* If CKTtime and CKTfinalTime are almost equal, then finish */
-    if (flag_autostop || AlmostEqualUlps(ckt->CKTtime, ckt->CKTfinalTime, 100)) {
+    if (flag_autostop || ckt->CKTtime >= ckt->CKTfinalTime ||
+        AlmostEqualUlps(ckt->CKTtime, ckt->CKTfinalTime, 100)) {
 #ifdef STEPDEBUG
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
