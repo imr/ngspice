@@ -932,7 +932,23 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     /* initialze random number generator with seed = 1 */
     int ii = 1;
     cp_vset("rndseed", CP_NUM, &ii);
-    com_sseed(NULL);
+    set_sseed(NULL);
+
+#ifdef FastRand
+    // initialization and seed for FastNorm Gaussian random generator
+    {
+        unsigned int rseed = 66;
+        initnorm(0, 0);
+        if (!cp_getvar("rndseed", CP_NUM, &rseed, 0)) {
+            time_t acttime = time(NULL);
+            rseed = (unsigned int)acttime;
+        }
+        initnorm(rseed, 2);
+        fprintf(cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
+    }
+#elif defined (WaGauss)
+    initw();
+#endif
 
     /* set a boolean variable to be used in .control sections */
     bool sm = TRUE;
@@ -1063,22 +1079,6 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
             newcompat.ki = FALSE;
         tfree(thisproc);
     }
-
-#ifdef FastRand
-// initialization and seed for FastNorm Gaussian random generator
-    {
-        unsigned int rseed = 66;
-        initnorm (0, 0);
-        if (!cp_getvar("rndseed", CP_NUM, &rseed, 0)) {
-            time_t acttime = time(NULL);
-            rseed = (unsigned int) acttime;
-        }
-        initnorm (rseed, 2);
-        fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
-    }
-#elif defined (WaGauss)
-        initw();
-#endif
 
     fprintf(cp_out,
             "******\n"
