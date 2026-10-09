@@ -48,34 +48,53 @@ com_save2(wordlist *wl, char *name)
 void
 settrace(wordlist *wl, int what, char *name)
 {
-    struct dbcomm *d, *last, *dbcheck;
+    struct dbcomm *d, *last, *dbcheck, **dpp;
+
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
         return;
     }
 
-    if (dbs)
+    /* Find last entry for list extension. */
+
+    last = NULL;
+    if (what == VF_ACCUM) {
+        /* Also remove any remaining "save none". */
+
+        for (dpp = &dbs; *dpp; ) {
+            dbcheck = *dpp;
+            if (dbcheck->db_type == DB_SAVE &&
+                eq(dbcheck->db_nodename1, "none")) {
+                *dpp = dbcheck->db_next;
+                ft_curckt->ci_dbs = dbs;
+                dbfree1(dbcheck);
+            } else {
+                last = dbcheck;
+                dpp = &dbcheck->db_next;
+            }
+        }
+    } else if (dbs) {
         for (last = dbs; last->db_next; last = last->db_next)
             ;
-    else
-        last = NULL;
+    }
 
-    for (;wl ;wl = wl->wl_next) {
+    for (; wl; wl = wl->wl_next) {
         char *s = cp_unquote(wl->wl_word);
         char *db_nodename1 = NULL;
-        char db_type = 0;
+        char  db_type = 0;
+
         if (eq(s, "all") || eq(s, "nosub")) {
             switch (what) {
             case VF_PRINT:
                 db_type = DB_TRACEALL;
+                tfree(s);
                 break;
             case VF_ACCUM:
-                db_nodename1 = copy(s);
+                db_nodename1 = s;
                 db_type = DB_SAVE;
                 break;
             }
-            tfree(s);
         } else {
             switch (what) {
             case VF_PRINT:
@@ -85,21 +104,52 @@ settrace(wordlist *wl, int what, char *name)
                 db_type = DB_SAVE;
                 break;
             }
+
             /* v(2) --> 2, i(vds) --> vds#branch */
-            db_nodename1 = copynode(s);
-            tfree(s);
+
+            if (s) {
+                db_nodename1 = copynode(s);
+                if (db_nodename1 != s)
+                    tfree(s);
+            }
             if (!db_nodename1)  /* skip on error */
                 continue;
         }
 
-        /* Don't save a nodename more than once, except for token 'all' */
         if (db_type == DB_SAVE) {
-            for (dbcheck = dbs; dbcheck; dbcheck = dbcheck->db_next) {
-                if (dbcheck->db_type == DB_SAVE && eq(dbcheck->db_nodename1, db_nodename1) &&
-                    !eq("all", db_nodename1)) {
-                    tfree(db_nodename1);
-                    goto loopend;
+            if (eq("none", db_nodename1)) {
+                /* "save none" purges the list of saves. */
+
+                last = NULL;
+                for (dpp = &dbs; *dpp; ) {
+                    dbcheck = *dpp;
+                    if (dbcheck->db_type == DB_SAVE) {
+                        *dpp = dbcheck->db_next;
+                        dbfree1(dbcheck);
+                        continue;
+                    } else {
+                        last = dbcheck;
+                        dpp = &dbcheck->db_next;
+                    }
                 }
+                if (wl->wl_next) {
+                    // More to come, forget this.
+
+                    tfree(db_nodename1);
+                    continue;
+                }
+            } else {
+                /* Ignore duplicates. */
+
+                for (dbcheck = dbs; dbcheck; dbcheck = dbcheck->db_next) {
+                    if (dbcheck->db_type == DB_SAVE &&
+                        eq(dbcheck->db_nodename1, db_nodename1)) {
+                        tfree(db_nodename1);
+                        break;
+                    }
+                }
+                if (dbcheck)
+                    continue;
             }
         }
 
@@ -113,10 +163,7 @@ settrace(wordlist *wl, int what, char *name)
             last->db_next = d;
         else
             ft_curckt->ci_dbs = dbs = d;
-
         last = d;
-
-    loopend:;
     }
 }
 
@@ -141,7 +188,6 @@ ft_getSaves(struct save_info **savesp)
 
     for (d = dbs; d; d = d->db_next)
         if (d->db_type == DB_SAVE) {
-            array[i].used = 0;
             if (d->db_analysis)
                 array[i].analysis = copy(d->db_analysis);
             else
@@ -163,28 +209,22 @@ copynode(char *s)
     char *l, *r;
     char *ret = NULL;
 
-    if (strchr(s, '('))
-        s = stripWhiteSpacesInsideParens(s);
-    else
-        s = copy(s);
-
     l = strrchr(s, '(');
     if (!l)
         return s;
-
-    r = strchr(s, ')');
-    if (!r) {
+    if (!strchr(l, ')')) {
         fprintf(cp_err, "Warning: Missing ')' in %s\n  Not saved!\n", s);
-        tfree(s);
         return NULL;
     }
+    s = stripWhiteSpacesInsideParens(s);
+    l = strrchr(s, '(');
+    r = strchr(s, ')');
 
     *r = '\0';
     if (*(l - 1) == 'i' || *(l - 1) == 'I')
         ret = tprintf("%s#branch", l + 1);
     else
         ret = copy(l + 1);
-
-    tfree(s);
+    free(s);    // Not the original!
     return ret;
 }

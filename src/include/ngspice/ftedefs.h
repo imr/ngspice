@@ -24,7 +24,6 @@ struct ccom;
 struct save_info {
     char    *name;
     IFuid   analysis;
-    int     used;
 };
 
 
