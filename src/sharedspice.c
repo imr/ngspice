@@ -1148,7 +1148,8 @@ int  ngSpice_Command(char* comexec)
     }
     /* Check if command is reasonable */
     if (*comexec == '\0') {
-        fprintf(stderr, "Warning: Received empty string as command, ignored");
+        fprintf(stderr,
+                "Warning: Received empty string as command, ignored\n");
         return 1;
     }
 
@@ -2476,40 +2477,35 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
             return 0;
     /* synchronization required, to be done by changing cktdelta */
     } else {
+        int retval;
+
         if (redostep) {
             *pckttime -= olddelta;
             (*rejected)++;
             /* use cktdelta as suggested by ngspice or acquire new cktdelta
             via pointer pcktdelta in user supplied callback */
-            getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
-            /* never move beyond final time */
-            if (*pckttime + *pcktdelta > finalt)
-                *pcktdelta = finalt - *pckttime - 1.1 * delmin;
-            return 1;
+
+            getsync(*pckttime, pcktdelta, olddelta,
+                    redostep, ng_ident, loc, userptr);
+            retval = 1;
         }
         else {
             /* Use cktdelta as suggested by ngspice or acquire new cktdelta
-               via pointer pcktdelta in user supplied callback. Redo the previous
-               step if return value from getsync is 1. */
-            int retval = getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
-            /* never move beyond final time */
-            if (*pckttime + *pcktdelta > finalt) {
-                double newdelta;
+               via pointer pcktdelta in user supplied callback.
+               Redo the previous step if return value from getsync is 1. */
 
-                newdelta = finalt - *pckttime - 1.1 * delmin;
-                if (newdelta <= 0.0)
-                    newdelta = finalt - *pckttime;
-                *pcktdelta = newdelta;
-            }
-
-            /* user has decided to redo the step, ignoring redostep being set to 0
-            by ngspice. */
+            retval = getsync(*pckttime, pcktdelta, olddelta,
+                                 redostep, ng_ident, loc, userptr);
             if (retval) {
+                /* User has decided to redo the step, ignoring !redostep.
+                 * Should be: "*pckttime += (*pcktdelta - olddelta); FIX?
+                 */
+
                 *pckttime -= olddelta;
                 (*rejected)++;
             }
-            return retval;
         }
+        return retval;
     }
 }
 
