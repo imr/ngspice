@@ -290,7 +290,18 @@ double exprand(double mean)
 *   seed with number <n>
 */
 void
-com_sseed(wordlist *wl)
+com_sseed(wordlist* wl)
+{
+    bool previnfo = seedinfo;
+    seedinfo = TRUE;
+    set_sseed(wl);
+    initw();
+    seedinfo = previnfo;
+}
+
+
+void
+set_sseed(wordlist *wl)
 {
     int newseed;
 
@@ -299,6 +310,12 @@ com_sseed(wordlist *wl)
             newseed = getpid();
             cp_vset("rndseed", CP_NUM, &newseed);
         }
+        srand((unsigned int)newseed);
+        TausSeed();
+    }
+    else if (cieq(wl->wl_word, "random")) {
+        newseed = getpid();
+        cp_vset("rndseed", CP_NUM, &newseed);
         srand((unsigned int)newseed);
         TausSeed();
     }

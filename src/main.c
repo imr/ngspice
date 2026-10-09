@@ -935,7 +935,7 @@ int main(int argc, char **argv)
     /* initialze random number generator with seed = 1 */
     int ii = 1;
     cp_vset("rndseed", CP_NUM, &ii);
-    com_sseed(NULL);
+    set_sseed(NULL);
 
 #ifdef FastRand
     // initialization and seed for FastNorm Gaussian random generator
