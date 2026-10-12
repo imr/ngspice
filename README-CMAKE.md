@@ -115,7 +115,6 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNGSPICE_ENABLE_CIDER=ON
 | `NGSPICE_WITH_READLINE` | `auto` | `readline`, `editline` or `none`. |
 | `NGSPICE_ENABLE_CIDER` | OFF | CIDER numerical device models. |
 | `NGSPICE_ENABLE_PSS` | OFF | Periodic steady state analysis. |
-
 | `NGSPICE_ENABLE_SENSE2` | OFF | Old sense2 sensitivity analysis. |
 | `NGSPICE_ENABLE_NDEV` | OFF | NDEV external device interface. |
 | `NGSPICE_BUILD_SHARED` | OFF | `libngspice` instead of the binary. |
@@ -231,7 +230,14 @@ python3 cmake/am2cmake.py
 ```
 
 Automake conditionals are translated via `AM_COND_MAP` in that script; an
-unknown one aborts the run. Device directories are picked up automatically.
+unknown one aborts the run.
+
+There are no `CMakeLists.txt` files in the source directories. The root
+`CMakeLists.txt` includes the generated file `cmake/NgspiceSourceLists.cmake`, 
+which defines one variable per `Makefile.am` target (e.g. `NGSPICE_SRC_misc_libmisc_la`).
+`src/CMakeLists.txt` lists the modules to use, expands them into source files and builds
+everything as one library. Device directories are found automatically from the variable
+names; any other new directory has to be added to `_modules` in `src/CMakeLists.txt`.
 
 Verified: Linux with GCC and clang (makefiles and Ninja), MSYS2 UCRT64 and
 MINGW64, Visual Studio and NMake including XSPICE code models, install and
