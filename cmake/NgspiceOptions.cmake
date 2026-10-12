@@ -31,7 +31,6 @@ option(NGSPICE_ENABLE_SENSE2      "Old sense2 sensitivity analysis"       OFF)
 option(NGSPICE_ENABLE_CMATHTESTS  "Build the cmaths self tests"           OFF)
 option(NGSPICE_ENABLE_OLDAPPS     "Build ngnutmeg/ngsconvert/... "        OFF)
 option(NGSPICE_ENABLE_HELP        "Build the X11 help browser"            OFF)
-option(NGSPICE_ENABLE_ADMS        "ADMS Verilog-A models (unsupported)"   OFF)
 
 option(NGSPICE_ENABLE_KLU         "KLU sparse solver"                     ON)
 set(NGSPICE_KLU_PROVIDER "bundled" CACHE STRING

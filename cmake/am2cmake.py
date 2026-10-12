@@ -54,7 +54,6 @@ AM_COND_MAP = {
     "SHARED_MODULE":   "NGSPICE_BUILD_SHARED",
     "OLDAPPS":         "NGSPICE_ENABLE_OLDAPPS",
     "CROSS_COMPILING": "CMAKE_CROSSCOMPILING",
-    "ADMS_WANTED":     "NGSPICE_ENABLE_ADMS",
     "RELPATH":         "NGSPICE_ENABLE_RELPATH",
     "DLIBS_FULLY_RESOLVED": "NOT APPLE",
     "MAINTAINER_MODE": "FALSE",
@@ -128,7 +127,7 @@ def parse_makefile_am(path):
 def main():
     entries = {}          # varname -> list of (cond, [relative paths])
     for dirpath, dirnames, filenames in os.walk(SRC):
-        dirnames[:] = [d for d in dirnames if d not in (".git", "icm", "adms")]
+        dirnames[:] = [d for d in dirnames if d not in (".git", "icm")]
         if "Makefile.am" not in filenames:
             continue
         rel = os.path.relpath(dirpath, SRC).replace(os.sep, "/")

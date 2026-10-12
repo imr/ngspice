@@ -10,7 +10,6 @@
 # for debug version of shared ngspice
 
 # Options:
-# Please see http://ngspice.sourceforge.net/admshowto.html for more info on adms.
 # CIDER may be selected at will.
 # XSPICE, KLU, and OpenMP may be deselected, if not required.
 # To obtain a 32 bit executable, replace -m64 by -m32 ./configure lines (not tested).

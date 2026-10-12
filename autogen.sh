@@ -46,16 +46,6 @@ error_and_exit()
     exit 1
 }
 
-check_awk()
-{
-    (awk --version) < /dev/null > /dev/null 2>&1 ||
-    (awk -W version) < /dev/null > /dev/null 2>&1 || {
-	echo
-	echo "You must have awk installed to compile $PROJECT with --adms."
-	exit 1
-    }
-}
-
 check_autoconf()
 {
     (autoconf --version) < /dev/null > /dev/null 2>&1 || {
@@ -85,10 +75,6 @@ check_autoconf()
 
 
 case "$1" in
-    "--adms" | "-a")
-        echo "Warning: adms is no longer available, ignored!"
-        ;;
-
     "--help" | "-h")
         help
         exit 0
