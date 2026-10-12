@@ -51,7 +51,7 @@ set(_check_dirs regression)
 if(NGSPICE_ENABLE_XSPICE)
     list(APPEND _check_dirs xspice)
 endif()
-# bsim3, bsim4, bsimsoi, hisim, hicum2, hisimhv1 and hisimhv2 are also in
+# bsim3, bsim4, bsimsoi, hisim, hisimhv1 and hisimhv2 are also in
 # SUBDIRS, but they are driven by tests/bin/check_cmc.sh over nmos/qaSpec
 # rather than by "TESTS = *.cir", so nothing is registered for them here.
 # Running the CMC model QA suites from CTest is a separate task.

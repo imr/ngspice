@@ -1366,7 +1366,6 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/isrc/Makefile
                  src/spicelib/devices/hfet1/Makefile
                  src/spicelib/devices/hfet2/Makefile
-                 src/spicelib/devices/hicum2/Makefile
                  src/spicelib/devices/hisim2/Makefile
                  src/spicelib/devices/hisimhv1/Makefile
                  src/spicelib/devices/hisimhv2/Makefile
@@ -1411,7 +1410,6 @@ AC_CONFIG_FILES([Makefile
                  src/frontend/trannoise/Makefile
                  src/frontend/wdisp/Makefile
                  src/include/ngspice/Makefile
-                 src/include/cppduals/duals/Makefile
                  src/maths/Makefile
                  src/maths/cmaths/Makefile
                  src/maths/fft/Makefile
@@ -1447,7 +1445,6 @@ AC_CONFIG_FILES([Makefile
                  tests/filters/Makefile
                  tests/general/Makefile
                  tests/hfet/Makefile
-                 tests/hicum2/Makefile
                  tests/hisim/Makefile
                  tests/hisimhv1/Makefile
                  tests/hisimhv2/Makefile

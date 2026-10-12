@@ -1237,30 +1237,6 @@ if((NGSPICE_ENABLE_KLU))
     )
 endif()
 
-set(NGSPICE_SRC_spicelib_devices_hicum2_libhicum2_la
-    spicelib/devices/hicum2/hicum2.c
-    spicelib/devices/hicum2/hicum2acld.c
-    spicelib/devices/hicum2/hicum2ask.c
-    spicelib/devices/hicum2/hicum2conv.c
-    spicelib/devices/hicum2/hicum2getic.c
-    spicelib/devices/hicum2/hicum2init.c
-    spicelib/devices/hicum2/hicumL2.cpp
-    spicelib/devices/hicum2/hicumL2temp.cpp
-    spicelib/devices/hicum2/hicum2mask.c
-    spicelib/devices/hicum2/hicum2mpar.c
-    spicelib/devices/hicum2/hicum2noise.c
-    spicelib/devices/hicum2/hicum2param.c
-    spicelib/devices/hicum2/hicum2pzld.c
-    spicelib/devices/hicum2/hicum2setup.c
-    spicelib/devices/hicum2/hicum2soachk.c
-    spicelib/devices/hicum2/hicum2trunc.c
-)
-if((NGSPICE_ENABLE_KLU))
-    list(APPEND NGSPICE_SRC_spicelib_devices_hicum2_libhicum2_la
-        spicelib/devices/hicum2/hicum2bindCSC.c
-    )
-endif()
-
 set(NGSPICE_SRC_spicelib_devices_hisim2_libhisim2_la
     spicelib/devices/hisim2/hsm2.c
     spicelib/devices/hisim2/hsm2acld.c

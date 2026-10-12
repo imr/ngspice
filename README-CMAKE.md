@@ -170,7 +170,7 @@ The default registers what `make check` runs: 44 tests, about a second.
 not run; some of those have stale reference output. Tests are labelled with
 their directory plus `check` or `extra`, so `ctest -L regression` works.
 
-The CMC model QA suites (`bsim3`, `bsim4`, `bsimsoi`, `hisim`, `hicum2`,
+The CMC model QA suites (`bsim3`, `bsim4`, `bsimsoi`, `hisim`,
 `hisimhv1`, `hisimhv2`) run via `tests/bin/check_cmc.sh` rather than
 `TESTS = *.cir` and are not registered yet.
 

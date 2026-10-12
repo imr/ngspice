@@ -63,16 +63,9 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 					    "Device type VBIC not available in this binary\n");
 				}
 				break;
-				case 8:
-					 type = INPtypelook("hicum2");
-				if(type < 0) {
-				    err = INPmkTemp(
-					    "Device type HICUM2 not available in this binary\n");
-				}
-				break;
 				default: /* placeholder; use level 4 for the next model */
 				err = INPmkTemp(
-				  "Only BJT levels 1-2, 4, 8, 9 are supported in this binary\n");
+				  "Only BJT levels 1-2, 4, 9 are supported in this binary\n");
 				break;
 
 			}

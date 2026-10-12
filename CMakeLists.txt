@@ -156,7 +156,6 @@ target_compile_definitions(ngspice_settings INTERFACE ${NGSPICE_NGDEBUG_GENEX})
 target_include_directories(ngspice_settings INTERFACE
     "${NGSPICE_GENERATED_INCLUDE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/include/cppduals"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/spicelib/devices")
 
 if(MSVC)

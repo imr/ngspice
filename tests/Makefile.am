@@ -19,7 +19,6 @@ SUBDIRS +=		\
 	bsim4		\
 	bsimsoi		\
 	hisim		\
-	hicum2		\
 	hisimhv1	\
 	hisimhv2
 endif
@@ -36,7 +35,6 @@ DIST_SUBDIRS =		\
 	filters		\
 	general		\
 	hfet		\
-	hicum2		\
 	hisim		\
 	hisimhv1	\
 	hisimhv2	\

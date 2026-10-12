@@ -15,8 +15,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 static int
 model_max_numnodes(int type)
 {
-    if (type == INPtypelook("VBIC") ||
-        type == INPtypelook("hicum2"))
+    if (type == INPtypelook("VBIC"))
         return 5;
     return 4;
 }
@@ -92,7 +91,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
         thismodel->INPmodType != INPtypelook("NBJT") &&
         thismodel->INPmodType != INPtypelook("NBJT2") &&
 #endif
-        thismodel->INPmodType != INPtypelook("hicum2") &&
         thismodel->INPmodType != INPtypelook("VBIC"))
     {
         LITERR("incorrect model type");
