@@ -80,7 +80,7 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
     double gmg=0;
     double gmd=0;
     
-    int inverse=FALSE;
+    int inverse;
     int icheck;
     int error;
 
@@ -295,10 +295,12 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
               ggd += GGRWL*earg*(1-arg);  
             } else
               ggd = 0;
-            if(vds < 0) {
-              vds = -vds;
-              inverse = TRUE;
+            if (vds < 0) {
+                vds = -vds;
+                inverse = TRUE;
             }
+            else
+                inverse = FALSE;
             hfeta(model,here,ckt,vds>0?vgs:vgd,vds,&cdrain,&gm,&gds,&capgs,&capgd,
                   &cgd,&gmg,&gmd,&cgs,&ggs);
             cg = cgs+cgd;

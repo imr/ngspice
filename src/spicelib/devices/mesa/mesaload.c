@@ -306,10 +306,13 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
                    ckt->CKTgmin*vgd;
             cg = cg+cgd;
             
-            if(vds < 0) {
-              vds = -vds;
-              inverse = TRUE;
+            if (vds < 0) {
+                vds = -vds;
+                inverse = TRUE;
             }
+            else
+                inverse = FALSE;
+
             von = here->MESAtVto+model->MESAks*(*(ckt->CKTrhsOld+here->MESAsourcePrimeNode)-model->MESAvsg);
             if(model->MESAlevel == 2)
               mesa1(model,here,inverse?vgd:vgs,vds,von,&cdrain,&gm,&gds,&capgs,&capgd);
