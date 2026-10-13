@@ -87,7 +87,9 @@ typedef struct MatList{
  CMat* chconcat(CMat* A, CMat* B);
  Mat* vconcat(Mat* A, Mat* B);
  CMat* cvconcat(CMat* A, CMat* B);
+#ifndef _MSC_VER
  double norm(Mat* A);
+#endif
  double cnorm(CMat* A);
  Mat* nullmat(Mat* A);
  MatList* lu(Mat* A);
