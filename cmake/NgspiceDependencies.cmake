@@ -254,6 +254,10 @@ endif()
 # AC_OPENMP just adds the flag when the compiler supports it, so a missing
 # OpenMP is not fatal here either.
 if(NGSPICE_ENABLE_OPENMP)
+    if(MSVC)
+        # MSVC unter Windows: LLVM-basierte OpenMP-Laufzeit
+        set(OpenMP_RUNTIME_MSVC llvm)
+    endif()
     find_package(OpenMP COMPONENTS C)
     if(NOT OpenMP_C_FOUND)
         message(WARNING
