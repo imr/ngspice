@@ -1167,7 +1167,7 @@ CMat* cvconcat(CMat* A, CMat* B) {
 	}
 	return C;
 }
-
+#ifndef _MSC_VER
 double norm(Mat* A) {
 	double d = 0;
 
@@ -1180,7 +1180,7 @@ double norm(Mat* A) {
 	d = sqrt(d);
 	return d;
 }
-
+#endif
 double cnorm(CMat* A) {
 	double d = 0;
 	for (int i = 0; i < A->row; i++) {
