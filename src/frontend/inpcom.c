@@ -78,6 +78,7 @@ Author: 1985 Wayne A. Christopher
 static struct library {
     char *realpath;
     char *habitat;
+    char *section;
     struct card *deck;
 } libraries[N_LIBRARIES];
 
@@ -212,7 +213,8 @@ struct inp_read_t {
 };
 
 static struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
-    const char* file_name, bool comfile, bool intfile, FileEncoding enc);
+    const char* file_name, const char *lib_section, bool comfile, bool intfile,
+    FileEncoding enc);
 
 
 #ifdef XSPICE
@@ -495,63 +497,69 @@ static void delete_libs(void)
     for (i = 0; i < num_libraries; i++) {
         tfree(libraries[i].realpath);
         tfree(libraries[i].habitat);
+        tfree(libraries[i].section);
         line_free_x(libraries[i].deck, TRUE);
     }
 }
 
 
-static struct library *find_lib(char *name)
+static struct library *find_lib(char *name, const char *section)
 {
     int i;
 
     for (i = 0; i < num_libraries; i++)
-        if (cieq(libraries[i].realpath, name))
+        if (cieq(libraries[i].realpath, name) &&
+                cieq(libraries[i].section, section))
             return &libraries[i];
 
     return NULL;
 }
 
 
+/* TRUE if line is a library section definition `.lib <section-name>',
+   with any section name if name is NULL */
+static bool is_section_definition(char *line, const char *name)
+{
+    char *s, *t, *y;
+    char keep_char;
+    bool found;
+
+    if (!ciprefix(".lib", line))
+        return FALSE;
+
+    s = skip_non_ws(line);
+    while (isspace_c(*s) || isquote(*s))
+        s++;
+    for (t = s; *t && !isspace_c(*t) && !isquote(*t); t++)
+        ;
+    y = t;
+    while (isspace_c(*y) || isquote(*y))
+        y++;
+
+    if (*y)
+        return FALSE;
+    if (!name)
+        return TRUE;
+
+    keep_char = *t;
+    *t = '\0';
+    found = (strcasecmp(name, s) == 0);
+    *t = keep_char;
+
+    return found;
+}
+
+
 static struct card *find_section_definition(struct card *c, char *name)
 {
-    for (; c; c = c->nextcard) {
-
-        char *line = c->line;
-
-        if (ciprefix(".lib", line)) {
-
-            char *s, *t, *y;
-
-            s = skip_non_ws(line);
-            while (isspace_c(*s) || isquote(*s))
-                s++;
-            for (t = s; *t && !isspace_c(*t) && !isquote(*t); t++)
-                ;
-            y = t;
-            while (isspace_c(*y) || isquote(*y))
-                y++;
-
-            if (!*y) {
-                /* library section definition: `.lib <section-name>' ..
-                 * `.endl' */
-
-                char keep_char = *t;
-                *t = '\0';
-
-                if (strcasecmp(name, s) == 0) {
-                    *t = keep_char;
-                    return c;
-                }
-
-                *t = keep_char;
-            }
-        }
-    }
+    for (; c; c = c->nextcard)
+        if (is_section_definition(c->line, name))
+            return c;
 
     return NULL;
 }
 
-static struct library *read_a_lib(const char *y, const char *dir_name)
+static struct library *read_a_lib(const char *y, const char *section, const char *dir_name)
 {
     char *yy, *y_resolved;
 
@@ -575,7 +583,7 @@ static struct library *read_a_lib(const char *y, const char *dir_name)
         controlled_exit(EXIT_FAILURE);
     }
 
-    lib = find_lib(yy);
+    lib = find_lib(yy, section);
 
     if (!lib) {
 
@@ -593,9 +601,23 @@ static struct library *read_a_lib(const char *y, const char *dir_name)
 
         lib->realpath = copy(yy);
         lib->habitat = ngdirname(yy);
+        lib->section = copy(section);
 
         lib->deck =
-            inp_read(newfp, 1 /*dummy*/, lib->habitat, lib->realpath, FALSE, FALSE, ENCODING_UNKNOWN).cc;
+            inp_read(newfp, 1 /*dummy*/, lib->habitat, lib->realpath, lib->section, FALSE, FALSE, ENCODING_UNKNOWN).cc;
+
+        /* the section may be defined in a file that the library includes */
+        if (!find_section_definition(lib->deck, lib->section)) {
+            line_free_x(lib->deck, TRUE);
+            rewind(newfp);
+            lib->deck =
+                inp_read(newfp, 1 /*dummy*/, lib->habitat, lib->realpath, NULL, FALSE, FALSE, ENCODING_UNKNOWN).cc;
+            if (find_section_definition(lib->deck, lib->section))
+                fprintf(cp_err,
+                        "Warning: section %s is defined in a file that library %s includes;\n"
+                        "    .LIB (manual chapt. 2.10) expects it in the library file itself\n",
+                        section, y);
+        }
 
         struct card* tmpdeck;
         int cnumber = 1;
@@ -1059,7 +1081,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
        This is the next major step:
        Reading the netlist line by line, handle .include and .lib,
        line continuation and upper/lower casing */
-    rv = inp_read(fp, 0, dir_name, file_name, comfile, intfile, ENCODING_UNKNOWN);
+    rv = inp_read(fp, 0, dir_name, file_name, NULL, comfile, intfile, ENCODING_UNKNOWN);
     cc = rv.cc;
 
     /* skip all pre-processing for expanded input files created by 'listing r',
@@ -1318,10 +1340,13 @@ static char *skip_token(const char *s)
 
 
 static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
-    const char* file_name, bool comfile, bool intfile, FileEncoding encoding)
+    const char* file_name, const char *lib_section, bool comfile, bool intfile,
+    FileEncoding encoding)
     /* fp: in, pointer to file to be read,
        call_depth: in, nested call to fcn
        dir_name: in, name of directory of file to be read
+       lib_section: in, if not NULL, read .include files only in this
+           library section
        comfile: in, TRUE if command file (e.g. spinit, .spiceinit)
        intfile: in, TRUE if deck is generated from internal circarray
     */
@@ -1345,6 +1370,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
     static bool biaswarn = FALSE;
     static bool hdlwarn = FALSE;
     bool first = TRUE;
+    bool in_lib_section = FALSE;
 #ifdef CIDER
     static int in_cider_model = 0;
 #endif
@@ -1469,6 +1495,13 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 memcpy(buffer, ".inc", 4);
             }
 
+        if (lib_section) {
+            if (is_section_definition(buffer, NULL))
+                in_lib_section = is_section_definition(buffer, lib_section);
+            else if (ciprefix(".endl", buffer))
+                in_lib_section = FALSE;
+        }
+
         if (ciprefix(".hdl", buffer)) {
             if (!hdlwarn) {
                 fprintf(cp_err, "Warning: Dot command .hdl is not supported, ingnored\n");
@@ -1490,7 +1523,8 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             continue;
         }
         /* now handle .include statements */
-        if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
+        if ((ciprefix(".include", buffer) || ciprefix(".inc", buffer)) &&
+                (!lib_section || in_lib_section)) {
 
             char* y = NULL;
             char* s;
@@ -1617,7 +1651,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 y_dir_name = ngdirname(y_resolved);
 
                 newcard = inp_read(
-                    newfp, call_depth + 1, y_dir_name, y_resolved, FALSE, FALSE, encoding)
+                    newfp, call_depth + 1, y_dir_name, y_resolved, NULL, FALSE, FALSE, encoding)
                     .cc; /* read stuff in include file into
                             netlist */
 
@@ -3986,7 +4020,7 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
         *s_e = '\0';
         *y_e = '\0';
 
-        lib = read_a_lib(s, dir_name);
+        lib = read_a_lib(s, y, dir_name);
 
         if (!lib) {
             fprintf(stderr, "ERROR, library file %s not found\n", s);

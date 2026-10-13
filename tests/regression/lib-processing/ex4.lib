@@ -1,0 +1,19 @@
+* -*- spice -*-
+* .include files outside the referenced section do not exist
+
+.include 'missing-before-sections.inc'
+
+.LIB TYPICAL
+.LIB 'ex4.lib' SHARED
+.include 'ex4-typical.inc'
+.ENDL TYPICAL
+
+.include 'missing-between-sections.inc'
+
+.LIB FAST
+.include 'missing-fast.inc'
+.ENDL FAST
+
+.LIB SHARED
+.include 'ex4-shared.inc'
+.ENDL SHARED

@@ -1,0 +1,6 @@
+* -*- spice -*-
+* section INNER is defined in a file that section OUTER includes
+
+.LIB OUTER
+.include 'ex4-inner.lib'
+.ENDL OUTER

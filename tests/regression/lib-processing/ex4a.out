@@ -1,0 +1,16 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: ex4a, check that .include is read only in the referenced .lib section
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+Note: v(check1) = 0
+Note: v(check2) = 0
+Note: v(check3) = 0
+INFO: ok
+ngspice-47+ done

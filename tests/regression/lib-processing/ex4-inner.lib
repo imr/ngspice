@@ -1,0 +1,5 @@
+* -*- spice -*-
+
+.LIB INNER
+.param inner_resistance = 8k
+.ENDL INNER

@@ -1,0 +1,61 @@
+ex4a, check that .include is read only in the referenced .lib section
+
+I1    typical 0  -1mA
+R1    typical 0  {typical_resistance}
+
+Vcheck1  typical check1  2.0V
+
+I2    shared 0  -1mA
+R2    shared 0  {shared_resistance}
+
+Vcheck2  shared check2  4.0V
+
+I3    inner 0  -1mA
+R3    inner 0  {inner_resistance}
+
+Vcheck3  inner check3  8.0V
+
+.lib 'ex4.lib' TYPICAL
+.lib 'ex4-outer.lib' INNER
+
+.control
+op
+
+let n_pass = 0
+
+echo "Note: v(check1) = $&v(check1)"
+echo "Note: v(check2) = $&v(check2)"
+echo "Note: v(check3) = $&v(check3)"
+
+if abs(v(check1)) <= 1e-9
+    let n_pass = n_pass + 1
+else
+    echo "ERROR: Test 1 failed"
+end
+
+
+if abs(v(check2)) <= 1e-9
+    let n_pass = n_pass + 1
+else
+    echo "ERROR: Test 2 failed"
+end
+
+
+if abs(v(check3)) <= 1e-9
+    let n_pass = n_pass + 1
+else
+    echo "ERROR: Test 3 failed"
+end
+
+
+if n_pass = 3
+    echo "INFO: ok"
+    quit 0
+end
+
+echo ERROR: $&n_pass of 3 tests passed
+quit 1
+
+.endc
+
+.end
