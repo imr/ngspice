@@ -27,6 +27,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/fteinp.h"
+#include "ngspice/hash.h"
 #include "numparam/general.h"
 
 #include "com_set.h"
@@ -8233,6 +8234,149 @@ static void inp_fix_temper_in_param(struct card *deck)
 }
 
 
+/* Helpers for inp_fix_agauss_in_param():
+ *
+ * A top level .param like
+ *     .param aga = agauss(1, 2, 3)
+ * has to be evaluated only once, so that every reference to 'aga'
+ * sees the same random value (manual, chapter 'Statistical analysis').
+ * It is converted into a .func (and thus re-drawn on each use) only if
+ * it cannot be evaluated at top level, because its expression refers
+ * to an identifier that is not a top level parameter, e.g. the
+ * instance parameters w, l of a device subcircuit:
+ *     .param mm = agauss(0, avt/sqrt(w*l), 1)
+ * Only the late, per-use evaluation of a .func makes such a line work.
+ */
+
+/* store a copy of 'name' in hash table 'tab', remember it in 'keys' */
+static void stat_known_add(NGHASHPTR tab, wordlist **keys, char *name)
+{
+    if (nghash_find(tab, name))
+        return;
+    *keys = wl_cons(name, *keys);
+    nghash_insert(tab, name, name);
+}
+
+
+/* Collect the names of all parameters and functions which are defined
+ * at top level (outside of .subckt ... .ends and .control ... .endc).
+ */
+static NGHASHPTR stat_collect_toplevel(struct card *deck, wordlist **keys)
+{
+    NGHASHPTR tab = nghash_init(NGHASH_MIN_SIZE);
+    int depth = 0, skip_control = 0;
+    struct card *card;
+
+    /* predefined constants of numparam */
+    stat_known_add(tab, keys, copy("pi"));
+    stat_known_add(tab, keys, copy("e"));
+
+    for (card = deck; card; card = card->nextcard) {
+        char *line = card->line, *lhs_b, *lhs_e, *equal_ptr;
+
+        if (*line == '*')
+            continue;
+        if (ciprefix(".subckt", line)) {
+            depth++;
+            continue;
+        }
+        if (ciprefix(".ends", line)) {
+            depth--;
+            continue;
+        }
+        if (ciprefix(".control", line)) {
+            skip_control++;
+            continue;
+        }
+        if (ciprefix(".endc", line)) {
+            skip_control--;
+            continue;
+        }
+        if (depth > 0 || skip_control > 0)
+            continue;
+
+        if (ciprefix(".para", line)) {
+            /* multi parameter lines have been split already */
+            equal_ptr = find_assignment(line);
+            if (!equal_ptr)
+                continue;
+            lhs_b = skip_token(line);
+            lhs_e = skip_back_ws(equal_ptr, line);
+            if (lhs_e > lhs_b)
+                stat_known_add(tab, keys, copy_substring(lhs_b, lhs_e));
+        }
+        else if (ciprefix(".func", line)) {
+            lhs_b = skip_ws(skip_token(line));
+            lhs_e = lhs_b;
+            while (identifier_char(*lhs_e))
+                lhs_e++;
+            if (lhs_e > lhs_b)
+                stat_known_add(tab, keys, copy_substring(lhs_b, lhs_e));
+        }
+    }
+    return tab;
+}
+
+
+/* Return TRUE, if each identifier in 'expr' which is neither a number
+ * nor a function call is found in table 'tab'.
+ */
+static bool stat_expr_is_toplevel(const char *expr, NGHASHPTR tab)
+{
+    const char *p = expr;
+
+    while (*p) {
+        if (isdigit_c(*p) || (*p == '.' && isdigit_c(p[1]))) {
+            /* number, optionally with exponent and scale suffix */
+            while (isdigit_c(*p) || *p == '.')
+                p++;
+            if ((*p == 'e' || *p == 'E') &&
+                (isdigit_c(p[1]) ||
+                 ((p[1] == '+' || p[1] == '-') && isdigit_c(p[2])))) {
+                p += 2;
+                while (isdigit_c(*p))
+                    p++;
+            }
+            while (identifier_char(*p))
+                p++;
+        }
+        else if (isalpha_c(*p) || *p == '_') {
+            const char *b = p, *q;
+            while (identifier_char(*p))
+                p++;
+            q = skip_ws((char *) p);
+            if (*q != '(') {
+                char *name = copy_substring(b, p);
+                bool found = nghash_find(tab, name) != NULL;
+                tfree(name);
+                if (!found)
+                    return FALSE;
+            }
+        }
+        else {
+            p++;
+        }
+    }
+    return TRUE;
+}
+
+
+/* Return TRUE, if top level parameter line 'line' (a .param with a
+ * statistical function) has to be converted into a .func.
+ * A parameter which depends on such a converted parameter can not be
+ * evaluated at top level either, therefore 'tab' is updated by the
+ * caller until no more changes occur.
+ */
+static bool stat_param_needs_func(char *line, NGHASHPTR tab)
+{
+    char *equal_ptr = find_assignment(line);
+
+    if (!equal_ptr)
+        return FALSE;
+    return !stat_expr_is_toplevel(equal_ptr + 1, tab);
+}
+
+
 /* Convert .param lines containing function 'agauss' and others
  *  (function name handed over by *fcn),  into .func lines:
  * .param xxx1 = 'aunif()'  --->  .func xxx1() 'aunif()'
@@ -8245,6 +8389,18 @@ static void inp_fix_temper_in_param(struct card *deck)
  * In a second step, after subcircuits have been expanded, all occurencies
  * of agauss in a b-line are replaced by their suitable value (function
  * eval_agauss() in inp.c).
+ *
+ * The conversion is restricted to top level .param lines which can not
+ * be evaluated at top level (see stat_param_needs_func()).  All other
+ * .param lines stay untouched and are evaluated once by numparam:
+ *   - a top level .param is drawn once per circuit load, so that all
+ *     references share one value (global process variation),
+ *   - a .param inside a .subckt is drawn once per subcircuit instance,
+ *     so that all references inside that instance share one value
+ *     (device mismatch).
+ * 'set stat_param_as_func' restores the previous behaviour (ngspice-29
+ * up to ngspice-47): every .param with a statistical function becomes
+ * a .func and is re-evaluated at each reference.
  */
 
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
@@ -8253,10 +8409,53 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
     char *funcbody, *funcname;
     struct func_temper *f, *funcs = NULL, **funcs_tail_ptr = &funcs;
     struct card *card;
+    bool all_to_func = cp_getvar("stat_param_as_func", CP_BOOL, NULL, 0);
+    NGHASHPTR toplevel = NULL;
+    wordlist *toplevel_keys = NULL;
 
     sub_count = TMALLOC(int, 16);
     for (j = 0; j < 16; j++)
         sub_count[j] = 0;
+
+    /* pre-pass:
+     *   find the top level parameters which can not be evaluated at
+     *   top level.  Remove them from 'toplevel', and repeat until no
+     *   more parameter is removed, so that a parameter depending on a
+     *   removed one is converted as well.
+     */
+    if (!all_to_func) {
+        bool changed = TRUE;
+        toplevel = stat_collect_toplevel(deck, &toplevel_keys);
+        while (changed) {
+            changed = FALSE;
+            subckt_depth = 0;
+            for (card = deck; card; card = card->nextcard) {
+                char *curr_line = card->line, *lhs_b, *lhs_e, *name;
+                if (*curr_line == '*')
+                    continue;
+                if (ciprefix(".subckt", curr_line))
+                    subckt_depth++;
+                else if (ciprefix(".ends", curr_line))
+                    subckt_depth--;
+                if (subckt_depth > 0 || !ciprefix(".para", curr_line) ||
+                    !search_identifier(curr_line, fcn, curr_line))
+                    continue;
+                lhs_b = skip_token(curr_line);
+                lhs_e = find_assignment(curr_line);
+                if (!lhs_e)
+                    continue;
+                lhs_e = skip_back_ws(lhs_e, curr_line);
+                name = copy_substring(lhs_b, lhs_e);
+                if (nghash_find(toplevel, name) &&
+                    stat_param_needs_func(curr_line, toplevel)) {
+                    nghash_delete(toplevel, name);
+                    changed = TRUE;
+                }
+                tfree(name);
+            }
+        }
+        subckt_depth = 0;
+    }
 
     /* first pass:
      *   determine all .param with agauss inside and replace by .func
@@ -8338,6 +8537,23 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
             p = strpbrk(lhs_b, "(,)");
             if (p && p < lhs_e)
                 continue;
+
+            /* keep .param, to be evaluated once by numparam:
+             *   inside a subcircuit (once per instance), or at top level,
+             *   if evaluation at top level is possible (see pre-pass) */
+            if (!all_to_func) {
+                bool keep;
+                if (subckt_depth > 0) {
+                    keep = TRUE;
+                }
+                else {
+                    char *name = copy_substring(lhs_b, lhs_e);
+                    keep = nghash_find(toplevel, name) != NULL;
+                    tfree(name);
+                }
+                if (keep)
+                    continue;
+            }
 
             if (temper < equal_ptr) {
                 fprintf(stderr,
@@ -8443,6 +8659,9 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
     /* final memory clearance */
     tfree(sub_count);
     inp_delete_funcs(funcs);
+    if (toplevel)
+        nghash_free(toplevel, NULL, NULL);
+    wl_free(toplevel_keys);
 }
 
 
