@@ -35,9 +35,20 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     double egfet;
     double arg;
     double dt;
+    double leakBE, leakBC;   /* resolved ISE / ISC (absolute) */
 
     /*  loop through all the bipolar models */
     for( ; model != NULL; model = BJTnextModel(model)) {
+
+        /* SPICE2 compatibility: ise/isc > 1e-4 is a multiplier of IS.
+         * Resolved here on every temperature update from the unscaled IS
+         * and the values as given on the card, so a changed IS (altermod,
+         * parameter sweep, reuse of setup) is followed; the model
+         * parameters stay as the user entered them. */
+        leakBE = model->BJTleakBEcurrent;
+        if (leakBE > 1e-4) leakBE *= model->BJTsatCur;
+        leakBC = model->BJTleakBCcurrent;
+        if (leakBC > 1e-4) leakBC *= model->BJTsatCur;
 
         if(!model->BJTtnomGiven) model->BJTtnom = ckt->CKTnomTemp;
         vtnom = CONSTKoverQ * model->BJTtnom;
@@ -246,13 +257,13 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->BJTtBetaR = model->BJTbetaR * bfactor;
 
             if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
-              here->BJTtBEleakCur = here->BJTarea * model->BJTleakBEcurrent *
+              here->BJTtBEleakCur = here->BJTarea * leakBE *
                   exp(factlog/model->BJTleakBEemissionCoeff)/bfactor;
-              here->BJTtBCleakCur = model->BJTleakBCcurrent *
+              here->BJTtBCleakCur = leakBC *
                   exp(factlog/model->BJTleakBCemissionCoeff)/bfactor;
             } else if (model->BJTtlev == 3) {
-              here->BJTtBEleakCur = here->BJTarea * pow(model->BJTleakBEcurrent,(1+model->BJTtise1*dt+model->BJTtise2*dt*dt));
-              here->BJTtBCleakCur = pow(model->BJTleakBCcurrent,(1+model->BJTtisc1*dt+model->BJTtisc2*dt*dt));
+              here->BJTtBEleakCur = here->BJTarea * pow(leakBE,(1+model->BJTtise1*dt+model->BJTtise2*dt*dt));
+              here->BJTtBCleakCur = pow(leakBC,(1+model->BJTtisc1*dt+model->BJTtisc2*dt*dt));
             }
             if (model->BJTsubs == VERTICAL) {
                 here->BJTtBCleakCur *= here->BJTareab;
