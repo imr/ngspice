@@ -65,6 +65,12 @@ if(MSVC)
     enable_language(CXX)
 endif()
 
+# Some compilers (seen with Intel icx) leave CMAKE_EXECUTABLE_FORMAT unset,
+# then Ninja refuses the RPATH rewrite on install. Linux is always ELF.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_EXECUTABLE_FORMAT STREQUAL "ELF")
+    set(CMAKE_EXECUTABLE_FORMAT "ELF" CACHE INTERNAL "Executable file format" FORCE)
+endif()
+
 include(GNUInstallDirs)
 include(CMakeDependentOption)
 include(NgspiceOptions)
