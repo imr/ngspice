@@ -18,7 +18,7 @@ AUTHORS
 
 MODIFICATIONS
 
-    <date> <person name> <nature of modifications>
+    21.10.26   Holger Vogt   dc/ac: use rinit
 
 SUMMARY
 
@@ -65,17 +65,19 @@ void cm_memristor (ARGS)
     double      int_value;
     double      *rval;
 	double      inpdiff;
+    double      initr;
 	
     /* get the parameters */
 	alpha = PARAM(alpha);
     beta = PARAM(beta);
-    vt = PARAM(vt);	
+    vt = PARAM(vt);
+    initr = PARAM(rinit);
 
     /* Initialize/access instance specific storage for resistance value */
     if(INIT) {
         cm_analog_alloc(RV, sizeof(double));
         rval = (double *) cm_analog_get_ptr(RV, 0);
-        *rval = PARAM(rinit);
+        *rval = initr;
     }
     else {
         rval = (double *) cm_analog_get_ptr(RV, 0);
@@ -102,12 +104,12 @@ void cm_memristor (ARGS)
 		cm_analog_auto_partial();*/
     }
     else if(ANALYSIS == AC) {
-        ac_gain.real = 1/ *rval;
+        ac_gain.real = 1 / initr;
         ac_gain.imag = 0.0;
         AC_GAIN(memris, memris) = ac_gain;
     }
 	else
-	    OUTPUT(memris) = INPUT(memris) / *rval;
+	    OUTPUT(memris) = INPUT(memris) / initr;
 }
 
 /* the window function */
