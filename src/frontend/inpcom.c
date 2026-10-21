@@ -274,7 +274,7 @@ static char* make_lower_case_copy(char* inbuf)
 
 static int is_special_model(char *buf, const char * const *models)
 {
-    int len;
+    size_t len;
     const char *s, * const *ep;
 
     if (!ciprefix(".model", buf)) {
