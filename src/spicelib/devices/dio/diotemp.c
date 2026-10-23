@@ -217,11 +217,7 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
         } else {
             tBreakdownVoltage = model->DIObreakdownVoltage * (1 - model->DIOtcv * dt);
         }
-        if (model->DIOlevel == 1) {
-            cbv = here->DIOm * model->DIObreakdownCurrent;
-        } else { /* level=3 */
-            cbv = model->DIObreakdownCurrent * here->DIOarea * here->DIOm;
-        }
+        cbv = model->DIObreakdownCurrent * here->DIOarea * here->DIOm;
         if (cbv < totalSatCur * tBreakdownVoltage/vt) {
 #ifdef TRACE
             cbv=totalSatCur * tBreakdownVoltage/vt;
