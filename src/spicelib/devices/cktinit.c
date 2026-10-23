@@ -56,9 +56,9 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 #ifdef XSPICE
     sckt->CKTadevFlag = 0; /* flag indicates A devices in the circuit */
 #endif
-    sckt->CKTtranMaxIter = 10;
+    sckt->CKTtranMaxIter = 100;
     sckt->CKTdcMaxIter = 100;
-    sckt->CKTdcTrcvMaxIter = 50;
+    sckt->CKTdcTrcvMaxIter = 100;
     sckt->CKTintegrateMethod = TRAPEZOIDAL;
     sckt->CKTorder = 1;
     sckt->CKTmaxOrder = 2;

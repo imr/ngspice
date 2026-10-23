@@ -34,10 +34,6 @@ NIiter(CKTcircuit *ckt, int maxIter)
     int iterno = 0;
     int ipass = 0;
 
-    /* some convergence issues that get resolved by increasing max iter */
-    if (maxIter < 100)
-        maxIter = 100;
-
     if ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
         error = CKTload(ckt);
