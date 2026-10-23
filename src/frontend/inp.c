@@ -500,7 +500,7 @@ eval_opt(struct card* deck)
             /* option rshunt=val*/
             double sr = INPevaluate(&begtok, &err, 0);
             if (sr <= 0 || err)
-                fprintf(cp_err, "Warning: Cannot convert 'option cshunt=%s' to resistor value, skipped!\n", begtok);
+                fprintf(cp_err, "Warning: Cannot convert 'option rshunt=%s' to resistor value, skipped!\n", begtok);
             else {
                 cp_vset("rshunt_value", CP_REAL, &sr);
                 has_rshunt = TRUE;
