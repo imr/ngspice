@@ -119,6 +119,10 @@ struct CKTcircuit {
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
     double *CKTrhsSpare;        /* spare rhs value for reordering */
+    double *CKTrhsAccepted;     /* last accepted transient solution,
+                                   the starting point of a retry */
+    int CKTrhsSize;             /* length of the rhs vectors less one,
+                                   as allocated by NIreinit */
     double *CKTirhs;            /* current rhs value - being loaded
                                    (imag) */
     double *CKTirhsOld;         /* previous rhs value (imaginary)*/

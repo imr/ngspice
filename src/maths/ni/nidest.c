@@ -22,6 +22,7 @@ NIdestroy(CKTcircuit *ckt)
     if(ckt->CKTrhs)         FREE(ckt->CKTrhs);
     if(ckt->CKTrhsOld)      FREE(ckt->CKTrhsOld);
     if(ckt->CKTrhsSpare)    FREE(ckt->CKTrhsSpare);
+    if(ckt->CKTrhsAccepted) FREE(ckt->CKTrhsAccepted);
     if(ckt->CKTirhs)        FREE(ckt->CKTirhs);
     if(ckt->CKTirhsOld)     FREE(ckt->CKTirhsOld);
     if(ckt->CKTirhsSpare)   FREE(ckt->CKTirhsSpare);
