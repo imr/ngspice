@@ -37,7 +37,7 @@ void INPpas5(CKTcircuit *ckt, INPtables *tab)
     int nadded = 0;      /* resistors added */
     double rsval = 0.;   /* rshunt resistance value */
 
-    /* get the cshunt value */
+    /* get the rshunt value */
     if (!cp_getvar("rshunt_value", CP_REAL, &rsval, 0))
         return;
 
