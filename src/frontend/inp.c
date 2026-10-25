@@ -69,7 +69,7 @@ extern void tprint(struct card *deck);
 //void inp_mc_free(void);
 //void inp_remove_recent(void);
 static bool mc_reload = FALSE;
-void eval_opt(struct card *deck);
+void eval_opt(struct card *deck, bool comfile);
 
 extern bool ft_batchmode;
 extern int dynmaxline;
@@ -424,10 +424,13 @@ inp_remove_recent(void) {
 
 
 /* Check for .option seed=[val|random] and set the random number generator.
-   Check for .option cshunt=val and set a global variable
+   Check for .option cshunt=val rshunt=val and set a global variable.
+   If .option rshunt is found in the netlist, it overrides the spinit, .spceinit given values.
+   If another netlist is sourced without .option rshunt, the global variable is removed,
+   or reset to the spinit, .spiceinit value, if available. Same for cshunt.
    Input is the option deck (already sorted for .option) */
 void
-eval_opt(struct card* deck)
+eval_opt(struct card* deck, bool comfile)
 {
     struct card* card;
     bool has_seed = FALSE;
@@ -486,6 +489,8 @@ eval_opt(struct card* deck)
                 fprintf(cp_err, "Warning: Cannot convert 'option cshunt=%s' to capacitor value, skipped!\n", begtok);
             else {
                 cp_vset("cshunt_value", CP_REAL, &sr);
+                if (comfile)
+                    cp_vset("cshunt_value_cf", CP_REAL, &sr);
                 has_cshunt = TRUE;
             }
         }
@@ -503,16 +508,30 @@ eval_opt(struct card* deck)
                 fprintf(cp_err, "Warning: Cannot convert 'option rshunt=%s' to resistor value, skipped!\n", begtok);
             else {
                 cp_vset("rshunt_value", CP_REAL, &sr);
+                if (comfile)
+                    cp_vset("rshunt_value_cf", CP_REAL, &sr);
                 has_rshunt = TRUE;
             }
         }
     }
-    // if cshunt option wasn't given, remove variable
-    if (!has_cshunt)
-        cp_remvar("cshunt_value");
-    // if rshunt option wasn't given, remove variable
-    if (!has_rshunt)
-        cp_remvar("rshunt_value");
+    /* if cshunt option wasn't given, remove variable,
+       or reset it to the value given in spinit, .spiceinit */
+    if (!has_cshunt) {
+        double varval;
+        if (cp_getvar("cshunt_value_cf", CP_REAL, &varval, 0))
+            cp_vset("cshunt_value", CP_REAL, &varval);
+        else
+            cp_remvar("cshunt_value");
+    }
+    /* if rshunt option wasn't given, remove variable,
+       or reset it to the value given in spinit, .spiceinit */
+    if (!has_rshunt) {
+        double varval;
+        if (cp_getvar("rshunt_value_cf", CP_REAL, &varval, 0))
+            cp_vset("rshunt_value", CP_REAL, &varval);
+        else
+            cp_remvar("rshunt_value");
+    }
 }
 
 /* The routine to source a spice input deck. We read the deck in, take
@@ -634,7 +653,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     options = inp_getopts(deck, comfile);
     /* Check for .option seed=[val|random] and set the random number generator.
         Check for .option cshunt=val and set a global variable cshunt_value */
-    eval_opt(options);
+    eval_opt(options, comfile);
 
     if (!comfile) {
         /* copy a deck before subckt substitution. */
