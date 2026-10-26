@@ -416,9 +416,10 @@ next1:
                     t1 = pow((1-vd/here->DIOtJctPot), 2) + 0.005;
                     gen_fac = pow(t1, here->DIOtGradingCoeff/2);
                     gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot)
-                                                         * pow(t1, (here->DIOtGradingCoeff/2-1));
-                    cdb_rec = cdb_rec * gen_fac;
+                                                         * pow(t1, (here->DIOtGradingCoeff/2-1))
+                                                         / here->DIOtJctPot;
                     gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
+                    cdb_rec = cdb_rec * gen_fac;
                     cdb = cdb + cdb_rec;
                     gdb = gdb + gdb_rec;
                     cdb_dT = cdb_dT + cdb_rec_dT*gen_fac;
@@ -432,18 +433,27 @@ next1:
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
                 darg_dT = 3 * arg / Temp;
-                if (model->DIOrecSatCurGiven) {
-                    evd_rec = exp((-3*vte)/vterec);
-                    cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
-                    t1 = pow((1-(-3*vte)/here->DIOtJctPot), 2) + 0.005;
-                    gen_fac = pow(t1, here->DIOtGradingCoeff/2);
-                    cdb = -csat*(1+arg) + gen_fac*cdb_rec;
-                } else {
-                    cdb = -csat*(1+arg);
-                }
+                cdb = -csat*(1+arg);
                 gdb = csat*3*arg/vd;
                 cdres = -csat*(1+arg); gdres = gdb;
                 cdb_dT = -csat_dT - (csat_dT*arg + csat*darg_dT);
+                if (model->DIOrecSatCurGiven) { /* generation current: same expression as forward, continuous in value and slope */
+                    evd_rec = exp(vd/vterec);
+                    cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
+                    gdb_rec = here->DIOtRecSatCur*evd_rec/vterec;
+                    cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1)
+                                -here->DIOtRecSatCur * vd * evd_rec / (vterec*Temp);
+                    t1 = pow((1-vd/here->DIOtJctPot), 2) + 0.005;
+                    gen_fac = pow(t1, here->DIOtGradingCoeff/2);
+                    gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot)
+                                                         * pow(t1, (here->DIOtGradingCoeff/2-1))
+                                                         / here->DIOtJctPot;
+                    gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
+                    cdb_rec = cdb_rec * gen_fac;
+                    cdb = cdb + cdb_rec;
+                    gdb = gdb + gdb_rec;
+                    cdb_dT = cdb_dT + cdb_rec_dT*gen_fac;
+                }
                 if ((model->DIOsatSWCurGiven)&&(!model->DIOswEmissionCoeffGiven)) {
                     cdsw = -csatsw*(1+arg);
                     gdsw = csatsw*3*arg/vd;
@@ -457,17 +467,26 @@ next1:
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
                 evrev_dT = (here->DIOtBrkdwnV+vd)*evrev/(vtebrk*Temp);
-                if (model->DIOrecSatCurGiven) {
-                    evd_rec = exp((-3*vte)/vterec);
-                    cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
-                    t1 = pow((1-(-3*vte)/here->DIOtJctPot), 2) + 0.005;
-                    gen_fac = pow(t1, here->DIOtGradingCoeff/2);
-                    cdb = -csat*evrev + gen_fac*cdb_rec;
-                } else {
-                    cdb = -csat*evrev;
-                }
+                cdb = -csat*evrev;
                 gdb = csat*evrev/vtebrk;
                 cdb_dT = -(csat_dT*evrev + csat*evrev_dT);
+                if (model->DIOrecSatCurGiven) { /* generation current: same expression as forward, continuous in value and slope */
+                    evd_rec = exp(vd/vterec);
+                    cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
+                    gdb_rec = here->DIOtRecSatCur*evd_rec/vterec;
+                    cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1)
+                                -here->DIOtRecSatCur * vd * evd_rec / (vterec*Temp);
+                    t1 = pow((1-vd/here->DIOtJctPot), 2) + 0.005;
+                    gen_fac = pow(t1, here->DIOtGradingCoeff/2);
+                    gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot)
+                                                         * pow(t1, (here->DIOtGradingCoeff/2-1))
+                                                         / here->DIOtJctPot;
+                    gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
+                    cdb_rec = cdb_rec * gen_fac;
+                    cdb = cdb + cdb_rec;
+                    gdb = gdb + gdb_rec;
+                    cdb_dT = cdb_dT + cdb_rec_dT*gen_fac;
+                }
                 if ((model->DIOsatSWCurGiven)
                     &&(!model->DIOswEmissionCoeffGiven)
                     &&(!model->DIOresistSWGiven)) { /* no breakdown for separate sidewall diode */
