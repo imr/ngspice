@@ -246,7 +246,10 @@ void cm_pswitch(ARGS)  /* structure holding parms,
             }
             else {
                 r = exp(logmean + loc->c1 * inmean - loc->c3 * inmean * inmean * inmean);
-                if(r<r_on) r=r_on;/* minimum resistance limiter */
+                if (r < r_on) { /* The clipped resistance is independent of control. */
+                    r = r_on;
+                    outOfLimit = 1;
+                }
             }
         } else {
             inmean = (cntl_on - INPUT(cntl_in)) / (cntl_on - cntl_off) - cntl_mean;
@@ -260,11 +263,16 @@ void cm_pswitch(ARGS)  /* structure holding parms,
             }
             else {
                 r = exp(logmean + loc->c1 * inmean - loc->c3 * inmean * inmean * inmean);
-                if(r<r_on) r=r_on;/* minimum resistance limiter */
+                if (r < r_on) { /* The clipped resistance is independent of control. */
+                    r = r_on;
+                    outOfLimit = 1;
+                }
             }
         }
 
-        pi_pcntl = INPUT(out) / r * (loc->c2 * inmean * inmean - loc->c1);
+        /* inmean is normalized by the physical control-voltage span. */
+        pi_pcntl = INPUT(out) / r * (loc->c2 * inmean * inmean - loc->c1)
+                   / fabs(cntl_on - cntl_off);
         if(1 == outOfLimit){
             pi_pcntl = 0;
         }
@@ -304,7 +312,10 @@ void cm_pswitch(ARGS)  /* structure holding parms,
                 pi_pcntl = -intermediate * INPUT(out) / (r*r);
             }        
         }
-        if(r<=1.0e-9) r=1.0e-9;/* minimum resistance limiter */
+        if (r <= 1.0e-9) { /* minimum resistance limiter */
+            r = 1.0e-9;
+            pi_pcntl = 0.0;
+        }
         pi_pvout = 1.0 / r;
     }
 
@@ -318,17 +329,21 @@ void cm_pswitch(ARGS)  /* structure holding parms,
 //                                              independent to out port */
         cm_analog_auto_partial();
 
-    /* Note that the minus signs are required  because current is positive
-       flowing INTO rather than OUT OF a component node.       */
     }
     else {                              /*   Output AC Gain Values      */
-        ac_gain.real = -pi_pvout;           /* See comment on minus signs above...  */
+        /* Conductance ports use the same current Jacobian in DC and AC. */
+        ac_gain.real = pi_pvout;
         ac_gain.imag= 0.0;
         AC_GAIN(out,out) = ac_gain;
 
-        ac_gain.real = -pi_pcntl;
+        ac_gain.real = pi_pcntl;
         ac_gain.imag= 0.0;
         AC_GAIN(out,cntl_in) = ac_gain;
+
+        ac_gain.real = 1.0 / r_cntl_in;
+        AC_GAIN(cntl_in,cntl_in) = ac_gain;
+        ac_gain.real = 0.0;
+        AC_GAIN(cntl_in,out) = ac_gain;
     }
 }
 

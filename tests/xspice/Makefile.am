@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = digital
+SUBDIRS = analog digital
 
 MAINTAINERCLEANFILES = Makefile.in

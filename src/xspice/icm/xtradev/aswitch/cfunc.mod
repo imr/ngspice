@@ -129,6 +129,7 @@ void cm_aswitch(ARGS)  /* structure holding parms,
 	double pi_pcntl;     /* partial of the output wrt control input */
 
    Mif_Complex_t ac_gain;
+   int limited = 0;
                    
 	  char *cntl_error = "\n*****ERROR*****\nASWITCH: CONTROL voltage delta less than 1.0e-12\n";
                        
@@ -152,11 +153,11 @@ void cm_aswitch(ARGS)  /* structure holding parms,
         r = r_on * exp(intermediate * (cntl_on - INPUT(cntl_in)));
 
         if (PARAM(limit) == MIF_TRUE) {
-            if(r<r_on) r=r_on;/* minimum resistance limiter */
-            if(r>r_off) r=r_off;/* maximum resistance limiter */
+            if (r < r_on) { r = r_on; limited = 1; }
+            if (r > r_off) { r = r_off; limited = 1; }
         }
         else {
-            if(r<=1.0e-9) r=1.0e-9;/* minimum resistance limiter */
+            if (r <= 1.0e-9) { r = 1.0e-9; limited = 1; }
         }
         pi_pvout = 1.0 / r;
         pi_pcntl = intermediate * INPUT(out) / r;
@@ -167,30 +168,31 @@ void cm_aswitch(ARGS)  /* structure holding parms,
                 r_on*cntl_off) / (cntl_on - cntl_off));
 
         if (PARAM(limit) == MIF_TRUE) {
-            if(r<r_on) r=r_on;/* minimum resistance limiter */
-            if(r>r_off) r=r_off;/* maximum resistance limiter */
+            if (r < r_on) { r = r_on; limited = 1; }
+            if (r > r_off) { r = r_off; limited = 1; }
         }
         else {
-            if(r<=1.0e-9) r=1.0e-9;/* minimum resistance limiter */
+            if (r <= 1.0e-9) { r = 1.0e-9; limited = 1; }
         }
         pi_pvout = 1.0 / r;
         pi_pcntl = -intermediate * INPUT(out) / (r*r);
     }                                 
 
+    /* A clamped resistance has zero control derivative in both analyses. */
+    if (limited)
+        pi_pcntl = 0.0;
+
     if(ANALYSIS != MIF_AC) {            /* Output DC & Transient Values  */
-        OUTPUT(out) = INPUT(out) / r;      /* Note that the minus   */
-        PARTIAL(out,out) = pi_pvout;       /* Signs are required    */
-        PARTIAL(out,cntl_in) = pi_pcntl;   /* because current is    */
-                                            /* positive flowing INTO */
-                                            /* rather than OUT OF a  */
-                                            /* component node.       */
+        OUTPUT(out) = INPUT(out) / r;
+        PARTIAL(out,out) = pi_pvout;
+        PARTIAL(out,cntl_in) = pi_pcntl;
     }
     else {                       /*   Output AC Gain Values      */
-        ac_gain.real = -pi_pvout;           /* See comment on minus   */
-        ac_gain.imag= 0.0;                  /* signs above....        */
+        ac_gain.real = pi_pvout;            /* Same Jacobian as DC. */
+        ac_gain.imag= 0.0;
         AC_GAIN(out,out) = ac_gain;
 
-        ac_gain.real = -pi_pcntl;
+        ac_gain.real = pi_pcntl;
         ac_gain.imag= 0.0;
         AC_GAIN(out,cntl_in) = ac_gain;
     }
