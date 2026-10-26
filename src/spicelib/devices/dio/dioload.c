@@ -416,9 +416,10 @@ next1:
                     t1 = pow((1-vd/here->DIOtJctPot), 2) + 0.005;
                     gen_fac = pow(t1, here->DIOtGradingCoeff/2);
                     gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot)
-                                                         * pow(t1, (here->DIOtGradingCoeff/2-1));
-                    cdb_rec = cdb_rec * gen_fac;
+                                                         * pow(t1, (here->DIOtGradingCoeff/2-1))
+                                                         / here->DIOtJctPot;
                     gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
+                    cdb_rec = cdb_rec * gen_fac;
                     cdb = cdb + cdb_rec;
                     gdb = gdb + gdb_rec;
                     cdb_dT = cdb_dT + cdb_rec_dT*gen_fac;
