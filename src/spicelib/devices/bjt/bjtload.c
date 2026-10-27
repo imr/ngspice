@@ -510,15 +510,31 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
              *   Kull's Quasi-Saturation model
              */
             if (model->BJTintCollResistGiven) {
+                /* The epi charges depend on vbc and vbcx only, so they are
+                   evaluated for both signs of vrci (as in PSpice and VBIC).
+                   Setting them to zero for vrci <= 0 made the charge jump by
+                   about QCO when vrci crossed zero, and the transient failed
+                   with "timestep too small".
+                   PSpice form: Q = QCO*(K(v) - 1 - GAMMA/2), which is about
+                   zero at zero bias. */
+                double Kbci,Kbci_Vbci,Kbcx,Kbcx_Vbcx,Q0;
+                Kbci = sqrt(1+here->BJTtepiDoping*exp(vbc/vt));
+                Kbci_Vbci = here->BJTtepiDoping*exp(vbc/vt)/(2*vt*Kbci);
+                Kbcx = sqrt(1+here->BJTtepiDoping*exp(vbcx/vt));
+                Kbcx_Vbcx = here->BJTtepiDoping*exp(vbcx/vt)/(2*vt*Kbcx);
+
+                Q0 = 1+here->BJTtepiDoping/2;
+                Qbci = model->BJTepiCharge*(Kbci-Q0);
+                Qbci_Vbci = model->BJTepiCharge*Kbci_Vbci;
+                Qbcx = model->BJTepiCharge*(Kbcx-Q0);
+                Qbcx_Vbcx = model->BJTepiCharge*Kbcx_Vbcx;
+                *(ckt->CKTstate0 + here->BJTqbcx) = Qbcx;
+                here->BJTcapbcx = Qbcx_Vbcx;
+
                 if (vrci > 0.) {
-                    double Kbci,Kbci_Vbci,Kbcx,Kbcx_Vbcx;
                     double rKp1,rKp1_Vbci,rKp1_Vbcx,xvar1,xvar1_Vbci,xvar1_Vbcx;
                     double Vcorr,Vcorr_Vbci,Vcorr_Vbcx,Iohm,Iohm_Vrci,Iohm_Vbci,Iohm_Vbcx;
                     double quot,quot_Vrci;
-                    Kbci = sqrt(1+here->BJTtepiDoping*exp(vbc/vt));
-                    Kbci_Vbci = here->BJTtepiDoping*exp(vbc/vt)/(2*vt*Kbci);
-                    Kbcx = sqrt(1+here->BJTtepiDoping*exp(vbcx/vt));
-                    Kbcx_Vbcx = here->BJTtepiDoping*exp(vbcx/vt)/(2*vt*Kbcx);
 
                     rKp1 = (1+Kbci)/(1+Kbcx);
                     rKp1_Vbci = Kbci_Vbci/(1+Kbcx);
@@ -543,25 +559,11 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                     Irci_Vrci = Iohm_Vrci/quot-Iohm*quot_Vrci/(quot*quot) + ckt->CKTgmin;
                     Irci_Vbci = Iohm_Vbci/quot;
                     Irci_Vbcx = Iohm_Vbcx/quot;
-
-                    Qbci = model->BJTepiCharge*Kbci;
-                    Qbci_Vbci = model->BJTepiCharge*Kbci_Vbci;
-                    Qbcx = model->BJTepiCharge*Kbcx;
-                    Qbcx_Vbcx = model->BJTepiCharge*Kbcx_Vbcx;
-                    *(ckt->CKTstate0 + here->BJTqbcx) = Qbcx;
-                    here->BJTcapbcx = Qbcx_Vbcx;
                 } else {
                     Irci = vrci/here->BJTtintCollResist + ckt->CKTgmin*vrci;
                     Irci_Vrci = 1/here->BJTtintCollResist + ckt->CKTgmin;
                     Irci_Vbci = 0.0;
                     Irci_Vbcx = 0.0;
-
-                    Qbci = 0.0;
-                    Qbci_Vbci = 0.0;
-                    Qbcx = 0.0;
-                    Qbcx_Vbcx = 0.0;
-                    *(ckt->CKTstate0 + here->BJTqbcx) = Qbcx;
-                    here->BJTcapbcx = Qbcx_Vbcx;
                 }
             }
             /*
