@@ -552,13 +552,20 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                     Iohm_Vbci = Vcorr_Vbci/here->BJTtintCollResist;
                     Iohm_Vbcx = Vcorr_Vbcx/here->BJTtintCollResist;
 
-                    quot = 1+fabs(vrci)/here->BJTtepiSatVoltage;
-                    quot_Vrci = vrci/(here->BJTtepiSatVoltage*fabs(vrci));
+                    /* equivalent form, but without a division by VO */
+                    quot = fabs(vrci)+here->BJTtepiSatVoltage;
+                    if (vrci > 0.)
+                        quot_Vrci = 1.0;
+                    else if (vrci < 0.)
+                        quot_Vrci = -1.0;
+                    else
+                        quot_Vrci = 0.0;
 
-                    Irci = Iohm/quot + ckt->CKTgmin*vrci;
-                    Irci_Vrci = Iohm_Vrci/quot-Iohm*quot_Vrci/(quot*quot) + ckt->CKTgmin;
-                    Irci_Vbci = Iohm_Vbci/quot;
-                    Irci_Vbcx = Iohm_Vbcx/quot;
+                    Irci = here->BJTtepiSatVoltage*Iohm/quot + ckt->CKTgmin*vrci;
+                    Irci_Vrci = here->BJTtepiSatVoltage*(Iohm_Vrci/quot
+                                - Iohm*quot_Vrci/(quot*quot)) + ckt->CKTgmin;
+                    Irci_Vbci = here->BJTtepiSatVoltage*Iohm_Vbci/quot;
+                    Irci_Vbcx = here->BJTtepiSatVoltage*Iohm_Vbcx/quot;
                 } else {
                     Irci = vrci/here->BJTtintCollResist + ckt->CKTgmin*vrci;
                     Irci_Vrci = 1/here->BJTtintCollResist + ckt->CKTgmin;

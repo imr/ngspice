@@ -172,6 +172,10 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if(!model->BJTepiSatVoltageGiven) {
             model->BJTepiSatVoltage = 10.0;
+        } else if (model->BJTintCollResistGiven
+                   && model->BJTepiSatVoltage <= 0.0) {
+            fprintf(stderr, "Warning: %s: VO = %g - epitaxial resistance RCO may give meaningless results\n",
+                    model->BJTmodName, model->BJTepiSatVoltage);
         }
         if(!model->BJTepiDopingGiven) {
             model->BJTepiDoping = 1.0e-11;
