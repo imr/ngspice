@@ -523,11 +523,15 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                 Kbcx = sqrt(1+here->BJTtepiDoping*exp(vbcx/vt));
                 Kbcx_Vbcx = here->BJTtepiDoping*exp(vbcx/vt)/(2*vt*Kbcx);
 
+                double qco = model->BJTepiCharge
+                             * ((model->BJTsubs == VERTICAL)
+                                ? here->BJTareab : here->BJTareac);
+
                 Q0 = 1+here->BJTtepiDoping/2;
-                Qbci = model->BJTepiCharge*(Kbci-Q0);
-                Qbci_Vbci = model->BJTepiCharge*Kbci_Vbci;
-                Qbcx = model->BJTepiCharge*(Kbcx-Q0);
-                Qbcx_Vbcx = model->BJTepiCharge*Kbcx_Vbcx;
+                Qbci = qco*(Kbci-Q0);
+                Qbci_Vbci = qco*Kbci_Vbci;
+                Qbcx = qco*(Kbcx-Q0);
+                Qbcx_Vbcx = qco*Kbcx_Vbcx;
                 *(ckt->CKTstate0 + here->BJTqbcx) = Qbcx;
                 here->BJTcapbcx = Qbcx_Vbcx;
 

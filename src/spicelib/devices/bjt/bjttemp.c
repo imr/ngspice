@@ -239,6 +239,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->BJTtepiSatVoltage=model->BJTepiSatVoltage;
                     here->BJTtepiDoping=model->BJTepiDoping;
                 }
+                here->BJTtintCollResist /= here->BJTarea;
             }
 
             double bfactor=1.0;
