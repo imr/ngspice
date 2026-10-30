@@ -2,7 +2,7 @@ Example circuit to read a Touchstone-format parameter file.
 
 * This file contains an an analog filter circuit; SP and AC analyses are run
 * and the S-parameters are saved in a file. 
-* It also uses vetor fitting for a *.nport file serving the nport instance
+* It also uses vector fitting for a *.nport file serving the nport instance
 * in a circuit that reproduces the original from its saved S-parameters.
 * Results from the two versions are plotted together for comparison.
 
