@@ -49,13 +49,13 @@ NGSRCDIR = $(srcdir)/../..
 NGSRCBUILDDIR = $(CURDIR)/../..
 
 dstring.o: $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
-	$(CC) $(CFLAGS) -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include -fPIC -o $@ -c $<
+	$(CC) $(CFLAGS) -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include $(KLU_CPPFLAGS) -fPIC -o $@ -c $<
 
 msline_common.o: $(srcdir)/../tlines/msline_common.c $(srcdir)/../tlines/msline_common.h
-	$(CC) $(CFLAGS) -I$(srcdir)/../tlines -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include -fPIC -o $@ -c $<
+	$(CC) $(CFLAGS) -I$(srcdir)/../tlines -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include $(KLU_CPPFLAGS) -fPIC -o $@ -c $<
 
 tline_common.o: $(srcdir)/../tlines/tline_common.c $(srcdir)/../tlines/tline_common.h
-	$(CC) $(CFLAGS) -I$(srcdir)/../tlines -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include -fPIC -o $@ -c $<
+	$(CC) $(CFLAGS) -I$(srcdir)/../tlines -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include $(KLU_CPPFLAGS) -fPIC -o $@ -c $<
 
 ifdef cm
 

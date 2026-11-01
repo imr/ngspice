@@ -197,6 +197,13 @@ AC_ARG_WITH([fftw3],
 AC_ARG_ENABLE([klu],
     [AS_HELP_STRING([--disable-klu], [Use KLU linear systems solver. Default=yes.])])
 
+# --with-suitesparse: Use the KLU of an installed SuiteSparse instead of the
+# bundled one.  "auto" (default) uses it if found, otherwise the bundled KLU.
+AC_ARG_WITH([suitesparse],
+    [AS_HELP_STRING([--with-suitesparse[=auto/yes/no]],
+        [Use KLU from an installed SuiteSparse instead of the bundled KLU. Default=auto.])],
+    [], [with_suitesparse=auto])
+
 # old options, not maintained, may even not work at all
 
 # --enable-oldapps: define OLDAPPS
@@ -299,13 +306,58 @@ if test "x$with_editline" = xyes; then
 fi
 
 # Add KLU solver to ngspice
+system_klu=no
 if test "x$enable_klu" = xyes || test "x$enable_klu" = x ; then
     AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
-    AC_MSG_RESULT([KLU solver enabled])
+    if test "x$with_suitesparse" != xno ; then
+        # 1. pkg-config (SuiteSparse >= 7 ships KLU.pc, some distros klu.pc)
+        m4_ifdef([PKG_CHECK_MODULES], [
+            PKG_CHECK_MODULES([SUITESPARSE_KLU], [KLU], [system_klu=yes],
+                [PKG_CHECK_MODULES([SUITESPARSE_KLU], [klu], [system_klu=yes], [:])])
+        ])
+        if test "x$system_klu" = xyes ; then
+            ss_save_CPPFLAGS="$CPPFLAGS"
+            CPPFLAGS="$CPPFLAGS $SUITESPARSE_KLU_CFLAGS"
+            AC_CHECK_HEADERS([klu.h], [], [system_klu=no])
+            CPPFLAGS="$ss_save_CPPFLAGS"
+        fi
+        # 2. plain header and library search
+        if test "x$system_klu" != xyes ; then
+            AC_CHECK_HEADERS([suitesparse/klu.h klu.h], [system_klu=yes; break])
+            if test "x$system_klu" = xyes ; then
+                SUITESPARSE_KLU_CFLAGS=""
+                SUITESPARSE_KLU_LIBS="-lklu -lbtf -lamd -lcolamd"
+                AC_CHECK_LIB([suitesparseconfig], [SuiteSparse_version],
+                    [SUITESPARSE_KLU_LIBS="$SUITESPARSE_KLU_LIBS -lsuitesparseconfig"])
+            fi
+        fi
+        # 3. the library must really link
+        if test "x$system_klu" = xyes ; then
+            ss_save_LIBS="$LIBS"
+            LIBS="$SUITESPARSE_KLU_LIBS $LIBS"
+            AC_MSG_CHECKING([whether SuiteSparse KLU links])
+            AC_LINK_IFELSE([AC_LANG_CALL([], [klu_z_tsolve])],
+                [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); system_klu=no])
+            LIBS="$ss_save_LIBS"
+        fi
+        if test "x$system_klu" != xyes && test "x$with_suitesparse" = xyes ; then
+            AC_MSG_ERROR([--with-suitesparse given, but SuiteSparse KLU was not found])
+        fi
+    fi
+    if test "x$system_klu" = xyes ; then
+        AC_DEFINE([NGSPICE_SYSTEM_KLU], [1], [Define if KLU from an installed SuiteSparse is used])
+        CPPFLAGS="$CPPFLAGS $SUITESPARSE_KLU_CFLAGS"
+        LIBS="$SUITESPARSE_KLU_LIBS $LIBS"
+        AC_MSG_RESULT([KLU solver enabled (SuiteSparse: $SUITESPARSE_KLU_LIBS)])
+    else
+        AC_MSG_RESULT([KLU solver enabled (bundled)])
+    fi
 else
     AC_MSG_RESULT([KLU solver disabled!])
 fi
 AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes ||  test "x$enable_klu" = x])
+AM_CONDITIONAL([SYSTEM_KLU], [test "x$system_klu" = xyes])
+AC_SUBST([SUITESPARSE_KLU_CFLAGS])
 
 
 # Enable maintainer commands only if requested

@@ -245,48 +245,74 @@ if(NGSPICE_WITH_SNDFILE)
 endif()
 
 # ---------------------------------------------------------------------------
-# KLU  (--enable-klu)
+# KLU  (--enable-klu, --with-suitesparse)
 #
-# bundled : compile src/maths/KLU, exactly like the autotools build
+# auto    : SuiteSparse KLU if found, otherwise the bundled one (default)
+# bundled : compile KLU/AMD/BTF/COLAMD from src/maths/KLU
 # system  : link against SuiteSparse's KLU (klu, amd, btf, colamd,
-#           suitesparseconfig).  The bundled headers under src/include/ngspice
-#           are then bypassed in favour of SuiteSparse's own klu.h.
+#           suitesparseconfig), error if not found.
+# The ngspice additions in src/maths/KLU (klusmp.c, klu_utils.c, ...) are
+# compiled in every case.  ngspice/klu.h selects the header via
+# NGSPICE_SYSTEM_KLU in config.h.
 # ---------------------------------------------------------------------------
-if(NGSPICE_ENABLE_KLU AND NGSPICE_KLU_PROVIDER STREQUAL "system")
+set(NGSPICE_KLU_SYSTEM OFF)
+set(NGSPICE_KLU_BUNDLED OFF)
+if(NGSPICE_ENABLE_KLU AND NOT NGSPICE_KLU_PROVIDER MATCHES "^(auto|bundled|system)$")
+    message(FATAL_ERROR "NGSPICE_KLU_PROVIDER must be auto, bundled or system")
+endif()
+if(NGSPICE_ENABLE_KLU AND NOT NGSPICE_KLU_PROVIDER STREQUAL "bundled")
     if(PKG_CONFIG_FOUND)
-        pkg_check_modules(PC_KLU QUIET klu)
+        pkg_check_modules(PC_KLU QUIET KLU)
+        if(NOT PC_KLU_FOUND)
+            pkg_check_modules(PC_KLU QUIET klu)
+        endif()
     endif()
 
     find_path(KLU_INCLUDE_DIR klu.h
               HINTS ${PC_KLU_INCLUDE_DIRS} ${SuiteSparse_ROOT}
-              PATH_SUFFIXES include include/suitesparse suitesparse)
+              PATH_SUFFIXES include/suitesparse suitesparse include)
 
     set(_klu_libs "")
-    foreach(_l klu amd btf colamd suitesparseconfig)
-        find_library(KLU_${_l}_LIBRARY NAMES ${_l}
+    set(_klu_missing "")
+    foreach(_l klu btf amd colamd suitesparseconfig)
+        find_library(KLU_${_l}_LIBRARY NAMES ${_l} lib${_l}
                      HINTS ${PC_KLU_LIBRARY_DIRS} ${SuiteSparse_ROOT}
                      PATH_SUFFIXES lib)
         if(KLU_${_l}_LIBRARY)
             list(APPEND _klu_libs "${KLU_${_l}_LIBRARY}")
         elseif(NOT _l STREQUAL "suitesparseconfig")
-            message(FATAL_ERROR
-                "NGSPICE_KLU_PROVIDER=system, but lib${_l} was not found.")
+            list(APPEND _klu_missing lib${_l})
         endif()
     endforeach()
-
     if(NOT KLU_INCLUDE_DIR)
-        message(FATAL_ERROR
-            "NGSPICE_KLU_PROVIDER=system, but klu.h was not found. "
-            "Install SuiteSparse or set SuiteSparse_ROOT.")
+        list(APPEND _klu_missing klu.h)
     endif()
 
-    add_library(ngspice_klu INTERFACE IMPORTED)
-    set_target_properties(ngspice_klu PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${KLU_INCLUDE_DIR}"
-        INTERFACE_LINK_LIBRARIES "${_klu_libs}"
-        INTERFACE_COMPILE_DEFINITIONS "NGSPICE_SYSTEM_KLU=1")
-
-    message(STATUS "Using system SuiteSparse KLU: ${KLU_INCLUDE_DIR}")
+    if(NOT _klu_missing)
+        set(NGSPICE_KLU_SYSTEM ON)
+        add_library(ngspice_klu INTERFACE IMPORTED)
+        set_target_properties(ngspice_klu PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${KLU_INCLUDE_DIR}"
+            INTERFACE_LINK_LIBRARIES "${_klu_libs}")
+        message(STATUS "Using SuiteSparse KLU: ${KLU_INCLUDE_DIR}")
+    elseif(NGSPICE_KLU_PROVIDER STREQUAL "system")
+        string(REPLACE ";" ", " _klu_missing "${_klu_missing}")
+        message(FATAL_ERROR
+            "NGSPICE_KLU_PROVIDER=system, but ${_klu_missing} not found. "
+            "Install SuiteSparse or set SuiteSparse_ROOT.")
+    else()
+        message(STATUS "SuiteSparse KLU not found, using the bundled KLU")
+    endif()
+endif()
+if(NGSPICE_ENABLE_KLU AND NOT NGSPICE_KLU_SYSTEM)
+    set(NGSPICE_KLU_BUNDLED ON)
+endif()
+if(NGSPICE_KLU_SYSTEM)
+    set(NGSPICE_KLU_SUMMARY "ON (SuiteSparse)")
+elseif(NGSPICE_KLU_BUNDLED)
+    set(NGSPICE_KLU_SUMMARY "ON (bundled)")
+else()
+    set(NGSPICE_KLU_SUMMARY "OFF")
 endif()
 
 # ---------------------------------------------------------------------------

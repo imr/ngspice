@@ -38,6 +38,7 @@ AM_COND_MAP = {
     "NUMDEV_WANTED":   "NGSPICE_ENABLE_CIDER",
     "NDEV_WANTED":     "NGSPICE_ENABLE_NDEV",
     "KLU_WANTED":      "NGSPICE_ENABLE_KLU",
+    "SYSTEM_KLU":      "NGSPICE_KLU_SYSTEM",
     "PSS_WANTED":      "NGSPICE_ENABLE_PSS",
     "SP_WANTED":       "NGSPICE_ENABLE_RFSPICE",
     "SENSE2_WANTED":   "NGSPICE_ENABLE_SENSE2",
@@ -74,7 +75,7 @@ NOT_CORE = (
 DIR_COND = {
     "frontend/help":  "NGSPICE_ENABLE_X11 AND NOT NGSPICE_WINGUI",
     "frontend/wdisp": "NGSPICE_WINGUI",
-    "maths/KLU":      "NGSPICE_KLU_BUNDLED",
+    "maths/KLU":      "NGSPICE_ENABLE_KLU",
 }
 
 # Library -> CMake target; every other library goes into ngspice_core.

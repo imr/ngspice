@@ -215,6 +215,44 @@ typedef struct sKLUmatrix {
 
 } KLUmatrix ;
 
+#ifdef NGSPICE_SYSTEM_KLU
+/*
+ * SuiteSparse KLU reports n == 0 as KLU_INVALID and has no notion of
+ * KLU_EMPTY_MATRIX.  Route the affected calls through thin wrappers
+ * (src/maths/KLU/klu_compat.c) that reproduce the behaviour of the
+ * bundled KLU, so that the callers need not distinguish both cases.
+ */
+klu_symbolic *ngspice_klu_analyze (int n, int Ap [ ], int Ai [ ], klu_common *Common) ;
+klu_numeric *ngspice_klu_factor (int Ap [ ], int Ai [ ], double Ax [ ], klu_symbolic *Symbolic, klu_common *Common) ;
+klu_numeric *ngspice_klu_z_factor (int Ap [ ], int Ai [ ], double Ax [ ], klu_symbolic *Symbolic, klu_common *Common) ;
+int ngspice_klu_refactor (int Ap [ ], int Ai [ ], double Ax [ ], klu_symbolic *Symbolic, klu_numeric *Numeric, klu_common *Common) ;
+int ngspice_klu_z_refactor (int Ap [ ], int Ai [ ], double Ax [ ], klu_symbolic *Symbolic, klu_numeric *Numeric, klu_common *Common) ;
+int ngspice_klu_solve (klu_symbolic *Symbolic, klu_numeric *Numeric, int ldim, int nrhs, double B [ ], klu_common *Common) ;
+int ngspice_klu_z_solve (klu_symbolic *Symbolic, klu_numeric *Numeric, int ldim, int nrhs, double B [ ], klu_common *Common) ;
+int ngspice_klu_tsolve (klu_symbolic *Symbolic, klu_numeric *Numeric, int ldim, int nrhs, double B [ ], klu_common *Common) ;
+int ngspice_klu_z_tsolve (klu_symbolic *Symbolic, klu_numeric *Numeric, int ldim, int nrhs, double B [ ], int conj_solve, klu_common *Common) ;
+int ngspice_klu_extract (klu_numeric *Numeric, klu_symbolic *Symbolic,
+    int *Lp, int *Li, double *Lx, int *Up, int *Ui, double *Ux,
+    int *Fp, int *Fi, double *Fx, int *P, int *Q, double *Rs, int *R, klu_common *Common) ;
+int ngspice_klu_z_extract (klu_numeric *Numeric, klu_symbolic *Symbolic,
+    int *Lp, int *Li, double *Lx, double *Lz, int *Up, int *Ui, double *Ux, double *Uz,
+    int *Fp, int *Fi, double *Fx, double *Fz, int *P, int *Q, double *Rs, int *R, klu_common *Common) ;
+
+#ifndef NGSPICE_KLU_COMPAT_IMPL
+#define klu_analyze     ngspice_klu_analyze
+#define klu_factor      ngspice_klu_factor
+#define klu_z_factor    ngspice_klu_z_factor
+#define klu_refactor    ngspice_klu_refactor
+#define klu_z_refactor  ngspice_klu_z_refactor
+#define klu_solve       ngspice_klu_solve
+#define klu_z_solve     ngspice_klu_z_solve
+#define klu_tsolve      ngspice_klu_tsolve
+#define klu_z_tsolve    ngspice_klu_z_tsolve
+#define klu_extract     ngspice_klu_extract
+#define klu_z_extract   ngspice_klu_z_extract
+#endif
+#endif /* NGSPICE_SYSTEM_KLU */
+
 #ifdef __cplusplus
 }
 #endif

@@ -35,16 +35,10 @@ option(NGSPICE_ENABLE_OLDAPPS     "Build ngnutmeg/ngsconvert/... "        OFF)
 option(NGSPICE_ENABLE_HELP        "Build the X11 help browser"            OFF)
 
 option(NGSPICE_ENABLE_KLU         "KLU sparse solver"                     ON)
-set(NGSPICE_KLU_PROVIDER "bundled" CACHE STRING
-    "Where KLU comes from: bundled (src/maths/KLU) or system (SuiteSparse)")
-set_property(CACHE NGSPICE_KLU_PROVIDER PROPERTY STRINGS bundled system)
-
-# KLU compiled from src/maths/KLU rather than taken from SuiteSparse
-if(NGSPICE_ENABLE_KLU AND NGSPICE_KLU_PROVIDER STREQUAL "bundled")
-    set(NGSPICE_KLU_BUNDLED ON)
-else()
-    set(NGSPICE_KLU_BUNDLED OFF)
-endif()
+set(NGSPICE_KLU_PROVIDER "auto" CACHE STRING
+    "Where KLU comes from: auto (SuiteSparse if found, else bundled), bundled (src/maths/KLU) or system (SuiteSparse, required)")
+set_property(CACHE NGSPICE_KLU_PROVIDER PROPERTY STRINGS auto bundled system)
+# NGSPICE_KLU_SYSTEM / NGSPICE_KLU_BUNDLED are decided in NgspiceDependencies.cmake
 
 option(NGSPICE_WITH_FFTW3         "Use external FFTW3 for Fourier transforms" ON)
 option(NGSPICE_WITH_SNDFILE       "Wave file support via libsndfile and libsamplerate" ON)
