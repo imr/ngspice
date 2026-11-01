@@ -625,6 +625,8 @@ void ft_gnuplot(double *xlims, double *ylims,
                        v->v_realdata[i] : realpart(v->v_compdata[i]);
 
                 if (i > 0 && (mono || (scale->v_plot && scale->v_plot->pl_scale == scale))) {
+                    prev_xval = isreal(scale) ?
+                        scale->v_realdata[i - 1] : realpart(scale->v_compdata[i - 1]);
                     if (dir * (xval - prev_xval) < 0) {
                         /* direction reversal, start a new graph */
                         fprintf(file_data, "\n");
