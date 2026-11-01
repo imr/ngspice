@@ -67,6 +67,8 @@ noinst_HEADERS = \
 	ipctiein.h	\
 	jobdefs.h	\
 	klu.h		\
+	klu_bundled.h	\
+	klu_ext.h	\
 	klu-binding.h   \
 	logicexp.h  \
 	lsort.h		\
