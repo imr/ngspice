@@ -15,9 +15,11 @@ t.cir
 /xnode clk div
 /sask
 stop when time = 50u
+# Note: "0.5" and "/sask" are responses to prompts for source voltage.
 run
 0.5
 /sask
+/node div
 /sram 1 0.0001 20
 resume
 write t.raw

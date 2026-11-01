@@ -83,6 +83,8 @@ int          (*ngSpice_Init_Sync_handle)(GetVSRCData*, GetISRCData*,
 int          (*ngSpice_Raw_Evt_handle)(char *, SendRawEvtData *, void *);
 int          (*ngSpice_Reset_handle)(void);
 bool         (*ngSpice_running_handle)(void);
+pevt_shared_data
+             (*ngGet_Evt_NodeInfo_handle)(char* nodename);
 
 bool no_bg = true;
 bool not_yet = true;
@@ -230,6 +232,7 @@ static void help(char *cmd) {
          "  /elim <limit>\t\tSet output limit for SendEvtData CB.\n"
          "  /help\t\t\tPrint this message.\n"
          "  /lvals\t\tList node values on data callback (toggle).\n"
+         "  /node <event_node>\tList events for node.\n"
          "  /reset\t\tReset Ngspice.\n"
          "  /sask\t\t\tAsk for V/ISRC values (toggles).\n"
          "  /slim <limit>\t\tSet output limit for SendxSRCData CB.\n"
@@ -306,6 +309,23 @@ static void lvals(char *cmd) {
     sd_list ^= 1;
     printf("Listing node values is now %s.\n",
            sd_list ? "on" : "off");
+}
+
+static void node(char *cmd) {
+    pevt_shared_data p;
+    int              i;
+
+    p = ngGet_Evt_NodeInfo_handle(cmd);
+    if (!p)
+        return;
+    for (i = 0; i < p->num_steps; i++) {
+        if (p->evt_dect[i]->dcop)
+            printf("OP: %s\n", p->evt_dect[i]->node_value);
+        else
+            printf("%g: %s\n",
+                   p->evt_dect[i]->step, p->evt_dect[i]->node_value);
+    }
+    ngGet_Evt_NodeInfo_handle(NULL); // Free memory.
 }
 
 static void reset(char *cmd) {
@@ -415,8 +435,8 @@ static void local(char *cmd)
         void       (*fn)(char *);
     }     table[] = { E(help),          // First, so that just "/" works.
                       E(aevt), E(avec), E(aplot), E(bgr), E(cask), E(cplot),
-                      E(dlim), E(elim), E(lvals), E(reset), E(sask), E(slim),
-                      E(sramp), E(vec), E(xnode),
+                      E(dlim), E(elim), E(lvals), E(reset), E(node),
+                      E(sask), E(slim), E(sramp), E(vec), E(xnode),
                      { NULL, NULL }};
     char *end;
     int   i, len;
@@ -476,6 +496,7 @@ int main(int argc, char **argv)
     ngSpice_Raw_Evt_handle = getsym("ngSpice_Raw_Evt");
     ngSpice_Reset_handle = getsym("ngSpice_Reset");
     ngSpice_running_handle = getsym("ngSpice_running");
+    ngGet_Evt_NodeInfo_handle = getsym("ngGet_Evt_NodeInfo");
     register_cbs();
 
     if (do_auto)
@@ -675,7 +696,7 @@ static int ng_srcdata(double *vp, double time, char *source, int id, void *udp)
         printf("V or ISRC request: source %s at time %g\n", source, time);
         if (sq_ask) {
             if (getLine("Value: ", comd, sizeof comd))
-                exit(0);;
+                exit(0);
             if (!strncmp("/s", comd, 2)) {
                 /* Allow "/sask" as response. */
 

@@ -26,9 +26,9 @@ shx -l ..\..\visualc\sharedspice\Release.x64\ngspice.dll
 If the '-a" option is given, the program exercises some example circuits
 and exits.  That assumes that the current directory is the one containing this
 file.  Otherwise the program is interactive and prompts for a command.
-If the input line starts with "/" an internal command for exercising the API
-will be executed.  Other lines are passed to the shared library's command
-interpreter.
+If the input line starts with a single "/", an internal command for exercising
+the API will be executed.  Other lines are passed to the shared library's
+command interpreter.
 
 These internal commands are available:
 
@@ -54,6 +54,8 @@ These internal commands are available:
   /lvals
     Toggles a flag that causes all node values to be listed for
       SendData callbacks.
+  /node
+    Lists the events on an XSPICE node.
   /reset
     Resets Ngspice (call to ngSpice_Reset()) and internal variables.
   /sask

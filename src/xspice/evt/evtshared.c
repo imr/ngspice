@@ -65,8 +65,7 @@ typedef struct evt_shared_data {
 } evt_shared_data, *pevt_shared_data;
 */
 
-pevt_data *return_node;
-pevt_shared_data return_all;
+static pevt_shared_data return_all;
 
 /* delete the information return structures */
 static void
@@ -78,6 +77,7 @@ delete_ret(void)
             tfree(return_all->evt_dect[i]->node_value);
             tfree(return_all->evt_dect[i]);
         }
+        tfree(return_all->evt_dect);
         tfree(return_all);
     }
 }
@@ -93,6 +93,7 @@ EVTshareddata(
     int         node_index;
     int         udn_index;
     Evt_Node_t  *node_data, *count_data;
+    pevt_data   *return_node;
     char        *node_value;
 
     CKTcircuit  *ckt;
@@ -129,9 +130,11 @@ EVTshareddata(
         return NULL;
     }
     udn_index = node_table[node_index]->udn_index;
-    if (ckt->evt->data.node)
+    if (ckt->evt->data.node) {
         node_data = ckt->evt->data.node->head[node_index];
-    else  {
+        if (!node_data)
+            return NULL;
+    } else {
         fprintf(cp_err, "ERROR - No node data: simulation not yet run?\n");
         return NULL;
     }
