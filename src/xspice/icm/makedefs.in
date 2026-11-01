@@ -20,7 +20,9 @@ EXEEXT = @EXEEXT@
 BUILD_EXEEXT = @BUILD_EXEEXT@
 
 # Spice header include path
-INCLUDES = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
+# include path of an external SuiteSparse KLU (empty for the bundled KLU)
+KLU_CPPFLAGS = @SUITESPARSE_KLU_CFLAGS@
+INCLUDES = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include $(KLU_CPPFLAGS)
 
 # CFLAGS to use here
 EXTRA_CFLAGS = -fPIC -Wshadow

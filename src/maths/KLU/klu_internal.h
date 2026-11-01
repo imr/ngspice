@@ -7,8 +7,17 @@
 #ifndef _KLU_INTERNAL_H
 #define _KLU_INTERNAL_H
 
+#include "ngspice/config.h"
 #include "ngspice/klu.h"
-#include "ngspice/btf.h"
+#ifdef NGSPICE_SYSTEM_KLU
+#  if defined(HAVE_SUITESPARSE_KLU_H)
+#    include <suitesparse/btf.h>
+#  else
+#    include <btf.h>
+#  endif
+#else
+#  include "ngspice/btf.h"
+#endif
 #include "klu_version.h"
 
 /* ========================================================================== */

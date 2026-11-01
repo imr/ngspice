@@ -165,6 +165,11 @@ target_include_directories(ngspice_settings INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/spicelib/devices")
 
+# every file that includes cktdefs.h sees ngspice/klu.h, the code models too
+if(NGSPICE_KLU_SYSTEM)
+    target_link_libraries(ngspice_settings INTERFACE ngspice_klu)
+endif()
+
 if(MSVC)
     # Mirror the PreprocessorDefinitions of visualc/vngspice.vcxproj.
     #
@@ -247,7 +252,7 @@ message(STATUS "  CIDER .............. ${NGSPICE_ENABLE_CIDER}")
 message(STATUS "  OSDI ............... ${NGSPICE_ENABLE_OSDI}")
 message(STATUS "  RFSPICE (S-param) .. ${NGSPICE_ENABLE_RFSPICE}")
 message(STATUS "  PSS ................ ${NGSPICE_ENABLE_PSS}")
-message(STATUS "  KLU ................ ${NGSPICE_ENABLE_KLU} (${NGSPICE_KLU_PROVIDER})")
+message(STATUS "  KLU ................ ${NGSPICE_KLU_SUMMARY}")
 message(STATUS "  FFTW3 .............. ${NGSPICE_HAVE_FFTW3}")
 message(STATUS "  sound files ........ ${NGSPICE_SNDFILE_SUMMARY}")
 message(STATUS "  OpenMP ............. ${NGSPICE_ENABLE_OPENMP}")

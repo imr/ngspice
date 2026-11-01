@@ -26,15 +26,14 @@ target_include_directories(ngspice_core PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/maths/dense"
     "${CMAKE_CURRENT_SOURCE_DIR}/spicelib/parser")
 
-# Bundled KLU: a second copy of the kernel, compiled with -DCOMPLEX. Its
-# sources are added in maths/KLU/CMakeLists.txt. System SuiteSparse ships both.
-if(NGSPICE_KLU_BUNDLED)
+# KLU: the numeric files of src/maths/KLU (the bundled kernel and the ngspice
+# additions klu_utils.c/klu_multiply.c) are compiled a second time with
+# -DCOMPLEX. Their sources are added in maths/KLU/CMakeLists.txt.
+if(NGSPICE_ENABLE_KLU)
     add_library(ngspice_klu_complex OBJECT)
     target_compile_definitions(ngspice_klu_complex PRIVATE COMPLEX)
     target_link_libraries(ngspice_klu_complex PRIVATE ngspice_settings)
     target_sources(ngspice_core PRIVATE $<TARGET_OBJECTS:ngspice_klu_complex>)
-elseif(NGSPICE_ENABLE_KLU)
-    target_link_libraries(ngspice_core PUBLIC ngspice_klu)
 endif()
 
 # While the autotools build exists, the CMakeLists.txt below are generated

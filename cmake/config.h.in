@@ -37,6 +37,9 @@
 #cmakedefine CIDER 1
 #cmakedefine OSDI 1
 #cmakedefine KLU 1
+
+/* Define if KLU from an installed SuiteSparse is used */
+#cmakedefine NGSPICE_SYSTEM_KLU 1
 #cmakedefine RFSPICE 1
 #cmakedefine WITH_PSS 1
 #cmakedefine NDEV 1
