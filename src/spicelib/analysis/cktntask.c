@@ -48,7 +48,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnumSrcSteps     = def->TSKnumSrcSteps;
         tsk->TSKnumGminSteps    = def->TSKnumGminSteps;
         tsk->TSKgminFactor      = def->TSKgminFactor;
-        /* minBreak */
+        tsk->TSKminBreak        = def->TSKminBreak;
         tsk->TSKabstol          = def->TSKabstol;
         tsk->TSKpivotAbsTol     = def->TSKpivotAbsTol;
         tsk->TSKpivotRelTol     = def->TSKpivotRelTol;
@@ -59,14 +59,14 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKgshunt          = def->TSKgshunt;
         tsk->TSKrshunt          = def->TSKrshunt;
         tsk->TSKcshunt          = def->TSKcshunt;
-        /* delmin */
+//        tsk->TSKdelmin          = def->TSKdelmin;
         tsk->TSKtrtol           = def->TSKtrtol;
         tsk->TSKdefaultMosM     = def->TSKdefaultMosM;
         tsk->TSKdefaultMosL     = def->TSKdefaultMosL;
         tsk->TSKdefaultMosW     = def->TSKdefaultMosW;
         tsk->TSKdefaultMosAD    = def->TSKdefaultMosAD;
         tsk->TSKdefaultMosAS    = def->TSKdefaultMosAS;
-        /* fixLimit */
+//        tsk->TSKfixLimit        = def->TSKfixLimit;
         tsk->TSKnoOpIter        = def->TSKnoOpIter;
         tsk->TSKtryToCompact    = def->TSKtryToCompact;
         tsk->TSKbadMos3         = def->TSKbadMos3;
@@ -142,7 +142,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKabsDv           = 0.5;
         tsk->TSKrelDv           = 2.0;
         tsk->TSKepsmin          = 1e-28;
-
+        tsk->TSKminBreak        = 1e-15;
 #ifdef KLU
         tsk->TSKkluMODE         = CKTkluOFF;
         tsk->TSKkluMemGrowFactor = 1.2 ;
