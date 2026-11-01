@@ -929,9 +929,11 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     /* program name*/
     cp_program = ft_sim->simulator;
 
-    /* initialze random number generator with seed = 1 */
+    /* Initialze random number generator with seed = 1.
+       and set a backup variable as well. */
     int ii = 1;
     cp_vset("rndseed", CP_NUM, &ii);
+    cp_vset("rndseed_cf", CP_NUM, &ii);
     set_sseed(NULL);
 
 #ifdef FastRand

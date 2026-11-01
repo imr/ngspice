@@ -69,7 +69,7 @@ extern void tprint(struct card *deck);
 //void inp_mc_free(void);
 //void inp_remove_recent(void);
 static bool mc_reload = FALSE;
-void eval_opt(struct card *deck, bool comfile);
+void eval_opt(struct card *deck, bool comfile, FILE* fp, bool intfile);
 
 extern bool ft_batchmode;
 extern int dynmaxline;
@@ -422,61 +422,23 @@ inp_remove_recent(void) {
         line_free(recent_deck, TRUE);
 }
 
-
-/* Check for .option seed=[val|random] and set the random number generator.
-   Check for .option cshunt=val rshunt=val and set a global variable.
+/* Check for .option cshunt=val rshunt=val (option and .option), and
+   .option seed=val and set a global variable.
    If .option rshunt is found in the netlist, it overrides the spinit, .spceinit given values.
    If another netlist is sourced without .option rshunt, the global variable is removed,
    or reset to the spinit, .spiceinit value, if available. Same for cshunt.
    Input is the option deck (already sorted for .option) */
 void
-eval_opt(struct card* deck, bool comfile)
+eval_opt(struct card* deck, bool comfile, FILE *fp, bool intfile)
 {
     struct card* card;
-    bool has_seed = FALSE;
     bool has_cshunt = FALSE;
     bool has_rshunt = FALSE;
+    bool has_seed = FALSE;
 
     for (card = deck; card; card = card->nextcard) {
         char* line = card->line;
-
-        if (strstr(line, "seedinfo"))
-            setseedinfo();
-        char* begtok = strstr(line, "seed=");
-        if (begtok)
-            begtok = &begtok[5]; /*skip seed=*/
-        if (begtok) {
-            if (has_seed)
-                fprintf(cp_err, "Warning: Multiple 'option seed=val|random' found!\n");
-            char* token = gettok(&begtok);
-            /* option seed=random [seed='random'] */
-            if (eq(token, "random") || eq(token, "{random}")) {
-                struct timeval tv;
-                gettimeofday(&tv, NULL);
-                /* get random value from current timestamp microseconds */
-                int rseed = (int)(tv.tv_usec);
-                cp_vset("rndseed", CP_NUM, &rseed);
-                set_sseed(NULL);
-                has_seed = TRUE;
-            }
-            /* option seed=val*/
-            else {
-                int sr = atoi(token);
-                if (sr <= 0)
-                    fprintf(cp_err, "Warning: Cannot convert 'option seed=%s' to seed value, skipped!\n", token);
-                else {
-                    cp_vset("rndseed", CP_NUM, &sr);
-                    set_sseed(NULL);
-                    has_seed = TRUE;
-                }
-            }
-#if defined(WaGauss)
-            initw();
-#endif
-            tfree(token);
-        }
-
-        begtok = strstr(line, "cshunt=");
+        char* begtok = strstr(line, "cshunt=");
         if (begtok)
             begtok = &begtok[7]; /*skip cshunt=*/
         if (begtok) {
@@ -513,6 +475,34 @@ eval_opt(struct card* deck, bool comfile)
                 has_rshunt = TRUE;
             }
         }
+        /* Dot command .option seed=xx only, option seed=xx is handled in com_option.*/
+        if (!comfile && ciprefix(".opt", line)) {
+            begtok = strstr(line, "seed=");
+            if (begtok) {
+                static bool warn1 = FALSE;
+                begtok = &begtok[5]; /*skip seed=*/
+                char* nexttok = gettok(&begtok);
+                if (has_seed && !warn1) {
+                    fprintf(cp_err, "Warning: Multiple '.option seed=val' found!\n");
+                    warn1 = TRUE;
+                }
+                wordlist* newwl = wl_from_string(nexttok);
+                tfree(nexttok);
+                com_sseed(newwl);
+                wl_delete(newwl);
+                has_seed = TRUE;
+
+                if (fp == NULL && intfile == FALSE) {
+                    static bool warn2 = FALSE;
+                    /* this is a from 'reset' command */
+                    if (!warn2) {
+                        fprintf(cp_err, "Warning: Dot command .option seed = val/random is in the netlist:\n");
+                        fprintf(cp_err, "    Command 'reset' will override all 'option seed=val' or 'setseed = val' settings!\n");
+                        warn2 = TRUE;
+                    }
+                }
+            }
+        }
     }
     /* if cshunt option wasn't given, remove variable,
        or reset it to the value given in spinit, .spiceinit */
@@ -531,6 +521,15 @@ eval_opt(struct card* deck, bool comfile)
             cp_vset("rshunt_value", CP_REAL, &varval);
         else
             cp_remvar("rshunt_value");
+    }
+    /* if seed option wasn't given, remove variable,
+       or reset it to the value given in spinit, .spiceinit, or 1 */
+    if (!has_seed) {
+        int ivarval = 1;
+        if (cp_getvar("rndseed_cf", CP_NUM, &ivarval, 0))
+            cp_vset("rndseed", CP_NUM, &ivarval);
+        else
+            cp_vset("rndseed", CP_NUM, &ivarval);
     }
 }
 
@@ -651,9 +650,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     /* Extract the .option or option lines from the deck into 'options',
         and remove them from the deck. Exceptions are .option with params. */
     options = inp_getopts(deck, comfile);
-    /* Check for .option seed=[val|random] and set the random number generator.
-        Check for .option cshunt=val and set a global variable cshunt_value */
-    eval_opt(options, comfile);
+    /* Check for '.option cshunt=val' and set a global variable cshunt_value.
+       Same for rshunt, setting rshunt_value, and seed, setting rndseed. */
+    eval_opt(options, comfile, fp, intfile);
 
     if (!comfile) {
         /* copy a deck before subckt substitution. */

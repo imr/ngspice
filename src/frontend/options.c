@@ -225,9 +225,9 @@ inp_getopts(struct card *deck, bool comfile)
     for (dd = deck->nextcard; dd; dd = next) {
         next = dd->nextcard;
         if (comfile) {
-        /* only .option seed, cshunt, rshunt are handled here. */
-            if ((ciprefix(".opt", dd->line) || ciprefix("option", dd->line)) &&
-            (strstr(dd->line, "seed=") || strstr(dd->line, "cshunt=") || strstr(dd->line, "rshunt="))){
+        /* only .option cshunt and rshunt are handled here. */
+            if ((ciprefix("option", dd->line)) &&
+            (strstr(dd->line, "cshunt=") || strstr(dd->line, "rshunt="))) {
                 inp_casefix(dd->line);
                 if (last)
                     last->nextcard = dd->nextcard;
@@ -243,7 +243,7 @@ inp_getopts(struct card *deck, bool comfile)
         /* .option with params is excluded here. These options will be handled
         after parameter substitution by INP2dot(), dot_options(), and INPdoOpts(). */
         else {
-            if ((ciprefix(".opt", dd->line) && !strchr(dd->line, '{')) || ciprefix("option", dd->line)) {
+            if ((ciprefix(".opt", dd->line) && !strchr(dd->line, '{'))) {
                 inp_casefix(dd->line);
                 if (last)
                     last->nextcard = dd->nextcard;

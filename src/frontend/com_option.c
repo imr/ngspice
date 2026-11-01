@@ -6,6 +6,7 @@
 #include "ngspice/wordlist.h"
 #include "variable.h"
 #include "com_option.h"
+#include "ngspice/randnumb.h"
 
 
 /* The option command. Syntax is option [opt ...] [opt = val ...].
@@ -50,6 +51,12 @@ com_option(wordlist *wl)
         printf("indverbosity = %d\n", circuit->CKTindverbosity);
         printf("epsmin = %g\n", circuit->CKTepsmin);
 
+        int nseed;
+        if (cp_getvar("rndseed", CP_NUM, &nseed, 0)) {
+            printf("\nRandom number initialization:\n");
+            printf("seed = %d\n", nseed);
+        }
+
         printf("\nMatrix solver:\n");
 #ifdef KLU
         if (circuit->CKTkluMODE == 0)
@@ -65,6 +72,7 @@ com_option(wordlist *wl)
         printf("chgtol      (charge)  = %g\n", circuit->CKTchgtol);
         printf("vntol       (voltage) = %g\n", circuit->CKTvoltTol);
         printf("pivtol      (pivot)   = %g\n", circuit->CKTpivotAbsTol);
+        printf("minbreak    (time)    = %g\n", circuit->CKTminBreak);
 
         printf("\nTolerances (relative):\n");
         printf("reltol      (current) = %g\n", circuit->CKTreltol);
@@ -130,6 +138,25 @@ com_option(wordlist *wl)
         default:
             s = NULL;
         }
+
+        /* Option 'seed' feeds a variable rndseed and sets the random number generator.
+           A backup variable allows the collaboration with dot command .option seed=xx */
+        if (cieq(v->va_name, "seed")) {
+            /* Remove "seed=" */
+            char* newword = wl->wl_word;
+            newword = newword + 5;
+            wordlist *newwl = wl_from_string(newword);
+            com_sseed(newwl);
+            wl_delete(newwl);
+            /* Set the backup variable */
+            int ivarval;
+            if (cp_getvar("rndseed", CP_NUM, &ivarval, 0))
+                cp_vset("rndseed_cf", CP_NUM, &ivarval);
+            continue;
+        }
+
+        if (cieq(v->va_name, "seedinfo"))
+            setseedinfo();
 
         /* qui deve settare le opzioni di simulazione */
         cp_vset(v->va_name, v->va_type, s);
