@@ -190,7 +190,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         task->TSKkluMODE = (val->iValue != 0);
         break;
     case OPT_KLU_MEMGROW_FACTOR:
-        task->TSKkluMemGrowFactor = (val->rValue == 1.2);
+        task->TSKkluMemGrowFactor = val->rValue;
         break;
 #endif
     case OPT_LTERELTOL:
