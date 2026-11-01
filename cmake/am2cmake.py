@@ -81,6 +81,7 @@ DIR_COND = {
 # Library -> CMake target; every other library goes into ngspice_core.
 LIB_TARGET = {
     "libKLU_complex_la": "ngspice_klu_complex",   # compiled with -DCOMPLEX
+    "libSuiteSparse_complex_la": "ngspice_klu_complex",
 }
 DEFAULT_TARGET = "ngspice_core"
 

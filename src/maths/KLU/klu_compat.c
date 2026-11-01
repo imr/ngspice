@@ -1,15 +1,14 @@
 /*
  * klu_compat.c
  *
- * Only compiled when ngspice is linked against an external SuiteSparse KLU
- * (NGSPICE_SYSTEM_KLU).
- *
- * The bundled KLU was modified by Francesco Lannutti to handle a matrix of
- * dimension 0: klu_analyze() sets Common->status = KLU_EMPTY_MATRIX and all
- * following factor/solve/extract calls return immediately, leaving that status
- * untouched.  ngspice (klusmp.c, CIDER) relies on this.  SuiteSparse instead
- * reports KLU_INVALID.  The wrappers below restore the bundled behaviour;
- * klu_ext.h maps the klu_* names onto them for all other translation units.
+ * The KLU bundled with ngspice up to SuiteSparse 3.7.0 was modified by
+ * Francesco Lannutti to handle a matrix of dimension 0: klu_analyze() sets
+ * Common->status = KLU_EMPTY_MATRIX and all following factor/solve/extract
+ * calls return immediately, leaving that status untouched.  ngspice
+ * (klusmp.c, CIDER) relies on this.  Unmodified SuiteSparse, bundled or
+ * installed, instead reports KLU_INVALID.  The wrappers below restore the
+ * old behaviour; klu_ext.h maps the klu_* names onto them for all other
+ * translation units.
  */
 
 #include "ngspice/config.h"

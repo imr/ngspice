@@ -2,8 +2,8 @@
  * ngspice/klu_ext.h
  *
  * ngspice-specific extensions to the KLU sparse solver.  These are not part
- * of SuiteSparse and are used identically with the bundled KLU (src/maths/KLU)
- * and with an external SuiteSparse KLU (NGSPICE_SYSTEM_KLU).
+ * of SuiteSparse and are used identically with the bundled SuiteSparse
+ * (src/maths/KLU/SuiteSparse) and with an installed one (NGSPICE_SYSTEM_KLU).
  *
  * Include "ngspice/klu.h", not this file directly.
  */
@@ -15,9 +15,7 @@
 extern "C" {
 #endif
 
-/* Common->status: matrix of dimension 0 (Francesco Lannutti).
- * Set by klu_analyze() when n == 0; klu_factor(), klu_refactor(),
- * klu_solve(), klu_tsolve() and klu_extract() then return immediately. */
+/* Common->status: matrix of dimension 0 (Francesco Lannutti), see below */
 #define KLU_EMPTY_MATRIX (2)
 
 /* Francesco - Extract only Udiag */
@@ -215,12 +213,13 @@ typedef struct sKLUmatrix {
 
 } KLUmatrix ;
 
-#ifdef NGSPICE_SYSTEM_KLU
 /*
- * SuiteSparse KLU reports n == 0 as KLU_INVALID and has no notion of
- * KLU_EMPTY_MATRIX.  Route the affected calls through thin wrappers
- * (src/maths/KLU/klu_compat.c) that reproduce the behaviour of the
- * bundled KLU, so that the callers need not distinguish both cases.
+ * The KLU bundled with ngspice up to SuiteSparse 3.7.0 was modified to handle
+ * a matrix of dimension 0: KLU_EMPTY_MATRIX is set by klu_analyze() and all
+ * following factor/solve/extract calls return immediately.  Unmodified
+ * SuiteSparse (bundled or installed) reports KLU_INVALID instead.  The calls
+ * are therefore routed through thin wrappers (src/maths/KLU/klu_compat.c),
+ * so that klusmp.c and CIDER keep their behaviour.
  */
 klu_symbolic *ngspice_klu_analyze (int n, int Ap [ ], int Ai [ ], klu_common *Common) ;
 klu_numeric *ngspice_klu_factor (int Ap [ ], int Ai [ ], double Ax [ ], klu_symbolic *Symbolic, klu_common *Common) ;
@@ -251,7 +250,6 @@ int ngspice_klu_z_extract (klu_numeric *Numeric, klu_symbolic *Symbolic,
 #define klu_extract     ngspice_klu_extract
 #define klu_z_extract   ngspice_klu_z_extract
 #endif
-#endif /* NGSPICE_SYSTEM_KLU */
 
 #ifdef __cplusplus
 }

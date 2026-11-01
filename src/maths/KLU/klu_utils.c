@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include "ngspice/memory.h"
-#include "klu_internal.h"
+#include "klu_ngspice.h"
 
 typedef struct sElement {
   Int row ;

@@ -5,7 +5,8 @@
  *
  *   NGSPICE_SYSTEM_KLU defined : use the KLU of an installed SuiteSparse
  *                                (found by configure or CMake)
- *   otherwise                  : use the KLU bundled in src/maths/KLU
+ *   otherwise                  : use the copy of SuiteSparse bundled in
+ *                                src/maths/KLU/SuiteSparse
  *
  * In both cases the ngspice extensions from klu_ext.h are added.
  */
@@ -20,7 +21,7 @@
 #    include <klu.h>
 #  endif
 #else
-#  include "ngspice/klu_bundled.h"
+#  include "../../maths/KLU/SuiteSparse/klu.h"
 #endif
 
 #include "ngspice/klu_ext.h"
