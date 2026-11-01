@@ -1,4 +1,4 @@
-#include "klu_internal.h"
+#include "klu_ngspice.h"
 
 Int KLU_constant_multiply         /* return TRUE if successful, FALSE otherwise */
 (

@@ -1120,6 +1120,9 @@ SMPnewMatrix (SMPmatrix *Matrix, int size)
 
         /* Initialize the KLU Common Data Structure */
         klu_defaults (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        /* The KLU bundled up to SuiteSparse 3.7.0 had initmem_amd = 10 in
+         * klu_defaults(), SuiteSparse uses 1.2.  Keep the ngspice value. */
+        Matrix->SMPkluMatrix->KLUmatrixCommon->initmem_amd = 10 ;
         Matrix->SMPkluMatrix->KLUmatrixCommon->memgrow = Matrix->CKTkluMemGrowFactor ;
 
         /* Allocate KLU data structures */
@@ -1165,6 +1168,10 @@ SMPnewMatrixKLUforCIDER (SMPmatrix *Matrix, int size, unsigned int KLUmatrixIsCo
 
         /* Initialize the KLU Common Data Structure */
         klu_defaults (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        /* The KLU bundled up to SuiteSparse 3.7.0 had memgrow = initmem_amd = 10
+         * in klu_defaults(), SuiteSparse uses 1.2.  Keep the ngspice values. */
+        Matrix->SMPkluMatrix->KLUmatrixCommon->memgrow = 10 ;
+        Matrix->SMPkluMatrix->KLUmatrixCommon->initmem_amd = 10 ;
 
         /* Allocate KLU data structures */
         Matrix->SMPkluMatrix->KLUmatrixN = (unsigned int)size ;

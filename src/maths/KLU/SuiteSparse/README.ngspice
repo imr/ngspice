@@ -1,0 +1,57 @@
+Bundled SuiteSparse for ngspice
+===============================
+
+This directory holds an unmodified copy of the parts of SuiteSparse that
+the KLU sparse solver needs:
+
+  SuiteSparse 7.14.1 (Sept 12, 2026)
+  KLU 2.3.6, AMD 3.3.4, BTF 2.3.3, COLAMD 3.3.5, SuiteSparse_config
+
+  https://github.com/DrTimothyAldenDavis/SuiteSparse
+  KLU, BTF: LGPL-2.1-or-later    AMD, COLAMD, SuiteSparse_config: BSD-3-Clause
+  (see License_*.txt)
+
+It is used only if configure (or CMake) finds no installed SuiteSparse KLU,
+or if ngspice is configured with --with-suitesparse=no
+(CMake: -DNGSPICE_KLU_PROVIDER=bundled).
+
+KLU, AMD, BTF and COLAMD need neither BLAS nor LAPACK.
+
+Only the 32 bit integer routines are built.  The complex KLU routines
+(klu_z_*) are made by compiling the numeric sources a second time with
+-DCOMPLEX, exactly as SuiteSparse does in its klu_z_*.c wrapper files.
+
+ngspice specific code is not in this directory:
+
+  src/include/ngspice/klu.h      selects bundled or installed KLU
+  src/include/ngspice/klu_ext.h  ngspice additions to the KLU API
+  src/maths/KLU/klusmp.c         SMP interface of ngspice
+  src/maths/KLU/klu_utils.c      klu_extract_Udiag, klu_print, CSR conversion
+  src/maths/KLU/klu_multiply.c   matrix-vector and constant multiplication
+  src/maths/KLU/klu_compat.c     KLU_EMPTY_MATRIX handling for n == 0
+  src/maths/KLU/klu_ngspice.h    private header of the files above
+
+Until SuiteSparse 3.7.0 (KLU 1.1.3) the bundled sources were modified for
+ngspice.  These changes are now outside of this directory:
+
+  - KLU_EMPTY_MATRIX for a matrix of dimension 0       -> klu_compat.c
+  - klu_extract_Udiag, klu_print                       -> klu_utils.c
+  - memgrow = initmem_amd = 10 in klu_defaults()       -> klusmp.c
+  - lsolve_symbolic and construct_column merged in
+    klu_kernel.c (a speed optimisation)                -> dropped, no
+                                                          measurable gain
+
+Update
+------
+
+  1. ./import.sh /path/to/SuiteSparse
+  2. update the version numbers above
+  3. if files were added or removed in SuiteSparse: adapt import.sh and
+     Makefile.am here, then run  python3 cmake/am2cmake.py
+  4. rebuild with --with-suitesparse=no and run the tests with KLU, e.g.
+
+       mkdir -p /tmp/kluhome && echo "option klu" > /tmp/kluhome/.spiceinit
+       HOME=/tmp/kluhome make check
+
+     ngspice uses Sparse 1.3 by default, so without "option klu" the
+     tests do not exercise KLU.

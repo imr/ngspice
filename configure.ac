@@ -1475,6 +1475,7 @@ AC_CONFIG_FILES([Makefile
                  src/maths/sparse/Makefile
                  src/maths/dense/Makefile
                  src/maths/KLU/Makefile
+                 src/maths/KLU/SuiteSparse/Makefile
                  src/misc/Makefile
                  src/xspice/Makefile
                  src/xspice/cm/Makefile

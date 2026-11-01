@@ -266,25 +266,32 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\maths\KLU\klu_internal.h" />
-    <ClInclude Include="..\..\src\maths\KLU\klu_proto.h" />
-    <ClInclude Include="..\..\src\maths\KLU\klu_version.h" />
+    <ClInclude Include="..\..\src\maths\KLU\klu_ngspice.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\SuiteSparse_config.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\amd.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\amd_internal.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\btf.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\btf_internal.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\colamd.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\klu.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\klu_internal.h" />
+    <ClInclude Include="..\..\src\maths\KLU\SuiteSparse\klu_version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\maths\KLU\klu.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_diagnostics.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_dump.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_extract.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_factor.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_free_numeric.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_kernel.c" />
     <ClCompile Include="..\..\src\maths\KLU\klu_multiply.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_refactor.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_scale.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_solve.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_sort.c" />
-    <ClCompile Include="..\..\src\maths\KLU\klu_tsolve.c" />
     <ClCompile Include="..\..\src\maths\KLU\klu_utils.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_diagnostics.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_dump.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_extract.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_factor.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_free_numeric.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_kernel.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_refactor.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_scale.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_solve.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_sort.c" />
+    <ClCompile Include="..\..\src\maths\KLU\SuiteSparse\klu_tsolve.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
