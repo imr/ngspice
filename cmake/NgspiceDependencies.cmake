@@ -254,7 +254,18 @@ endif()
 # The ngspice additions in src/maths/KLU (klusmp.c, klu_utils.c, ...) are
 # compiled in every case.  ngspice/klu.h selects the header via
 # NGSPICE_SYSTEM_KLU in config.h.
+#
+# Lookup order:
+#   1. -DKLU_INCLUDE_DIR= / -DKLU_klu_LIBRARY= ... if given
+#   2. Windows: NGSPICE_SUITESPARSE_DIR (default <ngspice>/../suitesparse with
+#      bin, include, lib), like the FFTW3 and libsndfile packages
+#   3. pkg-config, SuiteSparse_ROOT, the usual prefixes (on Windows also
+#      <dir>/include and <dir>/lib for every <dir>/bin in PATH)
+# On Windows the SuiteSparse DLLs found in <lib>/../bin are copied next to
+# ngspice.exe and installed with it (NGSPICE_RUNTIME_DLLS).
 # ---------------------------------------------------------------------------
+set(NGSPICE_SUITESPARSE_DIR "${CMAKE_SOURCE_DIR}/../suitesparse" CACHE PATH
+    "Windows: SuiteSparse package with bin, include and lib")
 set(NGSPICE_KLU_SYSTEM OFF)
 set(NGSPICE_KLU_BUNDLED OFF)
 if(NGSPICE_ENABLE_KLU AND NOT NGSPICE_KLU_PROVIDER MATCHES "^(auto|bundled|system)$")
@@ -268,13 +279,29 @@ if(NGSPICE_ENABLE_KLU AND NOT NGSPICE_KLU_PROVIDER STREQUAL "bundled")
         endif()
     endif()
 
+    set(_klu_names klu btf amd colamd suitesparseconfig)
+
+    # Windows package next to the source tree first, and exclusively, so that
+    # header and libraries cannot come from two different installations
+    if(WIN32 AND EXISTS "${NGSPICE_SUITESPARSE_DIR}")
+        find_path(KLU_INCLUDE_DIR klu.h
+                  HINTS "${NGSPICE_SUITESPARSE_DIR}"
+                  PATH_SUFFIXES include/suitesparse include
+                  NO_DEFAULT_PATH)
+        foreach(_l IN LISTS _klu_names)
+            find_library(KLU_${_l}_LIBRARY NAMES ${_l} lib${_l}
+                         HINTS "${NGSPICE_SUITESPARSE_DIR}"
+                         PATH_SUFFIXES lib NO_DEFAULT_PATH)
+        endforeach()
+    endif()
+
     find_path(KLU_INCLUDE_DIR klu.h
               HINTS ${PC_KLU_INCLUDE_DIRS} ${SuiteSparse_ROOT}
               PATH_SUFFIXES include/suitesparse suitesparse include)
 
     set(_klu_libs "")
     set(_klu_missing "")
-    foreach(_l klu btf amd colamd suitesparseconfig)
+    foreach(_l IN LISTS _klu_names)
         find_library(KLU_${_l}_LIBRARY NAMES ${_l} lib${_l}
                      HINTS ${PC_KLU_LIBRARY_DIRS} ${SuiteSparse_ROOT}
                      PATH_SUFFIXES lib)
@@ -295,6 +322,36 @@ if(NGSPICE_ENABLE_KLU AND NOT NGSPICE_KLU_PROVIDER STREQUAL "bundled")
             INTERFACE_INCLUDE_DIRECTORIES "${KLU_INCLUDE_DIR}"
             INTERFACE_LINK_LIBRARIES "${_klu_libs}")
         message(STATUS "Using SuiteSparse KLU: ${KLU_INCLUDE_DIR}")
+
+        # Windows: the DLLs belonging to the import libraries, from <lib>/../bin
+        if(WIN32)
+            set(_klu_dlls "")
+            foreach(_l IN LISTS _klu_names)
+                if(NOT KLU_${_l}_LIBRARY)
+                    continue()
+                endif()
+                get_filename_component(_libdir "${KLU_${_l}_LIBRARY}" DIRECTORY)
+                file(GLOB _dll LIST_DIRECTORIES false
+                     "${_libdir}/../bin/${_l}.dll"
+                     "${_libdir}/../bin/lib${_l}.dll"
+                     "${_libdir}/../bin/lib${_l}-*.dll"
+                     "${_libdir}/${_l}.dll"
+                     "${_libdir}/lib${_l}.dll")
+                if(_dll)
+                    list(GET _dll 0 _dll)
+                    get_filename_component(_dll "${_dll}" ABSOLUTE)
+                    list(APPEND _klu_dlls "${_dll}")
+                endif()
+            endforeach()
+            if(_klu_dlls)
+                list(APPEND NGSPICE_RUNTIME_DLLS ${_klu_dlls})
+                string(REPLACE ";" ", " _msg "${_klu_dlls}")
+                message(STATUS "SuiteSparse DLLs copied next to ngspice.exe: ${_msg}")
+            else()
+                message(STATUS "No SuiteSparse DLLs found next to the libraries "
+                               "(static libraries?)")
+            endif()
+        endif()
     elseif(NGSPICE_KLU_PROVIDER STREQUAL "system")
         string(REPLACE ";" ", " _klu_missing "${_klu_missing}")
         message(FATAL_ERROR

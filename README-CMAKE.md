@@ -108,7 +108,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNGSPICE_ENABLE_CIDER=ON
 | `NGSPICE_ENABLE_OSDI` | ON | OSDI / OpenVAF model loading. |
 | `NGSPICE_ENABLE_RFSPICE` | ON | S-parameter analysis. |
 | `NGSPICE_ENABLE_KLU` | ON | KLU solver; OFF falls back to SPARSE 1.3. |
-| `NGSPICE_KLU_PROVIDER` | `bundled` | `system` links SuiteSparse instead. |
+| `NGSPICE_KLU_PROVIDER` | `auto` | `auto` uses an installed SuiteSparse KLU if found, else the bundled copy in `src/maths/KLU/SuiteSparse`; `bundled` and `system` force one of them. |
 | `NGSPICE_WITH_FFTW3` | ON | OFF uses the internal FFT. |
 | `NGSPICE_WITH_SNDFILE` | ON | Wave files via libsndfile and libsamplerate, see `README.wavsim`. Off if either is missing. |
 | `NGSPICE_ENABLE_OPENMP` | ON | Parallel device loading. |
@@ -208,9 +208,13 @@ Expected next to the ngspice directory, as the visualc projects expect;
 | FFTW3 | `<ngspice>/../fftw-3.3-dll64` | `-DNGSPICE_FFTW3_DIR=`, `-DFFTW3_INCLUDE_DIR=`, `-DFFTW3_LIBRARY=` |
 | libsndfile | `<ngspice>/../libsndfile` | `-DNGSPICE_SNDFILE_DIR=`, `-DSNDFILE_INCLUDE_DIR=`, `-DSNDFILE_LIBRARY=` |
 | libsamplerate | `<ngspice>/../libsamplerate` | `-DNGSPICE_SAMPLERATE_DIR=`, `-DSAMPLERATE_INCLUDE_DIR=`, `-DSAMPLERATE_LIBRARY=` |
+| SuiteSparse (optional) | `<ngspice>/../suitesparse` with `bin`, `include`, `lib` | `-DNGSPICE_SUITESPARSE_DIR=`, `-DSuiteSparse_ROOT=`, `-DNGSPICE_KLU_PROVIDER=bundled` |
 
 The FFTW package has no import library; CMake generates one from
-`libfftw3-3.def`. The DLLs of all three are copied next to `ngspice.exe`.
+`libfftw3-3.def`. The DLLs of these packages, including the SuiteSparse
+DLLs (`klu`, `amd`, `btf`, `colamd`, `suitesparseconfig`) from `<lib>/../bin`,
+are copied next to `ngspice.exe` and installed with it. Without a SuiteSparse
+package the bundled KLU is compiled in and no DLL is needed.
 
 ## If something goes wrong
 
@@ -263,5 +267,5 @@ and commit both. Configuring stops with "out of date" if this was forgotten.
 Verified: Linux with GCC and clang (makefiles and Ninja), MSYS2 UCRT64 and
 MINGW64, Visual Studio and NMake including XSPICE code models, install and
 `DESTDIR` staging, `NGSPICE_BUILD_SHARED` against a client program.
-Untested: macOS, `NGSPICE_ENABLE_CIDER`, `NGSPICE_KLU_PROVIDER=system`,
-cross compilation.
+Untested: macOS, `NGSPICE_ENABLE_CIDER`, `NGSPICE_KLU_PROVIDER=system` on
+Windows, cross compilation.
