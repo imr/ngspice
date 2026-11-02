@@ -48,7 +48,7 @@ Works in the UCRT64 and the MINGW64 shell, not in the plain MSYS shell.
 ```sh
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-ctest --test-dir build -j8
+ctest --test-dir build -j8   # console binary only: -DNGSPICE_WINGUI=OFF
 cmake --install build
 cmake --build build --target clean
 rm -rf build
@@ -64,7 +64,7 @@ built.
 ```cmd
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Release
-ctest --test-dir build -C Release
+ctest --test-dir build -C Release   # console binary only: -DNGSPICE_WINGUI=OFF
 cmake --install build --config Release
 cmake --build build --config Release --target clean
 rmdir /s /q build
@@ -82,7 +82,7 @@ on Linux.
 ```cmd
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-ctest --test-dir build -j8
+ctest --test-dir build -j8   # console binary only: -DNGSPICE_WINGUI=OFF
 cmake --install build
 cmake --build build --target clean
 rmdir /s /q build
@@ -223,6 +223,8 @@ The FFTW package has no import library; CMake generates one from
 | `bison >= 3.0 is required` | Install bison and flex, or unpack winflexbison next to the ngspice directory. |
 | Installed ngspice does not find `spinit` | `CMAKE_INSTALL_PREFIX` was not set when configuring. |
 | `out of date: src/.../CMakeLists.txt` | A `Makefile.am` was changed. Run `python3 cmake/am2cmake.py`. |
+| Windows: `No tests were found` | The GUI binary was built. Configure with `-DNGSPICE_WINGUI=OFF` for ctest. |
+| All tests fail with differing output | A `.spiceinit` in the home directory changes the output. Run with `HOME` (Windows: also `USERPROFILE`) pointing to an empty directory. |
 | Configuring appears to hang | ~110 compiler checks; with MSVC that takes a minute. `-DNGSPICE_QUIET_CONFIG=ON` shortens the output. |
 
 ## For maintainers

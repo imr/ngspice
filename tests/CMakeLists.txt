@@ -16,6 +16,17 @@ if(NOT TARGET ngspice)
     return()
 endif()
 
+# The Windows GUI binary (winmain.c) writes into its own window, not to
+# stdout, so every comparison would see empty output.
+if(NGSPICE_WINGUI)
+    message(WARNING
+        "Tests are not registered: the Windows GUI binary (NGSPICE_WINGUI=ON) "
+        "writes into its own window, not to stdout. Configure a separate "
+        "build directory with -DNGSPICE_WINGUI=OFF to run ctest.")
+    set_property(GLOBAL PROPERTY NGSPICE_TEST_COUNT 0)
+    return()
+endif()
+
 # ---------------------------------------------------------------------------
 # A spinit that points at the code models in the build tree, so the tests
 # run without installing anything.
