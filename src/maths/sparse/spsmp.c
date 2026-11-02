@@ -100,12 +100,6 @@
 #include "spdefs.h"
 #include "ngspice/smpdefs.h"
 
-#if defined (_MSC_VER)
-extern double scalbn(double, int);
-#define logb _logb
-extern double logb(double);
-#endif
-
 static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
 
 

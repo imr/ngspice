@@ -12,12 +12,6 @@
 #include "ngspice/smpdefs.h"
 #include "ngspice/fteext.h"
 
-#if defined (_MSC_VER)
-extern double scalbn(double, int);
-#define logb _logb
-extern double logb(double);
-#endif
-
 #ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
 #endif
