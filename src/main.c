@@ -936,7 +936,6 @@ int main(int argc, char **argv)
        set a backup variable as well. */
     int ii = 1;
     cp_vset("rndseed", CP_NUM, &ii);
-    cp_vset("rndseed_cf", CP_NUM, &ii);
     set_sseed(NULL);
 
 #ifdef FastRand
