@@ -445,6 +445,14 @@ if(NGSPICE_ENABLE_X11)
     endif()
 endif()
 
+# Xft (with fontconfig, Xrender, freetype) is optional, as in configure.ac:
+# it gives antialiased fonts and rotated text (y axis label) in the plot window.
+set(NGSPICE_HAVE_XFT OFF)
+if(NGSPICE_ENABLE_X11 AND X11_Xft_FOUND)
+    set(NGSPICE_HAVE_XFT ON)
+    set(HAVE_LIBXFT 1)
+endif()
+
 # ---------------------------------------------------------------------------
 # OpenMP  (--enable-openmp)
 # ---------------------------------------------------------------------------

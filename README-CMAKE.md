@@ -14,8 +14,8 @@ cmake --install build             install
 
 | | packages |
 |---|---|
-| Debian, Ubuntu | `build-essential cmake bison flex libfftw3-dev libx11-dev libxaw7-dev libxmu-dev libxext-dev libreadline-dev`, optionally `ninja-build libsndfile1-dev libsamplerate0-dev` |
-| Fedora, RHEL | `gcc gcc-c++ make cmake bison flex fftw-devel libX11-devel libXaw-devel readline-devel`, optionally `ninja-build libsndfile-devel libsamplerate-devel` |
+| Debian, Ubuntu | `build-essential cmake bison flex libfftw3-dev libx11-dev libxaw7-dev libxmu-dev libxext-dev libxft-dev libreadline-dev`, optionally `ninja-build libsndfile1-dev libsamplerate0-dev` |
+| Fedora, RHEL | `gcc gcc-c++ make cmake bison flex fftw-devel libX11-devel libXaw-devel libXft-devel readline-devel`, optionally `ninja-build libsndfile-devel libsamplerate-devel` |
 | macOS | Xcode command line tools, then `brew install cmake ninja bison flex fftw readline libsndfile libsamplerate` |
 | MSYS2 UCRT64 | `mingw-w64-ucrt-x86_64-{gcc,cmake,ninja,fftw,libsndfile,libsamplerate}` and `bison flex` |
 | MSYS2 MINGW64 | `mingw-w64-x86_64-{gcc,cmake,ninja,fftw,libsndfile,libsamplerate}` and `bison flex` |
