@@ -421,10 +421,27 @@ endif()
 # X11  (--with-x)
 # ---------------------------------------------------------------------------
 if(NGSPICE_ENABLE_X11)
+    # src/frontend/plotting/x11.c needs Xaw, Xmu, Xt and Xext besides libX11
     find_package(X11)
-    if(NOT X11_FOUND)
-        message(STATUS "X11 not found -- building without the X11 plot window")
-        set(NGSPICE_ENABLE_X11 OFF CACHE BOOL "" FORCE)
+    set(_x11_missing "")
+    foreach(_x X11 Xaw Xmu Xt Xext)
+        if(_x STREQUAL "X11")
+            set(_ok ${X11_FOUND})
+        else()
+            set(_ok ${X11_${_x}_FOUND})
+        endif()
+        if(NOT _ok)
+            list(APPEND _x11_missing ${_x})
+        endif()
+    endforeach()
+    if(_x11_missing)
+        list(JOIN _x11_missing ", " _x11_missing)
+        message(WARNING
+            "X11 requested but not complete (missing: ${_x11_missing}) -- "
+            "building without the X11 plot window.\n"
+            "Install the X11 development packages, see README-CMAKE.md.\n"
+            "Use -DNGSPICE_ENABLE_X11=OFF to silence this.")
+        set(NGSPICE_ENABLE_X11 OFF)
     endif()
 endif()
 
