@@ -112,7 +112,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNGSPICE_ENABLE_CIDER=ON
 | `NGSPICE_WITH_FFTW3` | ON | OFF uses the internal FFT. |
 | `NGSPICE_WITH_SNDFILE` | ON | Wave files via libsndfile and libsamplerate, see `README.wavsim`. Off if either is missing. |
 | `NGSPICE_ENABLE_OPENMP` | ON | Parallel device loading. |
-| `NGSPICE_ENABLE_X11` | ON on Unix | X11 plot window. |
+| `NGSPICE_ENABLE_X11` | ON on Unix | X11 plot window. Switched off with a warning if the X11 development packages are missing. |
 | `NGSPICE_WITH_READLINE` | `auto` | `readline`, `editline` or `none`. |
 | `NGSPICE_ENABLE_CIDER` | OFF | CIDER numerical device models. |
 | `NGSPICE_ENABLE_PSS` | ON | Periodic steady state analysis. |
