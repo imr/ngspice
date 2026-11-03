@@ -2435,7 +2435,7 @@ tmeasure TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     wl = wl_build((const char * const *)argv);
 
-    get_measure2(wl, &mvalue, NULL, FALSE);
+    get_measure2(wl, &mvalue, NULL, 0, FALSE);
 
     printf(" %e \n", mvalue);
 

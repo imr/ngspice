@@ -171,24 +171,6 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             else
                 value->rValue = 0.0;
             return(OK);
-        case BJT_MOD_INVEARLYF:
-            value->rValue = here->BJTinvEarlyVoltF;
-            return(OK);
-        case BJT_MOD_INVEARLYR:
-            value->rValue = here->BJTinvEarlyVoltR;
-            return(OK);
-        case BJT_MOD_INVROLLOFFF:
-            value->rValue = here->BJTinvRollOffF;
-            return(OK);
-        case BJT_MOD_INVROLLOFFR:
-            value->rValue = here->BJTinvRollOffR;
-            return(OK);
-        case BJT_MOD_COLCONDUCT:
-            value->rValue = here->BJTcollectorConduct;
-            return(OK);
-        case BJT_MOD_EMITTERCONDUCT:
-            value->rValue = here->BJTemitterConduct;
-            return(OK);
         case BJT_MOD_TRANSVBCFACT:
             value->rValue = here->BJTtransitTimeVBCFactor;
             return(OK);

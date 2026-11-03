@@ -1,0 +1,32 @@
+* BJT quasi-saturation (Kull) with QCO > 0 in a switching transient
+* The epi charge must stay continuous when the current through RCO
+* changes sign, otherwise the transient stops with "timestep too small".
+
+.options noacct
+
+V5 vcc 0 5
+Re vcc e 4.7
+Q1 c b e QP
+Rbe b e 10k
+Rb b drv 330
+Vdrv drv 0 PULSE(5 0 10u 1u 1u 100u 200u)
+Rl c 0 47
+.model QP PNP(Is=1e-14 Bf=150 Rco=1.7 Vo=10 Gamma=1e-10 Qco=1e-10)
+
+.control
+tran 0.1u 300u
+let tend = time[length(time)-1]
+let vhigh = vecmax(v(c))
+* QCO = 0 gives vhigh = 4.406 V in this circuit
+if tend < 299.9u
+  echo "ERROR: BJT QCO transient stopped early"
+  quit 1
+end
+if abs(vhigh - 4.41) > 0.02
+  echo "ERROR: BJT QCO vhigh = $&vhigh, expected 4.41"
+  quit 1
+end
+echo "INFO: success"
+quit 0
+.endc
+.end

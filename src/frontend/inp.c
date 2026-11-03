@@ -69,7 +69,7 @@ extern void tprint(struct card *deck);
 //void inp_mc_free(void);
 //void inp_remove_recent(void);
 static bool mc_reload = FALSE;
-void eval_opt(struct card *deck);
+void eval_opt(struct card *deck, bool comfile, FILE* fp, bool intfile);
 
 extern bool ft_batchmode;
 extern int dynmaxline;
@@ -422,54 +422,23 @@ inp_remove_recent(void) {
         line_free(recent_deck, TRUE);
 }
 
-
-/* Check for .option seed=[val|random] and set the random number generator.
-   Check for .option cshunt=val and set a global variable
+/* Check for .option cshunt=val rshunt=val (option and .option), and
+   .option seed=val and set a global variable.
+   If .option rshunt is found in the netlist, it overrides the spinit, .spceinit given values.
+   If another netlist is sourced without .option rshunt, the global variable is removed,
+   or reset to the spinit, .spiceinit value, if available. Same for cshunt.
    Input is the option deck (already sorted for .option) */
 void
-eval_opt(struct card* deck)
+eval_opt(struct card* deck, bool comfile, FILE *fp, bool intfile)
 {
     struct card* card;
-    bool has_seed = FALSE;
     bool has_cshunt = FALSE;
+    bool has_rshunt = FALSE;
+    bool has_seed = FALSE;
 
     for (card = deck; card; card = card->nextcard) {
         char* line = card->line;
-
-        if (strstr(line, "seedinfo"))
-            setseedinfo();
-        char* begtok = strstr(line, "seed=");
-        if (begtok)
-            begtok = &begtok[5]; /*skip seed=*/
-        if (begtok) {
-            if (has_seed)
-                fprintf(cp_err, "Warning: Multiple 'option seed=val|random' found!\n");
-            char* token = gettok(&begtok);
-            /* option seed=random [seed='random'] */
-            if (eq(token, "random") || eq(token, "{random}")) {
-                struct timeval tv;
-                gettimeofday(&tv, NULL);
-                /* get random value from current timestamp microseconds */
-                int rseed = (int)(tv.tv_usec);
-                cp_vset("rndseed", CP_NUM, &rseed);
-                com_sseed(NULL);
-                has_seed = TRUE;
-            }
-            /* option seed=val*/
-            else {
-                int sr = atoi(token);
-                if (sr <= 0)
-                    fprintf(cp_err, "Warning: Cannot convert 'option seed=%s' to seed value, skipped!\n", token);
-                else {
-                    cp_vset("rndseed", CP_NUM, &sr);
-                    com_sseed(NULL);
-                    has_seed = TRUE;
-                }
-            }
-            tfree(token);
-        }
-
-        begtok = strstr(line, "cshunt=");
+        char* begtok = strstr(line, "cshunt=");
         if (begtok)
             begtok = &begtok[7]; /*skip cshunt=*/
         if (begtok) {
@@ -482,9 +451,76 @@ eval_opt(struct card* deck)
                 fprintf(cp_err, "Warning: Cannot convert 'option cshunt=%s' to capacitor value, skipped!\n", begtok);
             else {
                 cp_vset("cshunt_value", CP_REAL, &sr);
+                if (comfile)
+                    cp_vset("cshunt_value_cf", CP_REAL, &sr);
                 has_cshunt = TRUE;
             }
         }
+
+        begtok = strstr(line, "rshunt=");
+        if (begtok)
+            begtok = &begtok[7]; /*skip rshunt=*/
+        if (begtok) {
+            int err = 0;
+            if (has_rshunt)
+                fprintf(cp_err, "Warning: Multiple '.option rshunt=val' found!\n");
+            /* option rshunt=val*/
+            double sr = INPevaluate(&begtok, &err, 0);
+            if (sr <= 0 || err)
+                fprintf(cp_err, "Warning: Cannot convert 'option rshunt=%s' to resistor value, skipped!\n", begtok);
+            else {
+                cp_vset("rshunt_value", CP_REAL, &sr);
+                if (comfile)
+                    cp_vset("rshunt_value_cf", CP_REAL, &sr);
+                has_rshunt = TRUE;
+            }
+        }
+        /* Dot command .option seed=xx only, option seed=xx is handled in com_option.*/
+        if (!comfile && ciprefix(".opt", line)) {
+            begtok = strstr(line, "seed=");
+            if (begtok) {
+                static bool warn1 = FALSE;
+                begtok = &begtok[5]; /*skip seed=*/
+                char* nexttok = gettok(&begtok);
+                if (has_seed && !warn1) {
+                    fprintf(cp_err, "Warning: Multiple '.option seed=val' found!\n");
+                    warn1 = TRUE;
+                }
+                wordlist* newwl = wl_from_string(nexttok);
+                tfree(nexttok);
+                com_sseed(newwl);
+                wl_delete(newwl);
+                has_seed = TRUE;
+
+                if (fp == NULL && intfile == FALSE) {
+                    static bool warn2 = FALSE;
+                    /* this is a from 'reset' command */
+                    if (!warn2) {
+                        fprintf(cp_err, "Warning: Dot command .option seed = val/random is in the netlist:\n");
+                        fprintf(cp_err, "    Command 'reset' will override all 'option seed=val' or 'setseed = val' settings!\n");
+                        warn2 = TRUE;
+                    }
+                }
+            }
+        }
+    }
+    /* if cshunt option wasn't given, remove variable,
+       or reset it to the value given in spinit, .spiceinit */
+    if (!has_cshunt) {
+        double varval;
+        if (cp_getvar("cshunt_value_cf", CP_REAL, &varval, 0))
+            cp_vset("cshunt_value", CP_REAL, &varval);
+        else
+            cp_remvar("cshunt_value");
+    }
+    /* if rshunt option wasn't given, remove variable,
+       or reset it to the value given in spinit, .spiceinit */
+    if (!has_rshunt) {
+        double varval;
+        if (cp_getvar("rshunt_value_cf", CP_REAL, &varval, 0))
+            cp_vset("rshunt_value", CP_REAL, &varval);
+        else
+            cp_remvar("rshunt_value");
     }
 }
 
@@ -602,13 +638,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     if (ciprefix("*ng_script", deck->line))
         comfile = TRUE;
 
+    /* Extract the .option or option lines from the deck into 'options',
+        and remove them from the deck. Exceptions are .option with params. */
+    options = inp_getopts(deck, comfile);
+    /* Check for '.option cshunt=val' and set a global variable cshunt_value.
+       Same for rshunt, setting rshunt_value, and seed, setting rndseed. */
+    eval_opt(options, comfile, fp, intfile);
+
     if (!comfile) {
-        /* Extract the .option lines from the deck into 'options',
-           and remove them from the deck. Exceptions are .option with params. */
-        options = inp_getopts(deck);
-        /* Check for .option seed=[val|random] and set the random number generator.
-           Check for .option cshunt=val and set a global variable cshunt_value */
-        eval_opt(options);
         /* copy a deck before subckt substitution. */
         realdeck = inp_deckcopy(deck);
 
@@ -775,6 +812,48 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     commands = FALSE;
                 else
                     fprintf(cp_err, "Warning: misplaced .endc card\n");
+            } else if (!commands && ciprefix(".hb", dd->line) &&
+                       (dd->line[3] == '\0' || isspace_c(dd->line[3]))) {
+                /* Enhancement-162: a top-level `.hb ...` card is run after the
+                 * circuit is parsed as an `hb ...` command (Enhancement-134
+                 * harmonic balance), mirroring the `.sweep` handling above -- drop
+                 * the leading '.' and add it to the post-parse control list. The
+                 * boundary check keeps `.hb` from swallowing any future `.hb*`
+                 * card. */
+                controls = wl_cons(copy(skip_ws(dd->line) + 1), controls);
+                ld->nextcard = dd->nextcard;
+                line_free(dd, FALSE);
+            } else if (!commands && ciprefix(".pss", dd->line) &&
+                       (dd->line[4] == '\0' || isspace_c(dd->line[4]))) {
+                /* Enhancement-210: a top-level `.pss ...` card is run after the
+                 * circuit is parsed as a `pss ...` command (Enhancement-117
+                 * shooting-method PSS), mirroring the `.hb` handling above -- drop
+                 * the leading '.' and add it to the post-parse control list. The
+                 * stock `.pss` dot-card no-ops in batch (only the `pss` command
+                 * ran); this gives `.pss` the same command-dispatch the rest of
+                 * the periodic-steady-state family uses. The boundary check keeps
+                 * `.pss` from matching a longer name and never matches `.psp`
+                 * (periodic S-parameters, a distinct card). */
+                controls = wl_cons(copy(skip_ws(dd->line) + 1), controls);
+                ld->nextcard = dd->nextcard;
+                line_free(dd, FALSE);
+            } else if (!commands &&
+                       ((ciprefix(".qpss", dd->line) &&
+                         (dd->line[5] == '\0' || isspace_c(dd->line[5]))) ||
+                        (ciprefix(".hbosc", dd->line) &&
+                         (dd->line[6] == '\0' || isspace_c(dd->line[6]))) ||
+                        (ciprefix(".phasenoise", dd->line) &&
+                         (dd->line[11] == '\0' || isspace_c(dd->line[11]))))) {
+                /* Enhancement-163: the rest of the harmonic-balance family as
+                 * command-style dot-cards, mirroring `.hb` (Enhancement-162) and
+                 * `.sweep` (Enhancement-146): a top-level `.qpss` / `.hbosc` /
+                 * `.phasenoise` is stripped of its leading '.' and run after the
+                 * circuit is parsed as the corresponding command. Each boundary
+                 * check keeps the card from swallowing a longer name (e.g. `.hbosc`
+                 * is not matched by the `.hb` branch above). */
+                controls = wl_cons(copy(skip_ws(dd->line) + 1), controls);
+                ld->nextcard = dd->nextcard;
+                line_free(dd, FALSE);
             } else if (commands || prefix("*#", dd->line)) {
                 s = dd->line;
 
@@ -842,13 +921,24 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         /* Now that the deck is loaded, do the pre commands, if there are any,
            before the circuit structure is set up */
         if (pre_controls) {
+            int pass;
             pre_controls = wl_reverse(pre_controls);
-            for (wl = pre_controls; wl; wl = wl->wl_next){
+            /* Enhancement-200: run every pre_snp (stripped to "snp") before any
+             * other pre_ command -- notably pre_osdi (stripped to "osdi") -- so the
+             * .osdi that pre_snp generates already exists when pre_osdi loads it.
+             * Pass 0 executes the snp commands (in deck order), pass 1 the rest. */
+            for (pass = 0; pass < 2; pass++) {
+                for (wl = pre_controls; wl; wl = wl->wl_next) {
+                    int is_snp = ciprefix("snp ", wl->wl_word) ||
+                                 strcasecmp(wl->wl_word, "snp") == 0;
+                    if (pass == 0 ? !is_snp : is_snp)
+                        continue;
 #ifdef OSDI
-                inputdir = dir_name;
+                    inputdir = dir_name;
 #endif
-                /* process each pre_xxx command */
-                cp_evloop(wl->wl_word);
+                    /* process each pre_xxx command */
+                    cp_evloop(wl->wl_word);
+                }
             }
 
 #ifdef OSDI
@@ -1274,6 +1364,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 #ifdef OSDI
             inputdir = dir_name;
 #endif
+            /* If 'controlswait' has been set during the previous for loop step,
+               all further controls will be handled by exec_control() only. */
             if (cp_getvar("controlswait", CP_BOOL, NULL, 0)) {
                 if (wl)
                     exec_controls(wl_copy(wl));

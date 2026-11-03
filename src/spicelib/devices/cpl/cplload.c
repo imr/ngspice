@@ -191,10 +191,14 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 					}
 				}
 				here->CPLdcGiven = 1;
-
 				vi = new_vi();
 				vi->time = 0;
 				{
+				if (cp->noL > MAX_CP_TX_LINES) {
+					fprintf(stderr, "Error: Too many conductors (%d) for CPL line model, compiled limit is %d\n", cp->noL, MAX_CP_TX_LINES);
+					fprintf(stderr, "       Change #define MAX_CP_TX_LINES in src/include/ngspice/swec.h and recompile\n");
+					controlled_exit(EXIT_FAILURE);
+				}
 				for (i = 0; i <	cp->noL; i++) {
 					for (j = 0; j <	cp->noL; j++) {
 						TMS *tms;

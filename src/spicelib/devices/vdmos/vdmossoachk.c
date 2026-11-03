@@ -155,7 +155,10 @@ VDMOSsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                 }
 
             /* max. reverse current */
-            idr = fabs(*(ckt->CKTstate0 + here->VDIOcurrent) * -1. + here->VDMOScd);
+            idr = here->VDMOScd - *(ckt->CKTstate0 + here->VDIOcurrent);
+            if (VDIOrevrec(here))
+                idr -= here->VDIOqpGainScaled * *(ckt->CKTstate0 + here->VDIOsrcapCurrent);
+            idr = fabs(idr);
             if (model->VDMOSidr_maxGiven && idr > fabs(model->VDMOSidr_max))
                 if (warns_idr < maxwarns) {
                     soa_printf(ckt, (GENinstance*)here,
@@ -164,20 +167,41 @@ VDMOSsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     warns_idr++;
                 }
 
-            pd = fabs((id + idr) * vds);
-            pd += fabs(*(ckt->CKTstate0 + here->VDMOScqgd) *
-                (*(ckt->CKTrhsOld + here->VDMOSgNode) -
-                    *(ckt->CKTrhsOld + here->VDMOSdNode)));
-            pd += fabs(*(ckt->CKTstate0 + here->VDMOScqgs) *
-                (*(ckt->CKTrhsOld + here->VDMOSgNode) -
-                    *(ckt->CKTrhsOld + here->VDMOSsNode)));
-
             /* Calculate max power including derating:
                up to tnom the derating is zero,
                at maximum temp allowed the derating is 100%.
                Device temperature by self-heating or given externally. */
-            if (here->VDMOSthermal && model->VDMOSderatingGiven && model->VDMOSpd_maxGiven
-                && model->VDMOSte_maxGiven && model->VDMOStnomGiven) {
+            if (VDMOSselfheat(here)) {
+                double gthjc = here->VDMOSm / model->VDMOSrthjc;
+                pd = (ckt->CKTrhsOld[here->VDMOStempNode]
+                    - ckt->CKTrhsOld[here->VDMOStcaseNode]) * gthjc
+                    + *(ckt->CKTstate0 + here->VDMOScqth);
+            } else {
+                double vd_i  = ckt->CKTrhsOld[here->VDMOSdNodePrime]
+                             - ckt->CKTrhsOld[here->VDMOSsNodePrime];
+                double Vrd   = ckt->CKTrhsOld[here->VDMOSdNode]
+                             - ckt->CKTrhsOld[here->VDMOSdNodePrime];
+                double Vrs   = ckt->CKTrhsOld[here->VDMOSsNode]
+                             - ckt->CKTrhsOld[here->VDMOSsNodePrime];
+                double Vrg   = ckt->CKTrhsOld[here->VDMOSgNode]
+                             - ckt->CKTrhsOld[here->VDMOSgNodePrime];
+                double vdio  = ckt->CKTrhsOld[here->VDIOposPrimeNode]
+                             - ckt->CKTrhsOld[here->VDMOSdNode];
+                double Vrb   = ckt->CKTrhsOld[here->VDMOSsNode]
+                             - ckt->CKTrhsOld[here->VDIOposPrimeNode];
+                double idio  = *(ckt->CKTstate0 + here->VDIOcurrent);
+                if (VDIOrevrec(here))
+                    idio += here->VDIOqpGainScaled
+                          * *(ckt->CKTstate0 + here->VDIOsrcapCurrent);
+
+                pd  = fabs(here->VDMOScd * vd_i);          /* Channel          */
+                pd += fabs(idio * vdio);                   /* Bodydiode        */
+                pd += here->VDMOSdrainConductance  * Vrd*Vrd;
+                pd += here->VDMOSsourceConductance * Vrs*Vrs;
+                pd += here->VDMOSgateConductance   * Vrg*Vrg;
+                pd += here->VDIOtConductance       * Vrb*Vrb;
+            }
+            if (VDMOSselfheat(here)) {
                 te = ckt->CKTrhsOld[here->VDMOStcaseNode];
                 if (te < model->VDMOStnom - CONSTCtoK)
                     pd_max = model->VDMOSpd_max;

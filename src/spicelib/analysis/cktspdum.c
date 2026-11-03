@@ -128,7 +128,8 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, int doNoise)
     rhsold = ckt->CKTrhsOld;
     irhsold = ckt->CKTirhsOld;
     freqData.rValue = freq;
-    int extraSPdataCount =  3* ckt->CKTportCount * ckt->CKTportCount;
+    /* Enhancement-64: +1 for the Rbase vector */
+    int extraSPdataCount =  3* ckt->CKTportCount * ckt->CKTportCount + 1;
     valueData.v.numValue = ckt->CKTmaxEqNum - 1 + extraSPdataCount;
 
     int datasize = ckt->CKTmaxEqNum - 1 + extraSPdataCount;
@@ -187,6 +188,17 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, int doNoise)
                 data[nPlot].imag = zij.im;
                 nPlot++;
             }
+        }
+
+        /* Enhancement-64: reference resistance of the ports (matches the
+           "Rbase" UID registered after the Z block in span.c). Read z0
+           straight from port 1 -- the refPortY0 global is only set on the
+           noise path. */
+        {
+            VSRCinstance *refPort = (VSRCinstance *) (ckt->CKTrfPorts[0]);
+            data[nPlot].real = refPort->VSRCportZ0;
+            data[nPlot].imag = 0.0;
+            nPlot++;
         }
 
         if (doNoise)

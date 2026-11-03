@@ -764,6 +764,17 @@ extern CMat* ctransposeconj(CMat* source)
 }
 
 CMat* cadjoint(CMat* A) {
+	/* Enhancement-64: 1x1 base case -- the adjugate of [a] is [1] (the
+	   empty minor's determinant is 1 by convention), making cinverse of
+	   a 1x1 equal 1/a. Without this the cofactor loop below allocates
+	   0x0 and then negative-sized minors (a 1-port .sp analysis died
+	   with "malloc: can't allocate -8 bytes"). */
+	if (A->row == 1 && A->col == 1) {
+		CMat* B1 = newcmatnoinit(1, 1);
+		B1->d[0][0].re = 1.0;
+		B1->d[0][0].im = 0.0;
+		return B1;
+	}
 	CMat* B = newcmatnoinit(A->row, A->col);
 	CMat* A1 = newcmatnoinit(A->row - 1, A->col);
 	CMat* A2 = newcmatnoinit(A->row - 1, A->col - 1);
@@ -790,22 +801,86 @@ Mat* inverse(Mat* A) {
 	return C;
 }
 
-CMat* cinverse(CMat* A) {
-	CMat* B = cadjoint(A);
-	cplx de = cinv(cdet(A));
+/* Complex matrix inverse by Gauss-Jordan elimination with partial pivoting, in
+ * O(n^3). This replaces the former adjugate/determinant (Cramer's-rule) method,
+ * whose cdet() is a recursive cofactor expansion -- O(n!) -- and cadjoint() does
+ * n^2 of those, so cinverse was O(n*n!). Because the .sp S-parameter analysis
+ * inverts n x n port matrices at every frequency (CKTspCalcSMatrix, for S, Y and
+ * Z), that made S-parameter extraction explode by a factor of ~n per added port
+ * (an 8-port took ~13 s, a 10-port ~18 min); with this it is O(n^3) per inverse.
+ * Writes cinv_gj() into `out` (n x n, preallocated); returns 0 on ok, 1 if the
+ * matrix is singular. */
+static int cinv_gj(CMat* A, CMat* out) {
+	int n = A->row, i, j, c, p;
+	if (A->col != n) return 1;
+	/* augmented work: a = copy(A) reduced to I, b = I reduced to A^-1 */
+	double* ar = (double*)malloc((size_t)n * n * sizeof(double));
+	double* ai = (double*)malloc((size_t)n * n * sizeof(double));
+	double* br = (double*)malloc((size_t)n * n * sizeof(double));
+	double* bi = (double*)malloc((size_t)n * n * sizeof(double));
+	if (!ar || !ai || !br || !bi) { free(ar); free(ai); free(br); free(bi); return 1; }
+	for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+		ar[i*n+j] = A->d[i][j].re; ai[i*n+j] = A->d[i][j].im;
+		br[i*n+j] = (i == j) ? 1.0 : 0.0; bi[i*n+j] = 0.0;
+	}
+	for (c = 0; c < n; c++) {
+		/* partial pivot on largest |a[.][c]| in rows >= c */
+		p = c; double best = ar[c*n+c]*ar[c*n+c] + ai[c*n+c]*ai[c*n+c];
+		for (i = c+1; i < n; i++) {
+			double v = ar[i*n+c]*ar[i*n+c] + ai[i*n+c]*ai[i*n+c];
+			if (v > best) { best = v; p = i; }
+		}
+		if (best == 0.0) { free(ar); free(ai); free(br); free(bi); return 1; }
+		if (p != c) for (j = 0; j < n; j++) {
+			double t;
+			t = ar[c*n+j]; ar[c*n+j] = ar[p*n+j]; ar[p*n+j] = t;
+			t = ai[c*n+j]; ai[c*n+j] = ai[p*n+j]; ai[p*n+j] = t;
+			t = br[c*n+j]; br[c*n+j] = br[p*n+j]; br[p*n+j] = t;
+			t = bi[c*n+j]; bi[c*n+j] = bi[p*n+j]; bi[p*n+j] = t;
+		}
+		/* scale pivot row by 1/pivot */
+		double pr = ar[c*n+c], pi = ai[c*n+c], den = pr*pr + pi*pi;
+		double sr = pr/den, sinv = -pi/den;   /* 1/pivot = (pr - i pi)/|p|^2 */
+		for (j = 0; j < n; j++) {
+			double xr, xi;
+			xr = ar[c*n+j]*sr - ai[c*n+j]*sinv; xi = ar[c*n+j]*sinv + ai[c*n+j]*sr;
+			ar[c*n+j] = xr; ai[c*n+j] = xi;
+			xr = br[c*n+j]*sr - bi[c*n+j]*sinv; xi = br[c*n+j]*sinv + bi[c*n+j]*sr;
+			br[c*n+j] = xr; bi[c*n+j] = xi;
+		}
+		/* eliminate column c from all other rows */
+		for (i = 0; i < n; i++) {
+			if (i == c) continue;
+			double fr = ar[i*n+c], fi = ai[i*n+c];
+			if (fr == 0.0 && fi == 0.0) continue;
+			for (j = 0; j < n; j++) {
+				ar[i*n+j] -= fr*ar[c*n+j] - fi*ai[c*n+j];
+				ai[i*n+j] -= fr*ai[c*n+j] + fi*ar[c*n+j];
+				br[i*n+j] -= fr*br[c*n+j] - fi*bi[c*n+j];
+				bi[i*n+j] -= fr*bi[c*n+j] + fi*br[c*n+j];
+			}
+		}
+	}
+	for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+		out->d[i][j].re = br[i*n+j]; out->d[i][j].im = bi[i*n+j];
+	}
+	free(ar); free(ai); free(br); free(bi);
+	return 0;
+}
 
-	CMat* C = complexmultiply(B, de);
-	freecmat(B);
+CMat* cinverse(CMat* A) {
+	CMat* C = newcmatnoinit(A->row, A->col);
+	if (C == NULL) return NULL;                 /* true allocation failure (E_NOMEM) */
+	if (cinv_gj(A, C)) {                        /* singular: zero-fill (old contract never returned NULL) */
+		for (int i = 0; i < C->row; i++)
+			for (int j = 0; j < C->col; j++) { C->d[i][j].re = 0.0; C->d[i][j].im = 0.0; }
+	}
 	return C;
 }
 
 
 void cinversedest(CMat* A, CMat* dest) {
-	CMat* B = cadjoint(A);
-	cplx de = cinv(cdet(A));
-
-	complexmultiplydest(B, de, dest);
-	freecmat(B);
+	cinv_gj(A, dest);
 	return;
 }
 
@@ -1092,7 +1167,7 @@ CMat* cvconcat(CMat* A, CMat* B) {
 	}
 	return C;
 }
-
+#ifndef _MSC_VER
 double norm(Mat* A) {
 	double d = 0;
 
@@ -1105,7 +1180,7 @@ double norm(Mat* A) {
 	d = sqrt(d);
 	return d;
 }
-
+#endif
 double cnorm(CMat* A) {
 	double d = 0;
 	for (int i = 0; i < A->row; i++) {

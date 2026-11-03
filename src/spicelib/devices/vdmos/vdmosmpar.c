@@ -82,6 +82,14 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDIOgradCoeffTemp1 = 0;
             model->VDIOgradCoeffTemp2 = 0;
             break;
+        case VDIO_MOD_TM1:
+            model->VDIOgradCoeffTemp1 = value->rValue;
+            model->VDIOgradCoeffTemp1Given = TRUE;
+            break;
+        case VDIO_MOD_TM2:
+            model->VDIOgradCoeffTemp2 = value->rValue;
+            model->VDIOgradCoeffTemp2Given = TRUE;
+            break;
         case VDIO_MOD_FC:
             model->VDIOdepletionCapCoeff = value->rValue;
             model->VDIOdepletionCapCoeffGiven = TRUE;
@@ -166,9 +174,21 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDIOtranTimeTemp1 = 0;
             model->VDIOtranTimeTemp2 = 0;
             break;
+        case VDIO_MOD_TTT1:
+            model->VDIOtranTimeTemp1 = value->rValue;
+            model->VDIOtranTimeTemp1Given = TRUE;
+            break;
+        case VDIO_MOD_TTT2:
+            model->VDIOtranTimeTemp2 = value->rValue;
+            model->VDIOtranTimeTemp2Given = TRUE;
+            break;
         case VDIO_MOD_VP:
             model->VDIOsoftRevRecParam = value->rValue;
             model->VDIOsoftRevRecParamGiven = TRUE;
+            break;
+        case VDIO_MOD_QPSCALE:
+            model->VDIOqpscale = value->rValue;
+            model->VDIOqpscaleGiven = TRUE;
             break;
         case VDIO_MOD_EG:
             model->VDIOeg = value->rValue;

@@ -81,15 +81,16 @@ else
 	    strslice base "$base" 0 $off
         end
 
-	    strstr l "$base" ""         // Check for zero-length string
+	strstr l "$base" ""             // Check for zero-length string
+
         if $l > 0
             break
         end
-    end
 
-    if index - 1 > $argc
-        echo No file for top-level entity was found.
-        quit
+	if index > $argc
+	    echo No file for top-level entity was found.
+	    quit
+	end
     end
 end
 

@@ -1067,11 +1067,11 @@ struct card *pspice_compat(struct card *oldcard)
         char *cut_line = card->line;
         if (ciprefix(".model", cut_line)) {
             char *t_str;
-            if ((t_str = strstr(cut_line, "t_abs")) != NULL)
+            if ((t_str = search_plain_identifier(cut_line, "t_abs")) != NULL)
                 memcpy(t_str, " temp", 5);
-            else if ((t_str = strstr(cut_line, "t_rel_global")) != NULL)
+            else if ((t_str = search_plain_identifier(cut_line, "t_rel_global")) != NULL)
                 memcpy(t_str, "       dtemp", 12);
-            else if ((t_str = strstr(cut_line, "t_measured")) != NULL)
+            else if ((t_str = search_plain_identifier(cut_line, "t_measured")) != NULL)
                 memcpy(t_str, "      tnom", 10);
         }
     }

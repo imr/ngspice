@@ -904,7 +904,7 @@ MarkowitzProducts(MatrixPtr Matrix, int Step)
         if ((*pMarkowitzRow > LARGEST_SHORT_INTEGER && *pMarkowitzCol != 0) ||
                 (*pMarkowitzCol > LARGEST_SHORT_INTEGER && *pMarkowitzRow != 0)) {
             fProduct = (double)(*pMarkowitzRow++) * (double)(*pMarkowitzCol++);
-            if (fProduct >= LARGEST_LONG_INTEGER)
+            if (fProduct >= (double)LARGEST_LONG_INTEGER)
                 *pMarkowitzProduct++ = LARGEST_LONG_INTEGER;
             else
                 *pMarkowitzProduct++ = (long)fProduct;
@@ -2751,7 +2751,7 @@ UpdateMarkowitzNumbers( MatrixPtr Matrix, ElementPtr pPivot )
         if ((MarkoRow[Row] > LARGEST_SHORT_INTEGER && MarkoCol[Row] != 0) ||
                 (MarkoCol[Row] > LARGEST_SHORT_INTEGER && MarkoRow[Row] != 0)) {
             Product = MarkoCol[Row] * MarkoRow[Row];
-            if (Product >= LARGEST_LONG_INTEGER)
+            if (Product >= (double)LARGEST_LONG_INTEGER)
                 Matrix->MarkowitzProd[Row] = LARGEST_LONG_INTEGER;
             else
                 Matrix->MarkowitzProd[Row] = (long)Product;
@@ -2770,7 +2770,7 @@ UpdateMarkowitzNumbers( MatrixPtr Matrix, ElementPtr pPivot )
         if ((MarkoRow[Col] > LARGEST_SHORT_INTEGER && MarkoCol[Col] != 0) ||
                 (MarkoCol[Col] > LARGEST_SHORT_INTEGER && MarkoRow[Col] != 0)) {
             Product = MarkoCol[Col] * MarkoRow[Col];
-            if (Product >= LARGEST_LONG_INTEGER)
+            if (Product >= (double)LARGEST_LONG_INTEGER)
                 Matrix->MarkowitzProd[Col] = LARGEST_LONG_INTEGER;
             else
                 Matrix->MarkowitzProd[Col] = (long)Product;

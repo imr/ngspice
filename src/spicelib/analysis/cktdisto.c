@@ -32,7 +32,23 @@ CKTdisto (CKTcircuit *ckt, int mode)
     switch(mode) {
 
     case D_SETUP:
-
+#ifdef OSDI
+	    /* Enhancement-62: distortion analysis needs per-device Taylor
+	       coefficients (DEVdisto); Verilog-A (OSDI) devices only expose
+	       first derivatives through the OSDI ABI, so their
+	       nonlinearities are invisible to .disto -- the analysis would
+	       silently report ZERO distortion for them. Warn loudly instead
+	       of returning quietly-wrong numbers. */
+	    for (i=0;i<DEVmaxnum;i++) {
+		if ( DEVices[i] && !DEVices[i]->DEVdisto && ckt->CKThead[i]
+		     && DEVices[i]->DEVpublic.registry_entry ) {
+		    fprintf(stderr,
+		        "Warning: Verilog-A (OSDI) device type '%s' has no distortion model;\n"
+		        "         .disto results will NOT include its nonlinearities.\n",
+		        DEVices[i]->DEVpublic.name);
+		}
+	    }
+#endif
 	    for (i=0;i<DEVmaxnum;i++) {
 		if ( DEVices[i] && DEVices[i]->DEVdisto && ckt->CKThead[i] ) {
 		    error = DEVices[i]->DEVdisto (mode, ckt->CKThead[i], ckt);

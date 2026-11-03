@@ -34,10 +34,6 @@ NIiter(CKTcircuit *ckt, int maxIter)
     int iterno = 0;
     int ipass = 0;
 
-    /* some convergence issues that get resolved by increasing max iter */
-    if (maxIter < 100)
-        maxIter = 100;
-
     if ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
         error = CKTload(ckt);
@@ -108,6 +104,29 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 ((ckt->CKTmode & MODEINITTRAN) && (iterno == 1)))
             {
                 ckt->CKTniState |= NISHOULDREORDER;
+            }
+
+            /* Enhancement-111: residual merit ||F(x_k)|| = ||G*x_k - b|| for the
+             * globalized Newton line search. Computed here -- after the matrix
+             * is loaded and preordered but BEFORE it is LU-factored (spMultiply
+             * requires an unfactored matrix). G is the just-loaded Jacobian,
+             * x_k = CKTrhsOld, b = CKTrhs. F is the KCL residual (a current) --
+             * the merit function ngspice's iterate-based Newton otherwise lacks.
+             * CKTrhsSpare is scratch (free until the solve below). */
+            if (ckt->CKTlinesearch && ckt->CKTrhsSpare && (iterno > 1)) {
+                int sz = SMPmatSize(ckt->CKTmatrix);
+                int k;
+                double m = 0.0;
+                SMPmultiply(ckt->CKTmatrix, ckt->CKTrhsSpare, ckt->CKTrhsOld,
+                            NULL, NULL);
+                for (k = 1; k <= sz; k++) {
+                    double resid = ckt->CKTrhsSpare[k] - ckt->CKTrhs[k];
+                    double w = fabs(resid) /
+                        (ckt->CKTabstol + ckt->CKTreltol * fabs(ckt->CKTrhsSpare[k]));
+                    if (w > m)
+                        m = w;
+                }
+                ckt->CKTlsMerit = m;
             }
 
             if (ckt->CKTniState & NISHOULDREORDER) {
@@ -321,6 +340,83 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     ckt->CKTstate0[i] = OldCKTstate0[i] + (damp_factor * diff);
                 }
             }
+        }
+
+        /* Enhancement-111: globalized (damped) Newton via Armijo backtracking
+         * line search (option `linesearch`, OFF by default). Runs only on the
+         * non-convergence path. Using the residual merit ||F|| = ||G*x - b||
+         * (the KCL current mismatch, computed above before factorization), it
+         * damps the full Newton step x_k -> x_full by the largest lambda in
+         * {1, 1/2, 1/4, ...} that gives a sufficient decrease of ||F|| (Armijo).
+         * Each trial RE-LOADS the devices at the trial point x_k + lambda*d and
+         * re-evaluates ||F|| on the (SMPclear-reset, unfactored) matrix. At/near
+         * a solution the full step already reduces ||F||, so lambda = 1 is
+         * accepted on the first trial (result-neutral); backtracking only kicks
+         * in on genuine overshoot. This gives ngspice the principled globalized
+         * Newton it lacks -- the merit is the real residual, not the iterate
+         * change. */
+        if (ckt->CKTlinesearch && (ckt->CKTnoncon != 0) &&
+            ((ckt->CKTmode & MODETRANOP) || (ckt->CKTmode & MODEDCOP)) &&
+            (ckt->CKTmode & MODEINITFLOAT) && (iterno > 1))
+        {
+            int sz = SMPmatSize(ckt->CKTmatrix);
+            int k, saved_noncon = ckt->CKTnoncon;
+            double lambda = 1.0, merit_k = ckt->CKTlsMerit;
+
+            if (ckt->CKTlsBufSz < sz + 1) {
+                FREE(ckt->CKTlsXk);
+                FREE(ckt->CKTlsD);
+                ckt->CKTlsXk = TMALLOC(double, sz + 1);
+                ckt->CKTlsD  = TMALLOC(double, sz + 1);
+                ckt->CKTlsBufSz = sz + 1;
+            }
+            /* save x_k and the full Newton step d = x_full - x_k */
+            for (k = 1; k <= sz; k++) {
+                ckt->CKTlsXk[k] = ckt->CKTrhsOld[k];
+                ckt->CKTlsD[k]  = ckt->CKTrhs[k] - ckt->CKTrhsOld[k];
+            }
+            for (;;) {
+                double trial_merit = 0.0;
+                for (k = 1; k <= sz; k++)
+                    ckt->CKTrhsOld[k] = ckt->CKTlsXk[k] + lambda * ckt->CKTlsD[k];
+                /* Reset the device state (junction-voltage limiting reference)
+                 * to x_k before every trial, so each trial load limits relative
+                 * to the SAME point -- SPICE limiting is stateful and would
+                 * otherwise drift across trials and corrupt the iteration. */
+                if (OldCKTstate0 && ckt->CKTstate0)
+                    memcpy(ckt->CKTstate0, OldCKTstate0,
+                           (size_t) ckt->CKTnumStates * sizeof(double));
+                if (CKTload(ckt))       /* trial load failed -> stop backtracking */
+                    break;
+                SMPmultiply(ckt->CKTmatrix, ckt->CKTrhsSpare, ckt->CKTrhsOld,
+                            NULL, NULL);
+                for (k = 1; k <= sz; k++) {
+                    double resid = ckt->CKTrhsSpare[k] - ckt->CKTrhs[k];
+                    double w = fabs(resid) /
+                        (ckt->CKTabstol + ckt->CKTreltol * fabs(ckt->CKTrhsSpare[k]));
+                    if (w > trial_merit)
+                        trial_merit = w;
+                }
+                /* Armijo sufficient-decrease (c = 1e-4); floor lambda at 1/64 */
+                if (trial_merit <= (1.0 - 1.0e-4 * lambda) * merit_k ||
+                    lambda <= 1.0 / 64.0)
+                    break;
+                lambda *= 0.5;
+            }
+            /* Accept the (damped) step. Put x_trial into CKTrhs and restore
+             * CKTrhsOld = x_k so the SWAP below advances to x_trial. Roll the
+             * device state back to x_k so the trial loads leave NO state trace:
+             * the next iteration then loads at x_trial with the x_k limiting
+             * reference -- exactly the cadence a normal (un-line-searched)
+             * iteration would have. Only the chosen x_trial position persists. */
+            for (k = 1; k <= sz; k++) {
+                ckt->CKTrhs[k]    = ckt->CKTrhsOld[k];
+                ckt->CKTrhsOld[k] = ckt->CKTlsXk[k];
+            }
+            if (OldCKTstate0 && ckt->CKTstate0)
+                memcpy(ckt->CKTstate0, OldCKTstate0,
+                       (size_t) ckt->CKTnumStates * sizeof(double));
+            ckt->CKTnoncon = saved_noncon; /* trial loads dirtied it */
         }
 
         if (ckt->CKTmode & MODEINITFLOAT) {

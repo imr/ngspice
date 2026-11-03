@@ -147,6 +147,7 @@ extern bool ft_acctprint;
 extern bool ft_noacctprint;
 extern bool ft_noinitprint;
 extern bool ft_norefprint;
+extern bool ft_optimizing;      /* Enhancement-130 */
 extern bool ft_listprint;
 extern bool ft_nopage;
 extern bool ft_nomod;
@@ -241,7 +242,8 @@ extern bool ft_grdb;
 extern bool ft_controldb;
 extern bool ft_asyncdb;
 extern char *ft_setkwords[];
-extern struct card *inp_getopts(struct card *deck);
+extern struct card *inp_getopts(struct card *deck, bool comfile);
+extern struct card *inp_getopts_special(struct card *deck);
 extern struct card *inp_getoptsc(char *line, struct card *options);
 extern bool ft_ngdebug;
 extern bool ft_nginfo;

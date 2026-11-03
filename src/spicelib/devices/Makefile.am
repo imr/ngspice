@@ -27,7 +27,6 @@ SUBDIRS = \
 	isrc	\
 	hfet1	\
 	hfet2	\
-	hicum2	\
 	hisim2	\
 	hisimhv1	\
 	hisimhv2	\
@@ -42,6 +41,7 @@ SUBDIRS = \
 	mos6	\
 	mos9	\
 	res	\
+	nport	\
 	soi3	\
 	sw	\
 	tra	\
@@ -88,7 +88,6 @@ DIST_SUBDIRS = \
 	isrc	\
 	hfet1	\
 	hfet2	\
-	hicum2	\
 	hisim2	\
 	hisimhv1	\
 	hisimhv2	\
@@ -104,6 +103,7 @@ DIST_SUBDIRS = \
 	mos9	\
 	ndev	\
 	res	\
+	nport	\
 	soi3	\
 	sw	\
 	tra	\

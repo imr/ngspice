@@ -325,6 +325,14 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->VBICtempExpRE = value->rValue;
             mods->VBICtempExpREGiven = TRUE;
             break;
+        case VBIC_MOD_XRB:
+            mods->VBICtempExpRB = value->rValue;
+            mods->VBICtempExpRBGiven = TRUE;
+            break;
+        case VBIC_MOD_XRC:
+            mods->VBICtempExpRC = value->rValue;
+            mods->VBICtempExpRCGiven = TRUE;
+            break;
         case VBIC_MOD_XRBI:
             mods->VBICtempExpRBI = value->rValue;
             mods->VBICtempExpRBIGiven = TRUE;
@@ -476,10 +484,6 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
         case VBIC_MOD_EBBE:
             mods->VBICebbe = value->rValue;
             mods->VBICebbeGiven = TRUE;
-            break;
-        case VBIC_MOD_DTEMP:
-            mods->VBIClocTempDiff = value->rValue;
-            mods->VBIClocTempDiffGiven = TRUE;
             break;
         case VBIC_MOD_VERS:
             mods->VBICrevVersion = value->rValue;

@@ -72,6 +72,7 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     ckt->CKTgmin = task->TSKgmin;
     ckt->CKTgshunt = task->TSKgshunt;
     ckt->CKTcshunt = task->TSKcshunt;
+    ckt->CKTrshunt = task->TSKrshunt;
     ckt->CKTdelmin = task->TSKdelmin;
     ckt->CKTtrtol = task->TSKtrtol;
 #ifdef XSPICE
@@ -102,6 +103,7 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     ckt->CKTkeepOpInfo = task->TSKkeepOpInfo;
     ckt->CKTcopyNodesets = task->TSKcopyNodesets;
     ckt->CKTnodeDamping = task->TSKnodeDamping;
+    ckt->CKTlinesearch = task->TSKlinesearch; /* Enhancement-111 */
     ckt->CKTabsDv = task->TSKabsDv;
     ckt->CKTrelDv = task->TSKrelDv;
     ckt->CKTtroubleNode = 0;
@@ -119,8 +121,9 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     ckt->CKTlteTrtol = task->TSKlteTrtol;
     ckt->CKTnewtrunc = task->TSKnewtrunc;
 
-    fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n",
-        ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);
+    if (!ft_optimizing)    /* Enhancement-130: quiet during optimizer iterations */
+        fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n",
+            ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);
 
     if (ckt->CKTnewtrunc)
         fprintf(stdout, "Note: Voltage based truncation error correction selected\n");

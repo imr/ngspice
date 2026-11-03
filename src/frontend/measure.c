@@ -127,7 +127,7 @@ com_meas(wordlist *wl)
     }
     outvar = wl_count->wl_word;
 
-    fail = get_measure2(wl, &result, NULL, FALSE);
+    fail = get_measure2(wl, &result, NULL, 0, FALSE);
 
     if (fail) {
         fprintf(stderr, " meas %s failed!\n\n", line_in);
@@ -359,7 +359,7 @@ do_measure(
         out_line[0] = '\0';
         measure_word_list = measure_parse_line(meas_card->line);
         if (measure_word_list) {
-            fail = get_measure2(measure_word_list, &result, out_line, chk_only);
+            fail = get_measure2(measure_word_list, &result, out_line, sizeof out_line, chk_only);
             if (fail) {
                 measures_passed = FALSE;
                 if (!chk_only)

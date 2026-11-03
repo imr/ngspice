@@ -290,15 +290,27 @@ double exprand(double mean)
 *   seed with number <n>
 */
 void
-com_sseed(wordlist *wl)
+com_sseed(wordlist* wl)
+{
+    bool previnfo = seedinfo;
+    seedinfo = TRUE;
+    set_sseed(wl);
+    initw();
+    seedinfo = previnfo;
+}
+
+
+void
+set_sseed(wordlist *wl)
 {
     int newseed;
 
-    if (wl == NULL) {
-        if (!cp_getvar("rndseed", CP_NUM, &newseed, 0)) {
-            newseed = getpid();
-            cp_vset("rndseed", CP_NUM, &newseed);
-        }
+    /* get different seeds, if in a loop within the same process */
+    static int adder;
+
+    if (wl == NULL || cieq(wl->wl_word, "random")) {
+        newseed = getpid() + adder++;
+        cp_vset("rndseed", CP_NUM, &newseed);
         srand((unsigned int)newseed);
         TausSeed();
     }
@@ -318,7 +330,7 @@ com_sseed(wordlist *wl)
     }
 
     if (seedinfo)
-        printf("\nSeed value for random number generator is set to %d\n", newseed);
+        fprintf(stdout, "\nNote: Seed value for random number generator is set to %d\n", newseed);
 }
 
 

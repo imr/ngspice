@@ -197,6 +197,7 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   OSDIinfo->DEVacLoad = OSDIacLoad;
   OSDIinfo->DEVpzLoad = OSDIpzLoad;
   OSDIinfo->DEVtrunc = OSDItrunc;
+  OSDIinfo->DEVaccept = OSDIaccept;
   OSDIinfo->DEVnoise = OSDInoise;
 
   #ifdef KLU

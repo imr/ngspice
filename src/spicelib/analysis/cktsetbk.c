@@ -40,15 +40,23 @@ CKTsetBreak(CKTcircuit *ckt, double time)
         SPfrontEnd->IFerrorf (ERR_PANIC, "breakpoint in the past - HELP!");
         return(E_INTERN);
     }
-    for(i=0;i<ckt->CKTbreakSize;i++) {
-        if(ckt->CKTbreaks[i]>time) { /* passed */
-            if((ckt->CKTbreaks[i]-time) <= ckt->CKTminBreak) {
-                /* very close together - take earlier point */
+    for(i = 0;i < ckt->CKTbreakSize; i++) {
+        if(ckt->CKTbreaks[i] > time) { /* passed */
+            if((ckt->CKTbreaks[i] - time) <= ckt->CKTminBreak) {
+                /* Don't modify the breakpoint that is CKTfinalTime */
+                if (ckt->CKTbreaks[i] == ckt->CKTfinalTime) {
+#ifdef TRACE_BREAKPOINT
+                   printf("[t:%.e] \t %.e skipped\n", ckt->CKTtime, time);
+                   CKTbreakDump(ckt);
+#endif
+                   return(OK);
+                }
 #ifdef TRACE_BREAKPOINT
                 printf("[t:%e] \t %e replaces %e\n", ckt->CKTtime, time,
-		ckt->CKTbreaks[i]);
-		CKTbreakDump(ckt);
-#endif		
+                ckt->CKTbreaks[i]);
+                CKTbreakDump(ckt);
+#endif
+                /* very close together - take earlier point */
                 ckt->CKTbreaks[i] = time;
                 return(OK);
             }
@@ -56,8 +64,8 @@ CKTsetBreak(CKTcircuit *ckt, double time)
                 /* very close together, but after, so skip */
 #ifdef TRACE_BREAKPOINT
                 printf("[t:%e] \t %e skipped\n", ckt->CKTtime, time);
-		CKTbreakDump(ckt);
-#endif			
+                CKTbreakDump(ckt);
+#endif
                 return(OK);
             }
             /* fits in middle - new array & insert */

@@ -100,6 +100,17 @@ fourier(wordlist *wl, struct plot *current_plot)
         vec = ft_evaluate(pn);
         for (; vec; vec = vec->v_link2) {
 
+            /* Enhancement-225: a degenerate input (< 2 points) -- e.g.
+             * `fourier 1k deriv(vecmin(v(1)))`, a scalar with a length-1 scale --
+             * gives a zero time span and overran the interpolation grid,
+             * corrupting the heap. Fourier of fewer than 2 points is meaningless. */
+            if (vec->v_length < 2 || time->v_length < 2) {
+                fprintf(cp_err,
+                        "Error: fourier needs at least 2 data points (got %d)\n",
+                        vec->v_length < time->v_length ? vec->v_length : time->v_length);
+                continue;
+            }
+
             if (vec->v_length != time->v_length) {
                 fprintf(cp_err,
                         "Error: lengths don't match: %d, %d\n",

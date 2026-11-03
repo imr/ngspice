@@ -35,6 +35,12 @@ VBICtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
             CKTterr(here->VBICqbeo,ckt,timeStep);
             CKTterr(here->VBICqbco,ckt,timeStep);
             CKTterr(here->VBICqbcp,ckt,timeStep);
+            if (here->VBIC_selfheat)
+                CKTterr(here->VBICqcth,ckt,timeStep);
+            if (here->VBIC_excessPhase) {
+                CKTterr(here->VBICqxf1,ckt,timeStep);
+                CKTterr(here->VBICqxf2,ckt,timeStep);
+            }
         }
     }
     return(OK);

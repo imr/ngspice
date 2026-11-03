@@ -409,9 +409,14 @@ int sens_sens(CKTcircuit* ckt, int restart)
                 /* Conversion from Real Circuit Matrix to Complex Circuit Matrix */
                 if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
                 {
-                    for (i = 0; i < DEVmaxnum; i++)
-                        if (DEVices[i] && DEVices[i]->DEVbindCSCComplex && ckt->CKThead[i])
-                            DEVices[i]->DEVbindCSCComplex(ckt->CKThead[i], ckt);
+                    /* Enhancement-179: this loop used to reuse `i` -- the
+                     * OUTER frequency-loop variable -- so after the first
+                     * point `i` was DEVmaxnum and the AC sensitivity sweep
+                     * silently stopped at ONE frequency under KLU. */
+                    int di;
+                    for (di = 0; di < DEVmaxnum; di++)
+                        if (DEVices[di] && DEVices[di]->DEVbindCSCComplex && ckt->CKThead[di])
+                            DEVices[di]->DEVbindCSCComplex(ckt->CKThead[di], ckt);
 
                     ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex;
                 }
@@ -512,13 +517,15 @@ int sens_sens(CKTcircuit* ckt, int restart)
 
                 delta_Y->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal;
 
-                /* Clear KLU Vectors */
-                for (i = 0; i < (int)delta_Y->SMPkluMatrix->KLUmatrixNZ; i++)
-                {
-                    delta_Y->SMPkluMatrix->KLUmatrixAx[i] = 0;
-                    delta_Y->SMPkluMatrix->KLUmatrixAxComplex[2 * i] = 0;
-                    delta_Y->SMPkluMatrix->KLUmatrixAxComplex[2 * i + 1] = 0;
-                }
+                /* Clear KLU Vectors (local index: `i` is the outer
+                 * frequency-loop variable -- see the E-179 fix above) */
+                { int nzi;
+                  for (nzi = 0; nzi < (int)delta_Y->SMPkluMatrix->KLUmatrixNZ; nzi++)
+                  {
+                    delta_Y->SMPkluMatrix->KLUmatrixAx[nzi] = 0;
+                    delta_Y->SMPkluMatrix->KLUmatrixAxComplex[2 * nzi] = 0;
+                    delta_Y->SMPkluMatrix->KLUmatrixAxComplex[2 * nzi + 1] = 0;
+                  } }
             }
 #endif
 

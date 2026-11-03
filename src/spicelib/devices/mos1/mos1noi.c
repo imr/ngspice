@@ -98,7 +98,7 @@ MOS1noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                 case N_DENS:
 
                     if (inst->MOS1tempGiven)
-                        dtemp = inst->MOS1temp - ckt->CKTtemp + (model->MOS1tnom-CONSTCtoK);
+                        dtemp = inst->MOS1temp - ckt->CKTtemp;
                     else
                         dtemp = inst->MOS1dtemp;
 

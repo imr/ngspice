@@ -78,8 +78,9 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             return(OK);
         case VBIC_QUEST_CC:
             value->rValue = *(ckt->CKTstate0 + here->VBICiciei) -
-                            *(ckt->CKTstate0 + here->VBICiccp) -
-                            *(ckt->CKTstate0 + here->VBICibc);
+                            *(ckt->CKTstate0 + here->VBICibc) -
+                            *(ckt->CKTstate0 + here->VBICibep) -
+                            *(ckt->CKTstate0 + here->VBICibcp);
             value->rValue *= VBICmodPtr(here)->VBICtype;
             return(OK);
         case VBIC_QUEST_CB:
@@ -97,12 +98,12 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             value->rValue *= VBICmodPtr(here)->VBICtype;
             return(OK);
         case VBIC_QUEST_CS:
-            value->rValue = *(ckt->CKTstate0 + here->VBICiccp) -
-                            *(ckt->CKTstate0 + here->VBICibcp);
+            value->rValue = *(ckt->CKTstate0 + here->VBICibcp) -
+                            *(ckt->CKTstate0 + here->VBICiccp);
             value->rValue *= VBICmodPtr(here)->VBICtype;
             return(OK);
         case VBIC_QUEST_POWER:
-            value->rValue = fabs(here->VBICpower);
+            value->rValue = -here->VBICpower;
             return(OK);
         case VBIC_QUEST_BETA:
             VBICask(ckt, instPtr, VBIC_QUEST_CC, &IC, select);

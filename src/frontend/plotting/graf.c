@@ -517,6 +517,7 @@ void gr_point(struct dvec *dv,
         }
         break;
     case PLOT_COMB:
+    case PLOT_ARROWS:
         DatatoScreen(currentgraph,
                      0.0, currentgraph->datawindow.ymin,
                      &dummy, &ymin);

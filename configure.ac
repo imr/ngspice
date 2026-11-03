@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.70])
 
-m4_define([ngspice_major_version], [46+])
+m4_define([ngspice_major_version], [47+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
@@ -117,7 +117,7 @@ LT_INIT([shared static])
 #  --> Set 'LT_NGSPICE_AGE' to 0.
 
 LT_NGSPICE_CURRENT=0
-LT_NGSPICE_REVISION=15
+LT_NGSPICE_REVISION=16
 LT_NGSPICE_AGE=0
 LIBNGSPICE_SO_VERSION=$LT_NGSPICE_CURRENT.$LT_NGSPICE_REVISION.$LT_NGSPICE_AGE
 
@@ -150,9 +150,11 @@ AC_ARG_ENABLE([osdi],
 AC_ARG_ENABLE([cider],
     [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements])])
 
-# --enable-pss: enable PSS Analysis
+# --enable-pss / --disable-pss: PSS (periodic steady state) analysis.
+# Enhancement-117: PSS is now a shipped, default-on analysis; pass --disable-pss
+# to omit it.
 AC_ARG_ENABLE([pss],
-    [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
+    [AS_HELP_STRING([--disable-pss], [Disable PSS (periodic steady state) analysis. Default=enabled])])
 
 # --disable-sp: disable S Parameter Analysis
 AC_ARG_ENABLE([sp],
@@ -1079,9 +1081,9 @@ if test "x$enable_pzdebug" = xyes; then
     AC_DEFINE([PZDEBUG], [], [Define if you want to debug pole-zero analysis])
     AC_MSG_RESULT([WARNING: Pole/Zero analysis debug is enabled])
 fi
-if test "x$enable_pss" = xyes; then
+if test "x$enable_pss" != xno; then
     AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
-    AC_MSG_RESULT([WARNING: PSS analysis enabled])
+    AC_MSG_RESULT([PSS (periodic steady state) analysis enabled])
 fi
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
@@ -1232,7 +1234,7 @@ AM_CONDITIONAL([SP_WANTED], [test "x$has_sp" = xtrue])
 
 AM_CONDITIONAL([CIDER_WANTED], [test "x$enable_cider" = xyes])
 AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
-AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
+AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" != xno])
 AM_CONDITIONAL([SENSE2_WANTED], [test "x$enable_sense2" = xyes])
 
 
@@ -1366,7 +1368,6 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/isrc/Makefile
                  src/spicelib/devices/hfet1/Makefile
                  src/spicelib/devices/hfet2/Makefile
-                 src/spicelib/devices/hicum2/Makefile
                  src/spicelib/devices/hisim2/Makefile
                  src/spicelib/devices/hisimhv1/Makefile
                  src/spicelib/devices/hisimhv2/Makefile
@@ -1382,6 +1383,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/mos9/Makefile
                  src/spicelib/devices/ndev/Makefile
                  src/spicelib/devices/res/Makefile
+                 src/spicelib/devices/nport/Makefile
                  src/spicelib/devices/soi3/Makefile
                  src/spicelib/devices/sw/Makefile
                  src/spicelib/devices/tra/Makefile
@@ -1411,7 +1413,6 @@ AC_CONFIG_FILES([Makefile
                  src/frontend/trannoise/Makefile
                  src/frontend/wdisp/Makefile
                  src/include/ngspice/Makefile
-                 src/include/cppduals/duals/Makefile
                  src/maths/Makefile
                  src/maths/cmaths/Makefile
                  src/maths/fft/Makefile
@@ -1447,7 +1448,6 @@ AC_CONFIG_FILES([Makefile
                  tests/filters/Makefile
                  tests/general/Makefile
                  tests/hfet/Makefile
-                 tests/hicum2/Makefile
                  tests/hisim/Makefile
                  tests/hisimhv1/Makefile
                  tests/hisimhv2/Makefile
@@ -1471,6 +1471,8 @@ AC_CONFIG_FILES([Makefile
                  tests/transient/Makefile
                  tests/transmission/Makefile
                  tests/xspice/Makefile
+                 tests/xspice/analog/Makefile
+                 tests/xspice/analog/spinit
                  tests/xspice/digital/Makefile
                  tests/xspice/digital/spinit
                  tests/resistance/Makefile

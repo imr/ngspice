@@ -87,7 +87,7 @@ MOS2noise(int mode, int operation, GENmodel * genmodel, CKTcircuit * ckt,
                 case N_DENS:
 
                     if (inst->MOS2tempGiven)
-                        dtemp = inst->MOS2temp - ckt->CKTtemp + (model->MOS2tnom-CONSTCtoK);
+                        dtemp = inst->MOS2temp - ckt->CKTtemp;
                     else
                         dtemp = inst->MOS2dtemp;
 

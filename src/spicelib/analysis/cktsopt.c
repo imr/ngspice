@@ -160,6 +160,9 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_NODEDAMPING:
         task->TSKnodeDamping = (val->iValue != 0);
         break;
+    case OPT_LINESEARCH: /* Enhancement-111 */
+        task->TSKlinesearch = (val->iValue != 0);
+        break;
     case OPT_ABSDV:
         task->TSKabsDv = val->rValue;
         break;
@@ -175,6 +178,9 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_CSHUNT:
         task->TSKcshunt = val->rValue;
         break;
+    case OPT_RSHUNT:
+        task->TSKrshunt = val->rValue;
+        break;
 
 #ifdef KLU
     case OPT_SPARSE:
@@ -184,7 +190,7 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
         task->TSKkluMODE = (val->iValue != 0);
         break;
     case OPT_KLU_MEMGROW_FACTOR:
-        task->TSKkluMemGrowFactor = (val->rValue == 1.2);
+        task->TSKkluMemGrowFactor = val->rValue;
         break;
 #endif
     case OPT_LTERELTOL:
@@ -240,16 +246,6 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_MIF_AUTO_PARTIAL:
         g_mif_info.auto_partial.global = MIF_TRUE;
         break;
-
-    case OPT_ENH_RSHUNT:
-        if(val->rValue > 1.0e-30) {
-          ckt->enh->rshunt_data.enabled = MIF_TRUE;
-          ckt->enh->rshunt_data.gshunt = 1.0 / val->rValue;
-        }
-        else {
-          fprintf(stderr, "WARNING - Rshunt option too small.  Ignored.\n");
-        }
-        break;
 #endif
 /* gtri - end - wbk - add new options */
     default:
@@ -268,10 +264,10 @@ static IFparm OPTtbl[] = {
  { "convstep", OPT_ENH_CONV_STEP, IF_SET|IF_REAL, "Fractional step allowed by code model inputs between iterations" },
  { "convabsstep", OPT_ENH_CONV_ABS_STEP, IF_SET|IF_REAL, "Absolute step allowed by code model inputs between iterations" },
  { "autopartial", OPT_MIF_AUTO_PARTIAL, IF_SET|IF_FLAG, "Use auto-partial computation for all models" },
- { "rshunt", OPT_ENH_RSHUNT, IF_SET|IF_REAL, "Shunt resistance from analog nodes to ground" },
 /* gtri - end   - wbk - add new options */
 #endif
  { "cshunt", OPT_CSHUNT, IF_SET|IF_REAL, "Shunt capacitor from analog nodes to ground" },
+ { "rshunt", OPT_RSHUNT, IF_SET|IF_REAL, "Shunt resistor from analog nodes to ground" },
  { "noopiter", OPT_NOOPITER,IF_SET|IF_FLAG,"Go directly to gmin stepping" },
  { "gmin", OPT_GMIN,IF_SET|IF_REAL,"Minimum conductance" },
  { "gshunt", OPT_GSHUNT,IF_SET|IF_REAL,"Shunt conductance" },
@@ -355,6 +351,8 @@ static IFparm OPTtbl[] = {
         "Copy nodesets from device terminals to internal nodes" },
  { "nodedamping", OPT_NODEDAMPING, IF_SET|IF_FLAG,
         "Limit iteration to iteration node voltage change" },
+ { "linesearch", OPT_LINESEARCH, IF_SET|IF_FLAG,
+        "Adaptive damped-Newton line search on the weighted step norm" },
  { "absdv", OPT_ABSDV, IF_SET|IF_REAL,
         "Maximum absolute iter-iter node voltage change" },
  { "reldv", OPT_RELDV, IF_SET|IF_REAL,

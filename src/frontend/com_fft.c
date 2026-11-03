@@ -80,7 +80,14 @@ com_fft(wordlist *wl)
         M++;
     }
     fpts = N/2 + 1;
-    scale = ((double)N)/2;
+    /* E-241: normalize the amplitude by the ACTUAL sample count `length`, not the
+     * zero-padded FFT size N.  The Green's radix-2 FFT pads `length` samples up to
+     * the next power of two N; the single-sided amplitude of a bin is 2*|X|/length
+     * (independent of padding -- padding only interpolates the spectrum), so the
+     * scale must be length/2 to match the FFTW path above.  Using N/2 made every
+     * FFT whose sample count is not a power of two report amplitudes too small by
+     * length/N (up to 2x): e.g. a pure DC offset read half its value. */
+    scale = ((double)length)/2.0;
 #endif
 
     win = TMALLOC(double, length);
@@ -460,7 +467,10 @@ com_psd(wordlist *wl)
         fftFree();
 
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
-        intres = (double)N * (double)N;
+        /* E-241: normalize the PSD by length^2 (the actual sample count), not the
+         * zero-padded FFT size N^2 -- matching the FFTW path above.  Using N^2 made
+         * the PSD of a non-power-of-two-length record too small by (length/N)^2. */
+        intres = (double)length * (double)length;
         fdvec[i][0].cx_real = reald[0]*reald[0]/intres;
         fdvec[i][0].cx_imag = 0;
         noipower = fdvec[i][0].cx_real;

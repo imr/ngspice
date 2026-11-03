@@ -27,10 +27,8 @@ BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double cbhat;
     double vbe;
     double vbc;
-    double vbcx;
     double delvbe;
     double delvbc;
-    double delvbcx;
 
 
     for( ; model != NULL; model = BJTnextModel(model)) {
@@ -42,21 +40,17 @@ BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
             vbc=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbasePrimeNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-            vbcx=model->BJTtype*(
-                    *(ckt->CKTrhsOld+here->BJTbasePrimeNode)-
-                    *(ckt->CKTrhsOld+here->BJTcollCXNode));
             delvbe=vbe- *(ckt->CKTstate0 + here->BJTvbe);
             delvbc=vbc- *(ckt->CKTstate0 + here->BJTvbc);
-            delvbcx=vbcx- *(ckt->CKTstate0 + here->BJTvbcx);
-            cchat= *(ckt->CKTstate0 + here->BJTcc)+(*(ckt->CKTstate0 + 
-                    here->BJTgm)+ *(ckt->CKTstate0 + here->BJTgo))*delvbe-
-                    (*(ckt->CKTstate0 + here->BJTgo)+*(ckt->CKTstate0 +
-                    here->BJTgmu))*delvbc;
-            cbhat= *(ckt->CKTstate0 + here->BJTcb)+ *(ckt->CKTstate0 + 
-                    here->BJTgpi)*delvbe+ *(ckt->CKTstate0 + here->BJTgmu)*
-                    delvbc;
+            cchat= *(ckt->CKTstate0 + here->BJTcc)
+                  + (*(ckt->CKTstate0 + here->BJTgm)+*(ckt->CKTstate0 + here->BJTgo))*delvbe
+                  - (*(ckt->CKTstate0 + here->BJTgo)+*(ckt->CKTstate0 +here->BJTgmu))*delvbc;
+            cbhat= *(ckt->CKTstate0 + here->BJTcb)
+                  + *(ckt->CKTstate0 + here->BJTgpi)*delvbe
+                  + *(ckt->CKTstate0 + here->BJTgmu)*delvbc;
             cc = *(ckt->CKTstate0 + here->BJTcc);
             cb = *(ckt->CKTstate0 + here->BJTcb);
+
             /*
              *   check convergence
              */
@@ -74,6 +68,33 @@ BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
                     return(OK); /* no reason to continue - we've failed... */
                 }
             }
+
+            if (model->BJTintCollResistGiven) {
+                double vbcx, vrci, delvrci, delvbcx, irci, ircihat, tolr;
+
+                vbcx=model->BJTtype*(
+                        *(ckt->CKTrhsOld+here->BJTbasePrimeNode)-
+                        *(ckt->CKTrhsOld+here->BJTcollCXNode));
+                vrci = model->BJTtype*(
+                        *(ckt->CKTrhsOld+here->BJTcollCXNode)-
+                        *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
+                delvbcx = vbcx- *(ckt->CKTstate0 + here->BJTvbcx);
+                delvrci = vrci - *(ckt->CKTstate0 + here->BJTvrci);
+
+                irci = *(ckt->CKTstate0 + here->BJTirci);
+                ircihat = irci
+                        + *(ckt->CKTstate0 + here->BJTirci_Vrci) * delvrci
+                        + *(ckt->CKTstate0 + here->BJTirci_Vbci) * delvbc
+                        + *(ckt->CKTstate0 + here->BJTirci_Vbcx) * delvbcx;
+
+                tolr = ckt->CKTreltol*MAX(fabs(ircihat),fabs(irci)) + ckt->CKTabstol;
+                if (fabs(ircihat-irci) > tolr) {
+                    ckt->CKTnoncon++;
+                    ckt->CKTtroubleElt = (GENinstance *) here;
+                    return(OK);
+                }
+            }
+
         }
     }
     return(OK);

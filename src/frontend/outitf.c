@@ -26,6 +26,8 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "variable.h"
 #include <fcntl.h>
 #include "ngspice/cktdefs.h"
+#include "ngspice/acdefs.h"          /* Enhancement: ACAN for the sweep progress bar */
+#include "ngspice/trcvdefs.h"        /* Enhancement: TRCV (DC sweep) for the progress bar */
 #include "breakp2.h"
 #include "runcoms.h"
 #include "plotting/graf.h"
@@ -82,6 +84,100 @@ extern int sh_vecinit(runDesc *run);
 extern bool orflag;
 #endif
 
+/* Enhancement: live progress bar on the "Reference value" line.
+ *
+ * outp_progress_frac() returns the fraction (0..1) of a DC / AC / transient
+ * sweep completed, or -1 when the running analysis has no well-defined span
+ * (operating point, noise, ...). Transient uses the elapsed time against TSTOP;
+ * AC uses the frequency against the (linear or log) start/stop band; DC sweeps
+ * use the accepted-point count against the product of the nested step counts. */
+#ifndef HAS_WINGUI
+#define OUTP_BARLEN 24
+
+static double
+outp_progress_frac(runDesc *run, double refval)
+{
+    CKTcircuit *ckt = run ? run->circuit : NULL;
+    JOB *job;
+    const char *nm;
+
+    if (!ckt || !ckt->CKTcurJob)
+        return -1.0;
+    job = ckt->CKTcurJob;
+    nm = spice_analysis_get_name(job->JOBtype);
+    if (!nm)
+        return -1.0;
+
+    if (strcmp(nm, "TRAN") == 0) {
+        double span = ckt->CKTfinalTime - ckt->CKTinitTime;
+        if (span > 0.0)
+            return (ckt->CKTtime - ckt->CKTinitTime) / span;
+    } else if (strcmp(nm, "AC") == 0) {
+        ACAN *ac = (ACAN *) job;
+        double f0 = ac->ACstartFreq, f1 = ac->ACstopFreq;
+        if (ac->ACstepType == LINEAR) {
+            if (f1 != f0)
+                return (refval - f0) / (f1 - f0);
+        } else {                        /* DECADE / OCTAVE: logarithmic band */
+            if (f0 > 0.0 && f1 > 0.0 && refval > 0.0 && f1 != f0)
+                return log(refval / f0) / log(f1 / f0);
+        }
+    } else if (strcmp(nm, "NOISE") == 0) {   /* frequency-swept, like AC */
+        NOISEAN *ns = (NOISEAN *) job;
+        double f0 = ns->NstartFreq, f1 = ns->NstopFreq;
+        if (ns->NstpType == LINEAR) {
+            if (f1 != f0)
+                return (refval - f0) / (f1 - f0);
+        } else {
+            if (f0 > 0.0 && f1 > 0.0 && refval > 0.0 && f1 != f0)
+                return log(refval / f0) / log(f1 / f0);
+        }
+    } else if (strcmp(nm, "DC") == 0) {
+        TRCV *dc = (TRCV *) job;
+        double total = 1.0;
+        int i;
+        for (i = 0; i <= dc->TRCVnestLevel; i++) {
+            double s = dc->TRCVvStep[i];
+            if (s != 0.0)
+                total *= floor(fabs((dc->TRCVvStop[i] - dc->TRCVvStart[i]) / s)
+                               + 1.0 + 0.5);
+        }
+        if (total > 0.0)
+            return (double) run->pointCount / total;
+    }
+    return -1.0;
+}
+
+/* Print the throttled "Reference value" status line, with a progress bar
+ * appended when the sweep fraction is known. Redraws in place via '\r', like
+ * the original line, and keeps a constant width so no stale characters remain. */
+static void
+outp_print_reference(runDesc *run, double refval)
+{
+    double frac;
+
+    if (ft_optimizing)          /* Enhancement-130: quiet during optimizer iterations */
+        return;
+    frac = outp_progress_frac(run, refval);
+
+    if (frac >= 0.0) {
+        char bar[OUTP_BARLEN + 1];
+        int filled, k;
+        if (frac > 1.0)
+            frac = 1.0;
+        filled = (int) (frac * OUTP_BARLEN + 0.5);
+        for (k = 0; k < OUTP_BARLEN; k++)
+            bar[k] = (k < filled) ? '=' : ' ';
+        bar[OUTP_BARLEN] = '\0';
+        fprintf(stdout, " Reference value : % 12.5e  [%s] %3.0f%%\r",
+                refval, bar, frac * 100.0);
+    } else {
+        fprintf(stdout, " Reference value : % 12.5e\r", refval);
+    }
+    fflush(stdout);
+}
+#endif
+
 // fixme
 //   ugly hack to work around missing api to specify the "type" of signals
 int fixme_onoise_type = SV_NOTYPE;
@@ -100,9 +196,7 @@ static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 static bool interpolated = FALSE;
 static double *valueold, *valuenew;
 
-#ifdef SHARED_MODULE
 static bool savenone = FALSE;
-#endif
 
 /* The two "begin plot" routines share all their internals... */
 
@@ -213,6 +307,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
         an_name = spice_analysis_get_name(analysisPtr->JOBtype);
         ft_curckt->ci_last_an = an_name;
+        savenone = FALSE;
 
         /* Now let's see which of these things we need.  First toss in the
          * reference vector.  Then toss in anything that getSaves() tells
@@ -220,6 +315,15 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
          * the remaining saves into parameters.
          */
         numsaves = ft_getSaves(&saves);
+        if (numsaves && cieq(saves[0].name, "none")) {
+            /* If "none" appears, it is always alone. */
+
+            numsaves = 0;
+            savenone = TRUE;
+            tfree(saves[0].analysis);
+            tfree(saves[0].name);
+            tfree(saves);
+        }
         if (numsaves) {
             savesused = TMALLOC(bool, numsaves);
             saveall = FALSE;
@@ -235,7 +339,6 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 if (cieq(saves[i].name, "all") || cieq(saves[i].name, "allv")) {
                     saveall = TRUE;
                     savesused[i] = TRUE;
-                    saves[i].used = 1;
                     continue;
                 }
 
@@ -244,33 +347,20 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 if (cieq(saves[i].name, "alli")) {
                     savealli = TRUE;
                     savesused[i] = TRUE;
-                    saves[i].used = 1;
                     continue;
                 }
 
                 if (cieq(saves[i].name, "nosub")) {
                     savenosub = TRUE;
                     savesused[i] = TRUE;
-                    saves[i].used = 1;
                     continue;
                 }
 
                 if (cieq(saves[i].name, "nointernals")) {
                     savenointernals = TRUE;
                     savesused[i] = TRUE;
-                    saves[i].used = 1;
                     continue;
                 }
-#ifdef SHARED_MODULE
-                /* this may happen if shared ngspice*/
-                if (cieq(saves[i].name, "none")) {
-                    savenone = TRUE;
-                    saveall = TRUE;
-                    savesused[i] = TRUE;
-                    saves[i].used = 1;
-                    continue;
-                }
-#endif
             }
         }
 
@@ -282,11 +372,10 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         /* Pass 0. */
         if (refName) {
             addDataDesc(run, refName, refType, -1, initmem);
-            for (i = 0; i < numsaves; i++)
-                if (!savesused[i] && name_eq(saves[i].name, refName)) {
+            for (i = 0; i < numsaves; i++) {
+                if (!savesused[i] && name_eq(saves[i].name, refName))
                     savesused[i] = TRUE;
-                    saves[i].used = 1;
-                }
+            }
         } else {
             run->refIndex = -1;
         }
@@ -300,26 +389,23 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                         if (name_eq(saves[i].name, dataNames[j])) {
                             addDataDesc(run, dataNames[j], dataType, j, initmem);
                             savesused[i] = TRUE;
-                            saves[i].used = 1;
                             break;
                         }
                         /* generate a vector of real time information */
                         else if (ft_ngdebug && refName && eq(refName, "time") && eq(saves[i].name, "speedcheck")) {
                             addDataDesc(run, "speedcheck", IF_REAL, j, initmem);
                             savesused[i] = TRUE;
-                            saves[i].used = 1;
                             break;
                         }
                         else if (ft_ngdebug && refName && eq(refName, "time") && eq(saves[i].name, "deltacheck")) {
                             addDataDesc(run, "deltacheck", IF_REAL, j, initmem);
                             savesused[i] = TRUE;
-                            saves[i].used = 1;
                             break;
                         }
                     }
                 }
             }
-        } else {
+        } else if (!savenone) {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
                     /*  Save the node (with restrictions) */
@@ -439,7 +525,6 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     }
                     addDataDesc(run, dataNames[j], dataType, j, initmem);
                     savesused[i] = TRUE;
-                    saves[i].used = 1;
                     depind = j;
                 } else {
                     depind = run->data[j].outIndex;
@@ -458,6 +543,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             tfree(savesused);
         }
 
+#if 0
         if (numNames &&
             ((run->numData == 1 && run->refIndex != -1) ||
              (run->numData == 0 && run->refIndex == -1)))
@@ -466,7 +552,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     spice_analysis_get_description(analysisPtr->JOBtype));
             return E_NOTFOUND;
         }
-
+#endif
         /* Now that we have our own data structures built up, let's see what
          * nutmeg wants us to do.
          */
@@ -637,6 +723,10 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
                 plotAddRealValue(d, val.rValue);
             else if (d->type == IF_COMPLEX)
                 plotAddComplexValue(d, val.cValue);
+            else if (d->type == IF_INTEGER)
+                /* Enhancement-32: integer instance params/opvars (e.g. OSDI event
+                   counters) are recorded as reals, like every other plot vector */
+                plotAddRealValue(d, (double) val.iValue);
             else
                 fprintf(stderr, "OUTpData: unsupported data type\n");
         }
@@ -692,9 +782,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 if (!orflag && !ft_norefprint && !cp_background) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-                        fprintf(stdout, " Reference value : % 12.5e\r",
-                                refValue->cValue.real);
-                        fflush(stdout);
+                        outp_print_reference(run, refValue->cValue.real);
                         lastclock = currclock;
                     }
                 }
@@ -706,9 +794,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 if (!orflag && !ft_norefprint && !cp_background) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-                        fprintf(stdout, " Reference value : % 12.5e\r",
-                                refValue->rValue);
-                        fflush(stdout);
+                        outp_print_reference(run, refValue->rValue);
                         lastclock = currclock;
                     }
                 }
@@ -774,6 +860,10 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     fileAddRealValue(run->fp, run->binary, val.rValue);
                 else if (run->data[i].type == IF_COMPLEX)
                     fileAddComplexValue(run->fp, run->binary, val.cValue);
+                else if (run->data[i].type == IF_INTEGER)
+                    /* Enhancement-32: integer instance params/opvars are written
+                       as reals, like every other rawfile vector */
+                    fileAddRealValue(run->fp, run->binary, (double) val.iValue);
                 else
                     fprintf(stderr, "OUTpData: unsupported data type\n");
             }
@@ -803,14 +893,9 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         if (!orflag && !ft_norefprint && !cp_background) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-                if (run->isComplex) {
-                    fprintf(stdout, " Reference value : % 12.5e\r",
-                            refValue ? refValue->cValue.real : NAN);
-                } else {
-                    fprintf(stdout, " Reference value : % 12.5e\r",
-                            refValue ? refValue->rValue : NAN);
-                }
-                fflush(stdout);
+                outp_print_reference(run, run->isComplex
+                                     ? (refValue ? refValue->cValue.real : NAN)
+                                     : (refValue ? refValue->rValue : NAN));
                 lastclock = currclock;
             }
         }
@@ -885,6 +970,9 @@ OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
         } else if (param == PLOT_COMB) {
             for (d = run->runPlot->pl_dvecs; d; d = d->v_next)
                 d->v_plottype = PLOT_COMB;
+        } else if (param == PLOT_ARROWS) {
+            for (d = run->runPlot->pl_dvecs; d; d = d->v_next)
+                d->v_plottype = PLOT_ARROWS;
         } else {
             run->runPlot->pl_scale->v_gridtype = type;
         }
@@ -1119,7 +1207,8 @@ fileEnd(runDesc *run)
         long place = ftell(run->fp);
         fseek(run->fp, run->pointPos, SEEK_SET);
         fprintf(run->fp, "%d", run->pointCount);
-        fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
+        if (!ft_optimizing)     /* Enhancement-130 */
+            fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
         fseek(run->fp, place, SEEK_SET);
     } else {
         /* Yet another hack-around */
@@ -1187,11 +1276,9 @@ plotInit(runDesc *run)
 static inline int
 vlength2delta(int len)
 {
-#ifdef SHARED_MODULE
     if (savenone)
-        /* We need just a vector length of 1 */
-        return 1;
-#endif
+        return 1;        /* We need just a vector length of 1 */
+
     /* TSTOP / TSTEP */
     int points = ft_curckt->ci_ckt->CKTtimeListSize;
     /* transient and pss analysis (points > 0) upon start */
@@ -1230,11 +1317,8 @@ vlength2delta(int len)
 void
 AddRealValueToVector(struct dvec *v, double value)
 {
-#ifdef SHARED_MODULE
     if (savenone)
-        /* always save new data to same location */
-        v->v_length = 0;
-#endif
+        v->v_length = 0;        /* always save new data to same location */
 
     if (v->v_length >= v->v_alloc_length)
         dvec_extend(v, v->v_length + vlength2delta(v->v_length));
@@ -1262,10 +1346,8 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
 
-#ifdef SHARED_MODULE
     if (savenone)
         v->v_length = 0;
-#endif
 
     if (v->v_length >= v->v_alloc_length)
         dvec_extend(v, v->v_length + vlength2delta(v->v_length));
@@ -1281,7 +1363,8 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 static void
 plotEnd(runDesc *run)
 {
-    fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
+    if (!ft_optimizing)         /* Enhancement-130 */
+        fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 }
 
 
@@ -1369,7 +1452,9 @@ getSpecial(dataDesc *desc, runDesc *run, IFvalue *val)
     if (INPaName(desc->specParamName, val, run->circuit, &desc->specType,
                  desc->specName, &desc->specFast, ft_sim, &desc->type,
                  &selector) == OK) {
-        desc->type &= (IF_REAL | IF_COMPLEX);   /* mask out other bits */
+        /* Enhancement-32: keep IF_INTEGER too — integer instance params/opvars
+           (e.g. OSDI event counters) are recorded as reals downstream */
+        desc->type &= (IF_REAL | IF_COMPLEX | IF_INTEGER);   /* mask out other bits */
         return TRUE;
     }
 
@@ -1546,9 +1631,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
         if (!orflag && !ft_norefprint && !cp_background) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-                fprintf(stdout, " Reference value : % 12.5e\r",
-                        refValue->rValue);
-                fflush(stdout);
+                outp_print_reference(run, refValue->rValue);
                 lastclock = currclock;
             }
         }
@@ -1707,9 +1790,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
     if (!orflag && !ft_norefprint && !cp_background) {
         currclock = clock();
         if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-            fprintf(stdout, " Reference value : % 12.5e\r",
-                    refValue->rValue);
-            fflush(stdout);
+            outp_print_reference(run, refValue->rValue);
             lastclock = currclock;
         }
     }

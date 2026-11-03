@@ -27,9 +27,11 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/fteinp.h"
+#include "ngspice/hash.h"
 #include "numparam/general.h"
 
 #include "com_set.h"
+#include "encodedet.h"
 
 #include <limits.h>
 #include <stdlib.h>
@@ -122,7 +124,7 @@ wordlist* sourceinfo = NULL;
 
 static bool has_if = FALSE; /* if we have an .if ... .endif pair */
 
-static char *readline(FILE *fd);
+static char *readline(FILE *fd, FileEncoding encoding);
 int get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct card *deck, bool cs);
 static void inp_stripcomments_line(char *s, bool cs, bool inc);
@@ -170,6 +172,7 @@ static void inp_fix_temper_in_param(struct card *deck);
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn);
 static int inp_vdmos_model(struct card *deck);
 static void inp_check_syntax(struct card *deck);
+static char *skip_token(const char *s);
 
 static char *inp_spawn_brace(char *s);
 
@@ -209,7 +212,7 @@ struct inp_read_t {
 };
 
 static struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
-    const char* file_name, bool comfile, bool intfile);
+    const char* file_name, bool comfile, bool intfile, FileEncoding enc);
 
 
 #ifdef XSPICE
@@ -221,33 +224,27 @@ static void inp_poly_err(struct card *deck);
 #if defined(CIDER) || defined(XSPICE)
 static char *keep_case_of_cider_param(char *buffer)
 {
-    int numq = 0, keep_case = 0;
+    int keep_case = 0;
     char *s = 0;
+
     /* Retain the case of strings enclosed in double quotes for
        output rootfile and doping infile params within Cider .model
        statements. Also for the ic.file filename param in an element
        instantiation statement.
        No nested double quotes.
     */
+
     for (s = buffer; *s && (*s != '\n'); s++) {
-        if (*s == '\"') {
-            numq++; 
+        if (keep_case && *s == '\\' && s[1] == '\"') {
+            /* Escaped quote. */
+
+            ++s;
+            continue;
         }
-    }
-    if (numq == 2) {
-        /* One pair of double quotes */
-        for (s = buffer; *s && (*s != '\n'); s++) {
-            if (*s == '\"') {
-                keep_case = (keep_case == 0 ? 1 : 0); 
-            }
-            if (!keep_case) {
-                *s = tolower_c(*s);
-            }
-        }
-    } else {
-        for (s = buffer; *s && (*s != '\n'); s++) {
+        if (*s == '\"')
+            keep_case ^= 1;
+        if (!keep_case)
             *s = tolower_c(*s);
-        }
     }
     return s;
 }
@@ -273,6 +270,28 @@ static char* make_lower_case_copy(char* inbuf)
         *s = tolower_c(*s);
     }
     return rets;
+}
+
+static int is_special_model(char *buf, const char * const *models)
+{
+    size_t len;
+    const char *s, * const *ep;
+
+    if (!ciprefix(".model", buf)) {
+        return 0;
+    }
+    s = skip_token(buf);
+    if (!s || !*s)
+        return 0;
+    s = skip_token(s);
+    if (!s || !*s)
+        return 0;
+    for (ep = models; *ep; ep++) {
+        len = strlen(*ep);
+        if (!strncasecmp(s, *ep, len))
+            return 1;
+    }
+    return 0;
 }
 #endif
 
@@ -396,44 +415,25 @@ static int is_cider_model(char *buf)
        Otherwise it will be missed if on a continuation line.
        This should be rare.
     */
-    char *s;
-    if (!ciprefix(".model", buf)) {
-        return 0;
-    }
-    s = make_lower_case_copy(buf);
-    if (!s) return 0;
-    if (strstr(s, "numos") || strstr(s, "numd") || strstr(s, "nbjt")) {
-        tfree(s);
-        return 1;
-    } else {
-        tfree(s);
-        return 0;
-    }
+    static const char * const models[] = {"numos", "numd", "nbjt", 0};
+
+    return is_special_model(buf, models);
 }
 #endif
 #ifdef XSPICE
 static int is_xspice_model(char* buf)
 {
-    /* Expect filesource, table2d, table3d, d_state, d_source, d_process, d_cosim
-       to be on the same line as the .model.
-       Otherwise it will be missed if on a continuation line.
+    /* Identify XSPICE models with string parameters.
+       Expect identifier to be on the same line as the .model,
+       otherwise it will be missed if on a continuation line.
        This should be rare.
     */
-    char* s;
-    if (!ciprefix(".model", buf)) {
-        return 0;
-    }
-    s = make_lower_case_copy(buf);
-    if (!s) return 0;
-    if (strstr(s, "filesource") || strstr(s, "table2d") || strstr(s, "table3d") || 
-        strstr(s, "d_state") || strstr(s, "d_source") || strstr(s, "d_process") || strstr(s, "d_cosim")) {
-        tfree(s);
-        return 1;
-    }
-    else {
-        tfree(s);
-        return 0;
-    }
+
+    static const char * const models[] =
+        {"filesource", "vcd_source", "table2d", "table3d", "xfer", "d_state",
+         "d_source", "d_process", "d_cosim", 0};
+
+    return is_special_model(buf, models);
 }
 #endif
 
@@ -595,7 +595,7 @@ static struct library *read_a_lib(const char *y, const char *dir_name)
         lib->habitat = ngdirname(yy);
 
         lib->deck =
-            inp_read(newfp, 1 /*dummy*/, lib->habitat, lib->realpath, FALSE, FALSE).cc;
+            inp_read(newfp, 1 /*dummy*/, lib->habitat, lib->realpath, FALSE, FALSE, ENCODING_UNKNOWN).cc;
 
         struct card* tmpdeck;
         int cnumber = 1;
@@ -1059,7 +1059,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
        This is the next major step:
        Reading the netlist line by line, handle .include and .lib,
        line continuation and upper/lower casing */
-    rv = inp_read(fp, 0, dir_name, file_name, comfile, intfile);
+    rv = inp_read(fp, 0, dir_name, file_name, comfile, intfile, ENCODING_UNKNOWN);
     cc = rv.cc;
 
     /* skip all pre-processing for expanded input files created by 'listing r',
@@ -1309,7 +1309,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name, const char* file_name,
     return cc;
 }
 
-static char *skip_token(char *s)
+static char *skip_token(const char *s)
 {
     s = skip_ws(s);      /* Advance past space chars. */
     s = skip_non_ws(s);  /* Skip over token. */
@@ -1318,7 +1318,7 @@ static char *skip_token(char *s)
 
 
 static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name,
-    const char* file_name, bool comfile, bool intfile)
+    const char* file_name, bool comfile, bool intfile, FileEncoding encoding)
     /* fp: in, pointer to file to be read,
        call_depth: in, nested call to fcn
        dir_name: in, name of directory of file to be read
@@ -1379,14 +1379,14 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     buffer = copy(big_buff);
             }
             else {
-                buffer = readline(fp);
+                buffer = readline(fp, encoding);
                 if (!buffer)
                     break;
             }
 
 #else
 
-            buffer = readline(fp);
+            buffer = readline(fp, encoding);
             if (!buffer) {
                 break;
             }
@@ -1403,23 +1403,23 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
             continue;
         }
 
-        /* Strip a UTF-8 byte order mark at the start of a line -- i.e. at
-           the start of a file written by a Windows editor.  A BOM is never
-           legal SPICE syntax; left in place it glues to the first token
-           (fatal ".subckt/.ends mismatch" class errors in included libs). */
-        if (!intfile && strncmp(buffer, "\xEF\xBB\xBF", 3) == 0)
-            memmove(buffer, buffer + 3, strlen(buffer + 3) + 1);
-
-        /* OK -- now we have loaded the next line into 'buffer'.  Process it.
-         */
+        /* after reading the first line */
         if (first) {
             /* Files starting *ng_script are user supplied command files. */
-
             if (ciprefix("*ng_script", buffer))
                 comfile = TRUE;
+            /* Strip a UTF-8 or UTF-16 byte order mark at the start
+               of a file, e.g.  written by a Windows editor.  A BOM is never
+               legal SPICE syntax; left in place it glues to the first token
+               (fatal ".subckt/.ends mismatch" class errors in included libs). */
+            if (!intfile && (encoding == ENCODING_UTF8_WITH_BOM))
+                memmove(buffer, buffer + 3, strlen(buffer + 3) + 1);
+            else if (!intfile && (encoding == ENCODING_UTF16LE_WITH_BOM))
+                memmove(buffer, buffer + 2, strlen(buffer + 2) + 1);
             first = FALSE;
         }
-
+        /* OK -- now we have loaded the next line into 'buffer'.  Process it.
+         *
         /* If input line is blank, ignore it & continue looping.  */
         if ((strcmp(buffer, "\n") == 0) || (strcmp(buffer, "\r\n") == 0))
             if (call_depth != 0 || (call_depth == 0 && cc != NULL)) {
@@ -1578,6 +1578,26 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     }
                 }
 
+                /* test input file for its encoding */
+                encoding = ENCODING_UNKNOWN;
+                FILE* enfile = fopen(y_resolved, "rb");
+                if (enfile) {
+                    encoding = detect_file_encoding(enfile);
+                    switch (encoding) {
+                    case ENCODING_UTF8_WITH_BOM:
+                    case ENCODING_UTF16LE_WITH_BOM:
+                    case ENCODING_UTF16LE_NO_BOM:
+                        fprintf(stdout, "Note: .include file '%s' encoding: %s\n", y, encoding_to_string(encoding));
+                        break;
+                    case ENCODING_BINARY:
+                        fprintf(stderr, "Warning: Binary .inlude file '%s' is not supported, skipped!\n", y);
+                        fclose(enfile);
+                        continue;
+                    default: /* do nothing */;
+                    }
+                    fclose(enfile);
+                }
+
                 newfp = fopen(y_resolved, "r");
 
                 if (!newfp) {
@@ -1597,7 +1617,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                 y_dir_name = ngdirname(y_resolved);
 
                 newcard = inp_read(
-                    newfp, call_depth + 1, y_dir_name, y_resolved, FALSE, FALSE)
+                    newfp, call_depth + 1, y_dir_name, y_resolved, FALSE, FALSE, encoding)
                     .cc; /* read stuff in include file into
                             netlist */
 
@@ -1809,6 +1829,10 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
                     ciprefix("codemodel", buffer) ||
                     ciprefix("osdi", buffer) ||
                     ciprefix("pre_osdi", buffer) ||
+
+                    ciprefix("snp", buffer) ||
+
+                    ciprefix("pre_snp", buffer) ||
                     ciprefix("echo", buffer) || ciprefix("shell", buffer) ||
                     ciprefix("source", buffer) || ciprefix("cd", buffer) ||
                     ciprefix("load", buffer) || ciprefix("setcs", buffer) ||
@@ -2301,7 +2325,7 @@ static char *inp_pathresolve_at(const char *name, const char *dir)
 
 #define STRGROW 256
 
-static char *readline(FILE *fd)
+static char *readline(FILE *fd, FileEncoding encoding)
 {
     int c;
     int memlen;
@@ -2320,6 +2344,11 @@ static char *readline(FILE *fd)
 
         if (c == '\r')
             continue;
+
+        if (encoding == ENCODING_UTF16LE_WITH_BOM || encoding == ENCODING_UTF16LE_NO_BOM)
+            if (c == 0)
+                continue;
+
         strptr[strlen++] = (char) c;
 
         if (strlen >= memlen) {
@@ -3469,68 +3498,50 @@ static char *inp_spawn_brace(char *s)
   non-printable character is the only character in a line,
   replace it by '*'. Leave quotes in .param, .subckt and x
   (subcircuit instance) cards to allow string-valued parameters.
-  If there is a XSPICE code model .model line with file input,
-  keep quotes and case for the file path.
   *-------------------------------------------------------------------------*/
 
 void inp_casefix(char *string)
 {
 #ifdef HAVE_CTYPE_H
+    static const char * const keepers[] =
+        {".param", ".model", ".subckt", "x", 0};
+    const char * const *ep;
+    bool keepquotes = 0;
+
+    if (!string)
+        return; // FIX ME - move to top
+
     /* single non-printable character */
-    if (string && !isspace_c(*string) && !isprint_c(*string) &&
-            (string[1] == '\0' || isspace_c(string[1]))) {
+
+    if (!isspace_c(*string) && !isprint_c(*string) &&
+        (string[1] == '\0' || isspace_c(string[1]))) {
         *string = '*';
         return;
     }
-    if (string) {
-        bool keepquotes;
 
-#ifdef XSPICE
-        char* tmpstr = NULL;
-
-        /* Special treatment of code model file input. */
-
-        if (ciprefix(".model", string))
-            tmpstr = strstr(string, "file=\"");
-
-#endif
-        /* Allow string params */
-        keepquotes = ciprefix(".param", string);
-        /* Allow string param in .subckt lines */
-        keepquotes = keepquotes || (ciprefix(".subckt", string) && (strstr(string, "=\"")));
-        /* Keep quoted strings in X lines */
-        keepquotes = keepquotes || (*string == 'x' && strchr(string, '\"'));
-
-        while (*string) {
-#ifdef XSPICE
-            /* exclude file name inside of quotes from getting lower case,
-               keep quotes to enable spaces in file path */
-            if (string == tmpstr) {
-                string = string + 6; // past first quote
-                while (*string && *string != '"')
-                    string++;
-                if (*string)
-                    string++; // past second quote
-                if (*string == '\0')
-                    break;
-            }
-#endif
-            if (*string == '"') {
-                if (!keepquotes)
-                    *string++ = ' ';
-                while (*string && *string != '"')
-                    string++;
-                if (*string == '\0')
-                    continue; /* needed if string is "something ! */
-                if (*string == '"' && !keepquotes)
-                    *string = ' ';
-            }
-            if (*string && !isspace_c(*string) && !isprint_c(*string))
-                *string = '_';
-            if (isupper_c(*string))
-                *string = tolower_c(*string);
-            string++;
+    for (ep = keepers; *ep; ep++) {
+        if (ciprefix(*ep, string)) {
+            keepquotes = true;
+            break;
         }
+    }
+
+    while (*string) {
+        if (*string == '"') {
+            if (!keepquotes)
+                *string++ = ' ';
+            while (*++string && *string != '"')
+                ;
+            if (*string == '\0')
+                break; /* needed if string is "something ! */
+            if (!keepquotes)
+                *string++ = ' ';
+        }
+        if (*string && !isspace_c(*string) && !isprint_c(*string))
+            *string = '_';
+        if (isupper_c(*string))
+            *string = tolower_c(*string);
+        string++;
     }
 #endif
 }
@@ -3943,8 +3954,13 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
     s = skip_non_ws(line);
     while (isspace_c(*s))
         s++;
-    if (isquote(*s))
-        for (s_e = ++s; *s_e && !isquote(*s_e); s_e++) ;
+    if (isquote(*s)) {
+        for (s_e = ++s; *s_e && !isquote(*s_e); s_e++);
+        if (!*s_e) {
+            fprintf(stderr, "\nError: Missing second quote in line \n      %s", line);
+            controlled_exit(EXIT_FAILURE);
+        }
+    }
     else
         for (s_e = s; *s_e && !isspace_c(*s_e) && !isquote(*s_e); s_e++) ;
     y = s_e;
@@ -6962,7 +6978,7 @@ static void inp_compat(struct card *card)
                 }
 #else
                 // Gxxx  n-aux 0  n2 n1  1e9
-                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s %se9", title_tok,
+                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s 1e9 m=%s", title_tok,
                     title_tok, node2, node1, mstr);
                 // Rxxx  n-aux 0 1e-9 ; generate voltage from injected current by Gxxx
                 ckt_array[1] = tprintf("r%s %s_int1 0 1e-9", title_tok,title_tok);
@@ -8218,6 +8234,149 @@ static void inp_fix_temper_in_param(struct card *deck)
 }
 
 
+/* Helpers for inp_fix_agauss_in_param():
+ *
+ * A top level .param like
+ *     .param aga = agauss(1, 2, 3)
+ * has to be evaluated only once, so that every reference to 'aga'
+ * sees the same random value (manual, chapter 'Statistical analysis').
+ * It is converted into a .func (and thus re-drawn on each use) only if
+ * it cannot be evaluated at top level, because its expression refers
+ * to an identifier that is not a top level parameter, e.g. the
+ * instance parameters w, l of a device subcircuit:
+ *     .param mm = agauss(0, avt/sqrt(w*l), 1)
+ * Only the late, per-use evaluation of a .func makes such a line work.
+ */
+
+/* store a copy of 'name' in hash table 'tab', remember it in 'keys' */
+static void stat_known_add(NGHASHPTR tab, wordlist **keys, char *name)
+{
+    if (nghash_find(tab, name))
+        return;
+    *keys = wl_cons(name, *keys);
+    nghash_insert(tab, name, name);
+}
+
+
+/* Collect the names of all parameters and functions which are defined
+ * at top level (outside of .subckt ... .ends and .control ... .endc).
+ */
+static NGHASHPTR stat_collect_toplevel(struct card *deck, wordlist **keys)
+{
+    NGHASHPTR tab = nghash_init(NGHASH_MIN_SIZE);
+    int depth = 0, skip_control = 0;
+    struct card *card;
+
+    /* predefined constants of numparam */
+    stat_known_add(tab, keys, copy("pi"));
+    stat_known_add(tab, keys, copy("e"));
+
+    for (card = deck; card; card = card->nextcard) {
+        char *line = card->line, *lhs_b, *lhs_e, *equal_ptr;
+
+        if (*line == '*')
+            continue;
+        if (ciprefix(".subckt", line)) {
+            depth++;
+            continue;
+        }
+        if (ciprefix(".ends", line)) {
+            depth--;
+            continue;
+        }
+        if (ciprefix(".control", line)) {
+            skip_control++;
+            continue;
+        }
+        if (ciprefix(".endc", line)) {
+            skip_control--;
+            continue;
+        }
+        if (depth > 0 || skip_control > 0)
+            continue;
+
+        if (ciprefix(".para", line)) {
+            /* multi parameter lines have been split already */
+            equal_ptr = find_assignment(line);
+            if (!equal_ptr)
+                continue;
+            lhs_b = skip_token(line);
+            lhs_e = skip_back_ws(equal_ptr, line);
+            if (lhs_e > lhs_b)
+                stat_known_add(tab, keys, copy_substring(lhs_b, lhs_e));
+        }
+        else if (ciprefix(".func", line)) {
+            lhs_b = skip_ws(skip_token(line));
+            lhs_e = lhs_b;
+            while (identifier_char(*lhs_e))
+                lhs_e++;
+            if (lhs_e > lhs_b)
+                stat_known_add(tab, keys, copy_substring(lhs_b, lhs_e));
+        }
+    }
+    return tab;
+}
+
+
+/* Return TRUE, if each identifier in 'expr' which is neither a number
+ * nor a function call is found in table 'tab'.
+ */
+static bool stat_expr_is_toplevel(const char *expr, NGHASHPTR tab)
+{
+    const char *p = expr;
+
+    while (*p) {
+        if (isdigit_c(*p) || (*p == '.' && isdigit_c(p[1]))) {
+            /* number, optionally with exponent and scale suffix */
+            while (isdigit_c(*p) || *p == '.')
+                p++;
+            if ((*p == 'e' || *p == 'E') &&
+                (isdigit_c(p[1]) ||
+                 ((p[1] == '+' || p[1] == '-') && isdigit_c(p[2])))) {
+                p += 2;
+                while (isdigit_c(*p))
+                    p++;
+            }
+            while (identifier_char(*p))
+                p++;
+        }
+        else if (isalpha_c(*p) || *p == '_') {
+            const char *b = p, *q;
+            while (identifier_char(*p))
+                p++;
+            q = skip_ws((char *) p);
+            if (*q != '(') {
+                char *name = copy_substring(b, p);
+                bool found = nghash_find(tab, name) != NULL;
+                tfree(name);
+                if (!found)
+                    return FALSE;
+            }
+        }
+        else {
+            p++;
+        }
+    }
+    return TRUE;
+}
+
+
+/* Return TRUE, if top level parameter line 'line' (a .param with a
+ * statistical function) has to be converted into a .func.
+ * A parameter which depends on such a converted parameter can not be
+ * evaluated at top level either, therefore 'tab' is updated by the
+ * caller until no more changes occur.
+ */
+static bool stat_param_needs_func(char *line, NGHASHPTR tab)
+{
+    char *equal_ptr = find_assignment(line);
+
+    if (!equal_ptr)
+        return FALSE;
+    return !stat_expr_is_toplevel(equal_ptr + 1, tab);
+}
+
+
 /* Convert .param lines containing function 'agauss' and others
  *  (function name handed over by *fcn),  into .func lines:
  * .param xxx1 = 'aunif()'  --->  .func xxx1() 'aunif()'
@@ -8230,6 +8389,18 @@ static void inp_fix_temper_in_param(struct card *deck)
  * In a second step, after subcircuits have been expanded, all occurencies
  * of agauss in a b-line are replaced by their suitable value (function
  * eval_agauss() in inp.c).
+ *
+ * The conversion is restricted to top level .param lines which can not
+ * be evaluated at top level (see stat_param_needs_func()).  All other
+ * .param lines stay untouched and are evaluated once by numparam:
+ *   - a top level .param is drawn once per circuit load, so that all
+ *     references share one value (global process variation),
+ *   - a .param inside a .subckt is drawn once per subcircuit instance,
+ *     so that all references inside that instance share one value
+ *     (device mismatch).
+ * 'set stat_param_as_func' restores the previous behaviour (ngspice-29
+ * up to ngspice-47): every .param with a statistical function becomes
+ * a .func and is re-evaluated at each reference.
  */
 
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
@@ -8238,10 +8409,53 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
     char *funcbody, *funcname;
     struct func_temper *f, *funcs = NULL, **funcs_tail_ptr = &funcs;
     struct card *card;
+    bool all_to_func = cp_getvar("stat_param_as_func", CP_BOOL, NULL, 0);
+    NGHASHPTR toplevel = NULL;
+    wordlist *toplevel_keys = NULL;
 
     sub_count = TMALLOC(int, 16);
     for (j = 0; j < 16; j++)
         sub_count[j] = 0;
+
+    /* pre-pass:
+     *   find the top level parameters which can not be evaluated at
+     *   top level.  Remove them from 'toplevel', and repeat until no
+     *   more parameter is removed, so that a parameter depending on a
+     *   removed one is converted as well.
+     */
+    if (!all_to_func) {
+        bool changed = TRUE;
+        toplevel = stat_collect_toplevel(deck, &toplevel_keys);
+        while (changed) {
+            changed = FALSE;
+            subckt_depth = 0;
+            for (card = deck; card; card = card->nextcard) {
+                char *curr_line = card->line, *lhs_b, *lhs_e, *name;
+                if (*curr_line == '*')
+                    continue;
+                if (ciprefix(".subckt", curr_line))
+                    subckt_depth++;
+                else if (ciprefix(".ends", curr_line))
+                    subckt_depth--;
+                if (subckt_depth > 0 || !ciprefix(".para", curr_line) ||
+                    !search_identifier(curr_line, fcn, curr_line))
+                    continue;
+                lhs_b = skip_token(curr_line);
+                lhs_e = find_assignment(curr_line);
+                if (!lhs_e)
+                    continue;
+                lhs_e = skip_back_ws(lhs_e, curr_line);
+                name = copy_substring(lhs_b, lhs_e);
+                if (nghash_find(toplevel, name) &&
+                    stat_param_needs_func(curr_line, toplevel)) {
+                    nghash_delete(toplevel, name);
+                    changed = TRUE;
+                }
+                tfree(name);
+            }
+        }
+        subckt_depth = 0;
+    }
 
     /* first pass:
      *   determine all .param with agauss inside and replace by .func
@@ -8323,6 +8537,23 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
             p = strpbrk(lhs_b, "(,)");
             if (p && p < lhs_e)
                 continue;
+
+            /* keep .param, to be evaluated once by numparam:
+             *   inside a subcircuit (once per instance), or at top level,
+             *   if evaluation at top level is possible (see pre-pass) */
+            if (!all_to_func) {
+                bool keep;
+                if (subckt_depth > 0) {
+                    keep = TRUE;
+                }
+                else {
+                    char *name = copy_substring(lhs_b, lhs_e);
+                    keep = nghash_find(toplevel, name) != NULL;
+                    tfree(name);
+                }
+                if (keep)
+                    continue;
+            }
 
             if (temper < equal_ptr) {
                 fprintf(stderr,
@@ -8428,6 +8659,9 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
     /* final memory clearance */
     tfree(sub_count);
     inp_delete_funcs(funcs);
+    if (toplevel)
+        nghash_free(toplevel, NULL, NULL);
+    wl_free(toplevel_keys);
 }
 
 
@@ -9760,7 +9994,8 @@ utf8_syntax_check(struct card *deck)
         if (s) {
             fprintf(stderr, "Error: UTF-8 syntax error in input deck,\n    line %d at token/word %s\n", card->linenum_orig, s);
             fprintf(stderr, "    input file %s\n", card->linesource);
-            controlled_exit(1);
+            if (ft_stricterror)
+                controlled_exit(1);
         }
     }
 }

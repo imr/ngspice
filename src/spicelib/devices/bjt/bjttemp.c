@@ -28,7 +28,6 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     double ratlog;
     double ratio1;
     double factlog;
-    double bfactor=1.0;
     double factor;
     double fact1,fact2;
     double pbo,pbfact;
@@ -36,9 +35,20 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     double egfet;
     double arg;
     double dt;
+    double leakBE, leakBC;   /* resolved ISE / ISC (absolute) */
 
     /*  loop through all the bipolar models */
     for( ; model != NULL; model = BJTnextModel(model)) {
+
+        /* SPICE2 compatibility: ise/isc > 1e-4 is a multiplier of IS.
+         * Resolved here on every temperature update from the unscaled IS
+         * and the values as given on the card, so a changed IS (altermod,
+         * parameter sweep, reuse of setup) is followed; the model
+         * parameters stay as the user entered them. */
+        leakBE = model->BJTleakBEcurrent;
+        if (leakBE > 1e-4) leakBE *= model->BJTsatCur;
+        leakBC = model->BJTleakBCcurrent;
+        if (leakBC > 1e-4) leakBC *= model->BJTsatCur;
 
         if(!model->BJTtnomGiven) model->BJTtnom = ckt->CKTnomTemp;
         vtnom = CONSTKoverQ * model->BJTtnom;
@@ -53,8 +63,10 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
         } else {
             model->BJTtransitTimeVBCFactor = 0;
         }
-        model->BJTexcessPhaseFactor = (model->BJTexcessPhase/
-            (180.0/M_PI)) * model->BJTtransitTimeF;
+        /* uses model->BJTtransitTimeF deliberately: SPICE2 heritage, and no
+           reference simulator documents a temperature dependence for PTF */
+        model->BJTexcessPhaseFactor = (model->BJTexcessPhase/(180.0/M_PI))
+                                    * model->BJTtransitTimeF;
         if(model->BJTdepletionCapCoeffGiven) {
             if(model->BJTdepletionCapCoeff>.9999)  {
                 model->BJTdepletionCapCoeff=.9999;
@@ -176,8 +188,9 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                     factor = exp(factlog / model->BJTemissionCoeffR);
                     here->BJTBCtSatCur = model->BJTBCsatCur * factor;
                 } else {
-                    here->BJTBCtSatCur = here->BJTtSatCur;
+                    here->BJTBCtSatCur = here->BJTtSatCur / here->BJTarea;
                 }
+                factor = exp(factlog / model->BJTemissionCoeffS);
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = model->BJTsubSatCur * factor;
             } else if (model->BJTtlev == 3) {
@@ -190,7 +203,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
                     here->BJTBCtSatCur = pow(model->BJTBCsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
                 } else {
-                    here->BJTBCtSatCur = here->BJTtSatCur;
+                    here->BJTBCtSatCur = here->BJTtSatCur / here->BJTarea;
                 }
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = pow(model->BJTsubSatCur,(1+model->BJTtiss1*dt+model->BJTtiss2*dt*dt));
@@ -226,8 +239,10 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                     here->BJTtepiSatVoltage=model->BJTepiSatVoltage;
                     here->BJTtepiDoping=model->BJTepiDoping;
                 }
+                here->BJTtintCollResist /= here->BJTarea;
             }
 
+            double bfactor=1.0;
             if (model->BJTtlev == 0) {
                 bfactor = exp(ratlog*model->BJTbetaExp);
             } else if (model->BJTtlev == 1) {
@@ -243,13 +258,13 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->BJTtBetaR = model->BJTbetaR * bfactor;
 
             if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
-              here->BJTtBEleakCur = here->BJTarea * model->BJTleakBEcurrent *
+              here->BJTtBEleakCur = here->BJTarea * leakBE *
                   exp(factlog/model->BJTleakBEemissionCoeff)/bfactor;
-              here->BJTtBCleakCur = model->BJTleakBCcurrent *
+              here->BJTtBCleakCur = leakBC *
                   exp(factlog/model->BJTleakBCemissionCoeff)/bfactor;
             } else if (model->BJTtlev == 3) {
-              here->BJTtBEleakCur = here->BJTarea * pow(model->BJTleakBEcurrent,(1+model->BJTtise1*dt+model->BJTtise2*dt*dt));
-              here->BJTtBCleakCur = pow(model->BJTleakBCcurrent,(1+model->BJTtisc1*dt+model->BJTtisc2*dt*dt));
+              here->BJTtBEleakCur = here->BJTarea * pow(leakBE,(1+model->BJTtise1*dt+model->BJTtise2*dt*dt));
+              here->BJTtBCleakCur = pow(leakBC,(1+model->BJTtisc1*dt+model->BJTtisc2*dt*dt));
             }
             if (model->BJTsubs == VERTICAL) {
                 here->BJTtBCleakCur *= here->BJTareab;

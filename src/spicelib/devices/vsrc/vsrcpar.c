@@ -42,6 +42,8 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
+    here->VSRCfuncTGiven = FALSE;
+
     switch (param) {
         case VSRC_DC:
             here->VSRCdcValue = value->rValue;

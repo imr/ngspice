@@ -90,7 +90,7 @@ RESnoise(int mode, int operation, GENmodel*genmodel, CKTcircuit *ckt,
                 case N_DENS:
 
                     if (inst->REStempGiven)
-                        dtemp = inst->REStemp - ckt->CKTtemp + (model->REStnom-CONSTCtoK);
+                        dtemp = inst->REStemp - ckt->CKTtemp;
                     else
                         dtemp = inst->RESdtemp;
 

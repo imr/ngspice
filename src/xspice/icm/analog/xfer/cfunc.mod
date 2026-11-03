@@ -120,9 +120,13 @@ static double *read_file(const char *fn, int span, int offset,
             j = 0;
         }
 
-        /* Check allocation. */
+        /* Check allocation.  The store loop below can append up to one value
+           per column on this line, and sscanf read up to 9 (count <= 9) -- a
+           line with more than one data record stores more than the 3 of a
+           single freq/real/imag triple.  Reserve for the whole line (9) so a
+           multi-record line cannot write past the buffer. */
 
-        if (i + 3 > size) {
+        if (i + 9 > size) {
             size += ALLOC;
             file_data = realloc(file_data, size * sizeof(double));
             if (!file_data)

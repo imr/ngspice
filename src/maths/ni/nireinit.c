@@ -37,6 +37,8 @@ NIreinit( CKTcircuit *ckt)
     CKALLOC(CKTrhs,size+1,double);
     CKALLOC(CKTrhsOld,size+1,double);
     CKALLOC(CKTrhsSpare,size+1,double);
+    CKALLOC(CKTrhsAccepted,size+1,double);
+    ckt->CKTrhsSize = size;
     CKALLOC(CKTirhs,size+1,double);
     CKALLOC(CKTirhsOld,size+1,double);
     CKALLOC(CKTirhsSpare,size+1,double);

@@ -6,9 +6,11 @@ libosdi_la_SOURCES =	\
 	osdi.h		\
 	osdidefs.h	\
 	osdiext.h	\
+	osdilegacy.h	\
 	osdiinit.c	\
 	osdiload.c	\
-	osdiacld.c \
+	osdiacld.c	\
+	osdiaccept.c	\
 	osdiparam.c	\
 	osdiregistry.c	\
 	osdinoise.c	\

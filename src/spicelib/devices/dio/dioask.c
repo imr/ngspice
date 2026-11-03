@@ -75,18 +75,26 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case DIO_CURRENT:
             value->rValue = *(ckt->CKTstate0+here->DIOcurrent);
-            if ((here->DIOqpNode > 0) && (here->DIOtTransitTime!=0))
-                value->rValue += here->DIOqpGain * *(ckt->CKTstate0 + here->DIOcqcsr);
+            if (DIOrevrec(here))
+                value->rValue += here->DIOqpGainScaled *
+                                 *(ckt->CKTstate0 + here->DIOsrcapCurrent);
             return(OK);
-        case DIO_CAP: 
+        case DIO_CAP:
             value->rValue = here->DIOcap;
-            if ((here->DIOqpNode > 0) && (here->DIOtTransitTime!=0))
-                value->rValue += here->DIOtTransitTime * *(ckt->CKTstate0+here->DIOconduct);
+            if (DIOrevrec(here)) {
+                value->rValue += (1 - DIOmodPtr(here)->DIOsoftRevRecParam)
+                               * here->DIOtTransitTime
+                               * *(ckt->CKTstate0 + here->DIOresConduct);
+            }
             return(OK);
-        case DIO_CHARGE: 
+        case DIO_CAPSW:
+            value->rValue = here->DIOcapSW;
+            return(OK);
+        case DIO_CHARGE:
             value->rValue = *(ckt->CKTstate0+here->DIOcapCharge);
-            if ((here->DIOqpNode > 0) && (here->DIOtTransitTime!=0))
-                value->rValue += here->DIOqpGain * *(ckt->CKTstate0 + here->DIOsrcapCharge);
+            if (DIOrevrec(here))
+                value->rValue += here->DIOqpGainScaled *
+                                 *(ckt->CKTstate0 + here->DIOsrcapCharge);
             return(OK);
         case DIO_CAPCUR:
             value->rValue = *(ckt->CKTstate0+here->DIOcapCurrent);
@@ -101,10 +109,12 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);
             } else {
-                value->rValue = *(ckt->CKTstate0 + here->DIOcurrent) *
-                        *(ckt->CKTstate0 + here->DIOvoltage) +
-                        *(ckt->CKTstate0 + here->DIOcurrent) *
-                        *(ckt->CKTstate0 + here->DIOcurrent) / here->DIOtConductance;
+                double itot = *(ckt->CKTstate0 + here->DIOcurrent);
+                if (DIOrevrec(here))
+                    itot += here->DIOqpGainScaled *
+                            *(ckt->CKTstate0 + here->DIOsrcapCurrent);
+                value->rValue = itot * *(ckt->CKTstate0 + here->DIOvoltage)
+                              + itot * itot / here->DIOtConductance;
             }
             return(OK);
         case DIO_QUEST_SENS_DC:

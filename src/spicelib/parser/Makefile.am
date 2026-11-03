@@ -61,6 +61,8 @@ libinp_la_SOURCES = \
 		inppas3.h	\
 		inppas4.c	\
 		inppas4.h	\
+		inppas5.c	\
+		inppas5.h	\
 		inppname.c	\
 		inpptree.c	\
 		inpptree-parser.y \

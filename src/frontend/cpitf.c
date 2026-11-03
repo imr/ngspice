@@ -121,6 +121,7 @@ ft_cpinit(void)
         cp_addkword(CT_PLOTKEYWORDS, "ylabel");
         cp_addkword(CT_PLOTKEYWORDS, "linplot");
         cp_addkword(CT_PLOTKEYWORDS, "combplot");
+        cp_addkword(CT_PLOTKEYWORDS, "arrowplot");
         cp_addkword(CT_PLOTKEYWORDS, "pointplot");
 
         cp_addkword(CT_RUSEARGS, "time");

@@ -57,7 +57,8 @@ This file describes the procedures to install ngspice from sources.
  ngspice as a standard executable (command-line input, file and graphics
  output):
  bison, flex, X11 headers and libs, Xaw, Xmu, Xext, Xft, FontConfig,
- Xrender, freetype headers and readline.
+ Xrender, freetype headers and readline. Soundfile (*.wav) support requires
+ libsndfile and libsamplerate.
  Typically one needs the headers (e.g. libX11-devel) and the libs (e.g. libX11-6)
  of the packages mentioned above.
 
@@ -81,14 +82,14 @@ This file describes the procedures to install ngspice from sources.
  For compiling ngspice as a shared library, see section 1.4.
 
 
-1.2 Install from tarball (e.g. ngspice-46.tar.gz)
+1.2 Install from tarball (e.g. ngspice-47.tar.gz)
 
  This covers installation from a release distribution (for example
- ngspice-46.tar.gz, the so called tar ball).
+ ngspice-47.tar.gz, the so called tar ball).
 
  After downloading the tar ball to a local directory, unpack it by command:
 
- $ tar -zxvf ngspice-46.tar.gz
+ $ tar -zxvf ngspice-47.tar.gz
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -535,6 +536,42 @@ This file describes the procedures to install ngspice from sources.
  ngspice/visualc. Code models are not made (see above how to generate them), and
  ngspice.dll is not installed to anywhere, but (for release) may be found in
  ngspice\visualc\sharedspice\ReleaseOMP.x64.
+ 
+ Compiling with fftw support using vngspice-fftw.sln (or sharedspice.sln with
+ ReleaseOPM-fftw configuration) requires 64 bit fftw downloaded from
+ https://fftw.org/pub/fftw/fftw-3.3.5-dll64.zip and expanded into a directory 
+ called fftw-3.3-dll64, which has to be at the same level as the ngspice directory. 
+ 
+ So a development tree for VS looks like:
+ 
+ D:\Spice_dev\
+     fftw-3.3-dll64\
+         fftw3.h
+         ...
+     flex-bison\
+         win_bison.exe
+         ...
+     libsamplerate\
+         bin\
+         ...
+     libsndfile\
+         bin\
+         ...
+     ngspice\
+         src\
+         ...
+         visualc\
+             src\
+                 include\
+                     ngspice\
+                         config.h
+             ...
+             vngspice.sln
+             vngspice.vcxproj
+             ...
+
+Editing config.h will allow disabling of features, e.g. removing soundfile support by
+undefining flags HAVE_LIBSNDFILE and HAVE_LIBSAMPLERATE.
 
 
 3.3 make ngspice with pure CYGWIN
@@ -581,6 +618,7 @@ This file describes the procedures to install ngspice from sources.
  5. Install XQuartz, libtool, autoconf, automake, readline, ncurses
  6. Install OpenMP from mac.r-project.org (a sufficiently modern OpenMP,
     required by the ngspice OSDI interface).
+ 7. You might also install libsndfile and libsamplerate from Homebrew.
 
 4.2 Compile scripts for the bash terminal
  1. standard ngspice executable
@@ -607,7 +645,7 @@ This file describes the procedures to install ngspice from sources.
       sudo port install autoconf automake libtool bison flex ncurses
            readline fontconfig freetype libomp xorg-libXaw
  4. Use one of the scripts provided: compile_macos_clang.sh or compile_macos_gcc.sh
-    gcc may be installed from Homebre at https://formulae.brew.sh/formula/gcc, with the
+    gcc may be installed from Homebrew at https://formulae.brew.sh/formula/gcc, with the
     advantage that it supports OpenMP.
  5. Or run the commands manually:  Configure NGSPICE invoking "./configure".
     A complete set of features is:
@@ -646,6 +684,7 @@ Resulting dependencies of ngspice
     /usr/local/opt/gcc/lib/gcc/11/libgomp.1.dylib
     /usr/lib/libSystem.B.dylib
     /usr/local/lib/gcc/11/libgcc_s.1.dylib
+
 
 5.4 About compilers
  A compile script compile_macos_clang.sh contains all necessary steps for compiling

@@ -1,0 +1,23 @@
+* ---- 1. oracle
+* Vs=1V at 1 GHz, Zs = 50 + j30 (Ls = 30/(2*pi*1e9)); optimum Gamma_L = conj(Gamma_s)
+* loadpull max-power-transfer oracle (linear)
+Vs src 0 dc 0 sin(0 1 1e9)
+Rs src n1 50
+Ls n1 out 4.7746n
+RL out l1 50
+LL l1 l2 1e-15
+CL l2 0 1e-3
+
+.option noinit
+
+.control
+loadpull -load RL LL CL -out out -drive Vs -f 1e9 -n 21 -gmax 0.85
+display
+set xbrushwidth=2
+plot gain_db arrowplot ylabel 'gain'
+plot pout_dbm arrowplot ylabel 'power out dbm'
+let gamma = gamma_re+i*gamma_im
+plot mag(gamma) ylabel 'gamma'
+.endc
+
+.end

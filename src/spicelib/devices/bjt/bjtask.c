@@ -30,10 +30,11 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
     static char *msg = "Current and power not available for ac analysis";
     switch(which) {
         case BJT_QUEST_FT:
-            tmp = MAX(*(ckt->CKTstate0 + here->BJTcqbc),
-                *(ckt->CKTstate0 + here->BJTcqbx));
-            value->rValue = here->BJTgm/(2 * M_PI *
-                MAX(*(ckt->CKTstate0 + here->BJTcqbe),tmp));
+            tmp = here->BJTcapbe + here->BJTcapbc;
+            if (tmp > 0.0)
+                value->rValue = *(ckt->CKTstate0 + here->BJTgm) / (2 * M_PI * tmp);
+            else
+                value->rValue = 0.0;
             return(OK);
         case BJT_TEMP:
             value->rValue = here->BJTtemp - CONSTCtoK;
@@ -297,7 +298,7 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
                                     );
                 if ((ckt->CKTcurrentAnalysis & DOING_TRAN) && !(ckt->CKTmode & 
                         MODETRANOP)) {
-                    value->rValue += *(ckt->CKTstate0 + here->BJTcqsub) *
+                    value->rValue += fabs(*(ckt->CKTstate0 + here->BJTcqsub)) *
                             fabs(*(ckt->CKTrhsOld + here->BJTsubstConNode)-
                                  *(ckt->CKTrhsOld + here->BJTsubstNode));
                 }
@@ -320,8 +321,40 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
             value->rValue = here->BJTcapsub;
             value->rValue *= here->BJTm;
             return(OK);
+        case BJT_QUEST_GRC:
+            value->rValue = here->BJTtcollectorConduct * here->BJTm;
+            return(OK);
+        case BJT_QUEST_GRE:
+            value->rValue = here->BJTtemitterConduct * here->BJTm;
+            return(OK);
+        case BJT_QUEST_VAF:
+            if (here->BJTtinvEarlyVoltF != 0.0)
+                value->rValue = 1.0 / here->BJTtinvEarlyVoltF;
+            else
+                value->rValue = 0.0;    /* 0 = no Early effect, as in the model card */
+            return(OK);
+        case BJT_QUEST_VAR:
+            if (here->BJTtinvEarlyVoltR != 0.0)
+                value->rValue = 1.0 / here->BJTtinvEarlyVoltR;
+            else
+                value->rValue = 0.0;
+            return(OK);
+        case BJT_QUEST_IKF:
+            if (here->BJTtinvRollOffF != 0.0)
+                value->rValue = here->BJTm / here->BJTtinvRollOffF;
+            else
+                value->rValue = 0.0;    /* 0 = no high injection roll-off */
+            return(OK);
+        case BJT_QUEST_IKR:
+            if (here->BJTtinvRollOffR != 0.0)
+                value->rValue = here->BJTm / here->BJTtinvRollOffR;
+            else
+                value->rValue = 0.0;
+            return(OK);
+
         default:
             return(E_BADPARM);
+
     }
     /* NOTREACHED */
 }

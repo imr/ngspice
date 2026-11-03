@@ -352,7 +352,6 @@ static void printsend(void);
 extern wordlist* sourceinfo;
 
 static int totalreset(void);
-extern void rem_controls(void);
 extern void destroy_wallace(void);
 extern void sh_delete_myvec(void);
 extern IFsimulator SIMinfo;
@@ -500,7 +499,6 @@ _cthread_run(void *controls)
 #ifdef HAVE_LIBPTHREAD
     cont_condition = FALSE;
 #endif
-    wl_free(controls);
     return NULL;
 }
 
@@ -707,7 +705,7 @@ runc(char* command)
         /* bg_ctrl prepare running the controls after bg_run */
         } else if (!strcmp(buf, "bg_ctrl")) {
             if (shcontrols)
-                exec_controls(wl_copy(shcontrols));
+                exec_controls(shcontrols);
             else
                 fprintf(stderr, "Warning: No .control commands available, bg_ctrl skipped\n");
             return 0;
@@ -931,10 +929,27 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     /* program name*/
     cp_program = ft_sim->simulator;
 
-    /* initialze random number generator with seed = 1 */
+    /* Initialze random number generator with seed = 1.
+       and set a backup variable as well. */
     int ii = 1;
     cp_vset("rndseed", CP_NUM, &ii);
-    com_sseed(NULL);
+    set_sseed(NULL);
+
+#ifdef FastRand
+    // initialization and seed for FastNorm Gaussian random generator
+    {
+        unsigned int rseed = 66;
+        initnorm(0, 0);
+        if (!cp_getvar("rndseed", CP_NUM, &rseed, 0)) {
+            time_t acttime = time(NULL);
+            rseed = (unsigned int)acttime;
+        }
+        initnorm(rseed, 2);
+        fprintf(cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
+    }
+#elif defined (WaGauss)
+    initw();
+#endif
 
     /* set a boolean variable to be used in .control sections */
     bool sm = TRUE;
@@ -1066,22 +1081,6 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         tfree(thisproc);
     }
 
-#ifdef FastRand
-// initialization and seed for FastNorm Gaussian random generator
-    {
-        unsigned int rseed = 66;
-        initnorm (0, 0);
-        if (!cp_getvar("rndseed", CP_NUM, &rseed, 0)) {
-            time_t acttime = time(NULL);
-            rseed = (unsigned int) acttime;
-        }
-        initnorm (rseed, 2);
-        fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
-    }
-#elif defined (WaGauss)
-        initw();
-#endif
-
     fprintf(cp_out,
             "******\n"
             "** %s-%s shared library\n",
@@ -1150,7 +1149,8 @@ int  ngSpice_Command(char* comexec)
     }
     /* Check if command is reasonable */
     if (*comexec == '\0') {
-        fprintf(stderr, "Warning: Received empty string as command, ignored");
+        fprintf(stderr,
+                "Warning: Received empty string as command, ignored\n");
         return 1;
     }
 
@@ -1187,7 +1187,7 @@ char *ngCM_Input_Path(const char* path)
         txfree(Infile_Path);
         Infile_Path = copy(path);
     }
-    fprintf(stdout, "Note: Codel model file loading path is %s\n", Infile_Path);
+    fprintf(stdout, "Note: Codemodel file loading path is %s\n", Infile_Path);
     return Infile_Path;
 }
 
@@ -2006,6 +2006,11 @@ void SetAnalyse(
         ng_id2 = ng_idl;
         strncpy(OldAn2, Analyse, 127); // strcpy(OldAn2, "?"); /* initial value */
     }
+    else if (ng_id1 && ng_id1 != ng_idl && ng_id2 != ng_idl) {
+        ng_id2 = ng_idl;
+        strncpy(OldAn2, Analyse, 127);
+        OldPercent = 0;
+    }
 
     if (ng_idl == ng_id1) {
         thread1 = TRUE;
@@ -2063,10 +2068,11 @@ void SetAnalyse(
     /* info every one percent of progress:
        actual time, progress,
        to catch linearity of progress of simulation */
-    if (ft_ngdebug && !strcmp(Analyse, "tran"))
-       if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.)) {
-          printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());
-       }
+    if (ft_ngdebug && !strcmp(Analyse, "tran")) {
+        if ((int)((double)DecaPercent / 10.) > (int)((double)OldPercent / 10.)) {
+            printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent / 10., seconds());
+        }
+    }
     if(thread1)
         OldPercent1 = DecaPercent;
     else
@@ -2413,40 +2419,48 @@ getisrcval(double time, char *iname)
     }
 }
 
+/* sharedsync(double *pckttime, double *pcktdelta, double olddelta,
+              double finalt, double delmin,
+              int redostep, int *rejected, int loc).
+    Time control with user callback.
 
-/*
-    return value 1: continue with new time step, ckt->CKTtime + ckt->CKTdelta will be
-                    done next automatically.
-                    For time synchronization we may choose our own ckt->CKTdelta, being
-                    smaller than the one suggested by ngspice.
-    return value 0: will redo the most recent time step. We may subtract olddelta and
-                    continue with new ckt-CKTdelta.
-                    This is necessary if non-convergence has been detected (redostep = 1).
-                    The newly suggested ckt-CKTdelta has already been divided by 8.
-                    This is also enforced if the truncation error is too large.
-                    The newly suggested ckt-CKTdelta may be accompanied by an increase
-                    of integration order.
-                    For time synchronization, if the actual, converged ckt-CKTtime is
-                    beyond the optimum common time, we subtract olddelta and then choose
-                    our own ckt->CKTdelta, being smaller than olddelta.
-    Whereas redostep is set by ngspice, the user may decide via the callback function,
-    to redo the most recent step because of other reasons. This is accomplished by
-    returning a 1 with the callback function.
+    pckttime  pointer to ckt->CKTtime, the end time of the previous (loc == 0)
+              or current step.
+    cktdelta  pointer to ckt->CKTdelta, the length of the current step.
+              The user may set a new ckt->CKTdelta, smaller than that
+              suggested by ngspice. That may be necessary after failed
+              convergence or excess truncation has been detected (redostep = 1)
+              although then the newly suggested ckt-CKTdelta has already been
+              divided by 8. Then the newly suggested ckt-CKTdelta
+              is accompanied by an decrease of integration order.
 
-*/
-
-/*
-    ckttime   pointer to ckt->CKTtime, which already has been used trying to achieve
-              convergence, after olddelta had been added in the previous step.
-    cktdelta  pointer to newly defined ckt->CKTdelta, e.g. by recognizing truncation errors
     olddelta  old ckt->CKTdelta, has already been added in the previous step.
+              Updatted after the (loc == 0) call and zero in it.  FIX?
     finalt    final time CKTfinaltime
     delmin    minimum delta CKTdelmin
     redostep  if 0, converged,
               if 1, either no convergence, need to redo with new ckt->CKTdelta
               or ckt->CKTdelta has been reduced by truncation errors too large.
-    rejected  pointer to ckt->CKTstat->STATrejected, counts rejected time points.
-    loc       location of function call in dctran.c: 0: after breakpoint handling, 1: at end of for loop
+              If 1, loc is also 1.
+    rejected  pointer to ckt->CKTstat->STATrejected, that counts
+              rejected time points.
+    loc       location of function call in dctran.c:
+                0: after breakpoint handling with new step starting;
+                1: at end of loop, solver processing for the step complete.
+                   If !redostep, step may be accepted.
+
+    The return value is ignored when loc is zero, otherwise
+    return value 0 - normal continuation with next or re-done time step.
+    return value 1 - restart processing the current time step
+                     with the user's ckt->CKTdelta, assumed smaller than
+                     olddelta. Used for time synchronization,
+                     if the actual, converged ckt->CKTtime is beyond
+                     the optimum common time. Recovery from convergence
+                     failure is the same.
+
+    Whereas redostep is set by ngspice, the user may decide via the callback
+    to redo the most recent step for other reasons. This is accomplished by
+    returning a 1 with the callback function.
 */
 
 int
@@ -2464,40 +2478,35 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
             return 0;
     /* synchronization required, to be done by changing cktdelta */
     } else {
+        int retval;
+
         if (redostep) {
             *pckttime -= olddelta;
             (*rejected)++;
             /* use cktdelta as suggested by ngspice or acquire new cktdelta
             via pointer pcktdelta in user supplied callback */
-            getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
-            /* never move beyond final time */
-            if (*pckttime + *pcktdelta > finalt)
-                *pcktdelta = finalt - *pckttime - 1.1 * delmin;
-            return 1;
+
+            getsync(*pckttime, pcktdelta, olddelta,
+                    redostep, ng_ident, loc, userptr);
+            retval = 1;
         }
         else {
             /* Use cktdelta as suggested by ngspice or acquire new cktdelta
-               via pointer pcktdelta in user supplied callback. Redo the previous
-               step if return value from getsync is 1. */
-            int retval = getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
-            /* never move beyond final time */
-            if (*pckttime + *pcktdelta > finalt) {
-                double newdelta;
+               via pointer pcktdelta in user supplied callback.
+               Redo the previous step if return value from getsync is 1. */
 
-                newdelta = finalt - *pckttime - 1.1 * delmin;
-                if (newdelta <= 0.0)
-                    newdelta = finalt - *pckttime;
-                *pcktdelta = newdelta;
-            }
-
-            /* user has decided to redo the step, ignoring redostep being set to 0
-            by ngspice. */
+            retval = getsync(*pckttime, pcktdelta, olddelta,
+                                 redostep, ng_ident, loc, userptr);
             if (retval) {
+                /* User has decided to redo the step, ignoring !redostep.
+                 * Should be: "*pckttime += (*pcktdelta - olddelta); FIX?
+                 */
+
                 *pckttime -= olddelta;
                 (*rejected)++;
             }
-            return retval;
         }
+        return retval;
     }
 }
 

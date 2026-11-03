@@ -41,6 +41,8 @@ libfte_la_SOURCES = \
     com_ghelp.h \
     com_gnuplot.h   \
     com_gnuplot.c   \
+    com_pyplot.h    \
+    com_pyplot.c    \
     com_hardcopy.c  \
     com_hardcopy.h  \
     com_help.c  \
@@ -49,6 +51,29 @@ libfte_la_SOURCES = \
     com_history.h   \
     com_let.c   \
     com_let.h   \
+    com_rfstab.c  \
+    com_rfstab.h  \
+    com_loadpull.c  \
+    com_loadpull.h  \
+    com_optimize.c  \
+    com_optimize.h  \
+    snp2va.c  \
+    snp2va.h  \
+    com_presnp.c  \
+    com_qpss.c  \
+    com_qpss.h  \
+    com_qpac.c  \
+    com_qpac.h  \
+    com_qpxf.c  \
+    com_qpxf.h  \
+    com_qpnoise.c  \
+    com_qpnoise.h  \
+    com_hbosc.c  \
+    com_hbosc.h  \
+    com_hb.c    \
+    com_hb.h    \
+    com_checkpoint.c    \
+    com_checkpoint.h    \
     com_option.c    \
     com_option.h    \
     com_plot.c  \
@@ -117,6 +142,8 @@ libfte_la_SOURCES = \
     dotcards.c  \
     dotcards.h  \
     dvec.c      \
+    encodedet.c \
+    encodedet.h \
     error.c     \
     evaluate.c  \
     evaluate.h  \

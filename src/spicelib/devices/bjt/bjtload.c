@@ -33,8 +33,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double argtf;
     double capbc;
     double capbe;
-    double capbx=0;
-    double capsub=0;
     double cb;
     double cbc;
     double cbcn;
@@ -128,9 +126,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
     int SenCond=0;
     double m;
-    double vrci=0.0, delvrci;
-    double Irci=0.0, Irci_Vrci=0.0, Irci_Vbci=0.0, Irci_Vbcx=0.0;
-    double Qbci=0.0, Qbci_Vbci=0.0, Qbcx, Qbcx_Vbcx=0.0, gbcx, cbcx;
     int ttype;
 
     /*  loop through all the models */
@@ -159,8 +154,11 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             gcsub=0;
             geqbx=0;
             geqcb=0;
-            gbcx=0;
-            cbcx=0;
+            double capbx=0;
+            double capsub=0;
+            double vrci=0.0, delvrci=0.0;
+            double Irci=0.0, Irci_Vrci=0.0, Irci_Vbci=0.0, Irci_Vbcx=0.0;
+            double Qbci=0.0, Qbci_Vbci=0.0, Qbcx=0.0, Qbcx_Vbcx=0.0, gbcx=0.0, cbcx=0.0;
             /*
              *   dc model paramters
              */
@@ -232,9 +230,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbc = *(ckt->CKTstate1 + here->BJTvbc);
                 vbcx = *(ckt->CKTstate1 + here->BJTvbcx);
                 vrci = *(ckt->CKTstate1 + here->BJTvrci);
-                vbx=model->BJTtype*(
-                    *(ckt->CKTrhsOld+here->BJTbaseNode)-
-                    *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
+                vbx = *(ckt->CKTstate1 + here->BJTvbx);
                 vsub=ttype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTsubstConNode));
@@ -253,14 +249,12 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             } else if((ckt->CKTmode & MODEINITJCT) && (here->BJToff==0)) {
                 vbe=here->BJTtVcrit;
                 vbc=vbcx=0;
-                /* ERROR:  need to initialize VSUB, VBX here */
                 vsub=vbx=0;
                 vrci=0.0;
             } else if((ckt->CKTmode & MODEINITJCT) ||
                     ( (ckt->CKTmode & MODEINITFIX) && (here->BJToff!=0))) {
                 vbe=0;
                 vbc=vbcx=0;
-                /* ERROR:  need to initialize VSUB, VBX here */
                 vsub=vbx=0;
                 vrci=0.0;
             } else {
@@ -283,6 +277,10 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->BJTvrci);
                     vrci = (1+xfact) * *(ckt->CKTstate1 + here->BJTvrci)-
                             xfact * *(ckt->CKTstate2 + here->BJTvrci);
+                    *(ckt->CKTstate0 + here->BJTvbx) =
+                            *(ckt->CKTstate1 + here->BJTvbx);
+                    vbx = (1+xfact) * *(ckt->CKTstate1 + here->BJTvbx)-
+                            xfact * *(ckt->CKTstate2 + here->BJTvbx);
                     *(ckt->CKTstate0 + here->BJTcc) =
                             *(ckt->CKTstate1 + here->BJTcc);
                     *(ckt->CKTstate0 + here->BJTcb) =
@@ -299,6 +297,8 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->BJTgx);
                     *(ckt->CKTstate0 + here->BJTvsub) =
                             *(ckt->CKTstate1 + here->BJTvsub);
+                    vsub = (1+xfact) * *(ckt->CKTstate1 + here->BJTvsub)-
+                            xfact * *(ckt->CKTstate2 + here->BJTvsub);
                     *(ckt->CKTstate0 + here->BJTirci) =
                             *(ckt->CKTstate1 + here->BJTirci);
                     *(ckt->CKTstate0 + here->BJTirci_Vrci) =
@@ -324,6 +324,12 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     vrci=model->BJTtype*(
                         *(ckt->CKTrhsOld+here->BJTcollCXNode)-
                         *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
+                    vbx=model->BJTtype*(
+                        *(ckt->CKTrhsOld+here->BJTbaseNode)-
+                        *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
+                    vsub=ttype*(
+                        *(ckt->CKTrhsOld+here->BJTsubstNode)-
+                        *(ckt->CKTrhsOld+here->BJTsubstConNode));
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -331,12 +337,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 delvbc=vbc- *(ckt->CKTstate0 + here->BJTvbc);
                 delvbcx=vbcx- *(ckt->CKTstate0 + here->BJTvbcx);
                 delvrci = vrci - *(ckt->CKTstate0 + here->BJTvrci);
-                vbx=model->BJTtype*(
-                    *(ckt->CKTrhsOld+here->BJTbaseNode)-
-                    *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                vsub=ttype*(
-                    *(ckt->CKTrhsOld+here->BJTsubstNode)-
-                    *(ckt->CKTrhsOld+here->BJTsubstConNode));
                 cchat= *(ckt->CKTstate0 + here->BJTcc)+(*(ckt->CKTstate0 +
                         here->BJTgm)+ *(ckt->CKTstate0 + here->BJTgo))*delvbe-
                         (*(ckt->CKTstate0 + here->BJTgo)+*(ckt->CKTstate0 +
@@ -366,6 +366,10 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     if( (fabs(delvrci) < ckt->CKTreltol*MAX(fabs(vrci),
                             fabs(*(ckt->CKTstate0 + here->BJTvrci)))+
                             ckt->CKTvoltTol) )
+                    if( (fabs(vbx - *(ckt->CKTstate0 + here->BJTvbx)) <
+                            ckt->CKTreltol*MAX(fabs(vbx),
+                            fabs(*(ckt->CKTstate0 + here->BJTvbx)))+
+                            ckt->CKTvoltTol) )
                     if( (fabs(cchat-*(ckt->CKTstate0 + here->BJTcc)) <
                             ckt->CKTreltol* MAX(fabs(cchat),
                             fabs(*(ckt->CKTstate0 + here->BJTcc)))+
@@ -381,6 +385,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     vbc = *(ckt->CKTstate0 + here->BJTvbc);
                     vbcx = *(ckt->CKTstate0 + here->BJTvbcx);
                     vrci = *(ckt->CKTstate0 + here->BJTvrci);
+                    vbx = *(ckt->CKTstate0 + here->BJTvbx);
                     cc = *(ckt->CKTstate0 + here->BJTcc);
                     cb = *(ckt->CKTstate0 + here->BJTcb);
                     gpi = *(ckt->CKTstate0 + here->BJTgpi);
@@ -417,7 +422,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                             here->BJTtSubVcrit,&ichk1);
                 } else {
                     vsub = DEVpnjlim(vsub,*(ckt->CKTstate0 + here->BJTvsub),vt,
-                            50,&ichk1);
+                            VCRIT_DISABLED,&ichk1);
                 }
                 if (ichk1 == 1) icheck=1;
                 vrci = vbc - vbcx; /* in case vbc was limited */
@@ -505,18 +510,38 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
              *   Kull's Quasi-Saturation model
              */
             if (model->BJTintCollResistGiven) {
+                /* The epi charges depend on vbc and vbcx only, so they are
+                   evaluated for both signs of vrci (as in PSpice and VBIC).
+                   Setting them to zero for vrci <= 0 made the charge jump by
+                   about QCO when vrci crossed zero, and the transient failed
+                   with "timestep too small".
+                   PSpice form: Q = QCO*(K(v) - 1 - GAMMA/2), which is about
+                   zero at zero bias. */
+                double Kbci,Kbci_Vbci,Kbcx,Kbcx_Vbcx,Q0;
+                Kbci = sqrt(1+here->BJTtepiDoping*exp(vbc/vt));
+                Kbci_Vbci = here->BJTtepiDoping*exp(vbc/vt)/(2*vt*Kbci);
+                Kbcx = sqrt(1+here->BJTtepiDoping*exp(vbcx/vt));
+                Kbcx_Vbcx = here->BJTtepiDoping*exp(vbcx/vt)/(2*vt*Kbcx);
+
+                double qco = model->BJTepiCharge
+                             * ((model->BJTsubs == VERTICAL)
+                                ? here->BJTareab : here->BJTareac);
+
+                Q0 = 1+here->BJTtepiDoping/2;
+                Qbci = qco*(Kbci-Q0);
+                Qbci_Vbci = qco*Kbci_Vbci;
+                Qbcx = qco*(Kbcx-Q0);
+                Qbcx_Vbcx = qco*Kbcx_Vbcx;
+                *(ckt->CKTstate0 + here->BJTqbcx) = Qbcx;
+                here->BJTcapbcx = Qbcx_Vbcx;
+
                 if (vrci > 0.) {
-                    double Kbci,Kbci_Vbci,Kbcx,Kbcx_Vbcx;
                     double rKp1,rKp1_Vbci,rKp1_Vbcx,xvar1,xvar1_Vbci,xvar1_Vbcx;
                     double Vcorr,Vcorr_Vbci,Vcorr_Vbcx,Iohm,Iohm_Vrci,Iohm_Vbci,Iohm_Vbcx;
                     double quot,quot_Vrci;
-                    Kbci = sqrt(1+here->BJTtepiDoping*exp(vbc/vt));
-                    Kbci_Vbci = here->BJTtepiDoping*exp(vbc/vt)/(2*vt*Kbci);
-                    Kbcx = sqrt(1+here->BJTtepiDoping*exp(vbcx/vt));
-                    Kbcx_Vbcx = here->BJTtepiDoping*exp(vbcx/vt)/(2*vt*Kbcx);
 
                     rKp1 = (1+Kbci)/(1+Kbcx);
-                    rKp1_Vbci = Kbci_Vbci/(1+Kbci);
+                    rKp1_Vbci = Kbci_Vbci/(1+Kbcx);
                     rKp1_Vbcx = -(1+Kbci)*Kbcx_Vbcx/((Kbcx+1)*(Kbcx+1));
                     xvar1 = log(rKp1);
                     xvar1_Vbci = rKp1_Vbci/rKp1;
@@ -531,32 +556,25 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                     Iohm_Vbci = Vcorr_Vbci/here->BJTtintCollResist;
                     Iohm_Vbcx = Vcorr_Vbcx/here->BJTtintCollResist;
 
-                    quot = 1+fabs(vrci)/here->BJTtepiSatVoltage;
-                    quot_Vrci = vrci/(here->BJTtepiSatVoltage*fabs(vrci));
+                    /* equivalent form, but without a division by VO */
+                    quot = fabs(vrci)+here->BJTtepiSatVoltage;
+                    if (vrci > 0.)
+                        quot_Vrci = 1.0;
+                    else if (vrci < 0.)
+                        quot_Vrci = -1.0;
+                    else
+                        quot_Vrci = 0.0;
 
-                    Irci = Iohm/quot + ckt->CKTgmin*vrci;
-                    Irci_Vrci = Iohm_Vrci/quot-Iohm*quot_Vrci/(quot*quot) + ckt->CKTgmin;
-                    Irci_Vbci = Iohm_Vbci/quot;
-                    Irci_Vbcx = Iohm_Vbcx/quot;
-
-                    Qbci = model->BJTepiCharge*Kbci;
-                    Qbci_Vbci = model->BJTepiCharge*Kbci_Vbci;
-                    Qbcx = model->BJTepiCharge*Kbcx;
-                    Qbcx_Vbcx = model->BJTepiCharge*Kbcx_Vbcx;
-                    *(ckt->CKTstate0 + here->BJTqbcx) = Qbcx;
-                    here->BJTcapbcx = Qbcx_Vbcx;
+                    Irci = here->BJTtepiSatVoltage*Iohm/quot + ckt->CKTgmin*vrci;
+                    Irci_Vrci = here->BJTtepiSatVoltage*(Iohm_Vrci/quot
+                                - Iohm*quot_Vrci/(quot*quot)) + ckt->CKTgmin;
+                    Irci_Vbci = here->BJTtepiSatVoltage*Iohm_Vbci/quot;
+                    Irci_Vbcx = here->BJTtepiSatVoltage*Iohm_Vbcx/quot;
                 } else {
                     Irci = vrci/here->BJTtintCollResist + ckt->CKTgmin*vrci;
                     Irci_Vrci = 1/here->BJTtintCollResist + ckt->CKTgmin;
                     Irci_Vbci = 0.0;
                     Irci_Vbcx = 0.0;
-
-                    Qbci = 0.0;
-                    Qbci_Vbci = 0.0;
-                    Qbcx = 0.0;
-                    Qbcx_Vbcx = 0.0;
-                    *(ckt->CKTstate0 + here->BJTqbcx) = Qbcx;
-                    here->BJTcapbcx = Qbcx_Vbcx;
                 }
             }
             /*
@@ -743,6 +761,9 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                 if ( (!(ckt->CKTmode & MODETRANOP))||
                         (!(ckt->CKTmode & MODEUIC)) ) {
                     if(ckt->CKTmode & MODEINITSMSIG) {
+                    /* the cq* slots carry capacitances (not currents) to
+                       bjtacld.c / bjtpzld.c; in transient they hold the
+                       capacitor currents written by NIintegrate below */
                         *(ckt->CKTstate0 + here->BJTcqbe) = capbe;
                         *(ckt->CKTstate0 + here->BJTcqbc) = capbc;
                         *(ckt->CKTstate0 + here->BJTcqsub) = capsub;
@@ -815,6 +836,9 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                             gbcx = geq;
                             cbcx = *(ckt->CKTstate0 + here->BJTcqbcx);
                         }
+                    } else {
+                        /* dc sweep: no time derivative, hence no transcapacitance */
+                        geqcb = 0.0;
                     }
                     if(ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->BJTcqbe) =
@@ -858,6 +882,7 @@ next2:
             *(ckt->CKTstate0 + here->BJTvbe) = vbe;
             *(ckt->CKTstate0 + here->BJTvbc) = vbc;
             *(ckt->CKTstate0 + here->BJTvbcx) = vbcx;
+            *(ckt->CKTstate0 + here->BJTvbx) = vbx;
             *(ckt->CKTstate0 + here->BJTvrci) = vrci;
             *(ckt->CKTstate0 + here->BJTcc) = cc;
             *(ckt->CKTstate0 + here->BJTcb) = cb;
@@ -868,6 +893,7 @@ next2:
             *(ckt->CKTstate0 + here->BJTgx) = gx;
             *(ckt->CKTstate0 + here->BJTgeqcb) = geqcb;
             *(ckt->CKTstate0 + here->BJTgcsub) = gcsub;
+            *(ckt->CKTstate0 + here->BJTgbcx) = gbcx;
             *(ckt->CKTstate0 + here->BJTgeqbx) = geqbx;
             *(ckt->CKTstate0 + here->BJTvsub) = vsub;
             *(ckt->CKTstate0 + here->BJTgdsub) = gdsub;
@@ -937,7 +963,8 @@ load:
 c           Stamp element: Irci
 */
             if (model->BJTintCollResistGiven) {
-                double rhs_current = model->BJTtype * m * (Irci - Irci_Vrci*vrci - Irci_Vbci*vbc - Irci_Vbcx*vbcx);
+                double rhs_current = model->BJTtype * m * (Irci 
+                                 - Irci_Vrci*vrci - Irci_Vbci*vbc - Irci_Vbcx*vbcx);
                 *(ckt->CKTrhs + here->BJTcollCXNode) += -rhs_current;
                 *(here->BJTcollCXcollCXPtr)    += m *  Irci_Vrci;
                 *(here->BJTcollCXColPrimePtr)  += m * -Irci_Vrci;
@@ -953,8 +980,9 @@ c           Stamp element: Irci
                 *(here->BJTcolPrimeBasePrimePtr) += m * -Irci_Vbcx;
                 *(here->BJTcolPrimeCollCXPtr)    += m *  Irci_Vbcx;
 
-                *(ckt->CKTrhs + here->BJTbasePrimeNode) += m * -cbcx;
-                *(ckt->CKTrhs + here->BJTcollCXNode)    += m *  cbcx;
+                double ceqbcx = model->BJTtype * (cbcx - vbcx * gbcx);
+                *(ckt->CKTrhs + here->BJTbasePrimeNode) += m * (-ceqbcx);
+                *(ckt->CKTrhs + here->BJTcollCXNode)    += m * ( ceqbcx);
                 *(here->BJTbasePrimeBasePrimePtr)       += m *  gbcx;
                 *(here->BJTcollCXcollCXPtr)             += m *  gbcx;
                 *(here->BJTbasePrimeCollCXPtr)          += m * -gbcx;

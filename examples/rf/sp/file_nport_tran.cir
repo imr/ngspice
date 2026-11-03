@@ -1,0 +1,43 @@
+Example circuit to read a Touchstone-format parameter file.
+
+* This file contains an an analog filter circuit.
+* It reads a previously created Touchstone file 137mhz_bpf.s2p
+* Then uses vector fitting for a *.nport file, serving the nport instance
+* in a circuit that reproduces the original from its saved S-parameters.
+* Results from the two versions are plotted together for comparison.
+
+* Derived from: Qucs 1.0.2 C:/Users/Tom Hajjar/.qucs - S/S-parameter_files_ngspice_prj/137MHz_BPF.sch
+
+* input for both filters
+VP11 in 0 dc 0 SIN(0 0.316228 136MEG)
+
+* Original circuit for tran analysis
+Ri in sin 50
+C11 _net21 sin  4.7P 
+C15 _net31 filter_out1  4.7P
+C13 _net31 _net21  1P 
+C14 _net31 0  15P 
+C12 0 _net21  15P 
+L12 0 _net31  66N 
+L11 0 _net21  66N 
+R12 filter_out1 0 50
+
+* A version fitted from the extracted s-parameters using the nport device
+ri2 in sin2 50
+N1 sin2 np_model_out 0 mymodel
+.model mymodel nport(file="137mhz_bpf.nport")
+ro2 np_model_out 0 50
+
+* Control section, run simulations.
+.control
+* Use given Touchstone file for vector fitting by pre_snp, thus get a file 
+* new_137MHz_BPF.nport
+pre_snp -native $inputdir/137mhz_bpf.s2p ; read S parameters, fit, create new_137MHz_BPF.nport
+
+tran 0.1n 1u
+set xbrushwidth=3
+plot filter_out1-np_model_out ; difference to compare
+plot in filter_out1 np_model_out xlimit 0.8u 0.85u
+.endc
+
+.END

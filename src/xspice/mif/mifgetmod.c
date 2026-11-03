@@ -272,8 +272,12 @@ char *MIFgetMod(
                                                mdfast->gen.GENmodName);
                             return emessage;
                         } else if (param_info->default_value_siz == 0) {
-                            if (param_info->type == MIF_STRING)
-                                continue;   // Allow NULL
+                            if (param_info->type == MIF_STRING ||
+                                (param_info->is_array &&
+                                 param_info->has_lower_bound &&
+                                 param_info->lower_bound == 0)) {
+                                continue;   // Allow NULL or empty.
+                            }
                             emessage = tprintf("Parameter '%s' on model '%s' "
                                                "has no default.",
                                                param_info->name,

@@ -24,6 +24,7 @@ option NOINIT ACCT
 tran 1us 100us
 rusage
 display
+set xbrushwidth=2
 plot allv
 .endc
 .end

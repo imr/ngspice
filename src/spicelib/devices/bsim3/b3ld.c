@@ -2116,7 +2116,7 @@ for (; model != NULL; model = BSIM3nextModel(model))
                       VdseffCV = VdsatCV * T4;
                       dVdseffCV_dVg = dT0_dVg * T4 + T5 * (dT1_dVg - dT0_dVg);
                       dVdseffCV_dVd = T5 * (dT1_dVd + 1.0);
-                      dVdseffCV_dVb = dT0_dVb * (1.0 - T5) + T5 * dT1_dVb;
+                      dVdseffCV_dVb = dT0_dVb * (T4 - T5) + T5 * dT1_dVb;
                   }
 
                   /* Added to eliminate non-zero VdseffCV at Vds=0.0 */

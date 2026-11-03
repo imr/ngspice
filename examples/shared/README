@@ -84,7 +84,7 @@ run the circuit and use most of the internal commands.  Run as:
 
 or for Windows
 
-shx < t.txt
+shx < t.shx
 
 To view the results, run Ngspice as a program and enter:
 

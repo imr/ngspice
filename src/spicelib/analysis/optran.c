@@ -40,6 +40,8 @@ extern int sharedsync(double*, double*, double, double, double, int, int*, int);
 extern int ng_ident;      /* for debugging */
 #endif
 
+#define NEWRETRY
+
 int OPclrBreak(CKTcircuit* ckt);
 int OPsetBreak(CKTcircuit* ckt, double time);
 
@@ -447,6 +449,12 @@ OPtran(CKTcircuit *ckt, int oldconverged)
     /* end LTRA code addition */
 
     error = CKTaccept(ckt);
+#ifdef NEWRETRY
+    /* Keep the accepted solution: a retry after non-convergence starts from it */
+    if (ckt->CKTrhsAccepted)
+        memcpy(ckt->CKTrhsAccepted, ckt->CKTrhs,
+            (size_t)(ckt->CKTrhsSize + 1) * sizeof(double));
+#endif
     /* check if current breakpoint is outdated; if so, clear */
     if (optime > opbreaks[0])
         OPclrBreak(ckt);
@@ -479,7 +487,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
 #endif
 
     /* We are finished */
-    if(AlmostEqualUlps( optime, opfinaltime, 100 ) ) {
+    if (optime >= opfinaltime || AlmostEqualUlps( optime, opfinaltime, 100)) {
         tfree(opbreaks);
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op finished successfully");
         ckt->CKTmaxStep = prevmaxstepsize;
@@ -567,8 +575,9 @@ resume:
 #ifdef STEPDEBUG
         printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",opbreaks[0], optime, ckt->CKTminBreak);
 #endif
-        if(AlmostEqualUlps(opbreaks[0], optime, 100) ||
-           opbreaks[0] <= optime + ckt->CKTminBreak) {
+        if ((AlmostEqualUlps(opbreaks[0], optime, 100) ||
+             opbreaks[0] <= optime + ckt->CKTminBreak) &&
+            opbreaks[0] < opfinaltime) {
 #ifdef STEPDEBUG
             printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",opbreaks[0]);
             printf("    ckt_time: %g    ckt_min_break: %g\n",optime, ckt->CKTminBreak);
@@ -733,7 +742,18 @@ resume:
 #endif
 
             ckt->CKTdelta = ckt->CKTdelta/8;
-
+#ifdef NEWRETRY
+            /* Retry from the last accepted solution, not from the failed
+               attempt's last iterate. Built-in semiconductors predict their
+               junction voltages from their states in MODEINITPRED, but
+               B sources (asrcload.c) and other devices without a
+               predictor read CKTrhsOld directly: an iterate that ran
+               away, to NaN or far off, would poison every retry, down
+               to "timestep too small". */
+            if (ckt->CKTrhsAccepted)
+                memcpy(ckt->CKTrhsOld, ckt->CKTrhsAccepted,
+                    (size_t)(ckt->CKTrhsSize + 1) * sizeof(double));
+#endif
             if(firsttime) {
                 ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
             }

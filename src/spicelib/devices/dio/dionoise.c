@@ -86,7 +86,7 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                 case N_DENS:
 
                     if (inst->DIOtempGiven)
-                        dtemp = inst->DIOtemp - ckt->CKTtemp + (model->DIOnomTemp-CONSTCtoK);
+                        dtemp = inst->DIOtemp - ckt->CKTtemp;
                     else
                         dtemp = inst->DIOdtemp;
 
@@ -135,6 +135,14 @@ DIOnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                         noizDens[DIOTOTNOIZ] += noizDens[DIORSSWNOIZ] +
                             noizDens[DIOIDSWNOIZ] +
                             noizDens[DIOFLSWNOIZ];
+                    } else {
+                        /* no sidewall model */
+                        noizDens[DIORSSWNOIZ] = 0.0;
+                        noizDens[DIOIDSWNOIZ] = 0.0;
+                        noizDens[DIOFLSWNOIZ] = 0.0;
+                        lnNdens[DIORSSWNOIZ] = log(N_MINLOG);
+                        lnNdens[DIOIDSWNOIZ] = log(N_MINLOG);
+                        lnNdens[DIOFLSWNOIZ] = log(N_MINLOG);
                     }
 
                     lnNdens[DIOTOTNOIZ] =

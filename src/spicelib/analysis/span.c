@@ -142,7 +142,18 @@ CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noise
 
             double Gu = tempCy->d[0][0].re - Rn * Y11_Ycor;
 
-            cplx Ysopt; Ysopt.re = sqrt(SQR(Ycor.re) + Gu / Rn); Ysopt.im = -Ycor.im;
+            /* Enhancement-63: the uncorrelated noise conductance Gu (and
+               with it the sqrt argument below) is physically >= 0, but for
+               a fully-correlated noise topology (e.g. a single series
+               resistor as the only noise source) it is analytically ZERO
+               and floating-point rounding can land it at -1e-18 --
+               sqrt(negative) then poisons NF/SOpt/NFmin/Rn with NaN.
+               Clamp to the physical range. */
+            double YsoptArg = SQR(Ycor.re) + Gu / Rn;
+            if (YsoptArg < 0.0)
+                YsoptArg = 0.0;
+
+            cplx Ysopt; Ysopt.re = sqrt(YsoptArg); Ysopt.im = -Ycor.im;
             cplx Y0; Y0.re = refPortY0; Y0.im = 0.0;
             Sopt = cdivco(csubco(Y0, Ysopt),
                 caddco(Y0, Ysopt));
@@ -379,11 +390,10 @@ SPan(CKTcircuit* ckt, int restart)
         controlled_exit(EXIT_BAD);
     }
 
-    if (ckt->CKTportCount == 1)
-    {
-        fprintf(stderr, "\nError: Only one RF Port is found, we need at least two!\n");
-        controlled_exit(EXIT_BAD);
-    }
+    /* Enhancement-64: a single port is a perfectly good S-parameter
+       measurement (reflection, .s1p); the matrix machinery below is
+       N-general, so the old hard error was over-strict. The 2-port-only
+       noise-parameter block stays gated on CKTportCount == 2. */
 
 #ifdef XSPICE
     /* Tell the code models what mode we're in */
@@ -486,7 +496,9 @@ SPan(CKTcircuit* ckt, int restart)
             plot = NULL;
         }
 
-        int extraSPdataLength = 3 * ckt->CKTportCount * ckt->CKTportCount;
+        /* Enhancement-64: +1 for the Rbase vector (the ports' reference
+           resistance) so wrs2p/wrsnp work without a manual `let Rbase` */
+        int extraSPdataLength = 3 * ckt->CKTportCount * ckt->CKTportCount + 1;
         if (job->SPdoNoise)
         {
             extraSPdataLength += ckt->CKTportCount * ckt->CKTportCount; // Add Cy
@@ -526,6 +538,11 @@ SPan(CKTcircuit* ckt, int restart)
 
                 SPfrontEnd->IFnewUid(ckt, &(nameList[numNames++]), NULL, tmpBuf, UID_OTHER, NULL);
             }
+
+        /* Enhancement-64: publish the reference resistance of the ports as
+           a vector, so the Touchstone writers can label the file header
+           (`# Hz S RI R <Rbase>`) without user intervention. */
+        SPfrontEnd->IFnewUid(ckt, &(nameList[numNames++]), NULL, "Rbase", UID_OTHER, NULL);
 
         // Add noise related output, if needed
         if (job->SPdoNoise)

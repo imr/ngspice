@@ -1,0 +1,19 @@
+* source-pull: swept source impedance, fixed 50-ohm load
+Vs src 0 dc 0 sin(0 1 1e9)
+Rs src n1 50
+Ls n1 out 1e-15
+*Cs out 0 1e-3
+RL out 0 50
+
+.option noinit
+
+.control
+loadpull -source Rs Ls Cs -out out -drive Vs -f 1e9 -n 9 -gmax 0.6
+let gamma = gamma_re+i*gamma_im
+set xbrushwidth=2
+set color4="orange"
+plot mag(gamma)
+plot gamma_re gamma_im pout_dbm
+.endc
+
+.end

@@ -523,6 +523,7 @@ gettok_iv(char **s)
 
     {
         int n_paren = 0;
+        bool seen_paren = FALSE;  /* have we opened a '(' yet? */
         /* Skip any space between v/V/i/I and '(' */
         p_src = skip_ws(p_src);
 
@@ -530,17 +531,26 @@ gettok_iv(char **s)
             /* Keep track of nesting level */
             if (c == '(') {
                 n_paren++;
+                seen_paren = TRUE;
             }
             else if (c == ')') {
                 n_paren--;
             }
 
             if (isspace_c(c)) { /* Do not copy whitespace to output */
+                if (!seen_paren)   /* a bare token (no parens) ends here */
+                    break;
                 p_src++;
             }
             else {
+                /* a bare token ends at a delimiter */
+                if (!seen_paren && (c == '=' || c == ','))
+                    break;
                 *p_dst++ = *p_src++;
-                if (n_paren == 0) {
+                /* stop only once the parenthesised part has closed -- not after
+                 * the first suffix char, else vdb()/vm()/vp() were truncated to
+                 * vd/vm/vp (breaking `.meas ac ... vdb(out)' auto-save). */
+                if (seen_paren && n_paren == 0) {
                     break;
                 }
             }

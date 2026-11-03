@@ -1,0 +1,16 @@
+lc oscillator
+L1 a 0 1e-06
+C1 a 0 1e-09
+R1 a 0 100k
+B1 a 0 i = -(5e-4*v(a)) + 5e-4*v(a)*v(a)*v(a)
+.ic v(a)=0.1
+.control
+option noacct
+set numdgt=17
+tran 1n 100u uic
+plot a
+let amp = (maximum(v(a))-minimum(v(a)))/2
+print amp
+hbosc a 5 5e6 100u
+.endc
+.end

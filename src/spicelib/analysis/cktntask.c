@@ -48,7 +48,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnumSrcSteps     = def->TSKnumSrcSteps;
         tsk->TSKnumGminSteps    = def->TSKnumGminSteps;
         tsk->TSKgminFactor      = def->TSKgminFactor;
-        /* minBreak */
+        tsk->TSKminBreak        = def->TSKminBreak;
         tsk->TSKabstol          = def->TSKabstol;
         tsk->TSKpivotAbsTol     = def->TSKpivotAbsTol;
         tsk->TSKpivotRelTol     = def->TSKpivotRelTol;
@@ -57,21 +57,23 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKvoltTol         = def->TSKvoltTol;
         tsk->TSKgmin            = def->TSKgmin;
         tsk->TSKgshunt          = def->TSKgshunt;
+        tsk->TSKrshunt          = def->TSKrshunt;
         tsk->TSKcshunt          = def->TSKcshunt;
-        /* delmin */
+//        tsk->TSKdelmin          = def->TSKdelmin;
         tsk->TSKtrtol           = def->TSKtrtol;
         tsk->TSKdefaultMosM     = def->TSKdefaultMosM;
         tsk->TSKdefaultMosL     = def->TSKdefaultMosL;
         tsk->TSKdefaultMosW     = def->TSKdefaultMosW;
         tsk->TSKdefaultMosAD    = def->TSKdefaultMosAD;
         tsk->TSKdefaultMosAS    = def->TSKdefaultMosAS;
-        /* fixLimit */
+//        tsk->TSKfixLimit        = def->TSKfixLimit;
         tsk->TSKnoOpIter        = def->TSKnoOpIter;
         tsk->TSKtryToCompact    = def->TSKtryToCompact;
         tsk->TSKbadMos3         = def->TSKbadMos3;
         tsk->TSKkeepOpInfo      = def->TSKkeepOpInfo;
         tsk->TSKcopyNodesets    = def->TSKcopyNodesets;
         tsk->TSKnodeDamping     = def->TSKnodeDamping;
+        tsk->TSKlinesearch      = def->TSKlinesearch; /* Enhancement-111 */
         tsk->TSKabsDv           = def->TSKabsDv;
         tsk->TSKrelDv           = def->TSKrelDv;
         tsk->TSKnoopac          = def->TSKnoopac;
@@ -92,6 +94,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         /* use the application defaults */
         tsk->TSKgmin            = 1e-12;
         tsk->TSKgshunt          = 0;
+        tsk->TSKrshunt          = 1e30;
         tsk->TSKcshunt          = -1;
         tsk->TSKabstol          = 1e-12;
         tsk->TSKreltol          = 1e-3;
@@ -135,10 +138,11 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKkeepOpInfo      = 0;
         tsk->TSKcopyNodesets    = 0;
         tsk->TSKnodeDamping     = 0;
+        tsk->TSKlinesearch      = 0; /* Enhancement-111: off by default */
         tsk->TSKabsDv           = 0.5;
         tsk->TSKrelDv           = 2.0;
         tsk->TSKepsmin          = 1e-28;
-
+        tsk->TSKminBreak        = 1e-15;
 #ifdef KLU
         tsk->TSKkluMODE         = CKTkluOFF;
         tsk->TSKkluMemGrowFactor = 1.2 ;

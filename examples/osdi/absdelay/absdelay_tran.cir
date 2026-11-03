@@ -1,0 +1,24 @@
+* absdelay example: ideal time-delay Verilog-A module (absdelay.va)
+* Two independent delay lines, both with td=2n:
+*   1) a pulse source, to show a delayed edge
+*   2) a 50 MHz sinusoid, to show a delayed continuous waveform
+* OSDI devices are instantiated with a leading 'N'.
+
+.model dly absdelay_dly(td=2n)
+
+Vpulse pulse_in 0 PULSE(0 1 0 0.2n 0.2n 4n 10n)
+Ndly1  pulse_in pulse_out dly
+
+Vsin   sin_in 0 SIN(0 1 50Meg)
+Ndly2  sin_in sin_out dly
+
+.tran 10p 40n
+
+.control
+pre_osdi absdelay.osdi
+run
+plot pulse_in pulse_out
+plot sin_in sin_out
+.endc
+
+.end

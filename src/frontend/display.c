@@ -23,6 +23,7 @@ static int gen_Input(REQUEST *request, RESPONSE *response);
 static int nop(void);
 #define NOP ((void *)nop)
 static int nodev(void);
+#undef NODEV /* the macOS SDK <sys/param.h> defines an unrelated NODEV */
 #define NODEV ((void *)nodev)
 
 #ifndef X_DISPLAY_MISSING

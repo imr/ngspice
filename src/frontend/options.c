@@ -24,6 +24,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_norefprint = FALSE;
+bool ft_optimizing = FALSE;    /* Enhancement-130: silence per-iteration analysis chatter */
 bool ft_ngdebug = FALSE, ft_nginfo = FALSE, ft_stricterror = FALSE, ft_spiniterror = FALSE;
 bool ft_osdierror = FALSE;
 char* ft_codemodelerror = NULL;
@@ -217,7 +218,52 @@ cp_usrvars(void)
 
 /* Extract the .option lines from the deck */
 struct card *
-inp_getopts(struct card *deck)
+inp_getopts(struct card *deck, bool comfile)
+{
+    struct card *last = NULL, *opts = NULL, *dd, *next = NULL;
+
+    for (dd = deck->nextcard; dd; dd = next) {
+        next = dd->nextcard;
+        if (comfile) {
+        /* only .option cshunt and rshunt are handled here. */
+            if ((ciprefix("option", dd->line)) &&
+            (strstr(dd->line, "cshunt=") || strstr(dd->line, "rshunt="))) {
+                inp_casefix(dd->line);
+                if (last)
+                    last->nextcard = dd->nextcard;
+                else
+                    deck->nextcard = dd->nextcard;
+                dd->nextcard = opts;
+                opts = dd;
+            }
+            else {
+                last = dd;
+            }
+        }
+        /* .option with params is excluded here. These options will be handled
+        after parameter substitution by INP2dot(), dot_options(), and INPdoOpts(). */
+        else {
+            if ((ciprefix(".opt", dd->line) && !strchr(dd->line, '{'))) {
+                inp_casefix(dd->line);
+                if (last)
+                    last->nextcard = dd->nextcard;
+                else
+                    deck->nextcard = dd->nextcard;
+                dd->nextcard = opts;
+                opts = dd;
+            }
+            else {
+                last = dd;
+            }
+        }
+    }
+
+    return (opts);
+}
+
+/* Extract the .option lines from the deck */
+struct card *
+inp_getopts_special(struct card *deck)
 {
     struct card *last = NULL, *opts = NULL, *dd, *next = NULL;
 
@@ -225,7 +271,7 @@ inp_getopts(struct card *deck)
         next = dd->nextcard;
         /* .option with params is excluded here. These options will be handled
         after parameter substitution by INP2dot(), dot_options(), and INPdoOpts(). */
-        if (ciprefix(".opt", dd->line) && !strchr(dd->line, '{')) {
+        if ((ciprefix(".opt", dd->line) || ciprefix("option", dd->line)) && ciprefix("seed=", dd->line) ){
             inp_casefix(dd->line);
             if (last)
                 last->nextcard = dd->nextcard;
@@ -240,7 +286,6 @@ inp_getopts(struct card *deck)
 
     return (opts);
 }
-
 
 /* copy the given option line,
  *   (presumably from a comfile, e.g. spinit or .spiceinit)
@@ -383,7 +428,8 @@ cp_usrset(struct variable *var, bool isset)
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplotname")) {
         if (plot_cur && (var->va_type == CP_STRING)) {
-            FREE(plot_cur->pl_name);
+            if (!eq(plot_cur->pl_name, "constants")) /* not malloced! */
+                FREE(plot_cur->pl_name);
             plot_cur->pl_name = copy(var->va_string);
         }
         else
@@ -391,7 +437,8 @@ cp_usrset(struct variable *var, bool isset)
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplottitle")) {
         if (plot_cur && (var->va_type == CP_STRING)) {
-            FREE(plot_cur->pl_title);
+            if (!eq(plot_cur->pl_title, "Constant values")) /* not malloced! */
+                FREE(plot_cur->pl_title);
             plot_cur->pl_title = copy(var->va_string);
         }
         else

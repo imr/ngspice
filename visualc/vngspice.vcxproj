@@ -211,7 +211,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -260,7 +260,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -306,15 +306,16 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with current date</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\osdi;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\osdi;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -359,8 +360,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with current date</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -370,7 +372,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -425,7 +427,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -474,7 +476,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -518,15 +520,16 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with current date</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -571,8 +574,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with current date</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -582,7 +586,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -636,7 +640,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -680,8 +684,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with current date</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -691,7 +696,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);USE_OMP;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -751,7 +756,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -796,8 +801,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
     <PreBuildEvent>
-      <Message>force recompilation of conf.c with current date</Message>
-      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj</Command>
+      <Message>force recompilation of conf.c with current date, copy snp2va.c to *.cpp</Message>
+      <Command>if exist "$(IntDir)conf.obj" del "$(IntDir)conf.obj"
+copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp2va.cpp"</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -807,7 +813,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsamplerate\include;..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;CONFIG64;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -873,6 +879,7 @@
     <ClInclude Include="..\src\frontend\com_asciiplot.h" />
     <ClInclude Include="..\src\frontend\com_cdump.h" />
     <ClInclude Include="..\src\frontend\com_chdir.h" />
+    <ClInclude Include="..\src\frontend\com_checkpoint.h" />
     <ClInclude Include="..\src\frontend\com_commands.h" />
     <ClInclude Include="..\src\frontend\com_compose.h" />
     <ClInclude Include="..\src\frontend\com_display.h" />
@@ -884,13 +891,23 @@
     <ClInclude Include="..\src\frontend\com_ghelp.h" />
     <ClInclude Include="..\src\frontend\com_gnuplot.h" />
     <ClInclude Include="..\src\frontend\com_hardcopy.h" />
+    <ClInclude Include="..\src\frontend\com_hb.h" />
+    <ClInclude Include="..\src\frontend\com_hbosc.h" />
     <ClInclude Include="..\src\frontend\com_help.h" />
     <ClInclude Include="..\src\frontend\com_history.h" />
     <ClInclude Include="..\src\frontend\com_let.h" />
+    <ClInclude Include="..\src\frontend\com_loadpull.h" />
     <ClInclude Include="..\src\frontend\com_measure2.h" />
+    <ClInclude Include="..\src\frontend\com_optimize.h" />
     <ClInclude Include="..\src\frontend\com_option.h" />
     <ClInclude Include="..\src\frontend\com_plot.h" />
+    <ClInclude Include="..\src\frontend\com_pyplot.h" />
+    <ClInclude Include="..\src\frontend\com_qpac.h" />
+    <ClInclude Include="..\src\frontend\com_qpnoise.h" />
+    <ClInclude Include="..\src\frontend\com_qpss.h" />
+    <ClInclude Include="..\src\frontend\com_qpxf.h" />
     <ClInclude Include="..\src\frontend\com_rehash.h" />
+    <ClInclude Include="..\src\frontend\com_rfstab.h" />
     <ClInclude Include="..\src\frontend\com_set.h" />
     <ClInclude Include="..\src\frontend\com_setscale.h" />
     <ClInclude Include="..\src\frontend\com_shell.h" />
@@ -907,6 +924,7 @@
     <ClInclude Include="..\src\frontend\dimens.h" />
     <ClInclude Include="..\src\frontend\display.h" />
     <ClInclude Include="..\src\frontend\dotcards.h" />
+    <ClInclude Include="..\src\frontend\encodedet.h" />
     <ClInclude Include="..\src\frontend\error.h" />
     <ClInclude Include="..\src\frontend\evaluate.h" />
     <ClInclude Include="..\src\frontend\fourier.h" />
@@ -961,6 +979,7 @@
     <ClInclude Include="..\src\frontend\shyu.h" />
     <ClInclude Include="..\src\frontend\signal_handler.h" />
     <ClInclude Include="..\src\frontend\sndprint.h" />
+    <ClInclude Include="..\src\frontend\snp2va.h" />
     <ClInclude Include="..\src\frontend\spec.h" />
     <ClInclude Include="..\src\frontend\spiceif.h" />
     <ClInclude Include="..\src\frontend\streams.h" />
@@ -1235,12 +1254,6 @@
     <ClInclude Include="..\src\spicelib\devices\hfet2\hfet2ext.h" />
     <ClInclude Include="..\src\spicelib\devices\hfet2\hfet2init.h" />
     <ClInclude Include="..\src\spicelib\devices\hfet2\hfet2itf.h" />
-    <ClInclude Include="..\src\spicelib\devices\hicum2\hicum2defs.h" />
-    <ClInclude Include="..\src\spicelib\devices\hicum2\hicum2ext.h" />
-    <ClInclude Include="..\src\spicelib\devices\hicum2\hicum2init.h" />
-    <ClInclude Include="..\src\spicelib\devices\hicum2\hicum2itf.h" />
-    <ClInclude Include="..\src\spicelib\devices\hicum2\hicumL2.hpp" />
-    <ClInclude Include="..\src\spicelib\devices\hicum2\hicumL2temp.hpp" />
     <ClInclude Include="..\src\spicelib\devices\hisim2\hisim.h" />
     <ClInclude Include="..\src\spicelib\devices\hisim2\hsm2def.h" />
     <ClInclude Include="..\src\spicelib\devices\hisim2\hsm2evalenv.h" />
@@ -1326,6 +1339,10 @@
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtext.h" />
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtinit.h" />
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtitf.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportdefs.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportext.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportinit.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportitf.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2def.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2ext.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2init.h" />
@@ -1387,6 +1404,7 @@
     <ClInclude Include="..\src\spicelib\parser\inppas2.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas3.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas4.h" />
+    <ClInclude Include="..\src\spicelib\parser\inppas5.h" />
     <ClInclude Include="..\src\spicelib\parser\inpxx.h" />
     <ClInclude Include="..\src\winmain.h" />
     <ClInclude Include=".\src\include\inttypes.h" />
@@ -1397,9 +1415,7 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\include\cppduals\duals\dual">
-      <FileType>Document</FileType>
-    </ClInclude>
+    <None Include="..\src\spicelib\devices\nport\Makefile.am" />
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
@@ -1487,6 +1503,7 @@
     <ClCompile Include="..\src\frontend\com_asciiplot.c" />
     <ClCompile Include="..\src\frontend\com_cdump.c" />
     <ClCompile Include="..\src\frontend\com_chdir.c" />
+    <ClCompile Include="..\src\frontend\com_checkpoint.c" />
     <ClCompile Include="..\src\frontend\com_compose.c" />
     <ClCompile Include="..\src\frontend\com_display.c" />
     <ClCompile Include="..\src\frontend\com_dl.c" />
@@ -1497,13 +1514,24 @@
     <ClCompile Include="..\src\frontend\com_ghelp.c" />
     <ClCompile Include="..\src\frontend\com_gnuplot.c" />
     <ClCompile Include="..\src\frontend\com_hardcopy.c" />
+    <ClCompile Include="..\src\frontend\com_hb.c" />
+    <ClCompile Include="..\src\frontend\com_hbosc.c" />
     <ClCompile Include="..\src\frontend\com_help.c" />
     <ClCompile Include="..\src\frontend\com_history.c" />
     <ClCompile Include="..\src\frontend\com_let.c" />
+    <ClCompile Include="..\src\frontend\com_loadpull.c" />
     <ClCompile Include="..\src\frontend\com_measure2.c" />
+    <ClCompile Include="..\src\frontend\com_optimize.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
+    <ClCompile Include="..\src\frontend\com_presnp.c" />
+    <ClCompile Include="..\src\frontend\com_pyplot.c" />
+    <ClCompile Include="..\src\frontend\com_qpac.c" />
+    <ClCompile Include="..\src\frontend\com_qpnoise.c" />
+    <ClCompile Include="..\src\frontend\com_qpss.c" />
+    <ClCompile Include="..\src\frontend\com_qpxf.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
+    <ClCompile Include="..\src\frontend\com_rfstab.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
     <ClCompile Include="..\src\frontend\com_shell.c" />
@@ -1522,6 +1550,7 @@
     <ClCompile Include="..\src\frontend\display.c" />
     <ClCompile Include="..\src\frontend\dotcards.c" />
     <ClCompile Include="..\src\frontend\dvec.c" />
+    <ClCompile Include="..\src\frontend\encodedet.c" />
     <ClCompile Include="..\src\frontend\error.c" />
     <ClCompile Include="..\src\frontend\evaluate.c" />
     <ClCompile Include="..\src\frontend\fourier.c" />
@@ -1580,6 +1609,7 @@
     <ClCompile Include="..\src\frontend\plotting\plotit.c" />
     <ClCompile Include="..\src\frontend\plotting\plotting.c" />
     <ClCompile Include="..\src\frontend\plotting\pvec.c" />
+    <ClCompile Include="..\src\frontend\plotting\pyplot.c" />
     <ClCompile Include="..\src\frontend\plotting\x11.c" />
     <ClCompile Include="..\src\frontend\points.c" />
     <ClCompile Include="..\src\frontend\postcoms.c" />
@@ -1592,6 +1622,7 @@
     <ClCompile Include="..\src\frontend\shyu.c" />
     <ClCompile Include="..\src\frontend\signal_handler.c" />
     <ClCompile Include="..\src\frontend\sndprint.c" />
+    <ClCompile Include="..\src\frontend\snp2va.cpp" />
     <ClCompile Include="..\src\frontend\spec.c" />
     <ClCompile Include="..\src\frontend\spiceif.c" />
     <ClCompile Include="..\src\frontend\streams.c" />
@@ -1716,6 +1747,7 @@
     <ClCompile Include="..\src\misc\util.c" />
     <ClCompile Include="..\src\misc\wlist.c" />
     <ClCompile Include="..\src\ngspice.c" />
+    <ClCompile Include="..\src\osdi\osdiaccept.c" />
     <ClCompile Include="..\src\osdi\osdiacld.c" />
     <ClCompile Include="..\src\osdi\osdicallbacks.c" />
     <ClCompile Include="..\src\osdi\osdiinit.c" />
@@ -2257,23 +2289,6 @@
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2setup.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2temp.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2trunc.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2acld.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2ask.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2bindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2conv.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2getic.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2init.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2mask.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2mpar.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2noise.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2param.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2pzld.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2setup.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2soachk.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2trunc.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicumL2.cpp" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicumL2temp.cpp" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2ask.c" />
@@ -2583,6 +2598,19 @@
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtset.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttemp.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttrun.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nport.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportacload.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportask.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportdel.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportinit.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportload.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportmask.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportmpar.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportparam.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportread.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nporttemp.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2ask.c" />
@@ -2828,6 +2856,7 @@
     <ClCompile Include="..\src\spicelib\parser\inppas2.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas3.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas4.c" />
+    <ClCompile Include="..\src\spicelib\parser\inppas5.c" />
     <ClCompile Include="..\src\spicelib\parser\inppname.c" />
     <ClCompile Include="..\src\spicelib\parser\inpptree.c" />
     <ClCompile Include="..\src\spicelib\parser\inpsymt.c" />

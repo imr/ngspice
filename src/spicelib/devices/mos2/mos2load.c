@@ -480,6 +480,7 @@ next1:      if(vbs <= -3*vt) {
             double dodvds = 0.0;
             double dxndvd = 0.0;
             double dxndvb = 0.0;
+            double d2gdvbvd = 0.0;
             double udenom;
             double dudvgs;
             double dudvds;
@@ -642,6 +643,15 @@ next1:      if(vbs <= -3*vt) {
                         model->MOS2xd/(model->MOS2junctionDepth*argxd))/
                         (EffectiveLength*argd);
                     dgddb2 = -0.5*model->MOS2gamma*(dasdb2+daddb2);
+                    /* exact second derivatives of gamasd (d2/dvbs2, d2/dvbs/dvds) */
+                    {
+                        double d2ss = 0.5*model->MOS2xd/(EffectiveLength*args)*
+                            (d2sdb2-model->MOS2xd*dsrgdb*dsrgdb/(model->MOS2junctionDepth*argxs));
+                        double d2sd = 0.5*model->MOS2xd/(EffectiveLength*argd)*
+                            (d2bdb2-model->MOS2xd*dbrgdb*dbrgdb/(model->MOS2junctionDepth*argxd));
+                        dgddb2 = -model->MOS2gamma*(d2ss+d2sd);
+                        d2gdvbvd = model->MOS2gamma*d2sd;
+                    }
                 }
                 dgddvb = -model->MOS2gamma*(dbargs+dbargd);
                 if (model->MOS2junctionDepth > 0) {
@@ -694,11 +704,13 @@ next1:      if(vbs <= -3*vt) {
             body = barg*barg*barg-sarg3;
             gdbdv = 2.0*gammad*(barg*barg*dbrgdb-sarg1*sarg1*dsrgdb);
             dodvbs = -factor+dgdvbs*sarg1+gammad*dsrgdb;
+            dodvds = dgdvds*sarg1; /* von depends on vds also when nfs=0 */
             if (model->MOS2fastSurfaceStateDensity == 0.0) goto line400;
             if (OxideCap == 0.0) goto line410;
-            dxndvb = 2.0*dgdvbs*dsrgdb+gammad*d2sdb2+dgddb2*sarg1;
+            /* xn contains cdonco = -d(gamasd*sarg1)/dvbs + factor */
+            dxndvb = -(2.0*dgdvbs*dsrgdb+gammad*d2sdb2+dgddb2*sarg1);
             dodvbs = dodvbs+vt*dxndvb;
-            dxndvd = dgdvds*dsrgdb;
+            dxndvd = -(dgdvds*dsrgdb+d2gdvbvd*sarg1);
             dodvds = dgdvds*sarg1+vt*dxndvd;
             /*
              *  evaluate effective mobility and its derivatives
@@ -712,7 +724,7 @@ line400:
             ufact = exp(model->MOS2critFieldExp*log(tmp/udenom));
             ueff = model->MOS2surfaceMobility * 1e-4 /*(m**2/cm**2) */ *ufact;
             dudvgs = -ufact*model->MOS2critFieldExp/udenom;
-            dudvds = 0.0;
+            dudvds = model->MOS2critFieldExp*ufact*dodvds/vgst;
             dudvbs = model->MOS2critFieldExp*ufact*dodvbs/vgst;
             goto line500;
 line410:
@@ -987,7 +999,7 @@ line900:
                 arg1 = cdrain*(dudvgs/ufact-dldvgs/clfact);
                 here->MOS2gm = arg1+beta1*vdsat+beta1*(lvgs-
                     vbin-eta*vdsat-gammad*bsarg)*dsdvgs;
-                here->MOS2gds = -cdrain*dldvds/clfact-beta1*dgdvds*bodys/1.5;
+                here->MOS2gds = cdrain*(dudvds/ufact-dldvds/clfact)-beta1*dgdvds*bodys/1.5;
                 arg1 = cdrain*(dudvbs/ufact-dldvbs/clfact);
                 here->MOS2gmbs = arg1-beta1*(gdbdvs+dgdvbs*bodys/1.5-factor*
                         vdsat)+beta1* (lvgs-vbin-eta*vdsat-gammad*bsarg)*dsdvbs;

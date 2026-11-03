@@ -1,0 +1,21 @@
+* Section 4.7 ATF-34143 FET amplifier - complete output spectrum at u_RF = 100 mV
+* Fixed operating point Vdd = 5 V, Vgs = -0.43 V; HB at f = 1.9 GHz, 6 harmonics.
+.model ATF34143 NMF (vto=-0.95 beta=0.24 lambda=0.09 alpha=4.0 b=0.8
++ rd=0.25 rs=0.125 cgs=0.8p cgd=0.16p pb=0.7 is=1n)
+Vdd  dd 0 DC 5
+Vgg  gg 0 DC -0.43
+Lc   dd drain 1m
+Lg   gg gate  1m
+Z1   drain gate 0 ATF34143
+V3   rf 0 DC 0 SIN(0 0.1 1.9G) AC 1
+R2   rf n1 50
+C1   n1 gate 1u
+C2   drain out 1u
+R1   out 0 50
+.control
+hb 1.9G 6
+set xbrushwidth=2
+* output power in dbm (out is the peak voltage)
+plot 10*log10(out*out)+10 arrowplot ylimit -190 10  ylabel 'output power [dbm]'
+.endc
+.end

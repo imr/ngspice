@@ -271,6 +271,20 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
     *newlength = length;
     *newtype = type;
 
+    /* Enhancement-225: the polynomial-fit derivative reads `degree+1` points per
+     * fit; an input shorter than 2 points (e.g. `deriv(vecmin(v(1)))`, a
+     * plot-derived scalar) ran the fit / edge loops over too few points and
+     * overran the heap. The derivative of a single point is undefined -- return a
+     * zero vector of the same length (alloc_* zero-fill via calloc). */
+    if (length < 2) {
+        tfree(spare);
+        tfree(scratch);
+        if (type == VF_COMPLEX)
+            return (void *) alloc_c(length);
+        else
+            return (void *) alloc_d(length);
+    }
+
     if (type == VF_COMPLEX) {
         ngcomplex_t *c_outdata, *c_indata;
         double *r_coefs, *i_coefs;
@@ -598,6 +612,19 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         fprintf(cp_err, "Internal error cx_fft: argument has wrong data\n");
         return (NULL);
     }
+    /* Enhancement-225: cx_fft assumed the data vector and its scale share the
+     * same length. A synthetic / expression vector shorter than the plot's
+     * scale (e.g. `fft(1)` or `fft(vector(5))` evaluated on a long .tran plot)
+     * broke that: the scale loops below fill `pl_scale->v_length` entries into
+     * the `time`/`xscale` buffers that were sized by `length`, overrunning the
+     * heap; and `span` reads `pl_scale->v_realdata[length-1]`. Require a real
+     * input of length >= 2 whose scale is at least as long, and size the
+     * buffers for the largest fill (below). */
+    if (length < 2 || pl->pl_scale->v_length < length) {
+        fprintf(cp_err, "Error: fft/ifft needs an input vector of length >= 2 "
+                        "with a scale at least as long\n");
+        return (NULL);
+    }
 
 #ifdef HAVE_LIBFFTW3
     if (type == VF_COMPLEX)
@@ -612,6 +639,14 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         N <<= 1;
         M++;
     }
+    /* Enhancement-225: the Green's real/complex FFT (rffts/ffts) requires
+     * M >= 3 (N >= 8): its bit-reversal tables (BRLowArray) are only built for
+     * M > 2 by fftInit(), so a shorter transform dereferences unallocated
+     * memory and corrupts the heap. Zero-pad a short input up to 8 points. */
+    if (M < 3) {
+        M = 3;
+        N = 8;
+    }
     if (type == VF_COMPLEX)
         fpts = N;
     else
@@ -620,9 +655,20 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
 
     *newtype = VF_COMPLEX;
 
-    time = alloc_d(length);
+    /* Enhancement-225: size `time` for the scale-length fill (SV_TIME copies
+     * `pl_scale->v_length` entries) and `xscale` for the largest of the scale
+     * length, the data length and `fpts` (the frequency-scale vector `sv` is
+     * created with `fpts` points using `xscale` as its data). */
+    time = alloc_d(pl->pl_scale->v_length);
 
-    xscale = TMALLOC(double, length);
+    {
+        int xsz = pl->pl_scale->v_length;
+        if (length > xsz)
+            xsz = length;
+        if (fpts > xsz)
+            xsz = fpts;
+        xscale = TMALLOC(double, xsz);
+    }
 
     if (pl->pl_scale->v_type == SV_TIME) { /* calculate the frequency from time */
 
@@ -745,7 +791,17 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         *newlength = N;
         outdata = alloc_c(N);
 
-        scale = (double) N;
+        /* Enhancement-306: normalise by the number of INPUT samples, not by the
+           zero-padded transform size. Green's radix-2 kernel pads `length` samples
+           up to the next power of two N, but zero padding only interpolates the
+           spectrum -- it adds no signal, so it must not change an amplitude. The
+           unambiguous case is bin 0: X[0] is the sum of the samples = D*length for
+           a DC offset D, so dividing by N reads back D*length/N instead of D, and
+           "a DC value cannot depend on how many samples were taken". This is the
+           twin of the Enhancement-241 bug, which fixed the identical mistake in the
+           `fft` COMMAND (frontend/com_fft.c, scale = length/2) but not here in the
+           vector-expression function reached by `let F = fft(v)`. */
+        scale = (double) length;
         for (i = 0; i < N; i++) {
             outdata[i].cx_real = datax[2*i]/scale;
             outdata[i].cx_imag = datax[2*i+1]/scale;
@@ -803,7 +859,17 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         rffts(datax, M, 1);
         fftFree();
 
-        scale = ((double)N)/2;
+        /* Enhancement-306: normalise by the number of INPUT samples, not the
+           zero-padded transform size -- the FFTW twin four lines up already
+           uses ((double)length)/2.0. Green's radix-2 kernel pads `length`
+           samples to the next power of two N, but zero padding only
+           interpolates the spectrum; it adds no signal and must not change an
+           amplitude. Bin 0 is the unambiguous case: X[0] is the sum of the
+           samples = D*length for a DC offset D, so dividing by N reads back
+           D*length/N. This is the twin of Enhancement-241, which fixed the
+           identical mistake in the `fft` COMMAND (frontend/com_fft.c) but not
+           here in the vector-expression function reached by `let F = fft(v)`. */
+        scale = ((double)length)/2;
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         outdata[0].cx_real = datax[0]/scale/2.0;
         outdata[0].cx_imag = 0.0;

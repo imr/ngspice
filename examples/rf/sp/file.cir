@@ -1,0 +1,85 @@
+Example circuit to read a Touchstone-format parameter file.
+
+* This file contains an an analog filter circuit; SP and AC analyses are run
+* and the S-parameters are saved in a file.  It also contains a behavioural
+* circuit that reproduces the original from its saved S-parameters.
+* Results from the two versions are plotted together for comparison.
+* The behavioural circuit also illustrates the use of a string-valued
+* sub-circuit parameter to pass a file name.
+
+* Derived from: Qucs 1.0.2 C:/Users/Tom Hajjar/.qucs - S/S-parameter_files_ngspice_prj/137MHz_BPF.sch
+
+* Original circuit for SP analysis
+
+VP2 filter_out 0 dc 0 ac 0.316228 SIN(0 0.316228 1G) portnum 2 z0 50
+VP1 _net1 0 dc 0 ac 0.316228 SIN(0 0.316228 1G) portnum 1 z0 50
+C1 _net2 _net1  4.7P 
+C5 _net3 filter_out  4.7P
+C3 _net3 _net2  1P 
+C4 _net3 0  15P 
+C2 0 _net2  15P 
+L2 0 _net3  66N 
+L1 0 _net2  66N 
+
+.csparam Rbase=50 ; This is required by "wrs2p", below.
+
+* A version derived from extracted s-parameters, with option for subcircuit.
+
+VP3 net1 0 dc 0 ac 0.316228 ; Same as VP1 but that must not be loaded.
+ri net1 sin 50
+X1 sin sp_model_out 0 s2p_generic touchstone="137MHz_BPF.s2p"
+ro sp_model_out 0 50
+
+* Control section, run simulations.
+
+.control
+* Run an SP analysis, derive group delay, write a Touchstone file
+* Use this Touchstone file for vector fitting by pre_snp, thus get a file 
+* new_137MHz_BPF.nport
+SP LIN 71 107MEG 167MEG
+let Group_Delay = -1*deriv(cph(S_2_1))/(2*pi)
+wrs2p  new_137MHz_BPF.s2p
+pre_snp -native new_137MHz_BPF.s2p
+
+* Now run AC analysis
+
+alter vp2 ac = 0
+AC LIN 71 107MEG 167MEG
+set xbrushwidth=2
+display
+plot group_delay(filter_out) sp1.Group_Delay group_delay(sp_model_out)
+plot db(filter_out) cph(filter_out) db(sp_model_out) cph(sp_model_out)
+.endc
+
+* Subcircuit for SP behavioral device
+* The touchstone file has:
+*   HZ S RI R 50
+*   Z1 = 50 Z2 = 50
+* so default impedences may be used with it.
+
+.SUBCKT s2p_generic  1 2 3 touchstone="device.sp2" z1=50 z2=50
+* Pin 3 is the reference plane (usually it should be connected to GND)
+R1N 1 100 {-z1}
+R1P 100 101 {2*z1}
+R2N 2 200 {-z2}
+R2P 200 201 {2*z2}
+
+* S11 FREQ R_I
+ A0101 %vd 100 3 %vd 101 102 m_a0101
+ .model m_a0101 xfer file=touchstone span=9
+
+* S12 FREQ R_I
+ A0102 %vd 200 3 %vd 102 3 m_a0102
+ .model m_a0102 xfer file=touchstone span=9 offset=3
+
+* S21 FREQ R_I
+ A0201 %vd 100 3 %vd 201 202 m_a0201
+ .model m_a0201 xfer file=touchstone span=9 offset=5
+
+* S22 FREQ R_I
+ A0202 %vd 200 3 %vd 202 3 m_a0202
+ .model m_a0202 xfer file=touchstone span=9 offset=7
+
+.ENDS
+
+.END

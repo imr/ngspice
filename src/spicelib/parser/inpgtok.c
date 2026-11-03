@@ -187,6 +187,16 @@ INPgetNetTok(char **line, char **token, int gobble)
             break;
         if (*point == ',')
             break;
+        /* '(' must terminate a token here, matching the leading-garbage
+           skip above (which already treats a leading '(' as a boundary)
+           and matching INPgetTok(). Without this, a token immediately
+           followed by '(' with no space -- e.g. an OSDI .model card's
+           `modname devtype(p1=v1 p2=v2)`, no space before '(' -- gets
+           misparsed as one token spanning into the parameter list,
+           swallowing the opening paren and the first parameter's name
+           together, silently dropping that parameter's value. */
+        if (*point == '(')
+            break;
         if (*point == ')')
             break;
     }

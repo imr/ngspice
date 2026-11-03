@@ -702,6 +702,342 @@ dot_pss(char *line, void *ckt, INPtables *tab, struct card *current,
     return (0);
 }
 /* SP */
+
+/* Enhancement-122: Periodic AC (PAC). Runs PSS then sweeps a small-signal input
+ * frequency, solving the harmonic conversion matrix at each point. Reuses the PSS
+ * analysis (the PAC sweep runs off the retained periodic operating point) with the
+ * extra pac_* parameters set. */
+static int
+dot_pac(char *line, void *ckt, INPtables *tab, struct card *current,
+        void *task, void *gnode, JOB *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *nname;		/* the oscNode name */
+    CKTnode *nnode;		/* the oscNode node */
+    int which;			/* which analysis we are performing */
+    char *steptype;		/* pac sweep type: dec/oct/lin */
+
+    NG_IGNORE(gnode);
+    NG_IGNORE(current);
+
+    /* .pac Fguess StabTime OscNode Points Harmonics SC_iter Steady_coeff
+     *      <DEC|OCT|LIN> NumPts Fstart Fstop */
+    which = ft_find_analysis("PSS");
+    if (which == -1) {
+        LITERR("Periodic AC (PAC) analysis unsupported.\n");
+        return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Periodic AC Analysis", &foo, task));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Fguess */
+    GCA(INPapName, (ckt, which, foo, "fguess", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* StabTime */
+    GCA(INPapName, (ckt, which, foo, "stabtime", parm));
+
+    INPgetNetTok(&line, &nname, 0);
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp));	/* OscNode given as string */
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
+    GCA(INPapName, (ckt, which, foo, "points", parm));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS harmonics */
+    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* SC iterations */
+    GCA(INPapName, (ckt, which, foo, "sc_iter", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Steady coefficient */
+    GCA(INPapName, (ckt, which, foo, "steady_coeff", parm));
+
+    /* PAC sweep tail: <DEC|OCT|LIN> NumPts Fstart Fstop */
+    INPgetTok(&line, &steptype, 1);
+    ptemp.iValue = (strcmp(steptype, "dec") == 0) ? 1 :
+                   (strcmp(steptype, "oct") == 0) ? 2 : 0;	/* default LIN */
+    tfree(steptype);
+    GCA(INPapName, (ckt, which, foo, "pac_step", &ptemp));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* number of points */
+    GCA(INPapName, (ckt, which, foo, "pac_points", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstart */
+    GCA(INPapName, (ckt, which, foo, "pac_fstart", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstop */
+    GCA(INPapName, (ckt, which, foo, "pac_fstop", parm));
+
+    {   /* optional trailing maxsideband: output conversion sidebands each side */
+        char *p = line;
+        while (*p == ' ' || *p == '\t')
+            p++;
+        if (*p) {
+            parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
+            GCA(INPapName, (ckt, which, foo, "pac_maxsb", parm));
+        }
+    }
+
+    ptemp.iValue = 1;						/* enable the PAC sweep */
+    GCA(INPapName, (ckt, which, foo, "pac", &ptemp));
+
+    return (0);
+}
+
+/* Enhancement-132: Periodic S-parameters (PSP). Runs PSS then, for each RF port,
+ * injects through the harmonic conversion matrix and forms the periodic scattering
+ * matrix vs input frequency. Same PSS params + sweep tail as .pac; the excitation is
+ * the netlist's RF ports (portnum/z0), so there is no output node. */
+static int
+dot_psp(char *line, void *ckt, INPtables *tab, struct card *current,
+        void *task, void *gnode, JOB *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *nname;		/* the oscNode name */
+    CKTnode *nnode;		/* the oscNode node */
+    int which;			/* which analysis we are performing */
+    char *steptype;		/* psp sweep type: dec/oct/lin */
+
+    NG_IGNORE(gnode);
+    NG_IGNORE(current);
+
+    /* .psp Fguess StabTime OscNode Points Harmonics SC_iter Steady_coeff
+     *      <DEC|OCT|LIN> NumPts Fstart Fstop [maxsideband] */
+    which = ft_find_analysis("PSS");
+    if (which == -1) {
+        LITERR("Periodic S-parameter (PSP) analysis unsupported.\n");
+        return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Periodic S-parameter Analysis", &foo, task));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Fguess */
+    GCA(INPapName, (ckt, which, foo, "fguess", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* StabTime */
+    GCA(INPapName, (ckt, which, foo, "stabtime", parm));
+
+    INPgetNetTok(&line, &nname, 0);
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp));	/* OscNode given as string */
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
+    GCA(INPapName, (ckt, which, foo, "points", parm));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS harmonics */
+    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* SC iterations */
+    GCA(INPapName, (ckt, which, foo, "sc_iter", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Steady coefficient */
+    GCA(INPapName, (ckt, which, foo, "steady_coeff", parm));
+
+    /* PSP sweep tail: <DEC|OCT|LIN> NumPts Fstart Fstop */
+    INPgetTok(&line, &steptype, 1);
+    ptemp.iValue = (strcmp(steptype, "dec") == 0) ? 1 :
+                   (strcmp(steptype, "oct") == 0) ? 2 : 0;	/* default LIN */
+    tfree(steptype);
+    GCA(INPapName, (ckt, which, foo, "pac_step", &ptemp));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* number of points */
+    GCA(INPapName, (ckt, which, foo, "pac_points", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstart */
+    GCA(INPapName, (ckt, which, foo, "pac_fstart", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstop */
+    GCA(INPapName, (ckt, which, foo, "pac_fstop", parm));
+
+    {   /* optional trailing maxsideband: output conversion sidebands each side */
+        char *p = line;
+        while (*p == ' ' || *p == '\t')
+            p++;
+        if (*p) {
+            parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
+            GCA(INPapName, (ckt, which, foo, "pac_maxsb", parm));
+        }
+    }
+
+    ptemp.iValue = 1;						/* enable the PSP sweep */
+    GCA(INPapName, (ckt, which, foo, "psp", &ptemp));
+
+    return (0);
+}
+
+/* Enhancement-124: Periodic noise (PNOISE). Runs PSS then folds each device's
+ * noise through the conversion-matrix adjoint over all sidebands. Reuses the PSS
+ * analysis (like .pac) with the pnoise output node, input source, and sweep set. */
+static int
+dot_pnoise(char *line, void *ckt, INPtables *tab, struct card *current,
+           void *task, void *gnode, JOB *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *nname;		/* a node name */
+    char *sname;		/* the input source name */
+    CKTnode *nnode;		/* a node pointer */
+    int which;			/* which analysis we are performing */
+    char *steptype;		/* pnoise sweep type: dec/oct/lin */
+
+    NG_IGNORE(gnode);
+    NG_IGNORE(current);
+
+    /* .pnoise Fguess StabTime OscNode Points Harmonics SC_iter Steady_coeff
+     *         OutNode InSrc <DEC|OCT|LIN> NumPts Fstart Fstop */
+    which = ft_find_analysis("PSS");
+    if (which == -1) {
+        LITERR("Periodic noise (PNOISE) analysis unsupported.\n");
+        return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Periodic Noise Analysis", &foo, task));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Fguess */
+    GCA(INPapName, (ckt, which, foo, "fguess", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* StabTime */
+    GCA(INPapName, (ckt, which, foo, "stabtime", parm));
+    INPgetNetTok(&line, &nname, 0);				/* OscNode */
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
+    GCA(INPapName, (ckt, which, foo, "points", parm));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS harmonics */
+    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* SC iterations */
+    GCA(INPapName, (ckt, which, foo, "sc_iter", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Steady coefficient */
+    GCA(INPapName, (ckt, which, foo, "steady_coeff", parm));
+
+    INPgetNetTok(&line, &nname, 0);				/* OutNode */
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "pnoise_out", &ptemp));
+
+    INPgetTok(&line, &sname, 1);				/* InSrc */
+    INPinsert(&sname, tab);
+    ptemp.uValue = sname;
+    GCA(INPapName, (ckt, which, foo, "pnoise_insrc", &ptemp));
+
+    /* sweep tail: <DEC|OCT|LIN> NumPts Fstart Fstop */
+    INPgetTok(&line, &steptype, 1);
+    ptemp.iValue = (strcmp(steptype, "dec") == 0) ? 1 :
+                   (strcmp(steptype, "oct") == 0) ? 2 : 0;
+    tfree(steptype);
+    GCA(INPapName, (ckt, which, foo, "pac_step", &ptemp));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* number of points */
+    GCA(INPapName, (ckt, which, foo, "pac_points", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstart */
+    GCA(INPapName, (ckt, which, foo, "pac_fstart", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstop */
+    GCA(INPapName, (ckt, which, foo, "pac_fstop", parm));
+
+    {   /* Enhancement-126: optional trailing "cyclo" keyword */
+        char *p = line;
+        while (*p == ' ' || *p == '\t')
+            p++;
+        if (*p) {
+            char *word;
+            INPgetTok(&line, &word, 1);
+            if (strcmp(word, "cyclo") == 0) {
+                ptemp.iValue = 1;
+                GCA(INPapName, (ckt, which, foo, "pnoise_cyclo", &ptemp));
+            } else {
+                fprintf(stderr, "Error: unknown parameter %s on .pnoise - ignored\n", word);
+            }
+            tfree(word);
+        }
+    }
+
+    ptemp.iValue = 1;						/* enable the pnoise sweep */
+    GCA(INPapName, (ckt, which, foo, "pnoise", &ptemp));
+
+    return (0);
+}
+
+/* Enhancement-125: Periodic transfer function (PXF). The adjoint of PAC: runs PSS
+ * then solves Hᵀ Ψ = e_{out,0} and dots Ψ with the netlist AC-source pattern to get
+ * the transfer from the input to a fixed output at each sideband. Reuses the PSS
+ * analysis (like .pac). */
+static int
+dot_pxf(char *line, void *ckt, INPtables *tab, struct card *current,
+        void *task, void *gnode, JOB *foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *nname;		/* a node name */
+    CKTnode *nnode;		/* a node pointer */
+    int which;			/* which analysis we are performing */
+    char *steptype;		/* pxf sweep type: dec/oct/lin */
+
+    NG_IGNORE(gnode);
+    NG_IGNORE(current);
+
+    /* .pxf Fguess StabTime OscNode Points Harmonics SC_iter Steady_coeff
+     *      OutNode <DEC|OCT|LIN> NumPts Fstart Fstop [maxsideband] */
+    which = ft_find_analysis("PSS");
+    if (which == -1) {
+        LITERR("Periodic transfer-function (PXF) analysis unsupported.\n");
+        return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Periodic Transfer Function Analysis", &foo, task));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Fguess */
+    GCA(INPapName, (ckt, which, foo, "fguess", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* StabTime */
+    GCA(INPapName, (ckt, which, foo, "stabtime", parm));
+    INPgetNetTok(&line, &nname, 0);				/* OscNode */
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
+    GCA(INPapName, (ckt, which, foo, "points", parm));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS harmonics */
+    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* SC iterations */
+    GCA(INPapName, (ckt, which, foo, "sc_iter", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Steady coefficient */
+    GCA(INPapName, (ckt, which, foo, "steady_coeff", parm));
+
+    INPgetNetTok(&line, &nname, 0);				/* OutNode */
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "pxf_out", &ptemp));
+
+    /* sweep tail: <DEC|OCT|LIN> NumPts Fstart Fstop [maxsideband] */
+    INPgetTok(&line, &steptype, 1);
+    ptemp.iValue = (strcmp(steptype, "dec") == 0) ? 1 :
+                   (strcmp(steptype, "oct") == 0) ? 2 : 0;
+    tfree(steptype);
+    GCA(INPapName, (ckt, which, foo, "pac_step", &ptemp));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* number of points */
+    GCA(INPapName, (ckt, which, foo, "pac_points", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstart */
+    GCA(INPapName, (ckt, which, foo, "pac_fstart", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* fstop */
+    GCA(INPapName, (ckt, which, foo, "pac_fstop", parm));
+
+    {   /* optional trailing maxsideband */
+        char *p = line;
+        while (*p == ' ' || *p == '\t')
+            p++;
+        if (*p) {
+            parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
+            GCA(INPapName, (ckt, which, foo, "pac_maxsb", parm));
+        }
+    }
+
+    ptemp.iValue = 1;						/* enable the pxf sweep */
+    GCA(INPapName, (ckt, which, foo, "pxf", &ptemp));
+
+    return (0);
+}
 #endif
 
 
@@ -899,6 +1235,22 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CK
         rtn = dot_pss(line, ckt, tab, current, task, gnode, foo);
         goto quit;
         /* SP */
+        /* Enhancement-122: Periodic AC */
+    } else if ((strcmp(token, ".pac") == 0)) {
+        rtn = dot_pac(line, ckt, tab, current, task, gnode, foo);
+        goto quit;
+        /* Enhancement-124: Periodic noise */
+    } else if ((strcmp(token, ".pnoise") == 0)) {
+        rtn = dot_pnoise(line, ckt, tab, current, task, gnode, foo);
+        goto quit;
+        /* Enhancement-125: Periodic transfer function */
+    } else if ((strcmp(token, ".pxf") == 0)) {
+        rtn = dot_pxf(line, ckt, tab, current, task, gnode, foo);
+        goto quit;
+        /* Enhancement-132: Periodic S-parameters */
+    } else if ((strcmp(token, ".psp") == 0)) {
+        rtn = dot_psp(line, ckt, tab, current, task, gnode, foo);
+        goto quit;
 #endif
 #ifdef RFSPICE
     }

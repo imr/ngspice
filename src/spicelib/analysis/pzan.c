@@ -26,13 +26,13 @@ PZan(CKTcircuit *ckt, int reset)
 
     NG_IGNORE(reset);
 
-#ifdef KLU
-    if (ckt->CKTkluMODE) {
-        fprintf(stderr, "Error: Pole/zero analysis is not (yet) supported with 'option KLU'.\n");
-        fprintf(stderr, "    Use 'option sparse' instead.\n");
-        return(E_UNSUPP);
-    }
-#endif
+    /* Pole-zero runs under KLU for the common single-ended (grounded output
+     * reference) case. The one exception is a non-grounded output reference
+     * (balanced/differential output): its zeros phase folds columns
+     * (SMPcAddCol/SMPcZeroCol in CKTpzLoad) at solve time, which KLU's fixed
+     * symbolic factorization cannot survive the way Sparse's dynamic Markowitz
+     * re-ordering does. That case is caught below, after CKTpzSetup determines
+     * job->PZbalance_col. */
 
     error = PZinit(ckt);
     if (error != OK) return error;
@@ -68,6 +68,14 @@ PZan(CKTcircuit *ckt, int reset)
 	error = CKTpzSetup(ckt, PZ_DO_POLES);
 	if (error != OK)
 	    return error;
+#ifdef KLU
+	if (ckt->CKTkluMODE && job->PZbalance_col) {
+	    fprintf(stderr, "Error: pole-zero with a non-grounded output reference "
+		    "node (balanced/differential output) is not supported with "
+		    "'option KLU'; use 'option sparse' for that case.\n");
+	    return(E_UNSUPP);
+	}
+#endif
         error = CKTpzFindZeros(ckt, &job->PZpoleList, &job->PZnPoles);
         if (error != OK)
 	    return(error);
@@ -77,6 +85,14 @@ PZan(CKTcircuit *ckt, int reset)
 	error = CKTpzSetup(ckt, PZ_DO_ZEROS);
 	if (error != OK)
 	    return error;
+#ifdef KLU
+	if (ckt->CKTkluMODE && job->PZbalance_col) {
+	    fprintf(stderr, "Error: pole-zero with a non-grounded output reference "
+		    "node (balanced/differential output) is not supported with "
+		    "'option KLU'; use 'option sparse' for that case.\n");
+	    return(E_UNSUPP);
+	}
+#endif
         error = CKTpzFindZeros(ckt, &job->PZzeroList, &job->PZnZeros);
         if (error != OK)
 	    return(error);

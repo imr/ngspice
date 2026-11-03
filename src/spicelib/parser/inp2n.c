@@ -90,8 +90,10 @@ void INP2N(CKTcircuit *ckt, INPtables *tab, struct card *current) {
   mdfast = thismodel->INPmodfast;
   dev = ft_sim->devices[type];
 
-  if (!dev->registry_entry) {
-    LITERR("incorrect model type! Expected OSDI device");
+  /* E-242: the N dispatcher hosts OSDI devices (registry_entry set) and the
+   * native n-port rational device (name "nport"); accept either. */
+  if (!dev->registry_entry && strcmp(dev->name, "nport") != 0) {
+    LITERR("incorrect model type! Expected OSDI or nport device");
     return;
   }
 

@@ -117,6 +117,14 @@ void ft_ckspace(void)
        The caller then has to take care of memory available */
     return;
 #else
+    /* warn once per excursion above the threshold, not on every check */
+    static bool warned = false;
+
+    /* the same opt-out the outitf.c output-size estimate honors */
+    if (cp_getvar("no_mem_check", CP_BOOL, NULL, 0)) {
+        return;
+    }
+
     const unsigned long long freemem = getAvailableMemorySize();
     const unsigned long long usage = getCurrentRSS();
 
@@ -126,13 +134,18 @@ void ft_ckspace(void)
 
     const unsigned long long avail = usage + freemem;
     if ((double) usage > (double) avail * 0.95) {
-        (void) fprintf(cp_err,
-                "Warning - approaching max data size: "
-                "current size = ");
-        fprintmem(cp_err, usage);
-        (void) fprintf(cp_err, ", limit = ");
-        fprintmem(cp_err, avail);
-        (void) fprintf(cp_err, "\n");
+        if (!warned) {
+            (void) fprintf(cp_err,
+                    "Warning - approaching max data size: "
+                    "current size = ");
+            fprintmem(cp_err, usage);
+            (void) fprintf(cp_err, ", limit = ");
+            fprintmem(cp_err, avail);
+            (void) fprintf(cp_err, "\n");
+            warned = true;
+        }
+    } else if ((double) usage < (double) avail * 0.90) {
+        warned = false; /* re-arm after dropping clearly below the threshold */
     }
 #endif
 } /* end of function ft_chkspace */

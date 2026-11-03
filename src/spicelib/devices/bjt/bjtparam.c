@@ -31,11 +31,11 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->BJTarea = value->rValue;
             here->BJTareaGiven = TRUE;
             break;
-	case BJT_AREAB:
+        case BJT_AREAB:
             here->BJTareab = value->rValue;
             here->BJTareabGiven = TRUE;
             break;   
-	case BJT_AREAC:
+        case BJT_AREAC:
             here->BJTareac = value->rValue;
             here->BJTareacGiven = TRUE;
             break;     
@@ -81,6 +81,7 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
                     return(E_BADPARM);
             }
             break;
+
         default:
             return(E_BADPARM);
     }

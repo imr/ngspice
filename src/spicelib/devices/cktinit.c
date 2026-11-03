@@ -56,9 +56,9 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 #ifdef XSPICE
     sckt->CKTadevFlag = 0; /* flag indicates A devices in the circuit */
 #endif
-    sckt->CKTtranMaxIter = 10;
+    sckt->CKTtranMaxIter = 100;
     sckt->CKTdcMaxIter = 100;
-    sckt->CKTdcTrcvMaxIter = 50;
+    sckt->CKTdcTrcvMaxIter = 100;
     sckt->CKTintegrateMethod = TRAPEZOIDAL;
     sckt->CKTorder = 1;
     sckt->CKTmaxOrder = 2;
@@ -119,7 +119,6 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->enh->conv_limit.enabled = MIF_TRUE;
     sckt->enh->conv_limit.step = 0.25;
     sckt->enh->conv_limit.abs_step = 0.1;
-    sckt->enh->rshunt_data.enabled = MIF_FALSE;
 
 /* gtri - end - wbk - allocate/initialize substructs */
 

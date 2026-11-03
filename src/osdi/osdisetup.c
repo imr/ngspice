@@ -125,6 +125,27 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
   return num_nodes;
 }
 
+/* For every node index returned by collapse_nodes, find the descriptor index
+ * of the node that represents it. Needed because collapsing renumbers the
+ * nodes: descr->nodes[i] is only correct while nothing has been collapsed.
+ * collapse_nodes keeps the smaller index as representative. */
+static void repr_nodes(const OsdiDescriptor *descr, void *inst, uint32_t *repr,
+                       uint32_t num_nodes) {
+  uint32_t *node_mapping =
+      (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
+
+  for (uint32_t i = 0; i < num_nodes; i++) {
+    repr[i] = UINT32_MAX;
+  }
+
+  for (uint32_t i = 0; i < descr->num_nodes; i++) {
+    uint32_t mapped = node_mapping[i];
+    if (mapped < num_nodes && repr[mapped] == UINT32_MAX) {
+      repr[mapped] = i;
+    }
+  }
+}
+
 /* replace node mapping local to the current instance (created by
  * collapse_nodes) with global node indicies allocated with CKTmkVolt */
 static void write_node_mapping(const OsdiDescriptor *descr, void *inst,
@@ -199,6 +220,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
   /* setup a temporary buffer */
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
+  uint32_t *node_repr = TMALLOC(uint32_t, descr->num_nodes);
 
   /* determine the number of states required by each instance */
   int num_states = (int)descr->num_states;
@@ -216,8 +238,9 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     descr->setup_model((void *)&handle, model, sim_params, &init_info);
     res = handle_init_info(init_info, descr);
     if (res) {
-      errRtn = "OSDI setup_model";
-      continue;
+        fprintf(stderr, "Error in model %s\n", gen_model->GENmodName);
+        errRtn = "OSDI setup_model";
+        return res;
     }
 
     for (gen_inst = gen_model->GENinstances; gen_inst;
@@ -254,25 +277,31 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                             connected_terminals, sim_params, &init_info);
       res = handle_init_info(init_info, descr);
       if (res) {
-        errRtn = "OSDI setup_instance";
-        continue;
+          fprintf(stderr, "Error in instance (or model for instance) %s\n", gen_inst->GENname);
+          errRtn = "OSDI setup_instance";
+          return res;
       }
 
       /* setup the instance nodes */
 
       uint32_t num_nodes = collapse_nodes(descr, inst, connected_terminals);
+      repr_nodes(descr, inst, node_repr, num_nodes);
       /* copy terminals */
       memcpy(node_ids, gen_inst + 1, sizeof(int) * connected_terminals);
       /* create internal nodes as required */
       for (uint32_t i = connected_terminals; i < num_nodes; i++) {
+        const OsdiNode *node = &descr->nodes[node_repr[i]];
         // TODO handle currents  correctly
-        if (descr->nodes[i].is_flow) {
-          error = CKTmkCur(ckt, &tmp, gen_inst->GENname, descr->nodes[i].name);
+        if (node->is_flow) {
+          error = CKTmkCur(ckt, &tmp, gen_inst->GENname, node->name);
         } else {
-          error = CKTmkVolt(ckt, &tmp, gen_inst->GENname, descr->nodes[i].name);
+          error = CKTmkVolt(ckt, &tmp, gen_inst->GENname, node->name);
         }
-        if (error)
+        if (error) {
+          free(node_repr);
+          free(node_ids);
           return (error);
+        }
         node_ids[i] = (uint32_t)tmp->number;
         // TODO nodeset?
       }
@@ -281,7 +310,45 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
       /* now that we have the node mapping we can create the matrix entries */
       err = init_matrix(matrix, descr, inst);
       if (err) {
+        free(node_repr);
+        free(node_ids);
         return err;
+      }
+
+      /* Allocate extra matrix entries and waveform history for absdelay */
+      if (entry->experimental && descr->absdelay_count > 0) {
+        uint32_t *node_mapping =
+            (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
+        OsdiExtraInstData *extra =
+            osdi_extra_instance_data(entry, gen_inst);
+        uint32_t n = descr->absdelay_count;
+        
+        extra->delay_jac_y = TMALLOC(double *, n);
+        extra->delay_jac_z = TMALLOC(double *, n);
+        extra->delay_jac_y_csc = TMALLOC(double *, n);
+        extra->delay_jac_z_csc = TMALLOC(double *, n);
+        extra->delay_jac_y_cx = TMALLOC(double *, n);
+        extra->delay_jac_z_cx = TMALLOC(double *, n);
+        extra->delay_hist  = TMALLOC(double *, n);
+        extra->delay_hist_cap = 0;
+
+        for (uint32_t k = 0; k < n; k++) {
+          int y_spice = (int)node_mapping[descr->absdelays[k].y_node];
+          int z_spice = (int)node_mapping[descr->absdelays[k].z_node];
+          
+          extra->delay_jac_y[k] = SMPmakeElt(matrix, z_spice, y_spice);
+          extra->delay_jac_z[k] = SMPmakeElt(matrix, z_spice, z_spice);
+          extra->delay_jac_y_csc[k] = NULL;
+          extra->delay_jac_z_csc[k] = NULL;
+          extra->delay_jac_y_cx[k]  = NULL;
+          extra->delay_jac_z_cx[k]  = NULL;
+          extra->delay_hist[k]  = NULL;
+          if (!extra->delay_jac_y[k] || !extra->delay_jac_z[k]) {
+            free(node_repr);
+            free(node_ids);
+            return E_NOMEM;
+          }
+        }
       }
 
       /* reserve space in the state vector*/
@@ -291,6 +358,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     }
   }
 
+  free(node_repr);
   free(node_ids);
 
   return res;
@@ -366,6 +434,27 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
   return res;
 }
 
+/* Release the absdelay buffers of one instance. OSDIunsetup runs before
+ * every OSDIsetup, so without this each analysis leaks a fresh set and
+ * orphans the previous one. tfree clears the pointers, so a second unsetup
+ * is a no-op and the next setup starts from a known state. */
+static void free_absdelay_data(OsdiExtraInstData *extra, uint32_t n) {
+  if (extra->delay_hist) {
+    for (uint32_t k = 0; k < n; k++) {
+      tfree(extra->delay_hist[k]);
+    }
+    tfree(extra->delay_hist);
+  }
+  extra->delay_hist_cap = 0;
+
+  tfree(extra->delay_jac_y);
+  tfree(extra->delay_jac_z);
+  tfree(extra->delay_jac_y_csc);
+  tfree(extra->delay_jac_z_csc);
+  tfree(extra->delay_jac_y_cx);
+  tfree(extra->delay_jac_z_cx);
+}
+
 /* delete internal nodes
  */
 extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
@@ -382,6 +471,11 @@ extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
     for (gen_inst = gen_model->GENinstances; gen_inst != NULL;
          gen_inst = gen_inst->GENnextInstance) {
       void *inst = osdi_instance_data(entry, gen_inst);
+
+      if (entry->experimental && descr->absdelay_count > 0) {
+        free_absdelay_data(osdi_extra_instance_data(entry, gen_inst),
+                           descr->absdelay_count);
+      }
 
       // reset is collapsible
       bool *collapsed = (bool *)(((char *)inst) + descr->collapsed_offset);
@@ -482,6 +576,9 @@ int OSDIbindCSC(GENmodel *inModel, CKTcircuit *ckt) {
   /* setup a temporary buffer 
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);*/
 
+  BindElement *bindings = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO;
+  size_t nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ;
+
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
     /* void *model = osdi_model_data(gen_model); unused */
     for (gen_inst = gen_model->GENinstances; gen_inst;
@@ -491,6 +588,40 @@ int OSDIbindCSC(GENmodel *inModel, CKTcircuit *ckt) {
       int err = init_matrix_klu(ckt->CKTmatrix, descr, inst, matrix_ptrs);
       if (err != (OK)) {
         return err;
+      }
+
+      /* Rebind absdelay Jacobian pointers from COO to KLU CSC format.
+       * init_matrix_klu only handles descr->jacobian_entries; the extra
+       * delay_jac_y/z pointers allocated in OSDIsetup still point into the
+       * COO buffer and must be rebound here so absdelay_stamp_dc/osdiacld
+       * write into the live KLU matrix. */
+      if (entry->experimental && descr->absdelay_count > 0) {
+        OsdiExtraInstData *extra = osdi_extra_instance_data(entry, gen_inst);
+        BindElement tmp;
+        for (uint32_t k = 0; k < descr->absdelay_count; k++) {
+          if (extra->delay_jac_y[k]) {
+            tmp.COO = extra->delay_jac_y[k];
+            BindElement *m = (BindElement *)bsearch(&tmp, bindings, nz,
+                                                    sizeof(BindElement),
+                                                    BindCompare);
+            if (m) {
+              extra->delay_jac_y_csc[k] = m->CSC;
+              extra->delay_jac_y_cx[k]  = m->CSC_Complex;
+              extra->delay_jac_y[k]     = m->CSC;
+            }
+          }
+          if (extra->delay_jac_z[k]) {
+            tmp.COO = extra->delay_jac_z[k];
+            BindElement *m = (BindElement *)bsearch(&tmp, bindings, nz,
+                                                    sizeof(BindElement),
+                                                    BindCompare);
+            if (m) {
+              extra->delay_jac_z_csc[k] = m->CSC;
+              extra->delay_jac_z_cx[k]  = m->CSC_Complex;
+              extra->delay_jac_z[k]     = m->CSC;
+            }
+          }
+        }
       }
     }
   }
@@ -518,6 +649,22 @@ int OSDIupdateCSC(GENmodel *inModel, CKTcircuit *ckt, bool complex) {
       int err = update_matrix_klu(descr, inst, matrix_ptrs, complex);
       if (err != (OK)) {
         return err;
+      }
+
+      /* Switch the absdelay delay-row pointers between the real (CSC) and
+       * complex (CSC_Complex) KLU arrays, mirroring the regular Jacobian.
+       * Without this, the AC complex solve would write the delay stamps into
+       * the unused real array, leaving the delay rows empty -> singular. */
+      if (entry->experimental && descr->absdelay_count > 0) {
+        OsdiExtraInstData *extra = osdi_extra_instance_data(entry, gen_inst);
+        for (uint32_t k = 0; k < descr->absdelay_count; k++) {
+          if (extra->delay_jac_y_csc[k])
+            extra->delay_jac_y[k] =
+                complex ? extra->delay_jac_y_cx[k] : extra->delay_jac_y_csc[k];
+          if (extra->delay_jac_z_csc[k])
+            extra->delay_jac_z[k] =
+                complex ? extra->delay_jac_z_cx[k] : extra->delay_jac_z_csc[k];
+        }
       }
     }
   }

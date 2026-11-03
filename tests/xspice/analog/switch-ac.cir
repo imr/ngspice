@@ -1,0 +1,42 @@
+Switch AC conductance, normalized control derivative, and input loading
+.options trtol=1
+VDR IN 0 DC .1 AC 1
+VCTRL DRIVE 0 DC .2
+RC DRIVE CTRL 1k
+AP %gd(CTRL 0) %gd(IN OP) PS
+AA %vd(CTRL 0) %gd(IN OA) AS
+RP OP 0 1k
+RA OA 0 1k
+.model PS pswitch(r_on=100 r_off=10000 cntl_on=.2 cntl_off=0 r_cntl_in=1k)
+.model AS aswitch(r_on=100 r_off=10000 cntl_on=.2 cntl_off=0 log=true limit=true)
+.control
+set noaskquit
+set noacct
+let const.failures = 0
+ac lin 1 1 1
+if abs(real(v(op))-.5) > 1e-8
+    let const.failures = const.failures + 1
+end
+if abs(real(v(oa))-.5) > 1e-8
+    let const.failures = const.failures + 1
+end
+alter @vdr[acmag] = 0
+alter @vctrl[acmag] = 1
+ac lin 1 1 1
+if abs(real(v(ctrl))-.5) > 1e-8
+    let const.failures = const.failures + 1
+end
+if abs(real(v(op))-.4317347049363836) > 1e-8
+    let const.failures = const.failures + 1
+end
+if abs(real(v(oa))-.28782313662425575) > 1e-8
+    let const.failures = const.failures + 1
+end
+if const.failures > 0
+    echo "ERROR: switch AC Jacobian regression failed"
+    quit 1
+end
+echo "INFO: switch AC Jacobian regression passed"
+quit 0
+.endc
+.end

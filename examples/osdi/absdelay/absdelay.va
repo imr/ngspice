@@ -1,0 +1,16 @@
+`include "disciplines.vams"
+
+// absdelay_dly: ideal time delay.
+// The output simply reproduces the input voltage, shifted in time by
+// the fixed parameter td, using the absdelay() analog operator:
+//     V(out) = absdelay(V(in), td)
+module absdelay_dly(in, out);
+    inout in, out;
+    electrical in, out;
+
+    parameter real td = 1n from (0:inf);
+
+    analog begin
+        V(out) <+ absdelay(V(in), td);
+    end
+endmodule

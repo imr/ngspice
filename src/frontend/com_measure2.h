@@ -3,7 +3,7 @@
 
 
 extern int measure_get_precision(void);
-extern int get_measure2(wordlist *wl, double *result, char *out_line, bool auto_check);
+extern int get_measure2(wordlist *wl, double *result, char *out_line, size_t max_out_line, bool auto_check);
 extern int measure_extract_variables(char *line);
 
 void com_dotmeasure(wordlist *wl);

@@ -58,12 +58,41 @@ typedef struct {
 #define ALIGN(pow) __declspec(align(pow))
 #endif
 
+/* Per-absdelay slot descriptor read from the .osdi binary at load time. */
+typedef struct OsdiAbsDelayInfo {
+    uint32_t y_node;      /* OSDI node index for the synthetic input y_synth  */
+    uint32_t z_node;      /* OSDI node index for the output node z             */
+    uint32_t td_offset;   /* byte offset into OSDI instance data for td value  */
+} OsdiAbsDelayInfo;
+
 typedef struct OsdiExtraInstData {
   double dt;
   double temp;
   bool temp_given;
   bool dt_given;
   uint32_t eval_flags;
+
+  /* Waveform history for absdelay — one row per slot, indexed by timepoint. */
+  double **delay_hist;        /* [absdelay_count][capacity]  */
+  uint32_t delay_hist_cap;    /* allocated timepoints in each row  */
+
+  /* Pre-allocated KLU/sparse matrix pointers for the delay equation rows.
+   * delay_jac_y[k] points to the (z_row, y_synth_col) entry,
+   * delay_jac_z[k] points to the (z_row, z_col) entry.
+   * These are the ACTIVE pointers used by the stamping code; under KLU they
+   * are re-pointed between the real (CSC) and complex (CSC_Complex) arrays as
+   * the analysis switches between DC/tran and AC.                */
+  double **delay_jac_y;
+  double **delay_jac_z;
+
+  /* KLU only: saved real and complex CSC pointers for the delay rows, so the
+   * active pointers above can be switched on each DC<->AC transition (mirrors
+   * the regular Jacobian's inst_matrix_ptrs handling).  NULL under SPARSE,
+   * where delay_jac_y/z already address an interleaved [real,imag] entry. */
+  double **delay_jac_y_csc;
+  double **delay_jac_z_csc;
+  double **delay_jac_y_cx;
+  double **delay_jac_z_cx;
 
 } ALIGN(MAX_ALIGN) OsdiExtraInstData;
 

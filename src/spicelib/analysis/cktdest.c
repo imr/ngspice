@@ -86,6 +86,8 @@ CKTdestroy(CKTcircuit *ckt)
     FREE(ckt->CKTrhs);
     FREE(ckt->CKTrhsOld);
     FREE(ckt->CKTrhsSpare);
+    FREE(ckt->CKTlsXk);        /* Enhancement-111 */
+    FREE(ckt->CKTlsD);         /* Enhancement-111 */
     FREE(ckt->CKTirhs);
     FREE(ckt->CKTirhsOld);
     FREE(ckt->CKTirhsSpare);
@@ -105,8 +107,6 @@ CKTdestroy(CKTcircuit *ckt)
 
 #ifdef XSPICE
     EVTdest(ckt->evt);
-    if (ckt->enh->rshunt_data.enabled)
-        FREE(ckt->enh->rshunt_data.diag);
     FREE(ckt->enh);
     FREE(ckt->evt);
 #endif

@@ -69,13 +69,9 @@ NOISEan(CKTcircuit* ckt, int restart)
     g_mif_info.circuit.anal_init = MIF_TRUE;
 #endif
 
-#ifdef KLU
-    if (ckt->CKTkluMODE) {
-        fprintf(stderr, "Error: Noise simulation is not (yet) supported with 'option KLU'.\n");
-        fprintf(stderr, "    Use 'option sparse' instead.\n");
-        return(E_UNSUPP);
-    }
-#endif
+    /* Noise runs under KLU: the adjoint solve it relies on (SMPcaSolve) now
+     * performs a proper transposed solve under KLU (klu_z_tsolve) -- see
+     * SMPcaSolve in src/maths/KLU/klusmp.c. */
 
     NOISEAN* job = (NOISEAN*)ckt->CKTcurJob;
     GENinstance* inst = CKTfndDev(ckt, job->input);

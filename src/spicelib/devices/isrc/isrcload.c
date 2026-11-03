@@ -322,6 +322,9 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                                 time -= here->ISRCcoeffs[here->ISRCrBreakpt];
                                 time -= period * floor(time / period);
                                 time += here->ISRCcoeffs[here->ISRCrBreakpt];
+                                /* prevent glitches */
+                                if (time > end_time)
+                                    time = end_time;
                             }
                             else {
                                 value =

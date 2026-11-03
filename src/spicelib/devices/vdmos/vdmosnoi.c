@@ -41,8 +41,9 @@ VDMOSnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     /* define the names of the noise sources */
 
     static char *VDMOSnNames[VDMOSNSRCS] = {       /* Note that we have to keep the order */
-    "_rd",              /* noise due to rd */        /* consistent with thestrchr definitions */
-    "_rs",              /* noise due to rs */        /* in VDMOSdefs.h */
+    "_rd",              /* noise due to rd */      /* consistent with thestrchr definitions */
+    "_rg",              /* noise due to rg */      /* in VDMOSdefs.h */
+    "_rs",              /* noise due to rs */
     "_id",              /* noise due to id */
     "_1overf",          /* flicker (1/f) noise */
     ""                  /* total transistor noise */
@@ -50,15 +51,9 @@ VDMOSnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
     for (model=firstModel; model != NULL; model=VDMOSnextModel(model)) {
 
-    /* Oxide capacitance can be zero in MOS level 1.  Since this will give us problems in our 1/f */
-    /* noise model, we ASSUME an actual "tox" of 1e-7 */
-
-    if (model->VDMOSoxideCapFactor == 0.0) {
-        coxSquared = 3.9 * 8.854214871e-12 / 1e-7;
-        } else {
-        coxSquared = model->VDMOSoxideCapFactor;
-        }
+    coxSquared = model->VDMOSoxideCapFactor;
     coxSquared *= coxSquared;
+
     for (inst=VDMOSinstances(model); inst != NULL; inst=VDMOSnextInstance(inst)) {
         
         switch (operation) {
@@ -91,13 +86,16 @@ VDMOSnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
         switch (mode) {
 
         case N_DENS:
-            if ((inst->VDMOSthermal) && (model->VDMOSrthjcGiven))  
-                tempRatioSH = inst->VDMOSTempSH / ckt->CKTtemp;
-            else
-                tempRatioSH = 1.0;
+
+            tempRatioSH = inst->VDMOSTempSH / ckt->CKTtemp;
+
             NevalSrc(&noizDens[VDMOSRDNOIZ],&lnNdens[VDMOSRDNOIZ],
                  ckt,THERMNOISE,inst->VDMOSdNodePrime,inst->VDMOSdNode,
                  inst->VDMOSdrainConductance * tempRatioSH);
+
+            NevalSrc(&noizDens[VDMOSRGNOIZ],&lnNdens[VDMOSRGNOIZ],
+                 ckt,THERMNOISE,inst->VDMOSgNodePrime,inst->VDMOSgNode,
+                 inst->VDMOSgateConductance * tempRatioSH);
 
             NevalSrc(&noizDens[VDMOSRSNOIZ],&lnNdens[VDMOSRSNOIZ],
                  ckt,THERMNOISE,inst->VDMOSsNodePrime,inst->VDMOSsNode,
@@ -120,6 +118,7 @@ VDMOSnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                  log(MAX(noizDens[VDMOSFLNOIZ],N_MINLOG));
 
             noizDens[VDMOSTOTNOIZ] = noizDens[VDMOSRDNOIZ] +
+                             noizDens[VDMOSRGNOIZ] +
                              noizDens[VDMOSRSNOIZ] +
                              noizDens[VDMOSIDNOIZ] +
                              noizDens[VDMOSFLNOIZ];

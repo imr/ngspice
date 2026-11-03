@@ -48,6 +48,7 @@
 #include "com_plot.h"
 #include "com_setscale.h"
 #include "com_gnuplot.h"
+#include "com_pyplot.h"
 #include "com_state.h"
 #include "com_chdir.h"
 #include "com_echo.h"
@@ -92,6 +93,7 @@
 #include "spiceif.h" /* for com_snload() and com_snsave() */
 
 #include "com_dl.h"
+#include "snp2va.h"
 
 #ifdef XSPICE
 /* gtri - begin - wbk - add include files */
@@ -212,6 +214,10 @@ struct comm spcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       NULL,
       "file plotargs : Send plot to gnuplot." } ,
+    { "pyplot", com_pyplot, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "[file] plotargs : Send plot to matplotlib (file name optional)." } ,
     { "wrdata", com_write_simple, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, NLOTS,
       NULL,
@@ -220,6 +226,14 @@ struct comm spcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       "file : Send s-param data to file." } ,
+    { "wrsnp", com_write_sparam, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "file [ri|ma|db] [s|y|z] [hz|khz|mhz|ghz] : Send N-port network data to a Touchstone file." } ,
+    { "rdsnp", com_read_sparam, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "file [nports] : Read a Touchstone file into a new plot." } ,
     { "hardcopy", com_hardcopy, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -286,6 +300,10 @@ struct comm spcp_coms[] = {
       NULL,
       "library library ... : Loads a osdi library." } ,
 #endif
+    { "snp", com_pre_snp, FALSE, TRUE,          /* Enhancement-200 (use as `pre_snp`) */
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      NULL,
+      "file.sNp [module] : compile a Touchstone S-parameter file to a Verilog-A n-port OSDI model. Use as `pre_snp file.sNp` (runs before circuit parsing); load the .osdi it writes with `pre_osdi file.osdi`." },
 #ifdef DEVLIB
     { "use", com_use, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
@@ -415,6 +433,54 @@ struct comm spcp_coms[] = {
       { 040, 040, 040, 040 }, E_DEFHMASK, 1, LOTS,
       NULL,
       "devspecs : parmname value : Alter .param parameters." },
+    { "optimize", com_optimize, TRUE, FALSE,     /* Enhancement-130 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "-param name init lo hi ... -analysis <cmd> -minimize <expr> [-maxiter N] [-tol T] [-verbose] : Nelder-Mead parameter optimizer." },
+    { "rfstab", com_rfstab, TRUE, FALSE,         /* Enhancement-253 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "[S11 S12 S21 S22] : two-port stability / gain report from .sp S-parameters. Computes Rollett K, |Delta|, the mu/mu' stability factors and the max stable/available gain (MSG/MAG) per frequency, stores them (k, magdelta, mu, mu_src, gmax, msg, stable) in an 'rfstab' plot, and reports the unconditional-stability verdict. With no args uses the .sp defaults S_1_1 S_1_2 S_2_1 S_2_2." },
+    { "loadpull", com_loadpull, TRUE, FALSE,     /* Enhancement-234 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "-load <R> <L> <C> -out <node> -drive <Vsrc> -f <freq> [-supply <Vsrc>] [-z0 50] [-n 15] [-gmax 0.85] [-nper 20] [-source] : load-pull (or source-pull) analysis for PAs. Sweeps the load impedance Gamma over the Smith chart, runs a large-signal .tran at each point, and stores gamma_re,gamma_im,pout_dbm,gain_db[,pae,eff] in a 'loadpull' plot (contour with `pyplot -contour`)." },
+    { "qpss", com_qpss, TRUE, FALSE,             /* Enhancement-133 / -136 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 3, LOTS,
+      NULL,
+      "expr f1 f2 [periods] [maxorder] | expr f1 f2 hb [K1] [K2] : two-tone quasi-periodic steady state (transient / frequency-domain HB, incommensurate-capable)." },
+    { "qpac", com_qpac, TRUE, FALSE,             /* Enhancement-137 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "f_in | <dec|oct|lin> N fstart fstop : two-tone QPAC -- sideband response (single f) or swept plot vs f_in, around the `qpss ... hb` operating point." },
+    { "qpxf", com_qpxf, TRUE, FALSE,             /* Enhancement-141 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 2, LOTS,
+      NULL,
+      "output_node f_in | output_node <dec|oct|lin> N fstart fstop : two-tone QPXF -- per-sideband transfer at f_in (or swept xf/xf_conv plot), around the `qpss ... hb` operating point." },
+    { "qpnoise", com_qpnoise, TRUE, FALSE,       /* Enhancement-138 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 2, LOTS,
+      NULL,
+      "output_node f_in [cyclo] | output_node <dec|oct|lin> N fstart fstop : two-tone QPnoise -- output/input noise density at f_in (or swept onoise/inoise plot), around the `qpss ... hb` operating point (`cyclo` = cyclostationary PSD)." },
+    { "hbosc", com_hbosc, TRUE, FALSE,           /* Enhancement-140 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 2, LOTS,
+      NULL,
+      "oscnode K [fguess] [tstab] : autonomous harmonic balance -- an oscillator's steady state (harmonics + oscillation frequency), seeded from a transient." },
+    { "phasenoise", com_phasenoise, TRUE, FALSE, /* Enhancement-140 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 2, LOTS,
+      NULL,
+      "fstart fstop [points] : oscillator phase-noise spectrum L(df) via the PPV, around the `hbosc` operating point." },
+    { "hb", com_hb, TRUE, FALSE,                 /* Enhancement-134 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 2, LOTS,
+      NULL,
+      "f0 K [points] [maxiter] : harmonic-balance steady-state spectrum (K harmonics)." },
+    { "savestate", com_savestate, FALSE, TRUE,   /* Enhancement-131 */
+      { 1, 040000, 040000, 040000 }, E_DEFHMASK, 1, 1,
+      NULL,
+      "file : Save the current transient state to a checkpoint file." },
+    { "loadstate", com_loadstate, FALSE, TRUE,   /* Enhancement-131 */
+      { 1, 040000, 040000, 040000 }, E_DEFHMASK, 1, 1,
+      NULL,
+      "file : Restore a transient checkpoint and continue the .tran run." },
     { "resume", com_resume, TRUE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
@@ -759,6 +825,10 @@ struct comm nutcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, LOTS,
       NULL,
       "file plotargs : Send plot to gnuplot." } ,
+    { "pyplot", com_pyplot, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "[file] plotargs : Send plot to matplotlib (file name optional)." } ,
     { "wrdata", com_write_simple, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 2, NLOTS,
       NULL,
@@ -767,6 +837,14 @@ struct comm nutcp_coms[] = {
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
       NULL,
       "file : Send s-param data to file." } ,
+    { "wrsnp", com_write_sparam, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "file [ri|ma|db] [s|y|z] [hz|khz|mhz|ghz] : Send N-port network data to a Touchstone file." } ,
+    { "rdsnp", com_read_sparam, FALSE, TRUE,
+      { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "file [nports] : Read a Touchstone file into a new plot." } ,
     { "hardcopy", com_hardcopy, FALSE, TRUE,
       { 1, 041000, 041000, 041000 }, E_DEFHMASK, 0, LOTS,
       NULL,

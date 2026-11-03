@@ -2,6 +2,7 @@ FFT_tests http://www.idea2ic.com/
 .control
 set units=degrees
 let a = vector(16)
+setscale a
 *plot a vs a
 set pensize = 2
 *=========Need_a_complex_input====================

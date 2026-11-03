@@ -1,0 +1,2 @@
+codemodel @top_builddir@/src/xspice/icm/xtradev/xtradev.cm
+set sourcepath = ( $ngspice_vpath . )

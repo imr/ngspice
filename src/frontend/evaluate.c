@@ -107,6 +107,11 @@ ft_ternary(struct pnode *node)
 
     cond = ft_evaluate(node->pn_left);
 
+    /* Enhancement-225: a condition that fails to evaluate (e.g. `0[3]?...`,
+     * indexing a scalar) returns NULL; guard before dereferencing it. */
+    if (!cond)
+        return NULL;
+
     if (cond->v_link2) {
         fprintf(cp_err, "Error: ft_ternary(), whats that ?\n");
         return NULL;
@@ -134,6 +139,13 @@ ft_ternary(struct pnode *node)
         : node->pn_right->pn_right;
 
     v = ft_evaluate(arg);
+    /* Enhancement-225: the selected branch may fail to evaluate (e.g.
+     * `1?0[3]:9`, indexing a scalar) and return NULL; vec_copy(NULL) crashed. */
+    if (!v) {
+        if (!node->pn_left->pn_value && cond)
+            vec_free(cond);
+        return NULL;
+    }
     d = vec_copy(v);
     vec_new(d);
 

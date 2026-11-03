@@ -9,9 +9,6 @@
   let mc_runs = 10                $ number of runs for monte carlo
   let run = 1                     $ number of the actual run
 
-* Where to find the circuit netlist file MC_2_circ.sp
-  setcs sourcepath = ( D:\Spice_general\ngspice\examples\Monte_Carlo )
-
 * create file for frequency information
   echo Monte Carlo, frequency of R.O. > MC_frequ.log
 

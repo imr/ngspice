@@ -94,16 +94,27 @@ repeat $argc
     if $l > 2                    // Look for xxxx.v
         strslice tail "$base" -2 2
 	strcmp bad "$tail" ".v"
-	if $bad <> 0
-	    set base=""
-	    continue
+	if $bad = 0
+	    let l = $l - 2
+	else
+	    strcmp bad "$tail" "sv"
+	    if ($bad = 0) & ($l > 3) // yyyy.sv?
+		strslice tail "$base" -3 3
+		strcmp bad "$tail" ".sv"
+		if $bad <> 0
+		    continue
+		end
+		let l = $l - 3
+	    else
+		set bad = 1
+		continue
+	    end
 	end
-	let l = $l - 2
-	strslice base "$base" 0 $&l
     else
-        set base=""
+	set bad = 1
         continue
     end
+    strslice base "$base" 0 $&l
 
     dowhile $off >= 0            // Strip leading directories
         strstr off "$base" "$dirsep1"
@@ -121,10 +132,12 @@ repeat $argc
     strstr l "$base" ""          // Check for zero-length string
     if $l > 0
         break
+    else
+	set bad = 1
     end
 end
 
-if index - 1 > $argc
+if $bad
     set base=verilated           // Default name
 end
 

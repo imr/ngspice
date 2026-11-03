@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = include/ngspice include/cppduals/duals misc maths frontend spicelib
-DIST_SUBDIRS = include/ngspice include/cppduals/duals misc maths frontend spicelib xspice ciderlib osdi
+SUBDIRS = include/ngspice misc maths frontend spicelib
+DIST_SUBDIRS = include/ngspice misc maths frontend spicelib xspice ciderlib osdi
 
 if XSPICE_WANTED
 SUBDIRS += xspice
@@ -73,7 +73,6 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/isrc/libisrc.la		\
 	spicelib/devices/hfet1/libhfet.la		\
 	spicelib/devices/hfet2/libhfet2.la		\
-	spicelib/devices/hicum2/libhicum2.la		\
 	spicelib/devices/hisim2/libhisim2.la		\
 	spicelib/devices/hisimhv1/libhisimhv1.la	\
 	spicelib/devices/hisimhv2/libhisimhv2.la	\
@@ -88,6 +87,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/mos6/libmos6.la		\
 	spicelib/devices/mos9/libmos9.la		\
 	spicelib/devices/res/libres.la			\
+	spicelib/devices/nport/libnport.la			\
 	spicelib/devices/soi3/libsoi3.la		\
 	spicelib/devices/sw/libsw.la			\
 	spicelib/devices/txl/libtxl.la			\

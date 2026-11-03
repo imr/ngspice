@@ -41,6 +41,8 @@ extern int sharedsync(double*, double*, double, double, double, int, int*, int);
 extern int ng_ident;      /* for debugging */
 #endif
 
+#define NEWRETRY
+
 #define INIT_STATS() \
 do { \
     startTime = SPfrontEnd->IFseconds();        \
@@ -113,6 +115,78 @@ DCtran(CKTcircuit *ckt,
 #if defined SHARED_MODULE
     int redostep;
 #endif
+    if(ckt->CKTcheckpoint) {
+        /* Enhancement-131: continue a transient run from a checkpoint that was
+           restored from disk (see com_loadstate() in com_checkpoint.c).  The
+           restored circuit already carries the saved CKTtime, CKTdelta,
+           CKTstates[], CKTrhsOld and integration order, so -- unlike a fresh
+           run -- we must NOT reset them or redo the DC operating point.  Unlike
+           the in-memory `resume` path below we also cannot 666-relink an
+           existing output plot (there is none across a reload), so we open a
+           FRESH plot exactly as the restart branch does, then jump straight
+           into the time-stepping loop. */
+        ckt->CKTcheckpoint = 0;             /* one-shot */
+        ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODETRAN | MODEINITPRED;
+        INIT_STATS();
+        firsttime = 0;
+        if(ckt->CKTminBreak == 0)
+            ckt->CKTminBreak = ckt->CKTmaxStep * 5e-5;
+
+#ifdef XSPICE
+        /* The in-memory `resume` inherits these from the original run; a
+           cross-session restore starts a fresh process, so initialise the
+           XSPICE temporary-breakpoint markers (otherwise the stepping loop
+           forces CKTdelta to breakpoint.current - CKTtime = -CKTtime). */
+        g_mif_info.circuit.anal_type = MIF_DC;
+        g_mif_info.breakpoint.current = 1.0e30;
+        g_mif_info.breakpoint.last    = 1.0e30;
+#endif
+
+        /* Build a fresh output plot for the continuation. */
+        error = CKTnames(ckt, &numNames, &nameList);
+        if(error) return(error);
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           ckt->CKTcurJob->JOBname,
+                                           timeUid, IF_REAL,
+                                           numNames, nameList, IF_REAL,
+                                           &(job->TRANplot));
+        tfree(nameList);
+        if(error) return(error);
+
+        if (ckt->CKTsoaCheck)
+            error = CKTsoaInit();
+
+        /* Fix up the breakpoint list for the continuation.  Drop any restored
+           breakpoints at or before the resume time (they are in the past and
+           would yield a negative time step); keep the genuine future ones (e.g.
+           pending source edges).  Then guarantee the (possibly extended) final
+           time is present and that at least two entries exist -- the stepping
+           loop reads CKTbreaks[1].  Sources re-schedule their own future edges
+           as the run proceeds. */
+        if(ckt->CKTbreaks != NULL && ckt->CKTbreakSize > 0) {
+            int nb, w = 0;
+            for(nb = 0; nb < ckt->CKTbreakSize; nb++)
+                if(ckt->CKTbreaks[nb] > ckt->CKTtime + ckt->CKTdelmin)
+                    ckt->CKTbreaks[w++] = ckt->CKTbreaks[nb];
+            ckt->CKTbreakSize = w;
+        }
+        if(ckt->CKTbreaks == NULL || ckt->CKTbreakSize < 1) {
+            if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);
+            ckt->CKTbreaks = TMALLOC(double, 2);
+            if(ckt->CKTbreaks == NULL) return(E_NOMEM);
+            ckt->CKTbreaks[0] = ckt->CKTfinalTime;
+            ckt->CKTbreaks[1] = ckt->CKTfinalTime + ckt->CKTmaxStep;
+            ckt->CKTbreakSize = 2;
+        } else {
+            if(ckt->CKTfinalTime > ckt->CKTtime)
+                CKTsetBreak(ckt, ckt->CKTfinalTime);
+            if(ckt->CKTbreakSize < 2)
+                CKTsetBreak(ckt, ckt->CKTfinalTime + ckt->CKTmaxStep);
+        }
+
+        goto resume;
+    }
     if(restart || ckt->CKTtime == 0) {
         /* dctran() is entered here upon starting transient simulation
            with time 0 and restart 1.
@@ -372,6 +446,12 @@ DCtran(CKTcircuit *ckt,
     /* end LTRA code addition */
 
     error = CKTaccept(ckt);
+#ifdef NEWRETRY
+    /* Keep the accepted solution: a retry after non-convergence starts from it */
+    if (ckt->CKTrhsAccepted)
+        memcpy(ckt->CKTrhsAccepted, ckt->CKTrhs,
+               (size_t) (ckt->CKTrhsSize + 1) * sizeof(double));
+#endif
     /* check if current breakpoint is outdated; if so, clear */
     if (ckt->CKTtime > ckt->CKTbreaks[0])
         CKTclrBreak(ckt);
@@ -432,7 +512,8 @@ DCtran(CKTcircuit *ckt,
        before tran is started.*/
         flag_autostop = check_autostop("tran");
     /* If CKTtime and CKTfinalTime are almost equal, then finish */
-    if (flag_autostop || AlmostEqualUlps(ckt->CKTtime, ckt->CKTfinalTime, 100)) {
+    if (flag_autostop || ckt->CKTtime >= ckt->CKTfinalTime ||
+        AlmostEqualUlps(ckt->CKTtime, ckt->CKTfinalTime, 100)) {
 #ifdef STEPDEBUG
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
@@ -587,15 +668,15 @@ resume:
     }
     /* Try to equalise the last two time steps before the breakpoint,
        if the second step would be smaller than CKTdelta otherwise.*/
-    else if (!(ckt->CKTbreaks[0] == ckt->CKTfinalTime) && ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
+    else if (!AlmostEqualUlps(ckt->CKTtime + ckt->CKTdelta, ckt->CKTfinalTime, 100)
+             && ckt->CKTtime + 1.9 * ckt->CKTdelta > ckt->CKTbreaks[0]) {
         ckt->CKTsaveDelta = ckt->CKTdelta;
-        ckt->CKTdelta = (ckt->CKTbreaks[0] - ckt->CKTtime) / 2.;
+        ckt->CKTdelta = (ckt->CKTbreaks[0] - ckt->CKTtime) / 2.0;
 #ifdef STEPDEBUG
-        fprintf(stdout, "Delta equalising step at time %e with delta %e and breakpoint at %e\n", 
-            ckt->CKTtime, ckt->CKTdelta, ckt->CKTbreaks[0]);
+        fprintf(stdout, "Delta equalising step at time %e with new delta %e,\n remaining time %e and breakpoint at %e\n",
+            ckt->CKTtime, ckt->CKTdelta, ckt->CKTbreaks[0] - ckt->CKTtime, ckt->CKTbreaks[0]);
 #endif
     }
-
 #ifdef SHARED_MODULE
         /* Either directly go to next time step, or modify ckt->CKTdelta depending on
            synchronization requirements. sharedsync() returns 0. */
@@ -731,6 +812,18 @@ resume:
             redostep = 1;
 #endif
             ckt->CKTdelta = ckt->CKTdelta/8;
+#ifdef NEWRETRY
+            /* Retry from the last accepted solution, not from the failed
+               attempt's last iterate. Built-in semiconductors predict their
+               junction voltages from their states in MODEINITPRED, but
+               B sources (asrcload.c) and other devices without a
+               predictor read CKTrhsOld directly: an iterate that ran
+               away, to NaN or far off, would poison every retry, down
+               to "timestep too small". */
+            if (ckt->CKTrhsAccepted)
+                memcpy(ckt->CKTrhsOld, ckt->CKTrhsAccepted,
+                       (size_t) (ckt->CKTrhsSize + 1) * sizeof(double));
+#endif
 #ifdef STEPDEBUG
             (void)printf("delta cut to %g for non-convergence\n",ckt->CKTdelta);
             fflush(stdout);

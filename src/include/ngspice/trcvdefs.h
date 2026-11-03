@@ -25,6 +25,14 @@ Modified: 1999 Paolo Nenzi
 #define TEMP_CODE 1023
 #endif
 
+/* Enhancement-62: sweep type code for a generic instance-parameter sweep
+   (`.dc @inst[param] start stop step`), resolved through the device's own
+   DEVparam/DEVask interface -- works for any device type that exposes a
+   settable real instance parameter, including Verilog-A (OSDI) devices. */
+#ifndef PARAM_CODE
+#define PARAM_CODE 1024
+#endif
+
 typedef struct {
     int JOBtype;
     JOB *JOBnextJob;
@@ -38,6 +46,11 @@ typedef struct {
     IFuid TRCVvName[TRCVNESTLEVEL];     /* source being varied */
     GENinstance *TRCVvElt[TRCVNESTLEVEL];   /* pointer to source */
     int TRCVvType[TRCVNESTLEVEL];   /* type of element being varied */
+    int TRCVvParmId[TRCVNESTLEVEL]; /* Enhancement-62: IFparm id for a
+                                     * PARAM_CODE (@inst[param]) sweep */
+    double TRCVvNow[TRCVNESTLEVEL]; /* Enhancement-62: current value of a
+                                     * PARAM_CODE sweep (devices have no
+                                     * generic readback field to consult) */
     int TRCVset[TRCVNESTLEVEL];     /* flag to indicate this nest level used */
     int TRCVnestLevel;      /* number of levels of nesting called for */
     int TRCVnestState;      /* iteration state during pause */

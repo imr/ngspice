@@ -1,0 +1,26 @@
+*------------ 2. PA metrics
+* behavioral class-A-ish PA
+Vdr dr 0 dc 0 sin(0.3 0.4 1e9)
+Rg dr g 50
+Rgate g 0 200
+Vdd dd 0 dc 5
+Lchoke dd out 1u
+Bdev out 0 I = 0.05*(1 + tanh((v(g)-0.3)/0.15))
+RL out l1 50
+LL l1 l2 1e-15
+CL l2 0 1e-3
+
+.option noinit
+
+.control
+loadpull -load RL LL CL -out out -drive Vdr -supply Vdd -f 1e9 -n 9 -gmax 0.6 -nper 30
+let g_mx=vecmax(gain_db)
+let e_mx=vecmax(eff)
+let p_mx=vecmax(pae)
+let e_mn=vecmin(eff)
+print g_mx e_mx p_mx e_mn
+set xbrushwidth=2
+plot gamma_re gamma_im pout_dbm
+pyplot -contour gamma_re gamma_im pout_dbm
+.endc
+.end

@@ -29,6 +29,75 @@ Modified: 1999 Paolo Nenzi
 static double actval, actdiff;
 #endif
 
+/* Enhancement-62: resolve a `@inst[param]` sweep variable to its instance,
+   device type, and (settable, real-valued) instance-parameter id, through
+   the generic DEVparam/DEVask tables. Returns OK on success. Instance
+   lookup walks every device type comparing names case-insensitively (the
+   sweep name is a raw token, not an interned IFuid, so the DEVnameHash
+   cannot be used). */
+static int
+DCTfindInstParam(CKTcircuit *ckt, const char *name, GENinstance **instOut,
+                 int *typeOut, int *parmOut)
+{
+    char buf[1024];
+    char *lbrack, *rbrack, *parname;
+    GENmodel *model;
+    GENinstance *inst;
+    IFdevice *dev;
+    int type, k;
+
+    if (!name || name[0] != '@' || strlen(name) >= sizeof(buf))
+        return E_NODEV;
+    strcpy(buf, name + 1);
+    lbrack = strchr(buf, '[');
+    rbrack = lbrack ? strchr(lbrack, ']') : NULL;
+    if (!lbrack || !rbrack || rbrack <= lbrack + 1 || lbrack == buf)
+        return E_NODEV;
+    *lbrack = '\0';
+    *rbrack = '\0';
+    parname = lbrack + 1;
+
+    for (type = 0; type < DEVmaxnum; type++) {
+        if (!DEVices[type])
+            continue;
+        for (model = ckt->CKThead[type]; model; model = model->GENnextModel)
+            for (inst = model->GENinstances; inst; inst = inst->GENnextInstance)
+                if (inst->GENname && cieq(inst->GENname, buf)) {
+                    dev = &DEVices[type]->DEVpublic;
+                    for (k = 0; dev->instanceParms && k < *dev->numInstanceParms; k++) {
+                        IFparm *prm = dev->instanceParms + k;
+                        if ((prm->dataType & IF_SET)
+                            && (prm->dataType & IF_VARTYPES) == IF_REAL
+                            && cieq(prm->keyword, parname)) {
+                            *instOut = inst;
+                            *typeOut = type;
+                            *parmOut = prm->id;
+                            return OK;
+                        }
+                    }
+                    return E_BADPARM;
+                }
+    }
+    return E_NODEV;
+}
+
+/* Enhancement-62: set the swept instance parameter to `val` and refresh the
+   device (DEVtemperature re-runs per-model/per-instance setup -- for OSDI
+   devices that is exactly the parameter-change path `alter` + a fresh
+   analysis would take). */
+static void
+DCTsetInstParam(CKTcircuit *ckt, TRCV *job, int i, double val)
+{
+    IFvalue v;
+    int type = job->TRCVvElt[i]->GENmodPtr->GENmodType;
+
+    v.rValue = val;
+    DEVices[type]->DEVparam(job->TRCVvParmId[i], &v, job->TRCVvElt[i], NULL);
+    job->TRCVvNow[i] = val;
+    if (DEVices[type]->DEVtemperature)
+        DEVices[type]->DEVtemperature(ckt->CKThead[type], ckt);
+}
+
 
 int
 DCtrCurv(CKTcircuit *ckt, int restart)
@@ -150,6 +219,27 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             goto found;
         }
 
+        /* Enhancement-62: `.dc @inst[param] start stop step` -- sweep any
+           settable real instance parameter of any device (incl. OSDI). */
+        if (job->TRCVvName[i] && job->TRCVvName[i][0] == '@') {
+            GENinstance *pinst;
+            int ptype, pid;
+            if (DCTfindInstParam(ckt, job->TRCVvName[i], &pinst, &ptype, &pid) == OK) {
+                IFvalue old_v;
+                job->TRCVvElt[i] = pinst;
+                job->TRCVvType[i] = PARAM_CODE;
+                job->TRCVvParmId[i] = pid;
+                if (DEVices[ptype]->DEVask
+                    && DEVices[ptype]->DEVask(ckt, pinst, pid, &old_v, NULL) == OK)
+                    job->TRCVvSave[i] = old_v.rValue;
+                else
+                    job->TRCVvSave[i] = job->TRCVvStart[i];
+                job->TRCVgSave[i] = 1;
+                DCTsetInstParam(ckt, job, i, job->TRCVvStart[i]);
+                goto found;
+            }
+        }
+
         SPfrontEnd->IFerrorf (ERR_FATAL,
                 "DC Transfer Function: Voltage source, current source, or "
                 "resistor named \"%s\" is not in the circuit",
@@ -185,6 +275,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "temp-sweep", UID_OTHER, NULL);
     else if (job->TRCVvType[0] == rcode)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "res-sweep", UID_OTHER, NULL);
+    else if (job->TRCVvType[0] == PARAM_CODE)
+        SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "param-sweep", UID_OTHER, NULL);
     else
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "?-sweep", UID_OTHER, NULL);
 
@@ -261,6 +353,18 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     break;
                 goto nextstep;
             }
+        } else if (job->TRCVvType[i] == PARAM_CODE) { /* @inst[param] sweep */
+            if (SGN(job->TRCVvStep[i]) *
+                (job->TRCVvNow[i] - job->TRCVvStop[i]) >
+                DBL_EPSILON * 1e+03)
+            {
+                i++;
+                firstTime = 1;
+                ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITJCT;
+                if (i > job->TRCVnestLevel)
+                    break;
+                goto nextstep;
+            }
         }
 
         while (--i >= 0)
@@ -279,6 +383,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     job->TRCVvStart[i];
                 RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]), FALSE);
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
+            } else if (job->TRCVvType[i] == PARAM_CODE) {
+                DCTsetInstParam(ckt, job, i, job->TRCVvStart[i]);
             }
 
         /* Rotate state vectors. */
@@ -331,6 +437,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             } else if (job->TRCVvType[0] == TEMP_CODE) {
                 g_mif_info.circuit.evt_step =
                     ckt->CKTtemp - CONSTCtoK;
+            } else if (job->TRCVvType[0] == PARAM_CODE) {
+                g_mif_info.circuit.evt_step = job->TRCVvNow[0];
             }
 
             /* if first time through, call EVTop immediately and save event results */
@@ -374,6 +482,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ckt->CKTtime = ((ISRCinstance *)(job->TRCVvElt[0]))->ISRCdcValue;
         else if (job->TRCVvType[0] == rcode)
             ckt->CKTtime = ((RESinstance *)(job->TRCVvElt[0]))->RESresist;
+        else if (job->TRCVvType[0] == PARAM_CODE)
+            ckt->CKTtime = job->TRCVvNow[0];
         else if (job->TRCVvType[0] == TEMP_CODE)
             ckt->CKTtime = ckt->CKTtemp - CONSTCtoK;
 
@@ -450,6 +560,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 job->TRCVvStep[i];
             RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]), FALSE);
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
+        } else if (job->TRCVvType[i] == PARAM_CODE) { /* @inst[param] */
+            DCTsetInstParam(ckt, job, i,
+                            job->TRCVvNow[i] + job->TRCVvStep[i]);
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temperature */
             ckt->CKTtemp += job->TRCVvStep[i];
 
@@ -500,6 +613,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ckt->CKTtemp = job->TRCVvSave[i];
             inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
+        } else if (job->TRCVvType[i] == PARAM_CODE) {
+            /* value restored; the parameter stays marked "given" (the
+               generic DEVparam interface has no way to clear that) */
+            DCTsetInstParam(ckt, job, i, job->TRCVvSave[i]);
         }
 
     SPfrontEnd->OUTendPlot (plot);

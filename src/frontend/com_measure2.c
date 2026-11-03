@@ -24,6 +24,11 @@ typedef enum {
 } MEASURE_VAL_T;
 
 #define MEASURE_DEFAULT (-1)
+/* Enhancement-225: measure error buffer. Was errbuf[100]; a long measure
+ * expression (its whole string is sprintf'd as the vector name in
+ * "no such vector as '%s'") overran it -> heap/stack smash. Bounded via
+ * snprintf(.., MEAS_ERRBUF_SIZE, ..) at every write below. */
+#define MEAS_ERRBUF_SIZE 512
 #define MEASURE_LAST_TRANSITION (-2)
 
 typedef struct measure
@@ -53,7 +58,8 @@ typedef enum AnalysisType {
     AT_FIND, AT_WHEN,
     AT_AVG, AT_MIN, AT_MAX, AT_RMS, AT_PP,
     AT_INTEG, AT_DERIV,
-    AT_ERR, AT_ERR1, AT_ERR2, AT_ERR3, AT_MIN_AT, AT_MAX_AT
+    AT_ERR, AT_ERR1, AT_ERR2, AT_ERR3, AT_MIN_AT, AT_MAX_AT,
+    AT_PHASE_MARGIN, AT_GAIN_MARGIN
 } ANALYSIS_TYPE_T;
 
 static void measure_errMessage(const char *mName, const char *mFunction,
@@ -66,7 +72,7 @@ is_arith_char2(char c)
     return c != '\0' && strchr("*/<>?:|&^!%\\", c);
 }
 
-bool
+static bool
 str_has_arith_char2(char* s)
 {
     if (*s == '+' || *s == '-')
@@ -236,9 +242,11 @@ measure_function_type(char *operation)
         mFunctionType = AT_RMS;
     else if (strcasecmp(mFunction, "PP") == 0)
         mFunctionType = AT_PP;
-    else if (strcasecmp(mFunction, "INTEG") == 0)
+    else if (strcasecmp(mFunction, "INTEG") == 0 ||
+             strcasecmp(mFunction, "INTEGRAL") == 0)
         mFunctionType = AT_INTEG;
-    else if (strcasecmp(mFunction, "DERIV") == 0)
+    else if (strcasecmp(mFunction, "DERIV") == 0 ||
+             strcasecmp(mFunction, "DERIVATIVE") == 0)
         mFunctionType = AT_DERIV;
     else if (strcasecmp(mFunction, "ERR") == 0)
         mFunctionType = AT_ERR;
@@ -248,6 +256,12 @@ measure_function_type(char *operation)
         mFunctionType = AT_ERR2;
     else if (strcasecmp(mFunction, "ERR3") == 0)
         mFunctionType = AT_ERR3;
+    else if (strcasecmp(mFunction, "PHASE_MARGIN") == 0 ||
+             strcasecmp(mFunction, "PHASEMARGIN") == 0)
+        mFunctionType = AT_PHASE_MARGIN;
+    else if (strcasecmp(mFunction, "GAIN_MARGIN") == 0 ||
+             strcasecmp(mFunction, "GAINMARGIN") == 0)
+        mFunctionType = AT_GAIN_MARGIN;
     else
         mFunctionType = AT_UNKNOWN;
 
@@ -256,6 +270,24 @@ measure_function_type(char *operation)
     return (mFunctionType);
 }
 
+
+/* For AC/SP, a measured item like vdb(out) / vp(out) / vm(out) is a post-processed
+ * output function; only the base vector v(out) can be .save'd. Strip the magnitude/
+ * phase suffix down to v(...)/i(...) so the auto-save pre-pass saves the right thing
+ * (otherwise batch `.meas ac ... vdb(out)' left the node unsaved -> "no data saved
+ * for AC, analysis not run"). Plain v(out) and non-parenthesised tokens pass through.
+ * Caller frees. */
+static char *
+strip_ac_vec(const char *var, const char *analysis)
+{
+    if (cieq((char *) analysis, "ac") || cieq((char *) analysis, "sp")) {
+        char c0 = var[0];
+        const char *paren = strchr(var, '(');
+        if ((c0 == 'v' || c0 == 'V' || c0 == 'i' || c0 == 'I') && paren && paren > var + 1)
+            return tprintf("%c%s", c0, paren);
+    }
+    return copy(var);
+}
 
 /* -----------------------------------------------------------------
  * Function: Parse the measurement line and extract any variables in
@@ -351,16 +383,20 @@ measure_extract_variables(char *line)
                     } else {
                         /* We may have something like V(n1)=1
                            or v(n1)=2 , same with i() */
-                        measure_var = gettoks(variable);
+                        char *sv = strip_ac_vec(variable, analysis);
+                        measure_var = gettoks(sv);
                         com_save2(measure_var, analysis);
+                        tfree(sv);
                         status = FALSE;
                     }
                 }
                 if (variable2) {
                     /* We may have something like  v(n1)=v(n2)
                        v(n2) is handled here, same with i() */
-                    measure_var = gettoks(variable2);
+                    char *sv2 = strip_ac_vec(variable2, analysis);
+                    measure_var = gettoks(sv2);
                     com_save2(measure_var, analysis);
+                    tfree(sv2);
                     status = FALSE;
                 }
             }
@@ -759,6 +795,107 @@ measure_at(
 
 
 /* -----------------------------------------------------------------
+ * Function: measure the DERIVATIVE of a vector at a given scale
+ * point (Enhancement-179 -- .meas DERIV was parsed but never
+ * evaluated: it fell into the 'currently not supported' stub).
+ * A quadratic through the three samples around `at` is
+ * differentiated analytically, handling a nonuniform timestep; at
+ * the interval ends it degrades to the two-point slope.
+ * ----------------------------------------------------------------- */
+static int
+measure_deriv_at(
+    MEASUREPTR meas,            /* in : parsed measurement data request */
+    double at                   /* in : scale value to differentiate at */
+    )
+{
+    int i, j;
+    bool ac_check = FALSE, sp_check = FALSE;
+    struct dvec *d, *dScale;
+
+    if (meas->m_vec == NULL) {
+        fprintf(stderr, "Error: Syntax error in meas line, missing vector\n");
+        return MEASUREMENT_FAILURE;
+    }
+
+    d = vec_get(meas->m_vec);
+    dScale = plot_cur->pl_scale;
+
+    if (d == NULL) {
+        fprintf(cp_err, "Error: no such vector as %s.\n", meas->m_vec);
+        return MEASUREMENT_FAILURE;
+    }
+    if (dScale == NULL || (dScale->v_realdata == NULL && dScale->v_compdata == NULL)) {
+        fprintf(cp_err, "Error: scale vector time, frequency or dc has no data.\n");
+        return MEASUREMENT_FAILURE;
+    }
+
+    if (cieq(meas->m_analysis, "ac"))
+        ac_check = TRUE;
+    else if (cieq(meas->m_analysis, "sp"))
+        sp_check = TRUE;
+    else if (!cieq(meas->m_analysis, "dc") && !d->v_realdata) {
+        fprintf(stderr, "Error: no real data available for measurement (no tran simulation?)\n");
+        return MEASUREMENT_FAILURE;
+    }
+
+    if (d->v_length < 2) {
+        meas->m_measured = NAN;
+        return MEASUREMENT_OK;
+    }
+
+#define DERIV_VAL(idx) (((ac_check || sp_check) && d->v_compdata) ? \
+                        get_value(meas, d, (idx)) : d->v_realdata[(idx)])
+#define DERIV_SCL(idx) (dScale->v_compdata ? dScale->v_compdata[(idx)].cx_real \
+                                           : dScale->v_realdata[(idx)])
+
+    /* find the interval [j-1, j] bracketing `at` */
+    for (j = 1; j < d->v_length; j++) {
+        double s0 = DERIV_SCL(j - 1), s1 = DERIV_SCL(j);
+        if ((s0 <= at && at <= s1) || (s0 >= at && at >= s1))
+            break;
+    }
+    if (j >= d->v_length) {
+        meas->m_measured = NAN;
+        return MEASUREMENT_OK;
+    }
+
+    /* three-point stencil around the bracket (shift at the ends) */
+    i = j - 1;
+    if (i == 0)
+        i = 1;
+    if (i > d->v_length - 2)
+        i = d->v_length - 2;
+
+    {
+        double t0 = DERIV_SCL(i - 1), t1 = DERIV_SCL(i), t2 = DERIV_SCL(i + 1);
+        double v0 = DERIV_VAL(i - 1), v1 = DERIV_VAL(i), v2 = DERIV_VAL(i + 1);
+        double d01 = t1 - t0, d12 = t2 - t1, d02 = t2 - t0;
+
+        if (d01 == 0.0 || d12 == 0.0 || d02 == 0.0) {
+            /* repeated scale points (breakpoint duplicates): two-point slope */
+            double sa = DERIV_SCL(j - 1), sb = DERIV_SCL(j);
+            if (sb == sa) {
+                meas->m_measured = NAN;
+                return MEASUREMENT_OK;
+            }
+            meas->m_measured = (DERIV_VAL(j) - DERIV_VAL(j - 1)) / (sb - sa);
+            return MEASUREMENT_OK;
+        }
+        /* derivative of the Lagrange quadratic through (t0,v0),(t1,v1),(t2,v2) */
+        meas->m_measured =
+            v0 * (2.0 * at - t1 - t2) / (d01 * d02)
+          - v1 * (2.0 * at - t0 - t2) / (d01 * d12)
+          + v2 * (2.0 * at - t0 - t1) / (d02 * d12);
+    }
+
+#undef DERIV_VAL
+#undef DERIV_SCL
+
+    return MEASUREMENT_OK;
+}
+
+
+/* -----------------------------------------------------------------
  * Function: process an MIN, MAX, or AVG statement which has been
  * parsed into a measurement structure.  We should make sure to interpolate
  * the value here when we have m_from and m_to constraints * so this
@@ -774,6 +911,10 @@ measure_minMaxAvg(
     struct dvec *d, *dScale;
     double value, svalue, mValue, mValueAt;
     double pvalue = 0.0, sprev = 0.0, Tsum = 0.0;
+    /* Enhancement-303: the immediately preceding RAW sample (in or out of the window),
+       needed to interpolate the exact point where a dc sweep crosses `from` or `to`. */
+    double prev_s = 0.0, prev_v = 0.0;
+    bool have_prev = FALSE;
     int first;
     bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE;
 
@@ -878,15 +1019,85 @@ measure_minMaxAvg(
 
         if (dc_check) {
             /* dc: start from pos or neg scale value */
-            if ((svalue < meas->m_from) || (svalue > meas->m_to))
+            bool in_win = !((svalue < meas->m_from) || (svalue > meas->m_to));
+
+            /* Enhancement-303: clip an AVG window to exactly [from, to] on a dc sweep
+               too. Unlike time, a dc sweep may DESCEND (`dc v1 2 0 -0.001`), so the
+               boundary cannot be assumed to be the lower one: work from the actual
+               crossing between the previous raw sample and this one, which is
+               direction-agnostic and simply never fires on a sweep that does not
+               cross. Without this the window silently began at the first sweep point
+               inside it and ended at the last -- the same O(step) truncation fixed for
+               tran/ac/sp in Enhancement-302. */
+            if (mFunctionType == AT_AVG && have_prev && svalue != prev_s) {
+                bool prev_in = !((prev_s < meas->m_from) || (prev_s > meas->m_to));
+
+                if (in_win && !prev_in && first == 0) {
+                    /* crossing INTO the window: open it at the exact boundary */
+                    double b = (prev_s < meas->m_from) ? meas->m_from : meas->m_to;
+                    double t = (b - prev_s) / (svalue - prev_s);
+                    mValue = 0.0;
+                    Tsum = 0.0;
+                    pvalue = prev_v + t * (value - prev_v);
+                    sprev = b;
+                    mValueAt = b;
+                    first = 1;          /* this sample now accumulates against `b` */
+                } else if (!in_win && prev_in && first != 0) {
+                    /* crossing OUT of it: close at the exact boundary and stop */
+                    double b = (svalue > meas->m_to) ? meas->m_to : meas->m_from;
+                    double t = (b - prev_s) / (svalue - prev_s);
+                    double bv = prev_v + t * (value - prev_v);
+                    mValue += 0.5 * (bv + pvalue) * (b - sprev);
+                    Tsum += (b - sprev);
+                    sprev = b;
+                    break;
+                }
+            }
+
+            prev_s = svalue;
+            prev_v = value;
+            have_prev = TRUE;
+
+            if (!in_win)
                 continue;
         } else {
             /* all others: start from neg scale value */
             if (svalue < meas->m_from)
                 continue;
 
-            if ((meas->m_to != 0.0e0) && (svalue > meas->m_to))
+            if ((meas->m_to != 0.0e0) && (svalue > meas->m_to)) {
+                /* Enhancement-302: AVG integrates a trapezoid over the window and
+                   divides by its span, so the window has to END AT EXACTLY `to`.
+                   Without this it ended at the last sample BEFORE `to`, dropping the
+                   final partial interval -- an O(dt) error that made `avg` disagree
+                   with `integ`/(to-from) computed over the same window, even though
+                   they are the same quantity. RMS and INTEG already clip this way in
+                   measure_rms_integral(); do the same here. MIN/MAX keep their
+                   whole-sample semantics. */
+                if (mFunctionType == AT_AVG && first != 0 && i > 0) {
+                    /* Enhancement-316: always add the final partial interval up to `to`.
+                       The !AlmostEqualUlps guard used to gate the whole accumulation, so
+                       when the first out-of-window sample fell within 100 ULPs of `to`
+                       the entire final trapezoid [sprev, to] -- a full timestep -- was
+                       dropped, ending AVG's window one step short of `to`. That made
+                       `avg` disagree with `integ`/(to-from) over the same window (they
+                       are the same quantity -- the Enhancement-302 contract). INTEG/RMS
+                       in measure_rms_integral() ALWAYS add the final point, interpolating
+                       only when the sample overshoots `to`; match that here -- interpolate
+                       to `to` only when the sample is more than 100 ULPs beyond it, else
+                       use it as-is, but add the trapezoid either way. */
+                    if (!AlmostEqualUlps(svalue, meas->m_to, 100)) {
+                        value = measure_interpolate(dScale, d, i - 1, i, meas->m_to,
+                                                    'y', meas);
+                        svalue = meas->m_to;
+                    }
+                    mValue += 0.5 * (value + pvalue) * (svalue - sprev);
+                    Tsum += (svalue - sprev);
+                    pvalue = value;
+                    sprev = svalue;
+                }
                 break;
+            }
         }
 
         if (first == 0) {
@@ -904,6 +1115,19 @@ measure_minMaxAvg(
                 mValue = 0.0;
                 mValueAt = svalue;
                 Tsum = 0.0;
+                /* Enhancement-302: and START at exactly `from`, for the same reason --
+                   otherwise the first partial interval is dropped as well.
+                   NOT for a dc sweep: only time/frequency scales are guaranteed to
+                   ascend. A descending `dc v1 2 0 -0.001` enters the window at its
+                   HIGH end, where forcing svalue to `from` would extrapolate far
+                   outside [i-1, i] and poison every later trapezoid. */
+                if (!dc_check && meas->m_from != 0.0e0 && i > 0 &&
+                        !AlmostEqualUlps(svalue, meas->m_from, 100)) {
+                    value = measure_interpolate(dScale, d, i - 1, i, meas->m_from,
+                                                'y', meas);
+                    svalue = meas->m_from;
+                    mValueAt = svalue;
+                }
                 pvalue = value;
                 sprev = svalue;
                 break;
@@ -948,7 +1172,15 @@ measure_minMaxAvg(
     {
     case AT_AVG: {
         meas->m_measured = mValue / (first ? Tsum : 1.0);
-        meas->m_measured_at = svalue;
+        /* Enhancement-302: report the END OF THE WINDOW, not `svalue` -- which, when
+           the loop broke on the first out-of-window sample, was a time the average
+           never covered (a 250us window was echoed as "to=2.50280e-04"). `sprev` is
+           the last point actually accumulated, i.e. the true window end.
+           Enhancement-303: this now holds for dc as well -- but a dc sweep may DESCEND,
+           and then the accumulation ends at the LOW bound, which would print as
+           "from= 0.25 to= 0.25". The covered window is [mValueAt, sprev] in traversal
+           order, so report its upper end and the echo reads the same either way. */
+        meas->m_measured_at = first ? ((mValueAt > sprev) ? mValueAt : sprev) : svalue;
         break;
     }
     case AT_MIN:
@@ -968,6 +1200,115 @@ measure_minMaxAvg(
 
 
 /* -----------------------------------------------------------------
+ * Function: gain margin / phase margin from an AC loop-gain response.
+ *   phase_margin: PM = 180 + phase, evaluated at the (first) gain
+ *                 crossover where |gain| = 1 (0 dB).
+ *   gain_margin:  GM = -gain(dB), evaluated at the (first) phase
+ *                 crossover where the phase = -180 deg.
+ * The phase is UNWRAPPED first -- ngspice's vp() is wrapped to
+ * (-180,180], so the raw phase never actually equals -180 and a
+ * `when vp=-180' measure cannot find the phase crossover. m_measured
+ * holds the margin, m_measured_at the crossover frequency.
+ * ----------------------------------------------------------------- */
+static int
+measure_margin(
+    MEASUREPTR meas,              /* in : parsed measurement (m_vec = loop gain) */
+    ANALYSIS_TYPE_T mFunctionType /* in: AT_PHASE_MARGIN or AT_GAIN_MARGIN */
+    )
+{
+    struct dvec *d, *dScale;
+    int i, n;
+    double *gdb, *ph, *frq;
+    double prev, offset;
+
+    meas->m_measured = NAN;
+    meas->m_measured_at = NAN;
+
+    if (meas->m_vec == NULL) {
+        fprintf(cp_err, "Syntax error in meas line\n");
+        return MEASUREMENT_FAILURE;
+    }
+    if (!cieq(meas->m_analysis, "ac") && !cieq(meas->m_analysis, "sp")) {
+        fprintf(cp_err, "Error: gain_margin/phase_margin require an 'ac' measurement.\n");
+        return MEASUREMENT_FAILURE;
+    }
+    d = vec_get(meas->m_vec);
+    if (d == NULL) {
+        fprintf(cp_err, "Error: no such vector as %s.\n", meas->m_vec);
+        return MEASUREMENT_FAILURE;
+    }
+    if (d->v_compdata == NULL) {
+        fprintf(cp_err, "Error: %s has no complex AC data for a margin measurement.\n", meas->m_vec);
+        return MEASUREMENT_FAILURE;
+    }
+    dScale = vec_get("frequency");
+    if (dScale == NULL) {
+        fprintf(cp_err, "Error: no such scale vector as frequency.\n");
+        return MEASUREMENT_FAILURE;
+    }
+
+    n = d->v_length;
+    if (n < 2)
+        return MEASUREMENT_FAILURE;
+    gdb = TMALLOC(double, n);
+    ph  = TMALLOC(double, n);
+    frq = TMALLOC(double, n);
+    prev = 0.0;
+    offset = 0.0;
+    for (i = 0; i < n; i++) {
+        double re = d->v_compdata[i].cx_real;
+        double im = d->v_compdata[i].cx_imag;
+        /* phase in DEGREES always -- margins are conventionally in degrees, and the
+         * radtodeg() macro only converts when the runtime cx_degrees flag is set
+         * (otherwise it returns radians). */
+        double p = atan2(im, re) * (180.0 / M_PI);
+        gdb[i] = 20.0 * log10(hypot(re, im));
+        if (i > 0) {                 /* unwrap: undo the +-360 jumps of atan2 */
+            double dp = p - prev;
+            if (dp > 180.0) offset -= 360.0;
+            else if (dp < -180.0) offset += 360.0;
+        }
+        prev = p;
+        ph[i] = p + offset;
+        frq[i] = dScale->v_compdata ? dScale->v_compdata[i].cx_real : dScale->v_realdata[i];
+    }
+
+    for (i = 1; i < n; i++) {
+        double t, fc;
+        if (mFunctionType == AT_PHASE_MARGIN) {
+            /* first 0 dB gain crossover */
+            if ((gdb[i-1] >= 0.0 && gdb[i] < 0.0) || (gdb[i-1] < 0.0 && gdb[i] >= 0.0)) {
+                t = (0.0 - gdb[i-1]) / (gdb[i] - gdb[i-1]);
+                meas->m_measured = 180.0 + (ph[i-1] + t * (ph[i] - ph[i-1]));
+            } else {
+                continue;
+            }
+        } else {
+            /* first -180 deg phase crossover (unwrapped) */
+            if ((ph[i-1] >= -180.0 && ph[i] < -180.0) || (ph[i-1] < -180.0 && ph[i] >= -180.0)) {
+                t = (-180.0 - ph[i-1]) / (ph[i] - ph[i-1]);
+                meas->m_measured = -(gdb[i-1] + t * (gdb[i] - gdb[i-1]));
+            } else {
+                continue;
+            }
+        }
+        /* interpolate the crossover frequency in log space (log-spaced sweep) */
+        if (frq[i-1] > 0.0 && frq[i] > 0.0)
+            fc = exp(log(frq[i-1]) + t * (log(frq[i]) - log(frq[i-1])));
+        else
+            fc = frq[i-1] + t * (frq[i] - frq[i-1]);
+        meas->m_measured_at = fc;
+        break;
+    }
+
+    tfree(gdb);
+    tfree(ph);
+    tfree(frq);
+    return isnan(meas->m_measured) ? MEASUREMENT_FAILURE : MEASUREMENT_OK;
+}
+
+
+/* -----------------------------------------------------------------
  * Function: process an RMS or INTEG statement which has been
  * parsed into a measurement structure.  Here we do interpolate
  * the starting and stopping time window so the answer is correct.
@@ -979,6 +1320,11 @@ measure_rms_integral(
     )
 {
     int i;                      /* counter */
+    /* Enhancement-304: `n` walks the samples in order of increasing scale (which is
+       index order unless a dc sweep descends); `i` is the index it maps to and `iprev`
+       the one before it in that order. */
+    int n, iprev;
+    bool ascending = TRUE;
     int xy_size;                /* # of temp array elements */
     struct dvec *d, *xScale;    /* value and indpendent (x-axis) vectors */
     double value, xvalue;       /* current value and independent value */
@@ -1058,8 +1404,38 @@ measure_rms_integral(
 
     xy_size = 0;
     toVal = -1;
+
+    /* Enhancement-304: this loop assumes the scale ASCENDS -- it clips at `from` on the
+       way in and at `to` on the way out, and the segment widths x[i+1]-x[i] it builds
+       must come out positive for the Simpson / trapezoid sums below. A dc sweep may
+       DESCEND (`dc v1 2 0 -0.001`), and then the very first sample is already above
+       `to`: the clip fired at once, interpolated against index i-1 == -1 (an OUT-OF-
+       BOUNDS read) and broke with a single point, so the sums ran zero times and the
+       measurement came back 0.0 with `from= nan`. Walk the samples in order of
+       increasing scale instead of index order; for ascending data this is the identity
+       and every step below is unchanged. */
+    {
+        double s0, sN;
+        if (ac_check) {
+            s0 = xScale->v_compdata[0].cx_real;
+            sN = xScale->v_compdata[d->v_length - 1].cx_real;
+        } else if (xScale->v_realdata) {
+            s0 = xScale->v_realdata[0];
+            sN = xScale->v_realdata[d->v_length - 1];
+        } else {
+            s0 = xScale->v_compdata[0].cx_real;
+            sN = xScale->v_compdata[d->v_length - 1].cx_real;
+        }
+        if (d->v_length > 1 && sN < s0)
+            ascending = FALSE;
+    }
+
     /* create new set of values over interval [from, to] -- interpolate if necessary */
-    for (i = 0; i < d->v_length; i++) {
+    for (n = 0; n < d->v_length; n++) {
+        /* index of this sample, and of the one before it IN TRAVERSAL ORDER */
+        i = ascending ? n : (d->v_length - 1 - n);
+        iprev = ascending ? (i - 1) : (i + 1);
+
         if (ac_check) {
             if (d->v_compdata) {
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
@@ -1077,10 +1453,15 @@ measure_rms_integral(
             continue;
 
         if ((meas->m_to != 0.0e0) && (xvalue > meas->m_to)) {
-            // interpolate ending value if necessary.
-            if (!AlmostEqualUlps(xvalue, meas->m_to, 100)) {
-                value = measure_interpolate(xScale, d, i-1, i, meas->m_to, 'y', meas);
+            /* interpolate ending value if necessary. `n > 0` is what keeps `iprev` in
+               range -- it is the guard the old `i-1` lacked. With no preceding sample
+               there is nothing to interpolate against, so the window simply has not
+               been entered yet. */
+            if (n > 0 && !AlmostEqualUlps(xvalue, meas->m_to, 100)) {
+                value = measure_interpolate(xScale, d, iprev, i, meas->m_to, 'y', meas);
                 xvalue = meas->m_to;
+            } else if (n == 0) {
+                continue;
             }
             x[xy_size] = xvalue;
             if (mFunctionType == AT_RMS)
@@ -1092,10 +1473,10 @@ measure_rms_integral(
         }
 
         if (first == 0) {
-            if (meas->m_from != 0.0e0 && (i > 0)) {
+            if (meas->m_from != 0.0e0 && (n > 0)) {
                 // interpolate starting value.
                 if (!AlmostEqualUlps(xvalue, meas->m_from, 100)) {
-                    value = measure_interpolate(xScale, d, i-1, i, meas->m_from, 'y' , meas);
+                    value = measure_interpolate(xScale, d, iprev, i, meas->m_from, 'y' , meas);
                     xvalue = meas->m_from;
                 }
             }
@@ -1137,23 +1518,15 @@ measure_rms_integral(
         }
     }
 
-    /* Now set the measurement values if not set */
-    if (toVal < 0.0) {
-        if (ac_check) {
-            if (d->v_compdata) {
-                value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
-            } else {
-                value = d->v_realdata[i];
-                // fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
-            }
-            xvalue = xScale->v_compdata[i].cx_real;
-            toVal = xScale->v_compdata[d->v_length-1].cx_real;
-        } else {
-            toVal = xScale->v_realdata[d->v_length-1];
-        }
-
-
-    }
+    /* Now set the measurement values if not set.
+       Enhancement-304: the window ran to the end of the data rather than hitting `to`,
+       so the end of it is simply the last point appended. Reading
+       `xScale->...[d->v_length-1]` was wrong whenever the scale descends (that is the
+       SMALLEST scale value, not the last one traversed), and the `value`/`xvalue` reads
+       that used to sit here indexed with the integration loop's counter -- past the end
+       of the data -- into variables nothing reads again. Both are gone. */
+    if (toVal < 0.0)
+        toVal = (xy_size > 0) ? x[xy_size-1] : meas->m_measured_at;
     meas->m_from = meas->m_measured_at;
     meas->m_to = toVal;
 
@@ -1313,7 +1686,7 @@ measure_parse_stdParams(
                 wl = wl->wl_next;
                 continue;
             } else {
-                sprintf(errbuf, "bad syntax. equal sign missing ?\n");
+                snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax. equal sign missing ?\n");
                 return MEASUREMENT_FAILURE;
             }
         }
@@ -1323,7 +1696,7 @@ measure_parse_stdParams(
         }
         else {
             if (ft_numparse(&pValue, FALSE, &engVal1) < 0) {
-                sprintf(errbuf, "bad syntax, cannot evaluate right hand side of %s=%s\n", pName, pValue);
+                snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax, cannot evaluate right hand side of %s=%s\n", pName, pValue);
                 return MEASUREMENT_FAILURE;
             }
         }
@@ -1351,7 +1724,7 @@ measure_parse_stdParams(
         } else if (strcasecmp(pName, "AT") == 0) {
             meas->m_at = engVal1;
         } else {
-            sprintf(errbuf, "no such parameter as '%s'\n", pName);
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "no such parameter as '%s'\n", pName);
             return MEASUREMENT_FAILURE;
         }
 
@@ -1361,22 +1734,22 @@ measure_parse_stdParams(
 
     if (pCnt == 0) {
         if (pName)
-            sprintf(errbuf, "bad syntax of %s\n", pName);
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax of %s\n", pName);
         else
-            sprintf(errbuf, "bad syntax of\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax of\n");
         return MEASUREMENT_FAILURE;
     }
 
     // valid vector
     if (measure_valid_vector(meas->m_vec) == 0) {
-        sprintf(errbuf, "no such vector as '%s'\n", meas->m_vec);
+        snprintf(errbuf, MEAS_ERRBUF_SIZE, "no such vector as '%s'\n", meas->m_vec);
         return MEASUREMENT_FAILURE;
     }
 
     // valid vector2
     if (meas->m_vec2 != NULL)
         if (measure_valid_vector(meas->m_vec2) == 0) {
-            sprintf(errbuf, "no such vector as '%s'\n", meas->m_vec2);
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "no such vector as '%s'\n", meas->m_vec2);
             return MEASUREMENT_FAILURE;
         }
 
@@ -1437,18 +1810,18 @@ measure_parse_find(
             char * const pVal = strtok(NULL, "=");
 
             if (pVal == NULL) {
-                sprintf(errbuf, "bad syntax of WHEN\n");
+                snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax of WHEN\n");
                 return MEASUREMENT_FAILURE;
             }
 
             if (strcasecmp(pName, "AT") == 0) {
                 if (ft_numparse((char **) &pVal, FALSE, &meas->m_at) < 0) {
-                    sprintf(errbuf, "bad syntax of WHEN\n");
+                    snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax of WHEN\n");
                     return MEASUREMENT_FAILURE;
                 }
             }
             else {
-                sprintf(errbuf, "bad syntax of WHEN\n");
+                snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax of WHEN\n");
                 return MEASUREMENT_FAILURE;
             }
         } else {
@@ -1507,7 +1880,7 @@ measure_parse_when(
             pVar2 = strtok(NULL, "=");
 
             if (pVar2 == NULL) {
-                sprintf(errBuf, "bad syntax\n");
+                snprintf(errBuf, MEAS_ERRBUF_SIZE, "bad syntax\n");
                 return MEASUREMENT_FAILURE;
             }
 
@@ -1522,12 +1895,12 @@ measure_parse_when(
                     correct_vec(meas);
             } else {
                 if (str_has_arith_char2(pVar2)) {
-                    snprintf(errBuf, 99, "Expressions like %s are not supported.\n", pVar2);
+                    snprintf(errBuf, MEAS_ERRBUF_SIZE, "Expressions like %s are not supported.\n", pVar2);
                     return MEASUREMENT_FAILURE;
                 }
                 meas->m_val = INPevaluate2(&pVar2, &err, 0);
                 if (err || (*pVar2 && (!strchr("avfc", *pVar2) || *(pVar2 + 1) != '\0'))) {
-                    snprintf(errBuf, 99, "Cannot evaluate %s \n", pVar2);
+                    snprintf(errBuf, MEAS_ERRBUF_SIZE, "Cannot evaluate %s \n", pVar2);
                     return MEASUREMENT_FAILURE;
                 }
             }
@@ -1604,13 +1977,13 @@ measure_parse_trigtarg(
     }
 
     if (pcnt == 0) {
-        sprintf(errbuf, "bad syntax of '%s'\n", trigTarg);
+        snprintf(errbuf, MEAS_ERRBUF_SIZE, "bad syntax of '%s'\n", trigTarg);
         return MEASUREMENT_FAILURE;
     }
 
     // valid vector
     if (measure_valid_vector(meas->m_vec) == 0) {
-        sprintf(errbuf, "no such vector as '%s'\n", meas->m_vec);
+        snprintf(errbuf, MEAS_ERRBUF_SIZE, "no such vector as '%s'\n", meas->m_vec);
         return MEASUREMENT_FAILURE;
     }
 
@@ -1631,11 +2004,12 @@ get_measure2(
     wordlist *wl,     /* in: a word list for us to process */
     double *result,   /* out : the result of the measurement */
     char *out_line,   /* out: formatted result - may be NULL */
+    size_t max_out_line, /* in: size of out_line's buffer (0 if out_line is NULL) */
     bool autocheck    /* in: TRUE if checking for "autostop"; FALSE otherwise */
     )
 {
     wordlist *words, *wlTarg, *wlWhen;
-    char errbuf[100];
+    char errbuf[MEAS_ERRBUF_SIZE];
     char *mAnalysis = NULL;     // analysis type
     char *mName = NULL;         // name given to the measured output
     char *mFunction = NULL;
@@ -1759,7 +2133,7 @@ get_measure2(
 
         if ((measTrig->m_rise == -1) && (measTrig->m_fall == -1) &&
             (measTrig->m_cross == -1) && (measTrig->m_at == 1e99)) {
-            sprintf(errbuf, "at, rise, fall or cross must be given\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "at, rise, fall or cross must be given\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
             goto err_ret1;
         }
@@ -1778,7 +2152,7 @@ get_measure2(
 
         if ((measTarg->m_rise == -1) && (measTarg->m_fall == -1) &&
             (measTarg->m_cross == -1)&& (measTarg->m_at == 1e99)) {
-            sprintf(errbuf, "at, rise, fall or cross must be given\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "at, rise, fall or cross must be given\n");
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
             goto err_ret1;
         }
@@ -1798,7 +2172,7 @@ get_measure2(
 
 
         if (isnan(measTrig->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
             goto err_ret1;
         }
@@ -1809,14 +2183,14 @@ get_measure2(
             measTarg->m_measured = measTarg->m_at;
 
         if (isnan(measTarg->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
             goto err_ret1;
         }
 
         // print results
         if (out_line)
-            sprintf(out_line, "%-20s=  %.*e targ=  %.*e trig=  %.*e\n", 
+            snprintf(out_line, max_out_line, "%-20s=  %.*e targ=  %.*e trig=  %.*e\n",
                 mName, precision, (measTarg->m_measured - measTrig->m_measured),
                 precision, measTarg->m_measured, precision, measTrig->m_measured);
         else
@@ -1868,7 +2242,7 @@ err_ret1:
             com_measure_when(measFind);
 
             if (isnan(measFind->m_measured)) {
-                sprintf(errbuf, "out of interval\n");
+                snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
                 measure_errMessage(mName, mFunction, "AT", errbuf, autocheck);
                 goto err_ret2;
             }
@@ -1886,14 +2260,14 @@ err_ret1:
         }
 
         if (isnan(meas->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "AT", errbuf, autocheck);
             goto err_ret2;
         }
 
         // print results
         if (out_line)
-            sprintf(out_line, "%-20s=  %.*e\n", mName, precision, meas->m_measured);
+            snprintf(out_line, max_out_line, "%-20s=  %.*e\n", mName, precision, meas->m_measured);
         else
             fprintf(mout,"%-20s=  %.*e\n", mName, precision, meas->m_measured);
 
@@ -1925,14 +2299,14 @@ err_ret2:
         com_measure_when(meas);
 
         if (isnan(meas->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
             goto err_ret3;
         }
 
         // print results
         if (out_line)
-            sprintf(out_line, "%-20s=   %.*e\n", mName, precision, meas->m_measured);
+            snprintf(out_line, max_out_line, "%-20s=   %.*e\n", mName, precision, meas->m_measured);
         else
             fprintf(mout, "%-20s=  %.*e\n", mName, precision, meas->m_measured);
 
@@ -1967,7 +2341,7 @@ err_ret3:
         measure_rms_integral(meas, mFunctionType);
 
         if (isnan(meas->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             goto err_ret4;
         }
@@ -1977,7 +2351,7 @@ err_ret3:
 
         // print results
         if (out_line)
-            sprintf(out_line, "%-20s=   %.*e from=  %.*e to=  %.*e\n", mName, precision, meas->m_measured, precision, meas->m_from, precision, meas->m_to);
+            snprintf(out_line, max_out_line, "%-20s=   %.*e from=  %.*e to=  %.*e\n", mName, precision, meas->m_measured, precision, meas->m_from, precision, meas->m_to);
         else
             fprintf(mout, "%-20s=  %.*e from=  %.*e to=  %.*e\n", mName, precision, meas->m_measured, precision, meas->m_from, precision, meas->m_to);
 
@@ -2012,7 +2386,7 @@ err_ret4:
         // measure
         measure_minMaxAvg(meas, mFunctionType);
         if (isnan(meas->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             goto err_ret5;
         }
@@ -2022,7 +2396,7 @@ err_ret4:
 
         // print results
         if (out_line)
-            sprintf(out_line, "%-20s=  %.*e from=  %.*e to=  %.*e\n", mName,
+            snprintf(out_line, max_out_line, "%-20s=  %.*e from=  %.*e to=  %.*e\n", mName,
                 precision, meas->m_measured, precision, meas->m_at, precision, meas->m_measured_at);
         else
             fprintf(mout, "%-20s=  %.*e from=  %.*e to=  %.*e\n", mName,
@@ -2033,6 +2407,48 @@ err_ret4:
         ret_val = MEASUREMENT_OK;
 
 err_ret5:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(meas->m_vec);
+        tfree(meas);
+        tfree(mFunction);
+
+        return ret_val;
+    }
+    case AT_PHASE_MARGIN:
+    case AT_GAIN_MARGIN:
+    {
+        MEASUREPTR meas;
+        const char *unit = (mFunctionType == AT_PHASE_MARGIN) ? "deg" : "dB";
+        meas = TMALLOC(struct measure, 1);
+        meas->m_analysis = mAnalysis;
+
+        if (measure_parse_trigtarg(meas, words, NULL, "trig", errbuf) ==
+                MEASUREMENT_FAILURE) {
+            measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck);
+            goto err_ret_margin;
+        }
+
+        measure_margin(meas, mFunctionType);
+        if (isnan(meas->m_measured)) {
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, (mFunctionType == AT_PHASE_MARGIN)
+                    ? "no unity-gain (0 dB) crossover found\n"
+                    : "no -180 deg phase crossover found\n");
+            measure_errMessage(mName, mFunction, "MARGIN", errbuf, autocheck);
+            goto err_ret_margin;
+        }
+
+        if (out_line)
+            snprintf(out_line, max_out_line, "%-20s=  %.*e %s at=  %.*e\n", mName,
+                precision, meas->m_measured, unit, precision, meas->m_measured_at);
+        else
+            fprintf(mout, "%-20s=  %.*e %s at=  %.*e\n", mName,
+                precision, meas->m_measured, unit, precision, meas->m_measured_at);
+
+        *result = meas->m_measured;
+        ret_val = MEASUREMENT_OK;
+
+err_ret_margin:
         tfree(mAnalysis);
         tfree(mName);
         tfree(meas->m_vec);
@@ -2063,7 +2479,7 @@ err_ret5:
             measure_minMaxAvg(measTrig, AT_MAX);
 
         if (isnan(measTrig->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             goto err_ret6;
         }
@@ -2071,7 +2487,7 @@ err_ret5:
         if ((mFunctionType == AT_MIN) || (mFunctionType == AT_MAX)) {
             // print results
             if (out_line)
-                sprintf(out_line, "%-20s=  %.*e at=  %.*e\n", 
+                snprintf(out_line, max_out_line, "%-20s=  %.*e at=  %.*e\n",
                     mName, precision, measTrig->m_measured, precision, measTrig->m_measured_at);
             else
                 fprintf(mout, "%-20s=  %.*e at=  %.*e\n", 
@@ -2081,7 +2497,7 @@ err_ret5:
         } else {
             // print results
             if (out_line)
-                sprintf(out_line, "%-20s=  %.*e with=  %.*e\n", 
+                snprintf(out_line, max_out_line, "%-20s=  %.*e with=  %.*e\n",
                     mName, precision, measTrig->m_measured_at, precision, measTrig->m_measured);
             else
                 fprintf(mout, "%-20s=  %.*e with=  %.*e\n", 
@@ -2116,7 +2532,7 @@ err_ret6:
         // measure min
         measure_minMaxAvg(measTrig, AT_MIN);
         if (isnan(measTrig->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             goto err_ret7;
         }
@@ -2125,7 +2541,7 @@ err_ret6:
         // measure max
         measure_minMaxAvg(measTrig, AT_MAX);
         if (isnan(measTrig->m_measured)) {
-            sprintf(errbuf, "out of interval\n");
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
             measure_errMessage(mName, mFunction, "TRIG", errbuf, autocheck); // ??
             goto err_ret7;
         }
@@ -2133,7 +2549,7 @@ err_ret6:
 
         // print results
         if (out_line)
-            sprintf(out_line, "%-20s=  %.*e from=  %.*e to=  %.*e\n",
+            snprintf(out_line, max_out_line, "%-20s=  %.*e from=  %.*e to=  %.*e\n",
                 mName, precision, (maxValue - minValue), precision, measTrig->m_from, precision, measTrig->m_to);
         else
             fprintf(mout, "%-20s=  %.*e from=  %.*e to=  %.*e\n",
@@ -2154,6 +2570,79 @@ err_ret7:
     }
 
     case AT_DERIV:
+    {
+        /* Enhancement-179: DERIV{ATIVE} out_var AT=val | WHEN ... -- was
+         * parsed but unimplemented ('currently not supported'). Same
+         * parse/locate flow as FIND, with the derivative evaluator. */
+        MEASUREPTR meas, measFind;
+        meas = TMALLOC(struct measure, 1);
+        measFind = TMALLOC(struct measure, 1);
+
+        meas->m_analysis = measFind->m_analysis = mAnalysis;
+
+        if (measure_parse_find(meas, words, wlWhen, errbuf) == MEASUREMENT_FAILURE) {
+            measure_errMessage(mName, mFunction, "DERIV", errbuf, autocheck);
+            goto err_ret_deriv;
+        }
+
+        if (meas->m_at == 1e99) {
+            /* deriv .. when statement */
+            while (words != wlWhen)
+                words = words->wl_next;
+
+            if (words)
+                words = words->wl_next;
+
+            if (measure_parse_when(measFind, words, errbuf) == MEASUREMENT_FAILURE) {
+                measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+                goto err_ret_deriv;
+            }
+
+            com_measure_when(measFind);
+
+            if (isnan(measFind->m_measured)) {
+                snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
+                measure_errMessage(mName, mFunction, "WHEN", errbuf, autocheck);
+                goto err_ret_deriv;
+            }
+
+            if (measure_deriv_at(meas, measFind->m_measured) == MEASUREMENT_FAILURE)
+                goto err_ret_deriv;
+
+            meas->m_at = measFind->m_measured;
+
+        } else {
+            if (measure_deriv_at(meas, meas->m_at) == MEASUREMENT_FAILURE)
+                goto err_ret_deriv;
+        }
+
+        if (isnan(meas->m_measured)) {
+            snprintf(errbuf, MEAS_ERRBUF_SIZE, "out of interval\n");
+            measure_errMessage(mName, mFunction, "AT", errbuf, autocheck);
+            goto err_ret_deriv;
+        }
+
+        if (out_line)
+            snprintf(out_line, max_out_line, "%-20s=  %.*e\n", mName, precision, meas->m_measured);
+        else
+            fprintf(mout, "%-20s=  %.*e\n", mName, precision, meas->m_measured);
+
+        *result = meas->m_measured;
+
+        ret_val = MEASUREMENT_OK;
+
+err_ret_deriv:
+        tfree(mAnalysis);
+        tfree(mName);
+        tfree(meas->m_vec);
+        tfree(meas);
+        tfree(measFind->m_vec);
+        tfree(measFind);
+        tfree(mFunction);
+
+        return ret_val;
+    }
+
     case AT_ERR:
     case AT_ERR1:
     case AT_ERR2:

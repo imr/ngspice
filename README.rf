@@ -1,0 +1,77 @@
+This branch is based on the master branch as of Juli 19th, 2026
+Selected patches from https://github.com/javaNoviceProgrammer/Ngspice_OpenVAF_Enhancements/tree/main have been added,
+some have been slightly modified, compatibility with VS 2022 is achieved.
+
+PSS, HB, and reading, converting and using S parameters have been tested on a few examples.
+Documentaion and further testing are due, as well as finally adding suitable commit messages.
+
+The following commands have been taken from the docs at https://github.com/javaNoviceProgrammer/Ngspice_OpenVAF_Enhancements/blob/main/docs/Ngspice-OpenVAF-Handbook.pdf
+
+Commands available in https://sourceforge.net/p/ngspice/ngspice/ci/hv_rf_preliminary/tree/:
+
+Writing two-port or multi(N)-port S parameters
+spar_write() (2-port) or spar_write_np() (N-port)
+
+Periodic steady state (PSS)
+pss <Fguess> <StabTime> <OscNoB> <Points> <Harmonics> <Sc_iter> <Steady_Coeff> 
+
+Periodic AC (PAC)
+pac <Fguess> <StabTime> <OscNoB> <Points> <Harmonics> <Sc_iter> <Steady_Coeff>  <DEC/OCT/LIN> <Npoints> <fstart> <fstop>
+
+PNOISE
+pnoise <Fguess> <StabTime> <OscNoB> <Points> <Harmonics> <Sc_iter> <Steady_Coeff> <Outnode> <InSrc> <DEC/OCT/LIN> <Npoints> <fstart> <fstop>
+
+Periodic transfer function (PXF)
+pxf <Fguess> <StabTime> <OscNoB> <Points> <Harmonics> <Sc_iter> <Steady_Coeff> <Outnode> <InSrc> <DEC/OCT/LIN> <Npoints> <fstart> <fstop> [max sideband]
+
+Cyclostationary noise
+pnoise <Fguess> <StabTime> <OscNoB> <Points> <Harmonics> <Sc_iter> <Steady_Coeff> <Outnode> <InSrc> <DEC/OCT/LIN> <Npoints> <fstart> <fstop> cyclo
+
+Periodic S parameters
+psp <Fguess> <StabTime> <OscNoB> <Points> <Harmonics> <Sc_iter> <Steady_Coeff> <Outnode> <InSrc> <DEC/OCT/LIN> <Npoints> <fstart> <fstop> [max sideband]
+
+Quasi-periodic two-tone steady state (QPSS)
+qpss <expr> <f1> <f2> [periods] [max order]
+     | e.g. V(out)
+
+Harmonic Balance (HB)
+hb <Fguess> <Harmonics> [points] [maxiter]
+
+Two-tone HB (frequency domain QPSS)
+qpss <expr> <f1> <f2> hb <k1> <k2>
+
+Two-tone small-signal QPAC (quasi periodic AC)
+qpss <expr> <f1> <f2> hb <k1> <k2>
+qpac <f_in>
+
+Two-tone small-signal Qnoise (quasi periodic noise)
+qpss <expr> <f1> <f2> hb <k1> <k2>
+qnoise <output node> <f_in>
+
+Cyclo stationary QPNOISE
+qnoise <output node> <f_in> cyclo
+
+Oscillator phase noise (autonomous HB plus phase noise)
+hbosc <oscnode> <K> [fguess] [tstab]
+phasenoise <fstart> <fstop> [points]
+
+Two-tone small-signal quasi-periodic transfer function QPXF
+qpss <expr> <f1> <f2> hb <k1> <k2>
+qpxf <output node> <f_in>
+
+QPAC, QPnoise, and QPXF may be swept over frequency instead of fixed f_in, e.g.
+replace 'qpxf <output node> <f_in>' by 'qpxf <output node> <dec/oct/lin> <Npo> <fstart> <fstop>'
+
+Read S parameters and convert to instance with ports p1 to pN, referenced to ref.
+Command in the .control section:
+pre_snp -native my_touchstone.s2p ; reads a Touchstone file, vector fits and issues a *.nport file
+Instance in the netlist
+N1 p1 p2 ... pN ref mymodel
+.model mymodel nport(file=my_touchstone.nport)
+
+RF two-port stability
+sp ... (generate the S parameters)
+stab
+
+load pull
+loadpull -load <R> <L> <C> -out <node> -drive <Vsrc> -f <f0> [-supply <Vsrc>]

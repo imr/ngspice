@@ -119,6 +119,10 @@ struct CKTcircuit {
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
     double *CKTrhsSpare;        /* spare rhs value for reordering */
+    double *CKTrhsAccepted;     /* last accepted transient solution,
+                                   the starting point of a retry */
+    int CKTrhsSize;             /* length of the rhs vectors less one,
+                                   as allocated by NIreinit */
     double *CKTirhs;            /* current rhs value - being loaded
                                    (imag) */
     double *CKTirhsOld;         /* previous rhs value (imaginary)*/
@@ -222,6 +226,7 @@ struct CKTcircuit {
     int CKTnewtrunc;            /* enable lte (local truncation error) based on voltages */
     double CKTgmin;             /* .options GMIN */
     double CKTgshunt;           /* .options RSHUNT */
+    double CKTrshunt;           /* .options RSHUNT */
     double CKTcshunt;           /* .options CSHUNT */
     double CKTdelmin;           /* minimum time step for tran analysis */
     double CKTtrtol;            /* .options TRTOL */
@@ -270,6 +275,13 @@ struct CKTcircuit {
     unsigned int CKTkeepOpInfo:1; /* flag for small signal analyses */
     unsigned int CKTcopyNodesets:1; /* NodesetFIX */
     unsigned int CKTnodeDamping:1; /* flag for node damping fix */
+    unsigned int CKTlinesearch:1;  /* Enhancement-111: adaptive damped-Newton line search */
+    double CKTlsMerit;             /* E-111: this iteration's residual merit ||F|| = ||G*x-b|| */
+    double *CKTlsXk;               /* E-111: line-search scratch (saved x_k) */
+    double *CKTlsD;                /* E-111: line-search scratch (Newton step d) */
+    int CKTlsBufSz;                /* E-111: allocated size of the LS scratch buffers */
+    unsigned int CKTcheckpoint:1;  /* Enhancement-131: DCtran should continue from a restored
+                                      checkpoint (keep loaded state, build a fresh output plot) */
     double CKTabsDv;            /* abs limit for iter-iter voltage change */
     double CKTrelDv;            /* rel limit for iter-iter voltage change */
     int CKTtroubleNode;         /* Non-convergent node number */
@@ -458,6 +470,27 @@ extern int PSSaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern int PSSsetParm(CKTcircuit *, JOB *, int , IFvalue *);
 extern int PSSinit(CKTcircuit *, JOB *);
 extern int DCpss(CKTcircuit *, int);
+/* Enhancement-209: HBanalyze hands its converged spectrum back to the frontend
+   (com_hb) so it can publish nutmeg vectors. When `out` is non-NULL and the run
+   converges, ownership of the Vr/Vi arrays passes to the caller (which frees them
+   after publishing); pass NULL to keep the old behaviour (printed table only). */
+struct hbspectrum {
+    int     N;          /* number of circuit unknowns (solution row stride) */
+    int     K;          /* highest harmonic */
+    double  f0;         /* fundamental frequency (Hz) */
+    double *Vr, *Vi;    /* [(2K+1)*N] two-sided Fourier coefficients, index (k+K)*N+i */
+};
+extern int HBanalyze(CKTcircuit *, double f0, int K, int P, int maxiter, double tol, int verbose, struct hbspectrum *out); /* E-134; E-209 out */
+extern int QPSShb(CKTcircuit *, double f1, double f2, int K1, int K2, int P1, int P2, int maxiter, double tol, int verbose); /* E-136 */
+extern int QPACanalyze(CKTcircuit *, double f_in, int verbose); /* E-137 */
+extern int QPXFanalyze(CKTcircuit *, int outNode, double f_in, int verbose); /* E-141 */
+extern int QPACsweep(CKTcircuit *, int stepType, int np, double fstart, double fstop, double *freqs, double *data); /* E-142 */
+extern int QPnoiseSweep(CKTcircuit *, int outNode, int stepType, int np, double fstart, double fstop, double *freqs, double *data); /* E-142 */
+extern int QPXFsweep(CKTcircuit *, int outNode, int stepType, int np, double fstart, double fstop, double *freqs, double *data); /* E-142 */
+extern int QPnoiseAnalyze(CKTcircuit *, int outNode, double f_in, int cyclo, int verbose); /* E-138 / -139 */
+extern int HBOSCanalyze(CKTcircuit *, int oscNode, int K, int P, double f0seed, double ampseed, int maxiter, double tol, int verbose); /* E-140 */
+extern int PhaseNoiseAnalyze(CKTcircuit *, double fstart, double fstop, int npts, int verbose); /* E-140 */
+
 #endif
 
 #ifdef RFSPICE

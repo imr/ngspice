@@ -52,7 +52,9 @@ ifeq ($(ISMINGW), 1)
   LDFLAGS = -shared @LDFLAGS@
 endif
 ifeq "$(strip $(uname))" "Darwin"
-  LDFLAGS = -bundle -flat_namespace -undefined suppress
+  # -flat_namespace/-undefined suppress are deprecated by the modern macOS
+  # linker; dynamic_lookup resolves the codemodels' ngspice symbols at load
+  LDFLAGS = -bundle -undefined dynamic_lookup
 endif
 ifeq "$(strip $(uname))" "SunOS"
   ifneq "$(CC)" "gcc"

@@ -83,10 +83,6 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
             ptemp.rValue = csval;
             error = INPpName("capacitance", &ptemp, ckt, mytype, fast);
 
-            /* add device numbers for statistics */
-            ckt->CKTstat->STATdevNum[mytype].instNum++;
-            ckt->CKTstat->STATtotalDev++;
-
             nadded++;
         }
     }

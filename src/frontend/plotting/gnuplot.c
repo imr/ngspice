@@ -298,7 +298,10 @@ void ft_gnuplot(double *xlims, double *ylims,
         contours = has_contour_data(vecs);
     }
 
-    extrange = 0.05 * (ylims[1] - ylims[0]);
+    if (ylims)
+        extrange = 0.005 * (ylims[1] - ylims[0]);
+    else
+        extrange = 0.;
 
     if (!cp_getvar("gnuplot_terminal", CP_STRING,
             terminal, sizeof(terminal))) {
@@ -476,8 +479,13 @@ void ft_gnuplot(double *xlims, double *ylims,
         if(nolegend)
             fprintf(file, "set key off\n");
 
-        if (plottype == PLOT_COMB) {
+        if (plottype == PLOT_BOXES) {
             strcpy(plotstyle, "boxes");
+        } else if (plottype == PLOT_COMB) {
+            strcpy(plotstyle, "impulses");
+        } else if (plottype == PLOT_ARROWS) {
+            fprintf(file, "set style arrow 1 head nofilled size screen 0.03, 15 lw %d\n", linewidth);
+            strcpy(plotstyle, "arrows");
         } else if (plottype == PLOT_POINT) {
             if (markers) {
                 // fprintf(file, "Markers: True\n");
@@ -515,8 +523,16 @@ void ft_gnuplot(double *xlims, double *ylims,
                 if (v->v_name) {
                     i = i + 2;
                     if (i > 2) fprintf(file, ",\\\n");
-                    fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                        filename_data, i - 1, i, plotstyle, linewidth);
+                    if (eq(plotstyle, "arrows"))
+                        if (ylims)
+                            fprintf(file, "\'%s\' using %d:(%e):(0):(%e+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, ylims[0], (-1) * ylims[0], i);
+                        else
+                            fprintf(file, "\'%s\' using %d:(-200):(0):(200+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, i);
+                    else
+                        fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                            filename_data, i - 1, i, plotstyle, linewidth);
                     quote_gnuplot_string(file, v->v_name);
                 }
             }
@@ -565,8 +581,16 @@ void ft_gnuplot(double *xlims, double *ylims,
                 if (v->v_name) {
                     i = i + 2;
                     if (i > 2) fprintf(file, ",\\\n");
-                    fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                        filename_data, i - 1, i, plotstyle, linewidth);
+                    if (eq(plotstyle, "arrows"))
+                        if (ylims)
+                            fprintf(file, "\'%s\' using %d:(%e):(0):(%e+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, ylims[0], (-1) * ylims[0], i);
+                        else
+                            fprintf(file, "\'%s\' using %d:(-200):(0):(200+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, i);
+                    else
+                        fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                            filename_data, i - 1, i, plotstyle, linewidth);
                     quote_gnuplot_string(file, v->v_name);
                 }
             }
@@ -601,6 +625,8 @@ void ft_gnuplot(double *xlims, double *ylims,
                        v->v_realdata[i] : realpart(v->v_compdata[i]);
 
                 if (i > 0 && (mono || (scale->v_plot && scale->v_plot->pl_scale == scale))) {
+                    prev_xval = isreal(scale) ?
+                        scale->v_realdata[i - 1] : realpart(scale->v_compdata[i - 1]);
                     if (dir * (xval - prev_xval) < 0) {
                         /* direction reversal, start a new graph */
                         fprintf(file_data, "\n");
@@ -624,8 +650,7 @@ void ft_gnuplot(double *xlims, double *ylims,
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
     /* for external fcn system() */
-    // (void) sprintf(buf, "start /B wgnuplot %s -" ,  filename_plt);
-    (void) sprintf(buf, "start /B wgnuplot -persist %s " ,  filename_plt);
+    (void) snprintf(buf, sizeof(buf), "start /B wgnuplot -persist %s " ,  filename_plt);
     _flushall();
 #else
     /* for external fcn system() from LINUX environment */

@@ -1,0 +1,58 @@
+* Section 3.2 ATF-34143 FET amplifier - S21 vs input voltage u_RF, for Vdd = 2/3/4/5 V
+* HB at f = 1.9 GHz; S21 = 2 * |OUT @ 1.9 GHz| / u_RF (the incident wave is u_RF/2).
+* Outer sweep = Vdd (2,3,4,5 V), inner sweep = u_RF (10 mV -> 800 mV, log).
+* Each point tagged "SWEEPPT vdd=<V> urf=<V>" for an external plotter.
+* For internal plotting create 2D vector hboutvec and vector urfvec, fill hboutvec with
+* out[1] (OUT @ 1.9 GHz) of HB and plot versus urfvec
+.model ATF34143 NMF (vto=-0.95 beta=0.24 lambda=0.09 alpha=4.0 b=0.8
++ rd=0.25 rs=0.125 cgs=0.8p cgd=0.16p pb=0.7 is=1n)
+Vdd  dd 0 DC 5
+Vgg  gg 0 DC -0.43
+Lc   dd drain 1m
+Lg   gg gate  1m
+Z1   drain gate 0 ATF34143
+V3   rf 0 DC 0 SIN(0 0.1 1.9G) AC 1
+R2   rf n1 50
+C1   n1 gate 1u
+C2   drain out 1u
+R1   out 0 50
+.control
+let nvd = 4
+let npts = 41
+* vector to store complex hb values
+let outvecsize = nvd * npts
+let tmpvec = vector($&outvecsize) ; size 4*41
+let hboutvec = j(tmpvec) ; allow storing complex data
+reshape hboutvec [$&nvd][$&npts] ; reshape to 4 x 41
+* vector to store urf values
+let urfvec = vector($&npts)
+
+let iv = 0
+while iv < nvd
+  let vd = 2 + iv
+  alter Vdd = vd
+  let n = 0
+  while n < npts
+    let urf = 0.01 * (80)^(n/(npts-1))
+    alter @V3[sin] = [ 0 $&urf 1.9G ]
+    echo
+    echo "SWEEPPT vdd= $&vd urf= $&urf"
+    hb 1.9G 4
+    let hboutvec [$&iv][$&n] = 2 * out[1] /urf ; hb at 1.9GHz
+    let n = n + 1
+  end
+  let iv = iv + 1
+end
+
+* scale vector for plotting
+let n = 0
+while n < npts
+  let urfvec [$&n] = 0.01 * (80)^(n/(npts-1)) ; urf
+  let n = n + 1
+end
+
+set xbrushwidth=2
+plot hboutvec vs urfvec ylabel 'S21 (linear)'
+
+.endc
+.end

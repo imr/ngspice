@@ -27,7 +27,8 @@ typedef struct OsdiRegistryEntry {
 #ifdef KLU
   uint32_t matrix_ptr_offset;
 #endif
-
+  
+  int experimental;
 } OsdiRegistryEntry;
 
 typedef struct OsdiObjectFile {

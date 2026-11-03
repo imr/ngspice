@@ -13,21 +13,21 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/inpdefs.h"
 #include "inpxx.h"
 
+#define GARBAGE " \t=(),"
+
 int INPgetStr(char **line, char **token, int gobble)
 				/* eat non-whitespace trash AFTER token? */
 {
     char *point;
+    int escaped = 0;
     char separator = '\0';
 
     /* Scan along throwing away garbage characters. */
-    for (point = *line; *point != '\0'; point++) {
-	if ((*point == ' ') ||
-	    (*point == '\t') ||
-	    (*point == '=') ||
-	    (*point == '(') || (*point == ')') || (*point == ','))
-	    continue;
-	break;
-    }
+
+    point = *line;
+    while (strchr(GARBAGE, *point))
+        ++point;
+
     if (*point == '"') {
 	separator = '"';
 	point++;
@@ -37,28 +37,55 @@ int INPgetStr(char **line, char **token, int gobble)
     }
     /* mark beginning of token */
     *line = point;
-    /* now find all good characters */
-    for (point = *line; *point != '\0'; point++) {
-	if ((*point == ' ') ||
-	    (*point == '\t') ||
-	    (*point == '=') ||
-	    (*point == '(') ||
-	    (*point == ')') || (*point == ',') || (*point == separator))
-	    break;
+
+    /* Now find all good characters. */
+
+    if (separator) {
+        /* Quoted string is everything up to a closing quote. */
+
+        for (;;) {
+            if (!*point || *point == separator)
+                break;
+            if (*point == '\\' && point[1] == separator) {
+                escaped = 1;
+                ++point;
+            }
+            ++point;
+        }
+    } else {
+        /* Scan to next "garbage" character. */
+
+        while (*point && !strchr(GARBAGE, *point))
+            ++point;
     }
 
     /* Create token */
+
     *token = TMALLOC(char, 1 + point - *line);
     if (!*token)
 	return (E_NOMEM);
     (void) strncpy(*token, *line, (size_t) (point - *line));
     *(*token + (point - *line)) = '\0';
+
+    if (separator && *point == separator)
+	point++;	/* Skip closing separator */
     *line = point;
 
-    /* Gobble garbage to next token. */
-    if (separator && **line == separator) {
-	(*line)++;		/* Skip one closing separator */
+    if (escaped) {
+        char *wp;
+
+        /* Remove escaped quotes. */
+
+        for (wp = point = *token; *point; ) {
+            if (*point == '\\' && point[1] == separator)
+                ++point;
+            *wp++ = *point++;
+        }
+        *wp = 0;
     }
+
+    /* Gobble garbage to next token. */
+
     for (; **line != '\0'; (*line)++) {
 	if (**line == ' ')
 	    continue;

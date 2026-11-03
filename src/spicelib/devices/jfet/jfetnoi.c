@@ -83,7 +83,7 @@ JFETnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
                 case N_DENS:
 
                     if (inst->JFETtempGiven)
-                        dtemp = inst->JFETtemp - ckt->CKTtemp + (model->JFETtnom-CONSTCtoK);
+                        dtemp = inst->JFETtemp - ckt->CKTtemp;
                     else
                         dtemp = inst->JFETdtemp;
 

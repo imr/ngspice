@@ -76,7 +76,7 @@ Int KLU_matrix_vector_multiply         /* return TRUE if successful, FALSE other
 )
 {
     Entry *Az, *Intermediate, Sum ;
-    Int i, j, *pExtOrder ;
+    Int i, j, ei ;
 
     /* ---------------------------------------------------------------------- */
     /* check inputs */
@@ -106,21 +106,28 @@ Int KLU_matrix_vector_multiply         /* return TRUE if successful, FALSE other
 
     Az = (Entry *)Ax ;
 
-    pExtOrder = &IntToExtColMap [n] ;
     for (i = n - 1 ; i >= 0 ; i--)
     {
+        /* Internal index i (0-based CSR row/col) maps to external vector index
+           IntToExtColMap[i+1]. A NULL map means internal order == external
+           order, i.e. the identity map ext = i+1 (external RHS/Solution vectors
+           are 1-based; entry 0 is the grounded/unused reference). SMPmultiply
+           passes NULL, so this identity path is what makes the KLU
+           matrix-vector product (and hence the E-111 line-search residual
+           merit) work under the KLU solver. */
+        ei = (IntToExtColMap != NULL) ? IntToExtColMap [i + 1] : (i + 1) ;
 
 #ifdef COMPLEX
-        Intermediate [i].Real = Solution [*(pExtOrder)] ;
-        Intermediate [i].Imag = iSolution [*(pExtOrder--)] ;
+        Intermediate [i].Real = Solution [ei] ;
+        Intermediate [i].Imag = iSolution [ei] ;
 #else
-        Intermediate [i] = Solution [*(pExtOrder--)] ;
+        Intermediate [i] = Solution [ei] ;
 #endif
     }
 
-    pExtOrder = &IntToExtRowMap [n] ;
     for (i = n - 1 ; i >= 0 ; i--)
     {
+        ei = (IntToExtRowMap != NULL) ? IntToExtRowMap [i + 1] : (i + 1) ;
 
 #ifdef COMPLEX
         Sum.Real = 0.0 ;
@@ -141,10 +148,10 @@ Int KLU_matrix_vector_multiply         /* return TRUE if successful, FALSE other
         }
 
 #ifdef COMPLEX
-        RHS [*(pExtOrder)] = Sum.Real ;
-        iRHS [*(pExtOrder--)] = Sum.Imag ;
+        RHS [ei] = Sum.Real ;
+        iRHS [ei] = Sum.Imag ;
 #else
-        RHS [*(pExtOrder--)] = Sum ;
+        RHS [ei] = Sum ;
 #endif
 
     }

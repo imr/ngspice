@@ -1,0 +1,34 @@
+.title KiCad schematic
+.include "2N2222A.txt"
+.param freq=1.5Meg
+.csparam freq={freq}
+R4 Net-_Q1-B_ 0 2.2k
+C1 in Net-_Q1-B_ 10u
+R3 Net-_R1-Pad1_ Net-_Q1-B_ 10k
+V2 in 0 DC 0 SIN( 0 50m {freq} 0 0 0 ) AC 1  
+R1 Net-_R1-Pad1_ out1 560
+V1 Net-_R1-Pad1_ 0 DC 12 
+R5 out2 0 3.3k
+C2 out1 out2 10u
+R2 Net-_Q1-E_ 0 180
+Q1 out1 Net-_Q1-B_ Net-_Q1-E_ Q2n2222a
+
+.control
+*tran 1n 10u
+*pyplot in out2
+*ac dec 10 1 100Meg
+*pyplot db(out2)
+*destroy all
+*set hb_verbose
+hb $&freq 8
+display
+set xbrushwidth=2
+plot db(out2) arrowplot ylimit -200 0
+pyplot db(out1) db(out2) arrowplot ylimit -250 0
+set gnuplot_terminal=png
+gnuplot $inputdir/gout db(out2) arrowplot ylimit -250 0
+print hbfrequency db(out1) db(out2)
+*quit
+.endc
+
+.end

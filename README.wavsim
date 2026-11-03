@@ -36,3 +36,6 @@ to LDFLAGS
 
 Linux Ubuntu 24.04 has the libraries libsndfile0 and libsamplerate0 available automatically.
 You may need to install (with apt) the development header files libsndfile0-dev and libsamplerate0-dev.
+
+If libsndfile or libsamplerate are not available, ngspice will compile without wave support. ngspice
+will emit an error message if soundfile handling is requested.

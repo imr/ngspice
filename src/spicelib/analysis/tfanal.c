@@ -153,7 +153,15 @@ TFanal(CKTcircuit *ckt, int restart)
         outputs[2] = ckt->CKTrhs[job->TFoutNeg->number] -
             ckt->CKTrhs[job->TFoutPos->number];
     } else {
-        outputs[2] = 1/MAX(1e-20,ckt->CKTrhs[outsrc]);
+        /* Enhancement-179: the branch current drawn by the unit forcing is
+         * NEGATIVE for a passive network (same convention as the input-
+         * impedance solve above, which divides by -rhs), so clamping with
+         * MAX(1e-20, rhs) pinned the output impedance of every current-
+         * output .tf to 1e20 -- a bug inherited from Berkeley SPICE3. */
+        if (fabs(ckt->CKTrhs[outsrc]) < 1e-20)
+            outputs[2] = 1e20;
+        else
+            outputs[2] = -1/ckt->CKTrhs[outsrc];
     }
 done:
     outdata.v.numValue=3;
