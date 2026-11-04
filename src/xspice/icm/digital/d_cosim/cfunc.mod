@@ -725,9 +725,10 @@ void ucm_d_cosim(ARGS)
         }
 
         if (TIME <= ip->info.vtime) {
-            cm_message_printf("XSPICE time is behind vtime:\n"
+            cm_message_printf("XSPICE time is behind vtime by %g:\n"
                               "XSPICE %.16g\n"
                               "Cosim  %.16g",
+                              ip->info.vtime - TIME,
                               TIME, ip->info.vtime);
         }
         run(ip, XSPICE_ARG);
