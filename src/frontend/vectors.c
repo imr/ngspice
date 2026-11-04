@@ -23,8 +23,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/dstring.h"
 #include "plotting/plotting.h"
 #ifdef XSPICE
-#include "ngspice/evt.h"
 #include "ngspice/mif.h"
+#include "ngspice/evtproto.h"
 #endif
 
 static struct dvec *findvec_all(struct plot *pl);
@@ -38,12 +38,6 @@ static struct dvec *find_permanent_vector_by_name(
         NGHASHPTR pl_lookup_table, char *name);
 static enum ALL_TYPE_ENUM get_all_type(const char *word);
 static bool plot_prefix(const char *pre, const char *str);
-
-#ifdef XSPICE
-extern int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename);
-struct dvec *EVTfindvec(char *node);
-#endif
-
 
 static void vec_rebuild_lookup_table(struct plot *pl)
 {
@@ -1175,9 +1169,10 @@ void plot_setcur(const char *name)
         if (plot_cur->pl_next) {
             plot_cur = plot_cur->pl_next;
 #ifdef XSPICE
-            if (ft_curckt) {
+            /* XSPICE event data are linked to the current circuit. */
+
+            if (ft_curckt)
                 EVTswitch_plot(ft_curckt->ci_ckt, plot_cur->pl_typename);
-            }
 #endif
         }
         else {
@@ -1200,9 +1195,8 @@ void plot_setcur(const char *name)
         if (prev_pl) { /* found */
             plot_cur = prev_pl;
 #ifdef XSPICE
-            if (ft_curckt) {
+            if (ft_curckt)
                 EVTswitch_plot(ft_curckt->ci_ckt, plot_cur->pl_typename);
-            }
 #endif
         }
         else { /* no next plot */
@@ -1229,12 +1223,8 @@ void plot_setcur(const char *name)
      }
     */
 #ifdef XSPICE
-    /* XSPICE event data are linked to the current circuit. It must not be removed
-       when manipulating the data by any command.
-    */
-    if (ft_curckt) {
+    if (ft_curckt)
         EVTswitch_plot(ft_curckt->ci_ckt, name);
-    }
 #endif
     plot_cur = pl;
 } /* end of function plot_setcur */

@@ -100,6 +100,10 @@ void EVTprint(wordlist *wl);
 void EVTprintvcd(wordlist *wl);
 void EVTsave(wordlist *wl);
 void EVTdisplay(wordlist *wl);
+int  EVTsetup_plot(CKTcircuit* ckt, char* plottypename);
+int  EVTswitch_plot(CKTcircuit* ckt, const char* plottypename);
+void Evt_Job_destroy(Evt_Ckt_Data_t* evt);
+
 
 int EVTop(
     CKTcircuit *ckt,

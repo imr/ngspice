@@ -32,10 +32,12 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 #include "runcoms.h"
 #include "plotting/graf.h"
 #include "../misc/misc_time.h"
+#ifdef XSPICE
+#include "ngspice/evtproto.h"
+#endif
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
-extern int EVTsetup_plot(CKTcircuit* ckt, char* plotname);
 
 extern IFsimulator SIMinfo;
 extern char Spice_Build_Date[];
@@ -567,8 +569,10 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 run->runPlot->pl_ndims = 1;
 #ifdef XSPICE
             /* set the current plot name into the event job */
-            if (run->runPlot->pl_typename)
+            if (run->runPlot->pl_typename) {
                 EVTsetup_plot(run->circuit, run->runPlot->pl_typename);
+                EVTswitch_plot(run->circuit, run->runPlot->pl_typename);
+            }
 #endif
         }
     }

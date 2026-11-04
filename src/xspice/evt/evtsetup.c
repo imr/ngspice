@@ -51,18 +51,12 @@ NON-STANDARD FEATURES
 #include "ngspice/evtudn.h"
 #include "ngspice/mifproto.h"
 #include "ngspice/evtproto.h"
-
-
-
+#include "ngspice/cpextern.h"
 
 static int EVTsetup_queues(CKTcircuit *ckt);
 static int EVTsetup_data(CKTcircuit *ckt);
 static int EVTsetup_jobs(CKTcircuit *ckt);
 static int EVTsetup_load_ptrs(CKTcircuit *ckt);
-
-int EVTsetup_plot(CKTcircuit* ckt, char* plottypename);
-int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename);
-
 
 /* Allocation macros with built-in check for out-of-memory */
 /* Adapted from SPICE 3C1 code in CKTsetup.c */
@@ -351,12 +345,17 @@ static int EVTsetup_data(
 
     Evt_Node_Info_t     *node_info;
 
+    if (!cp_getvar("keepxs", CP_BOOL, NULL, 0)) {
+        /* No such variable: free previous per-simulation data. */
+
+        Evt_Job_destroy(ckt->evt);
+    }
 
     /* Allocate main substructures of data */
     /* Note that we don't free any old structures */
-    /* since they are pointed to by jobs and need */
+    /* since they may be pointed to by jobs and need */
     /* to be maintained so that results from multiple */
-    /* jobs are kept around like SPICE does */
+    /* jobs are kept around like SPICE does. */
 
     data = &(ckt->evt->data);
     CKALLOC(data->node, 1, Evt_Node_Data_t)
@@ -638,6 +637,7 @@ int EVTsetup_plot(CKTcircuit* ckt, char *plotname) {
     
     Evt_Job_t* jobs = &(ckt->evt->jobs);
     if (jobs) {
+        tfree(jobs->job_plot[jobs->num_jobs - 1]);
         jobs->job_plot[jobs->num_jobs - 1] = copy(plotname);
         jobs->cur_job = jobs->num_jobs - 1;
         return OK;
@@ -655,7 +655,6 @@ int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename) {
 
     Evt_Job_t* jobs;
     Evt_Data_t* data;
-
     if (!ckt)
         return (E_NOTFOUND);
 
@@ -667,7 +666,7 @@ int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename) {
 
     if (jobs) {
         /* check for the job with current plot type name , e.g. tran2 */
-        for (i = 0; i < jobs->num_jobs; i++) {
+        for (i = jobs->num_jobs - 1; i >=0 ; i--) {
             if (jobs->job_plot[i] && eq(jobs->job_plot[i], plottypename)) {
                 found = TRUE;
                 jobs->cur_job = i;
