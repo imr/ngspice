@@ -1,0 +1,145 @@
+check model binning under ngbehavior=hsa: a multi-finger size on an inner bin edge
+
+* With hsa the subcircuit expander drops the .model cards whose bin does not
+* hold the size on the x line, then INPgetModBin() picks one of those left.
+* Both must apply the rule  min <= w/nf < max  the same way.
+*
+* w=15u nf=5 is one finger of exactly 3u, the edge between card.1 and card.2,
+* so it belongs in card.2.  w=49u nf=7 is exactly 7u, so it belongs in card.3.
+* The other two sizes are off any edge and keep their cards.
+*
+* Each binned instance is compared with a plain model of the same vth0 at the
+* same size, so each printed ratio is 1 only when the expected card was used.
+* When no card is found the circuit does not load and nothing is printed.
+*
+* Two more circuits use the outer edges.  A size on the lowest wmin belongs in
+* the card, for a binned card and for a single card with no .N in its name.
+* A size on the wmax of that single card stops the load, as nf=1 always did.
+* It has no ratio to print, so a line after its echo means it was accepted.
+*
+* ngbehavior has to be set before the circuit is read, so the circuits are
+* given with circbyline, the one with .option scale last because the option
+* stays set for the circuits after it.  destroy all goes before each circuit,
+* because print finds the vectors of the plot before when a circuit stops.
+
+.control
+
+set ngbehavior=hsa
+
+circbyline hsa finger on a bin edge, no scale
+circbyline .subckt dut d g s b l=1u w=1u nf=1
+circbyline mn d g s b card l={l} w={w} nf={nf}
+circbyline .model card.1 nmos level=54 version=4.5 vth0=0.3 lmin=1.5e-7 lmax=2.02e-5 wmin=4.2e-7 wmax=3e-6
+circbyline .model card.2 nmos level=54 version=4.5 vth0=0.5 lmin=1.5e-7 lmax=2.02e-5 wmin=3e-6 wmax=7e-6
+circbyline .model card.3 nmos level=54 version=4.5 vth0=0.7 lmin=1.5e-7 lmax=2.02e-5 wmin=7e-6 wmax=1.01e-3
+circbyline .ends dut
+circbyline .model ref1 nmos level=54 version=4.5 vth0=0.3
+circbyline .model ref2 nmos level=54 version=4.5 vth0=0.5
+circbyline .model ref3 nmos level=54 version=4.5 vth0=0.7
+circbyline vg g 0 0.9
+circbyline vx1 dx1 0 0.9
+circbyline x1 dx1 g 0 0 dut l=0.5u w=15u nf=5
+circbyline vr1 dr1 0 0.9
+circbyline mr1 dr1 g 0 0 ref2 l=0.5u w=15u nf=5
+circbyline vx2 dx2 0 0.9
+circbyline x2 dx2 g 0 0 dut l=0.5u w=49u nf=7
+circbyline vr2 dr2 0 0.9
+circbyline mr2 dr2 g 0 0 ref3 l=0.5u w=49u nf=7
+circbyline vx3 dx3 0 0.9
+circbyline x3 dx3 g 0 0 dut l=0.5u w=14.5u nf=5
+circbyline vr3 dr3 0 0.9
+circbyline mr3 dr3 g 0 0 ref1 l=0.5u w=14.5u nf=5
+circbyline vx4 dx4 0 0.9
+circbyline x4 dx4 g 0 0 dut l=0.5u w=20u nf=5
+circbyline vr4 dr4 0 0.9
+circbyline mr4 dr4 g 0 0 ref2 l=0.5u w=20u nf=5
+circbyline .end
+
+op
+print i(vx1)/i(vr1)
+print i(vx2)/i(vr2)
+print i(vx3)/i(vr3)
+print i(vx4)/i(vr4)
+
+destroy all
+
+circbyline hsa finger on the lowest wmin
+circbyline .subckt dutb d g s b l=1u w=1u nf=1
+circbyline mn d g s b card l={l} w={w} nf={nf}
+circbyline .model card.1 nmos level=54 version=4.5 vth0=0.5 lmin=1.5e-7 lmax=2.02e-5 wmin=3e-6 wmax=1.01e-3
+circbyline .ends dutb
+circbyline .subckt duts d g s b l=1u w=1u nf=1
+circbyline mn d g s b cardx l={l} w={w} nf={nf}
+circbyline .model cardx nmos level=54 version=4.5 vth0=0.5 lmin=1.5e-7 lmax=2.02e-5 wmin=3e-6 wmax=1.01e-3
+circbyline .ends duts
+circbyline .model ref2 nmos level=54 version=4.5 vth0=0.5
+circbyline vg g 0 0.9
+circbyline vx1 dx1 0 0.9
+circbyline x1 dx1 g 0 0 dutb l=0.5u w=15u nf=5
+circbyline vx2 dx2 0 0.9
+circbyline x2 dx2 g 0 0 duts l=0.5u w=15u nf=5
+circbyline vr1 dr1 0 0.9
+circbyline mr1 dr1 g 0 0 ref2 l=0.5u w=15u nf=5
+circbyline .end
+
+op
+print i(vx1)/i(vr1)
+print i(vx2)/i(vr1)
+
+destroy all
+
+circbyline hsa finger on the wmax of a single card
+circbyline .subckt duts d g s b l=1u w=1u nf=1
+circbyline mn d g s b card l={l} w={w} nf={nf}
+circbyline .model card nmos level=54 version=4.5 lmin=1.5e-7 lmax=2.02e-5 wmin=1e-7 wmax=3e-6
+circbyline .ends duts
+circbyline vg g 0 0.9
+circbyline vxt dxt 0 0.9
+circbyline x1 dxt g 0 0 duts l=0.5u w=15u nf=5
+circbyline .end
+
+echo a size on the wmax of a single card stops the load
+op
+print i(vxt)
+
+destroy all
+
+circbyline hsa finger on a bin edge, scale 1u
+circbyline .option scale=1u
+circbyline .subckt dut d g s b l=1 w=1 nf=1
+circbyline mn d g s b card l={l} w={w} nf={nf}
+circbyline .model card.1 nmos level=54 version=4.5 vth0=0.3 lmin=1.5e-7 lmax=2.02e-5 wmin=4.2e-7 wmax=3e-6
+circbyline .model card.2 nmos level=54 version=4.5 vth0=0.5 lmin=1.5e-7 lmax=2.02e-5 wmin=3e-6 wmax=7e-6
+circbyline .model card.3 nmos level=54 version=4.5 vth0=0.7 lmin=1.5e-7 lmax=2.02e-5 wmin=7e-6 wmax=1.01e-3
+circbyline .ends dut
+circbyline .model ref1 nmos level=54 version=4.5 vth0=0.3
+circbyline .model ref2 nmos level=54 version=4.5 vth0=0.5
+circbyline .model ref3 nmos level=54 version=4.5 vth0=0.7
+circbyline vg g 0 0.9
+circbyline vx1 dx1 0 0.9
+circbyline x1 dx1 g 0 0 dut l=0.5 w=15 nf=5
+circbyline vr1 dr1 0 0.9
+circbyline mr1 dr1 g 0 0 ref2 l=0.5 w=15 nf=5
+circbyline vx2 dx2 0 0.9
+circbyline x2 dx2 g 0 0 dut l=0.5 w=49 nf=7
+circbyline vr2 dr2 0 0.9
+circbyline mr2 dr2 g 0 0 ref3 l=0.5 w=49 nf=7
+circbyline vx3 dx3 0 0.9
+circbyline x3 dx3 g 0 0 dut l=0.5 w=14.5 nf=5
+circbyline vr3 dr3 0 0.9
+circbyline mr3 dr3 g 0 0 ref1 l=0.5 w=14.5 nf=5
+circbyline vx4 dx4 0 0.9
+circbyline x4 dx4 g 0 0 dut l=0.5 w=20 nf=5
+circbyline vr4 dr4 0 0.9
+circbyline mr4 dr4 g 0 0 ref2 l=0.5 w=20 nf=5
+circbyline .end
+
+op
+print i(vx1)/i(vr1)
+print i(vx2)/i(vr2)
+print i(vx3)/i(vr3)
+print i(vx4)/i(vr4)
+
+.endc
+
+.end

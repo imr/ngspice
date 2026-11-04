@@ -242,8 +242,8 @@ is_equal(double result, double expectedResult)
 }
 
 
-static bool
-in_range(double value, double min, double max)
+bool
+INPbinInRange(double value, double min, double max)
 {
     /* the standard binning rule is: min <= value < max */
     return (is_equal(value, min) || min < value) && value < max && !is_equal(value, max);
@@ -334,7 +334,7 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
         lmin = parse_values[0]; lmax = parse_values[1];
         wmin = parse_values[2]; wmax = parse_values[3];
 
-        if (in_range(l, lmin, lmax) && in_range(w, wmin, wmax)) {
+        if (INPbinInRange(l, lmin, lmax) && INPbinInRange(w, wmin, wmax)) {
             /* create unless model is already defined */
             if (!modtmp->INPmodfast) {
                 int error = create_model(ckt, modtmp, tab);

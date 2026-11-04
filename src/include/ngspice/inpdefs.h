@@ -9,6 +9,7 @@ Modified: 2000 AlansFixes
 
 /* structure declarations used by either/both input package */
 
+#include "ngspice/bool.h"
 #include "ngspice/gendefs.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/inpptree.h"
@@ -83,9 +84,9 @@ struct card {
     struct card *nextcard;
     struct card *actualLine;
     struct nscope *level;
-    float w;
-    float l;
-    float nf;
+    double w;
+    double l;
+    double nf;
     int compmod;
 };
 
@@ -127,6 +128,7 @@ double INPevaluateRKM_L(char **, int *, int);
 char *INPfindLev(char *, int *);
 char *INPgetMod(CKTcircuit *, char *, INPmodel **, INPtables *);
 char *INPgetModBin(CKTcircuit *, char *, INPmodel **, INPtables *, char *);
+bool INPbinInRange(double value, double min, double max);
 int INPgetTok(char **, char **, int);
 int INPgetNetTok(char **, char **, int);
 void INPgetTree(char **, INPparseTree **, CKTcircuit *, INPtables *);

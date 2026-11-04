@@ -632,12 +632,12 @@ doit(struct card *deck, wordlist *modnames) {
                             }
 
                             char* curr_line = su_deck->line;
-                            float fwmin, fwmax, flmin, flmax;
+                            double fwmin, fwmax, flmin, flmax;
                             char *wmin = strstr(curr_line, " wmin=");
                             if (wmin) {
                                 int err;
                                 wmin = wmin + 6;
-                                fwmin = (float)INPevaluate(&wmin, &err, 0);
+                                fwmin = INPevaluate(&wmin, &err, 0);
                                 if (err) {
                                     prev = su_deck;
                                     su_deck = su_deck->nextcard;
@@ -653,7 +653,7 @@ doit(struct card *deck, wordlist *modnames) {
                             if (wmax) {
                                 int err;
                                 wmax = wmax + 6;
-                                fwmax = (float)INPevaluate(&wmax, &err, 0);
+                                fwmax = INPevaluate(&wmax, &err, 0);
                                 if (err) {
                                     prev = su_deck;
                                     su_deck = su_deck->nextcard;
@@ -670,7 +670,7 @@ doit(struct card *deck, wordlist *modnames) {
                             if (lmin) {
                                 int err;
                                 lmin = lmin + 6;
-                                flmin = (float)INPevaluate(&lmin, &err, 0);
+                                flmin = INPevaluate(&lmin, &err, 0);
                                 if (err) {
                                     prev = su_deck;
                                     su_deck = su_deck->nextcard;
@@ -686,7 +686,7 @@ doit(struct card *deck, wordlist *modnames) {
                             if (lmax) {
                                 int err;
                                 lmax = lmax + 6;
-                                flmax = (float)INPevaluate(&lmax, &err, 0);
+                                flmax = INPevaluate(&lmax, &err, 0);
                                 if (err) {
                                     prev = su_deck;
                                     su_deck = su_deck->nextcard;
@@ -699,11 +699,11 @@ doit(struct card *deck, wordlist *modnames) {
                                 continue;
                             }
 
-                            float csl = (float)scale * c->l;
+                            double csl = scale * c->l;
                             /* scale by nf */
-                            float csw = (float)scale * c->w / c->nf;
+                            double csw = scale * c->w / c->nf;
                             /*fprintf(stdout, "Debug: nf = %f\n", c->nf);*/
-                            if (csl >= flmin && csl < flmax && csw >= fwmin && csw < fwmax) {
+                            if (INPbinInRange(csl, flmin, flmax) && INPbinInRange(csw, fwmin, fwmax)) {
                                 /* use the current .model card */
                                 prev = su_deck;
                                 su_deck = su_deck->nextcard;

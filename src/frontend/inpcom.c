@@ -965,7 +965,7 @@ void inp_get_w_l_x(struct card* card) {
         if (w) {
             int err;
             w = w + 3;
-            card->w = (float)INPevaluate(&w, &err, 0);
+            card->w = INPevaluate(&w, &err, 0);
             if(err) { 
                 card->w = 0;
                 continue;
@@ -980,7 +980,7 @@ void inp_get_w_l_x(struct card* card) {
         if (l) {
             int err;
             l = l + 3;
-            card->l = (float)INPevaluate(&l, &err, 0);
+            card->l = INPevaluate(&l, &err, 0);
             if(err) { 
                 card->l = 0;
                 continue;
@@ -994,7 +994,7 @@ void inp_get_w_l_x(struct card* card) {
         if (nf) {
             int err;
             nf = nf + 4;
-            card->nf = (float)INPevaluate(&nf, &err, 0);
+            card->nf = INPevaluate(&nf, &err, 0);
             if (err) {
                 card->w = card->l = 0;
                 card->nf = 1.;
