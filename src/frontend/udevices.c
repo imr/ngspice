@@ -477,8 +477,10 @@ static void add_all_port_names(char *subckt_line)
     }
     if (ps_ports_and_pins & 4) {
         printf("TRANS_IN  %s\n", subckt_line);
+        fflush(stdout);
     } else if (ps_ports_and_pins & 1) {
         printf("%s\n", subckt_line);
+        fflush(stdout);
     }
     copy_line = tprintf("%s", subckt_line);
     pos = strstr(copy_line, "optional:");
@@ -872,12 +874,14 @@ struct card *replacement_udevice_cards(void)
         } else {
             printf("\nTRANS_OUT  %s\n", tmp);
         }
+        fflush(stdout);
         tfree(tmp);
         ds_free(&ds_tmp);
     }
     for (x = first_xlator(translated_p); x; x = next_xlator(translated_p)) {
         if (ps_ports_and_pins & 2) {
             printf("TRANS_OUT  %s\n", x->translated);
+            fflush(stdout);
         }
         new_str = copy(x->translated);
         if (count == 0) {
@@ -901,6 +905,7 @@ struct card *replacement_udevice_cards(void)
         p2 = skip_non_ws(p2);
         ds_cat_mem(&tmpds, p1, (p2 - p1));
         printf("TRANS_OUT  .ends %s\n\n", ds_get_buf(&tmpds));
+        fflush(stdout);
         ds_free(&tmpds);
     }
     return newcard;
@@ -4489,6 +4494,7 @@ bool u_process_instance(char *nline)
         append_xlator(translated_p, xlp);
         if (ps_ports_and_pins & 4) {
             printf("TRANS_IN  %s\n", nline);
+            fflush(stdout);
         }
         delete_xlator(xlp);
         ds_free(&dstr);
@@ -4505,6 +4511,7 @@ bool u_process_instance(char *nline)
             delete_instance_hdr(hdr);
             if (ps_ports_and_pins & 4) {
                 printf("TRANS_IN  %s\n", nline);
+                fflush(stdout);
             }
             behav_ret = f_logicexp(nline, ps_scan_gates_optimize);
             if (!behav_ret && current_subckt) {
@@ -4520,6 +4527,7 @@ bool u_process_instance(char *nline)
             delete_instance_hdr(hdr);
             if (ps_ports_and_pins & 4) {
                 printf("TRANS_IN  %s\n", nline);
+                fflush(stdout);
             }
             behav_ret = f_pindly(nline);
             if (!behav_ret && current_subckt) {
@@ -4541,6 +4549,7 @@ bool u_process_instance(char *nline)
     }
     if (ps_ports_and_pins & 4) {
         printf("TRANS_IN  %s\n", nline);
+        fflush(stdout);
     }
     /* Skip past instance name, type, pwr, gnd */
     p1 = skip_past_words(nline, 4);
@@ -4608,6 +4617,7 @@ bool u_process_model_line(char *line, bool global)
     if (strncmp(line, ".model ", strlen(".model ")) == 0) {
         if (ps_ports_and_pins & 4) {
             printf("TRANS_IN  %s\n", line);
+            fflush(stdout);
         }
         newline = TMALLOC(char, strlen(line) + 1);
         (void) memcpy(newline, line, strlen(line) + 1);
