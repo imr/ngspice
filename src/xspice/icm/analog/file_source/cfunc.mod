@@ -524,10 +524,10 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             for (i = 0; i < size; ++i) {
                 while (*cp && (isspace_c(*cp) || *cp == ','))
                     ++cp;
-                char *ncp = CNVgettok(&cp);
-                int ret = cnv_get_spice_value(ncp, &d);
-                free(ncp);
-                if (ret == FAIL) {
+                char *xcp = CNVgettok(&cp);
+                int rv = cnv_get_spice_value(xcp, &d);
+                free(xcp);
+                if (rv == FAIL) {
                     derr = MIF_TRUE;
                     break;
                 }
