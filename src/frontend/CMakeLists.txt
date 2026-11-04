@@ -114,7 +114,7 @@ target_sources(ngspice_core PRIVATE
     vectors.c
     where.c)
 
-# parse-bison.y: see bison_target() in src/CMakeLists.txt
+# parse-bison.y: see ngspice_bison_target() in src/CMakeLists.txt
 
 add_subdirectory(plotting)
 if(NGSPICE_ENABLE_X11 AND NOT NGSPICE_WINGUI)

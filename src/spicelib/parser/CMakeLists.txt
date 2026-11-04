@@ -66,4 +66,4 @@ if(NGSPICE_ENABLE_OSDI)
         inp2n.c)
 endif()
 
-# inpptree-parser.y: see bison_target() in src/CMakeLists.txt
+# inpptree-parser.y: see ngspice_bison_target() in src/CMakeLists.txt
