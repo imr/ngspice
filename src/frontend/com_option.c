@@ -149,9 +149,6 @@ com_option(wordlist *wl)
             com_sseed(newwl);
             wl_delete(newwl);
             /* Set the backup variable */
-            int ivarval;
-            if (cp_getvar("rndseed", CP_NUM, &ivarval, 0))
-                cp_vset("rndseed_cf", CP_NUM, &ivarval);
             continue;
         }
 

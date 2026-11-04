@@ -7,12 +7,12 @@
 set(_cmpp_gen "${CMAKE_BINARY_DIR}/generated/src/xspice/cmpp")
 file(MAKE_DIRECTORY "${_cmpp_gen}")
 
-bison_target(CmppIfsParser  ifs_yacc.y "${_cmpp_gen}/ifs_yacc.c"
-             DEFINES_FILE "${_cmpp_gen}/ifs_yacc.h")
-bison_target(CmppModParser  mod_yacc.y "${_cmpp_gen}/mod_yacc.c"
-             DEFINES_FILE "${_cmpp_gen}/mod_yacc.h")
-flex_target(CmppIfsLexer    ifs_lex.l  "${_cmpp_gen}/ifs_lex.c")
-flex_target(CmppModLexer    mod_lex.l  "${_cmpp_gen}/mod_lex.c")
+ngspice_bison_target(CmppIfsParser  ifs_yacc.y "${_cmpp_gen}/ifs_yacc.c"
+                     DEFINES_FILE "${_cmpp_gen}/ifs_yacc.h")
+ngspice_bison_target(CmppModParser  mod_yacc.y "${_cmpp_gen}/mod_yacc.c"
+                     DEFINES_FILE "${_cmpp_gen}/mod_yacc.h")
+ngspice_flex_target(CmppIfsLexer    ifs_lex.l  "${_cmpp_gen}/ifs_lex.c")
+ngspice_flex_target(CmppModLexer    mod_lex.l  "${_cmpp_gen}/mod_lex.c")
 
 add_flex_bison_dependency(CmppIfsLexer CmppIfsParser)
 add_flex_bison_dependency(CmppModLexer CmppModParser)

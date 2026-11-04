@@ -75,12 +75,12 @@ endif()
 # ---------------------------------------------------------------------------
 file(MAKE_DIRECTORY "${NGSPICE_GEN}/frontend" "${NGSPICE_GEN}/spicelib/parser")
 
-bison_target(NgspiceFrontendParser
+ngspice_bison_target(NgspiceFrontendParser
     "${CMAKE_CURRENT_SOURCE_DIR}/frontend/parse-bison.y"
     "${NGSPICE_GEN}/frontend/parse-bison.c"
     DEFINES_FILE "${NGSPICE_GEN}/frontend/parse-bison.h")
 
-bison_target(NgspiceInpPtreeParser
+ngspice_bison_target(NgspiceInpPtreeParser
     "${CMAKE_CURRENT_SOURCE_DIR}/spicelib/parser/inpptree-parser.y"
     "${NGSPICE_GEN}/spicelib/parser/inpptree-parser.c"
     DEFINES_FILE "${NGSPICE_GEN}/spicelib/parser/inpptree-parser.h")

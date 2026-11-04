@@ -305,16 +305,11 @@ set_sseed(wordlist *wl)
 {
     int newseed;
 
-    if (wl == NULL) {
-        if (!cp_getvar("rndseed", CP_NUM, &newseed, 0)) {
-            newseed = getpid();
-            cp_vset("rndseed", CP_NUM, &newseed);
-        }
-        srand((unsigned int)newseed);
-        TausSeed();
-    }
-    else if (cieq(wl->wl_word, "random")) {
-        newseed = getpid();
+    /* get different seeds, if in a loop within the same process */
+    static int adder;
+
+    if (wl == NULL || cieq(wl->wl_word, "random")) {
+        newseed = getpid() + adder++;
         cp_vset("rndseed", CP_NUM, &newseed);
         srand((unsigned int)newseed);
         TausSeed();

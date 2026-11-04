@@ -522,15 +522,6 @@ eval_opt(struct card* deck, bool comfile, FILE *fp, bool intfile)
         else
             cp_remvar("rshunt_value");
     }
-    /* if seed option wasn't given, remove variable,
-       or reset it to the value given in spinit, .spiceinit, or 1 */
-    if (!has_seed) {
-        int ivarval = 1;
-        if (cp_getvar("rndseed_cf", CP_NUM, &ivarval, 0))
-            cp_vset("rndseed", CP_NUM, &ivarval);
-        else
-            cp_vset("rndseed", CP_NUM, &ivarval);
-    }
 }
 
 /* The routine to source a spice input deck. We read the deck in, take

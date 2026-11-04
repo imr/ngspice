@@ -85,7 +85,7 @@ LIB_TARGET = {
 }
 DEFAULT_TARGET = "ngspice_core"
 
-# bison inputs handled by bison_target() in src/CMakeLists.txt
+# bison inputs handled by ngspice_bison_target() in src/CMakeLists.txt
 PARSER_INPUTS = ("parse-bison.y", "inpptree-parser.y")
 
 LIB_SOURCES_RE = re.compile(r"^(lib[A-Za-z0-9_]+_la)_SOURCES\s*\+?=\s*(.*)$")
@@ -185,7 +185,7 @@ def render(rel, sources, subdirs, parsers):
         if f not in PARSER_INPUTS:
             sys.exit("src/%s/Makefile.am: %s is a bison/flex input that "
                      "src/CMakeLists.txt does not process" % (rel, f))
-        out += ["# %s: see bison_target() in src/CMakeLists.txt" % f, ""]
+        out += ["# %s: see ngspice_bison_target() in src/CMakeLists.txt" % f, ""]
 
     for cond, names in subdirs:
         groups = []

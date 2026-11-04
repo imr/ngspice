@@ -569,3 +569,32 @@ if(NGSPICE_ENABLE_CODEMODELS)
             "package provides win_flex.exe.")
     endif()
 endif()
+
+# winflexbison is not safe to run in parallel: it creates its temporary files
+# with _tempnam(), i.e. under a predictable name in %TMP%. Two bison runs at
+# the same time (Ninja, msbuild /m) then share a file, and the result is a
+# missing or corrupted parser. Give every run its own TMP directory.
+# Use ngspice_bison_target() / ngspice_flex_target() instead of the plain
+# FindBISON / FindFLEX macros.
+macro(_ngspice_winflexbison_env _var _name)
+    if(${_var} MATCHES "win[_-](bison|flex)")
+        set(_ngspice_tmp "${CMAKE_BINARY_DIR}/winflexbison-tmp/${_name}")
+        file(MAKE_DIRECTORY "${_ngspice_tmp}")
+        set(_ngspice_saved_exe "${${_var}}")
+        set(${_var} "${CMAKE_COMMAND}" -E env "TMP=${_ngspice_tmp}"
+            "TEMP=${_ngspice_tmp}" "FLEX_TMP_DIR=${_ngspice_tmp}"
+            "${_ngspice_saved_exe}")
+    endif()
+endmacro()
+
+macro(ngspice_bison_target _name)
+    _ngspice_winflexbison_env(BISON_EXECUTABLE ${_name})
+    bison_target(${_name} ${ARGN})
+    unset(BISON_EXECUTABLE)
+endmacro()
+
+macro(ngspice_flex_target _name)
+    _ngspice_winflexbison_env(FLEX_EXECUTABLE ${_name})
+    flex_target(${_name} ${ARGN})
+    unset(FLEX_EXECUTABLE)
+endmacro()
