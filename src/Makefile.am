@@ -116,7 +116,7 @@ ngspice_SOURCES = \
 	conf.h \
 	ngspice.c
 
-ngspice_CPPFLAGS = $(AM_CPPFLAGS) -DSIMULATOR
+ngspice_CPPFLAGS = $(AM_CPPFLAGS)
 
 if WINGUI
 ngspice_LDFLAGS = -municode $(AM_LDFLAGS)
@@ -373,7 +373,7 @@ libspice_la_SOURCES = \
 	ngspice.c \
 	tclspice.c
 
-libspice_la_CPPFLAGS = $(AM_CPPFLAGS)  -DSIMULATOR \
+libspice_la_CPPFLAGS = $(AM_CPPFLAGS) \
 	-DTCLSPICE_version="\"$(TCLSPICE_VERSION)\""
 
 libspice_la_LIBADD = \
@@ -504,7 +504,7 @@ libngspice_la_SOURCES = \
 	ngspice.c \
 	sharedspice.c
 
-libngspice_la_CPPFLAGS = $(AM_CPPFLAGS)  -DSIMULATOR \
+libngspice_la_CPPFLAGS = $(AM_CPPFLAGS) \
 	-DSHAREDSPICE_version="\"$(SHAREDSPICE_VERSION)\""
 
 libngspice_la_LIBADD = \

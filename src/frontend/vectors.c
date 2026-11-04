@@ -259,7 +259,7 @@ FINDVEC_ALL_GEN(findvec_ally,
         (d->v_flags & VF_PERMANENT) &&
                 (!cieq(d->v_name, pl->pl_scale->v_name)))
 
-#if defined (XSPICE) && defined (SIMULATOR) /* SIMULATOR: disable old app nutmeg */
+#if defined (XSPICE)
 /* special case for finding all event nodes and return them as linked vectors */
 static struct dvec* findvec_alle(void) {
 
@@ -307,12 +307,6 @@ static struct dvec* findvec_alle(void) {
          end = v;
     }
     return newv;
-}
-#endif
-
-#ifndef SIMULATOR
-static struct dvec* findvec_alle(void) {
-    return NULL;
 }
 #endif
 

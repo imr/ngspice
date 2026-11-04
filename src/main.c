@@ -186,13 +186,9 @@ static int app_event_func(void);
 static void show_help(void);
 static bool read_initialisation_file(const char *dir, const char *name);
 
-#ifdef SIMULATOR
 static void append_to_stream(FILE *dest, FILE *source);
-#endif
 
 extern IFsimulator SIMinfo;
-
-#ifdef SIMULATOR
 
 const bool ft_nutmeg = FALSE;
 extern struct comm spcp_coms[];
@@ -225,262 +221,6 @@ IFfrontEnd nutmeginfo = {
     OUTattributes
 };
 
-#else /* SIMULATOR */
-
-const bool ft_nutmeg = TRUE;
-extern struct comm nutcp_coms[];
-struct comm *cp_coms = nutcp_coms;
-IFfrontEnd nutmeginfo;
-
-/* -------------------------------------------------------------------------- */
-int
-if_run(CKTcircuit *t, char *w, wordlist *s, INPtables *b)
-{
-    NG_IGNORE(b);
-    NG_IGNORE(s);
-    NG_IGNORE(w);
-    NG_IGNORE(t);
-
-    return 0;
-}
-
-/* -------------------------------------------------------------------------- */
-int
-if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
-{
-    NG_IGNORE(tab);
-    NG_IGNORE(args);
-    NG_IGNORE(t);
-
-    return 0;
-}
-
-/* -------------------------------------------------------------------------- */
-void
-if_dump(CKTcircuit *ckt, FILE *fp)
-{
-    NG_IGNORE(fp);
-    NG_IGNORE(ckt);
-}
-
-/* -------------------------------------------------------------------------- */
-CKTcircuit *
-if_inpdeck(struct card *deck, INPtables **tab)
-{
-    NG_IGNORE(tab);
-    NG_IGNORE(deck);
-
-    return NULL;
-}
-
-/* -------------------------------------------------------------------------- */
-int
-if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
-{
-    NG_IGNORE(value);
-    NG_IGNORE(type);
-    NG_IGNORE(name);
-    NG_IGNORE(ckt);
-
-    return 0;
-}
-
-/* -------------------------------------------------------------------------- */
-void
-if_cktfree(CKTcircuit *ckt, INPtables *tab)
-{
-    NG_IGNORE(tab);
-    NG_IGNORE(ckt);
-}
-
-/* -------------------------------------------------------------------------- */
-void
-if_setndnames(char *line)
-{
-    NG_IGNORE(line);
-}
-
-/* -------------------------------------------------------------------------- */
-char *
-if_errstring(int code)
-{
-    NG_IGNORE(code);
-
-    return copy("spice error");
-}
-
-/* -------------------------------------------------------------------------- */
-void
-if_setparam_model(CKTcircuit *ckt, char **name, char *val)
-{
-    NG_IGNORE(val);
-    NG_IGNORE(name);
-    NG_IGNORE(ckt);
-}
-
-void
-if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model)
-{
-    NG_IGNORE(do_model);
-    NG_IGNORE(val);
-    NG_IGNORE(param);
-    NG_IGNORE(name);
-    NG_IGNORE(ckt);
-}
-
-/* -------------------------------------------------------------------------- */
-bool
-if_tranparams(struct circ *ci, double *start, double *stop, double *step)
-{
-    NG_IGNORE(step);
-    NG_IGNORE(stop);
-    NG_IGNORE(start);
-    NG_IGNORE(ci);
-
-    return FALSE;
-}
-
-/* -------------------------------------------------------------------------- */
-struct variable *
-if_getstat(CKTcircuit *ckt, char *name)
-{
-    NG_IGNORE(name);
-    NG_IGNORE(ckt);
-
-    return NULL;
-}
-
-void
-com_snload(wordlist *wl)
-{
-    NG_IGNORE(wl);
-}
-
-void
-com_snsave(wordlist *wl)
-{
-    NG_IGNORE(wl);
-}
-
-void
-com_optran(wordlist *wl)
-{
-    NG_IGNORE(wl);
-}
-
-void
-SMPprint(SMPmatrix *n1, char *n2)
-{
-    NG_IGNORE(n1);
-    NG_IGNORE(n2);
-}
-
-void
-SMPprintRHS(SMPmatrix *n1, char *n2, double *n3, double *n4)
-{
-    NG_IGNORE(n1);
-    NG_IGNORE(n2);
-    NG_IGNORE(n3);
-    NG_IGNORE(n4);
-}
-
-void
-spice_destroy_devices(void)
-{
-}
-
-#endif /* SIMULATOR */
-
-#ifndef SIMULATOR
-
-#ifdef XSPICE
-/* saj to get nutmeg to compile, not nice but necessary */
-Ipc_Tiein_t  g_ipc;
-
-Ipc_Status_t
-ipc_send_errchk(void)
-{
-    Ipc_Status_t x = IPC_STATUS_OK;
-    return x;
-}
-
-Ipc_Status_t
-ipc_get_line(char *str, int *len, Ipc_Wait_t wait)
-{
-    Ipc_Status_t x = IPC_STATUS_OK;
-
-    NG_IGNORE(str);
-    NG_IGNORE(len);
-    NG_IGNORE(wait);
-
-    return x;
-}
-
-struct card *
-ENHtranslate_poly(struct card *deck)
-{
-    NG_IGNORE(deck);
-    return NULL;
-}
-
-int
-EVTswitch_plot(CKTcircuit* ckt, const char* plottypename)
-{
-    NG_IGNORE(ckt);
-    NG_IGNORE(plottypename);
-    return 1;
-};
-
-void
-EVTsave(wordlist* wl)
-{
-    NG_IGNORE(wl);
-}
-
-int
-load_opus(const char *name)
-{
-    NG_IGNORE(name);
-    return 1;
-}
-
-char *
-MIFgettok(char **s)
-{
-    NG_IGNORE(s);
-    return NULL;
-}
-
-void
-EVTprint(wordlist *wl)
-{
-    NG_IGNORE(wl);
-}
-
-void
-EVTprintvcd(wordlist *wl)
-{
-    NG_IGNORE(wl);
-}
-
-void
-EVTdisplay(wordlist *wl)
-{
-    NG_IGNORE(wl);
-}
-
-struct dvec *
-EVTfindvec(char *node) {
-    NG_IGNORE(node);
-    return NULL;
-}
-
-void NIresetwarnmsg(void)
-{}
-
-#endif /* XSPICE */
-
-#endif /* SIMULATOR */
 
 char *hlp_filelist[] = { "ngspice", NULL };
 
@@ -500,7 +240,6 @@ int DEVmaxnum = 0;
 int
 SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 {
-#ifdef SIMULATOR
     spice_init_devices();
     SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
@@ -514,8 +253,6 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 /* Evaluates limits of machine accuracy for CIDER */
     evalAccLimits();
 #endif /* CIDER */
-
-#endif /* SIMULATOR */
 
     SPfrontEnd = frontEnd;
     *simulator = &SIMinfo;
@@ -761,7 +498,6 @@ show_help(void)
            "Report bugs to %s.\n", cp_program, Bug_Addr);
 }
 
-#ifdef SIMULATOR
 /* -------------------------------------------------------------------------- */
 static void
 append_to_stream(FILE *dest, FILE *source)
@@ -772,7 +508,6 @@ append_to_stream(FILE *dest, FILE *source)
     while ((n = fread(buf, 1, BSIZE_SP, source)) > 0)
         fwrite(buf, n, 1, dest);
 }
-#endif /* SIMULATOR */
 
 /* -------------------------------------------------------------------------- */
 /* Read an initialisation file.
@@ -956,10 +691,10 @@ int main(int argc, char **argv)
 
     /* set a boolean variable when XSPICE and/or OSDI is enabled,
        to be used in spinit etc. */
-#if defined(SIMULATOR) && defined(XSPICE)
+#if defined(XSPICE)
     cp_vset("xspice_enabled", CP_BOOL, &t);
 #endif
-#if defined(SIMULATOR) && defined(OSDI)
+#if defined(OSDI)
     cp_vset("osdi_enabled", CP_BOOL, &t);
 #endif
 
@@ -1183,11 +918,7 @@ int main(int argc, char **argv)
         }
     } /* srflag */
 
-#ifdef SIMULATOR
     if_getparam = spif_getparam_special;
-#else
-    if_getparam = nutif_getparam;
-#endif
 
     if ((!iflag && !istty) || ft_servermode) { /* (batch and file) or
                                                 * server operation */
@@ -1356,8 +1087,6 @@ int main(int argc, char **argv)
         }
     } /* end of normal execution for setjmp() */
 
-
-#ifdef SIMULATOR
 
     /* Pass 2 -- get the filenames. If we are spice, then this means
      * build a circuit for this file. If this is in server mode, don't
@@ -1597,25 +1326,6 @@ int main(int argc, char **argv)
 
         sp_shutdown(EXIT_NORMAL);
     }  /* ---  if (ft_batchmode) ---  */
-
-
-#else  /* ~ SIMULATOR */
-
-    if (SETJMP(jbuf, 1)) {
-
-        ft_sigintr_cleanup();
-        fprintf(cp_err, "Warning: error executing during ft_loadfile().\n");
-
-    }
-    else {
-        cp_interactive = FALSE;
-
-        while (optind < argc) {
-            ft_loadfile(argv[optind++]);
-        }
-    }
-
-#endif /* ~ SIMULATOR */
 
     for (;;) {
         if (!SETJMP(jbuf, 1)) {
