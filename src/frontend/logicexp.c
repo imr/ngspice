@@ -374,6 +374,8 @@ static int lexer_scan(LEXER lx)
             }
             if (i == 1 && need_gt1) {
                 lx->lexer_buf[1] = '\0';
+                if (c != '\0')
+                    lexer_putback(lx);
                 return LEX_OTHER;
             }
             if (i >= lx->lexer_blen) {
@@ -1360,7 +1362,11 @@ bool f_logicexp(char *line, int optimize)
 error_return:
     delete_lexer(parse_lexer);
     current_lexer = NULL;
-    if (uname) tfree(uname);
+    if (uname) {
+        fprintf(stderr, "ERROR parsing logicexp\n");
+        fprintf(stderr, "ERROR in instance %s\n", uname);
+        tfree(uname);
+    }
     return FALSE;
 }
 
@@ -1725,7 +1731,7 @@ static bool extract_delay(
         return FALSE;
     }
     val = lexer_scan(lx);
-    while (val != '}') {
+    while (val != '}' && val != 0) {
         if (val == LEX_ID) {
             if (eq(lx->lexer_buf, "delay")) {
                 in_delay = TRUE;
@@ -1801,6 +1807,10 @@ static bool extract_delay(
         }
         val = lexer_scan(lx);
     } // end while != '}'
+    if (!val) {
+        fprintf(stderr, "ERROR unexpected end of tokens in extract_delay\n");
+        ret_val = FALSE;
+    }
     ds_free(&dly);
     ds_free(&ddel_str);
     ds_free(&tmp_ds);
@@ -1832,6 +1842,7 @@ static bool new_gen_output_models(LEXER lx)
                 in_tristate = FALSE;
                 val = lexer_scan(lx);
                 if (val != ':') {
+                    fprintf(stderr, "ERROR : missing after pindly\n");
                     goto err_return;
                 }
             } else if (eq(lx->lexer_buf, "tristate")) {
@@ -1839,6 +1850,7 @@ static bool new_gen_output_models(LEXER lx)
                 in_tristate = TRUE;
                 val = lexer_scan(lx);
                 if (val != ':') {
+                    fprintf(stderr, "ERROR : missing after tristate\n");
                     goto err_return;
                 }
             } else if (eq(lx->lexer_buf, "setup_hold")
@@ -1856,6 +1868,7 @@ static bool new_gen_output_models(LEXER lx)
                 if (pline) {
                     pline_arr[idx++] = pline;
                 } else {
+                    fprintf(stderr, "ERROR unable to find pindly: out_name\n");
                     goto err_return;
                 }
                 val = lexer_scan(lx);
@@ -1863,13 +1876,15 @@ static bool new_gen_output_models(LEXER lx)
                     val = lexer_scan(lx);
                 }
             }
-            if (!extract_delay(lx, val, pline_arr, idx, FALSE)) goto err_return;
+            if (!extract_delay(lx, val, pline_arr, idx, FALSE)) {
+                fprintf(stderr, "ERROR unable to extract_delay in pindly:\n");
+                goto err_return;
+            }
             for (i = 0; i < arrlen; i++) {
                 pline_arr[i] = NULL;
             }
             idx = 0; // end in_pindly and LEX_ID
-        } else if (in_tristate && val == LEX_ID) {
-        // start in_tristate and LEX_ID
+        } else if (in_tristate && val == LEX_ID) { // start in_tristate and LEX_ID
             if (eq(lx->lexer_buf, "enable")) {
                 val = lexer_scan(lx);
                 if (val == LEX_ID && (eq(lx->lexer_buf, "hi")
@@ -1881,11 +1896,13 @@ static bool new_gen_output_models(LEXER lx)
                     if (val != '=') {
                         // if there is no '=' it must be an enable id
                         if (val != LEX_ID) {
+                            fprintf(stderr, "ERROR no id following enable in tristate:\n");
                             goto err_return;
                         }
                     } else { // enable id follows '='
                         val = lexer_scan(lx);
                         if (val != LEX_ID) {
+                            fprintf(stderr, "ERROR no id following enable = in tristate:\n");
                             goto err_return;
                         }
                     }
@@ -1894,18 +1911,21 @@ static bool new_gen_output_models(LEXER lx)
                         ds_cat_char(&enable_name, '~');
                     ds_cat_str(&enable_name, lx->lexer_buf);
                 } else {
+                    fprintf(stderr, "ERROR enable is not followed by hi/lo in tristate:\n");
                     goto err_return;
                 }
                 ds_clear(&last_enable);
                 ds_cat_ds(&last_enable, &enable_name);
                 val = lexer_scan(lx);
                 if (val != LEX_ID) {
+                    fprintf(stderr, "ERROR no id following enable signal in tristate:\n");
                     goto err_return;
                 }
             } else if (ds_get_length(&last_enable) > 0) {
                 ds_clear(&enable_name);
                 ds_cat_ds(&enable_name, &last_enable);
             } else {
+                fprintf(stderr, "ERROR enable missing from tristate:\n");
                 goto err_return;
             }
             while (val == LEX_ID) {
@@ -1915,6 +1935,7 @@ static bool new_gen_output_models(LEXER lx)
                     (void) set_ena_name(ds_get_buf(&enable_name), pline);
                     u_remember_pin(lx->lexer_buf, 3);
                 } else {
+                    fprintf(stderr, "ERROR tristate: output signal not found\n");
                     goto err_return;
                 }
                 val = lexer_scan(lx);
@@ -1922,7 +1943,10 @@ static bool new_gen_output_models(LEXER lx)
                     val = lexer_scan(lx);
                 }
             }
-            if (!extract_delay(lx, val, pline_arr, idx, TRUE)) goto err_return;
+            if (!extract_delay(lx, val, pline_arr, idx, TRUE)) {
+                fprintf(stderr, "ERROR unable to extract_delay in tristate:\n");
+                goto err_return;
+            }
             for (i = 0; i < arrlen; i++) {
                 pline_arr[i] = NULL;
             }
@@ -1968,7 +1992,7 @@ bool f_pindly(char *line)
     PLINE pline = NULL;
 
     init_pindly_tab();
-
+    set_pindly_instance_name(NULL);
     lxr = new_lexer(line);
     current_lexer = lxr;
     t = lexer_scan(lxr); // U*
@@ -2055,11 +2079,7 @@ bool f_pindly(char *line)
     }
 
     if (!new_gen_output_models(lxr)) {
-        char *i_name = get_pindly_instance_name();
         fprintf(stderr, "ERROR generating models for pindly\n");
-        if (i_name) {
-            fprintf(stderr, "ERROR in instance %s\n", i_name);
-        }
         goto error_return;;
     }
     gen_pindly_buffers();
@@ -2073,6 +2093,10 @@ error_return:
     delete_lexer(lxr);
     cleanup_pindly_tab();
     current_lexer = NULL;
+    if (get_pindly_instance_name()) {
+        fprintf(stderr, "ERROR parsing pindly\n");
+        fprintf(stderr, "ERROR in instance %s\n", get_pindly_instance_name());
+    }
     set_pindly_instance_name(NULL);
     return FALSE;
 }
