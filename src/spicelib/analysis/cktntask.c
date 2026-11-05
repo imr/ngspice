@@ -106,9 +106,9 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnewtrunc        = 0;
         tsk->TSKtrtol           = 7.;
         tsk->TSKbypass          = 0;
-        tsk->TSKtranMaxIter     = 10;
+        tsk->TSKtranMaxIter     = 100;
         tsk->TSKdcMaxIter       = 100;
-        tsk->TSKdcTrcvMaxIter   = 50;
+        tsk->TSKdcTrcvMaxIter   = 100;
         tsk->TSKintegrateMethod = TRAPEZOIDAL;
         tsk->TSKmaxOrder        = 2;
         /* full check, and full verbosity */
