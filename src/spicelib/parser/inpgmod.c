@@ -267,10 +267,50 @@ INPgetWnflag(void)
 }
 
 
+/* Is the variable binoutermax set (set binoutermax, or .option binoutermax)?
+   Then a size exactly on lmax or wmax is accepted when no bin holds it
+   by the standard rule. Some PDKs (e.g. sky130) have outermost bin limits
+   on round values, so their largest device size is on lmax or wmax. */
+bool
+INPbinOuterMax(void)
+{
+    return cp_getvar("binoutermax", CP_BOOL, NULL, 0);
+}
+
+
+/* Match the sizes l and w against the bin limits of one model card.
+   0: the card does not hold the sizes.
+   1: min <= size < max for l and for w (the standard rule).
+   2, 3: only with outermax: one or both sizes are exactly on lmax, wmax.
+   A lower value is the better match. */
+int
+INPbinMatch(double l, double lmin, double lmax,
+            double w, double wmin, double wmax, bool outermax)
+{
+    int match = 1;
+
+    if (!INPbinInRange(l, lmin, lmax)) {
+        if (outermax && is_equal(l, lmax))
+            match++;
+        else
+            return 0;
+    }
+    if (!INPbinInRange(w, wmin, wmax)) {
+        if (outermax && is_equal(w, wmax))
+            match++;
+        else
+            return 0;
+    }
+    return match;
+}
+
+
 char *
 INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char *line)
 {
-    INPmodel    *modtmp;
+    INPmodel    *modtmp, *best = NULL;
+    int          best_match = 0;
+    bool         outermax = INPbinOuterMax();
     double       l, w, lmin, lmax, wmin, wmax;
     double       parse_values[4];
     bool         parse_found[4];
@@ -344,17 +384,26 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
         lmin = parse_values[0]; lmax = parse_values[1];
         wmin = parse_values[2]; wmax = parse_values[3];
 
-        if (INPbinInRange(l, lmin, lmax) && INPbinInRange(w, wmin, wmax)) {
-            /* create unless model is already defined */
-            if (!modtmp->INPmodfast) {
-                int error = create_model(ckt, modtmp, tab);
-                if (error)
-                    return NULL;
-            }
-
-            *model = modtmp;
-            return NULL;
+        int match = INPbinMatch(l, lmin, lmax, w, wmin, wmax, outermax);
+        if (match == 0)
+            continue;
+        if (!best || match < best_match) {
+            best = modtmp;
+            best_match = match;
         }
+        /* the standard rule holds: take the first card found, as before */
+        if (match == 1)
+            break;
+    }
+
+    if (best) {
+        /* create unless model is already defined */
+        if (!best->INPmodfast) {
+            int error = create_model(ckt, best, tab);
+            if (error)
+                return NULL;
+        }
+        *model = best;
     }
 
     return NULL;

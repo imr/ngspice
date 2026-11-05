@@ -576,6 +576,7 @@ doit(struct card *deck, wordlist *modnames) {
     double scale;
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
+    bool outermax = INPbinOuterMax();
 
     /* as in INPgetModBin(): bin on w/nf (1) or on the total w (0) */
     int wnflag = INPgetWnflag();
@@ -724,9 +725,10 @@ doit(struct card *deck, wordlist *modnames) {
                             double csw = scale * c->w / (wnflag ? c->nf : 1.);
                             /* the other width, if wnflag is given on the instance */
                             double csw2 = scale * c->w / (wnflag ? 1. : c->nf);
-                            if (INPbinInRange(csl, flmin, flmax) &&
-                                (INPbinInRange(csw, fwmin, fwmax) ||
-                                 (inst_wnflag && INPbinInRange(csw2, fwmin, fwmax)))) {
+                            /* keep the card if INPgetModBin() may choose it */
+                            if (INPbinMatch(csl, flmin, flmax, csw, fwmin, fwmax, outermax) > 0 ||
+                                (inst_wnflag &&
+                                 INPbinMatch(csl, flmin, flmax, csw2, fwmin, fwmax, outermax) > 0)) {
                                 /* use the current .model card */
                                 prev = su_deck;
                                 su_deck = su_deck->nextcard;

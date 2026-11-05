@@ -130,6 +130,9 @@ char *INPgetMod(CKTcircuit *, char *, INPmodel **, INPtables *);
 char *INPgetModBin(CKTcircuit *, char *, INPmodel **, INPtables *, char *);
 bool INPbinInRange(double value, double min, double max);
 int INPgetWnflag(void);
+bool INPbinOuterMax(void);
+int INPbinMatch(double l, double lmin, double lmax,
+                double w, double wmin, double wmax, bool outermax);
 int INPgetTok(char **, char **, int);
 int INPgetNetTok(char **, char **, int);
 void INPgetTree(char **, INPparseTree **, CKTcircuit *, INPtables *);

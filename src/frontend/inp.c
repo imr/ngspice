@@ -59,6 +59,7 @@ static wordlist *inp_savecurrents(struct card *deck, struct card *options,
 static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
 static void inp_set_wnflag(const char *line);
+static void inp_set_binoutermax(const char *line);
 #ifdef REM_UNUSED
 static void rem_unused_mos_models(struct card* deck);
 #endif
@@ -991,6 +992,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                             fprintf(stderr, "\nError: Could not set 'scalm' variable\n");
                     }
                     inp_set_wnflag(scan->line);
+                    inp_set_binoutermax(scan->line);
                 }
                 /* from .options (will override the previous settings) */
                 for (scan = options; scan; scan = scan->nextcard) {
@@ -1019,6 +1021,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                             fprintf(stderr, "\nError: Could not set 'scalm' variable\n");
                     }
                     inp_set_wnflag(scan->line);
+                    inp_set_binoutermax(scan->line);
                 }
             }
 
@@ -2794,6 +2797,19 @@ static void inp_set_wnflag(const char *line)
     else if (*s != '\0' && !isspace_c(*s))
         return;
     cp_vset("wnflag", CP_NUM, &wnflag);
+}
+
+/* .option binoutermax: set the variable binoutermax already here, because
+   the subcircuit expander needs it before the options are evaluated.
+   Like scale, the variable then stays set for the following circuits. */
+static void inp_set_binoutermax(const char *line)
+{
+    const char *s = strstr(line, "binoutermax");
+    if (s && s > line && isspace_c(s[-1]) &&
+        (s[11] == '\0' || isspace_c(s[11]))) {
+        bool t = TRUE;
+        cp_vset("binoutermax", CP_BOOL, &t);
+    }
 }
 
 #ifdef REM_UNUSED
