@@ -101,6 +101,7 @@ static int numnodes(const char* line, struct subs* subs);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
+static bool su_has_wnflag(struct card *deck);
 
 /* hash table to store the global nodes
  * For now its use is limited to avoid double entries in global_nodes[] */
@@ -421,6 +422,18 @@ find_ends(struct card *l)
 
 #define MAXNEST 21
 /*-------------------------------------------------------------------*/
+/* Is wnflag given on a MOS instance line of this subcircuit body? */
+static bool
+su_has_wnflag(struct card *deck)
+{
+    for (; deck; deck = deck->nextcard)
+        if (*deck->line == 'm' && strstr(deck->line, " wnflag="))
+            return TRUE;
+    return FALSE;
+}
+
+
+/*-------------------------------------------------------------------*/
 /*  doit does the actual substitution of .subckts.                   */
 /*  It takes two passes:  the first extracts .subckts                */
 /*  and sticks pointer to them into the linked list sss.  It does    */
@@ -564,6 +577,9 @@ doit(struct card *deck, wordlist *modnames) {
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
+    /* as in INPgetModBin(): bin on w/nf (1) or on the total w (0) */
+    int wnflag = INPgetWnflag();
+
     error = 0;
     /* Second pass: do the replacements. */
     do {                    /*  while (!error && numpasses-- && gotone)  */
@@ -624,6 +640,10 @@ doit(struct card *deck, wordlist *modnames) {
                         /* extract wmin, wmax, lmin, lmax */
                         struct card* new_deck = su_deck;
                         struct card* prev = NULL;
+                        /* wnflag on a MOS line of the subcircuit overrides the
+                           option, and may be an expression: then keep the cards
+                           for both w/nf and w, INPgetModBin() will choose */
+                        bool inst_wnflag = su_has_wnflag(su_deck);
                         while (su_deck) {
                             if (!ciprefix(".model", su_deck->line)) {
                                 prev = su_deck;
@@ -700,10 +720,13 @@ doit(struct card *deck, wordlist *modnames) {
                             }
 
                             double csl = scale * c->l;
-                            /* scale by nf */
-                            double csw = scale * c->w / c->nf;
-                            /*fprintf(stdout, "Debug: nf = %f\n", c->nf);*/
-                            if (INPbinInRange(csl, flmin, flmax) && INPbinInRange(csw, fwmin, fwmax)) {
+                            /* w per finger, or total w if wnflag is 0 */
+                            double csw = scale * c->w / (wnflag ? c->nf : 1.);
+                            /* the other width, if wnflag is given on the instance */
+                            double csw2 = scale * c->w / (wnflag ? 1. : c->nf);
+                            if (INPbinInRange(csl, flmin, flmax) &&
+                                (INPbinInRange(csw, fwmin, fwmax) ||
+                                 (inst_wnflag && INPbinInRange(csw2, fwmin, fwmax)))) {
                                 /* use the current .model card */
                                 prev = su_deck;
                                 su_deck = su_deck->nextcard;

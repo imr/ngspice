@@ -942,22 +942,15 @@ char *find_back_assignment(const char *p, const char *start)
 /* We check x lines for nf=, w= and l= and fill in their values.
    To be used when expanding subcircuits with binned model cards. 
    
-   In subckt.c, function doit(), lines 621ff. the unsused models
-   are filtered out. 'nf' given on an x line (subcircuit invocation)
-   is aknowledged. The option 'wnflag', if set to 0 in .spiceinit,
-   will set 'nf' to 1 and thus suppress its usage.
-   
+   In subckt.c, function doit(), the unused models are filtered out.
+   'nf' given on an x line (subcircuit invocation) is acknowledged there,
+   unless wnflag is 0 (set wnflag=0, .option wnflag=0, or wnflag on a
+   MOS line of the subcircuit).
+
    In inp.c, function rem_unused_mos_models, another trial to removing
    unused MOS models is given, this time on the expanded m lines and
    its models.*/
 void inp_get_w_l_x(struct card* card) {
-    int wnflag;
-    if (!cp_getvar("wnflag", CP_NUM, &wnflag, 0)) {
-        if (newcompat.spe || newcompat.hs)
-            wnflag = 1;
-        else
-            wnflag = 0;
-    }
     for (; card; card = card->nextcard) {
         char* curr_line = card->line;
         int skip_control = 0;
