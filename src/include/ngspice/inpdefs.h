@@ -129,6 +129,7 @@ char *INPfindLev(char *, int *);
 char *INPgetMod(CKTcircuit *, char *, INPmodel **, INPtables *);
 char *INPgetModBin(CKTcircuit *, char *, INPmodel **, INPtables *, char *);
 bool INPbinInRange(double value, double min, double max);
+int INPgetWnflag(void);
 int INPgetTok(char **, char **, int);
 int INPgetNetTok(char **, char **, int);
 void INPgetTree(char **, INPparseTree **, CKTcircuit *, INPtables *);

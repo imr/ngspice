@@ -250,6 +250,23 @@ INPbinInRange(double value, double min, double max)
 }
 
 
+/* wnflag for the selection of a bin: 1 for w/nf, 0 for the total w.
+   From set wnflag=0|1 or .option wnflag=0|1; set wnflag or .option wnflag
+   without a value is 1, as in reference simulators.  If not given, 1 with ngbehavior hs
+   or spe, else 0.  wnflag on a BSIM4 instance overrides this. */
+int
+INPgetWnflag(void)
+{
+    int wnflag;
+
+    if (cp_getvar("wnflag", CP_NUM, &wnflag, 0))
+        return wnflag ? 1 : 0;
+    if (cp_getvar("wnflag", CP_BOOL, NULL, 0))
+        return 1;
+    return (newcompat.spe || newcompat.hs) ? 1 : 0;
+}
+
+
 char *
 INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char *line)
 {
@@ -260,17 +277,10 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
     static char *instance_tokens[] = { "l", "w", "nf", "wnflag" };
     static char *model_tokens[]    = { "lmin", "lmax", "wmin", "wmax" };
     double       scale;
-    int          wnflag;
+    int          wnflag = INPgetWnflag();
 
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
-
-    if (!cp_getvar("wnflag", CP_NUM, &wnflag, 0)) {
-        if (newcompat.spe || newcompat.hs)
-            wnflag = 1;
-        else
-            wnflag = 0;
-    }
 
     *model = NULL;
 
