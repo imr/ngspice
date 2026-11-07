@@ -44,14 +44,14 @@ void com_osdi(wordlist *wl)
 
 
 /* osdi_bind                       list the bindings
-   osdi_bind mos <level> <module> [<par> <nval> <pval>] [ignore <par> ...]
-   osdi_bind mos <level> none      remove the binding
+   osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]
+   osdi_bind mos <level> none [if <cpar>]   remove the binding(s)
    Use as pre_osdi_bind inside a .control section. */
 void com_osdi_bind(wordlist *wl)
 {
     const char *usage =
-        "Usage: osdi_bind mos <level> <module> [<par> <nval> <pval>] [ignore <par> ...]\n"
-        "       osdi_bind mos <level> none\n"
+        "Usage: osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]\n"
+        "       osdi_bind mos <level> none [if <cpar>]\n"
         "       osdi_bind\n";
     char *kind, *module, *end;
     long level;
@@ -81,11 +81,23 @@ void com_osdi_bind(wordlist *wl)
     module = wl->wl_word;
     wl = wl->wl_next;
 
+    /* condition: selected if the card has this parameter */
+    const char *cond = NULL;
+    if (wl && strcasecmp(wl->wl_word, "if") == 0) {
+        if (!wl->wl_next) {
+            fprintf(cp_err, "%s", usage);
+            return;
+        }
+        cond = wl->wl_next->wl_word;
+        wl = wl->wl_next->wl_next;
+    }
+
     if (strcasecmp(module, "none") == 0) {
         if (wl)
             fprintf(cp_err, "%s", usage);
-        else if (!INPosdiBindRemove("mos", (int) level))
-            fprintf(cp_err, "Warning: osdi_bind: mos level %ld was not bound\n", level);
+        else if (!INPosdiBindRemove("mos", (int) level, cond, cond == NULL))
+            fprintf(cp_err, "Warning: osdi_bind: mos level %ld%s%s was not bound\n",
+                    level, cond ? " if " : "", cond ? cond : "");
         return;
     }
 
@@ -111,8 +123,9 @@ void com_osdi_bind(wordlist *wl)
         ignore = wl_copy(wl->wl_next);
     }
 
-    if (INPosdiBindAdd("mos", (int) level, module, par, nval, pval, ignore))
-        fprintf(cp_out, "Note: osdi_bind: mos level %ld now bound to %s\n", level, module);
+    if (INPosdiBindAdd("mos", (int) level, module, cond, par, nval, pval, ignore))
+        fprintf(cp_out, "Note: osdi_bind: replaced the binding of mos level %ld%s%s\n",
+                level, cond ? " if " : "", cond ? cond : "");
 }
 #endif
 

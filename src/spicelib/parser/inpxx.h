@@ -41,6 +41,7 @@ struct osdi_bind {
     char *kind;         /* "mos" */
     int level;
     char *module;       /* OSDI module name */
+    char *cond;         /* selected if the card has this parameter, or NULL */
     char *par;          /* polarity parameter, e.g. "type", or NULL */
     char *nval;         /* its value for nmos */
     char *pval;         /* its value for pmos */
@@ -48,7 +49,7 @@ struct osdi_bind {
     struct osdi_bind *next;
 };
 
-const struct osdi_bind *INPosdiBindFind(const char *kind, int level);
+const struct osdi_bind *INPosdiBindFind(const char *kind, int level, const char *module);
 #endif
 
 

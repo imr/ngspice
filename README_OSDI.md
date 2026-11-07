@@ -25,9 +25,9 @@ Model cards of commercial simulators select a compact model by its level
 lets such cards use a Verilog-A module loaded with `osdi`, and lets `M`
 instances refer to them:
 
-    osdi_bind mos <level> <module> [<par> <nval> <pval>] [ignore <par> ...]
-    osdi_bind mos <level> none        remove the binding
-    osdi_bind                         list the bindings
+    osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]
+    osdi_bind mos <level> none [if <cpar>]   remove the binding(s)
+    osdi_bind                                list the bindings
 
 Example for `.spiceinit`:
 
@@ -37,6 +37,17 @@ Example for `.spiceinit`:
 `nmos` sets the polarity parameter `<par>` to `<nval>`, `pmos` to `<pval>`;
 the default is `type 1 -1`. A contradicting `type` on the card is reported
 and ignored. Card parameters in the `ignore` list are skipped silently.
+A level may have several bindings. One with `if <cpar>` is selected if the
+card has parameter `<cpar>` (any value), else the one without `if`. Example
+for the two PSP103 modules, only the NQS module knows `swnqs`:
+
+    osdi psp103.osdi
+    osdi psp103_nqs.osdi
+    osdi_bind mos 69 psp103va
+    osdi_bind mos 69 pspnqs103va if swnqs
+
+`osdi_bind mos <level> none` removes all bindings of the level,
+`osdi_bind mos <level> none if <cpar>` only the one with that condition.
 A bound level takes precedence over a built-in model of the same level.
 The module is looked up when the card is parsed, so `osdi` and `osdi_bind`
 may be given in any order. Within a netlist use `pre_osdi_bind`.

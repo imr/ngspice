@@ -130,9 +130,7 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             int lev;
             char *lev_err = INPfindLev(modtmp->INPmodLine->line, &lev);
             tfree(lev_err);     /* already reported in pass 1 */
-            bind = INPosdiBindFind("mos", lev);
-            if (bind && strcasecmp(bind->module, device->name) != 0)
-                bind = NULL;
+            bind = INPosdiBindFind("mos", lev, device->name);
         }
         if (bind && bind->par) {
             IFparm *p = find_model_parameter(bind->par, device);
