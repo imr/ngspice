@@ -118,8 +118,36 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 #ifdef OSDI
     /* osdi models don't accept their device type as an argument */
     bool is_osdi = false;
-    if (device->registry_entry){ 
-        INPgetNetTok(&line, &parm, 1); /* throw away osdi */
+    /* card of a model level bound to this module with osdi_bind */
+    const struct osdi_bind *bind = NULL;
+    const char *polarity = NULL;        /* its value of bind->par */
+    if (device->registry_entry){
+        /* osdi module name, or nmos/pmos of a card bound with osdi_bind */
+        INPgetNetTok(&line, &parm, 1);
+        bool is_n = strcmp(parm, "nmos") == 0 || strcmp(parm, "nsoi") == 0;
+        bool is_p = strcmp(parm, "pmos") == 0 || strcmp(parm, "psoi") == 0;
+        if (is_n || is_p) {
+            int lev;
+            char *lev_err = INPfindLev(modtmp->INPmodLine->line, &lev);
+            tfree(lev_err);     /* already reported in pass 1 */
+            bind = INPosdiBindFind("mos", lev);
+            if (bind && strcasecmp(bind->module, device->name) != 0)
+                bind = NULL;
+        }
+        if (bind && bind->par) {
+            IFparm *p = find_model_parameter(bind->par, device);
+            if (p) {
+                char *value = is_n ? bind->nval : bind->pval;
+                polarity = value;
+                error = ft_sim->setModelParm(ckt, modtmp->INPmodfast, p->id,
+                                             INPgetValue(ckt, &value, p->dataType, tab), NULL);
+                if (error)
+                    return error;
+            } else {
+                err = INPerrCat(err, tprintf("module %s has no parameter %s - %s ignored",
+                                             device->name, bind->par, parm));
+            }
+        }
         tfree(parm);
         is_osdi = true;
     }
@@ -131,6 +159,26 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             FREE(parm);
             continue;
         }
+
+#ifdef OSDI
+        if (bind) {
+            /* the polarity of a bound card comes from nmos/pmos */
+            if (polarity && strcmp(parm, bind->par) == 0) {
+                double v = INPgetValue(ckt, &line, IF_REAL, tab)->rValue;
+                if (v != atof(polarity))
+                    err = INPerrCat(err, tprintf("%s=%g contradicts the model type - ignored",
+                                                 parm, v));
+                FREE(parm);
+                continue;
+            }
+            /* parameters of other simulators listed with 'osdi_bind ... ignore' */
+            if (wl_find(parm, bind->ignore)) {
+                INPgetValue(ckt, &line, IF_REAL, tab);
+                FREE(parm);
+                continue;
+            }
+        }
+#endif
 
         IFparm *p = find_model_parameter(parm, device);
 

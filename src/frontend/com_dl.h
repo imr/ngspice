@@ -7,6 +7,7 @@ void com_codemodel(wordlist *wl);
 
 #ifdef OSDI
 void com_osdi(wordlist *wl);
+void com_osdi_bind(wordlist *wl);
 #endif
 
 #ifdef DEVLIB

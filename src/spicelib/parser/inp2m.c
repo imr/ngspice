@@ -36,6 +36,12 @@ model_numnodes(int type)
         return 5;
     }
 
+#ifdef OSDI
+    /* Verilog-A module, e.g. bound to a MOS level with osdi_bind */
+    if (ft_sim->devices[type]->registry_entry)
+        return *ft_sim->devices[type]->terms;
+#endif
+
     return 4;
 }
 
@@ -133,6 +139,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         thismodel->INPmodType != INPtypelook("SOI3") &&
 #ifdef CIDER
         thismodel->INPmodType != INPtypelook("NUMOS") &&
+#endif
+#ifdef OSDI
+        !ft_sim->devices[thismodel->INPmodType]->registry_entry &&
 #endif
         thismodel->INPmodType != INPtypelook("HiSIM2") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV1") &&
