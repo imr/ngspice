@@ -68,6 +68,11 @@ unconnected, as `N` instances do. A `Q` instance ties a missing substrate
 as the thermal node, stay internal, so that self-heating acts as the model
 card requests (HICUM `flsh`, Mextram `bjt504t`).
 
+`R` and `C` instances are not bound: resistor and varactor modules with
+more than two terminals (r3_cmc, r2_et_cmc, mosvar) are used with `N`
+instances and native model cards (`.model rmod r3_cmc ...`), as in the
+IHP PDK.
+
 On a bound card, `level` selects the binding and is not passed to the
 module. A bound level takes precedence over a built-in model of the same
 level. The module is looked up when the card is parsed, so `osdi` and
