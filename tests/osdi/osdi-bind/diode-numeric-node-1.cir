@@ -1,0 +1,16 @@
+* osdi_bind: a numeric fourth node on a D line is a node, not the unlabeled area
+
+* dummy_bjt of dummy_modules.c conducts 3 mS from its first to its third terminal
+.model diode_four_terminals d level=24
+
+v_diode_numeric_nodes diode_numeric_nodes 0 1
+d_diode_numeric_nodes diode_numeric_nodes 0 0 0 diode_four_terminals
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind dio 24 dummy_bjt
+op
+print i(v_diode_numeric_nodes)
+.endc
+
+.end

@@ -30,6 +30,9 @@ set(NGSPICE_TEST_FILTER
 separate_arguments(_extra NATIVE_COMMAND "${EXTRA_ARGS}")
 
 set(ENV{SPICE_SCRIPTS} "${SPICE_SCRIPTS}")
+if(NGSPICE_OSDI_DIR)
+    set(ENV{NGSPICE_OSDI_DIR} "${NGSPICE_OSDI_DIR}")
+endif()
 set(ENV{ngspice_vpath} "${_dir}")
 
 execute_process(

@@ -62,6 +62,21 @@ set(_check_dirs regression)
 if(NGSPICE_ENABLE_XSPICE)
     list(APPEND _check_dirs xspice)
 endif()
+if(NGSPICE_ENABLE_OSDI)
+    list(APPEND _check_dirs osdi)
+    # the OSDI modules that tests/osdi loads, like tests/osdi/Makefile.am
+    set(NGSPICE_TEST_OSDI_DIR "${CMAKE_BINARY_DIR}/tests-osdi")
+    add_library(dummy_modules MODULE osdi/dummy_modules.c)
+    add_library(dummy_modules_tenfold MODULE osdi/dummy_modules.c)
+    target_compile_definitions(dummy_modules_tenfold PRIVATE CONDUCTANCE_FACTOR=10)
+    foreach(_module_library dummy_modules dummy_modules_tenfold)
+        target_include_directories(${_module_library} PRIVATE "${CMAKE_SOURCE_DIR}/src/osdi")
+        # $<0:> keeps multi-config generators from adding a Debug or Release directory
+        set_target_properties(${_module_library} PROPERTIES
+            PREFIX "" SUFFIX ".osdi"
+            LIBRARY_OUTPUT_DIRECTORY "${NGSPICE_TEST_OSDI_DIR}$<0:>")
+    endforeach()
+endif()
 # bsim3, bsim4, bsimsoi, hisim, hisimhv1 and hisimhv2 are also in
 # SUBDIRS, but they are driven by tests/bin/check_cmc.sh over nmos/qaSpec
 # rather than by "TESTS = *.cir", so nothing is registered for them here.
@@ -70,6 +85,9 @@ endif()
 set(_skip_dirs "")
 if(NOT NGSPICE_ENABLE_XSPICE)
     list(APPEND _skip_dirs "xspice")
+endif()
+if(NOT NGSPICE_ENABLE_OSDI)
+    list(APPEND _skip_dirs "osdi")
 endif()
 if(NOT NGSPICE_ENABLE_CIDER)
     list(APPEND _skip_dirs "cider" "numdev")
@@ -147,6 +165,7 @@ foreach(_mk IN LISTS _makefiles)
                          "-DWORKDIR=${_work}"
                          "-DEXTRA_ARGS=${_extra}"
                          "-DSPICE_SCRIPTS=${NGSPICE_TEST_SCRIPTS}"
+                         "-DNGSPICE_OSDI_DIR=${NGSPICE_TEST_OSDI_DIR}"
                          -P "${CMAKE_SOURCE_DIR}/cmake/RunNgspiceTest.cmake")
 
         set(_labels "${_prefix}")
