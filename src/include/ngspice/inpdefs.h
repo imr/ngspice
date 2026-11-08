@@ -160,10 +160,9 @@ int INPtypelook(char *);
 #ifdef OSDI
 /* binding of model levels to OSDI modules, command osdi_bind */
 int INPosdiBindAdd(const char *kind, int level, const char *module,
-                   const char *cond, const char *lead,
-                   const char *par, const char *nval, const char *pval,
+                   const char *has, const char *area, const char *polarity,
                    struct wordlist *ignore);
-int INPosdiBindRemove(const char *kind, int level, const char *cond, int all);
+int INPosdiBindRemove(const char *kind, int level, const char *has, int all);
 void INPosdiBindPrint(FILE *fp);
 #endif
 int INP2dot(CKTcircuit *, INPtables *, struct card *, TSKtask *, CKTnode *);

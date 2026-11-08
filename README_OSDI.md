@@ -22,47 +22,48 @@ This ensures that netlists can be simulated from any directory
 
 Model cards of commercial simulators select a compact model by its level
 (e.g. `.model nch nmos level=72` for BSIM-CMG). The command `osdi_bind`
-lets such cards use a Verilog-A module loaded with `osdi`, and lets `M`
-instances refer to them:
+lets such cards use a Verilog-A module loaded with `osdi`, used by `M`
+(MOS) and `D` (diode) instances:
 
-    osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]
-    osdi_bind dio <level> <module> [if <cpar>] [lead <ipar>] [ignore <par> ...]
-    osdi_bind mos|dio <level> none [if <cpar>]   remove the binding(s)
-    osdi_bind                                    list the bindings
+    osdi_bind mos|dio <level> <module> [has=<par>] [area=<ipar>]
+                      [polarity=<par>|none] [ignore=<par>,<par>,...]
+    osdi_bind mos|dio <level> none [has=<par>]    remove the binding(s)
+    osdi_bind                                     list the bindings
 
 Example for `.spiceinit`:
 
-    osdi bsimcmg.osdi
-    osdi_bind mos 72 bsimcmg_va ignore devtype version
-
-`nmos` sets the polarity parameter `<par>` to `<nval>`, `pmos` to `<pval>`;
-the default is `type 1 -1`. A contradicting `type` on the card is reported
-and ignored. Card parameters in the `ignore` list are skipped silently.
-A level may have several bindings. One with `if <cpar>` is selected if the
-card has parameter `<cpar>` (any value), else the one without `if`. Example
-for the two PSP103 modules, only the NQS module knows `swnqs`:
-
     osdi psp103.osdi
     osdi psp103_nqs.osdi
-    osdi_bind mos 69 psp103va
-    osdi_bind mos 69 pspnqs103va if swnqs
-
-`osdi_bind mos <level> none` removes all bindings of the level,
-`osdi_bind mos <level> none if <cpar>` only the one with that condition.
-Diode cards `.model <name> d level=<level>` are bound with kind `dio` and used
-by `D` instances. Diodes have no polarity parameter. An unlabeled value on a
-`D` instance sets the instance parameter `<ipar>` given with `lead`, default
-`area`:
-
+    osdi bsimcmg.osdi
+    osdi ekv3.osdi
     osdi juncap200.osdi
     osdi diode_cmc.osdi
-    osdi_bind dio 6 juncap200 lead ab
-    osdi_bind dio 7 diode_cmc
+    osdi_bind mos 69 psp103va
+    osdi_bind mos 69 pspnqs103va has=swnqs
+    osdi_bind mos 72 bsimcmg_va  ignore=devtype,version
+    osdi_bind mos 79 ekv3_rf     polarity=sign
+    osdi_bind dio 6  juncap200
+    osdi_bind dio 7  diode_cmc
 
-On a bound card, `level` selects the binding and is not passed to the module.
-A bound level takes precedence over a built-in model of the same level.
-The module is looked up when the card is parsed, so `osdi` and `osdi_bind`
-may be given in any order. Within a netlist use `pre_osdi_bind`.
+Options:
+
+- `has=<par>`: a level may have several bindings. One with `has=<par>` is
+  selected if the card has parameter `<par>` (any value), else the one
+  without `has=`. Above, only the NQS module of PSP103 knows `swnqs`.
+- `polarity=<par>` (mos): `nmos` sets the module parameter `<par>` to 1,
+  `pmos` to -1; default `type`. A contradicting value on the card is
+  reported and ignored. `polarity=none`: the module has no polarity.
+- `area=<ipar>` (dio): an unlabeled value on a `D` instance
+  (`D1 a k dmod 2`) sets instance parameter `<ipar>`; default `area`.
+  Named instance parameters are passed to the module unchanged.
+- `ignore=<par>,...`: card parameters of other simulators to skip.
+
+On a bound card, `level` selects the binding and is not passed to the
+module. A bound level takes precedence over a built-in model of the same
+level. The module is looked up when the card is parsed, so `osdi` and
+`osdi_bind` may be given in any order. Within a netlist use
+`pre_osdi_bind` in a `.control` section. `osdi_bind` without arguments
+lists the bindings in the syntax of the command.
 
 ## Build Instructions
 

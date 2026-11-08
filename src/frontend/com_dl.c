@@ -43,101 +43,155 @@ void com_osdi(wordlist *wl)
 }
 
 
-/* osdi_bind                       list the bindings
-   osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]
-   osdi_bind dio <level> <module> [if <cpar>] [lead <ipar>] [ignore <par> ...]
-   osdi_bind mos|dio <level> none [if <cpar>]   remove the binding(s)
+/* osdi_bind
+     list the bindings
+   osdi_bind mos|dio <level> <module> [has=<par>] [area=<ipar>]
+                     [polarity=<par>|none] [ignore=<par>,<par>,...]
+     bind a model level to an OSDI module
+   osdi_bind mos|dio <level> none [has=<par>]
+     remove the binding(s)
    Use as pre_osdi_bind inside a .control section. */
+
+static const char *osdi_bind_usage =
+    "Usage: osdi_bind mos <level> <module> [has=<par>] [polarity=<par>|none] [ignore=<par>,...]\n"
+    "       osdi_bind dio <level> <module> [has=<par>] [area=<ipar>] [ignore=<par>,...]\n"
+    "       osdi_bind mos|dio <level> none [has=<par>]\n"
+    "       osdi_bind\n";
+
+/* The words of the command as one string, without blanks around '='
+   and after ',', split into words again */
+static wordlist *
+osdi_bind_words(wordlist *wl)
+{
+    char *line = wl_flatten(wl);
+    char *dst = line, *src;
+    for (src = line; *src; src++) {
+        if (*src == ' ' || *src == '\t') {
+            const char *next = src;
+            while (*next == ' ' || *next == '\t')
+                next++;
+            if (*next == '=' || *next == ',' || *next == '\0' ||
+                (dst > line && (dst[-1] == '=' || dst[-1] == ',' || dst[-1] == ' ')))
+                continue;
+            *dst++ = ' ';
+        } else {
+            *dst++ = *src;
+        }
+    }
+    *dst = '\0';
+    wordlist *words = NULL, *last = NULL;
+    char *p = line, *tok;
+    while ((tok = gettok(&p)) != NULL)
+        wl_append_word(&words, &last, tok);
+    tfree(line);
+    return words;
+}
+
+
 void com_osdi_bind(wordlist *wl)
 {
-    const char *usage =
-        "Usage: osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]\n"
-        "       osdi_bind dio <level> <module> [if <cpar>] [lead <ipar>] [ignore <par> ...]\n"
-        "       osdi_bind mos|dio <level> none [if <cpar>]\n"
-        "       osdi_bind\n";
-    const char *kind;
-    char *module, *end;
-    long level;
-
     if (!wl) {
         INPosdiBindPrint(cp_out);
         return;
     }
 
-    if (strcasecmp(wl->wl_word, "mos") == 0)
+    wordlist *words = osdi_bind_words(wl);
+    wordlist *w = words;
+    const char *kind;
+    char *module, *end;
+    long level;
+    const char *has = NULL, *area = NULL, *polarity = NULL;
+    wordlist *ignore = NULL, *ignore_last = NULL;
+
+    if (!w) {
+        fprintf(cp_err, "%s", osdi_bind_usage);
+        return;
+    }
+    if (strcasecmp(w->wl_word, "mos") == 0)
         kind = "mos";
-    else if (strcasecmp(wl->wl_word, "dio") == 0)
+    else if (strcasecmp(w->wl_word, "dio") == 0)
         kind = "dio";
     else {
         fprintf(cp_err, "Error: osdi_bind: device kind %s is not supported, only mos and dio\n",
-                wl->wl_word);
-        return;
+                w->wl_word);
+        goto done;
     }
     bool is_mos = strcmp(kind, "mos") == 0;
+    if (is_mos)
+        polarity = "type";
 
-    if (!wl->wl_next || !wl->wl_next->wl_next) {
-        fprintf(cp_err, "%s", usage);
-        return;
+    if (!w->wl_next || !w->wl_next->wl_next) {
+        fprintf(cp_err, "%s", osdi_bind_usage);
+        goto done;
     }
-    level = strtol(wl->wl_next->wl_word, &end, 10);
+    level = strtol(w->wl_next->wl_word, &end, 10);
     if (*end || level < 1 || level > 99) {
         fprintf(cp_err, "Error: osdi_bind: level %s is not a number from 1 to 99\n",
-                wl->wl_next->wl_word);
-        return;
+                w->wl_next->wl_word);
+        goto done;
     }
-    wl = wl->wl_next->wl_next;
-    module = wl->wl_word;
-    wl = wl->wl_next;
+    w = w->wl_next->wl_next;
+    module = w->wl_word;
 
-    /* polarity parameter of mos, default: type 1 -1; dio has none */
-    const char *cond = NULL, *lead = NULL;
-    const char *par = NULL, *nval = NULL, *pval = NULL;
-    if (is_mos) {
-        par = "type";
-        nval = "1";
-        pval = "-1";
-    }
-    wordlist *ignore = NULL;
-
-    while (wl) {
-        if (strcasecmp(wl->wl_word, "if") == 0 && wl->wl_next) {
-            /* selected if the card has this parameter */
-            cond = wl->wl_next->wl_word;
-            wl = wl->wl_next->wl_next;
-        } else if (strcasecmp(wl->wl_word, "lead") == 0 && wl->wl_next && !is_mos) {
-            /* instance parameter of an unlabeled value */
-            lead = wl->wl_next->wl_word;
-            wl = wl->wl_next->wl_next;
-        } else if (strcasecmp(wl->wl_word, "ignore") == 0 && wl->wl_next) {
-            ignore = wl_copy(wl->wl_next);
-            wl = NULL;
-        } else if (is_mos && wl->wl_next && wl->wl_next->wl_next &&
-                   strcasecmp(wl->wl_word, "if") != 0 &&
-                   strcasecmp(wl->wl_word, "ignore") != 0) {
-            par = wl->wl_word;
-            nval = wl->wl_next->wl_word;
-            pval = wl->wl_next->wl_next->wl_word;
-            wl = wl->wl_next->wl_next->wl_next;
+    /* options name=value; the command line lexer splits at commas,
+       so words without '=' after ignore= continue its list */
+    bool in_ignore = FALSE;
+    for (w = w->wl_next; w; w = w->wl_next) {
+        char *opt = w->wl_word;
+        char *val = strchr(opt, '=');
+        if (!val && in_ignore) {
+            val = opt;
+            opt = "ignore";
+        } else if (val) {
+            *val++ = '\0';
+        }
+        in_ignore = FALSE;
+        if (!val || !*val) {
+            fprintf(cp_err, "Error: osdi_bind: %s is not of the form name=value\n", opt);
+            fprintf(cp_err, "%s", osdi_bind_usage);
+            goto done;
+        }
+        if (strcasecmp(opt, "has") == 0) {
+            has = val;
+        } else if (strcasecmp(opt, "area") == 0 && !is_mos) {
+            area = val;
+        } else if (strcasecmp(opt, "polarity") == 0 && is_mos) {
+            polarity = strcasecmp(val, "none") == 0 ? NULL : val;
+        } else if (strcasecmp(opt, "ignore") == 0) {
+            char *p;
+            while ((p = strchr(val, ',')) != NULL) {
+                *p = '\0';
+                if (*val)
+                    wl_append_word(&ignore, &ignore_last, copy(val));
+                val = p + 1;
+            }
+            if (*val)
+                wl_append_word(&ignore, &ignore_last, copy(val));
+            in_ignore = TRUE;
         } else {
-            fprintf(cp_err, "%s", usage);
-            wl_free(ignore);
-            return;
+            fprintf(cp_err, "Error: osdi_bind: option %s is not known for %s\n", opt, kind);
+            fprintf(cp_err, "%s", osdi_bind_usage);
+            goto done;
         }
     }
 
     if (strcasecmp(module, "none") == 0) {
-        if (lead || ignore || (is_mos && strcmp(par, "type") != 0))
-            fprintf(cp_err, "%s", usage);
-        else if (!INPosdiBindRemove(kind, (int) level, cond, cond == NULL))
+        if (area || ignore || (is_mos && (!polarity || strcmp(polarity, "type") != 0)))
+            fprintf(cp_err, "Error: osdi_bind: only has= is allowed with none\n");
+        else if (!INPosdiBindRemove(kind, (int) level, has, has == NULL))
             fprintf(cp_err, "Warning: osdi_bind: %s level %ld%s%s was not bound\n",
-                    kind, level, cond ? " if " : "", cond ? cond : "");
-        wl_free(ignore);
-        return;
+                    kind, level, has ? " has=" : "", has ? has : "");
+        goto done;
     }
 
-    if (INPosdiBindAdd(kind, (int) level, module, cond, lead, par, nval, pval, ignore))
+    if (INPosdiBindAdd(kind, (int) level, module, has, area, polarity, ignore))
         fprintf(cp_out, "Note: osdi_bind: replaced the binding of %s level %ld%s%s\n",
-                kind, level, cond ? " if " : "", cond ? cond : "");
+                kind, level, has ? " has=" : "", has ? has : "");
+    ignore = NULL;      /* owned by the binding */
+
+done:
+    wl_free(ignore);
+    wl_free(words);
 }
 #endif
 

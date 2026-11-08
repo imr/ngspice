@@ -117,20 +117,32 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     } else {
 #endif
         ptemp.rValue = leadval;
-        char *leadname = "area";
+        char *areaname = "area";
 #ifdef OSDI
-        /* the instance parameter given with 'osdi_bind dio ... lead <ipar>' */
+        /* the instance parameter given with 'osdi_bind dio ... area=<ipar>' */
         if (is_osdi) {
             int lev;
             char *lev_err = INPfindLev(thismodel->INPmodLine->line, &lev);
             tfree(lev_err);
-            const struct osdi_bind *b =
-                INPosdiBindFind("dio", lev, ft_sim->devices[type]->name);
-            if (b && b->lead)
-                leadname = b->lead;
+            IFdevice *dev = ft_sim->devices[type];
+            const struct osdi_bind *b = INPosdiBindFind("dio", lev, dev->name);
+            if (b && b->area)
+                areaname = b->area;
+            bool found = FALSE;
+            for (int k = 0; k < *dev->numInstanceParms && !found; k++)
+                found = strcasecmp(dev->instanceParms[k].keyword, areaname) == 0;
+            if (!found) {
+                char *msg = tprintf("module %s has no instance parameter %s for the "
+                                    "unlabeled value; name the parameter, or use "
+                                    "'osdi_bind dio ... area=<par>'",
+                                    dev->name, areaname);
+                LITERR(msg);
+                tfree(msg);
+                return;
+            }
         }
 #endif
-        GCA(INPpName, (leadname, &ptemp, ckt, type, fast));
+        GCA(INPpName, (areaname, &ptemp, ckt, type, fast));
     }
 #ifdef CIDER    
     }
