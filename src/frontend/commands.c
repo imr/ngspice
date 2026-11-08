@@ -302,7 +302,7 @@ struct comm spcp_coms[] = {
     { "osdi_bind", com_osdi_bind, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 0, LOTS,
       NULL,
-      "[mos|dio level module [has=par] [area=ipar] [polarity=par|none] [ignore=par,...]] : Bind a model level to an osdi module. Use as `pre_osdi_bind` in .control." } ,
+      "[mos|bjt|dio level module [has=par] [area=ipar] [polarity=par|none] [ignore=par,...]] : Bind a model level to an osdi module. Use as `pre_osdi_bind` in .control." } ,
 #endif
     { "snp", com_pre_snp, FALSE, TRUE,          /* Enhancement-200 (use as `pre_snp`) */
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,

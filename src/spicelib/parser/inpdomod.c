@@ -15,12 +15,14 @@ Author: 1985 Thomas L. Quarles
  * Bindings of model levels to Verilog-A modules loaded with osdi,
  * set at runtime by the command osdi_bind (e.g. in .spiceinit):
  *
- *   osdi_bind mos|dio <level> <module> [has=<par>] [area=<ipar>]
- *                     [polarity=<par>|none] [ignore=<par>,<par>,...]
+ *   osdi_bind mos|bjt|dio <level> <module> [has=<par>] [area=<ipar>]
+ *                         [polarity=<par>|none] [ignore=<par>,<par>,...]
  *
  * mos: a card '.model <name> nmos|pmos level=<level> ...' creates a model
  *   of the OSDI module. nmos (nsoi) sets the polarity parameter (default
  *   type) to 1, pmos (psoi) to -1; polarity=none: the module has none.
+ * bjt: likewise for '.model <name> npn|pnp level=<level> ...' and Q
+ *   instances; npn sets the polarity parameter to 1, pnp to -1.
  * dio: a card '.model <name> d level=<level> ...' creates a model of the
  *   OSDI module. An unlabeled value on a D instance sets instance
  *   parameter <ipar> (default area).
@@ -194,7 +196,7 @@ INPosdiBindPrint(FILE *fp)
             fprintf(fp, " has=%s", b->has);
         if (b->area)
             fprintf(fp, " area=%s", b->area);
-        if (strcmp(b->kind, "mos") == 0) {
+        if (strcmp(b->kind, "dio") != 0) {
             if (!b->polarity)
                 fprintf(fp, " polarity=none");
             else if (strcmp(b->polarity, "type") != 0)
@@ -278,6 +280,10 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
     /*  -----  Check if model is a BJT --------- */
     if (strcmp(type_name, "npn") == 0 || strcmp(type_name, "pnp") == 0) {
 			err = INPfindLev(line,&lev);
+#ifdef OSDI
+			/* a level bound with osdi_bind takes precedence over a built-in model */
+			if (!osdi_bind_type("bjt", lev, line, &type, &err))
+#endif
 			switch(lev) {
 				case 0:
 				case 1:

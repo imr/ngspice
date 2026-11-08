@@ -122,11 +122,13 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
     const struct osdi_bind *bind = NULL;
     const char *polarity = NULL;        /* value of bind->polarity: "1" or "-1" */
     if (device->registry_entry){
-        /* osdi module name, or nmos/pmos of a card bound with osdi_bind */
+        /* osdi module name, or nmos/pmos/npn/pnp/d of a card bound with osdi_bind */
         INPgetNetTok(&line, &parm, 1);
-        bool is_n = strcmp(parm, "nmos") == 0 || strcmp(parm, "nsoi") == 0;
-        bool is_p = strcmp(parm, "pmos") == 0 || strcmp(parm, "psoi") == 0;
-        const char *kind = (is_n || is_p) ? "mos" :
+        bool is_npn = strcmp(parm, "npn") == 0, is_pnp = strcmp(parm, "pnp") == 0;
+        bool is_n = strcmp(parm, "nmos") == 0 || strcmp(parm, "nsoi") == 0 || is_npn;
+        bool is_p = strcmp(parm, "pmos") == 0 || strcmp(parm, "psoi") == 0 || is_pnp;
+        const char *kind = (is_npn || is_pnp) ? "bjt" :
+                           (is_n || is_p) ? "mos" :
                            strcmp(parm, "d") == 0 ? "dio" : NULL;
         if (kind) {
             int lev;

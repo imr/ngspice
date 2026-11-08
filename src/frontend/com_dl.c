@@ -45,17 +45,17 @@ void com_osdi(wordlist *wl)
 
 /* osdi_bind
      list the bindings
-   osdi_bind mos|dio <level> <module> [has=<par>] [area=<ipar>]
-                     [polarity=<par>|none] [ignore=<par>,<par>,...]
+   osdi_bind mos|bjt|dio <level> <module> [has=<par>] [area=<ipar>]
+                         [polarity=<par>|none] [ignore=<par>,<par>,...]
      bind a model level to an OSDI module
-   osdi_bind mos|dio <level> none [has=<par>]
+   osdi_bind mos|bjt|dio <level> none [has=<par>]
      remove the binding(s)
    Use as pre_osdi_bind inside a .control section. */
 
 static const char *osdi_bind_usage =
-    "Usage: osdi_bind mos <level> <module> [has=<par>] [polarity=<par>|none] [ignore=<par>,...]\n"
+    "Usage: osdi_bind mos|bjt <level> <module> [has=<par>] [polarity=<par>|none] [ignore=<par>,...]\n"
     "       osdi_bind dio <level> <module> [has=<par>] [area=<ipar>] [ignore=<par>,...]\n"
-    "       osdi_bind mos|dio <level> none [has=<par>]\n"
+    "       osdi_bind mos|bjt|dio <level> none [has=<par>]\n"
     "       osdi_bind\n";
 
 /* The words of the command as one string, without blanks around '='
@@ -109,14 +109,17 @@ void com_osdi_bind(wordlist *wl)
     }
     if (strcasecmp(w->wl_word, "mos") == 0)
         kind = "mos";
+    else if (strcasecmp(w->wl_word, "bjt") == 0)
+        kind = "bjt";
     else if (strcasecmp(w->wl_word, "dio") == 0)
         kind = "dio";
     else {
-        fprintf(cp_err, "Error: osdi_bind: device kind %s is not supported, only mos and dio\n",
+        fprintf(cp_err, "Error: osdi_bind: device kind %s is not supported, only mos, bjt and dio\n",
                 w->wl_word);
         goto done;
     }
-    bool is_mos = strcmp(kind, "mos") == 0;
+    /* mos and bjt have a polarity, default parameter type */
+    bool is_mos = strcmp(kind, "dio") != 0;
     if (is_mos)
         polarity = "type";
 
@@ -153,7 +156,7 @@ void com_osdi_bind(wordlist *wl)
         }
         if (strcasecmp(opt, "has") == 0) {
             has = val;
-        } else if (strcasecmp(opt, "area") == 0 && !is_mos) {
+        } else if (strcasecmp(opt, "area") == 0 && strcmp(kind, "dio") == 0) {
             area = val;
         } else if (strcasecmp(opt, "polarity") == 0 && is_mos) {
             polarity = strcasecmp(val, "none") == 0 ? NULL : val;

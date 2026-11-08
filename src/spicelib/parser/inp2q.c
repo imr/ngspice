@@ -17,6 +17,11 @@ model_max_numnodes(int type)
 {
     if (type == INPtypelook("VBIC"))
         return 5;
+#ifdef OSDI
+    /* Verilog-A module, e.g. bound to a bipolar level with osdi_bind */
+    if (ft_sim->devices[type]->registry_entry)
+        return *ft_sim->devices[type]->terms;
+#endif
     return 4;
 }
 
@@ -30,8 +35,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
     int type;                   /* the type the model says it is */
     char *line;                 /* the part of the current line left to parse */
     char *name;                 /* the resistor's name */
-    const int max_i = 5;
-    CKTnode *node[5];
+    const int max_i = 7;
+    CKTnode *node[7];
+    bool is_osdi = FALSE;
     int error;                  /* error code temporary */
     int numnodes;               /* flag indicating 4 or 5 nodes */
     GENinstance *fast;          /* pointer to the actual instance */
@@ -76,9 +82,20 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
         return;
     }
 
-    /* tie missing ports to ground, (substrate and thermal node) */
-    while (i < model_numnodes)
-        node[i++] = gnode;
+#ifdef OSDI
+    is_osdi = ft_sim->devices[thismodel->INPmodType]->registry_entry != NULL;
+#endif
+    if (is_osdi) {
+        /* Verilog-A module: tie a missing substrate (4th terminal) to
+           ground; further terminals (thermal node) stay internal, so
+           that self-heating acts as with N instances */
+        if (i == 3 && model_numnodes >= 4)
+            node[i++] = gnode;
+    } else {
+        /* tie missing ports to ground, (substrate and thermal node) */
+        while (i < model_numnodes)
+            node[i++] = gnode;
+    }
 
     numnodes = i;
 
@@ -91,7 +108,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
         thismodel->INPmodType != INPtypelook("NBJT") &&
         thismodel->INPmodType != INPtypelook("NBJT2") &&
 #endif
-        thismodel->INPmodType != INPtypelook("VBIC"))
+        thismodel->INPmodType != INPtypelook("VBIC") &&
+        !is_osdi)
     {
         LITERR("incorrect model type");
         return;
@@ -107,6 +125,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
     IFC(newInstance, (ckt, mdfast, &fast, name));
     for (i = 0; i < numnodes; i++)
         IFC(bindNode, (ckt, fast, i + 1, node[i]));
+    /* unconnected terminals of a Verilog-A module */
+    for (; is_osdi && i < model_numnodes; i++)
+        GENnode(fast)[i] = -1;
 
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
 
