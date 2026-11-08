@@ -29,6 +29,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/fteinp.h"
 #include "ngspice/hash.h"
 #include "numparam/general.h"
+#include "numparam/numparam.h"  /* MARKER */
 
 #include "com_set.h"
 #include "encodedet.h"
@@ -5297,6 +5298,19 @@ static int inp_get_param_level(
 
 /* Return the number of terminals for a given device, characterized by
    the first letter of its instance line. Returns 0 upon error. */
+/* Is token a value: a number like 2, 1.5e-12, 3u, an expression {...}
+   or '...', or the placeholder of an expression inserted by numparam?
+   Model and node names are not values. */
+static bool is_value_token(const char *token)
+{
+    char *s = (char *) token;
+    double val;
+    if (*token == '{' || *token == '\'' || prefix(MARKER, token))
+        return TRUE;
+    return ft_numparse(&s, TRUE, &val) >= 0;
+}
+
+
 int get_number_terminals(char *c)
 {
     int   i, j, k;
@@ -5324,12 +5338,16 @@ int get_number_terminals(char *c)
             if (newcompat.ps && !search_plain_identifier(c, "thermal"))
                 return 2;
 
-            /* find the first token with "off" or "=" in the line*/
+            /* D<name> <node> <node> [<thermal node>] <model> [<area>] ...
+               The nodes and the model end before the first token from the
+               fifth on that is "off", "thermal", contains "=", or is a
+               value: the unlabeled area (number or {expression}). */
             for (i = 0; (i < 10) && (*c != '\0'); ++i) {
                 inst = gettok_instance(&c);
                 if (i > 3 && (search_plain_identifier(inst, "off") ||
                               search_plain_identifier(inst, "thermal") ||
-                              strchr(inst, '='))) {
+                              strchr(inst, '=') ||
+                              is_value_token(inst))) {
                     txfree(inst);
                     break;
                 }
