@@ -25,8 +25,10 @@ char *INPfindVer(char *line, char *version)
             where++;
         }
 
-        /* now the magic string */
-        if (sscanf(where, "%s", version) != 1) { /* We get the version number */
+        /* now the magic string, which may be quoted */
+        if (*where == '"')
+            where++;
+        if (sscanf(where, "%99[^\" \t\r\n]", version) != 1) { /* We get the version number */
             sprintf( version, "default" );
             printf("Warning -- Version not specified correct on line \"%s\"\nSetting version to 'default'.\n", line);
         }
