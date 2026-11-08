@@ -126,13 +126,15 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
         INPgetNetTok(&line, &parm, 1);
         bool is_n = strcmp(parm, "nmos") == 0 || strcmp(parm, "nsoi") == 0;
         bool is_p = strcmp(parm, "pmos") == 0 || strcmp(parm, "psoi") == 0;
-        if (is_n || is_p) {
+        const char *kind = (is_n || is_p) ? "mos" :
+                           strcmp(parm, "d") == 0 ? "dio" : NULL;
+        if (kind) {
             int lev;
             char *lev_err = INPfindLev(modtmp->INPmodLine->line, &lev);
             tfree(lev_err);     /* already reported in pass 1 */
-            bind = INPosdiBindFind("mos", lev, device->name);
+            bind = INPosdiBindFind(kind, lev, device->name);
         }
-        if (bind && bind->par) {
+        if (bind && bind->par && (is_n || is_p)) {
             IFparm *p = find_model_parameter(bind->par, device);
             if (p) {
                 char *value = is_n ? bind->nval : bind->pval;
@@ -160,6 +162,12 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
 #ifdef OSDI
         if (bind) {
+            /* level selects the binding, it is not a parameter of the module */
+            if (strcmp(parm, "level") == 0) {
+                INPgetValue(ckt, &line, IF_REAL, tab);
+                FREE(parm);
+                continue;
+            }
             /* the polarity of a bound card comes from nmos/pmos */
             if (polarity && strcmp(parm, bind->par) == 0) {
                 double v = INPgetValue(ckt, &line, IF_REAL, tab)->rValue;

@@ -16,11 +16,16 @@ Author: 1985 Thomas L. Quarles
  * set at runtime by the command osdi_bind (e.g. in .spiceinit):
  *
  *   osdi_bind mos 69 psp103va [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]
+ *   osdi_bind dio 6 juncap200 [if <cpar>] [lead <ipar>] [ignore <par> ...]
  *
  * A card '.model <name> nmos|pmos level=69 ...' then creates a model of
  * the OSDI device psp103va. nmos (nsoi) sets parameter <par> to <nval>,
  * pmos (psoi) to <pval>; the default is 'type 1 -1'. Card parameters in the
- * ignore list are skipped.
+ * ignore list are skipped. The parameter level of a bound card selects the
+ * binding and is not passed to the module.
+ * A card '.model <name> d level=6 ...' creates a model of the OSDI device
+ * juncap200; an unlabeled value on a D instance sets instance parameter
+ * <ipar> (default: area).
  * A level may have several bindings: one with 'if <cpar>' is selected if the
  * card has parameter <cpar> (any value), else the one without 'if', e.g.
  *   osdi_bind mos 69 psp103va
@@ -38,6 +43,7 @@ osdi_bind_free(struct osdi_bind *b)
     tfree(b->kind);
     tfree(b->module);
     tfree(b->cond);
+    tfree(b->lead);
     tfree(b->par);
     tfree(b->nval);
     tfree(b->pval);
@@ -141,7 +147,8 @@ INPosdiBindRemove(const char *kind, int level, const char *cond, int all)
    condition. cond, par, nval and pval may be NULL.
    Takes ownership of ignore. Returns 1 if a binding was replaced. */
 int
-INPosdiBindAdd(const char *kind, int level, const char *module, const char *cond,
+INPosdiBindAdd(const char *kind, int level, const char *module,
+               const char *cond, const char *lead,
                const char *par, const char *nval, const char *pval,
                wordlist *ignore)
 {
@@ -154,6 +161,7 @@ INPosdiBindAdd(const char *kind, int level, const char *module, const char *cond
     b->level = level;
     b->module = lower_copy(module);
     b->cond = lcond;
+    b->lead = lead ? lower_copy(lead) : NULL;
     b->par = par ? lower_copy(par) : NULL;
     b->nval = nval ? copy(nval) : NULL;
     b->pval = pval ? copy(pval) : NULL;
@@ -188,6 +196,8 @@ INPosdiBindPrint(FILE *fp)
         fprintf(fp, "osdi_bind %s %d %s", b->kind, b->level, b->module);
         if (b->cond)
             fprintf(fp, " if %s", b->cond);
+        if (b->lead)
+            fprintf(fp, " lead %s", b->lead);
         if (b->par)
             fprintf(fp, " %s %s %s", b->par, b->nval, b->pval);
         if (b->ignore) {
@@ -300,11 +310,20 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 
     /*  --------  Check if model is a diode --------- */
     else if (strcmp(type_name, "d") == 0) {
-			type = INPtypelook("Diode");
-			if (type < 0) {
-			    err =
-				INPmkTemp
-				("Device type Diode not available in this binary\n");
+#ifdef OSDI
+			/* the built-in diode reads level itself; a level bound
+			   with osdi_bind selects a Verilog-A module */
+			char *lev_err = INPfindLev(line, &lev);
+			tfree(lev_err);
+			if (!osdi_bind_type("dio", lev, line, &type, &err))
+#endif
+			{
+			    type = INPtypelook("Diode");
+			    if (type < 0) {
+				err =
+				    INPmkTemp
+				    ("Device type Diode not available in this binary\n");
+			    }
 			}
 			INPmakeMod(modname, type, image);
     } /*   else if (strcmp(typename, "d") == 0) {  */

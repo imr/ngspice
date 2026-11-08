@@ -21,8 +21,10 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     int type;           /* the type the model says it is */
     char *line;         /* the part of the current line left to parse */
     char *name;         /* the resistor's name */
-    const int max_i = 3;/* the maximum node count */
-    CKTnode *node[3];   
+    const int max_i = 7;/* the maximum node count (OSDI modules) */
+    CKTnode *node[7];
+    int allowed_i = 3;  /* the node count of the model */
+    bool is_osdi = FALSE;
     int error;          /* error code temporary */
     int numnodes;       /* flag indicating 4 or 5 nodes */
     GENinstance *fast;  /* pointer to the actual instance */
@@ -62,7 +64,15 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
         INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
-    if (i > max_i) {
+#ifdef OSDI
+    /* Verilog-A module, e.g. bound to a diode level with osdi_bind */
+    if (thismodel && ft_sim->devices[thismodel->INPmodType]->registry_entry) {
+        is_osdi = TRUE;
+        allowed_i = *ft_sim->devices[thismodel->INPmodType]->terms;
+    }
+#endif
+
+    if (i > allowed_i) {
         LITERR("Too many nodes for this model type");
         return;
     }
@@ -70,7 +80,7 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     numnodes = i;
 
     if (thismodel != NULL) {
-        if ((mytype != thismodel->INPmodType)
+        if ((mytype != thismodel->INPmodType) && !is_osdi
 #ifdef CIDER
             && (thismodel->INPmodType != INPtypelook("NUMD"))
             && (thismodel->INPmodType != INPtypelook("NUMD2"))
@@ -92,7 +102,7 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     }
 
     IFC(newInstance, (ckt, mdfast, &fast, name));
-    for (i = 0; i < max_i; i++)
+    for (i = 0; i < allowed_i; i++)
         if (i < numnodes)
             IFC (bindNode, (ckt, fast, i + 1, node[i]));
         else if (thismodel->INPmodType != INPtypelook("NUMD")
@@ -107,7 +117,20 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     } else {
 #endif
         ptemp.rValue = leadval;
-        GCA(INPpName, ("area", &ptemp, ckt, type, fast));
+        char *leadname = "area";
+#ifdef OSDI
+        /* the instance parameter given with 'osdi_bind dio ... lead <ipar>' */
+        if (is_osdi) {
+            int lev;
+            char *lev_err = INPfindLev(thismodel->INPmodLine->line, &lev);
+            tfree(lev_err);
+            const struct osdi_bind *b =
+                INPosdiBindFind("dio", lev, ft_sim->devices[type]->name);
+            if (b && b->lead)
+                leadname = b->lead;
+        }
+#endif
+        GCA(INPpName, (leadname, &ptemp, ckt, type, fast));
     }
 #ifdef CIDER    
     }

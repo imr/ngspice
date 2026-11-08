@@ -26,8 +26,9 @@ lets such cards use a Verilog-A module loaded with `osdi`, and lets `M`
 instances refer to them:
 
     osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]
-    osdi_bind mos <level> none [if <cpar>]   remove the binding(s)
-    osdi_bind                                list the bindings
+    osdi_bind dio <level> <module> [if <cpar>] [lead <ipar>] [ignore <par> ...]
+    osdi_bind mos|dio <level> none [if <cpar>]   remove the binding(s)
+    osdi_bind                                    list the bindings
 
 Example for `.spiceinit`:
 
@@ -48,6 +49,17 @@ for the two PSP103 modules, only the NQS module knows `swnqs`:
 
 `osdi_bind mos <level> none` removes all bindings of the level,
 `osdi_bind mos <level> none if <cpar>` only the one with that condition.
+Diode cards `.model <name> d level=<level>` are bound with kind `dio` and used
+by `D` instances. Diodes have no polarity parameter. An unlabeled value on a
+`D` instance sets the instance parameter `<ipar>` given with `lead`, default
+`area`:
+
+    osdi juncap200.osdi
+    osdi diode_cmc.osdi
+    osdi_bind dio 6 juncap200 lead ab
+    osdi_bind dio 7 diode_cmc
+
+On a bound card, `level` selects the binding and is not passed to the module.
 A bound level takes precedence over a built-in model of the same level.
 The module is looked up when the card is parsed, so `osdi` and `osdi_bind`
 may be given in any order. Within a netlist use `pre_osdi_bind`.

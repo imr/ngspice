@@ -9934,11 +9934,13 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
                         inp_find_model(card->level, elem_model_name);
                 if (m) {
                     /* Type 'a' may also be an OSDI module (loaded later by
-                       pre_osdi), usable by N and M instances. N also accepts
-                       a MOS card bound to an OSDI module by osdi_bind. */
+                       pre_osdi), usable by N, M and D instances. N also accepts
+                       a MOS or diode card bound to an OSDI module by osdi_bind. */
                     bool osdi_ok = (m->elemb == 'a' &&
-                                    (*curr_line == 'n' || *curr_line == 'm')) ||
-                                   (*curr_line == 'n' && m->elemb == 'm');
+                                    (*curr_line == 'n' || *curr_line == 'm' ||
+                                     *curr_line == 'd')) ||
+                                   (*curr_line == 'n' &&
+                                    (m->elemb == 'm' || m->elemb == 'd'));
                     if (*curr_line != m->elemb && !osdi_ok)
                         fprintf(stderr,
                                 "warning, model type mismatch in line\n    "

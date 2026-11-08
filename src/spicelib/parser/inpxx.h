@@ -38,10 +38,11 @@ void INP2Z(CKTcircuit *ckt, INPtables *tab, struct card *current);
 #ifdef OSDI
 /* inpdomod.c: model level bound to an OSDI module by command osdi_bind */
 struct osdi_bind {
-    char *kind;         /* "mos" */
+    char *kind;         /* "mos" or "dio" */
     int level;
     char *module;       /* OSDI module name */
     char *cond;         /* selected if the card has this parameter, or NULL */
+    char *lead;         /* instance parameter of an unlabeled value, or NULL */
     char *par;          /* polarity parameter, e.g. "type", or NULL */
     char *nval;         /* its value for nmos */
     char *pval;         /* its value for pmos */

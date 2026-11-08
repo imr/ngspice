@@ -45,15 +45,18 @@ void com_osdi(wordlist *wl)
 
 /* osdi_bind                       list the bindings
    osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]
-   osdi_bind mos <level> none [if <cpar>]   remove the binding(s)
+   osdi_bind dio <level> <module> [if <cpar>] [lead <ipar>] [ignore <par> ...]
+   osdi_bind mos|dio <level> none [if <cpar>]   remove the binding(s)
    Use as pre_osdi_bind inside a .control section. */
 void com_osdi_bind(wordlist *wl)
 {
     const char *usage =
         "Usage: osdi_bind mos <level> <module> [if <cpar>] [<par> <nval> <pval>] [ignore <par> ...]\n"
-        "       osdi_bind mos <level> none [if <cpar>]\n"
+        "       osdi_bind dio <level> <module> [if <cpar>] [lead <ipar>] [ignore <par> ...]\n"
+        "       osdi_bind mos|dio <level> none [if <cpar>]\n"
         "       osdi_bind\n";
-    char *kind, *module, *end;
+    const char *kind;
+    char *module, *end;
     long level;
 
     if (!wl) {
@@ -61,11 +64,16 @@ void com_osdi_bind(wordlist *wl)
         return;
     }
 
-    kind = wl->wl_word;
-    if (strcasecmp(kind, "mos") != 0) {
-        fprintf(cp_err, "Error: osdi_bind: device kind %s is not supported, only mos\n", kind);
+    if (strcasecmp(wl->wl_word, "mos") == 0)
+        kind = "mos";
+    else if (strcasecmp(wl->wl_word, "dio") == 0)
+        kind = "dio";
+    else {
+        fprintf(cp_err, "Error: osdi_bind: device kind %s is not supported, only mos and dio\n",
+                wl->wl_word);
         return;
     }
+    bool is_mos = strcmp(kind, "mos") == 0;
 
     if (!wl->wl_next || !wl->wl_next->wl_next) {
         fprintf(cp_err, "%s", usage);
@@ -81,51 +89,55 @@ void com_osdi_bind(wordlist *wl)
     module = wl->wl_word;
     wl = wl->wl_next;
 
-    /* condition: selected if the card has this parameter */
-    const char *cond = NULL;
-    if (wl && strcasecmp(wl->wl_word, "if") == 0) {
-        if (!wl->wl_next) {
+    /* polarity parameter of mos, default: type 1 -1; dio has none */
+    const char *cond = NULL, *lead = NULL;
+    const char *par = NULL, *nval = NULL, *pval = NULL;
+    if (is_mos) {
+        par = "type";
+        nval = "1";
+        pval = "-1";
+    }
+    wordlist *ignore = NULL;
+
+    while (wl) {
+        if (strcasecmp(wl->wl_word, "if") == 0 && wl->wl_next) {
+            /* selected if the card has this parameter */
+            cond = wl->wl_next->wl_word;
+            wl = wl->wl_next->wl_next;
+        } else if (strcasecmp(wl->wl_word, "lead") == 0 && wl->wl_next && !is_mos) {
+            /* instance parameter of an unlabeled value */
+            lead = wl->wl_next->wl_word;
+            wl = wl->wl_next->wl_next;
+        } else if (strcasecmp(wl->wl_word, "ignore") == 0 && wl->wl_next) {
+            ignore = wl_copy(wl->wl_next);
+            wl = NULL;
+        } else if (is_mos && wl->wl_next && wl->wl_next->wl_next &&
+                   strcasecmp(wl->wl_word, "if") != 0 &&
+                   strcasecmp(wl->wl_word, "ignore") != 0) {
+            par = wl->wl_word;
+            nval = wl->wl_next->wl_word;
+            pval = wl->wl_next->wl_next->wl_word;
+            wl = wl->wl_next->wl_next->wl_next;
+        } else {
             fprintf(cp_err, "%s", usage);
+            wl_free(ignore);
             return;
         }
-        cond = wl->wl_next->wl_word;
-        wl = wl->wl_next->wl_next;
     }
 
     if (strcasecmp(module, "none") == 0) {
-        if (wl)
+        if (lead || ignore || (is_mos && strcmp(par, "type") != 0))
             fprintf(cp_err, "%s", usage);
-        else if (!INPosdiBindRemove("mos", (int) level, cond, cond == NULL))
-            fprintf(cp_err, "Warning: osdi_bind: mos level %ld%s%s was not bound\n",
-                    level, cond ? " if " : "", cond ? cond : "");
+        else if (!INPosdiBindRemove(kind, (int) level, cond, cond == NULL))
+            fprintf(cp_err, "Warning: osdi_bind: %s level %ld%s%s was not bound\n",
+                    kind, level, cond ? " if " : "", cond ? cond : "");
+        wl_free(ignore);
         return;
     }
 
-    /* polarity parameter, default: type 1 -1 */
-    const char *par = "type", *nval = "1", *pval = "-1";
-    if (wl && strcasecmp(wl->wl_word, "ignore") != 0) {
-        if (!wl->wl_next || !wl->wl_next->wl_next) {
-            fprintf(cp_err, "%s", usage);
-            return;
-        }
-        par = wl->wl_word;
-        nval = wl->wl_next->wl_word;
-        pval = wl->wl_next->wl_next->wl_word;
-        wl = wl->wl_next->wl_next->wl_next;
-    }
-
-    wordlist *ignore = NULL;
-    if (wl) {
-        if (strcasecmp(wl->wl_word, "ignore") != 0 || !wl->wl_next) {
-            fprintf(cp_err, "%s", usage);
-            return;
-        }
-        ignore = wl_copy(wl->wl_next);
-    }
-
-    if (INPosdiBindAdd("mos", (int) level, module, cond, par, nval, pval, ignore))
-        fprintf(cp_out, "Note: osdi_bind: replaced the binding of mos level %ld%s%s\n",
-                level, cond ? " if " : "", cond ? cond : "");
+    if (INPosdiBindAdd(kind, (int) level, module, cond, lead, par, nval, pval, ignore))
+        fprintf(cp_out, "Note: osdi_bind: replaced the binding of %s level %ld%s%s\n",
+                kind, level, cond ? " if " : "", cond ? cond : "");
 }
 #endif
 
