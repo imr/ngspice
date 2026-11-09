@@ -5338,20 +5338,27 @@ int get_number_terminals(char *c)
             if (newcompat.ps && !search_plain_identifier(c, "thermal"))
                 return 2;
 
-            /* D<name> <node> <node> [<thermal node>] <model> [<area>] ...
+            /* D<name> <node> ... <node> <model> [<area>] ...
                The nodes and the model end before the first token from the
-               fifth on that is "off", "thermal", contains "=", or is a
-               value: the unlabeled area (number or {expression}). */
-            for (i = 0; (i < 10) && (*c != '\0'); ++i) {
-                inst = gettok_instance(&c);
-                if (i > 3 && (search_plain_identifier(inst, "off") ||
-                              search_plain_identifier(inst, "thermal") ||
-                              strchr(inst, '=') ||
-                              is_value_token(inst))) {
+               fifth on that is "off", "thermal", contains "=", or is the
+               unlabeled area: a value (number or {expression}) after a
+               token that is not a value, the model name. A value after a
+               value is a numeric node name (OSDI diode with more nodes). */
+            {
+                bool prev_is_value = FALSE;
+                for (i = 0; (i < 10) && (*c != '\0'); ++i) {
+                    inst = gettok_instance(&c);
+                    bool inst_is_value = is_value_token(inst);
+                    if (i > 3 && (search_plain_identifier(inst, "off") ||
+                                  search_plain_identifier(inst, "thermal") ||
+                                  strchr(inst, '=') ||
+                                  (inst_is_value && !prev_is_value))) {
+                        txfree(inst);
+                        break;
+                    }
+                    prev_is_value = inst_is_value;
                     txfree(inst);
-                    break;
                 }
-                txfree(inst);
             }
             return i - 2;
             break;
