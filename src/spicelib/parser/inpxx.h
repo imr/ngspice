@@ -48,7 +48,7 @@ struct osdi_bind {
     struct osdi_bind *next;
 };
 
-const struct osdi_bind *INPosdiBindFind(const char *kind, int level, const char *module);
+const struct osdi_bind *INPosdiBindForCard(const char *kind, const char *card);
 #endif
 
 

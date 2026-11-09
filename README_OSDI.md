@@ -75,8 +75,9 @@ IHP PDK.
 
 On a bound card, `level` selects the binding and is not passed to the
 module. A bound level takes precedence over a built-in model of the same
-level. The module is looked up when the card is parsed, so `osdi` and
-`osdi_bind` may be given in any order. Within a netlist use
+level. The module is looked up among the OSDI modules when the card is parsed,
+so `osdi` and `osdi_bind` may be given in any order, and a module may have
+the name of a built-in device (e.g. `bsim4`). Within a netlist use
 `pre_osdi_bind` in a `.control` section. `osdi_bind` without arguments
 lists the bindings in the syntax of the command.
 

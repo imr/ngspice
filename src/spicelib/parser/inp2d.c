@@ -121,11 +121,8 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
 #ifdef OSDI
         /* the instance parameter given with 'osdi_bind dio ... area=<ipar>' */
         if (is_osdi) {
-            int lev;
-            char *lev_err = INPfindLev(thismodel->INPmodLine->line, &lev);
-            tfree(lev_err);
             IFdevice *dev = ft_sim->devices[type];
-            const struct osdi_bind *b = INPosdiBindFind("dio", lev, dev->name);
+            const struct osdi_bind *b = INPosdiBindForCard("dio", thismodel->INPmodLine->line);
             if (b && b->area)
                 areaname = b->area;
             bool found = FALSE;

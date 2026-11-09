@@ -131,10 +131,9 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
                            (is_n || is_p) ? "mos" :
                            strcmp(parm, "d") == 0 ? "dio" : NULL;
         if (kind) {
-            int lev;
-            char *lev_err = INPfindLev(modtmp->INPmodLine->line, &lev);
-            tfree(lev_err);     /* already reported in pass 1 */
-            bind = INPosdiBindFind(kind, lev, device->name);
+            bind = INPosdiBindForCard(kind, modtmp->INPmodLine->line);
+            if (bind && strcasecmp(bind->module, device->name) != 0)
+                bind = NULL;
         }
         if (bind && bind->polarity && (is_n || is_p)) {
             IFparm *p = find_model_parameter(bind->polarity, device);

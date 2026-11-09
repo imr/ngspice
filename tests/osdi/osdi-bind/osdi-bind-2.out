@@ -1,0 +1,37 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: list, replace and remove bindings, and errors
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+No model levels are bound to OSDI modules.
+Note: osdi_bind: replaced the binding of mos level 90
+osdi_bind bjt 92 dummy_bjt polarity=sign
+osdi_bind dio 20 dummy_diode area=r
+osdi_bind dio 21 dummy_missing   * module not loaded
+osdi_bind mos 90 dummy_mos_alternate
+osdi_bind mos 90 dummy_mos has=nqs
+osdi_bind mos 91 dummy_mos polarity=none ignore=devtype,version
+osdi_bind mos 97 dummy_mos has=nqs ignore=devtype,version
+osdi_bind bjt 92 dummy_bjt polarity=sign
+osdi_bind dio 20 dummy_diode area=r
+osdi_bind dio 21 dummy_missing   * module not loaded
+osdi_bind mos 90 dummy_mos_alternate
+osdi_bind mos 97 dummy_mos has=nqs ignore=devtype,version
+osdi_bind bjt 92 dummy_bjt polarity=sign
+osdi_bind dio 20 dummy_diode area=r
+osdi_bind dio 21 dummy_missing   * module not loaded
+osdi_bind mos 90 dummy_mos_alternate
+osdi_bind mos 97 dummy_mos has=nqs ignore=devtype,version
+
+Note: No compatibility mode selected!
+
+
+Circuit: * card errors
+
+Note: Simulation executed from .control section 

@@ -1,0 +1,114 @@
+* osdi_bind: model levels bound to the OSDI modules of dummy_modules.c
+*
+* Each module conducts g * type * area between two terminals, with g
+* 1 mS for dummy_mos, 2 mS for dummy_mos_alternate, 3 mS for dummy_bjt and
+* 4 mS for dummy_diode, or 1/r if r is given. A 1 V source drives each case,
+* so its current shows which module the card selected, and with which
+* polarity.
+
+.model nmos_bound nmos level=90
+.model nsoi_bound nsoi level=90
+.model psoi_bound psoi level=90
+* nqs selects the binding with has=nqs
+.model nmos_has_nqs nmos level=90 nqs=0
+* type=1 contradicts pmos and is ignored, type=-1 agrees
+.model pmos_type_contradicts pmos level=90 type=1
+.model pmos_type_agrees pmos level=90 type=-1
+* polarity=none, so type=-1 of the card applies
+.model nmos_polarity_none nmos level=91 type=-1
+* nqs selects the binding with has=nqs and polarity=none, although the
+* binding without has= binds the same module
+.model pmos_same_module_has_nqs pmos level=94 nqs=0
+* polarity=sign, but the module has no parameter sign
+.model pmos_polarity_sign pmos level=92
+* ignore=devtype,version
+.model nmos_ignore nmos level=93 devtype=0 version=111
+* level 55 selects B3SOIFD unless bound
+.model nmos_builtin_level nmos level=55
+
+.model npn_bound npn level=20
+.model pnp_bound pnp level=20
+.model npn_builtin npn
+
+* area=r: an unlabeled value sets r
+.model diode_area_r d level=20
+.model diode_bound d level=21
+.model diode_builtin d rs=1k
+
+.model module_card_on_q dummy_bjt
+.model module_card_on_d dummy_diode
+
+v_nmos_bound nmos_bound 0 1
+m_nmos_bound nmos_bound 0 0 0 nmos_bound
+v_nsoi_bound nsoi_bound 0 1
+m_nsoi_bound nsoi_bound 0 0 0 nsoi_bound
+v_psoi_bound psoi_bound 0 1
+m_psoi_bound psoi_bound 0 0 0 psoi_bound
+v_nmos_has_nqs nmos_has_nqs 0 1
+m_nmos_has_nqs nmos_has_nqs 0 0 0 nmos_has_nqs
+v_pmos_type_contradicts pmos_type_contradicts 0 1
+m_pmos_type_contradicts pmos_type_contradicts 0 0 0 pmos_type_contradicts
+v_pmos_type_agrees pmos_type_agrees 0 1
+m_pmos_type_agrees pmos_type_agrees 0 0 0 pmos_type_agrees
+v_nmos_polarity_none nmos_polarity_none 0 1
+m_nmos_polarity_none nmos_polarity_none 0 0 0 nmos_polarity_none
+v_pmos_same_module_has_nqs pmos_same_module_has_nqs 0 1
+m_pmos_same_module_has_nqs pmos_same_module_has_nqs 0 0 0 pmos_same_module_has_nqs
+v_pmos_polarity_sign pmos_polarity_sign 0 1
+m_pmos_polarity_sign pmos_polarity_sign 0 0 0 pmos_polarity_sign
+v_nmos_ignore nmos_ignore 0 1
+m_nmos_ignore nmos_ignore 0 0 0 nmos_ignore
+v_nmos_builtin_level nmos_builtin_level 0 1
+m_nmos_builtin_level nmos_builtin_level 0 0 0 nmos_builtin_level
+
+v_pnp_four_nodes pnp_four_nodes 0 1
+q_pnp_four_nodes pnp_four_nodes 0 0 0 pnp_bound
+* three nodes and area 2: substrate grounded, thermal node internal
+v_npn_area npn_area 0 1
+q_npn_area npn_area 0 0 npn_bound 2
+v_npn_builtin npn_builtin 0 1
+q_npn_builtin npn_builtin 0 0 npn_builtin
+
+v_diode_area_r diode_area_r 0 1
+d_diode_area_r diode_area_r 0 diode_area_r 100
+v_diode_area diode_area 0 1
+d_diode_area diode_area 0 diode_bound 2
+v_diode_builtin diode_builtin 0 1
+d_diode_builtin diode_builtin 0 diode_builtin
+
+v_module_card_on_q module_card_on_q 0 1
+q_module_card_on_q module_card_on_q 0 0 module_card_on_q
+v_module_card_on_d module_card_on_d 0 1
+d_module_card_on_d module_card_on_d 0 module_card_on_d 2
+v_mos_card_on_n mos_card_on_n 0 1
+n_mos_card_on_n mos_card_on_n 0 0 0 nmos_bound
+v_bjt_card_on_n bjt_card_on_n 0 1
+n_bjt_card_on_n bjt_card_on_n 0 0 0 0 npn_bound
+v_diode_card_on_n diode_card_on_n 0 1
+n_diode_card_on_n diode_card_on_n 0 0 diode_bound
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind mos 90 dummy_mos
+pre_osdi_bind mos 90 dummy_mos_alternate has=nqs
+pre_osdi_bind mos 91 dummy_mos polarity=none
+pre_osdi_bind mos 94 dummy_mos
+pre_osdi_bind mos 94 dummy_mos has=nqs polarity=none
+pre_osdi_bind mos 92 dummy_mos polarity = sign
+pre_osdi_bind mos 93 dummy_mos ignore=devtype, version
+pre_osdi_bind mos 55 dummy_mos
+pre_osdi_bind bjt 20 dummy_bjt
+pre_osdi_bind dio 20 dummy_diode area=r
+pre_osdi_bind dio 21 dummy_diode
+op
+print i(v_nmos_bound) i(v_nsoi_bound) i(v_psoi_bound) i(v_nmos_has_nqs)
+print i(v_pmos_type_contradicts) i(v_pmos_type_agrees) i(v_nmos_polarity_none)
+print i(v_pmos_same_module_has_nqs)
+print i(v_pmos_polarity_sign) i(v_nmos_ignore) i(v_nmos_builtin_level)
+print i(v_pnp_four_nodes) i(v_npn_area) i(v_npn_builtin)
+print i(v_diode_area_r) i(v_diode_area) i(v_diode_builtin)
+print i(v_module_card_on_q) i(v_module_card_on_d)
+print i(v_mos_card_on_n) i(v_bjt_card_on_n) i(v_diode_card_on_n)
+.endc
+
+.end

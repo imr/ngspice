@@ -62,11 +62,24 @@ lower_copy(const char *s)
 }
 
 
-/* both NULL, or equal strings */
+/* both NULL, or equal strings regardless of case */
 static bool
 same_has(const char *a, const char *b)
 {
-    return (!a && !b) || (a && b && strcmp(a, b) == 0);
+    return (!a && !b) || (a && b && strcasecmp(a, b) == 0);
+}
+
+
+/* The OSDI device of this name, or -1. Unlike INPtypelook(), a built-in
+   device of the same name (e.g. bsim4, resistor) is not taken. */
+static int
+osdi_typelook(const char *module)
+{
+    for (int i = 0; i < ft_sim->numDevices; i++)
+        if (ft_sim->devices[i] && ft_sim->devices[i]->registry_entry &&
+            strcasecmp(module, ft_sim->devices[i]->name) == 0)
+            return i;
+    return -1;
 }
 
 
@@ -83,19 +96,6 @@ card_has_param(const char *line, const char *par)
         tfree(tok);
     }
     return found;
-}
-
-
-/* The binding of kind and level to module, or NULL */
-const struct osdi_bind *
-INPosdiBindFind(const char *kind, int level, const char *module)
-{
-    struct osdi_bind *b;
-    for (b = osdi_binds; b; b = b->next)
-        if (b->level == level && strcmp(b->kind, kind) == 0 &&
-            strcasecmp(b->module, module) == 0)
-            return b;
-    return NULL;
 }
 
 
@@ -117,6 +117,26 @@ osdi_bind_select(const char *kind, int level, const char *line, bool *bound)
                 return b;
         }
     return dflt;
+}
+
+
+/* The binding of kind that applies to the model card (the whole line
+   '.model <name> <type> ...'), or NULL. The same choice as in INPdomodel,
+   so that a module bound twice to a level, with and without has=, gets
+   the options of the binding that the card selected. */
+const struct osdi_bind *
+INPosdiBindForCard(const char *kind, const char *card)
+{
+    int level;
+    bool bound;
+    char *tok, *lev_err = INPfindLev((char *) card, &level);
+    tfree(lev_err);
+    /* skip .model, model name and type */
+    for (int i = 0; i < 3 && *card; i++) {
+        INPgetTok((char **) &card, &tok, 1);
+        tfree(tok);
+    }
+    return osdi_bind_select(kind, level, card, &bound);
 }
 
 
@@ -190,7 +210,7 @@ INPosdiBindPrint(FILE *fp)
     }
     for (b = osdi_binds; b; b = b->next) {
         wordlist *wl;
-        int t = INPtypelook(b->module);
+        int t = osdi_typelook(b->module);
         fprintf(fp, "osdi_bind %s %d %s", b->kind, b->level, b->module);
         if (b->has)
             fprintf(fp, " has=%s", b->has);
@@ -228,17 +248,11 @@ osdi_bind_type(const char *kind, int level, const char *line, int *type, char **
         return 1;
     }
 
-    *type = INPtypelook(b->module);
+    *type = osdi_typelook(b->module);
     if (*type < 0)
         *err = INPerrCat(*err, tprintf(
             "%s level %d is bound to Verilog-A module %s, which is not loaded (use pre_osdi)\n",
             kind, level, b->module));
-    else if (!ft_sim->devices[*type]->registry_entry) {
-        *err = INPerrCat(*err, tprintf(
-            "%s level %d is bound to %s, which is not an OSDI module\n",
-            kind, level, b->module));
-        *type = -1;
-    }
     return 1;
 }
 #endif

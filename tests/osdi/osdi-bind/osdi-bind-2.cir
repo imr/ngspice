@@ -1,0 +1,65 @@
+* osdi_bind: list, replace and remove bindings, and errors
+
+* a circuit to simulate, as batch mode expects
+v_circuit circuit 0 1
+r_circuit circuit 0 1k
+
+.control
+pre_osdi dummy_modules.osdi
+op
+osdi_bind
+osdi_bind mos 90 dummy_mos
+* replaces the binding above
+osdi_bind mos 90 dummy_mos_alternate
+osdi_bind mos 90 dummy_mos has=nqs
+osdi_bind mos 91 dummy_mos polarity=none ignore=devtype,version
+osdi_bind bjt 92 dummy_bjt polarity=sign
+osdi_bind dio 20 dummy_diode area=r
+osdi_bind dio 21 dummy_missing
+osdi_bind mos 97 dummy_mos has = nqs ignore = devtype , version
+osdi_bind
+
+* has= is not case sensitive
+osdi_bind mos 90 none has=NQS
+osdi_bind mos 91 none
+osdi_bind mos 96 none
+osdi_bind mos 96 none has=nqs
+osdi_bind
+
+osdi_bind res 1 resistor
+osdi_bind mos 1
+osdi_bind mos one dummy_mos
+osdi_bind mos 0 dummy_mos
+osdi_bind mos 100 dummy_mos
+osdi_bind mos 1 dummy_mos has
+osdi_bind mos 1 dummy_mos has=
+osdi_bind mos 1 dummy_mos area=r
+osdi_bind dio 1 dummy_diode polarity=type
+osdi_bind mos 1 none ignore=type
+* an empty word from a variable
+set empty_word = ""
+osdi_bind $empty_word
+osdi_bind
+
+* card errors, in a second circuit
+osdi_bind mos 94 dummy_mos has=nqs
+osdi_bind mos 95 dummy_missing
+osdi_bind dio 22 vbic
+osdi_bind dio 23 dummy_diode area=nosuchparameter
+circbyline * card errors
+circbyline .model nmos_only_has_bindings nmos level=94
+circbyline .model nmos_not_loaded nmos level=95
+circbyline .model diode_not_osdi d level=22
+circbyline .model diode_no_area_parameter d level=23
+circbyline .model nmos_card nmos level=90
+circbyline v_errors errors 0 1
+circbyline d_no_area_parameter errors 0 diode_no_area_parameter 2
+circbyline d_mismatch errors 0 nmos_card
+circbyline m_only_has_bindings errors 0 0 0 nmos_only_has_bindings
+circbyline m_not_loaded errors 0 0 0 nmos_not_loaded
+circbyline d_not_osdi errors 0 diode_not_osdi
+circbyline .end
+
+.endc
+
+.end
