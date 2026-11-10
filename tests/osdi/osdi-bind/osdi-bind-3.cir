@@ -1,0 +1,43 @@
+* osdi_bind: remaining command forms and instance errors
+
+v_circuit circuit 0 1
+r_circuit circuit 0 1k
+
+.control
+pre_osdi dummy_modules.osdi
+op
+osdi_bind mos
+osdi_bind mos 94 dummy_mos has=nqs
+* replaces the binding above
+osdi_bind mos 94 dummy_mos_alternate has=nqs
+osdi_bind mos 94 dummy_mos
+osdi_bind mos 94 none has=sqn
+osdi_bind dio 1 none
+osdi_bind dio 1 none area=r
+osdi_bind mos 1 none polarity=sign
+osdi_bind mos 1 none polarity=none
+
+osdi_bind bjt 30 dummy_diode
+osdi_bind dio 30 dummy_diode
+circbyline * instance errors
+circbyline .model npn_three_terminals npn level=30
+circbyline .model diode_osdi d level=30
+circbyline .model diode_builtin d
+circbyline .model resistor_card r
+circbyline .model module_card dummy_mos
+circbyline .model nmos_empty_version nmos level=54 version=""
+circbyline v_errors errors 0 1
+circbyline q_three_terminals errors 0 0 npn_three_terminals
+circbyline d_too_many_nodes errors 0 t u diode_osdi
+circbyline d_builtin_area errors 0 diode_builtin 2
+circbyline d_off errors 0 diode_builtin off
+circbyline d_named_area errors 0 diode_builtin area=2
+circbyline q_diode_card errors 0 0 diode_builtin
+circbyline n_resistor_card errors 0 resistor_card
+circbyline n_module_card errors 0 0 0 module_card
+circbyline m_empty_version errors errors 0 0 nmos_empty_version
+circbyline d_thermal errors 0 t diode_builtin thermal
+circbyline .end
+.endc
+
+.end
