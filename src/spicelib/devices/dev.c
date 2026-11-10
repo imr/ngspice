@@ -333,10 +333,12 @@ void load_alldevs(void){
 #endif
 
 #if defined(XSPICE) || defined(OSDI)
-#include "ngspice/fteext.h"  /* for ft_sim */
+#include "ngspice/ftedefs.h"  /* for ft_sim, ft_circuits */
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
 
 static void relink(void) {
+  const int oldDeviceCount = DEVmaxnum;
+  struct circ *circuit;
 
 /*
  * This replacement done by SDB on 6.11.2003
@@ -348,6 +350,10 @@ static void relink(void) {
   DEVmaxnum = DEVNUM;
 
   ft_sim->devices = devices_ptr();
+
+  for (circuit = ft_circuits; circuit; circuit = circuit->ci_next)
+      if (circuit->ci_ckt)
+          CKTgrowDeviceLists(circuit->ci_ckt, oldDeviceCount);
   return;
 }
 
