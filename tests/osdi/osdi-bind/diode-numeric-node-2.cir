@@ -1,0 +1,17 @@
+* osdi_bind: a numeric fourth node after a named third node on a D line
+
+* dummy_bjt of dummy_modules.c conducts 3 mS from its first to its third terminal
+.model diode_four_terminals d level=24
+
+v_emitter emitter 0 0
+v_diode_named_numeric diode_named_numeric 0 1
+d_diode_named_numeric diode_named_numeric 0 emitter 0 diode_four_terminals
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind dio 24 dummy_bjt
+op
+print i(v_diode_named_numeric)
+.endc
+
+.end
