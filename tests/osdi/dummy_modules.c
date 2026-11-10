@@ -26,8 +26,8 @@
 #define TERMINAL_CONDUCTANCE 1e-3
 
 /* OpenVAF gives every module the instance parameter $mfactor, which ngspice
-   calls m, so these modules have it too */
-enum { PARAMETER_R, PARAMETER_AREA, PARAMETER_MFACTOR, INSTANCE_PARAMETER_COUNT };
+   calls m, so these modules have it too. l and w only select a bin. */
+enum { PARAMETER_R, PARAMETER_AREA, PARAMETER_L, PARAMETER_W, PARAMETER_MFACTOR, INSTANCE_PARAMETER_COUNT };
 enum { PARAMETER_TYPE = INSTANCE_PARAMETER_COUNT, PARAMETER_G, PARAMETER_COUNT };
 
 /* An instance parameter, or its default on the model card */
@@ -183,6 +183,8 @@ static OsdiJacobianEntry resistor_entries[] = {
 
 static char *r_names[] = { "r" };
 static char *area_names[] = { "area" };
+static char *l_names[] = { "l" };
+static char *w_names[] = { "w" };
 static char *mfactor_names[] = { "$mfactor" };
 static char *type_names[] = { "type" };
 static char *g_names[] = { "g" };
@@ -190,6 +192,8 @@ static char *g_names[] = { "g" };
 static OsdiParamOpvar parameters[] = {
     { r_names, 0, "Resistance", "Ohm", PARA_TY_REAL | PARA_KIND_INST, 0 },
     { area_names, 0, "Area factor", "", PARA_TY_REAL | PARA_KIND_INST, 0 },
+    { l_names, 0, "Length", "m", PARA_TY_REAL | PARA_KIND_INST, 0 },
+    { w_names, 0, "Width", "m", PARA_TY_REAL | PARA_KIND_INST, 0 },
     { mfactor_names, 0, "Multiplier", "", PARA_TY_REAL | PARA_KIND_INST, 0 },
     { type_names, 0, "Polarity", "", PARA_TY_INT | PARA_KIND_MODEL, 0 },
     { g_names, 0, "Conductance", "S", PARA_TY_REAL | PARA_KIND_MODEL, 0 },

@@ -423,7 +423,13 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
             modtmp->INPmodType != INPtypelook("BSIM4v7") &&
             modtmp->INPmodType != INPtypelook("HiSIM2") &&
             modtmp->INPmodType != INPtypelook("HiSIMHV1") &&
-            modtmp->INPmodType != INPtypelook("HiSIMHV2"))
+            modtmp->INPmodType != INPtypelook("HiSIMHV2")
+#ifdef OSDI
+            /* Verilog-A modules: bins by lmin, lmax, wmin, wmax of the card */
+            && !(modtmp->INPmodType >= 0 &&
+                 ft_sim->devices[modtmp->INPmodType]->registry_entry)
+#endif
+            )
         {
             continue;
         }

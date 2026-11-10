@@ -1,0 +1,19 @@
+* osdi_bind: an M instance selects the bin of a bound card by l and w
+
+* dummy_mos of dummy_modules.c conducts g from its first to its third terminal
+.model nmos_bound.1 nmos level=90 lmin=0 lmax=1u wmin=0 wmax=10u g=1e-3
+.model nmos_bound.2 nmos level=90 lmin=1u lmax=10u wmin=0 wmax=10u g=2e-3
+
+v_short short 0 1
+m_short short 0 0 0 nmos_bound l=0.5u w=1u
+v_long long 0 1
+m_long long 0 0 0 nmos_bound l=2u w=1u
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind mos 90 dummy_mos ignore=lmin,lmax,wmin,wmax
+op
+print i(v_short) i(v_long)
+.endc
+
+.end
