@@ -171,7 +171,8 @@ configure_file(spinit.in "${CMAKE_BINARY_DIR}/install/spinit" @ONLY)
 set(pkglibdir "${CMAKE_BINARY_DIR}/codemodels")
 configure_file(spinit.in "${CMAKE_BINARY_DIR}/scripts/spinit" @ONLY)
 file(APPEND "${CMAKE_BINARY_DIR}/scripts/spinit"
-     "\n* resolve .include against the directory of the test netlist\nset sourcepath = ( $ngspice_vpath . )\n")
+     "\n* resolve .include against the directory of the test netlist\nset sourcepath = ( $ngspice_vpath . )\n"
+     "set analog_codemodel = ${CMAKE_BINARY_DIR}/codemodels/analog.cm\n")
 
 # ---------------------------------------------------------------------------
 # Executables and libraries

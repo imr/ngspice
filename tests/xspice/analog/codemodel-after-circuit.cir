@@ -1,0 +1,9 @@
+* codemodel adds devices after the circuit exists, then op runs
+v_source input 0 1
+r_load input 0 1k
+.control
+codemodel $analog_codemodel
+op
+print i(v_source)
+.endc
+.end

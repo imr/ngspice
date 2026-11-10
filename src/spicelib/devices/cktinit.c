@@ -147,3 +147,27 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 
     return OK;
 }
+
+
+/* codemodel and osdi may add devices after CKTinit. The entry after the
+   last device in devTimes and devCounts holds the overhead, so it moves. */
+void
+CKTgrowDeviceLists(CKTcircuit *ckt, int oldDeviceCount)
+{
+    STATistics *stat = ckt->CKTstat;
+    int i;
+
+    ckt->CKThead = TREALLOC(GENmodel *, ckt->CKThead, DEVmaxnum);
+    stat->STATdevNum = TREALLOC(STATdevList, stat->STATdevNum, DEVmaxnum);
+    stat->devTimes = TREALLOC(double, stat->devTimes, DEVmaxnum + 1);
+    stat->devCounts = TREALLOC(size_t, stat->devCounts, DEVmaxnum + 1);
+
+    stat->devTimes[DEVmaxnum] = stat->devTimes[oldDeviceCount];
+    stat->devCounts[DEVmaxnum] = stat->devCounts[oldDeviceCount];
+    for (i = oldDeviceCount; i < DEVmaxnum; i++) {
+        ckt->CKThead[i] = NULL;
+        memset(&stat->STATdevNum[i], 0, sizeof(STATdevList));
+        stat->devTimes[i] = 0;
+        stat->devCounts[i] = 0;
+    }
+}

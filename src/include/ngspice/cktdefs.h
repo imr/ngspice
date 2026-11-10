@@ -384,6 +384,7 @@ extern int CKTfndTask(CKTcircuit *, TSKtask **, IFuid );
 extern int CKTground(CKTcircuit *, CKTnode **, IFuid);
 extern int CKTic(CKTcircuit *);
 extern int CKTinit(CKTcircuit **);
+extern void CKTgrowDeviceLists(CKTcircuit *, int);
 extern int CKTinst2Node(CKTcircuit *, void *, int , CKTnode **, IFuid *);
 extern int CKTlinkEq(CKTcircuit *, CKTnode *);
 extern int CKTload(CKTcircuit *);
