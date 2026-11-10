@@ -109,7 +109,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
         thismodel->INPmodType != INPtypelook("NBJT2") &&
 #endif
         thismodel->INPmodType != INPtypelook("VBIC") &&
-        !is_osdi)
+        /* OSDI module, unless a card bound to another device kind */
+        !(is_osdi && INPosdiCardFits('q', thismodel->INPmodLine->line)))
     {
         LITERR("incorrect model type");
         return;

@@ -120,6 +120,33 @@ osdi_bind_select(const char *kind, int level, const char *line, bool *bound)
 }
 
 
+/* May an instance with letter m, q or d use the OSDI model of this card
+   (the whole line '.model <name> <type> ...')? A card bound by type and
+   level (nmos/pmos/nsoi/psoi, npn/pnp, d) only fits the letter of its
+   kind; a card with the module name as type fits any letter. */
+bool
+INPosdiCardFits(char letter, const char *card)
+{
+    char *tok;
+    bool fits = TRUE;
+    /* skip .model and the model name, get the type */
+    for (int i = 0; i < 3 && *card; i++) {
+        INPgetTok((char **) &card, &tok, 1);
+        if (i == 2) {
+            if (!strcmp(tok, "nmos") || !strcmp(tok, "pmos") ||
+                !strcmp(tok, "nsoi") || !strcmp(tok, "psoi"))
+                fits = (letter == 'm');
+            else if (!strcmp(tok, "npn") || !strcmp(tok, "pnp"))
+                fits = (letter == 'q');
+            else if (!strcmp(tok, "d"))
+                fits = (letter == 'd');
+        }
+        tfree(tok);
+    }
+    return fits;
+}
+
+
 /* The binding of kind that applies to the model card (the whole line
    '.model <name> <type> ...'), or NULL. The same choice as in INPdomodel,
    so that a module bound twice to a level, with and without has=, gets

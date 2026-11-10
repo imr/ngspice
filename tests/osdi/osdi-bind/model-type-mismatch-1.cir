@@ -1,0 +1,35 @@
+* osdi_bind: an M, Q or D instance rejects a bound card of another device kind
+
+* a circuit to simulate, as batch mode expects
+v_circuit circuit 0 1
+r_circuit circuit 0 1k
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind mos 90 dummy_mos
+pre_osdi_bind bjt 20 dummy_bjt
+op
+circbyline * q_nmos_card
+circbyline .model nmos_bound nmos level=90
+circbyline v_q_nmos_card q_nmos_card 0 1
+circbyline q_nmos_card q_nmos_card 0 0 nmos_bound
+circbyline .end
+op
+print i(v_q_nmos_card)
+circbyline * m_npn_card
+circbyline .model npn_bound npn level=20
+circbyline v_m_npn_card m_npn_card 0 1
+circbyline m_npn_card m_npn_card 0 0 0 npn_bound
+circbyline .end
+op
+print i(v_m_npn_card)
+circbyline * d_nmos_card
+circbyline .model nmos_bound nmos level=90
+circbyline v_d_nmos_card d_nmos_card 0 1
+circbyline d_nmos_card d_nmos_card 0 nmos_bound
+circbyline .end
+op
+print i(v_d_nmos_card)
+.endc
+
+.end

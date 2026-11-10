@@ -141,7 +141,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         thismodel->INPmodType != INPtypelook("NUMOS") &&
 #endif
 #ifdef OSDI
-        !ft_sim->devices[thismodel->INPmodType]->registry_entry &&
+        /* OSDI module, unless a card bound to another device kind */
+        !(ft_sim->devices[thismodel->INPmodType]->registry_entry &&
+          INPosdiCardFits('m', thismodel->INPmodLine->line)) &&
 #endif
         thismodel->INPmodType != INPtypelook("HiSIM2") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV1") &&

@@ -80,7 +80,9 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     numnodes = i;
 
     if (thismodel != NULL) {
-        if ((mytype != thismodel->INPmodType) && !is_osdi
+        /* OSDI module, unless a card bound to another device kind */
+        if ((mytype != thismodel->INPmodType) &&
+            !(is_osdi && INPosdiCardFits('d', thismodel->INPmodLine->line))
 #ifdef CIDER
             && (thismodel->INPmodType != INPtypelook("NUMD"))
             && (thismodel->INPmodType != INPtypelook("NUMD2"))

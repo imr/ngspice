@@ -49,6 +49,7 @@ struct osdi_bind {
 };
 
 const struct osdi_bind *INPosdiBindForCard(const char *kind, const char *card);
+bool INPosdiCardFits(char letter, const char *card);
 #endif
 
 
