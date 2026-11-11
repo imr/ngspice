@@ -45,17 +45,19 @@ void com_osdi(wordlist *wl)
 
 /* osdi_bind
      list the bindings
-   osdi_bind mos|bjt|dio <level> <module> [has=<par>] [area=<ipar>]
-                         [polarity=<par>|none] [ignore=<par>,<par>,...]
+   osdi_bind mos|bjt|dio <level> <module> [version=<v>] [has=<par>]
+                         [area=<ipar>] [polarity=<par>[:<nval>:<pval>]|none]
+                         [ignore=<par>,<par>,...]
      bind a model level to an OSDI module
-   osdi_bind mos|bjt|dio <level> none [has=<par>]
+   osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]
      remove the binding(s)
    Use as pre_osdi_bind inside a .control section. */
 
 static const char *osdi_bind_usage =
-    "Usage: osdi_bind mos|bjt <level> <module> [has=<par>] [polarity=<par>|none] [ignore=<par>,...]\n"
-    "       osdi_bind dio <level> <module> [has=<par>] [area=<ipar>] [ignore=<par>,...]\n"
-    "       osdi_bind mos|bjt|dio <level> none [has=<par>]\n"
+    "Usage: osdi_bind mos|bjt <level> <module> [version=<v>] [has=<par>]\n"
+    "                 [polarity=<par>[:<nval>:<pval>]|none] [ignore=<par>,...]\n"
+    "       osdi_bind dio <level> <module> [version=<v>] [has=<par>] [area=<ipar>] [ignore=<par>,...]\n"
+    "       osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]\n"
     "       osdi_bind\n";
 
 /* The words of the command as one string, without blanks around '='
@@ -100,7 +102,8 @@ void com_osdi_bind(wordlist *wl)
     const char *kind;
     char *module, *end;
     long level;
-    const char *has = NULL, *area = NULL, *polarity = NULL;
+    const char *has = NULL, *version = NULL, *area = NULL, *polarity = NULL;
+    const char *nval = NULL, *pval = NULL;
     wordlist *ignore = NULL, *ignore_last = NULL;
 
     if (!w) {
@@ -156,9 +159,29 @@ void com_osdi_bind(wordlist *wl)
         }
         if (strcasecmp(opt, "has") == 0) {
             has = val;
+        } else if (strcasecmp(opt, "version") == 0) {
+            /* without quotes */
+            if (*val == '"' || *val == '\'')
+                val++;
+            char *q = strpbrk(val, "\"'");
+            if (q)
+                *q = '\0';
+            version = val;
         } else if (strcasecmp(opt, "area") == 0 && strcmp(kind, "dio") == 0) {
             area = val;
         } else if (strcasecmp(opt, "polarity") == 0 && is_mos) {
+            /* <par>, <par>:<nval>:<pval>, or none */
+            char *c1 = strchr(val, ':');
+            if (c1) {
+                char *c2 = strchr(c1 + 1, ':');
+                if (!c2 || c2 == c1 + 1 || !c2[1]) {
+                    fprintf(cp_err, "Error: osdi_bind: polarity=%s is not <par>:<nval>:<pval>\n", val);
+                    goto done;
+                }
+                *c1 = *c2 = '\0';
+                nval = c1 + 1;
+                pval = c2 + 1;
+            }
             polarity = strcasecmp(val, "none") == 0 ? NULL : val;
         } else if (strcasecmp(opt, "ignore") == 0) {
             char *p;
@@ -179,15 +202,17 @@ void com_osdi_bind(wordlist *wl)
     }
 
     if (strcasecmp(module, "none") == 0) {
-        if (area || ignore || (is_mos && (!polarity || strcmp(polarity, "type") != 0)))
-            fprintf(cp_err, "Error: osdi_bind: only has= is allowed with none\n");
-        else if (!INPosdiBindRemove(kind, (int) level, has, has == NULL))
+        if (area || ignore || nval || (is_mos && (!polarity || strcmp(polarity, "type") != 0)))
+            fprintf(cp_err, "Error: osdi_bind: only version= and has= are allowed with none\n");
+        else if (!INPosdiBindRemove(kind, (int) level, has, version,
+                                    has == NULL && version == NULL))
             fprintf(cp_err, "Warning: osdi_bind: %s level %ld%s%s was not bound\n",
                     kind, level, has ? " has=" : "", has ? has : "");
         goto done;
     }
 
-    if (INPosdiBindAdd(kind, (int) level, module, has, area, polarity, ignore))
+    if (INPosdiBindAdd(kind, (int) level, module, has, version, area, polarity,
+                       nval, pval, ignore))
         fprintf(cp_out, "Note: osdi_bind: replaced the binding of %s level %ld%s%s\n",
                 kind, level, has ? " has=" : "", has ? has : "");
     ignore = NULL;      /* owned by the binding */

@@ -15,23 +15,30 @@ Author: 1985 Thomas L. Quarles
  * Bindings of model levels to Verilog-A modules loaded with osdi,
  * set at runtime by the command osdi_bind (e.g. in .spiceinit):
  *
- *   osdi_bind mos|bjt|dio <level> <module> [has=<par>] [area=<ipar>]
- *                         [polarity=<par>|none] [ignore=<par>,<par>,...]
+ *   osdi_bind mos|bjt|dio <level> <module> [version=<v>] [has=<par>]
+ *                         [area=<ipar>] [polarity=<par>[:<nval>:<pval>]|none]
+ *                         [ignore=<par>,<par>,...]
  *
  * mos: a card '.model <name> nmos|pmos level=<level> ...' creates a model
  *   of the OSDI module. nmos (nsoi) sets the polarity parameter (default
- *   type) to 1, pmos (psoi) to -1; polarity=none: the module has none.
+ *   type) to <nval> (default 1), pmos (psoi) to <pval> (default -1);
+ *   polarity=none: the module has none.
  * bjt: likewise for '.model <name> npn|pnp level=<level> ...' and Q
  *   instances; npn sets the polarity parameter to 1, pnp to -1.
  * dio: a card '.model <name> d level=<level> ...' creates a model of the
  *   OSDI module. An unlabeled value on a D instance sets instance
  *   parameter <ipar> (default area).
  * Card parameters in the ignore list are skipped. The parameter level of
- * a bound card selects the binding and is not passed to the module.
- * A level may have several bindings: one with has=<par> is selected if the
- * card has parameter <par> (any value), else the one without has=, e.g.
- *   osdi_bind mos 69 psp103va
- *   osdi_bind mos 69 pspnqs103va has=swnqs
+ * a bound card selects the binding and is not passed to the module; nor is
+ * version, unless the module has this parameter.
+ * A level may have several bindings. A binding applies to a card if the card
+ * has parameter <par> (has=<par>, any value) and if the card's version
+ * starts with <v> followed by no digit (version=<v>). Of the bindings that
+ * apply, the one with the most conditions is selected, of these the first
+ * given; a binding without conditions is the default, e.g.
+ *   osdi_bind mos 69 psp103va    version=103
+ *   osdi_bind mos 69 pspnqs103va version=103 has=swnqs
+ *   osdi_bind mos 69 psp104va    version=104
  * The module is looked up when the card is parsed, so osdi_bind and
  * osdi may be given in any order.
  *-------------------------------------------------------------*/
@@ -45,6 +52,9 @@ osdi_bind_free(struct osdi_bind *b)
     tfree(b->kind);
     tfree(b->module);
     tfree(b->has);
+    tfree(b->version);
+    tfree(b->nval);
+    tfree(b->pval);
     tfree(b->area);
     tfree(b->polarity);
     wl_free(b->ignore);
@@ -99,24 +109,80 @@ card_has_param(const char *line, const char *par)
 }
 
 
-/* The binding of kind and level that applies to the model card line:
-   the first one whose has= parameter is on the card, else the one without
-   has=. NULL if none applies. *bound tells if the level has any binding. */
+/* The value of parameter version in the rest of a model card line (after
+   the model type), without quotes, or NULL. Free it with tfree(). */
+static char *
+card_version(const char *line)
+{
+    char *tok, *value = NULL;
+    while (*line && !value) {
+        INPgetTok((char **) &line, &tok, 1);
+        if (strcmp(tok, "version") == 0 && *line) {
+            INPgetTok((char **) &line, &value, 1);
+            /* strip quotes */
+            char *v = value, *d = value;
+            for (; *v; v++)
+                if (*v != '"' && *v != '\'')
+                    *d++ = *v;
+            *d = '\0';
+        }
+        tfree(tok);
+    }
+    return value;
+}
+
+
+/* Does version start with prefix, not followed by a digit?
+   ("103.3" and "103" match "103", "1030" does not.) */
+static bool
+version_matches(const char *version, const char *prefix)
+{
+    size_t n = strlen(prefix);
+    return version && strncasecmp(version, prefix, n) == 0 &&
+           !isdigit_c(version[n]);
+}
+
+
+/* The binding of kind and level that applies to the model card line (after
+   the model type): of the bindings whose conditions (has=, version=) hold,
+   the one with the most conditions, of these the first; a binding without
+   conditions is the default. NULL if none applies. *bound tells if the
+   level has any binding. */
 static const struct osdi_bind *
 osdi_bind_select(const char *kind, int level, const char *line, bool *bound)
 {
     struct osdi_bind *b;
-    const struct osdi_bind *dflt = NULL;
+    const struct osdi_bind *best = NULL;
+    int best_score = -1;
+    char *version = NULL;
+    bool version_read = FALSE;
     *bound = FALSE;
-    for (b = osdi_binds; b; b = b->next)
-        if (b->level == level && strcmp(b->kind, kind) == 0) {
-            *bound = TRUE;
-            if (!b->has)
-                dflt = b;
-            else if (card_has_param(line, b->has))
-                return b;
+    for (b = osdi_binds; b; b = b->next) {
+        if (b->level != level || strcmp(b->kind, kind) != 0)
+            continue;
+        *bound = TRUE;
+        int score = 0;
+        if (b->has) {
+            if (!card_has_param(line, b->has))
+                continue;
+            score++;
         }
-    return dflt;
+        if (b->version) {
+            if (!version_read) {
+                version = card_version(line);
+                version_read = TRUE;
+            }
+            if (!version_matches(version, b->version))
+                continue;
+            score++;
+        }
+        if (score > best_score) {
+            best = b;
+            best_score = score;
+        }
+    }
+    tfree(version);
+    return best;
 }
 
 
@@ -168,17 +234,18 @@ INPosdiBindForCard(const char *kind, const char *card)
 
 
 /* Remove the bindings of kind and level, all of them if all is set,
-   else the one with has=<has> (has may be NULL).
+   else the one with has=<has> and version=<version> (either may be NULL).
    Returns the number of bindings removed. */
 int
-INPosdiBindRemove(const char *kind, int level, const char *has, int all)
+INPosdiBindRemove(const char *kind, int level, const char *has,
+                  const char *version, int all)
 {
     struct osdi_bind **pb = &osdi_binds;
     int n = 0;
     while (*pb) {
         struct osdi_bind *b = *pb;
         if (b->level == level && strcmp(b->kind, kind) == 0 &&
-            (all || same_has(b->has, has))) {
+            (all || (same_has(b->has, has) && same_has(b->version, version)))) {
             *pb = b->next;
             osdi_bind_free(b);
             n++;
@@ -190,23 +257,27 @@ INPosdiBindRemove(const char *kind, int level, const char *has, int all)
 }
 
 
-/* Add a binding, replacing an existing one of the same kind, level and
-   has=. has, area and polarity may be NULL.
+/* Add a binding, replacing an existing one of the same kind, level, has=
+   and version=. has, version, area, polarity, nval and pval may be NULL.
    Takes ownership of ignore. Returns 1 if a binding was replaced. */
 int
 INPosdiBindAdd(const char *kind, int level, const char *module,
-               const char *has, const char *area, const char *polarity,
+               const char *has, const char *version, const char *area,
+               const char *polarity, const char *nval, const char *pval,
                wordlist *ignore)
 {
     wordlist *wl;
     char *lhas = has ? lower_copy(has) : NULL;
-    int replaced = INPosdiBindRemove(kind, level, lhas, 0) > 0;
+    int replaced = INPosdiBindRemove(kind, level, lhas, version, 0) > 0;
     struct osdi_bind *b = TMALLOC(struct osdi_bind, 1);
 
     b->kind = lower_copy(kind);
     b->level = level;
     b->module = lower_copy(module);
     b->has = lhas;
+    b->version = version ? copy(version) : NULL;
+    b->nval = copy(nval ? nval : "1");
+    b->pval = copy(pval ? pval : "-1");
     b->area = area ? lower_copy(area) : NULL;
     b->polarity = polarity ? lower_copy(polarity) : NULL;
     for (wl = ignore; wl; wl = wl->wl_next)
@@ -239,6 +310,8 @@ INPosdiBindPrint(FILE *fp)
         wordlist *wl;
         int t = osdi_typelook(b->module);
         fprintf(fp, "osdi_bind %s %d %s", b->kind, b->level, b->module);
+        if (b->version)
+            fprintf(fp, " version=%s", b->version);
         if (b->has)
             fprintf(fp, " has=%s", b->has);
         if (b->area)
@@ -246,6 +319,8 @@ INPosdiBindPrint(FILE *fp)
         if (strcmp(b->kind, "dio") != 0) {
             if (!b->polarity)
                 fprintf(fp, " polarity=none");
+            else if (strcmp(b->nval, "1") != 0 || strcmp(b->pval, "-1") != 0)
+                fprintf(fp, " polarity=%s:%s:%s", b->polarity, b->nval, b->pval);
             else if (strcmp(b->polarity, "type") != 0)
                 fprintf(fp, " polarity=%s", b->polarity);
         }

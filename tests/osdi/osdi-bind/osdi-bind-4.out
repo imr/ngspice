@@ -1,0 +1,30 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: version= selects the module, polarity=<par>:<nval>:<pval>
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+i(v_n_v1) = -1.00000e-03
+i(v_n_v1_3) = -1.00000e-03
+i(v_n_v2) = -2.00000e-03
+i(v_n_v1_nqs) = -2.00000e-03
+i(v_n_v10) = -3.00000e-03
+i(v_n_none) = -3.00000e-03
+i(v_p_v1) = 1.000000e-03
+i(v_p_none) = 3.000000e-03
+i(v_n_110) = -1.00000e-03
+i(v_p_110) = 0.000000e+00
+osdi_bind mos 95 dummy_mos version=1
+osdi_bind mos 95 dummy_mos_alternate version=2
+osdi_bind mos 95 dummy_mos_alternate version=1 has=nqs
+osdi_bind mos 95 dummy_mos polarity=type:3:-3
+osdi_bind mos 96 dummy_mos version=110 polarity=type:1:0
+osdi_bind mos 95 dummy_mos version=1
+osdi_bind mos 95 dummy_mos polarity=type:3:-3
+osdi_bind mos 96 dummy_mos version=110 polarity=type:1:0
+Note: Simulation executed from .control section 

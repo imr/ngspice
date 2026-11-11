@@ -42,8 +42,10 @@ struct osdi_bind {
     int level;
     char *module;       /* OSDI module name */
     char *has;          /* selected if the card has this parameter, or NULL */
+    char *version;      /* selected if the card's version starts so, or NULL */
     char *area;         /* instance parameter of an unlabeled value, or NULL */
-    char *polarity;     /* set to 1 by nmos, -1 by pmos, or NULL */
+    char *polarity;     /* set by nmos/npn to nval, by pmos/pnp to pval, or NULL */
+    char *nval, *pval;  /* default "1" and "-1" */
     struct wordlist *ignore;   /* card parameters to skip */
     struct osdi_bind *next;
 };

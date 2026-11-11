@@ -120,7 +120,7 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
     bool is_osdi = false;
     /* card of a model level bound to this module with osdi_bind */
     const struct osdi_bind *bind = NULL;
-    const char *polarity = NULL;        /* value of bind->polarity: "1" or "-1" */
+    const char *polarity = NULL;        /* value given to bind->polarity */
     if (device->registry_entry){
         /* osdi module name, or nmos/pmos/npn/pnp/d of a card bound with osdi_bind */
         INPgetNetTok(&line, &parm, 1);
@@ -138,7 +138,7 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
         if (bind && bind->polarity && (is_n || is_p)) {
             IFparm *p = find_model_parameter(bind->polarity, device);
             if (p) {
-                char *value = is_n ? "1" : "-1";
+                char *value = is_n ? bind->nval : bind->pval;
                 polarity = value;
                 error = ft_sim->setModelParm(ckt, modtmp->INPmodfast, p->id,
                                              INPgetValue(ckt, &value, p->dataType, tab), NULL);
@@ -164,9 +164,13 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
 #ifdef OSDI
         if (bind) {
-            /* level selects the binding, it is not a parameter of the module */
-            if (strcmp(parm, "level") == 0) {
-                INPgetValue(ckt, &line, IF_REAL, tab);
+            /* level selects the binding, it is not a parameter of the module;
+               nor is version, unless the module has this parameter */
+            if (strcmp(parm, "level") == 0 ||
+                (strcmp(parm, "version") == 0 && !find_model_parameter(parm, device))) {
+                char *value;
+                INPgetTok(&line, &value, 1);    /* a number or a string like "1.1" */
+                tfree(value);
                 FREE(parm);
                 continue;
             }
