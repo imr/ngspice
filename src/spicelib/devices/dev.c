@@ -613,6 +613,11 @@ static int osdi_add_device(int n, OsdiRegistryEntry *devs, const char *path) {
 #endif
   for (i = 0; i < n; i++) {
     DEVices[DEVNUM + i] = osdi_create_spicedev(&devs[i]);
+    /* show, showmod and devhelp print the description: name the file,
+       as modules of different files may differ only by their name */
+    DEVices[DEVNUM + i]->DEVpublic.description =
+        tprintf("A simulator independent device loaded with OSDI from %s",
+                path);
     osdi_warn_same_name(DEVices[DEVNUM + i], path);
 #ifdef TRACE
     printf("Added device: %s\n", DEVices[DEVNUM + i]->DEVpublic.name);
