@@ -457,7 +457,7 @@ osdi_bind_type(const char *kind, int level, const char *line, int *type, char **
 
     if (!b) {
         *err = INPerrCat(*err, tprintf(
-            "%s level %d: no osdi_bind applies to this card (all have has=)\n",
+            "%s level %d: no osdi_bind applies to this card (all have version= or has=)\n",
             kind, level));
         *type = -1;
         return 1;
