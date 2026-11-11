@@ -1,0 +1,43 @@
+* osdi_bind: alias=<name>:<ipar> renames instance parameters
+*
+* Each module conducts g * area (g = 1 mS for dummy_mos, 3 mS for
+* dummy_bjt, 4 mS for dummy_diode), or 1/r if r is given.
+* A 1 V source drives each case.
+
+.model n_alias nmos level=97
+.model npn_alias npn level=97
+.model d_alias d level=97
+* a native card: alias= of a binding does not apply
+.model d_native dummy_diode
+
+* M: w2 is area, so 2 mS
+v_m_named m_named 0 1
+m_m_named m_named 0 0 0 n_alias w2=2
+* M: area itself is still area, 3 mS
+v_m_area m_area 0 1
+m_m_area m_area 0 0 0 n_alias area=3
+* Q: the unlabeled value is area, alias area:r gives r = 100 ohm
+v_q_unlabeled q_unlabeled 0 1
+q_q_unlabeled q_unlabeled 0 0 npn_alias 100
+* D: named res=200 is r, so 5 mA
+v_d_named d_named 0 1
+d_d_named d_named 0 d_alias res = 200
+* D: unlabeled value 400 is area, alias area:r gives r = 400 ohm
+v_d_unlabeled d_unlabeled 0 1
+d_d_unlabeled d_unlabeled 0 d_alias 400
+* D, native card: area=2 stays area, 8 mS
+v_d_native d_native 0 1
+d_d_native d_native 0 d_native area=2
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind mos 97 dummy_mos alias=w2:area
+pre_osdi_bind bjt 97 dummy_bjt alias=area:r
+pre_osdi_bind dio 97 dummy_diode alias=res:r, area:r
+op
+print i(v_m_named) i(v_m_area) i(v_q_unlabeled)
+print i(v_d_named) i(v_d_unlabeled) i(v_d_native)
+osdi_bind
+.endc
+
+.end

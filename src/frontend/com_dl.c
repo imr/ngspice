@@ -46,8 +46,8 @@ void com_osdi(wordlist *wl)
 /* osdi_bind
      list the bindings
    osdi_bind mos|bjt|dio <level> <module> [version=<v>] [has=<par>]
-                         [area=<ipar>] [polarity=<par>[:<nval>:<pval>]|none]
-                         [ignore=<par>,<par>,...]
+                         [polarity=<par>[:<nval>:<pval>]|none]
+                         [alias=<name>:<ipar>,...] [ignore=<par>,<par>,...]
      bind a model level to an OSDI module
    osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]
      remove the binding(s)
@@ -55,8 +55,8 @@ void com_osdi(wordlist *wl)
 
 static const char *osdi_bind_usage =
     "Usage: osdi_bind mos|bjt <level> <module> [version=<v>] [has=<par>]\n"
-    "                 [polarity=<par>[:<nval>:<pval>]|none] [ignore=<par>,...]\n"
-    "       osdi_bind dio <level> <module> [version=<v>] [has=<par>] [area=<ipar>] [ignore=<par>,...]\n"
+    "                 [polarity=<par>[:<nval>:<pval>]|none] [alias=<name>:<ipar>,...] [ignore=<par>,...]\n"
+    "       osdi_bind dio <level> <module> [version=<v>] [has=<par>] [alias=<name>:<ipar>,...] [ignore=<par>,...]\n"
     "       osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]\n"
     "       osdi_bind\n";
 
@@ -102,9 +102,10 @@ void com_osdi_bind(wordlist *wl)
     const char *kind;
     char *module, *end;
     long level;
-    const char *has = NULL, *version = NULL, *area = NULL, *polarity = NULL;
+    const char *has = NULL, *version = NULL, *polarity = NULL;
     const char *nval = NULL, *pval = NULL;
     wordlist *ignore = NULL, *ignore_last = NULL;
+    wordlist *alias = NULL, *alias_last = NULL;
 
     if (!w) {
         fprintf(cp_err, "%s", osdi_bind_usage);
@@ -140,18 +141,18 @@ void com_osdi_bind(wordlist *wl)
     module = w->wl_word;
 
     /* options name=value; the command line lexer splits at commas,
-       so words without '=' after ignore= continue its list */
-    bool in_ignore = FALSE;
+       so words without '=' after ignore= or alias= continue its list */
+    const char *in_list = NULL;
     for (w = w->wl_next; w; w = w->wl_next) {
         char *opt = w->wl_word;
         char *val = strchr(opt, '=');
-        if (!val && in_ignore) {
+        if (!val && in_list) {
             val = opt;
-            opt = "ignore";
+            opt = (char *) in_list;
         } else if (val) {
             *val++ = '\0';
         }
-        in_ignore = FALSE;
+        in_list = NULL;
         if (!val || !*val) {
             fprintf(cp_err, "Error: osdi_bind: %s is not of the form name=value\n", opt);
             fprintf(cp_err, "%s", osdi_bind_usage);
@@ -167,8 +168,25 @@ void com_osdi_bind(wordlist *wl)
             if (q)
                 *q = '\0';
             version = val;
-        } else if (strcasecmp(opt, "area") == 0 && strcmp(kind, "dio") == 0) {
-            area = val;
+        } else if (strcasecmp(opt, "alias") == 0) {
+            /* <name>:<ipar>,<name>:<ipar>,... */
+            char *item = val, *next;
+            for (; item; item = next) {
+                next = strchr(item, ',');
+                if (next)
+                    *next++ = '\0';
+                if (!*item)
+                    continue;
+                char *colon = strchr(item, ':');
+                if (!colon || colon == item || !colon[1] || strchr(colon + 1, ':')) {
+                    fprintf(cp_err, "Error: osdi_bind: alias %s is not <name>:<ipar>\n", item);
+                    goto done;
+                }
+                *colon = '\0';
+                wl_append_word(&alias, &alias_last, copy(item));
+                wl_append_word(&alias, &alias_last, copy(colon + 1));
+            }
+            in_list = "alias";
         } else if (strcasecmp(opt, "polarity") == 0 && is_mos) {
             /* <par>, <par>:<nval>:<pval>, or none */
             char *c1 = strchr(val, ':');
@@ -193,7 +211,7 @@ void com_osdi_bind(wordlist *wl)
             }
             if (*val)
                 wl_append_word(&ignore, &ignore_last, copy(val));
-            in_ignore = TRUE;
+            in_list = "ignore";
         } else {
             fprintf(cp_err, "Error: osdi_bind: option %s is not known for %s\n", opt, kind);
             fprintf(cp_err, "%s", osdi_bind_usage);
@@ -202,7 +220,7 @@ void com_osdi_bind(wordlist *wl)
     }
 
     if (strcasecmp(module, "none") == 0) {
-        if (area || ignore || nval || (is_mos && (!polarity || strcmp(polarity, "type") != 0)))
+        if (alias || ignore || nval || (is_mos && (!polarity || strcmp(polarity, "type") != 0)))
             fprintf(cp_err, "Error: osdi_bind: only version= and has= are allowed with none\n");
         else if (!INPosdiBindRemove(kind, (int) level, has, version,
                                     has == NULL && version == NULL))
@@ -211,13 +229,14 @@ void com_osdi_bind(wordlist *wl)
         goto done;
     }
 
-    if (INPosdiBindAdd(kind, (int) level, module, has, version, area, polarity,
-                       nval, pval, ignore))
+    if (INPosdiBindAdd(kind, (int) level, module, has, version, polarity,
+                       nval, pval, alias, ignore))
         fprintf(cp_out, "Note: osdi_bind: replaced the binding of %s level %ld%s%s\n",
                 kind, level, has ? " has=" : "", has ? has : "");
-    ignore = NULL;      /* owned by the binding */
+    ignore = alias = NULL;      /* owned by the binding */
 
 done:
+    wl_free(alias);
     wl_free(ignore);
     wl_free(words);
 }

@@ -1,0 +1,21 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: alias=<name>:<ipar> renames instance parameters
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+i(v_m_named) = -2.00000e-03
+i(v_m_area) = -3.00000e-03
+i(v_q_unlabeled) = -1.00000e-02
+i(v_d_named) = -5.00000e-03
+i(v_d_unlabeled) = -2.50000e-03
+i(v_d_native) = -8.00000e-03
+osdi_bind bjt 97 dummy_bjt alias=area:r
+osdi_bind dio 97 dummy_diode alias=res:r,area:r
+osdi_bind mos 97 dummy_mos alias=w2:area
+Note: Simulation executed from .control section 

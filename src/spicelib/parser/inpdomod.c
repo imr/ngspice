@@ -8,6 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/inpdefs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/wordlist.h"
+#include "ngspice/stringutil.h"
 #include "inpxx.h"
 
 #ifdef OSDI
@@ -16,8 +17,8 @@ Author: 1985 Thomas L. Quarles
  * set at runtime by the command osdi_bind (e.g. in .spiceinit):
  *
  *   osdi_bind mos|bjt|dio <level> <module> [version=<v>] [has=<par>]
- *                         [area=<ipar>] [polarity=<par>[:<nval>:<pval>]|none]
- *                         [ignore=<par>,<par>,...]
+ *                         [polarity=<par>[:<nval>:<pval>]|none]
+ *                         [alias=<name>:<ipar>,...] [ignore=<par>,<par>,...]
  *
  * mos: a card '.model <name> nmos|pmos level=<level> ...' creates a model
  *   of the OSDI module. nmos (nsoi) sets the polarity parameter (default
@@ -26,8 +27,10 @@ Author: 1985 Thomas L. Quarles
  * bjt: likewise for '.model <name> npn|pnp level=<level> ...' and Q
  *   instances; npn sets the polarity parameter to 1, pnp to -1.
  * dio: a card '.model <name> d level=<level> ...' creates a model of the
- *   OSDI module. An unlabeled value on a D instance sets instance
- *   parameter <ipar> (default area).
+ *   OSDI module.
+ * alias=<name>:<ipar>,...: on M, Q and D instances of a bound card, the
+ *   instance parameter <name> sets the module parameter <ipar>. The
+ *   unlabeled value of D and Q instances is the parameter area.
  * Card parameters in the ignore list are skipped. The parameter level of
  * a bound card selects the binding and is not passed to the module; nor is
  * version, unless the module has this parameter.
@@ -55,7 +58,7 @@ osdi_bind_free(struct osdi_bind *b)
     tfree(b->version);
     tfree(b->nval);
     tfree(b->pval);
-    tfree(b->area);
+    wl_free(b->alias);
     tfree(b->polarity);
     wl_free(b->ignore);
     tfree(b);
@@ -213,6 +216,112 @@ INPosdiCardFits(char letter, const char *card)
 }
 
 
+/* The binding of a model card bound by type and level (the whole line
+   '.model <name> <type> ...'), or NULL; NULL also for a card with a module
+   name as type. */
+const struct osdi_bind *
+INPosdiBindOfCard(const char *card)
+{
+    const char *kind = NULL, *p = card;
+    char *tok;
+    /* skip .model and the model name, get the type */
+    for (int i = 0; i < 3 && *p; i++) {
+        INPgetTok((char **) &p, &tok, 1);
+        if (i == 2) {
+            if (!strcmp(tok, "nmos") || !strcmp(tok, "pmos") ||
+                !strcmp(tok, "nsoi") || !strcmp(tok, "psoi"))
+                kind = "mos";
+            else if (!strcmp(tok, "npn") || !strcmp(tok, "pnp"))
+                kind = "bjt";
+            else if (!strcmp(tok, "d"))
+                kind = "dio";
+        }
+        tfree(tok);
+    }
+    return kind ? INPosdiBindForCard(kind, card) : NULL;
+}
+
+
+/* The module parameter that alias= gives for instance parameter name,
+   or name itself */
+const char *
+INPosdiAlias(const struct osdi_bind *b, const char *name)
+{
+    wordlist *wl;
+    if (b)
+        for (wl = b->alias; wl && wl->wl_next; wl = wl->wl_next->wl_next)
+            if (strcasecmp(wl->wl_word, name) == 0)
+                return wl->wl_next->wl_word;
+    return name;
+}
+
+
+/* The instance line rest (parameters after the model name) with the names
+   of alias= replaced: a name directly before '=' (blanks allowed), outside
+   of {...} and quotes. NULL if the binding has no alias. */
+char *
+INPosdiAliasLine(const struct osdi_bind *b, const char *line)
+{
+    if (!b || !b->alias)
+        return NULL;
+    size_t cap = strlen(line) * 2 + 64, n = 0;
+    char *out = TMALLOC(char, cap);
+    int depth = 0;
+    char quote = '\0';
+    const char *p = line;
+    while (*p) {
+        if (quote) {
+            if (*p == quote)
+                quote = '\0';
+            out[n++] = *p++;
+        } else if (*p == '"' || *p == '\'') {
+            quote = *p;
+            out[n++] = *p++;
+        } else if (*p == '{') {
+            depth++;
+            out[n++] = *p++;
+        } else if (*p == '}') {
+            if (depth > 0)
+                depth--;
+            out[n++] = *p++;
+        } else if (depth == 0 && (isalpha_c(*p) || *p == '_') &&
+                   (p == line || !(isalnum_c(p[-1]) || p[-1] == '_' || p[-1] == '.'))) {
+            /* an identifier: replace it if '=' follows and it has an alias */
+            const char *start = p;
+            while (isalnum_c(*p) || *p == '_')
+                p++;
+            const char *q = p;
+            while (*q == ' ' || *q == '\t')
+                q++;
+            const char *name = NULL;
+            if (*q == '=' && q[1] != '=') {
+                char *ident = copy_substring(start, p);
+                const char *to = INPosdiAlias(b, ident);
+                if (to != ident)
+                    name = to;
+                tfree(ident);
+            }
+            const char *text = name ? name : start;
+            size_t len = name ? strlen(name) : (size_t) (p - start);
+            if (n + len + 16 >= cap) {
+                cap = 2 * cap + len;
+                out = TREALLOC(char, out, cap);
+            }
+            memcpy(out + n, text, len);
+            n += len;
+        } else {
+            out[n++] = *p++;
+        }
+        if (n + 16 >= cap) {
+            cap *= 2;
+            out = TREALLOC(char, out, cap);
+        }
+    }
+    out[n] = '\0';
+    return out;
+}
+
+
 /* The binding of kind that applies to the model card (the whole line
    '.model <name> <type> ...'), or NULL. The same choice as in INPdomodel,
    so that a module bound twice to a level, with and without has=, gets
@@ -258,13 +367,13 @@ INPosdiBindRemove(const char *kind, int level, const char *has,
 
 
 /* Add a binding, replacing an existing one of the same kind, level, has=
-   and version=. has, version, area, polarity, nval and pval may be NULL.
-   Takes ownership of ignore. Returns 1 if a binding was replaced. */
+   and version=. has, version, polarity, nval and pval may be NULL.
+   Takes ownership of alias and ignore. Returns 1 if a binding was replaced. */
 int
 INPosdiBindAdd(const char *kind, int level, const char *module,
-               const char *has, const char *version, const char *area,
+               const char *has, const char *version,
                const char *polarity, const char *nval, const char *pval,
-               wordlist *ignore)
+               wordlist *alias, wordlist *ignore)
 {
     wordlist *wl;
     char *lhas = has ? lower_copy(has) : NULL;
@@ -278,7 +387,10 @@ INPosdiBindAdd(const char *kind, int level, const char *module,
     b->version = version ? copy(version) : NULL;
     b->nval = copy(nval ? nval : "1");
     b->pval = copy(pval ? pval : "-1");
-    b->area = area ? lower_copy(area) : NULL;
+    for (wl = alias; wl; wl = wl->wl_next)
+        for (char *c = wl->wl_word; *c; c++)
+            *c = tolower_c(*c);
+    b->alias = alias;
     b->polarity = polarity ? lower_copy(polarity) : NULL;
     for (wl = ignore; wl; wl = wl->wl_next)
         for (char *c = wl->wl_word; *c; c++)
@@ -314,8 +426,6 @@ INPosdiBindPrint(FILE *fp)
             fprintf(fp, " version=%s", b->version);
         if (b->has)
             fprintf(fp, " has=%s", b->has);
-        if (b->area)
-            fprintf(fp, " area=%s", b->area);
         if (strcmp(b->kind, "dio") != 0) {
             if (!b->polarity)
                 fprintf(fp, " polarity=none");
@@ -324,6 +434,9 @@ INPosdiBindPrint(FILE *fp)
             else if (strcmp(b->polarity, "type") != 0)
                 fprintf(fp, " polarity=%s", b->polarity);
         }
+        for (wl = b->alias; wl && wl->wl_next; wl = wl->wl_next->wl_next)
+            fprintf(fp, "%s%s:%s", wl == b->alias ? " alias=" : ",",
+                    wl->wl_word, wl->wl_next->wl_word);
         for (wl = b->ignore; wl; wl = wl->wl_next)
             fprintf(fp, "%s%s", wl == b->ignore ? " ignore=" : ",", wl->wl_word);
         fprintf(fp, "%s\n", t < 0 ? "   * module not loaded" : "");

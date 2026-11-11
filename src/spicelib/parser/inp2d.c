@@ -111,7 +111,18 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
             && (thismodel->INPmodType != INPtypelook("NUMD2")))
             GENnode(fast)[i] = -1;
 
+#ifdef OSDI
+    /* instance parameter names given with 'osdi_bind ... alias=' */
+    const struct osdi_bind *bind =
+        is_osdi ? INPosdiBindOfCard(thismodel->INPmodLine->line) : NULL;
+    char *aliased = INPosdiAliasLine(bind, line);
+    if (aliased)
+        line = aliased;
+#endif
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+#ifdef OSDI
+    tfree(aliased);
+#endif
     if (waslead) {
 #ifdef CIDER
         if( type == INPtypelook("NUMD2") ) {
@@ -121,19 +132,17 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
         ptemp.rValue = leadval;
         char *areaname = "area";
 #ifdef OSDI
-        /* the instance parameter given with 'osdi_bind dio ... area=<ipar>' */
+        /* the unlabeled value is the parameter area, or its alias */
         if (is_osdi) {
             IFdevice *dev = ft_sim->devices[type];
-            const struct osdi_bind *b = INPosdiBindForCard("dio", thismodel->INPmodLine->line);
-            if (b && b->area)
-                areaname = b->area;
+            areaname = (char *) INPosdiAlias(bind, "area");
             bool found = FALSE;
             for (int k = 0; k < *dev->numInstanceParms && !found; k++)
                 found = strcasecmp(dev->instanceParms[k].keyword, areaname) == 0;
             if (!found) {
                 char *msg = tprintf("module %s has no instance parameter %s for the "
                                     "unlabeled value; name the parameter, or use "
-                                    "'osdi_bind dio ... area=<par>'",
+                                    "'osdi_bind ... alias=area:<par>'",
                                     dev->name, areaname);
                 LITERR(msg);
                 tfree(msg);

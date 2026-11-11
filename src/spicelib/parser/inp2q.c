@@ -130,7 +130,18 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
     for (; is_osdi && i < model_numnodes; i++)
         GENnode(fast)[i] = -1;
 
+#ifdef OSDI
+    /* instance parameter names given with 'osdi_bind ... alias=' */
+    const struct osdi_bind *bind =
+        is_osdi ? INPosdiBindOfCard(thismodel->INPmodLine->line) : NULL;
+    char *aliased = INPosdiAliasLine(bind, line);
+    if (aliased)
+        line = aliased;
+#endif
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+#ifdef OSDI
+    tfree(aliased);
+#endif
 
     if (waslead) {
 #ifdef CIDER
@@ -140,6 +151,26 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
         }
 #endif
         ptemp.rValue = leadval;
-        GCA(INPpName, ("area", &ptemp, ckt, type, fast));
+        char *areaname = "area";
+#ifdef OSDI
+        /* the unlabeled value is the parameter area, or its alias */
+        if (is_osdi) {
+            IFdevice *dev = ft_sim->devices[type];
+            areaname = (char *) INPosdiAlias(bind, "area");
+            bool found = FALSE;
+            for (int k = 0; k < *dev->numInstanceParms && !found; k++)
+                found = strcasecmp(dev->instanceParms[k].keyword, areaname) == 0;
+            if (!found) {
+                char *msg = tprintf("module %s has no instance parameter %s for the "
+                                    "unlabeled value; name the parameter, or use "
+                                    "'osdi_bind ... alias=area:<par>'",
+                                    dev->name, areaname);
+                LITERR(msg);
+                tfree(msg);
+                return;
+            }
+        }
+#endif
+        GCA(INPpName, (areaname, &ptemp, ckt, type, fast));
     }
 }

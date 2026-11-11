@@ -43,7 +43,7 @@ struct osdi_bind {
     char *module;       /* OSDI module name */
     char *has;          /* selected if the card has this parameter, or NULL */
     char *version;      /* selected if the card's version starts so, or NULL */
-    char *area;         /* instance parameter of an unlabeled value, or NULL */
+    struct wordlist *alias;    /* instance parameter names: from, to, from, to, ... */
     char *polarity;     /* set by nmos/npn to nval, by pmos/pnp to pval, or NULL */
     char *nval, *pval;  /* default "1" and "-1" */
     struct wordlist *ignore;   /* card parameters to skip */
@@ -52,6 +52,9 @@ struct osdi_bind {
 
 const struct osdi_bind *INPosdiBindForCard(const char *kind, const char *card);
 bool INPosdiCardFits(char letter, const char *card);
+const struct osdi_bind *INPosdiBindOfCard(const char *card);
+const char *INPosdiAlias(const struct osdi_bind *b, const char *name);
+char *INPosdiAliasLine(const struct osdi_bind *b, const char *line);
 #endif
 
 

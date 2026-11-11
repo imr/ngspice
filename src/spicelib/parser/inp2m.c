@@ -164,7 +164,21 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         else
             GENnode(fast)[i] = -1;
 
+#ifdef OSDI
+    bool is_osdi = ft_sim->devices[thismodel->INPmodType]->registry_entry != NULL;
+#endif
+#ifdef OSDI
+    /* instance parameter names given with 'osdi_bind ... alias=' */
+    const struct osdi_bind *bind =
+        is_osdi ? INPosdiBindOfCard(thismodel->INPmodLine->line) : NULL;
+    char *aliased = INPosdiAliasLine(bind, line);
+    if (aliased)
+        line = aliased;
+#endif
     PARSECALL ((&line, ckt, type, fast, &leadval, &waslead, tab));
+#ifdef OSDI
+    tfree(aliased);
+#endif
     if (waslead)
         LITERR (" error:  no unlabeled parameter permitted on mosfet\n");
 }

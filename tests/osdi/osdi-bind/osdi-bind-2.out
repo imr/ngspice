@@ -12,19 +12,19 @@ No. of Data Rows : 1
 No model levels are bound to OSDI modules.
 Note: osdi_bind: replaced the binding of mos level 90
 osdi_bind bjt 92 dummy_bjt polarity=sign
-osdi_bind dio 20 dummy_diode area=r
+osdi_bind dio 20 dummy_diode alias=area:r
 osdi_bind dio 21 dummy_missing   * module not loaded
 osdi_bind mos 90 dummy_mos_alternate
 osdi_bind mos 90 dummy_mos has=nqs
 osdi_bind mos 91 dummy_mos polarity=none ignore=devtype,version
 osdi_bind mos 97 dummy_mos has=nqs ignore=devtype,version
 osdi_bind bjt 92 dummy_bjt polarity=sign
-osdi_bind dio 20 dummy_diode area=r
+osdi_bind dio 20 dummy_diode alias=area:r
 osdi_bind dio 21 dummy_missing   * module not loaded
 osdi_bind mos 90 dummy_mos_alternate
 osdi_bind mos 97 dummy_mos has=nqs ignore=devtype,version
 osdi_bind bjt 92 dummy_bjt polarity=sign
-osdi_bind dio 20 dummy_diode area=r
+osdi_bind dio 20 dummy_diode alias=area:r
 osdi_bind dio 21 dummy_missing   * module not loaded
 osdi_bind mos 90 dummy_mos_alternate
 osdi_bind mos 97 dummy_mos has=nqs ignore=devtype,version

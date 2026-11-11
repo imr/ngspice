@@ -30,7 +30,7 @@
 .model pnp_bound pnp level=20
 .model npn_builtin npn
 
-* area=r: an unlabeled value sets r
+* alias=area:r: an unlabeled value sets r
 .model diode_area_r d level=20
 .model diode_bound d level=21
 .model diode_builtin d rs=1k
@@ -98,7 +98,7 @@ pre_osdi_bind mos 92 dummy_mos polarity = sign
 pre_osdi_bind mos 93 dummy_mos ignore=devtype, version
 pre_osdi_bind mos 55 dummy_mos
 pre_osdi_bind bjt 20 dummy_bjt
-pre_osdi_bind dio 20 dummy_diode area=r
+pre_osdi_bind dio 20 dummy_diode alias=area:r
 pre_osdi_bind dio 21 dummy_diode
 op
 print i(v_nmos_bound) i(v_nsoi_bound) i(v_psoi_bound) i(v_nmos_has_nqs)

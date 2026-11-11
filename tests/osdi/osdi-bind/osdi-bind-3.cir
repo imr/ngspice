@@ -13,7 +13,7 @@ osdi_bind mos 94 dummy_mos_alternate has=nqs
 osdi_bind mos 94 dummy_mos
 osdi_bind mos 94 none has=sqn
 osdi_bind dio 1 none
-osdi_bind dio 1 none area=r
+osdi_bind dio 1 none alias=area:r
 osdi_bind mos 1 none polarity=sign
 osdi_bind mos 1 none polarity=none
 
