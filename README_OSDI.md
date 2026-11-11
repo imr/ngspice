@@ -99,8 +99,8 @@ lists the bindings in the syntax of the command.
 
 A binding names a module, not a file. If two loaded `.osdi` files contain
 modules of the same name (e.g. two releases of a model compiled from
-sources with the same `module` name), only the module loaded first is used;
-load only one of them, or give the modules different names.
+sources with the same `module` name), only the module loaded first is used,
+and ngspice warns; load only one of them, or give the modules different names.
 
 ## Build Instructions
 
