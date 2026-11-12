@@ -1,0 +1,18 @@
+* osdi_bind: version=1.0 does not select a card with version=1.5
+*
+* dummy_mos conducts 1 mS, dummy_mos_alternate 2 mS.
+
+.model version_one_five nmos level=72 version=1.5
+
+v_version_one_five version_one_five 0 1
+m_version_one_five version_one_five 0 0 0 version_one_five
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind mos 72 dummy_mos version=1.0
+pre_osdi_bind mos 72 dummy_mos_alternate version=1.5
+op
+print i(v_version_one_five)
+.endc
+
+.end

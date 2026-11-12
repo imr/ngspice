@@ -1,0 +1,15 @@
+* osdi_bind: polarity= rejects values with none, and nan as a value
+*
+* A rejected command adds no binding, so the listing is empty.
+
+v1 a 0 1
+
+.control
+pre_osdi dummy_modules.osdi
+osdi_bind mos 70 dummy_mos polarity=none:1:0
+osdi_bind mos 71 dummy_mos polarity=type:nan:1
+osdi_bind
+op
+.endc
+
+.end
