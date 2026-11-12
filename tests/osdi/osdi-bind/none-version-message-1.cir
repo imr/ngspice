@@ -1,17 +1,19 @@
-* osdi_bind: the messages of none and of a replaced binding name version=
+* osdi_bind: none and a replaced binding with version=
 *
-* check.sh drops lines with Warning and Note, so the messages go to a file
-* and print without their first word.
+* The messages ("mos level 72 version=111 was not bound", "replaced the
+* binding of mos level 72 version=110") are Warning and Note lines, which
+* the test runners drop; without shell commands (not on Windows cmd) the
+* test checks the bindings that remain: none version=111 removes nothing,
+* the second version=110 replaces the first.
 
 v1 a 0 1
 
 .control
 pre_osdi dummy_modules.osdi
 osdi_bind mos 72 dummy_mos version=110
-osdi_bind mos 72 none version=111 >& none-version-message-1.txt
-osdi_bind mos 72 dummy_mos version=110 >>& none-version-message-1.txt
-shell cut -d: -f2- none-version-message-1.txt
-shell rm none-version-message-1.txt
+osdi_bind mos 72 none version=111
+osdi_bind mos 72 dummy_mos_alternate version=110
+osdi_bind
 op
 .endc
 
