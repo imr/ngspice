@@ -1,0 +1,16 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: quoted alias= and ignore= values work as unquoted ones
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+i(v_quoted_alias) = -2.00000e-03
+i(v_quoted_ignore) = -1.00000e-03
+osdi_bind mos 70 dummy_mos alias=ab:area
+osdi_bind mos 71 dummy_mos ignore=xx
+Note: Simulation executed from .control section 
