@@ -112,8 +112,11 @@ card_has_param(const char *line, const char *par)
 }
 
 
+static char *version_normalize(char *value);
+
 /* The value of parameter version in the rest of a model card line (after
-   the model type), without quotes, or NULL. Free it with tfree(). */
+   the model type), without quotes, numbers normalized, or NULL. Free it
+   with tfree(). */
 static char *
 card_version(const char *line)
 {
@@ -128,8 +131,26 @@ card_version(const char *line)
                 if (*v != '"' && *v != '\'')
                     *d++ = *v;
             *d = '\0';
+            value = version_normalize(value);
         }
         tfree(tok);
+    }
+    return value;
+}
+
+
+/* A version that is a number in another notation, as numparam writes
+   an evaluated '110' (1.100000000000000e+02), is written as the
+   shortest number: 110, 103.3. Takes ownership of value. */
+static char *
+version_normalize(char *value)
+{
+    char *end;
+    double d = strtod(value, &end);
+    if (end != value && *end == '\0') {
+        char *num = tprintf("%.15g", d);
+        tfree(value);
+        return num;
     }
     return value;
 }
@@ -140,9 +161,12 @@ card_version(const char *line)
 static bool
 version_matches(const char *version, const char *prefix)
 {
-    size_t n = strlen(prefix);
-    return version && strncasecmp(version, prefix, n) == 0 &&
-           !isdigit_c(version[n]);
+    char *p = version_normalize(copy(prefix));
+    size_t n = strlen(p);
+    bool match = version && strncasecmp(version, p, n) == 0 &&
+                 !isdigit_c(version[n]);
+    tfree(p);
+    return match;
 }
 
 

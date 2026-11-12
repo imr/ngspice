@@ -1,0 +1,30 @@
+* osdi_bind: version= of a card given as expression
+*
+* numparam writes an evaluated version='110' as 1.100000000000000e+02;
+* it has to select the binding version=110 all the same.
+* dummy_mos conducts 1 mS, dummy_mos_alternate 2 mS.
+
+.param v=110
+.model m110q nmos level=72 version='110'
+.model m110p nmos level=72 version='v'
+.model m111b nmos level=72 version={v+1}
+.model m111d nmos level=72 version="111"
+
+v110q a110q 0 1
+m110q a110q 0 0 0 m110q
+v110p a110p 0 1
+m110p a110p 0 0 0 m110p
+v111b a111b 0 1
+m111b a111b 0 0 0 m111b
+v111d a111d 0 1
+m111d a111d 0 0 0 m111d
+
+.control
+pre_osdi dummy_modules.osdi
+pre_osdi_bind mos 72 dummy_mos version=110
+pre_osdi_bind mos 72 dummy_mos_alternate version=111.0
+op
+print i(v110q) i(v110p) i(v111b) i(v111d)
+.endc
+
+.end
