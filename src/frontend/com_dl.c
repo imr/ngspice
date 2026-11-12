@@ -90,6 +90,68 @@ osdi_bind_words(wordlist *wl)
 }
 
 
+/* Allowed characters.
+   osdi_bind is no expression parser: a name (module, has=, version=,
+   polarity parameter, alias= and ignore= entries) consists of letters,
+   digits and the characters below; anything else, e.g. brackets or
+   operators, is rejected. Extend the list here if a real model card
+   needs more. Separators (= , :) are split off before the check, the
+   values of polarity=<par>:<nval>:<pval> must be numbers, quotes are
+   removed before (as the ngspice command line does elsewhere). */
+static const char osdi_bind_name_chars[] = "_.-";
+
+/* Is name made of the allowed characters? Else report it. */
+static bool
+osdi_bind_name_ok(const char *what, const char *name)
+{
+    const char *c;
+    for (c = name; *c; c++)
+        if (!isalnum((unsigned char) *c) && !strchr(osdi_bind_name_chars, *c)) {
+            fprintf(cp_err, "Error: osdi_bind: character '%c' is not allowed in %s %s\n",
+                    *c, what, name);
+            return FALSE;
+        }
+    if (!*name) {
+        fprintf(cp_err, "Error: osdi_bind: %s is empty\n", what);
+        return FALSE;
+    }
+    return TRUE;
+}
+
+
+/* Remove the quotes of an option value in place: alias="ab:area" */
+static void
+osdi_bind_unquote(char *s)
+{
+    char *dst = s;
+    for (; *s; s++)
+        if (*s != '"' && *s != '\'')
+            *dst++ = *s;
+    *dst = '\0';
+}
+
+
+/* Is s a number (integer or real)? */
+static bool
+osdi_bind_is_number(const char *s)
+{
+    char *end;
+    if (!*s)
+        return FALSE;
+    (void) strtod(s, &end);
+    return *end == '\0';
+}
+
+
+/* The conditions of a binding as in its listing: " version=<v> has=<par>" */
+static char *
+osdi_bind_conditions(const char *version, const char *has)
+{
+    return tprintf("%s%s%s%s", version ? " version=" : "", version ? version : "",
+                   has ? " has=" : "", has ? has : "");
+}
+
+
 void com_osdi_bind(wordlist *wl)
 {
     if (!wl) {
@@ -100,7 +162,7 @@ void com_osdi_bind(wordlist *wl)
     wordlist *words = osdi_bind_words(wl);
     wordlist *w = words;
     const char *kind;
-    char *module, *end;
+    char *module, *end, *cond;
     long level;
     const char *has = NULL, *version = NULL, *polarity = NULL;
     const char *nval = NULL, *pval = NULL;
@@ -139,6 +201,9 @@ void com_osdi_bind(wordlist *wl)
     }
     w = w->wl_next->wl_next;
     module = w->wl_word;
+    osdi_bind_unquote(module);
+    if (!osdi_bind_name_ok("module", module))
+        goto done;
 
     /* options name=value; the command line lexer splits at commas,
        so words without '=' after ignore= or alias= continue its list */
@@ -153,20 +218,20 @@ void com_osdi_bind(wordlist *wl)
             *val++ = '\0';
         }
         in_list = NULL;
+        if (val)
+            osdi_bind_unquote(val);
         if (!val || !*val) {
             fprintf(cp_err, "Error: osdi_bind: %s is not of the form name=value\n", opt);
             fprintf(cp_err, "%s", osdi_bind_usage);
             goto done;
         }
         if (strcasecmp(opt, "has") == 0) {
+            if (!osdi_bind_name_ok("has=", val))
+                goto done;
             has = val;
         } else if (strcasecmp(opt, "version") == 0) {
-            /* without quotes */
-            if (*val == '"' || *val == '\'')
-                val++;
-            char *q = strpbrk(val, "\"'");
-            if (q)
-                *q = '\0';
+            if (!osdi_bind_name_ok("version=", val))
+                goto done;
             version = val;
         } else if (strcasecmp(opt, "alias") == 0) {
             /* <name>:<ipar>,<name>:<ipar>,... */
@@ -183,6 +248,9 @@ void com_osdi_bind(wordlist *wl)
                     goto done;
                 }
                 *colon = '\0';
+                if (!osdi_bind_name_ok("alias=", item) ||
+                    !osdi_bind_name_ok("alias=", colon + 1))
+                    goto done;
                 wl_append_word(&alias, &alias_last, copy(item));
                 wl_append_word(&alias, &alias_last, copy(colon + 1));
             }
@@ -192,25 +260,34 @@ void com_osdi_bind(wordlist *wl)
             char *c1 = strchr(val, ':');
             if (c1) {
                 char *c2 = strchr(c1 + 1, ':');
-                if (!c2 || c2 == c1 + 1 || !c2[1]) {
+                if (c1 == val || !c2 || strchr(c2 + 1, ':')) {
                     fprintf(cp_err, "Error: osdi_bind: polarity=%s is not <par>:<nval>:<pval>\n", val);
                     goto done;
                 }
                 *c1 = *c2 = '\0';
                 nval = c1 + 1;
                 pval = c2 + 1;
+                if (!osdi_bind_is_number(nval) || !osdi_bind_is_number(pval)) {
+                    fprintf(cp_err, "Error: osdi_bind: polarity=%s:%s:%s: the values are not numbers\n",
+                            val, nval, pval);
+                    goto done;
+                }
             }
+            if (!osdi_bind_name_ok("polarity=", val))
+                goto done;
             polarity = strcasecmp(val, "none") == 0 ? NULL : val;
         } else if (strcasecmp(opt, "ignore") == 0) {
-            char *p;
-            while ((p = strchr(val, ',')) != NULL) {
-                *p = '\0';
-                if (*val)
-                    wl_append_word(&ignore, &ignore_last, copy(val));
-                val = p + 1;
+            char *item = val, *next;
+            for (; item; item = next) {
+                next = strchr(item, ',');
+                if (next)
+                    *next++ = '\0';
+                if (!*item)
+                    continue;
+                if (!osdi_bind_name_ok("ignore=", item))
+                    goto done;
+                wl_append_word(&ignore, &ignore_last, copy(item));
             }
-            if (*val)
-                wl_append_word(&ignore, &ignore_last, copy(val));
             in_list = "ignore";
         } else {
             fprintf(cp_err, "Error: osdi_bind: option %s is not known for %s\n", opt, kind);
@@ -223,16 +300,21 @@ void com_osdi_bind(wordlist *wl)
         if (alias || ignore || nval || (is_mos && (!polarity || strcmp(polarity, "type") != 0)))
             fprintf(cp_err, "Error: osdi_bind: only version= and has= are allowed with none\n");
         else if (!INPosdiBindRemove(kind, (int) level, has, version,
-                                    has == NULL && version == NULL))
-            fprintf(cp_err, "Warning: osdi_bind: %s level %ld%s%s was not bound\n",
-                    kind, level, has ? " has=" : "", has ? has : "");
+                                    has == NULL && version == NULL)) {
+            cond = osdi_bind_conditions(version, has);
+            fprintf(cp_err, "Warning: osdi_bind: %s level %ld%s was not bound\n",
+                    kind, level, cond);
+            tfree(cond);
+        }
         goto done;
     }
 
+    cond = osdi_bind_conditions(version, has);
     if (INPosdiBindAdd(kind, (int) level, module, has, version, polarity,
                        nval, pval, alias, ignore))
-        fprintf(cp_out, "Note: osdi_bind: replaced the binding of %s level %ld%s%s\n",
-                kind, level, has ? " has=" : "", has ? has : "");
+        fprintf(cp_out, "Note: osdi_bind: replaced the binding of %s level %ld%s\n",
+                kind, level, cond);
+    tfree(cond);
     ignore = alias = NULL;      /* owned by the binding */
 
 done:

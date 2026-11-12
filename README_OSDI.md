@@ -78,6 +78,10 @@ Options:
   `devtype` of BSIM-CMG 110 cards on the 111 module, which only knows
   `type`.
 
+Names in `osdi_bind` (module, parameters, version) consist of letters,
+digits, `_`, `.` and `-`; values of `polarity=` are numbers. Other characters,
+e.g. brackets or operators, are rejected, quotes are removed.
+
 Terminals: `M` and `D` instances leave terminals that are not given
 unconnected, as `N` instances do. A `Q` instance ties a missing substrate
 (4th terminal) to ground, as with built-in models; further terminals, such

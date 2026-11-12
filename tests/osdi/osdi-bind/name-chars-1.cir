@@ -1,0 +1,19 @@
+* osdi_bind: names are letters, digits, _ . and - only; brackets and
+* operators are rejected and add no binding; only level 76 is bound.
+
+v1 a 0 1
+
+.control
+pre_osdi dummy_modules.osdi
+osdi_bind mos 70 dummy%mos
+osdi_bind mos 71 dummy_mos version=(110)
+osdi_bind mos 72 dummy_mos has=[swnqs]
+osdi_bind mos 73 dummy_mos polarity=type+1
+osdi_bind mos 74 dummy_mos alias=ab:area*2
+osdi_bind mos 75 dummy_mos ignore=xx,y/y
+osdi_bind mos 76 dummy_mos ignore=x-y
+osdi_bind
+op
+.endc
+
+.end
