@@ -156,17 +156,27 @@ version_normalize(char *value)
 }
 
 
-/* Does version start with prefix, not followed by a digit?
-   ("103.3" and "103" match "103", "1030" does not.) */
+/* Does the version of the card (normalized by card_version()) match the
+   version of the binding?
+   A binding with a decimal point that is a number (version=1.0, 111.5)
+   matches the same number only: 1.0 matches 1 and 1.00, not 1.5.
+   Else the card version has to start with it, not followed by a digit:
+   "103.3" and "103" match "103", "1030" does not; "4.8.2" matches "4.8". */
 static bool
 version_matches(const char *version, const char *prefix)
 {
-    char *p = version_normalize(copy(prefix));
-    size_t n = strlen(p);
-    bool match = version && strncasecmp(version, p, n) == 0 &&
-                 !isdigit_c(version[n]);
-    tfree(p);
-    return match;
+    char *end;
+    double b, c;
+    if (!version)
+        return FALSE;
+    b = strtod(prefix, &end);
+    if (end != prefix && *end == '\0' && strchr(prefix, '.')) {
+        c = strtod(version, &end);
+        if (end != version && *end == '\0')
+            return c == b;
+    }
+    size_t n = strlen(prefix);
+    return strncasecmp(version, prefix, n) == 0 && !isdigit_c(version[n]);
 }
 
 

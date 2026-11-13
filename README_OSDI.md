@@ -59,8 +59,11 @@ Options:
 
 - `version=<v>` and `has=<par>`: a level may have several bindings. A
   binding applies if the card's `version` starts with `<v>`, not followed
-  by a digit (`103` matches `103` and `103.3`, not `1030`), and if the card
-  has parameter `<par>` (any value). Of the bindings that apply, the one
+  by a digit (`103` matches `103` and `103.3`, not `1030`); a number with
+  a decimal point matches this number only (`111.0` matches `111`, not
+  `111.5`). A version given as expression (`version='110'`) is compared
+  as its value. Further the card has to have parameter `<par>` (any
+  value). Of the bindings that apply, the one
   with the most conditions is selected, of these the first given; a
   binding without conditions is the default. Above, only the NQS module of
   PSP103 knows `swnqs`.

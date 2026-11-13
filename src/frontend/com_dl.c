@@ -131,12 +131,13 @@ osdi_bind_unquote(char *s)
 }
 
 
-/* Is s a number (integer or real)? */
+/* Is s a number (integer or real)? Only digits, sign, point and exponent:
+   strtod() would also read nan, inf and hexadecimal numbers. */
 static bool
 osdi_bind_is_number(const char *s)
 {
     char *end;
-    if (!*s)
+    if (!*s || s[strspn(s, "0123456789+-.eE")] != '\0')
         return FALSE;
     (void) strtod(s, &end);
     return *end == '\0';
@@ -267,6 +268,10 @@ void com_osdi_bind(wordlist *wl)
                 *c1 = *c2 = '\0';
                 nval = c1 + 1;
                 pval = c2 + 1;
+                if (strcasecmp(val, "none") == 0) {
+                    fprintf(cp_err, "Error: osdi_bind: polarity=none takes no values\n");
+                    goto done;
+                }
                 if (!osdi_bind_is_number(nval) || !osdi_bind_is_number(pval)) {
                     fprintf(cp_err, "Error: osdi_bind: polarity=%s:%s:%s: the values are not numbers\n",
                             val, nval, pval);
