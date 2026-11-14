@@ -587,19 +587,18 @@ static void free_dlerr_msg(char *msg)
 #ifdef OSDI
 #include "ngspice/osdiitf.h"
 
-/* A module is looked up by its name, so of two OSDI modules with the
-   same name, from different .osdi files, only the one loaded first is
-   used. Using both makes no sense; warn, the user has to select the
-   right file. */
+/* A model card finds a module by its name, so of two OSDI modules with
+   the same name, from different .osdi files, a card uses the one loaded
+   first; warn. */
 static void osdi_warn_same_name(const SPICEdev *dev, const char *path) {
   int j;
   for (j = 0; j < DEVNUM; j++)
     if (DEVices[j] && DEVices[j]->DEVpublic.registry_entry &&
         strcasecmp(DEVices[j]->DEVpublic.name, dev->DEVpublic.name) == 0) {
       fprintf(stderr,
-              "Warning: OSDI module %s in %s has the name of a module\n"
-              "    loaded before, which is used; load only one of them\n",
-              dev->DEVpublic.name, path);
+              "Warning: OSDI module %s in %s has the name of a module loaded\n"
+              "    before; a model card '.model <name> %s' uses the one loaded first\n",
+              dev->DEVpublic.name, path, dev->DEVpublic.name);
       return;
     }
 }
