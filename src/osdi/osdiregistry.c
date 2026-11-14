@@ -517,6 +517,34 @@ extern OsdiObjectFile load_object_file(const char *input) {
 }
 
 #ifdef KLU
+/* The descriptors of the OSDI library path (found as by load_object_file):
+ * [*first, *end). The descriptors of loaded devices point into this range,
+ * so it tells which devices came from this file. Returns 0 on success. */
+extern int osdi_file_descriptors(const char *input, const void **first,
+                                 const void **end) {
+  const void *sym;
+  char *path = resolve_input_path(input);
+  if (!path) {
+    return -1;
+  }
+  void *handle = OPENLIB(path);
+  txfree(path);
+  if (!handle) {
+    return -1;
+  }
+  const void *descriptors = GET_SYM(handle, "OSDI_DESCRIPTORS");
+  sym = GET_SYM(handle, "OSDI_NUM_DESCRIPTORS");
+  if (!descriptors || !sym) {
+    return -1;
+  }
+  uint32_t num = *((const uint32_t *)sym);
+  sym = GET_SYM(handle, "OSDI_DESCRIPTOR_SIZE");
+  size_t size = sym ? *((const uint32_t *)sym) : sizeof(OsdiDescriptor03);
+  *first = descriptors;
+  *end = (const char *)descriptors + num * size;
+  return 0;
+}
+
 inline size_t osdi_instance_matrix_ptr_off(const OsdiRegistryEntry *entry) {
   return entry->matrix_ptr_offset;
 }

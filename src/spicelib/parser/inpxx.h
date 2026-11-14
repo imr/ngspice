@@ -40,7 +40,9 @@ void INP2Z(CKTcircuit *ckt, INPtables *tab, struct card *current);
 struct osdi_bind {
     char *kind;         /* "mos" or "dio" */
     int level;
+    char *file;         /* .osdi file as given, with :<module> if given */
     char *module;       /* OSDI module name */
+    int type;           /* its device, from this file */
     char *has;          /* selected if the card has this parameter, or NULL */
     char *version;      /* selected if the card's version starts so, or NULL */
     struct wordlist *alias;    /* instance parameter names: from, to, from, to, ... */

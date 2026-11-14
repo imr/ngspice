@@ -42,12 +42,11 @@ v_p_110 p_110 0 1
 m_p_110 p_110 0 0 0 p_110
 
 .control
-pre_osdi dummy_modules.osdi
-pre_osdi_bind mos 95 dummy_mos version=1
-pre_osdi_bind mos 95 dummy_mos_alternate version=2
-pre_osdi_bind mos 95 dummy_mos_alternate version=1 has=nqs
-pre_osdi_bind mos 95 dummy_mos polarity=type:3:-3
-pre_osdi_bind mos 96 dummy_mos version=110 polarity=type:1:0
+pre_osdi_bind mos 95 dummy_modules.osdi:dummy_mos version=1
+pre_osdi_bind mos 95 dummy_modules.osdi:dummy_mos_alternate version=2
+pre_osdi_bind mos 95 dummy_modules.osdi:dummy_mos_alternate version=1 has=nqs
+pre_osdi_bind mos 95 dummy_modules.osdi:dummy_mos polarity=type:3:-3
+pre_osdi_bind mos 96 dummy_modules.osdi:dummy_mos version=110 polarity=type:1:0
 op
 print i(v_n_v1) i(v_n_v1_3) i(v_n_v2) i(v_n_v1_nqs)
 print i(v_n_v10) i(v_n_none) i(v_p_v1) i(v_p_none)

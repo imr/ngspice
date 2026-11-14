@@ -12,9 +12,8 @@ v_quoted_ignore quoted_ignore 0 1
 m_quoted_ignore quoted_ignore 0 0 0 mos_quoted_ignore
 
 .control
-pre_osdi dummy_modules.osdi
-pre_osdi_bind mos 70 dummy_mos alias="ab:area"
-pre_osdi_bind mos 71 dummy_mos ignore="xx"
+pre_osdi_bind mos 70 dummy_modules.osdi:dummy_mos alias="ab:area"
+pre_osdi_bind mos 71 dummy_modules.osdi:dummy_mos ignore="xx"
 op
 print i(v_quoted_alias) i(v_quoted_ignore)
 osdi_bind

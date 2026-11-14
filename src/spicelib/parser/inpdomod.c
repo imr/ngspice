@@ -16,10 +16,14 @@ Author: 1985 Thomas L. Quarles
  * Bindings of model levels to Verilog-A modules loaded with osdi,
  * set at runtime by the command osdi_bind (e.g. in .spiceinit):
  *
- *   osdi_bind mos|bjt|dio <level> <module> [version=<v>] [has=<par>]
+ *   osdi_bind mos|bjt|dio <level> <file>.osdi[:<module>] [version=<v>] [has=<par>]
  *                         [polarity=<par>[:<nval>:<pval>]|none]
  *                         [alias=<name>:<ipar>,...] [ignore=<par>,<par>,...]
  *
+ * osdi_bind loads the .osdi file (as the command osdi does) and binds the
+ * level to its module; :<module> selects one of several modules of a file.
+ * The binding keeps the device of this file, also if a module of the same
+ * name was loaded from another file.
  * mos: a card '.model <name> nmos|pmos level=<level> ...' creates a model
  *   of the OSDI module. nmos (nsoi) sets the polarity parameter (default
  *   type) to <nval> (default 1), pmos (psoi) to <pval> (default -1);
@@ -39,11 +43,9 @@ Author: 1985 Thomas L. Quarles
  * starts with <v> followed by no digit (version=<v>). Of the bindings that
  * apply, the one with the most conditions is selected, of these the first
  * given; a binding without conditions is the default, e.g.
- *   osdi_bind mos 69 psp103va    version=103
- *   osdi_bind mos 69 pspnqs103va version=103 has=swnqs
- *   osdi_bind mos 69 psp104va    version=104
- * The module is looked up when the card is parsed, so osdi_bind and
- * osdi may be given in any order.
+ *   osdi_bind mos 69 psp103.osdi
+ *   osdi_bind mos 69 psp103_nqs.osdi has=swnqs
+ *   osdi_bind mos 69 psp104.osdi     version=104
  *-------------------------------------------------------------*/
 
 static struct osdi_bind *osdi_binds = NULL;
@@ -53,6 +55,7 @@ static void
 osdi_bind_free(struct osdi_bind *b)
 {
     tfree(b->kind);
+    tfree(b->file);
     tfree(b->module);
     tfree(b->has);
     tfree(b->version);
@@ -80,19 +83,6 @@ static bool
 same_has(const char *a, const char *b)
 {
     return (!a && !b) || (a && b && strcasecmp(a, b) == 0);
-}
-
-
-/* The OSDI device of this name, or -1. Unlike INPtypelook(), a built-in
-   device of the same name (e.g. bsim4, resistor) is not taken. */
-static int
-osdi_typelook(const char *module)
-{
-    for (int i = 0; i < ft_sim->numDevices; i++)
-        if (ft_sim->devices[i] && ft_sim->devices[i]->registry_entry &&
-            strcasecmp(module, ft_sim->devices[i]->name) == 0)
-            return i;
-    return -1;
 }
 
 
@@ -404,8 +394,8 @@ INPosdiBindRemove(const char *kind, int level, const char *has,
    and version=. has, version, polarity, nval and pval may be NULL.
    Takes ownership of alias and ignore. Returns 1 if a binding was replaced. */
 int
-INPosdiBindAdd(const char *kind, int level, const char *module,
-               const char *has, const char *version,
+INPosdiBindAdd(const char *kind, int level, const char *file,
+               const char *module, int type, const char *has, const char *version,
                const char *polarity, const char *nval, const char *pval,
                wordlist *alias, wordlist *ignore)
 {
@@ -416,7 +406,9 @@ INPosdiBindAdd(const char *kind, int level, const char *module,
 
     b->kind = lower_copy(kind);
     b->level = level;
+    b->file = copy(file);
     b->module = lower_copy(module);
+    b->type = type;
     b->has = lhas;
     b->version = version ? copy(version) : NULL;
     b->nval = copy(nval ? nval : "1");
@@ -454,8 +446,7 @@ INPosdiBindPrint(FILE *fp)
     }
     for (b = osdi_binds; b; b = b->next) {
         wordlist *wl;
-        int t = osdi_typelook(b->module);
-        fprintf(fp, "osdi_bind %s %d %s", b->kind, b->level, b->module);
+        fprintf(fp, "osdi_bind %s %d %s", b->kind, b->level, b->file);
         if (b->version)
             fprintf(fp, " version=%s", b->version);
         if (b->has)
@@ -473,7 +464,7 @@ INPosdiBindPrint(FILE *fp)
                     wl->wl_word, wl->wl_next->wl_word);
         for (wl = b->ignore; wl; wl = wl->wl_next)
             fprintf(fp, "%s%s", wl == b->ignore ? " ignore=" : ",", wl->wl_word);
-        fprintf(fp, "%s\n", t < 0 ? "   * module not loaded" : "");
+        fprintf(fp, "\n");
     }
 }
 
@@ -497,11 +488,7 @@ osdi_bind_type(const char *kind, int level, const char *line, int *type, char **
         return 1;
     }
 
-    *type = osdi_typelook(b->module);
-    if (*type < 0)
-        *err = INPerrCat(*err, tprintf(
-            "%s level %d is bound to Verilog-A module %s, which is not loaded (use pre_osdi)\n",
-            kind, level, b->module));
+    *type = b->type;
     return 1;
 }
 #endif

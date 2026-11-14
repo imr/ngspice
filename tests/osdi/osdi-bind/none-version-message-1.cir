@@ -9,10 +9,9 @@
 v1 a 0 1
 
 .control
-pre_osdi dummy_modules.osdi
-osdi_bind mos 72 dummy_mos version=110
+osdi_bind mos 72 dummy_modules.osdi:dummy_mos version=110
 osdi_bind mos 72 none version=111
-osdi_bind mos 72 dummy_mos_alternate version=110
+osdi_bind mos 72 dummy_modules.osdi:dummy_mos_alternate version=110
 osdi_bind
 op
 .endc

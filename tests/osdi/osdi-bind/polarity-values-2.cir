@@ -5,9 +5,8 @@
 v1 a 0 1
 
 .control
-pre_osdi dummy_modules.osdi
-osdi_bind mos 70 dummy_mos polarity=none:1:0
-osdi_bind mos 71 dummy_mos polarity=type:nan:1
+osdi_bind mos 70 dummy_modules.osdi:dummy_mos polarity=none:1:0
+osdi_bind mos 71 dummy_modules.osdi:dummy_mos polarity=type:nan:1
 osdi_bind
 op
 .endc

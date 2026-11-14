@@ -45,18 +45,20 @@ void com_osdi(wordlist *wl)
 
 /* osdi_bind
      list the bindings
-   osdi_bind mos|bjt|dio <level> <module> [version=<v>] [has=<par>]
+   osdi_bind mos|bjt|dio <level> <file>.osdi[:<module>] [version=<v>] [has=<par>]
                          [polarity=<par>[:<nval>:<pval>]|none]
                          [alias=<name>:<ipar>,...] [ignore=<par>,<par>,...]
-     bind a model level to an OSDI module
+     load the .osdi file and bind a model level to its OSDI module
+     (:<module> if the file has several)
    osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]
      remove the binding(s)
    Use as pre_osdi_bind inside a .control section. */
 
 static const char *osdi_bind_usage =
-    "Usage: osdi_bind mos|bjt <level> <module> [version=<v>] [has=<par>]\n"
+    "Usage: osdi_bind mos|bjt <level> <file>.osdi[:<module>] [version=<v>] [has=<par>]\n"
     "                 [polarity=<par>[:<nval>:<pval>]|none] [alias=<name>:<ipar>,...] [ignore=<par>,...]\n"
-    "       osdi_bind dio <level> <module> [version=<v>] [has=<par>] [alias=<name>:<ipar>,...] [ignore=<par>,...]\n"
+    "       osdi_bind dio <level> <file>.osdi[:<module>] [version=<v>] [has=<par>]\n"
+    "                 [alias=<name>:<ipar>,...] [ignore=<par>,...]\n"
     "       osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]\n"
     "       osdi_bind\n";
 
@@ -163,7 +165,8 @@ void com_osdi_bind(wordlist *wl)
     wordlist *words = osdi_bind_words(wl);
     wordlist *w = words;
     const char *kind;
-    char *module, *end, *cond;
+    char *file, *module = NULL, *end, *cond;
+    int type = -1;
     long level;
     const char *has = NULL, *version = NULL, *polarity = NULL;
     const char *nval = NULL, *pval = NULL;
@@ -201,10 +204,26 @@ void com_osdi_bind(wordlist *wl)
         goto done;
     }
     w = w->wl_next->wl_next;
-    module = w->wl_word;
-    osdi_bind_unquote(module);
-    if (!osdi_bind_name_ok("module", module))
-        goto done;
+    /* <file>.osdi[:<module>] or none; the path may contain ':' (C:/...) */
+    file = w->wl_word;
+    osdi_bind_unquote(file);
+    if (strcasecmp(file, "none") != 0) {
+        char *ext = NULL, *c;
+        for (c = file; (c = strchr(c, '.')) != NULL; c++)
+            if (strncasecmp(c, ".osdi", 5) == 0 && (c[5] == '\0' || c[5] == ':'))
+                ext = c;
+        if (!ext) {
+            fprintf(cp_err, "Error: osdi_bind: %s is not an .osdi file: "
+                    "osdi_bind loads the file of the module, e.g. bsimcmg.osdi\n", file);
+            goto done;
+        }
+        if (ext[5] == ':') {
+            ext[5] = '\0';
+            module = ext + 6;
+            if (!osdi_bind_name_ok("module", module))
+                goto done;
+        }
+    }
 
     /* options name=value; the command line lexer splits at commas,
        so words without '=' after ignore= or alias= continue its list */
@@ -301,7 +320,7 @@ void com_osdi_bind(wordlist *wl)
         }
     }
 
-    if (strcasecmp(module, "none") == 0) {
+    if (strcasecmp(file, "none") == 0) {
         if (alias || ignore || nval || (is_mos && (!polarity || strcmp(polarity, "type") != 0)))
             fprintf(cp_err, "Error: osdi_bind: only version= and has= are allowed with none\n");
         else if (!INPosdiBindRemove(kind, (int) level, has, version,
@@ -314,12 +333,34 @@ void com_osdi_bind(wordlist *wl)
         goto done;
     }
 
+    /* load the file, as the command osdi does; a file loaded before is not
+       loaded again. The binding keeps the device of this file. */
+    if (load_osdi(file)) {
+        fprintf(cp_err, "Error: osdi_bind: library %s couldn't be loaded!\n", file);
+        ft_spiniterror = TRUE;
+        ft_osdierror = TRUE;
+        if (ft_stricterror)
+            controlled_exit(EXIT_BAD);
+        goto done;
+    }
+    type = osdi_file_device(file, module);
+    if (type == -2) {
+        fprintf(cp_err, "Error: osdi_bind: %s has several modules, select one with %s:<module>\n",
+                file, file);
+        goto done;
+    }
+    if (type < 0) {
+        fprintf(cp_err, "Error: osdi_bind: %s has no module %s\n", file, module ? module : "");
+        goto done;
+    }
+    char *given = module ? tprintf("%s:%s", file, module) : copy(file);
     cond = osdi_bind_conditions(version, has);
-    if (INPosdiBindAdd(kind, (int) level, module, has, version, polarity,
-                       nval, pval, alias, ignore))
+    if (INPosdiBindAdd(kind, (int) level, given, ft_sim->devices[type]->name, type,
+                       has, version, polarity, nval, pval, alias, ignore))
         fprintf(cp_out, "Note: osdi_bind: replaced the binding of %s level %ld%s\n",
                 kind, level, cond);
     tfree(cond);
+    tfree(given);
     ignore = alias = NULL;      /* owned by the binding */
 
 done:

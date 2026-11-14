@@ -5,9 +5,8 @@ v_circuit circuit 0 1
 r_circuit circuit 0 1k
 
 .control
-pre_osdi dummy_modules.osdi
-pre_osdi_bind mos 90 dummy_mos
-pre_osdi_bind bjt 20 dummy_bjt
+pre_osdi_bind mos 90 dummy_modules.osdi:dummy_mos
+pre_osdi_bind bjt 20 dummy_modules.osdi:dummy_bjt
 op
 circbyline * q_nmos_card
 circbyline .model nmos_bound nmos level=90

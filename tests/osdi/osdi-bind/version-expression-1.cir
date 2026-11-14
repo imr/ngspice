@@ -20,9 +20,8 @@ v111d a111d 0 1
 m111d a111d 0 0 0 m111d
 
 .control
-pre_osdi dummy_modules.osdi
-pre_osdi_bind mos 72 dummy_mos version=110
-pre_osdi_bind mos 72 dummy_mos_alternate version=111.0
+pre_osdi_bind mos 72 dummy_modules.osdi:dummy_mos version=110
+pre_osdi_bind mos 72 dummy_modules.osdi:dummy_mos_alternate version=111.0
 op
 print i(v110q) i(v110p) i(v111b) i(v111d)
 .endc

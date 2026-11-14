@@ -89,17 +89,17 @@ n_diode_card_on_n diode_card_on_n 0 0 diode_bound
 
 .control
 pre_osdi dummy_modules.osdi
-pre_osdi_bind mos 90 dummy_mos
-pre_osdi_bind mos 90 dummy_mos_alternate has=nqs
-pre_osdi_bind mos 91 dummy_mos polarity=none
-pre_osdi_bind mos 94 dummy_mos
-pre_osdi_bind mos 94 dummy_mos has=nqs polarity=none
-pre_osdi_bind mos 92 dummy_mos polarity = sign
-pre_osdi_bind mos 93 dummy_mos ignore=devtype, version
-pre_osdi_bind mos 55 dummy_mos
-pre_osdi_bind bjt 20 dummy_bjt
-pre_osdi_bind dio 20 dummy_diode alias=area:r
-pre_osdi_bind dio 21 dummy_diode
+pre_osdi_bind mos 90 dummy_modules.osdi:dummy_mos
+pre_osdi_bind mos 90 dummy_modules.osdi:dummy_mos_alternate has=nqs
+pre_osdi_bind mos 91 dummy_modules.osdi:dummy_mos polarity=none
+pre_osdi_bind mos 94 dummy_modules.osdi:dummy_mos
+pre_osdi_bind mos 94 dummy_modules.osdi:dummy_mos has=nqs polarity=none
+pre_osdi_bind mos 92 dummy_modules.osdi:dummy_mos polarity = sign
+pre_osdi_bind mos 93 dummy_modules.osdi:dummy_mos ignore=devtype, version
+pre_osdi_bind mos 55 dummy_modules.osdi:dummy_mos
+pre_osdi_bind bjt 20 dummy_modules.osdi:dummy_bjt
+pre_osdi_bind dio 20 dummy_modules.osdi:dummy_diode alias=area:r
+pre_osdi_bind dio 21 dummy_modules.osdi:dummy_diode
 op
 print i(v_nmos_bound) i(v_nsoi_bound) i(v_psoi_bound) i(v_nmos_has_nqs)
 print i(v_pmos_type_contradicts) i(v_pmos_type_agrees) i(v_nmos_polarity_none)

@@ -37,6 +37,8 @@ typedef struct OsdiObjectFile {
 } OsdiObjectFile;
 
 extern OsdiObjectFile load_object_file(const char *path);
+extern int osdi_file_descriptors(const char *path, const void **first,
+                                 const void **end);
 extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry);
 
 extern char *inputdir;

@@ -22,38 +22,35 @@ This ensures that netlists can be simulated from any directory
 
 Model cards of commercial simulators select a compact model by its level
 (e.g. `.model nch nmos level=72` for BSIM-CMG). The command `osdi_bind`
-lets such cards use a Verilog-A module loaded with `osdi`, used by `M`
-(MOS), `Q` (bipolar) and `D` (diode) instances:
+loads an `.osdi` file and lets such cards use its Verilog-A module, used
+by `M` (MOS), `Q` (bipolar) and `D` (diode) instances:
 
-    osdi_bind mos|bjt|dio <level> <module> [version=<v>] [has=<par>]
+    osdi_bind mos|bjt|dio <level> <file>.osdi[:<module>] [version=<v>] [has=<par>]
                           [polarity=<par>[:<nval>:<pval>]|none]
                           [alias=<name>:<ipar>,...] [ignore=<par>,<par>,...]
     osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]
                                                      remove the binding(s)
     osdi_bind                                        list the bindings
 
-Example for `.spiceinit`:
+`osdi_bind` loads the file as the command `osdi` does (a file loaded
+before is not loaded again; relative paths are found as with `osdi`, e.g.
+via `NGSPICE_OSDI_DIR`). The module is the one of this file; a file with
+several modules needs `:<module>`, e.g. `dummy_modules.osdi:dummy_mos`.
+The module name need not match the file name. Example for `.spiceinit`:
 
-    osdi psp103.osdi
-    osdi psp103_nqs.osdi
-    osdi psp104.osdi
-    osdi bsimcmg110.osdi
-    osdi bsimcmg.osdi
-    osdi ekv3.osdi
-    osdi juncap200.osdi
-    osdi diode_cmc.osdi
-    osdi bjt504.osdi
-    osdi hicumL2.osdi
-    osdi_bind mos 69 psp103va    version=103
-    osdi_bind mos 69 pspnqs103va version=103 has=swnqs
-    osdi_bind mos 69 psp104va    version=104
-    osdi_bind mos 72 bsimcmg     version=110 polarity=devtype:1:0
-    osdi_bind mos 72 bsimcmg_va  version=111 ignore=devtype
-    osdi_bind mos 79 ekv3_rf     polarity=sign
-    osdi_bind bjt 6  bjt504va
-    osdi_bind bjt 8  hicumL2va
-    osdi_bind dio 6  juncap200   alias=area:ab
-    osdi_bind dio 7  diode_cmc
+    osdi_bind mos 69 psp103.osdi
+    osdi_bind mos 69 psp103_nqs.osdi  has=swnqs
+    osdi_bind mos 69 psp104.osdi      version=104
+    osdi_bind mos 72 bsimcmg.osdi
+    osdi_bind mos 72 bsimcmg110.osdi  version=110 polarity=devtype:1:0
+    osdi_bind mos 79 ekv3.osdi        polarity=sign
+    osdi_bind bjt 6  bjt504.osdi
+    osdi_bind bjt 8  hicumL2.osdi
+    osdi_bind dio 6  juncap200.osdi   alias=area:ab
+    osdi_bind dio 7  diode_cmc.osdi
+
+The command `osdi` stays for `N` instances with native model cards
+(`.model nch bsimcmg_va ...`).
 
 Options:
 
@@ -81,7 +78,7 @@ Options:
   `devtype` of BSIM-CMG 110 cards on the 111 module, which only knows
   `type`.
 
-Names in `osdi_bind` (module, parameters, version) consist of letters,
+Names in `osdi_bind` (module after `:`, parameters, version) consist of letters,
 digits, `_`, `.` and `-`; values of `polarity=` are numbers. Other characters,
 e.g. brackets or operators, are rejected, quotes are removed.
 
@@ -97,17 +94,17 @@ instances and native model cards (`.model rmod r3_cmc ...`), as in the
 IHP PDK.
 
 On a bound card, `level` selects the binding and is not passed to the
-module; nor is `version`, unless the module has this parameter. A bound level takes precedence over a built-in model of the same
-level. The module is looked up among the OSDI modules when the card is parsed,
-so `osdi` and `osdi_bind` may be given in any order, and a module may have
-the name of a built-in device (e.g. `bsim4`). Within a netlist use
-`pre_osdi_bind` in a `.control` section. `osdi_bind` without arguments
-lists the bindings in the syntax of the command.
+module; nor is `version`, unless the module has this parameter. A bound
+level takes precedence over a built-in model of the same level, and a
+module may have the name of a built-in device (e.g. `bsim4`). Within a
+netlist use `pre_osdi_bind` in a `.control` section. `osdi_bind` without
+arguments lists the bindings in the syntax of the command.
 
-A binding names a module, not a file. If two loaded `.osdi` files contain
-modules of the same name (e.g. two releases of a model compiled from
-sources with the same `module` name), only the module loaded first is used,
-and ngspice warns; load only one of them, or give the modules different names.
+A binding keeps the module of its file. So two `.osdi` files with modules
+of the same name (e.g. two releases of a model compiled from sources with
+the same `module` name) can be bound to different levels or versions. A
+native card (`.model x <module> ...`) finds a module by its name, that is
+the one loaded first; ngspice warns when such a file is loaded.
 
 ## Build Instructions
 

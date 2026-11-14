@@ -18,6 +18,7 @@ int load_dev(char *name);
 
 #ifdef OSDI
 int load_osdi(const char *);
+int osdi_file_device(const char *path, const char *module);
 #endif
 #endif
 

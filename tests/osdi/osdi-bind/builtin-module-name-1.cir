@@ -7,8 +7,7 @@ v_diode_named_resistor diode_named_resistor 0 1
 d_diode_named_resistor diode_named_resistor 0 diode_named_resistor
 
 .control
-pre_osdi dummy_modules.osdi
-pre_osdi_bind dio 25 resistor
+pre_osdi_bind dio 25 dummy_modules.osdi:resistor
 op
 print i(v_diode_named_resistor)
 .endc

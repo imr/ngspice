@@ -10,8 +10,7 @@ v_long long 0 1
 m_long long 0 0 0 nmos_bound l=2u w=1u
 
 .control
-pre_osdi dummy_modules.osdi
-pre_osdi_bind mos 90 dummy_mos ignore=lmin,lmax,wmin,wmax
+pre_osdi_bind mos 90 dummy_modules.osdi:dummy_mos ignore=lmin,lmax,wmin,wmax
 op
 print i(v_short) i(v_long)
 .endc

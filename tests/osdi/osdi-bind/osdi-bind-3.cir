@@ -4,21 +4,20 @@ v_circuit circuit 0 1
 r_circuit circuit 0 1k
 
 .control
-pre_osdi dummy_modules.osdi
 op
 osdi_bind mos
-osdi_bind mos 94 dummy_mos has=nqs
+osdi_bind mos 94 dummy_modules.osdi:dummy_mos has=nqs
 * replaces the binding above
-osdi_bind mos 94 dummy_mos_alternate has=nqs
-osdi_bind mos 94 dummy_mos
+osdi_bind mos 94 dummy_modules.osdi:dummy_mos_alternate has=nqs
+osdi_bind mos 94 dummy_modules.osdi:dummy_mos
 osdi_bind mos 94 none has=sqn
 osdi_bind dio 1 none
 osdi_bind dio 1 none alias=area:r
 osdi_bind mos 1 none polarity=sign
 osdi_bind mos 1 none polarity=none
 
-osdi_bind bjt 30 dummy_diode
-osdi_bind dio 30 dummy_diode
+osdi_bind bjt 30 dummy_modules.osdi:dummy_diode
+osdi_bind dio 30 dummy_modules.osdi:dummy_diode
 circbyline * instance errors
 circbyline .model npn_three_terminals npn level=30
 circbyline .model diode_osdi d level=30

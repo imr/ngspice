@@ -31,9 +31,9 @@ d_d_native d_native 0 d_native area=2
 
 .control
 pre_osdi dummy_modules.osdi
-pre_osdi_bind mos 97 dummy_mos alias=w2:area
-pre_osdi_bind bjt 97 dummy_bjt alias=area:r
-pre_osdi_bind dio 97 dummy_diode alias=res:r, area:r
+pre_osdi_bind mos 97 dummy_modules.osdi:dummy_mos alias=w2:area
+pre_osdi_bind bjt 97 dummy_modules.osdi:dummy_bjt alias=area:r
+pre_osdi_bind dio 97 dummy_modules.osdi:dummy_diode alias=res:r, area:r
 op
 print i(v_m_named) i(v_m_area) i(v_q_unlabeled)
 print i(v_d_named) i(v_d_unlabeled) i(v_d_native)
