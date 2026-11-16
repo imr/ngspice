@@ -464,6 +464,25 @@ MIFsetup(
     return(OK);
 }
 
+void MIF_call_back(MIFinstance *here, Mif_Callback_Reason_t reason)
+{
+    if (here->callback) {
+        Mif_Private_t cm_data;
+
+        /* Prepare the structure to be passed to the code model */
+
+        cm_data.num_conn = here->num_conn;
+        cm_data.conn = here->conn;
+        cm_data.num_param = here->num_param;
+        cm_data.param = here->param;
+        cm_data.num_inst_var = here->num_inst_var;
+        cm_data.inst_var = here->inst_var;
+        cm_data.callback = &(here->callback);
+
+        here->callback(&cm_data, MIF_CB_DESTROY);
+    }
+}
+
 int
 MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
 {
@@ -559,21 +578,7 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
             tfree(here->conv);
             tfree(here->intgr);
 
-            /* de-allocate the memory that has been allocated locally in the code model during INIT */
-            if (here->callback) {
-                Mif_Private_t cm_data;
-                /* Prepare the structure to be passed to the code model */
-                cm_data.num_conn = here->num_conn;
-                cm_data.conn = here->conn;
-                cm_data.num_param = here->num_param;
-                cm_data.param = here->param;
-                cm_data.num_inst_var = here->num_inst_var;
-                cm_data.inst_var = here->inst_var;
-                cm_data.callback = &(here->callback);
-
-                here->callback(&cm_data, MIF_CB_DESTROY);
-            }
-
+            MIF_call_back(here, MIF_CB_DESTROY);
             MIF_free_noise_state(here);
 
             here->initialized = MIF_FALSE;

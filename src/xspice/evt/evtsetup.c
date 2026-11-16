@@ -90,9 +90,7 @@ retrieved similar to SPICE3C1 saving multiple 'plots'.
 int EVTsetup(
     CKTcircuit *ckt)   /* The circuit structure */
 {
-
     int err;
-
 
     /* Exit immediately if no event-driven instances in circuit */
     if(ckt->evt->counts.num_insts == 0)
@@ -127,32 +125,6 @@ int EVTsetup(
     /* Return OK */
     return(OK);
 }
-
-
-int EVTunsetup(
-    CKTcircuit* ckt)   /* The circuit structure */
-{
-    int err;
-
-    /* Exit immediately if no event-driven instances in circuit */
-    if (ckt->evt->counts.num_insts == 0)
-        return(OK);
-
-    /* Clear the inst, node, and output queues, and initialize the to_call */
-    /* elements in the instance queue to call all event-driven instances */
-    err = EVTsetup_queues(ckt);
-    if (err)
-        return(err);
-
-    /* Initialize additional event data */
-    g_mif_info.circuit.evt_step = 0.0;
-
-    /* Return OK */
-    return(OK);
-}
-
-
-
 
 /*
 EVTsetup_queues
@@ -245,6 +217,7 @@ static int EVTsetup_queues(
         output_event = output_queue->head[i];
         while(output_event) {
             ptr = output_event;
+            tfree(output_event->value);
             output_event = output_event->next;
             FREE(ptr);
         }
@@ -344,12 +317,6 @@ static int EVTsetup_data(
     Evt_Node_t          *rhsold;
 
     Evt_Node_Info_t     *node_info;
-
-    if (!cp_getvar("keepxs", CP_BOOL, NULL, 0)) {
-        /* No such variable: free previous per-simulation data. */
-
-        Evt_Job_destroy(ckt->evt);
-    }
 
     /* Allocate main substructures of data */
     /* Note that we don't free any old structures */
@@ -488,6 +455,11 @@ static int EVTsetup_jobs(
     Evt_Job_t  *jobs;
     Evt_Data_t *data;
 
+    if (!cp_getvar("keepxs", CP_BOOL, NULL, 0)) {
+        /* No such variable: free previous per-simulation data. */
+
+        Evt_Job_destroy(ckt->evt);
+    }
 
     jobs = &(ckt->evt->jobs);
     data = &(ckt->evt->data);
@@ -561,8 +533,19 @@ static int EVTsetup_load_ptrs(
         /* Get the MIFinstance pointer */
         fast = ckt->evt->info.inst_table[i]->inst_ptr;
 
-        /* Reset init flag, required when any run is called a second time */
-        fast->initialized = FALSE;
+        if (fast->initialized) {
+            /* Reset init flag, required on second or later analysis. */
+
+            fast->initialized = FALSE;
+
+            /* Call code model callback function warning of destruction.
+             * That should release resources: inefficient, as models may have
+             * reusable state, but otherwise, all models with callbacks
+             * may need to change.
+             */
+
+            MIF_call_back(fast, MIF_CB_DESTROY);
+        }
 
         /* Loop through all connections */
         num_conn = fast->num_conn;

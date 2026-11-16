@@ -165,6 +165,7 @@ extern int MIFnoise(
 );
 
 extern void MIF_free_noise_state(MIFinstance *here);
+extern void MIF_call_back(MIFinstance *here, Mif_Callback_Reason_t reason);
 
 #ifdef KLU
 extern int MIFbindCSC (GENmodel*, CKTcircuit*) ;
