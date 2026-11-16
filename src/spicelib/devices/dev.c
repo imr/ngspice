@@ -587,24 +587,7 @@ static void free_dlerr_msg(char *msg)
 #ifdef OSDI
 #include "ngspice/osdiitf.h"
 
-/* A module is looked up by its name, so of two OSDI modules with the
-   same name, from different .osdi files, only the one loaded first is
-   used. Using both makes no sense; warn, the user has to select the
-   right file. */
-static void osdi_warn_same_name(const SPICEdev *dev, const char *path) {
-  int j;
-  for (j = 0; j < DEVNUM; j++)
-    if (DEVices[j] && DEVices[j]->DEVpublic.registry_entry &&
-        strcasecmp(DEVices[j]->DEVpublic.name, dev->DEVpublic.name) == 0) {
-      fprintf(stderr,
-              "Warning: OSDI module %s in %s has the name of a module\n"
-              "    loaded before, which is used; load only one of them\n",
-              dev->DEVpublic.name, path);
-      return;
-    }
-}
-
-static int osdi_add_device(int n, OsdiRegistryEntry *devs, const char *path) {
+static int osdi_add_device(int n, OsdiRegistryEntry *devs) {
   int i;
   int dnum = DEVNUM + n;
   DEVices = TREALLOC(SPICEdev *, DEVices, dnum);
@@ -613,12 +596,6 @@ static int osdi_add_device(int n, OsdiRegistryEntry *devs, const char *path) {
 #endif
   for (i = 0; i < n; i++) {
     DEVices[DEVNUM + i] = osdi_create_spicedev(&devs[i]);
-    /* show, showmod and devhelp print the description: name the file,
-       as modules of different files may differ only by their name */
-    DEVices[DEVNUM + i]->DEVpublic.description =
-        tprintf("A simulator independent device loaded with OSDI from %s",
-                path);
-    osdi_warn_same_name(DEVices[DEVNUM + i], path);
 #ifdef TRACE
     printf("Added device: %s\n", DEVices[DEVNUM + i]->DEVpublic.name);
 #endif
@@ -634,7 +611,7 @@ int load_osdi(const char *path) {
     return file.num_entries;
   }
 
-  osdi_add_device(file.num_entries, file.entrys, path);
+  osdi_add_device(file.num_entries, file.entrys);
   return 0;
 }
 #endif
