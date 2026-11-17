@@ -66,6 +66,25 @@ fourier(wordlist *wl, struct plot *current_plot)
         return 1;
     }
 
+    time = current_plot->pl_scale;
+    if (!isreal(time)) {
+        fprintf(cp_err, "Error: fourier needs real time scale\n");
+        return 1;
+    }
+
+    s = wl->wl_word;
+    if (ft_numparse(&s, FALSE, &fundfreq) < 0 || fundfreq <= 0.0) {
+        fprintf(cp_err, "Error: bad fundamental freq %s\n", wl->wl_word);
+        return 1;
+    }
+
+    wl = wl->wl_next;
+    names = ft_getpnames_quotes(wl, TRUE);
+    if (!names) {
+        fprintf(stderr, "Warning: fourier: no vector or expression given, ignored!\n");
+        return 1;
+    }
+
     if (!cp_getvar("nfreqs", CP_NUM, &nfreqs, 0) || nfreqs < 1)
         nfreqs = 10;
     if (!cp_getvar("nperiods", CP_NUM, &nperiods, 0) || nperiods < 1)
@@ -77,25 +96,12 @@ fourier(wordlist *wl, struct plot *current_plot)
     if (cp_getvar("fournosave", CP_BOOL, NULL, 0))
         foursave = FALSE;
 
-    time = current_plot->pl_scale;
-    if (!isreal(time)) {
-        fprintf(cp_err, "Error: fourier needs real time scale\n");
-        return 1;
-    }
-    s = wl->wl_word;
-    if (ft_numparse(&s, FALSE, &fundfreq) < 0 || fundfreq <= 0.0) {
-        fprintf(cp_err, "Error: bad fundamental freq %s\n", wl->wl_word);
-        return 1;
-    }
-
     freq = TMALLOC(double, nfreqs);
     mag = TMALLOC(double, nfreqs);
     phase = TMALLOC(double, nfreqs);
     nmag = TMALLOC(double, nfreqs);
     nphase = TMALLOC(double, nfreqs);
 
-    wl = wl->wl_next;
-    names = ft_getpnames_quotes(wl, TRUE);
     for (pn = names; pn; pn = pn->pn_next) {
         vec = ft_evaluate(pn);
         for (; vec; vec = vec->v_link2) {
