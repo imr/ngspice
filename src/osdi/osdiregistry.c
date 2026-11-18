@@ -389,7 +389,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
   if (OSDI_DESCRIPTOR_SIZE) {
     // This must be openvaf-reloaded 
     size_t expected_descriptor_size;
-    // Must be version==0.4
+    // Must be version 0.4 (stable) or 0.5 (experimental)
     if (OSDI_VERSION_MAJOR == 0 && OSDI_VERSION_MINOR == 4) {
       // Stable
       experimental = 0;
@@ -397,10 +397,13 @@ extern OsdiObjectFile load_object_file(const char *input) {
     } else if (OSDI_VERSION_MAJOR == 0 && OSDI_VERSION_MINOR == 5) {
       // Experimental
       experimental = 1;
-      expected_descriptor_size = sizeof(OsdiDescriptor);
+      /* jacobian_values is the last field of the v0.5 descriptor and is not
+       * used by ngspice. Do not require it, so models from earlier v0.5
+       * OpenVAF-reloaded builds (which end with absdelays) are accepted. */
+      expected_descriptor_size = offsetof(OsdiDescriptor, jacobian_values);
     } else {
       // Not supported
-      printf("NGSPICE supports OpenVAF-reloaded OSDI version 0.4 but \"%s\" uses v%d.%d!",
+      printf("NGSPICE supports OpenVAF-reloaded OSDI v0.4 and v0.5 but \"%s\" uses v%d.%d!\n",
         path, OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
       txfree(path); 
       return INVALID_OBJECT;
@@ -417,11 +420,12 @@ extern OsdiObjectFile load_object_file(const char *input) {
     }
   } else {
     // Original OpenVAF, must be version==0.3
-    if (OSDI_VERSION_MAJOR != OSDI_VERSION_MAJOR_CURR ||
-      OSDI_VERSION_MINOR != OSDI_VERSION_MINOR_CURR) {
-      printf("NGSPICE only supports OSDI v%d.%d but \"%s\" uses v%d.%d!",
-        OSDI_VERSION_MAJOR_CURR, OSDI_VERSION_MINOR_CURR, path,
-        OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
+    /* Do not compare against OSDI_VERSION_*_CURR from osdi.h here: that is
+     * the newest supported version (0.5), but original OpenVAF only
+     * produces v0.3 object files without OSDI_DESCRIPTOR_SIZE. */
+    if (OSDI_VERSION_MAJOR != 0 || OSDI_VERSION_MINOR != 3) {
+      printf("NGSPICE supports original OpenVAF OSDI v0.3 but \"%s\" uses v%d.%d!\n",
+        path, OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
       txfree(path);
       return INVALID_OBJECT;
     }

@@ -12,13 +12,16 @@
  */
 
 #pragma once
+
+#ifndef NO_STD
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#endif
 
 
 #define OSDI_VERSION_MAJOR_CURR 0
-#define OSDI_VERSION_MINOR_CURR 3
+#define OSDI_VERSION_MINOR_CURR 5
 
 #define PARA_TY_MASK 3
 #define PARA_TY_REAL 0
@@ -62,7 +65,7 @@
 #define EVAL_RET_FLAG_STOP 8
 
 
-#define LOG_LVL_MASK 8
+#define LOG_LVL_MASK 7
 #define LOG_LVL_DEBUG 0
 #define LOG_LVL_DISPLAY 1
 #define LOG_LVL_INFO 2
@@ -73,7 +76,24 @@
 
 #define INIT_ERR_OUT_OF_BOUNDS 1
 
+#define ATTR_TYPE_STR 0
+#define ATTR_TYPE_INT 1
+#define ATTR_TYPE_REAL 2
 
+#define NATREF_NONE 0
+#define NATREF_NATURE 1
+#define NATREF_DISCIPLINE_FLOW 2
+#define NATREF_DISCIPLINE_POTENTIAL 3
+
+#define DOMAIN_NOT_GIVEN 0 
+#define DOMAIN_DISCRETE 1
+#define DOMAIN_CONTINUOUS 2
+
+#define NOISE_TYPE_WHITE 0
+#define NOISE_TYPE_FLICKER 1
+#define NOISE_TYPE_TABLE 2
+
+#define MODULEFLAG_ABSTIME 1
 
 typedef struct OsdiLimFunction {
   char *name;
@@ -122,6 +142,13 @@ typedef struct OsdiJacobianEntry {
   uint32_t react_ptr_off;
   uint32_t flags;
 }OsdiJacobianEntry;
+
+typedef struct OsdiJacobianValue {
+  uint32_t resist_flags;
+  uint32_t react_flags;
+  uint32_t resist_off;
+  uint32_t react_off;
+}OsdiJacobianValue;
 
 typedef struct OsdiNode {
   char *name;
@@ -201,7 +228,7 @@ typedef struct OsdiDescriptor {
                                      double temperature, uint32_t num_terminals,
                                      OsdiSimParas *sim_params, OsdiInitInfo *res);
 
-  uint32_t (*eval)(void *handle, void *inst, const void *model, const OsdiSimInfo *info);
+  uint32_t (*eval)(void *handle, void *inst, void *model, OsdiSimInfo *info);
   void (*load_noise)(void *inst, void *model, double freq, double *noise_dens);
   void (*load_residual_resist)(void *inst, void* model, double *dst);
   void (*load_residual_react)(void *inst, void* model, double *dst);
@@ -231,7 +258,39 @@ typedef struct OsdiDescriptor {
   uint32_t module_flags;
   uint32_t absdelay_count;
   OsdiAbsDelay *absdelays;
+  OsdiJacobianValue *jacobian_values;
 }OsdiDescriptor;
 
+typedef struct OsdiNature {
+  char *name;
+  uint32_t parent_type;
+  uint32_t parent;
+  uint32_t ddt;
+  uint32_t idt;
+  uint32_t attr_start;
+  uint32_t num_attr;
+}OsdiNature;
 
+typedef struct OsdiDiscipline {
+  char *name;
+  uint32_t flow;
+  uint32_t potential;
+  uint32_t domain;
+  uint32_t attr_start;
+  uint32_t num_flow_attr;
+  uint32_t num_potential_attr;
+  uint32_t num_user_attr;
+}OsdiDiscipline;
+
+typedef union OsdiAttributeValue {
+  char* string;
+  int32_t integer;
+  double real;
+}OsdiAttributeValue;
+
+typedef struct OsdiAttribute {
+  char *name;
+  uint32_t value_type;
+  OsdiAttributeValue value;
+}OsdiAttribute;
 

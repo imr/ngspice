@@ -280,7 +280,7 @@ OsdiSimParas get_simparams(const CKTcircuit *ckt) {
 
 static void eval(const OsdiDescriptor *descr, const GENinstance *gen_inst,
                  void *inst, OsdiExtraInstData *extra_inst_data,
-                 const void *model, const OsdiSimInfo *sim_info) {
+                 void *model, OsdiSimInfo *sim_info) {
 
   OsdiNgspiceHandle handle =
       (OsdiNgspiceHandle){.kind = 3, .name = gen_inst->GENname};
