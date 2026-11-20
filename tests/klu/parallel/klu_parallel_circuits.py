@@ -22,7 +22,7 @@ def run(binary,folder,body,vectors,analysis,threads,enabled):
     return {key:float(re.search(re.escape(key)+r'\s*=\s*([0-9.eE+-]+)',log)[1]) for key in ['Accepted timepoints','Rejected timepoints']}
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--baseline',type=Path);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--baseline',type=Path);p.add_argument('--system-fallback',action='store_true');a=p.parse_args()
     fixtures=cases(); side=40
     mesh=['Vdd in 0 dc .5 ac 1 pulse(.5 1 1n 100p 100p 4n 10n)','Rin in n0 10']
     for row in range(side):
@@ -44,7 +44,9 @@ def main():
                 if (base/file).exists():
                     row[file]=compare(base/file,out/file)
                     assert row[file]['byte_identical'],(name,threads,file)
-            if name=='switch-large':assert 'KLU optimized summary:' in (out/'run.log').read_text()
+            if name=='switch-large':
+                active='KLU optimized summary:' in (out/'run.log').read_text()
+                assert active != a.system_fallback,(name,threads,'unexpected backend')
             results.append(row)
     (a.output/'result.json').write_text(json.dumps({'passed':True,'runs':results},indent=2)+'\n')
     print(f'PASS {len(results)} configurations: byte-identical saved waveforms, matching timepoint decisions')

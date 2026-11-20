@@ -56,6 +56,12 @@ TESTS_ENVIRONMENT = \
 	$(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README bin .gitignore klu/parallel
+	README bin .gitignore \
+	klu/parallel/circuit_fixtures.py \
+	klu/parallel/klu_alloc_fault.c \
+	klu/parallel/klu_parallel_circuits.py \
+	klu/parallel/klu_parallel_fixtures.py \
+	klu/parallel/klu_parallel_matrix_test.c \
+	klu/parallel/run-klu-parallel.py
 
 MAINTAINERCLEANFILES = Makefile.in
