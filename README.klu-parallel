@@ -96,3 +96,43 @@ scaling. The 3D and PEX cases used eight. This does not establish universal
 speedup or performance relative to Spectre. No proprietary solver source was
 used; KLU derivation and licensing remain covered by COPYING and the bundled
 SuiteSparse license files.
+
+Checks of the pre-master-48 port (2026-11-20)
+-------------------------------------------
+
+Base: 03a0f71418b2d15419a61570eabfe794a403f5e8. The production code is in
+8e093044d; later commits adjust test packaging and document validation.
+Ubuntu 22.04, GCC 11.4, autotools with bundled KLU and OpenMP, CFLAGS
+-O2 -g -std=gnu17:
+
+* 48 direct matrix configurations and 24 complete circuit configurations pass.
+* Another 24 circuit configurations compared with a separately built, unmodified
+  upstream executable have byte-identical saved arrays and timepoint counts.
+* make check: 63 PASS, 0 FAIL; 198 BSIM4 QA files match the unmodified baseline
+  byte for byte. Both have 419 legacy CMC reference DIFFER diagnostics.
+* KLU-library/harness ASan/UBSan checks pass with leak detection, eleven forced
+  plan-allocation failures, 32 requested threads and OMP_THREAD_LIMIT=2.
+* A non-OpenMP math-library build passes the direct test. This is not a claim
+  that a full non-OpenMP simulator was rebuilt for this port.
+
+One additional exploratory pair per circuit on this port, same binary and
+eight requested threads, produced the following analysis times:
+
+                        original KLU      optimized
+  2304-node 2D RC          3.38355 s        3.23165 s
+  4096-node 3D RC         24.32180 s       16.06440 s
+  SKY130 PEX opamp        53.17470 s       40.93780 s
+
+All three pairs have byte-identical saved arrays and matching timepoint
+decisions; no numerical fallback occurred. These single pairs do not replace
+the repeated measurements on the earlier prototype branch. Timing used 32
+physical NUMA0 cores/32 GiB on a shared Xeon 6982P-C host; requested workers
+were eight, with one actually used on 2D RC and eight on the other two cases.
+
+The CMake/system-SuiteSparse build completes, but its full runtime regression
+is NOT qualified: the small generated RC deck segfaults while quitting after
+writing its waveform and statistics. A separately built unmodified upstream
+03a0f714 with the same CMake settings and Ubuntu SuiteSparse 5.10.1 reproduces
+the failure. The optimized refactor was disabled in both failing runs. This
+pre-existing failure is recorded, not counted as a passing test or fixed by
+this proposal. Windows project entries are updated but Windows was not tested.
