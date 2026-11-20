@@ -5651,14 +5651,16 @@ static void inp_sort_params(struct card *param_cards,
      * return value from nghash_find unambiguously means "not present"
      * (param index 0 is a valid hit, encoded as the integer 1).
      *
-     * For repeated names, the hash overwrites with the LATER index, so
-     * the recorded index for any name is the latest occurrence.  In the
-     * duplicate-mark pass below, every entry whose own index differs
-     * from the hash's recorded index gets skip=1, matching the original
-     * semantics (earlier duplicates are skipped, the last one wins). */
+     * For repeated names the recorded index must be the LATEST occurrence.
+     * nghash_insert() does not overwrite an existing key (it returns the
+     * entry already there), so insert in REVERSE order: the first insert
+     * of each name is then its last definition.  In the duplicate-mark
+     * pass below, every entry whose own index differs from the hash's
+     * recorded index gets skip=1, matching the original semantics
+     * (earlier duplicates are skipped, the last one wins). */
     NGHASHPTR name_to_idx = nghash_init(num_params > 0 ? num_params : 1);
 
-    for (i = 0; i < num_params; i++)
+    for (i = num_params - 1; i >= 0; i--)
         nghash_insert(name_to_idx, deps[i].param_name,
                       (void *)(intptr_t)(i + 1));
 
