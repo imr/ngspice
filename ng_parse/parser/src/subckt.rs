@@ -74,6 +74,33 @@ fn rhs_has_draw(s: &str) -> bool {
         || l.contains("limit(")
 }
 
+/// Marker that begins the name of a per-instance frozen draw (see
+/// `SubcktExpander::mc_cards`).
+const MC_TAG: &str = "ngpmc__";
+
+/// Name of the `.param` card that carries ONE instance's draw of a subckt-local
+/// statistical parameter. The instance path is hashed (FNV-1a) so the name is a
+/// plain identifier whatever characters the path holds, and so it cannot
+/// accidentally spell a runtime keyword (`time`, `temper`, ...).
+fn mc_name(path: &str, name: &str) -> String {
+    let mut h: u64 = 0xcbf29ce484222325;
+    for b in path.bytes() {
+        h ^= b as u64;
+        h = h.wrapping_mul(0x100000001b3);
+    }
+    format!("{MC_TAG}{h:016x}_{name}")
+}
+
+/// Does this resolved expression depend on a simulation-time quantity (as
+/// opposed to a statistical draw)? Such a value cannot be hoisted into a
+/// top-level `.param` card.
+fn has_sim_runtime(s: &str) -> bool {
+    let ids = ident_tokens(s);
+    ["temper", "time", "hertz", "v", "i", "ddt", "sdt", "pwl"]
+        .iter()
+        .any(|k| ids.contains(*k))
+}
+
 /// Classify the GLOBAL statistical params (shared process draws) out of the
 /// top-level `.param` set. A param is global-shared iff it is (transitively) a
 /// statistical draw AND it is referenced by at least one OTHER top-level `.param`.
@@ -154,6 +181,12 @@ pub struct Scope {
     /// one (nmap, prefix) pair, so the rendered Sym strings cannot differ.
     /// Only consulted/populated when no function-arg locals are in effect.
     partial_cache: RefCell<HashMap<String, Part>>,
+    /// Instance path of the subckt instance this scope belongs to (empty for the
+    /// root). Names the frozen draws of this instance (see `frozen`).
+    path: RefCell<String>,
+    /// Subckt-local statistical params of THIS instance that have been frozen to
+    /// a single draw: param name -> the `.param` card name that carries it.
+    frozen: RefCell<HashMap<String, String>>,
     parent: Option<Rc<Scope>>,
     funcs: Arc<FuncMap>,
 }
@@ -167,6 +200,8 @@ impl Scope {
             values: RefCell::new(HashMap::new()),
             resolving: RefCell::new(HashSet::new()),
             partial_cache: RefCell::new(HashMap::new()),
+            path: RefCell::new(String::new()),
+            frozen: RefCell::new(HashMap::new()),
             parent: None,
             funcs,
         })
@@ -180,6 +215,8 @@ impl Scope {
             values: RefCell::new(HashMap::new()),
             resolving: RefCell::new(HashSet::new()),
             partial_cache: RefCell::new(HashMap::new()),
+            path: RefCell::new(String::new()),
+            frozen: RefCell::new(HashMap::new()),
             parent: Some(Rc::clone(parent)),
             funcs: Arc::clone(&parent.funcs),
         })
@@ -193,6 +230,23 @@ impl Scope {
     /// Used by partial evaluation: when a param can't be folded to a constant
     /// (because its definition transitively depends on a runtime quantity such as
     /// `temper`), we partial-evaluate its definition instead of giving up.
+    /// The scope whose own `.param`/default defines `k` (already `key()`ed), as
+    /// seen from `scope`. `None` when the name is bound to a plain number on the
+    /// way (an instance override) or is not defined at all.
+    fn owner_of(scope: &Rc<Scope>, k: &str) -> Option<Rc<Scope>> {
+        let mut cur = Rc::clone(scope);
+        loop {
+            if cur.locals.contains_key(k) {
+                return None;
+            }
+            if cur.raw.borrow().contains_key(k) {
+                return Some(cur);
+            }
+            let next = cur.parent.as_ref().map(Rc::clone)?;
+            cur = next;
+        }
+    }
+
     fn raw_lookup(&self, name: &str) -> Option<String> {
         let k = key(name);
         if let Some(r) = self.raw.borrow().get(&k) {
@@ -683,6 +737,17 @@ pub struct SubcktExpander {
     /// results (foundry_a `u0` -> dead transistor; bxpressn-1 `v=` -> malformed
     /// B source). Reported by the CLI; `--strict` turns them into an error.
     drops: RefCell<Vec<(String, String)>>,
+    /// Per-instance frozen draws, in creation (= dependency) order: (card name,
+    /// resolved rhs). HSPICE evaluates a subckt-local `.param` ONCE per instance,
+    /// so a local param whose value is a statistical draw (foundry mismatch:
+    /// `temp4='parl1'` with top-level `parl1=agauss(0,1,1)`) is one draw shared by
+    /// every expression of that instance that uses it. Inlining the `agauss()`
+    /// text at each use instead gives every use its own draw, which breaks the
+    /// correlation the model relies on (binned `vsat`/`lvsat`/`wvsat`/`pvsat`
+    /// moved independently and summed to a negative saturation velocity). Each
+    /// such param is emitted as its own top-level `.param` and referenced by NAME,
+    /// so ngspice draws it once (see `mc_param_cards` for the card pair).
+    mc_cards: RefCell<Vec<(String, String)>>,
     /// `.option scale` (default 1) — the GLOBAL instance/model geometry scale.
     ///
     /// Model binning multiplies the X line's DRAWN l/w by this before comparing
@@ -891,6 +956,7 @@ impl SubcktExpander {
             root: Rc::clone(&root),
             out: Vec::new(),
             drops: RefCell::new(Vec::new()),
+            mc_cards: RefCell::new(Vec::new()),
             option_scale,
             cfg,
             stats: SubstStats::default(),
@@ -985,7 +1051,45 @@ impl SubcktExpander {
     /// by-name global reference) folds to 131, collapsing the global process
     /// variation to zero.
     fn sym_keeps(&self, s: &str) -> bool {
-        Self::has_runtime(s) || ident_tokens(s).iter().any(|id| self.global_shared.contains(id))
+        Self::has_runtime(s)
+            || s.contains(MC_TAG)
+            || ident_tokens(s).iter().any(|id| self.global_shared.contains(id))
+    }
+
+    /// The per-instance frozen-draw `.param` cards that the expanded deck still
+    /// references (see `mc_cards`). A draw whose every use folded away (mismatch
+    /// switched off multiplies it by a literal 0) is not emitted, so it does not
+    /// consume a value from ngspice's random stream.
+    fn mc_param_cards(&self, cards: &[String]) -> Vec<String> {
+        let mc = self.mc_cards.borrow();
+        if mc.is_empty() {
+            return Vec::new();
+        }
+        let mut used: HashSet<String> = HashSet::new();
+        for c in cards {
+            if c.contains(MC_TAG) {
+                used.extend(ident_tokens(c).into_iter().filter(|t| t.starts_with(MC_TAG)));
+            }
+        }
+        // Reverse creation order: a kept card marks the frozen draws it uses.
+        let mut keep = vec![false; mc.len()];
+        for (i, (name, rhs)) in mc.iter().enumerate().rev() {
+            if used.contains(name) {
+                keep[i] = true;
+                used.extend(ident_tokens(rhs).into_iter().filter(|t| t.starts_with(MC_TAG)));
+            }
+        }
+        // TWO cards per draw. ngspice turns a `.param` that itself contains a
+        // statistical function into a `.func` and draws afresh at EVERY reference
+        // (inpcom.c::inp_fix_agauss_in_param), whereas a `.param` that merely
+        // refers to one is evaluated once. So the draw goes in `<name>_d` and the
+        // deck references `<name>`, which ngspice evaluates a single time.
+        let mut out = Vec::new();
+        for ((name, rhs), _) in mc.iter().zip(keep).filter(|(_, k)| *k) {
+            out.push(format!(".param {name}_d={rhs}"));
+            out.push(format!(".param {name}={name}_d"));
+        }
+        out
     }
 
     /// Build the shared `.param` cards for the global statistical params (see the
@@ -1072,10 +1176,11 @@ impl SubcktExpander {
         // device (the exact bug this fixes). Inserted at position 0 for the same
         // reason as the pspice injection above: `cards` excludes the title (the glue
         // prepends it), and a later position could land inside a leading `.control`.
-        let shared = self.global_shared_cards();
-        for (k, c) in shared.into_iter().enumerate() {
-            cards.insert(k, c);
-        }
+        // The per-instance frozen draws follow them (they may reference a shared
+        // global by name).
+        let mut head = self.global_shared_cards();
+        head.extend(self.mc_param_cards(&cards));
+        cards.splice(0..0, head);
         let drops = self
             .drops
             .into_inner()
@@ -1114,7 +1219,8 @@ impl SubcktExpander {
         let option_scale = self.option_scale;
         let cfg = self.cfg;
 
-        let results: Vec<(Vec<String>, Vec<(String, String)>)> = std::thread::scope(|s| {
+        type WorkerOut = (Vec<String>, Vec<(String, String)>, Vec<(String, String)>);
+        let results: Vec<WorkerOut> = std::thread::scope(|s| {
             let handles: Vec<_> = chunks
                 .into_iter()
                 .map(|chunk| {
@@ -1134,6 +1240,7 @@ impl SubcktExpander {
                             root,
                             out: Vec::new(),
                             drops: RefCell::new(Vec::new()),
+                            mc_cards: RefCell::new(Vec::new()),
                             option_scale,
                             cfg,
                             stats: SubstStats::default(),
@@ -1142,7 +1249,7 @@ impl SubcktExpander {
                             top_cards: Vec::new(),
                         };
                         w.process_lines(&chunk, local_models);
-                        (w.out, w.drops.into_inner())
+                        (w.out, w.drops.into_inner(), w.mc_cards.into_inner())
                     })
                 })
                 .collect();
@@ -1150,9 +1257,10 @@ impl SubcktExpander {
         });
 
         // Merge in chunk order -> identical order to a single-core run.
-        for (out, drops) in results {
+        for (out, drops, mc) in results {
             self.out.extend(out);
             self.drops.get_mut().extend(drops);
+            self.mc_cards.get_mut().extend(mc);
         }
     }
 
@@ -1314,6 +1422,11 @@ impl SubcktExpander {
         };
         let child_mult = mult * x_m;
         let child = Scope::child(scope, locals);
+        *child.path.borrow_mut() = if prefix.is_empty() {
+            inst.to_string()
+        } else {
+            format!("{prefix}.{inst}")
+        };
         for (n, rhs) in &def.defaults {
             child.add_raw(n, rhs.clone());
         }
@@ -1741,6 +1854,29 @@ impl SubcktExpander {
                         }
                         out
                     }
+                };
+                // A SUBCKT-LOCAL param whose resolved value is a statistical draw
+                // is ONE draw per instance: hoist it into its own `.param` card and
+                // reference that by name (see `mc_cards`). A top-level param is
+                // left alone — HSPICE draws it afresh at each reference, unless it
+                // is a shared global, handled above.
+                let out = match &out {
+                    Part::Sym(s) if rhs_has_draw(s) && !has_sim_runtime(s) => {
+                        match Scope::owner_of(scope, &k) {
+                            Some(owner) if owner.parent.is_some() => {
+                                let known = owner.frozen.borrow().get(&k).cloned();
+                                let card = known.unwrap_or_else(|| {
+                                    let card = mc_name(&owner.path.borrow(), &k);
+                                    self.mc_cards.borrow_mut().push((card.clone(), s.clone()));
+                                    owner.frozen.borrow_mut().insert(k.clone(), card.clone());
+                                    card
+                                });
+                                Part::Sym(card)
+                            }
+                            _ => out,
+                        }
+                    }
+                    _ => out,
                 };
                 if locals.is_empty() {
                     scope.partial_cache.borrow_mut().insert(k, out.clone());
@@ -4170,6 +4306,108 @@ mod tests {
         assert!(SubcktExpander::has_runtime("agauss(0.5,0.01,3)"));
         assert!(SubcktExpander::has_runtime("aunif(1,2)"));
         assert!(SubcktExpander::has_runtime("limit(1,0.1)"));
+    }
+
+    /// A subckt-local param whose value is a statistical draw is ONE draw per
+    /// instance (HSPICE evaluates a local `.param` once per instance). The
+    /// foundry mismatch structure: a top-level `parl1=agauss(0,1,1)` captured by
+    /// the subckt-local `temp4='parl1'`, then shared by several expressions.
+    /// Every use in one instance must reference the SAME `.param` card, and two
+    /// instances must reference different ones.
+    #[test]
+    fn subckt_local_draw_is_one_draw_per_instance() {
+        let lines = vec![
+            ll("* t"),
+            ll(".param parl1=agauss(0,1,1)"),
+            ll(".subckt dev a b"),
+            ll(".param temp4='parl1'"),
+            ll(".param flag='0.5*temp4'"),
+            ll(".model rm r (rsh='100*(1+flag)' tc1='flag')"),
+            ll("r1 a m r='1000*(1+0.01*flag)'"),
+            ll("r2 m b r='1000*(1+0.01*flag)'"),
+            ll("r3 a b rm l=1u w=1u"),
+            ll(".ends"),
+            ll("x1 1 0 dev"),
+            ll("x2 1 0 dev"),
+        ];
+        let out = SubcktExpander::new(&lines).expand();
+        // per instance: `<name>_d=agauss(...)` (the draw) and `<name>=<name>_d`
+        // (evaluated once by ngspice; this is the name the deck references)
+        let refs: Vec<&String> = out
+            .cards
+            .iter()
+            .filter(|c| c.starts_with(".param ngpmc__") && !c.contains("agauss("))
+            .collect();
+        assert_eq!(refs.len(), 2, "want one draw per instance: {:?}", out.cards);
+        let name = |c: &String| c[".param ".len()..].split('=').next().unwrap().to_string();
+        let (d1, d2) = (name(refs[0]), name(refs[1]));
+        assert_ne!(d1, d2, "instances share a draw");
+        for d in [&d1, &d2] {
+            assert!(
+                out.cards.iter().any(|c| c.starts_with(&format!(".param {d}_d=agauss("))),
+                "no draw card for {d}: {:?}",
+                out.cards
+            );
+        }
+        // no use site carries its own agauss() any more
+        for c in out.cards.iter().filter(|c| !c.starts_with(".param")) {
+            assert!(!c.contains("agauss("), "draw inlined at a use site: {c}");
+        }
+        // x1: both resistors and both model params use x1's draw, and only it
+        let uses = |inst: &str, d: &str| -> usize {
+            out.cards
+                .iter()
+                .filter(|c| !c.starts_with(".param") && c.contains(inst))
+                .map(|c| c.matches(d).count())
+                .sum()
+        };
+        assert_eq!(uses("x1", &d1) + uses("x1", &d2), 4, "{:?}", out.cards);
+        assert!(uses("x1", &d1) == 4 || uses("x1", &d2) == 4, "x1 mixes draws: {:?}", out.cards);
+        assert!(out.drops.is_empty(), "unexpected drops: {:?}", out.drops);
+    }
+
+    /// A frozen draw whose every use folds away (mismatch switched off: the term
+    /// is multiplied by a literal 0) leaves no `.param` card behind, so it does
+    /// not consume a value from the random stream.
+    #[test]
+    fn unused_local_draw_is_not_emitted() {
+        let lines = vec![
+            ll("* t"),
+            ll(".param parl1=agauss(0,1,1) mismatchflag=0"),
+            ll(".subckt dev a b"),
+            ll(".param temp4='parl1'"),
+            ll(".param flag='0.5*temp4*mismatchflag'"),
+            ll("r1 a b r='1000*(1+0.01*flag)'"),
+            ll(".ends"),
+            ll("x1 1 0 dev"),
+        ];
+        let out = SubcktExpander::new(&lines).expand();
+        assert!(
+            !out
+                .cards
+                .iter()
+                .any(|c| c.contains("ngpmc__") || (!c.starts_with(".param") && c.contains("agauss("))),
+            "dead draw emitted: {:?}",
+            out.cards
+        );
+    }
+
+    /// A top-level draw referenced directly (not through a subckt-local param) is
+    /// still drawn afresh at each reference, as HSPICE does.
+    #[test]
+    fn top_level_draw_used_directly_stays_per_reference() {
+        let lines = vec![
+            ll("* t"),
+            ll(".param parl1=agauss(0,1,1)"),
+            ll(".subckt dev a b"),
+            ll("r1 a b r='1000*(1+0.01*parl1)'"),
+            ll(".ends"),
+            ll("x1 1 0 dev"),
+        ];
+        let out = SubcktExpander::new(&lines).expand();
+        let r = out.cards.iter().find(|c| c.contains("r1")).unwrap();
+        assert!(r.contains("agauss("), "direct draw not inlined: {r}");
+        assert!(!out.cards.iter().any(|c| c.contains("ngpmc__")), "{:?}", out.cards);
     }
 
     /// A negated statistical term must not emit `<binop>-` (`...e0+-(agauss(...))`).
