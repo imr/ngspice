@@ -11,7 +11,8 @@ endif
 noinst_LTLIBRARIES = libKLU_real.la libKLU_complex.la libKLU.la
 
 noinst_HEADERS = \
-	klu_ngspice.h
+	klu_ngspice.h \
+	ng_klu_parallel.h
 
 # ngspice additions, compiled for real and (with -DCOMPLEX) complex entries
 libKLU_real_la_SOURCES = \
@@ -24,7 +25,8 @@ libKLU_complex_la_SOURCES = \
 
 libKLU_la_SOURCES = \
 	klu_compat.c \
-	klusmp.c
+	klusmp.c \
+	ng_klu_parallel.c
 
 libKLU_real_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 libKLU_complex_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -DCOMPLEX

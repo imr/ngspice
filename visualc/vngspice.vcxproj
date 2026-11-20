@@ -1670,6 +1670,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClCompile Include="..\src\maths\fft\matlib.c" />
     <ClCompile Include="..\src\maths\KLU\klu_compat.c" />
     <ClCompile Include="..\src\maths\KLU\klusmp.c" />
+    <ClCompile Include="..\src\maths\KLU\ng_klu_parallel.c" />
     <ClCompile Include="..\src\maths\KLU\klu_multiply.c" />
     <ClCompile Include="..\src\maths\KLU\klu_utils.c" />
     <ClCompile Include="..\src\maths\KLU\SuiteSparse\klu.c" />

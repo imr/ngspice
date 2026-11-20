@@ -180,6 +180,7 @@ int BindKluCompareCSCKLUforCIDER (const void *a, const void *b) ;
 #endif
 
 typedef struct sKLUmatrix {
+    struct ng_klu_plan *KLUmatrixPlan;               /* cached real refactor schedule */
     klu_common *KLUmatrixCommon ;                   /* KLU common object */
     klu_symbolic *KLUmatrixSymbolic ;               /* KLU symbolic object */
     klu_numeric *KLUmatrixNumeric ;                 /* KLU numeric object */

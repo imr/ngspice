@@ -11,6 +11,7 @@
 #include "../sparse/spdefs.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/fteext.h"
+#include "ng_klu_parallel.h"
 
 #ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
@@ -582,8 +583,17 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
             LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
         }
 
-        ret = klu_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx,
-                            Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        if (cp_getvar("klu_parallel", CP_BOOL, NULL, 0)) {
+            int threads = 1;
+            KLUmatrix *m = Matrix->SMPkluMatrix;
+            cp_getvar("num_threads", CP_NUM, &threads, 0);
+            ret = ng_klu_refactor(&m->KLUmatrixPlan, m->KLUmatrixAp, m->KLUmatrixAi,
+                    m->KLUmatrixAx, m->KLUmatrixSymbolic, m->KLUmatrixNumeric,
+                    m->KLUmatrixCommon, threads);
+        } else {
+            ret = klu_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx,
+                                Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        }
 
         if (ret == 0)
         {
@@ -704,6 +714,7 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
         Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
 
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
+            ng_klu_plan_free(&Matrix->SMPkluMatrix->KLUmatrixPlan);
             klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         }
         Matrix->SMPkluMatrix->KLUmatrixNumeric = klu_z_factor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi,
@@ -763,6 +774,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
         Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
 
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
+            ng_klu_plan_free(&Matrix->SMPkluMatrix->KLUmatrixPlan);
             klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         }
 
@@ -819,6 +831,7 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
         }
 
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
+            ng_klu_plan_free(&Matrix->SMPkluMatrix->KLUmatrixPlan);
             klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         }
         if (Matrix->SMPkluMatrix->KLUmatrixIsComplex) {
@@ -1092,6 +1105,7 @@ SMPnewMatrix (SMPmatrix *Matrix, int size)
     if (Matrix->CKTkluMODE) {
         /* Allocate the KLU Matrix Data Structure */
         Matrix->SMPkluMatrix = (KLUmatrix *) malloc (sizeof (KLUmatrix)) ;
+        Matrix->SMPkluMatrix->KLUmatrixPlan = NULL;
         Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ = 0 ;
         Matrix->SMPkluMatrix->KLUmatrixLinkedListCOO = NULL ;
 
@@ -1140,6 +1154,7 @@ SMPnewMatrixKLUforCIDER (SMPmatrix *Matrix, int size, unsigned int KLUmatrixIsCo
     if (Matrix->CKTkluMODE) {
         /* Allocate the KLU Matrix Data Structure */
         Matrix->SMPkluMatrix = (KLUmatrix *) malloc (sizeof (KLUmatrix)) ;
+        Matrix->SMPkluMatrix->KLUmatrixPlan = NULL;
 
         /* Initialize the KLU Matrix Internal Pointers */
         Matrix->SMPkluMatrix->KLUmatrixCommon = (klu_common *) malloc (sizeof (klu_common)) ; ;
@@ -1197,6 +1212,7 @@ SMPdestroy (SMPmatrix *Matrix)
 {
     if (Matrix->CKTkluMODE)
     {
+        ng_klu_plan_free(&Matrix->SMPkluMatrix->KLUmatrixPlan);
         klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         klu_free_symbolic (&(Matrix->SMPkluMatrix->KLUmatrixSymbolic), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         free (Matrix->SMPkluMatrix->KLUmatrixAp) ;
@@ -1233,6 +1249,7 @@ SMPdestroyKLUforCIDER (SMPmatrix *Matrix)
 {
     if (Matrix->CKTkluMODE)
     {
+        ng_klu_plan_free(&Matrix->SMPkluMatrix->KLUmatrixPlan);
         klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         klu_free_symbolic (&(Matrix->SMPkluMatrix->KLUmatrixSymbolic), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         free (Matrix->SMPkluMatrix->KLUmatrixAp) ;

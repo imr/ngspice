@@ -5,7 +5,8 @@ target_sources(ngspice_core PRIVATE
     klu_multiply.c
     klu_utils.c
     klu_compat.c
-    klusmp.c)
+    klusmp.c
+    ng_klu_parallel.c)
 
 target_sources(ngspice_klu_complex PRIVATE
     klu_multiply.c

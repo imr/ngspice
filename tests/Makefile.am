@@ -56,6 +56,6 @@ TESTS_ENVIRONMENT = \
 	$(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-	README bin .gitignore
+	README bin .gitignore klu/parallel
 
 MAINTAINERCLEANFILES = Makefile.in

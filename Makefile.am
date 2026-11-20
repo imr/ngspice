@@ -5,7 +5,7 @@ DIST_SUBDIRS = src man tests
 
 EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS INSTALL \
-		DEVICES INTERNALS NEWS README README.tcl README.optran\
+		DEVICES INTERNALS NEWS README README.tcl README.optran README.klu-parallel\
 		README.shared-xspice README.vdmos README_OSDI.md\
 		README_OSDI_howto README.cpl-gc README.utf8 \
 		examples m4 visualc Dockerfile \

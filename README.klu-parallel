@@ -1,0 +1,98 @@
+Experimental SIMD and parallel KLU refactor
+=========================================
+
+The optional real refactor path reuses KLU's initial factorization, pivots,
+block structure and U traversal. Within each L column, entries are sorted by
+row for vector access; dependency levels allow independent columns to run on
+OpenMP workers. Small levels are combined into serial stages. Initial
+factorization, complex factorization and triangular solves are not parallelized
+by this change. Circuit equations and simulation tolerances are unchanged.
+
+Build with the bundled KLU, for example in a directory outside the source:
+
+  /path/to/source/configure --with-x=no --with-readline=no \
+      --enable-klu --without-suitesparse --enable-openmp
+  make -j8
+
+Keep .option klu in the deck; before analyses in .control, set:
+
+  set klu_parallel
+  set num_threads=8
+
+The feature is off by default. A system SuiteSparse build always follows its
+existing refactor path, including when klu_parallel is set: its private storage
+is deliberately not interpreted by this prototype. Non-OpenMP bundled builds
+can use the serial optimized path. x86-64/GCC dispatches AVX-512/AVX2/scalar at
+runtime; other supported builds use scalar updates. Separate multiply/subtract
+instructions avoid introducing FMA in the evaluated GCC build. Do not use
+fast-math when checking arithmetic reproducibility.
+
+Normal refactor/solve accumulation order is retained under the tested compiler
+settings. Sorting L may change roundoff in transpose solves, so byte-identical
+transpose/adjoint results are not promised. Use fresh processes for baseline
+comparisons: unsetting the flag cannot undo in-memory L sorting.
+
+The plan is owned by the ngspice matrix wrapper, freed before its numeric
+object, and rebuilt when numeric/symbolic objects or requested threads change.
+Scratch is private per worker and capped at 512 MiB. Allocation failure or
+active nested OpenMP execution uses the original refactor. Zero/nonfinite block
+pivots trigger full recomputation through the original routine, preserving its
+singular status and halt policy without adding Gmin twice. A late allocation
+failure may leave sorted L columns for the original routine.
+
+Levels need >=4 columns and estimated work >=32768 for parallel execution.
+Matrices need estimated work >=100000 and a non-singleton block to use the
+fast path. These empirical thresholds do not guarantee a speedup; planning
+and synchronization can still cost more than they save. The summary counts
+workers that actually performed factor arithmetic, not just team size.
+
+Tests
+-----
+
+After an OpenMP bundled build, using a new output directory:
+
+  python3 tests/klu/parallel/run-klu-parallel.py \
+      --build /path/to/build --output /path/to/results
+
+The direct harness compares independent original and optimized numeric objects.
+48 configurations cover nonsymmetric/permuted BTF matrices, requested
+1/8/16/32 threads, scaling -1/0/1/2, changed coefficients and singular/recovery
+paths. Normal solutions must be byte-identical and have componentwise backward
+error <=1e-10. Transpose residuals are tested on well-scaled fixtures. The
+generated circuit suite compares 24 configurations, including real/complex/real
+analysis transitions and a matrix large enough to activate the plan. Its saved
+arrays and accepted/rejected timepoint counts must match. No PDK is needed.
+
+The high-dynamic-range fixtures also serve as diagnostics, not unconditional
+passing references: on the ngspice-47 prototype, disabling scaling produced
+~1.93e-7 normal backward error in both implementations despite identical
+answers. Scaled transpose gave ~2.06e-10 original / ~2.37e-10 optimized, both
+above the 1e-10 gate. The positive suite does not relax the gate to turn those
+results into passes; it uses well-scaled cases for those modes.
+
+klu_alloc_fault.c is linked only into an allocation-failure test with
+--wrap=malloc,--wrap=calloc and NG_KLU_ALLOC_TEST. NG_KLU_TEST_MAX_SIMD is a
+test-only compile override for scalar/AVX2 coverage. Neither is enabled in a
+normal executable. Sanitizer coverage refers to the changed KLU library and
+direct harness, not an entirely instrumented simulator.
+
+Performance context
+-------------------
+
+Before this pre-master-48 port, the same arithmetic/scheduling implementation
+was measured on a maintained ngspice-47 branch, GCC 11.4, Xeon 6982P-C/AVX-512.
+Three alternating-order complete-transient pairs per circuit used the same
+executable, eight requested threads and scientific settings; only this feature
+flag changed. Median paired analysis speedups were 1.114x for a 2304-node 2D
+RC network, 1.753x for a 4096-node 3D RC network and 1.418x for a SKY130 PEX
+opamp (915 MOS, 56344 R, 13618 C). A 4096-MOS model-dominated circuit was
+essentially unchanged. The opamp total-process speedup was 1.235x because
+~32 seconds of netlist loading was unaffected. All 12 pairs had identical
+saved arrays and timepoint counts. These are prototype-branch measurements,
+not a claim that this upstream port was measured at those exact speeds.
+
+The 2D case used one matrix worker, so its gain is from SIMD, not multicore
+scaling. The 3D and PEX cases used eight. This does not establish universal
+speedup or performance relative to Spectre. No proprietary solver source was
+used; KLU derivation and licensing remain covered by COPYING and the bundled
+SuiteSparse license files.

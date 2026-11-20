@@ -1655,6 +1655,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:"$(IntDir)libfftw
     <ClCompile Include="..\src\maths\fft\matlib.c" />
     <ClCompile Include="..\src\maths\KLU\klu_compat.c" />
     <ClCompile Include="..\src\maths\KLU\klusmp.c" />
+    <ClCompile Include="..\src\maths\KLU\ng_klu_parallel.c" />
     <ClCompile Include="..\src\maths\KLU\klu_multiply.c" />
     <ClCompile Include="..\src\maths\KLU\klu_utils.c" />
     <ClCompile Include="..\src\maths\KLU\SuiteSparse\klu.c" />
