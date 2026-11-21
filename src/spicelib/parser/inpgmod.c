@@ -118,8 +118,38 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 #ifdef OSDI
     /* osdi models don't accept their device type as an argument */
     bool is_osdi = false;
-    if (device->registry_entry){ 
-        INPgetNetTok(&line, &parm, 1); /* throw away osdi */
+    /* card of a model level bound to this module with osdi_bind */
+    const struct osdi_bind *bind = NULL;
+    const char *polarity = NULL;        /* value given to bind->polarity */
+    if (device->registry_entry){
+        /* osdi module name, or nmos/pmos/npn/pnp/d of a card bound with osdi_bind */
+        INPgetNetTok(&line, &parm, 1);
+        bool is_npn = strcmp(parm, "npn") == 0, is_pnp = strcmp(parm, "pnp") == 0;
+        bool is_n = strcmp(parm, "nmos") == 0 || strcmp(parm, "nsoi") == 0 || is_npn;
+        bool is_p = strcmp(parm, "pmos") == 0 || strcmp(parm, "psoi") == 0 || is_pnp;
+        const char *kind = (is_npn || is_pnp) ? "bjt" :
+                           (is_n || is_p) ? "mos" :
+                           strcmp(parm, "d") == 0 ? "dio" : NULL;
+        if (kind) {
+            bind = INPosdiBindForCard(kind, modtmp->INPmodLine->line);
+            if (bind && strcasecmp(bind->module, device->name) != 0)
+                bind = NULL;
+        }
+        if (bind && bind->polarity && (is_n || is_p)) {
+            IFparm *p = find_model_parameter(bind->polarity, device);
+            if (p) {
+                char *value = is_n ? bind->nval : bind->pval;
+                polarity = value;
+                error = ft_sim->setModelParm(ckt, modtmp->INPmodfast, p->id,
+                                             INPgetValue(ckt, &value, p->dataType, tab), NULL);
+                if (error)
+                    return error;
+            } else {
+                err = INPerrCat(err, tprintf("module %s has no parameter %s - %s ignored"
+                                             " (osdi_bind ... polarity=<par>|none)",
+                                             device->name, bind->polarity, parm));
+            }
+        }
         tfree(parm);
         is_osdi = true;
     }
@@ -131,6 +161,36 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             FREE(parm);
             continue;
         }
+
+#ifdef OSDI
+        if (bind) {
+            /* level selects the binding, it is not a parameter of the module;
+               nor is version, unless the module has this parameter */
+            if (strcmp(parm, "level") == 0 ||
+                (strcmp(parm, "version") == 0 && !find_model_parameter(parm, device))) {
+                char *value;
+                INPgetTok(&line, &value, 1);    /* a number or a string like "1.1" */
+                tfree(value);
+                FREE(parm);
+                continue;
+            }
+            /* the polarity of a bound card comes from nmos/pmos */
+            if (polarity && strcmp(parm, bind->polarity) == 0) {
+                double v = INPgetValue(ckt, &line, IF_REAL, tab)->rValue;
+                if (v != atof(polarity))
+                    err = INPerrCat(err, tprintf("%s=%g contradicts the model type - ignored",
+                                                 parm, v));
+                FREE(parm);
+                continue;
+            }
+            /* parameters of other simulators listed with 'osdi_bind ... ignore' */
+            if (wl_find(parm, bind->ignore)) {
+                INPgetValue(ckt, &line, IF_REAL, tab);
+                FREE(parm);
+                continue;
+            }
+        }
+#endif
 
         IFparm *p = find_model_parameter(parm, device);
 
@@ -367,7 +427,13 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
             modtmp->INPmodType != INPtypelook("BSIM4v7") &&
             modtmp->INPmodType != INPtypelook("HiSIM2") &&
             modtmp->INPmodType != INPtypelook("HiSIMHV1") &&
-            modtmp->INPmodType != INPtypelook("HiSIMHV2"))
+            modtmp->INPmodType != INPtypelook("HiSIMHV2")
+#ifdef OSDI
+            /* Verilog-A modules: bins by lmin, lmax, wmin, wmax of the card */
+            && !(modtmp->INPmodType >= 0 &&
+                 ft_sim->devices[modtmp->INPmodType]->registry_entry)
+#endif
+            )
         {
             continue;
         }

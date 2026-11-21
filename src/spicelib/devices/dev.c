@@ -627,6 +627,34 @@ static int osdi_add_device(int n, OsdiRegistryEntry *devs, const char *path) {
   return 0;
 }
 
+/* The device of OSDI module module (NULL: the only one) loaded from file
+ * path, or -1 if there is no such module, -2 if module is NULL and the file
+ * has several. Unlike a lookup by name this finds the module of this file
+ * also if a module of the same name was loaded before from another file. */
+int osdi_file_device(const char *path, const char *module) {
+  const char *first, *end;
+  int i, found = -1, n = 0;
+  if (osdi_file_descriptors(path, (const void **)&first, (const void **)&end))
+    return -1;
+  for (i = 0; i < DEVNUM; i++) {
+    const OsdiRegistryEntry *entry;
+    if (!DEVices[i] || !DEVices[i]->DEVpublic.registry_entry)
+      continue;
+    entry = DEVices[i]->DEVpublic.registry_entry;
+    if ((const char *)entry->descriptor < first ||
+        (const char *)entry->descriptor >= end)
+      continue;
+    if (module) {
+      if (strcasecmp(DEVices[i]->DEVpublic.name, module) == 0)
+        return i;
+    } else {
+      found = i;
+      n++;
+    }
+  }
+  return n > 1 ? -2 : found;
+}
+
 int load_osdi(const char *path) {
   OsdiObjectFile file = load_object_file(path);
   if (file.num_entries < 0) {

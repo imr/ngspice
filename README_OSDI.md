@@ -18,6 +18,94 @@ Example usage: `pre_osdi diode.osdi`
 If a relative path is provided to the `osdi` command in a netlist, it will resolve that path **relative to the netlist**, not relative to current working directory.
 This ensures that netlists can be simulated from any directory
 
+## Binding model levels to OSDI modules
+
+Model cards of commercial simulators select a compact model by its level
+(e.g. `.model nch nmos level=72` for BSIM-CMG). The command `osdi_bind`
+loads an `.osdi` file and lets such cards use its Verilog-A module, used
+by `M` (MOS), `Q` (bipolar) and `D` (diode) instances:
+
+    osdi_bind mos|bjt|dio <level> <file>.osdi[:<module>] [version=<v>] [has=<par>]
+                          [polarity=<par>[:<nval>:<pval>]|none]
+                          [alias=<name>:<ipar>,...] [ignore=<par>,<par>,...]
+    osdi_bind mos|bjt|dio <level> none [version=<v>] [has=<par>]
+                                                     remove the binding(s)
+    osdi_bind                                        list the bindings
+
+`osdi_bind` loads the file as the command `osdi` does (a file loaded
+before is not loaded again; relative paths are found as with `osdi`, e.g.
+via `NGSPICE_OSDI_DIR`). The module is the one of this file; a file with
+several modules needs `:<module>`, e.g. `dummy_modules.osdi:dummy_mos`.
+The module name need not match the file name. Example for `.spiceinit`:
+
+    osdi_bind mos 69 psp103.osdi
+    osdi_bind mos 69 psp103_nqs.osdi  has=swnqs
+    osdi_bind mos 69 psp104.osdi      version=104
+    osdi_bind mos 72 bsimcmg.osdi
+    osdi_bind mos 72 bsimcmg110.osdi  version=110 polarity=devtype:1:0
+    osdi_bind mos 79 ekv3.osdi        polarity=sign
+    osdi_bind bjt 6  bjt504.osdi
+    osdi_bind bjt 8  hicumL2.osdi
+    osdi_bind dio 6  juncap200.osdi   alias=area:ab
+    osdi_bind dio 7  diode_cmc.osdi
+
+The command `osdi` stays for `N` instances with native model cards
+(`.model nch bsimcmg_va ...`).
+
+Options:
+
+- `version=<v>` and `has=<par>`: a level may have several bindings. A
+  binding applies if the card's `version` starts with `<v>`, not followed
+  by a digit (`103` matches `103` and `103.3`, not `1030`); a number with
+  a decimal point matches this number only (`111.0` matches `111`, not
+  `111.5`). A version given as expression (`version='110'`) is compared
+  as its value. Further the card has to have parameter `<par>` (any
+  value). Of the bindings that apply, the one
+  with the most conditions is selected, of these the first given; a
+  binding without conditions is the default. Above, only the NQS module of
+  PSP103 knows `swnqs`.
+- `polarity=<par>` (mos, bjt): `nmos`/`npn` sets the module parameter
+  `<par>` to 1, `pmos`/`pnp` to -1; default `type`. Other values with
+  `polarity=<par>:<nval>:<pval>`, e.g. `devtype:1:0` for BSIM-CMG 110,
+  where `devtype` is 1 for NMOS and 0 for PMOS. A contradicting value on
+  the card is reported and ignored. `polarity=none`: the module has no polarity.
+- `alias=<name>:<ipar>,...`: on `M`, `Q` and `D` instances of a bound
+  card, the instance parameter `<name>` sets the module parameter `<ipar>`.
+  The unlabeled value of `D` and `Q` instances (`D1 a k dmod 2`) is the
+  parameter `area`, so `alias=area:ab` passes it to `ab`. Other instance
+  parameters are passed to the module unchanged.
+- `ignore=<par>,...`: card parameters of other simulators to skip, e.g.
+  `devtype` of BSIM-CMG 110 cards on the 111 module, which only knows
+  `type`.
+
+Names in `osdi_bind` (module after `:`, parameters, version) consist of letters,
+digits, `_`, `.` and `-`; values of `polarity=` are numbers. Other characters,
+e.g. brackets or operators, are rejected, quotes are removed.
+
+Terminals: `M` and `D` instances leave terminals that are not given
+unconnected, as `N` instances do. A `Q` instance ties a missing substrate
+(4th terminal) to ground, as with built-in models; further terminals, such
+as the thermal node, stay internal, so that self-heating acts as the model
+card requests (HICUM `flsh`, Mextram `bjt504t`).
+
+`R` and `C` instances are not bound: resistor and varactor modules with
+more than two terminals (r3_cmc, r2_et_cmc, mosvar) are used with `N`
+instances and native model cards (`.model rmod r3_cmc ...`), as in the
+IHP PDK.
+
+On a bound card, `level` selects the binding and is not passed to the
+module; nor is `version`, unless the module has this parameter. A bound
+level takes precedence over a built-in model of the same level, and a
+module may have the name of a built-in device (e.g. `bsim4`). Within a
+netlist use `pre_osdi_bind` in a `.control` section. `osdi_bind` without
+arguments lists the bindings in the syntax of the command.
+
+A binding keeps the module of its file. So two `.osdi` files with modules
+of the same name (e.g. two releases of a model compiled from sources with
+the same `module` name) can be bound to different levels or versions. A
+native card (`.model x <module> ...`) finds a module by its name, that is
+the one loaded first; ngspice warns when such a file is loaded.
+
 ## Build Instructions
 
 To compile NGSPICE with OSDI support ensure that the `--enable-predictor` and `--enable-osdi` flags are used.

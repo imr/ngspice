@@ -1,0 +1,15 @@
+* osdi_bind: a module named like a built-in device, here resistor like Resistor
+
+* resistor of dummy_modules.c conducts 5 mS
+.model diode_named_resistor d level=25
+
+v_diode_named_resistor diode_named_resistor 0 1
+d_diode_named_resistor diode_named_resistor 0 diode_named_resistor
+
+.control
+pre_osdi_bind dio 25 dummy_modules.osdi:resistor
+op
+print i(v_diode_named_resistor)
+.endc
+
+.end

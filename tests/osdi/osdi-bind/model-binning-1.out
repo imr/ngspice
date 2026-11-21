@@ -1,0 +1,14 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: an m instance selects the bin of a bound card by l and w
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+i(v_short) = -1.00000e-03
+i(v_long) = -2.00000e-03
+Note: Simulation executed from .control section 

@@ -1508,6 +1508,8 @@ AC_CONFIG_FILES([Makefile
                  tests/mes/Makefile
                  tests/mesa/Makefile
                  tests/mos6/Makefile
+                 tests/osdi/Makefile
+                 tests/osdi/osdi-bind/Makefile
                  tests/polezero/Makefile
                  tests/regression/Makefile
                  tests/regression/subckt-processing/Makefile

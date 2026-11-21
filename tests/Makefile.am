@@ -7,6 +7,10 @@ if XSPICE_WANTED
 SUBDIRS += xspice
 endif
 
+if OSDI_WANTED
+SUBDIRS += osdi
+endif
+
 if SHORT_CHECK_WANTED
 SUBDIRS +=		\
 	bsim3		\
@@ -42,6 +46,7 @@ DIST_SUBDIRS =		\
 	mes		\
 	mesa		\
 	mos6		\
+	osdi		\
 	polezero	\
 	regression	\
 	resistance	\

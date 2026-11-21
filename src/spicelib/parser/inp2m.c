@@ -36,6 +36,12 @@ model_numnodes(int type)
         return 5;
     }
 
+#ifdef OSDI
+    /* Verilog-A module, e.g. bound to a MOS level with osdi_bind */
+    if (ft_sim->devices[type]->registry_entry)
+        return *ft_sim->devices[type]->terms;
+#endif
+
     return 4;
 }
 
@@ -134,6 +140,11 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
 #ifdef CIDER
         thismodel->INPmodType != INPtypelook("NUMOS") &&
 #endif
+#ifdef OSDI
+        /* OSDI module, unless a card bound to another device kind */
+        !(ft_sim->devices[thismodel->INPmodType]->registry_entry &&
+          INPosdiCardFits('m', thismodel->INPmodLine->line)) &&
+#endif
         thismodel->INPmodType != INPtypelook("HiSIM2") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV1") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV2") &&
@@ -153,7 +164,21 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         else
             GENnode(fast)[i] = -1;
 
+#ifdef OSDI
+    bool is_osdi = ft_sim->devices[thismodel->INPmodType]->registry_entry != NULL;
+#endif
+#ifdef OSDI
+    /* instance parameter names given with 'osdi_bind ... alias=' */
+    const struct osdi_bind *bind =
+        is_osdi ? INPosdiBindOfCard(thismodel->INPmodLine->line) : NULL;
+    char *aliased = INPosdiAliasLine(bind, line);
+    if (aliased)
+        line = aliased;
+#endif
     PARSECALL ((&line, ckt, type, fast, &leadval, &waslead, tab));
+#ifdef OSDI
+    tfree(aliased);
+#endif
     if (waslead)
         LITERR (" error:  no unlabeled parameter permitted on mosfet\n");
 }

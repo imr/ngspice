@@ -5338,27 +5338,28 @@ int get_number_terminals(char *c)
             if (newcompat.ps && !search_plain_identifier(c, "thermal"))
                 return 2;
 
-            /* D<name> <node> ... <node> <model> [<area>] ...
-               The nodes and the model end before the first token from the
-               fifth on that is "off", "thermal", contains "=", or is the
-               unlabeled area: a value (number or {expression}) after a
-               token that is not a value, the model name. A value after a
-               value is a numeric node name (OSDI diode with more nodes). */
+            /* D<name> <node> <node> [<node> ...] <model> [<area>] ...
+               As for q: the positional tokens end before the first token
+               from the fifth on that is "off", "thermal" or contains "=".
+               The last positional token is the model, or the unlabeled
+               area if it is a value (number or {expression}); the model
+               is then the token before it. Node names may be numbers. */
             {
-                bool prev_is_value = FALSE;
+                bool last_is_value = FALSE;
                 for (i = 0; (i < 10) && (*c != '\0'); ++i) {
                     inst = gettok_instance(&c);
-                    bool inst_is_value = is_value_token(inst);
                     if (i > 3 && (search_plain_identifier(inst, "off") ||
                                   search_plain_identifier(inst, "thermal") ||
-                                  strchr(inst, '=') ||
-                                  (inst_is_value && !prev_is_value))) {
+                                  strchr(inst, '='))) {
                         txfree(inst);
                         break;
                     }
-                    prev_is_value = inst_is_value;
+                    last_is_value = is_value_token(inst);
                     txfree(inst);
                 }
+                /* i positional tokens: name, nodes, model [, area] */
+                if (last_is_value && i > 4)
+                    return i - 3;
             }
             return i - 2;
             break;
@@ -9933,7 +9934,17 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
                 struct modellist *m =
                         inp_find_model(card->level, elem_model_name);
                 if (m) {
-                    if (*curr_line != m->elemb && !(*curr_line == 'n' && m->elemb == 'a'))
+                    /* Type 'a' may also be an OSDI module (loaded later by
+                       pre_osdi), usable by N, M, Q and D instances. N also
+                       accepts a MOS, bipolar or diode card bound to an OSDI
+                       module by osdi_bind. */
+                    bool osdi_ok = (m->elemb == 'a' &&
+                                    (*curr_line == 'n' || *curr_line == 'm' ||
+                                     *curr_line == 'q' || *curr_line == 'd')) ||
+                                   (*curr_line == 'n' &&
+                                    (m->elemb == 'm' || m->elemb == 'q' ||
+                                     m->elemb == 'd'));
+                    if (*curr_line != m->elemb && !osdi_ok)
                         fprintf(stderr,
                                 "warning, model type mismatch in line\n    "
                                 "%s\n",

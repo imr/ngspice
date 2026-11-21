@@ -6,7 +6,492 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
+#include "ngspice/fteext.h"
+#include "ngspice/wordlist.h"
+#include "ngspice/stringutil.h"
 #include "inpxx.h"
+
+#ifdef OSDI
+/*--------------------------------------------------------------
+ * Bindings of model levels to Verilog-A modules loaded with osdi,
+ * set at runtime by the command osdi_bind (e.g. in .spiceinit):
+ *
+ *   osdi_bind mos|bjt|dio <level> <file>.osdi[:<module>] [version=<v>] [has=<par>]
+ *                         [polarity=<par>[:<nval>:<pval>]|none]
+ *                         [alias=<name>:<ipar>,...] [ignore=<par>,<par>,...]
+ *
+ * osdi_bind loads the .osdi file (as the command osdi does) and binds the
+ * level to its module; :<module> selects one of several modules of a file.
+ * The binding keeps the device of this file, also if a module of the same
+ * name was loaded from another file.
+ * mos: a card '.model <name> nmos|pmos level=<level> ...' creates a model
+ *   of the OSDI module. nmos (nsoi) sets the polarity parameter (default
+ *   type) to <nval> (default 1), pmos (psoi) to <pval> (default -1);
+ *   polarity=none: the module has none.
+ * bjt: likewise for '.model <name> npn|pnp level=<level> ...' and Q
+ *   instances; npn sets the polarity parameter to 1, pnp to -1.
+ * dio: a card '.model <name> d level=<level> ...' creates a model of the
+ *   OSDI module.
+ * alias=<name>:<ipar>,...: on M, Q and D instances of a bound card, the
+ *   instance parameter <name> sets the module parameter <ipar>. The
+ *   unlabeled value of D and Q instances is the parameter area.
+ * Card parameters in the ignore list are skipped. The parameter level of
+ * a bound card selects the binding and is not passed to the module; nor is
+ * version, unless the module has this parameter.
+ * A level may have several bindings. A binding applies to a card if the card
+ * has parameter <par> (has=<par>, any value) and if the card's version
+ * starts with <v> followed by no digit (version=<v>). Of the bindings that
+ * apply, the one with the most conditions is selected, of these the first
+ * given; a binding without conditions is the default, e.g.
+ *   osdi_bind mos 69 psp103.osdi
+ *   osdi_bind mos 69 psp103_nqs.osdi has=swnqs
+ *   osdi_bind mos 69 psp104.osdi     version=104
+ *-------------------------------------------------------------*/
+
+static struct osdi_bind *osdi_binds = NULL;
+
+
+static void
+osdi_bind_free(struct osdi_bind *b)
+{
+    tfree(b->kind);
+    tfree(b->file);
+    tfree(b->module);
+    tfree(b->has);
+    tfree(b->version);
+    tfree(b->nval);
+    tfree(b->pval);
+    wl_free(b->alias);
+    tfree(b->polarity);
+    wl_free(b->ignore);
+    tfree(b);
+}
+
+
+static char *
+lower_copy(const char *s)
+{
+    char *t = copy(s), *c;
+    for (c = t; *c; c++)
+        *c = tolower_c(*c);
+    return t;
+}
+
+
+/* both NULL, or equal strings regardless of case */
+static bool
+same_has(const char *a, const char *b)
+{
+    return (!a && !b) || (a && b && strcasecmp(a, b) == 0);
+}
+
+
+/* Does the rest of a model card line (after the model type) contain
+   parameter par (any value)? */
+static bool
+card_has_param(const char *line, const char *par)
+{
+    char *tok;
+    bool found = FALSE;
+    while (*line && !found) {
+        INPgetTok((char **) &line, &tok, 1);
+        found = strcmp(tok, par) == 0;
+        tfree(tok);
+    }
+    return found;
+}
+
+
+static char *version_normalize(char *value);
+
+/* The value of parameter version in the rest of a model card line (after
+   the model type), without quotes, numbers normalized, or NULL. Free it
+   with tfree(). */
+static char *
+card_version(const char *line)
+{
+    char *tok, *value = NULL;
+    while (*line && !value) {
+        INPgetTok((char **) &line, &tok, 1);
+        if (strcmp(tok, "version") == 0 && *line) {
+            INPgetTok((char **) &line, &value, 1);
+            /* strip quotes */
+            char *v = value, *d = value;
+            for (; *v; v++)
+                if (*v != '"' && *v != '\'')
+                    *d++ = *v;
+            *d = '\0';
+            value = version_normalize(value);
+        }
+        tfree(tok);
+    }
+    return value;
+}
+
+
+/* A version that is a number in another notation, as numparam writes
+   an evaluated '110' (1.100000000000000e+02), is written as the
+   shortest number: 110, 103.3. Takes ownership of value. */
+static char *
+version_normalize(char *value)
+{
+    char *end;
+    double d = strtod(value, &end);
+    if (end != value && *end == '\0') {
+        char *num = tprintf("%.15g", d);
+        tfree(value);
+        return num;
+    }
+    return value;
+}
+
+
+/* Does the version of the card (normalized by card_version()) match the
+   version of the binding?
+   A binding with a decimal point that is a number (version=1.0, 111.5)
+   matches the same number only: 1.0 matches 1 and 1.00, not 1.5.
+   Else the card version has to start with it, not followed by a digit:
+   "103.3" and "103" match "103", "1030" does not; "4.8.2" matches "4.8". */
+static bool
+version_matches(const char *version, const char *prefix)
+{
+    char *end;
+    double b, c;
+    if (!version)
+        return FALSE;
+    b = strtod(prefix, &end);
+    if (end != prefix && *end == '\0' && strchr(prefix, '.')) {
+        c = strtod(version, &end);
+        if (end != version && *end == '\0')
+            return c == b;
+    }
+    size_t n = strlen(prefix);
+    return strncasecmp(version, prefix, n) == 0 && !isdigit_c(version[n]);
+}
+
+
+/* The binding of kind and level that applies to the model card line (after
+   the model type): of the bindings whose conditions (has=, version=) hold,
+   the one with the most conditions, of these the first; a binding without
+   conditions is the default. NULL if none applies. *bound tells if the
+   level has any binding. */
+static const struct osdi_bind *
+osdi_bind_select(const char *kind, int level, const char *line, bool *bound)
+{
+    struct osdi_bind *b;
+    const struct osdi_bind *best = NULL;
+    int best_score = -1;
+    char *version = NULL;
+    bool version_read = FALSE;
+    *bound = FALSE;
+    for (b = osdi_binds; b; b = b->next) {
+        if (b->level != level || strcmp(b->kind, kind) != 0)
+            continue;
+        *bound = TRUE;
+        int score = 0;
+        if (b->has) {
+            if (!card_has_param(line, b->has))
+                continue;
+            score++;
+        }
+        if (b->version) {
+            if (!version_read) {
+                version = card_version(line);
+                version_read = TRUE;
+            }
+            if (!version_matches(version, b->version))
+                continue;
+            score++;
+        }
+        if (score > best_score) {
+            best = b;
+            best_score = score;
+        }
+    }
+    tfree(version);
+    return best;
+}
+
+
+/* May an instance with letter m, q or d use the OSDI model of this card
+   (the whole line '.model <name> <type> ...')? A card bound by type and
+   level (nmos/pmos/nsoi/psoi, npn/pnp, d) only fits the letter of its
+   kind; a card with the module name as type fits any letter. */
+bool
+INPosdiCardFits(char letter, const char *card)
+{
+    char *tok;
+    bool fits = TRUE;
+    /* skip .model and the model name, get the type */
+    for (int i = 0; i < 3 && *card; i++) {
+        INPgetTok((char **) &card, &tok, 1);
+        if (i == 2) {
+            if (!strcmp(tok, "nmos") || !strcmp(tok, "pmos") ||
+                !strcmp(tok, "nsoi") || !strcmp(tok, "psoi"))
+                fits = (letter == 'm');
+            else if (!strcmp(tok, "npn") || !strcmp(tok, "pnp"))
+                fits = (letter == 'q');
+            else if (!strcmp(tok, "d"))
+                fits = (letter == 'd');
+        }
+        tfree(tok);
+    }
+    return fits;
+}
+
+
+/* The binding of a model card bound by type and level (the whole line
+   '.model <name> <type> ...'), or NULL; NULL also for a card with a module
+   name as type. */
+const struct osdi_bind *
+INPosdiBindOfCard(const char *card)
+{
+    const char *kind = NULL, *p = card;
+    char *tok;
+    /* skip .model and the model name, get the type */
+    for (int i = 0; i < 3 && *p; i++) {
+        INPgetTok((char **) &p, &tok, 1);
+        if (i == 2) {
+            if (!strcmp(tok, "nmos") || !strcmp(tok, "pmos") ||
+                !strcmp(tok, "nsoi") || !strcmp(tok, "psoi"))
+                kind = "mos";
+            else if (!strcmp(tok, "npn") || !strcmp(tok, "pnp"))
+                kind = "bjt";
+            else if (!strcmp(tok, "d"))
+                kind = "dio";
+        }
+        tfree(tok);
+    }
+    return kind ? INPosdiBindForCard(kind, card) : NULL;
+}
+
+
+/* The module parameter that alias= gives for instance parameter name,
+   or name itself */
+const char *
+INPosdiAlias(const struct osdi_bind *b, const char *name)
+{
+    wordlist *wl;
+    if (b)
+        for (wl = b->alias; wl && wl->wl_next; wl = wl->wl_next->wl_next)
+            if (strcasecmp(wl->wl_word, name) == 0)
+                return wl->wl_next->wl_word;
+    return name;
+}
+
+
+/* The instance line rest (parameters after the model name) with the names
+   of alias= replaced: a name directly before '=' (blanks allowed), outside
+   of {...} and quotes. NULL if the binding has no alias. */
+char *
+INPosdiAliasLine(const struct osdi_bind *b, const char *line)
+{
+    if (!b || !b->alias)
+        return NULL;
+    size_t cap = strlen(line) * 2 + 64, n = 0;
+    char *out = TMALLOC(char, cap);
+    int depth = 0;
+    char quote = '\0';
+    const char *p = line;
+    while (*p) {
+        if (quote) {
+            if (*p == quote)
+                quote = '\0';
+            out[n++] = *p++;
+        } else if (*p == '"' || *p == '\'') {
+            quote = *p;
+            out[n++] = *p++;
+        } else if (*p == '{') {
+            depth++;
+            out[n++] = *p++;
+        } else if (*p == '}') {
+            if (depth > 0)
+                depth--;
+            out[n++] = *p++;
+        } else if (depth == 0 && (isalpha_c(*p) || *p == '_') &&
+                   (p == line || !(isalnum_c(p[-1]) || p[-1] == '_' || p[-1] == '.'))) {
+            /* an identifier: replace it if '=' follows and it has an alias */
+            const char *start = p;
+            while (isalnum_c(*p) || *p == '_')
+                p++;
+            const char *q = p;
+            while (*q == ' ' || *q == '\t')
+                q++;
+            const char *name = NULL;
+            if (*q == '=' && q[1] != '=') {
+                char *ident = copy_substring(start, p);
+                const char *to = INPosdiAlias(b, ident);
+                if (to != ident)
+                    name = to;
+                tfree(ident);
+            }
+            const char *text = name ? name : start;
+            size_t len = name ? strlen(name) : (size_t) (p - start);
+            if (n + len + 16 >= cap) {
+                cap = 2 * cap + len;
+                out = TREALLOC(char, out, cap);
+            }
+            memcpy(out + n, text, len);
+            n += len;
+        } else {
+            out[n++] = *p++;
+        }
+        if (n + 16 >= cap) {
+            cap *= 2;
+            out = TREALLOC(char, out, cap);
+        }
+    }
+    out[n] = '\0';
+    return out;
+}
+
+
+/* The binding of kind that applies to the model card (the whole line
+   '.model <name> <type> ...'), or NULL. The same choice as in INPdomodel,
+   so that a module bound twice to a level, with and without has=, gets
+   the options of the binding that the card selected. */
+const struct osdi_bind *
+INPosdiBindForCard(const char *kind, const char *card)
+{
+    int level;
+    bool bound;
+    char *tok, *lev_err = INPfindLev((char *) card, &level);
+    tfree(lev_err);
+    /* skip .model, model name and type */
+    for (int i = 0; i < 3 && *card; i++) {
+        INPgetTok((char **) &card, &tok, 1);
+        tfree(tok);
+    }
+    return osdi_bind_select(kind, level, card, &bound);
+}
+
+
+/* Remove the bindings of kind and level, all of them if all is set,
+   else the one with has=<has> and version=<version> (either may be NULL).
+   Returns the number of bindings removed. */
+int
+INPosdiBindRemove(const char *kind, int level, const char *has,
+                  const char *version, int all)
+{
+    struct osdi_bind **pb = &osdi_binds;
+    int n = 0;
+    while (*pb) {
+        struct osdi_bind *b = *pb;
+        if (b->level == level && strcmp(b->kind, kind) == 0 &&
+            (all || (same_has(b->has, has) && same_has(b->version, version)))) {
+            *pb = b->next;
+            osdi_bind_free(b);
+            n++;
+        } else {
+            pb = &b->next;
+        }
+    }
+    return n;
+}
+
+
+/* Add a binding, replacing an existing one of the same kind, level, has=
+   and version=. has, version, polarity, nval and pval may be NULL.
+   Takes ownership of alias and ignore. Returns 1 if a binding was replaced. */
+int
+INPosdiBindAdd(const char *kind, int level, const char *file,
+               const char *module, int type, const char *has, const char *version,
+               const char *polarity, const char *nval, const char *pval,
+               wordlist *alias, wordlist *ignore)
+{
+    wordlist *wl;
+    char *lhas = has ? lower_copy(has) : NULL;
+    int replaced = INPosdiBindRemove(kind, level, lhas, version, 0) > 0;
+    struct osdi_bind *b = TMALLOC(struct osdi_bind, 1);
+
+    b->kind = lower_copy(kind);
+    b->level = level;
+    b->file = copy(file);
+    b->module = lower_copy(module);
+    b->type = type;
+    b->has = lhas;
+    b->version = version ? copy(version) : NULL;
+    b->nval = copy(nval ? nval : "1");
+    b->pval = copy(pval ? pval : "-1");
+    for (wl = alias; wl; wl = wl->wl_next)
+        for (char *c = wl->wl_word; *c; c++)
+            *c = tolower_c(*c);
+    b->alias = alias;
+    b->polarity = polarity ? lower_copy(polarity) : NULL;
+    for (wl = ignore; wl; wl = wl->wl_next)
+        for (char *c = wl->wl_word; *c; c++)
+            *c = tolower_c(*c);
+    b->ignore = ignore;
+
+    /* keep the list sorted by kind and level, in order of input */
+    struct osdi_bind **pb = &osdi_binds;
+    while (*pb && (strcmp((*pb)->kind, b->kind) < 0 ||
+                   (strcmp((*pb)->kind, b->kind) == 0 && (*pb)->level <= level)))
+        pb = &(*pb)->next;
+    b->next = *pb;
+    *pb = b;
+
+    return replaced;
+}
+
+
+/* List the bindings in the syntax of the command osdi_bind */
+void
+INPosdiBindPrint(FILE *fp)
+{
+    struct osdi_bind *b;
+    if (!osdi_binds) {
+        fprintf(fp, "No model levels are bound to OSDI modules.\n");
+        return;
+    }
+    for (b = osdi_binds; b; b = b->next) {
+        wordlist *wl;
+        fprintf(fp, "osdi_bind %s %d %s", b->kind, b->level, b->file);
+        if (b->version)
+            fprintf(fp, " version=%s", b->version);
+        if (b->has)
+            fprintf(fp, " has=%s", b->has);
+        if (strcmp(b->kind, "dio") != 0) {
+            if (!b->polarity)
+                fprintf(fp, " polarity=none");
+            else if (strcmp(b->nval, "1") != 0 || strcmp(b->pval, "-1") != 0)
+                fprintf(fp, " polarity=%s:%s:%s", b->polarity, b->nval, b->pval);
+            else if (strcmp(b->polarity, "type") != 0)
+                fprintf(fp, " polarity=%s", b->polarity);
+        }
+        for (wl = b->alias; wl && wl->wl_next; wl = wl->wl_next->wl_next)
+            fprintf(fp, "%s%s:%s", wl == b->alias ? " alias=" : ",",
+                    wl->wl_word, wl->wl_next->wl_word);
+        for (wl = b->ignore; wl; wl = wl->wl_next)
+            fprintf(fp, "%s%s", wl == b->ignore ? " ignore=" : ",", wl->wl_word);
+        fprintf(fp, "\n");
+    }
+}
+
+
+/* If level of kind is bound, set *type to the OSDI device selected for the
+   model card line (or -1 with an error message in *err) and return 1.
+   Return 0 if the level is not bound. */
+static int
+osdi_bind_type(const char *kind, int level, const char *line, int *type, char **err)
+{
+    bool bound;
+    const struct osdi_bind *b = osdi_bind_select(kind, level, line, &bound);
+    if (!bound)
+        return 0;
+
+    if (!b) {
+        *err = INPerrCat(*err, tprintf(
+            "%s level %d: no osdi_bind applies to this card (all have version= or has=)\n",
+            kind, level));
+        *type = -1;
+        return 1;
+    }
+
+    *type = b->type;
+    return 1;
+}
+#endif
 
 /*--------------------------------------------------------------
  * This fcn takes the model card & examines it.  Depending upon
@@ -45,6 +530,10 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
     /*  -----  Check if model is a BJT --------- */
     if (strcmp(type_name, "npn") == 0 || strcmp(type_name, "pnp") == 0) {
 			err = INPfindLev(line,&lev);
+#ifdef OSDI
+			/* a level bound with osdi_bind takes precedence over a built-in model */
+			if (!osdi_bind_type("bjt", lev, line, &type, &err))
+#endif
 			switch(lev) {
 				case 0:
 				case 1:
@@ -74,11 +563,20 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 
     /*  --------  Check if model is a diode --------- */
     else if (strcmp(type_name, "d") == 0) {
-			type = INPtypelook("Diode");
-			if (type < 0) {
-			    err =
-				INPmkTemp
-				("Device type Diode not available in this binary\n");
+#ifdef OSDI
+			/* the built-in diode reads level itself; a level bound
+			   with osdi_bind selects a Verilog-A module */
+			char *lev_err = INPfindLev(line, &lev);
+			tfree(lev_err);
+			if (!osdi_bind_type("dio", lev, line, &type, &err))
+#endif
+			{
+			    type = INPtypelook("Diode");
+			    if (type < 0) {
+				err =
+				    INPmkTemp
+				    ("Device type Diode not available in this binary\n");
+			    }
 			}
 			INPmakeMod(modname, type, image);
     } /*   else if (strcmp(typename, "d") == 0) {  */
@@ -203,6 +701,10 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 	       || (strcmp(type_name, "nsoi") == 0)
 	       || (strcmp(type_name, "psoi") == 0)) {
 			err = INPfindLev(line, &lev);
+#ifdef OSDI
+			/* a level bound with osdi_bind takes precedence over a built-in model */
+			if (!osdi_bind_type("mos", lev, line, &type, &err))
+#endif
 			switch (lev) {
 			case 0:
 			case 1:

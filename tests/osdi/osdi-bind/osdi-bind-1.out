@@ -1,0 +1,34 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: model levels bound to the osdi modules of dummy_modules.c
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+i(v_nmos_bound) = -1.00000e-03
+i(v_nsoi_bound) = -1.00000e-03
+i(v_psoi_bound) = 1.000000e-03
+i(v_nmos_has_nqs) = -2.00000e-03
+i(v_pmos_type_contradicts) = 1.000000e-03
+i(v_pmos_type_agrees) = 1.000000e-03
+i(v_nmos_polarity_none) = 1.000000e-03
+i(v_pmos_same_module_has_nqs) = -1.00000e-03
+i(v_pmos_polarity_sign) = -1.00000e-03
+i(v_nmos_ignore) = -1.00000e-03
+i(v_nmos_builtin_level) = -1.00000e-03
+i(v_pnp_four_nodes) = 3.000000e-03
+i(v_npn_area) = -6.00000e-03
+i(v_npn_builtin) = -2.00020e-12
+i(v_diode_area_r) = -1.00000e-02
+i(v_diode_area) = -8.00000e-03
+i(v_diode_builtin) = -3.70559e-04
+i(v_module_card_on_q) = -3.00000e-03
+i(v_module_card_on_d) = -8.00000e-03
+i(v_mos_card_on_n) = -1.00000e-03
+i(v_bjt_card_on_n) = -3.00000e-03
+i(v_diode_card_on_n) = -4.00000e-03
+Note: Simulation executed from .control section 

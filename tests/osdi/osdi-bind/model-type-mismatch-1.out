@@ -1,0 +1,30 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: an m, q or d instance rejects a bound card of another device kind
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+
+Note: No compatibility mode selected!
+
+
+Circuit: * q_nmos_card
+
+
+Note: No compatibility mode selected!
+
+
+Circuit: * m_npn_card
+
+
+Note: No compatibility mode selected!
+
+
+Circuit: * d_nmos_card
+
+Note: Simulation executed from .control section 

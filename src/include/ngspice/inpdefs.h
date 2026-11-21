@@ -157,6 +157,16 @@ int INPtermInsert(CKTcircuit *, char **, INPtables *, CKTnode **);
 int INPtermSearch(CKTcircuit*, char**, INPtables*, CKTnode**);
 int INPmkTerm(CKTcircuit *, char **, INPtables *, CKTnode **);
 int INPtypelook(char *);
+#ifdef OSDI
+/* binding of model levels to OSDI modules, command osdi_bind */
+int INPosdiBindAdd(const char *kind, int level, const char *file,
+                   const char *module, int type, const char *has, const char *version,
+                   const char *polarity, const char *nval, const char *pval,
+                   struct wordlist *alias, struct wordlist *ignore);
+int INPosdiBindRemove(const char *kind, int level, const char *has,
+                      const char *version, int all);
+void INPosdiBindPrint(FILE *fp);
+#endif
 int INP2dot(CKTcircuit *, INPtables *, struct card *, TSKtask *, CKTnode *);
 INPtables *INPtabInit(int);
 void INPkillMods(void);

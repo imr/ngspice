@@ -1,6 +1,6 @@
 *.test
 *.log
-*.out
+/bsim4/bsim4.out
 *.vcd
 
 ngspiceCkt

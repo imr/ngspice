@@ -35,6 +35,30 @@ void INP2W(CKTcircuit *ckt, INPtables *tab, struct card *current);
 void INP2Y(CKTcircuit *ckt, INPtables *tab, struct card *current);
 void INP2Z(CKTcircuit *ckt, INPtables *tab, struct card *current);
 
+#ifdef OSDI
+/* inpdomod.c: model level bound to an OSDI module by command osdi_bind */
+struct osdi_bind {
+    char *kind;         /* "mos" or "dio" */
+    int level;
+    char *file;         /* .osdi file as given, with :<module> if given */
+    char *module;       /* OSDI module name */
+    int type;           /* its device, from this file */
+    char *has;          /* selected if the card has this parameter, or NULL */
+    char *version;      /* selected if the card's version starts so, or NULL */
+    struct wordlist *alias;    /* instance parameter names: from, to, from, to, ... */
+    char *polarity;     /* set by nmos/npn to nval, by pmos/pnp to pval, or NULL */
+    char *nval, *pval;  /* default "1" and "-1" */
+    struct wordlist *ignore;   /* card parameters to skip */
+    struct osdi_bind *next;
+};
+
+const struct osdi_bind *INPosdiBindForCard(const char *kind, const char *card);
+bool INPosdiCardFits(char letter, const char *card);
+const struct osdi_bind *INPosdiBindOfCard(const char *card);
+const char *INPosdiAlias(const struct osdi_bind *b, const char *name);
+char *INPosdiAliasLine(const struct osdi_bind *b, const char *line);
+#endif
+
 
 /* ptfuncs.c */
 

@@ -299,6 +299,10 @@ struct comm spcp_coms[] = {
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       NULL,
       "library library ... : Loads a osdi library." } ,
+    { "osdi_bind", com_osdi_bind, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 0, LOTS,
+      NULL,
+      "[mos|bjt|dio level file.osdi[:module] [version=v] [has=par] [polarity=par[:n:p]|none] [alias=name:ipar,...] [ignore=par,...]] : Load the .osdi file and bind a model level to its module. Use as `pre_osdi_bind` in .control." } ,
 #endif
     { "snp", com_pre_snp, FALSE, TRUE,          /* Enhancement-200 (use as `pre_snp`) */
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,

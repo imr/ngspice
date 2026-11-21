@@ -1,0 +1,19 @@
+* osdi_bind: none and a replaced binding with version=
+*
+* The messages ("mos level 72 version=111 was not bound", "replaced the
+* binding of mos level 72 version=110") are Warning and Note lines, which
+* the test runners drop; without shell commands (not on Windows cmd) the
+* test checks the bindings that remain: none version=111 removes nothing,
+* the second version=110 replaces the first.
+
+v1 a 0 1
+
+.control
+osdi_bind mos 72 dummy_modules.osdi:dummy_mos version=110
+osdi_bind mos 72 none version=111
+osdi_bind mos 72 dummy_modules.osdi:dummy_mos_alternate version=110
+osdi_bind
+op
+.endc
+
+.end

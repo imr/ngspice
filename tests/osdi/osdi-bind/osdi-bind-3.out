@@ -1,0 +1,21 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * osdi_bind: remaining command forms and instance errors
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 1
+Note: osdi_bind: replaced the binding of mos level 94 has=nqs
+
+Note: No compatibility mode selected!
+
+
+Circuit: * instance errors
+
+Warning -- Version not specified correct on line "level=54 version="""
+Setting version to 'default'.
+Note: Simulation executed from .control section 
