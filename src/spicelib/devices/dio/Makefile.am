@@ -15,6 +15,7 @@ libdio_la_SOURCES =	\
 	dioinit.c	\
 	dioinit.h	\
 	dioitf.h	\
+	diojc2.c	\
 	dioload.c	\
 	diomask.c	\
 	diompar.c	\

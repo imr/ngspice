@@ -28,6 +28,13 @@ DIOsSetup(SENstruct *info, GENmodel *inModel)
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
 
+        if (model->DIOlevel == 6) {
+            SPfrontEnd->IFerrorf(ERR_FATAL,
+                "%s: sensitivity analysis is not available for diode level 6 (JUNCAP2).",
+                model->DIOmodName);
+            return(E_BADPARM);
+        }
+
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
                 here=DIOnextInstance(here)) {

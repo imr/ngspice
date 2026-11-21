@@ -82,6 +82,18 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->DIOwidthPoly = value->rValue;
             here->DIOwidthPolyGiven = TRUE;
             break;
+        case DIO_PGATE:
+            here->DIOpgate = value->rValue;
+            here->DIOpgateGiven = TRUE;
+            break;
+        case DIO_JC2_IFACTOR:
+            here->DIOjc2ifactor = value->rValue;
+            here->DIOjc2ifactorGiven = TRUE;
+            break;
+        case DIO_JC2_CFACTOR:
+            here->DIOjc2cfactor = value->rValue;
+            here->DIOjc2cfactorGiven = TRUE;
+            break;
 
         default:
             return(E_BADPARM);

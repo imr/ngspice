@@ -11,6 +11,7 @@ Modified by Paolo Nenzi 2003, Dietmar Warning 2012 and Arpad Buermen 2025
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
+#include "ngspice/juncap2.h"
 
             /* data structures used to describe diodes */
 #define VOLT_TEMP_TOL_FACTOR 1e4 /* Needed in load bypass section */
@@ -154,6 +155,17 @@ typedef struct sDIOinstance {
     double DIOlengthPoly;    /* Length of polysilicon capacitor (level=3) */
     double DIOwidthMetal;    /* Width of metal capacitor (level=3) */
     double DIOwidthPoly;     /* Width of polysilicon capacitor (level=3) */
+
+    /* JUNCAP2 (level=6) */
+    double DIOpgate;         /* gate-edge length LG [m] */
+    double DIOjc2ab, DIOjc2ls, DIOjc2lg; /* effective (scaled) AB, LS, LG */
+    double DIOjc2ifactor;    /* current multiplier */
+    double DIOjc2cfactor;    /* capacitance multiplier */
+    unsigned DIOpgateGiven : 1;
+    unsigned DIOjc2ifactorGiven : 1;
+    unsigned DIOjc2cfactorGiven : 1;
+    JC2tdata DIOjc2td;       /* temperature dependent values */
+    JC2inst DIOjc2i;         /* geometry dependent values */
 
     double DIOinitCond;      /* initial condition */
     double DIOtemp;          /* temperature of the instance */
@@ -486,6 +498,13 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOpolyMaskOffset;  /* Masking and etching effects in polysilicon (level=3) */
     double DIOmaskOffset;      /* Masking and etching effects (level=3) */
 
+    /* JUNCAP2 (level=6) */
+    JC2model DIOjc2;
+    double DIOjc2type;         /* 1: p-n (anode p), -1: n-p */
+    double DIOjc2dta;          /* temperature offset [K] */
+    unsigned DIOjc2typeGiven : 1;
+    unsigned DIOjc2dtaGiven : 1;
+
 } DIOmodel;
 
 /* device parameters */
@@ -519,6 +538,9 @@ enum {
     DIO_LP,
     DIO_WM,
     DIO_WP,
+    DIO_PGATE,
+    DIO_JC2_IFACTOR,
+    DIO_JC2_CFACTOR,
 };
 
 /* model parameters */
@@ -596,7 +618,16 @@ enum {
     DIO_MOD_XM,
     DIO_MOD_XP,
     DIO_MOD_XW,
+
+    DIO_MOD_JC2TYPE,
+    DIO_MOD_JC2DTA,
 };
+
+/* JUNCAP2 (level=6): model IDs DIO_MOD_JC2BASE ... DIO_MOD_JC2BASE + JC2_MOD_NIDS - 1 */
+#define DIO_MOD_JC2BASE 1000
+
+/* JUNCAP2 (level=6): reference temperature if TRJ is not given [K] */
+#define DIO_JC2_TRDEF (CONSTCtoK + 21.0)
 
 void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit *ckt);
 

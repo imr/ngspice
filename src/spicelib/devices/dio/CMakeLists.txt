@@ -10,6 +10,7 @@ target_sources(ngspice_core PRIVATE
     diodset.c
     diogetic.c
     dioinit.c
+    diojc2.c
     dioload.c
     diomask.c
     diompar.c

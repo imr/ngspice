@@ -304,7 +304,17 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             /* no action - we already know we are a diode, but this */
             /* makes life easier for spice-2 like parsers */
             break;
+        case DIO_MOD_JC2TYPE:
+            model->DIOjc2type = value->rValue;
+            model->DIOjc2typeGiven = TRUE;
+            break;
+        case DIO_MOD_JC2DTA:
+            model->DIOjc2dta = value->rValue;
+            model->DIOjc2dtaGiven = TRUE;
+            break;
         default:
+            if (param >= DIO_MOD_JC2BASE && param < DIO_MOD_JC2BASE + JC2_MOD_NIDS)
+                return JC2mParam(&model->DIOjc2, param - DIO_MOD_JC2BASE, value);
             return(E_BADPARM);
     }
     return(OK);

@@ -25,6 +25,11 @@ IFparm DIOpTable[] = { /* parameters */
  IOPU("wm",    DIO_WM,    IF_REAL, "Width of metal capacitor (level=3)"),
  IOPU("wp",    DIO_WP,    IF_REAL, "Width of polysilicon capacitor (level=3)"),
  IOP("thermal",DIO_THERMAL, IF_FLAG, "Self heating mode selector"),
+ IOPU("pgate", DIO_PGATE, IF_REAL, "Gate-edge length (level=6)"),
+ IOPUR("ab",   DIO_AREA,  IF_REAL, "Junction area (level=6), alias of area"),
+ IOPUR("ls",   DIO_PJ,    IF_REAL, "STI-edge part of junction perimeter (level=6), alias of pj"),
+ IOPUR("lg",   DIO_PGATE, IF_REAL, "Gate-edge part of junction perimeter (level=6), alias of pgate"),
+ JC2_PTABLE(DIO_JC2_IFACTOR, DIO_JC2_CFACTOR)
 
  IP("sens_area",DIO_AREA_SENS,IF_FLAG,"flag to request sensitivity WRT area"),
  OP("vd",      DIO_VOLTAGE,IF_REAL, "Diode voltage"),
@@ -147,6 +152,12 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "xm",  DIO_MOD_XM,  IF_REAL, "Masking and etching effects in metal (level=3)"),
  IOP( "xp",  DIO_MOD_XP,  IF_REAL, "Masking and etching effects in polysilicon (level=3)"),
  IOP( "xw",  DIO_MOD_XW,  IF_REAL, "Masking and etching effects (level=3)"),
+
+/* JUNCAP2 model (level=6) */
+ IOP( "type", DIO_MOD_JC2TYPE, IF_REAL, "JUNCAP2 junction type: 1 p-n, -1 n-p (level=6)"),
+ IOP( "dta",  DIO_MOD_JC2DTA,  IF_REAL, "Temperature offset with respect to ambient temperature (level=6)"),
+ IOPR("version", DIO_MOD_JC2BASE + JC2_MOD_VERSION, IF_REAL, "JUNCAP2 version (level=6), alias of jcap2version"),
+ JC2_MPTABLE(DIO_MOD_JC2BASE)
 
  IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")
 };

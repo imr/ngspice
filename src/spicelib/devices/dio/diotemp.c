@@ -306,7 +306,10 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             if(!here->DIOtempGiven)
                 here->DIOtemp = ckt->CKTtemp + here->DIOdtemp;
 
-            DIOtempUpdate(model, here, here->DIOtemp, ckt);
+            if (model->DIOlevel == 6)
+                DIOjc2temp(model, here);
+            else
+                DIOtempUpdate(model, here, here->DIOtemp, ckt);
 
         } /* instance */
 

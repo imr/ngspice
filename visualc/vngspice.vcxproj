@@ -2261,6 +2261,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClCompile Include="..\src\spicelib\devices\dio\diodset.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diogetic.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioinit.c" />
+    <ClCompile Include="..\src\spicelib\devices\dio\diojc2.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioload.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diomask.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diompar.c" />

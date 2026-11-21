@@ -82,6 +82,13 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             int selfheat = DIOselfheat(here);
             int revrec = DIOrevrec(here);
 
+            if (model->DIOlevel == 6) {         /* JUNCAP2 */
+                error = DIOjc2load(model, here, ckt);
+                if (error)
+                    return(error);
+                continue;
+            }
+
             /*
              *     this routine loads diodes for dc and transient analyses.
              */

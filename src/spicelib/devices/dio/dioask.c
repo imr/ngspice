@@ -39,6 +39,15 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case DIO_PJ:
             value->rValue = here->DIOpj;
             return(OK);
+        case DIO_PGATE:
+            value->rValue = here->DIOpgate;
+            return(OK);
+        case DIO_JC2_IFACTOR:
+            value->rValue = here->DIOjc2ifactor;
+            return(OK);
+        case DIO_JC2_CFACTOR:
+            value->rValue = here->DIOjc2cfactor;
+            return(OK);
         case DIO_W:
             value->rValue = here->DIOw;
             return(OK);

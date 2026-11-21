@@ -240,8 +240,16 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_XW:
             value->rValue = model->DIOmaskOffset;
             return(OK);
+        case DIO_MOD_JC2TYPE:
+            value->rValue = model->DIOjc2type;
+            return(OK);
+        case DIO_MOD_JC2DTA:
+            value->rValue = model->DIOjc2dta;
+            return(OK);
 
         default:
+            if (which >= DIO_MOD_JC2BASE && which < DIO_MOD_JC2BASE + JC2_MOD_NIDS)
+                return JC2mAsk(&model->DIOjc2, DIO_JC2_TRDEF, which - DIO_MOD_JC2BASE, value);
             return(E_BADPARM);
         }
 }

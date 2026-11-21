@@ -26,6 +26,8 @@ extern int DIOdisto(int,GENmodel*,CKTcircuit*);
 extern int DIOnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int DIOdSetup(DIOmodel*,CKTcircuit*);
 extern int DIOsoaCheck(CKTcircuit *, GENmodel *);
+extern void DIOjc2temp(DIOmodel *, DIOinstance *);
+extern int DIOjc2load(DIOmodel *, DIOinstance *, CKTcircuit *);
 
 #ifdef KLU
 extern int DIObindCSC (GENmodel*, CKTcircuit*) ;

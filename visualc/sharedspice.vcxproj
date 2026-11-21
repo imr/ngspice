@@ -1994,6 +1994,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:"$(IntDir)libfftw
     <ClCompile Include="..\src\spicelib\devices\dio\diodset.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diogetic.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioinit.c" />
+    <ClCompile Include="..\src\spicelib\devices\dio\diojc2.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioload.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diomask.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diompar.c" />

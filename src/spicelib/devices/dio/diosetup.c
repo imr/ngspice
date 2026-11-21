@@ -39,6 +39,28 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             SPfrontEnd->IFerrorf(ERR_FATAL,
                 "%s: Diode model level 2 is not supported.", model->DIOmodName);
             return(E_BADPARM);
+        } else if (model->DIOlevel == 4) {
+            SPfrontEnd->IFerrorf(ERR_FATAL,
+                "%s: Diode model level 4 (JUNCAP1) is not supported.", model->DIOmodName);
+            return(E_BADPARM);
+        }
+
+        /* JUNCAP2 (level=6) */
+        JC2setup(&model->DIOjc2, model->DIOmodName, model->DIOlevel == 6);
+        if (!model->DIOjc2typeGiven)
+            model->DIOjc2type = 1.0;
+        else
+            model->DIOjc2type = (model->DIOjc2type < 0.0) ? -1.0 : 1.0;
+        if (!model->DIOjc2dtaGiven)
+            model->DIOjc2dta = 0.0;
+        if (model->DIOlevel == 6) {
+            if (model->DIOresistSWGiven || model->DIOrth0Given || model->DIOsoftRevRecParamGiven) {
+                SPfrontEnd->IFerrorf(ERR_WARNING,
+                    "%s: rsw, rth0 and vp are not used with level=6 (JUNCAP2).", model->DIOmodName);
+                model->DIOresistSWGiven = FALSE;
+                model->DIOrth0Given = FALSE;
+                model->DIOsoftRevRecParamGiven = FALSE;
+            }
         }
         if(!model->DIOemissionCoeffGiven) {
             model->DIOemissionCoeff = 1;
@@ -331,6 +353,48 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     here->DIOpj = 0;
                 }
             }
+            if (model->DIOlevel == 6) {
+                /* JUNCAP2 geometry AB = area [m^2], LS = pj [m], LG = pgate [m]:
+                   instance value, else value from the model card, else the
+                   default of the Verilog-A code.  Given values are scaled with
+                   the option scale (area with scale^2), the defaults not. */
+                double sab = 1.0, sls = 1.0, slg = 1.0;
+                if (here->DIOareaGiven)
+                    sab = scale * scale;
+                else if (model->DIOareaGiven) {
+                    here->DIOarea = model->DIOarea;
+                    sab = scale * scale;
+                } else
+                    here->DIOarea = 1.0e-12;
+                if (here->DIOpjGiven)
+                    sls = scale;
+                else if (model->DIOpjGiven) {
+                    here->DIOpj = model->DIOpj;
+                    sls = scale;
+                } else
+                    here->DIOpj = 1.0e-6;
+                if (here->DIOpgateGiven)
+                    slg = scale;
+                else
+                    here->DIOpgate = 1.0e-6;
+                if (!here->DIOjc2ifactorGiven)
+                    here->DIOjc2ifactor = 1.0;
+                if (!here->DIOjc2cfactorGiven)
+                    here->DIOjc2cfactor = 1.0;
+                if (here->DIOarea < 0.0 || here->DIOpj < 0.0 || here->DIOpgate < 0.0 ||
+                    here->DIOjc2ifactor < 0.0 || here->DIOjc2cfactor < 0.0) {
+                    SPfrontEnd->IFerrorf(ERR_WARNING,
+                        "%s: negative area, pj, pgate, ifactor or cfactor set to 0", here->DIOname);
+                    here->DIOarea = MAX(here->DIOarea, 0.0);
+                    here->DIOpj = MAX(here->DIOpj, 0.0);
+                    here->DIOpgate = MAX(here->DIOpgate, 0.0);
+                    here->DIOjc2ifactor = MAX(here->DIOjc2ifactor, 0.0);
+                    here->DIOjc2cfactor = MAX(here->DIOjc2cfactor, 0.0);
+                }
+                here->DIOjc2ab = here->DIOarea * sab;
+                here->DIOjc2ls = here->DIOpj * sls;
+                here->DIOjc2lg = here->DIOpgate * slg;
+            }
             if(!here->DIOmGiven) {
                 here->DIOm = 1;
             } else if (!(here->DIOm > 0.0)) {
@@ -370,7 +434,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                                   * (wp * scale + model->DIOpolyMaskOffset)
                                   * (lp * scale + model->DIOpolyMaskOffset);
             }
-            if (!(here->DIOarea > 0.0)) {
+            if (model->DIOlevel != 6 && !(here->DIOarea > 0.0)) {
                 SPfrontEnd->IFerrorf(ERR_WARNING,
                     "%s: area must be positive, using 1 instead", here->DIOname);
                 here->DIOarea = 1.0;
