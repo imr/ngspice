@@ -7,7 +7,8 @@ SUBDIRS = . osdi-bind
 check_LTLIBRARIES = dummy_modules.la dummy_modules_tenfold.la
 dummy_modules_la_SOURCES = dummy_modules.c
 dummy_modules_la_CPPFLAGS = -I$(top_srcdir)/src/osdi
-dummy_modules_la_LDFLAGS = -module -avoid-version -shrext .osdi -rpath $(abs_builddir)
+# -no-undefined: libtool builds a DLL on Cygwin/MinGW only with it
+dummy_modules_la_LDFLAGS = -module -avoid-version -no-undefined -shrext .osdi -rpath $(abs_builddir)
 dummy_modules_tenfold_la_SOURCES = dummy_modules.c
 dummy_modules_tenfold_la_CPPFLAGS = -I$(top_srcdir)/src/osdi -DCONDUCTANCE_FACTOR=10
 dummy_modules_tenfold_la_LDFLAGS = $(dummy_modules_la_LDFLAGS)
