@@ -122,6 +122,7 @@ double ag0, qgb, von, cbhat=0.0, VgstNVt, ExpVgst;
 double ceqqb, ceqqd, ceqqg, ceqqjd=0.0, ceqqjs=0.0, ceq, geq;
 double cdrain, cdhat=0.0, ceqdrn, ceqbd, ceqbs, ceqjd, ceqjs, gjbd, gjbs;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
+double jc2qbs = 0.0, jc2qbd = 0.0, jc2capbs = 0.0, jc2capbd = 0.0;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
@@ -686,6 +687,19 @@ for (; model != NULL; model = BSIM4v5nextModel(model))
           vbd_jct = (!here->BSIM4v5rbodyMod) ? vbd : vdbd;
 
           /* Source/drain junction diode DC model begins */
+          if (model->BSIM4v5juncap == 2)
+          {   /* JUNCAP2: current and charge of the source and drain junction */
+              JC2eval(&model->BSIM4v5jc2td, 0, &here->BSIM4v5jc2i[0], vbs_jct,
+                      &here->BSIM4v5cbs, &here->BSIM4v5gbs, &jc2qbs, &jc2capbs);
+              JC2eval(&model->BSIM4v5jc2td, 1, &here->BSIM4v5jc2i[1], vbd_jct,
+                      &here->BSIM4v5cbd, &here->BSIM4v5gbd, &jc2qbd, &jc2capbd);
+              here->BSIM4v5gbs += ckt->CKTgmin;
+              here->BSIM4v5cbs += ckt->CKTgmin * vbs_jct;
+              here->BSIM4v5gbd += ckt->CKTgmin;
+              here->BSIM4v5cbd += ckt->CKTgmin * vbd_jct;
+          }
+          else
+          {
           Nvtms = model->BSIM4v5vtm * model->BSIM4v5SjctEmissionCoeff;
 	  if ((here->BSIM4v5Aseff <= 0.0) && (here->BSIM4v5Pseff <= 0.0))
 	  {   SourceSatCurrent = 1.0e-14;
@@ -977,6 +991,8 @@ for (; model != NULL; model = BSIM4v5nextModel(model))
 	  here->BSIM4v5cbd -= here->BSIM4v5DjctTempRevSatCur * (T2 - 1.0) 
 	  			+ here->BSIM4v5DswTempRevSatCur * (T4 - 1.0)
 	  			+ here->BSIM4v5DswgTempRevSatCur * (T6 - 1.0); 
+
+          }
 
           /* End of diode DC model */
 
@@ -3545,6 +3561,16 @@ finished:
               MJSWD = model->BSIM4v5DbulkJctSideGradingCoeff;
               MJSWGD = model->BSIM4v5DbulkJctGateSideGradingCoeff;
 
+              if (model->BSIM4v5juncap == 2)
+              {   /* JUNCAP2: charge and capacitance from the junction current evaluation */
+                  *(ckt->CKTstate0 + here->BSIM4v5qbs) = jc2qbs;
+                  here->BSIM4v5capbs = jc2capbs;
+                  *(ckt->CKTstate0 + here->BSIM4v5qbd) = jc2qbd;
+                  here->BSIM4v5capbd = jc2capbd;
+              }
+              else
+              {
+
               /* Source Bulk Junction */
 	      if (vbs_jct == 0.0)
 	      {   *(ckt->CKTstate0 + here->BSIM4v5qbs) = 0.0;
@@ -3642,6 +3668,7 @@ finished:
                      / model->BSIM4v5PhiBSWD + czbdswg * MJSWGD / model->BSIM4v5PhiBSWGD);
                   *(ckt->CKTstate0 + here->BSIM4v5qbd) = vbd_jct * (T0 + 0.5 * T1);
                   here->BSIM4v5capbd = T0 + T1; 
+              }
               }
           }
 

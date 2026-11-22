@@ -1058,6 +1058,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClInclude Include="..\src\include\ngspice\inpptree.h" />
     <ClInclude Include="..\src\include\ngspice\ipc.h" />
     <ClInclude Include="..\src\include\ngspice\jobdefs.h" />
+    <ClInclude Include="..\src\include\ngspice\juncap2.h" />
     <ClInclude Include="..\src\include\ngspice\lsort.h" />
     <ClInclude Include="..\src\include\ngspice\macros.h" />
     <ClInclude Include="..\src\include\ngspice\material.h" />
@@ -2075,6 +2076,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5geo.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5jc2.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5getic.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5ld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5mask.c" />
@@ -2095,6 +2097,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6geo.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6jc2.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6getic.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6ld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6mask.c" />
@@ -2115,6 +2118,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7geo.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7jc2.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7getic.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7ld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v7\b4v7mask.c" />
@@ -2136,6 +2140,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4geo.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4getic.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\b4jcap.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4ld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4mask.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4mdel.c" />
@@ -2246,6 +2251,7 @@ copy/Y "$(ProjectDir)..\src\frontend\snp2va.c" "$(ProjectDir)..\src\frontend\snp
     <ClCompile Include="..\src\spicelib\devices\csw\cswtrunc.c" />
     <ClCompile Include="..\src\spicelib\devices\dev.c" />
     <ClCompile Include="..\src\spicelib\devices\devsup.c" />
+    <ClCompile Include="..\src\spicelib\devices\juncap2.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dio.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioacld.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioask.c" />

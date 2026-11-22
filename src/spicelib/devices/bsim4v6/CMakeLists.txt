@@ -8,6 +8,7 @@ target_sources(ngspice_core PRIVATE
     b4v6check.c
     b4v6cvtest.c
     b4v6geo.c
+    b4v6jc2.c
     b4v6getic.c
     b4v6ld.c
     b4v6mask.c

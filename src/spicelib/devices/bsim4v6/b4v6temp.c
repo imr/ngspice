@@ -391,6 +391,9 @@ int Size_Not_Found, i;
          }
 
 
+         /* JUNCAP2: temperature dependent, geometry independent values */
+         BSIM4v6jc2TempModel(model, Temp);
+
          /* loop through all the instances of the model */
          for (here = BSIM4v6instances(model); here != NULL;
               here = BSIM4v6nextInstance(here))
@@ -2013,6 +2016,10 @@ int Size_Not_Found, i;
                 here->BSIM4v6DswTempRevSatCur = T4 * here->BSIM4v6Pdeff * model->BSIM4v6jtsswd;
                 here->BSIM4v6SswgTempRevSatCur = T5 * T10 * T11 * model->BSIM4v6jtsswgs;
                 here->BSIM4v6DswgTempRevSatCur = T6 * T10 * T11 * model->BSIM4v6jtsswgd;
+
+                /* JUNCAP2: geometry dependent values, AB = As/Ad, LS = Ps/Pd without gate edge, LG = Weff*NF */
+                BSIM4v6jc2TempInst(model, here, here->BSIM4v6Aseff, here->BSIM4v6Pseff,
+                                 here->BSIM4v6Adeff, here->BSIM4v6Pdeff, T10);
 
                 /*high k*/
                 /*Calculate VgsteffVth for mobMod=3*/

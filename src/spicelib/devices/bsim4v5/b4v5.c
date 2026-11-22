@@ -47,6 +47,7 @@ IOP( "rbpd", BSIM4v5_RBPD,  IF_REAL   , "Body resistance"),
 IOP( "delvto", BSIM4v5_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
 IOPR( "delvt0", BSIM4v5_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
 IOP( "mulu0", BSIM4v5_MULU0, IF_REAL, "Low field mobility multiplier"),
+JC2_PTABLE(BSIM4v5_JC2_IFACTOR, BSIM4v5_JC2_CFACTOR)
 IOP( "xgw",  BSIM4v5_XGW, IF_REAL, "Distance from gate contact center to device edge"),
 IOP( "ngcon", BSIM4v5_NGCON, IF_REAL, "Number of gate contacts"),
 IOPU("dtemp", BSIM4v5_DTEMP, IF_REAL,    "Instance temperature difference"),
@@ -910,6 +911,12 @@ IOP("vgdr_max", BSIM4v5_MOD_VGDR_MAX, IF_REAL, "maximum voltage G-D branch"),
 IOP("vgbr_max", BSIM4v5_MOD_VGBR_MAX, IF_REAL, "maximum voltage G-B branch"),
 IOP("vbsr_max", BSIM4v5_MOD_VBSR_MAX, IF_REAL, "maximum voltage B-S branch"),
 IOP("vbdr_max", BSIM4v5_MOD_VBDR_MAX, IF_REAL, "maximum voltage B-D branch"),
+
+/* JUNCAP2 junction model */
+IOP( "juncap", BSIM4v5_MOD_JUNCAP, IF_INTEGER, "Junction model selector: 0 BSIM4, 2 JUNCAP2"),
+JC2_MPTABLE(BSIM4v5_MOD_JC2BASE)
+JC2_MPTABLE_TREF(BSIM4v5_MOD_JC2BASE)
+JC2_MPTABLE_DRAIN(BSIM4v5_MOD_JC2BASE)
 
 IP( "nmos", BSIM4v5_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM4v5_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),

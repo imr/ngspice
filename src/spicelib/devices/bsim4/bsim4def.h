@@ -30,6 +30,14 @@ standard can be found at: http://www.si2.org/cmc
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
+#include "ngspice/juncap2.h"
+
+/* JUNCAP2 junction model (juncap = 2): parameter IDs; the model IDs
+   BSIM4_MOD_JC2BASE ... BSIM4_MOD_JC2BASE + JC2_MOD_NIDS - 1 are used */
+#define BSIM4_MOD_JUNCAP        1400
+#define BSIM4_MOD_JC2BASE       1401
+#define BSIM4_JC2_IFACTOR       60      /* instance parameters */
+#define BSIM4_JC2_CFACTOR       61
 
 typedef struct sBSIM4instance
 {
@@ -118,6 +126,8 @@ typedef struct sBSIM4instance
 
     double BSIM4delvto;
     double BSIM4mulu0;
+    double BSIM4jc2ifactor;         /* JUNCAP2 instance parameters */
+    double BSIM4jc2cfactor;
     int BSIM4wnflag;
     double BSIM4xgw;
     double BSIM4ngcon;
@@ -284,6 +294,9 @@ typedef struct sBSIM4instance
     double BSIM4SswgTempRevSatCur;
     double BSIM4DswgTempRevSatCur;
 
+    /* JUNCAP2 geometry dependent data, [0] source, [1] drain */
+    JC2inst BSIM4jc2i[2];
+
     struct bsim4SizeDependParam  *pParam;
 
     unsigned BSIM4lGiven :1;
@@ -314,6 +327,8 @@ typedef struct sBSIM4instance
     unsigned BSIM4rbpsGiven   :1;
     unsigned BSIM4delvtoGiven   :1;
     unsigned BSIM4mulu0Given   :1;
+    unsigned BSIM4jc2ifactorGiven :1;
+    unsigned BSIM4jc2cfactorGiven :1;
     unsigned BSIM4wnflagGiven   :1;
     unsigned BSIM4xgwGiven   :1;
     unsigned BSIM4ngconGiven   :1;
@@ -1892,6 +1907,12 @@ typedef struct sBSIM4model
 
     double BSIM4gidlclamp;
     double BSIM4idovvdsc;
+
+    /* JUNCAP2 junction model */
+    int    BSIM4juncap;
+    JC2model BSIM4jc2;
+    JC2tdata BSIM4jc2td;
+
     struct bsim4SizeDependParam *pSizeDependParamKnot;
 
 #ifdef USE_OMP
@@ -1905,6 +1926,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4cvchargeModGiven :1;
     unsigned  BSIM4capModGiven :1;
     unsigned  BSIM4dioModGiven :1;
+    unsigned  BSIM4juncapGiven :1;
     unsigned  BSIM4rdsModGiven :1;
     unsigned  BSIM4rbodyModGiven :1;
     unsigned  BSIM4rgateModGiven :1;
@@ -3926,6 +3948,13 @@ extern int BSIM4PAeffGeo(double, int, int, double, double, double, double, doubl
 extern int BSIM4RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 extern int BSIM4RdsEndIso(double, double, double, double, double, double, int, int, double *);
 extern int BSIM4RdsEndSha(double, double, double, double, double, double, int, int, double *);
+extern void BSIM4jctCapStd(double, double, double, double, double, double, double,
+        double, double, double, double *, double *);
+extern int  BSIM4jc2mParam(int, IFvalue *, BSIM4model *);
+extern int  BSIM4jc2mAsk(BSIM4model *, int, IFvalue *);
+extern void BSIM4jc2Setup(BSIM4model *);
+extern void BSIM4jc2TempModel(BSIM4model *, double);
+extern void BSIM4jc2TempInst(BSIM4model *, BSIM4instance *, double, double, double, double, double);
 
 #endif /*BSIM4*/
 

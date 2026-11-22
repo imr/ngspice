@@ -414,6 +414,8 @@ int Fatal_Flag = 0;
              fprintf(stderr, "BVS reset to %g.\n", model->BSIM4bvs);
          }
 
+         /* JUNCAP2: temperature dependent, geometry independent values */
+         BSIM4jc2TempModel(model, Temp);
 
          /* loop through all the instances of the model */
          for (here = BSIM4instances(model); here != NULL;
@@ -2259,6 +2261,10 @@ int Fatal_Flag = 0;
         here->BSIM4DswTempRevSatCur = T4 * here->BSIM4Pdeff * model->BSIM4jtsswd;
         here->BSIM4SswgTempRevSatCur = T5 * T10 * T11 * model->BSIM4jtsswgs;
         here->BSIM4DswgTempRevSatCur = T6 * T10 * T11 * model->BSIM4jtsswgd;
+
+        /* JUNCAP2: geometry dependent values, AB = As/Ad, LS = Ps/Pd without gate edge, LG = Weff*NF */
+        BSIM4jc2TempInst(model, here, here->BSIM4Aseff, here->BSIM4Pseff,
+                         here->BSIM4Adeff, here->BSIM4Pdeff, T10);
 
                 if(model->BSIM4mtrlMod != 0 && model->BSIM4mtrlCompatMod == 0)
         {

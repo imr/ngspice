@@ -114,6 +114,12 @@ BSIM4v7instance *here = (BSIM4v7instance*)inst;
         case BSIM4v7_MULU0:
             value->rValue = here->BSIM4v7mulu0;
             return(OK);
+        case BSIM4v7_JC2_IFACTOR:
+            value->rValue = here->BSIM4v7jc2ifactor;
+            return(OK);
+        case BSIM4v7_JC2_CFACTOR:
+            value->rValue = here->BSIM4v7jc2cfactor;
+            return(OK);
         case BSIM4v7_DTEMP:
             value->rValue = here->BSIM4v7dtemp;
             return(OK);

@@ -3121,7 +3121,7 @@ GENmodel *inMod)
             }
             break;
         default:
-            return(E_BADPARM);
+            return BSIM4v5jc2mParam(param, value, mod);
     }
     return(OK);
 }

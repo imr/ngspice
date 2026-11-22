@@ -63,6 +63,7 @@ noinst_HEADERS = \
 	ipcproto.h	\
 	ipctiein.h	\
 	jobdefs.h	\
+	juncap2.h	\
 	klu.h		\
 	klu_ext.h	\
 	klu-binding.h   \

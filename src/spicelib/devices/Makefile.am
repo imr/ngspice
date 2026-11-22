@@ -127,6 +127,7 @@ libdev_la_SOURCES =	\
 	dev.c		\
 	dev.h		\
 	devsup.c	\
+	juncap2.c	\
 	cktaccept.c	\
 	cktaccept.h	\
 	cktask.c	\

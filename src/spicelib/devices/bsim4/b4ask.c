@@ -132,6 +132,12 @@ BSIM4instance *here = (BSIM4instance*)inst;
         case BSIM4_MULU0:
             value->rValue = here->BSIM4mulu0;
             return(OK);
+        case BSIM4_JC2_IFACTOR:
+            value->rValue = here->BSIM4jc2ifactor;
+            return(OK);
+        case BSIM4_JC2_CFACTOR:
+            value->rValue = here->BSIM4jc2cfactor;
+            return(OK);
         case BSIM4_WNFLAG:
             value->iValue = here->BSIM4wnflag;
             return(OK);

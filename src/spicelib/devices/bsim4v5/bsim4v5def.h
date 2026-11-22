@@ -16,7 +16,15 @@ File: bsim4v5def.h
 #include "ngspice/gendefs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
-#include "ngspice/noisedef.h"         
+#include "ngspice/noisedef.h"
+#include "ngspice/juncap2.h"
+
+/* JUNCAP2 junction model (juncap = 2): parameter IDs; the model IDs
+   BSIM4v5_MOD_JC2BASE ... BSIM4v5_MOD_JC2BASE + JC2_MOD_NIDS - 1 are used */
+#define BSIM4v5_MOD_JUNCAP        1600
+#define BSIM4v5_MOD_JC2BASE       1601
+#define BSIM4v5_JC2_IFACTOR       60      /* instance parameters */
+#define BSIM4v5_JC2_CFACTOR       61
 
 typedef struct sBSIM4v5instance
 {
@@ -103,6 +111,8 @@ typedef struct sBSIM4v5instance
     
     double BSIM4v5delvto;
     double BSIM4v5mulu0;
+    double BSIM4v5jc2ifactor;         /* JUNCAP2 instance parameters */
+    double BSIM4v5jc2cfactor;
     double BSIM4v5xgw;
     double BSIM4v5ngcon;
     double BSIM4v5dtemp;
@@ -260,6 +270,9 @@ typedef struct sBSIM4v5instance
     double BSIM4v5SswgTempRevSatCur;
     double BSIM4v5DswgTempRevSatCur;
 
+    /* JUNCAP2 geometry dependent data, [0] source, [1] drain */
+    JC2inst BSIM4v5jc2i[2];
+
     struct bsim4v5SizeDependParam  *pParam;
 
     unsigned BSIM4v5lGiven :1;
@@ -287,6 +300,8 @@ typedef struct sBSIM4v5instance
     unsigned BSIM4v5rbpsGiven   :1;
     unsigned BSIM4v5delvtoGiven   :1;
     unsigned BSIM4v5mulu0Given   :1;
+    unsigned BSIM4v5jc2ifactorGiven :1;
+    unsigned BSIM4v5jc2cfactorGiven :1;
     unsigned BSIM4v5xgwGiven   :1;
     unsigned BSIM4v5ngconGiven   :1;
     unsigned BSIM4v5dtempGiven : 1;
@@ -1686,6 +1701,12 @@ typedef struct sBSIM4v5model
     double BSIM4v5vbsrMax;
     double BSIM4v5vbdrMax;
 
+
+    /* JUNCAP2 junction model */
+    int    BSIM4v5juncap;
+    JC2model BSIM4v5jc2;
+    JC2tdata BSIM4v5jc2td;
+
     struct bsim4v5SizeDependParam *pSizeDependParamKnot;
 
 #ifdef USE_OMP
@@ -1703,6 +1724,7 @@ typedef struct sBSIM4v5model
     unsigned  BSIM4v5binUnitGiven :1;
     unsigned  BSIM4v5capModGiven :1;
     unsigned  BSIM4v5dioModGiven :1;
+    unsigned  BSIM4v5juncapGiven :1;
     unsigned  BSIM4v5rdsModGiven :1;
     unsigned  BSIM4v5rbodyModGiven :1;
     unsigned  BSIM4v5rgateModGiven :1;
@@ -3428,6 +3450,11 @@ extern void BSIM4v5evaluate(double,double,double,BSIM4v5instance*,BSIM4v5model*,
 extern int BSIM4v5debug(BSIM4v5model*, BSIM4v5instance*, CKTcircuit*, int);
 extern int BSIM4v5checkModel(BSIM4v5model*, BSIM4v5instance*, CKTcircuit*);
 extern int BSIM4v5PAeffGeo(double, int, int, double, double, double, double, double *, double *, double *, double *);
+extern int  BSIM4v5jc2mParam(int, IFvalue *, BSIM4v5model *);
+extern int  BSIM4v5jc2mAsk(BSIM4v5model *, int, IFvalue *);
+extern void BSIM4v5jc2Setup(BSIM4v5model *);
+extern void BSIM4v5jc2TempModel(BSIM4v5model *, double);
+extern void BSIM4v5jc2TempInst(BSIM4v5model *, BSIM4v5instance *, double, double, double, double, double);
 extern int BSIM4v5RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 #endif /*BSIM4v5*/

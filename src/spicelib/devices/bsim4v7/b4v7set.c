@@ -98,6 +98,9 @@ BSIM4v7instance **InstArray;
             printf("Warning: dioMod has been set to its default value: 1.\n");
         }
 
+        /* JUNCAP2 junction model selector and parameter defaults */
+        BSIM4v7jc2Setup(model);
+
         if (!model->BSIM4v7cvchargeModGiven) 
             model->BSIM4v7cvchargeMod = 0;
         if (!model->BSIM4v7capModGiven) 
@@ -2252,6 +2255,10 @@ BSIM4v7instance **InstArray;
                 here->BSIM4v7delvto = 0.0;
             if (!here->BSIM4v7mulu0Given)
                 here->BSIM4v7mulu0 = 1.0;
+            if (!here->BSIM4v7jc2ifactorGiven)
+                here->BSIM4v7jc2ifactor = 1.0;
+            if (!here->BSIM4v7jc2cfactorGiven)
+                here->BSIM4v7jc2cfactor = 1.0;
             if (!here->BSIM4v7xgwGiven)
                 here->BSIM4v7xgw = model->BSIM4v7xgw;
             if (!here->BSIM4v7ngconGiven)

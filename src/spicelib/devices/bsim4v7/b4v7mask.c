@@ -2729,7 +2729,7 @@ IFvalue *value)
             return(OK);
 
         default:
-            return(E_BADPARM);
+            return BSIM4v7jc2mAsk(model, which, value);
     }
     /* NOTREACHED */
 }

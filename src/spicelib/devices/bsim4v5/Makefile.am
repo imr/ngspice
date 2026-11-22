@@ -9,6 +9,7 @@ libbsim4v5_la_SOURCES =	\
 	b4v5check.c	\
 	b4v5cvtest.c	\
 	b4v5geo.c	\
+	b4v5jc2.c		\
 	b4v5getic.c	\
 	b4v5ld.c	\
 	b4v5mask.c	\

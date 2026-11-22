@@ -161,6 +161,22 @@ IFvalue *select)
             here->BSIM4mulu0 = value->rValue;
             here->BSIM4mulu0Given = TRUE;
             break;
+        case BSIM4_JC2_IFACTOR:
+        case BSIM4_JC2_CFACTOR:
+            if (value->rValue < 0.0) {
+                printf("Warning: %s = %g of instance %s out of range, set to 0.\n",
+                       param == BSIM4_JC2_IFACTOR ? "ifactor" : "cfactor",
+                       value->rValue, here->BSIM4name);
+                value->rValue = 0.0;
+            }
+            if (param == BSIM4_JC2_IFACTOR) {
+                here->BSIM4jc2ifactor = value->rValue;
+                here->BSIM4jc2ifactorGiven = TRUE;
+            } else {
+                here->BSIM4jc2cfactor = value->rValue;
+                here->BSIM4jc2cfactorGiven = TRUE;
+            }
+            break;
         case BSIM4_WNFLAG:
             here->BSIM4wnflag = value->iValue;
             here->BSIM4wnflagGiven = TRUE;

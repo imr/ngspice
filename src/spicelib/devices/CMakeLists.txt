@@ -4,6 +4,7 @@
 target_sources(ngspice_core PRIVATE
     dev.c
     devsup.c
+    juncap2.c
     cktaccept.c
     cktask.c
     cktbindnode.c

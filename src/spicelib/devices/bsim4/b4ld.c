@@ -129,7 +129,8 @@ double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgb, von, cbhat, VgstNVt, ExpVgst;
 double ceqqb, ceqqd, ceqqg, ceqqjd=0.0, ceqqjs=0.0, ceq, geq;
 double cdrain, cdhat, ceqdrn, ceqbd, ceqbs, ceqjd, ceqjs, gjbd, gjbs;
-double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
+double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs;
+double jc2qbs = 0.0, jc2qbd = 0.0, jc2capbs = 0.0, jc2capbd = 0.0;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
@@ -698,6 +699,19 @@ for (; model != NULL; model = BSIM4nextModel(model))
           vbd_jct = (!here->BSIM4rbodyMod) ? vbd : vdbd;
 
           /* Source/drain junction diode DC model begins */
+          if (model->BSIM4juncap == 2)
+          {   /* JUNCAP2: current and charge of the source and drain junction */
+              JC2eval(&model->BSIM4jc2td, 0, &here->BSIM4jc2i[0], vbs_jct,
+                      &here->BSIM4cbs, &here->BSIM4gbs, &jc2qbs, &jc2capbs);
+              JC2eval(&model->BSIM4jc2td, 1, &here->BSIM4jc2i[1], vbd_jct,
+                      &here->BSIM4cbd, &here->BSIM4gbd, &jc2qbd, &jc2capbd);
+              here->BSIM4gbs += ckt->CKTgmin;
+              here->BSIM4cbs += ckt->CKTgmin * vbs_jct;
+              here->BSIM4gbd += ckt->CKTgmin;
+              here->BSIM4cbd += ckt->CKTgmin * vbd_jct;
+          }
+          else
+          {
           Nvtms = model->BSIM4vtm * model->BSIM4SjctEmissionCoeff;
 /*    if ((here->BSIM4Aseff <= 0.0) && (here->BSIM4Pseff <= 0.0))
       {   SourceSatCurrent = 1.0e-14;
@@ -998,6 +1012,7 @@ for (; model != NULL; model = BSIM4nextModel(model))
       here->BSIM4cbd -= here->BSIM4DjctTempRevSatCur * (T2 - 1.0)
                 + here->BSIM4DswTempRevSatCur * (T4 - 1.0)
                 + here->BSIM4DswgTempRevSatCur * (T6 - 1.0);
+          }
 
           /* End of diode DC model */
 
@@ -3945,7 +3960,7 @@ finished:
 
       /* Calculate junction C-V */
           if (ChargeComputationNeeded)
-      {   czbd = model->BSIM4DunitAreaTempJctCap * here->BSIM4Adeff; /* bug fix */
+          {   czbd = model->BSIM4DunitAreaTempJctCap * here->BSIM4Adeff; /* bug fix */
               czbs = model->BSIM4SunitAreaTempJctCap * here->BSIM4Aseff;
               czbdsw = model->BSIM4DunitLengthSidewallTempJctCap * here->BSIM4Pdeff;
               czbdswg = model->BSIM4DunitLengthGateSidewallTempJctCap
@@ -3956,109 +3971,32 @@ finished:
 
               MJS = model->BSIM4SbulkJctBotGradingCoeff;
               MJSWS = model->BSIM4SbulkJctSideGradingCoeff;
-          MJSWGS = model->BSIM4SbulkJctGateSideGradingCoeff;
+              MJSWGS = model->BSIM4SbulkJctGateSideGradingCoeff;
 
               MJD = model->BSIM4DbulkJctBotGradingCoeff;
               MJSWD = model->BSIM4DbulkJctSideGradingCoeff;
               MJSWGD = model->BSIM4DbulkJctGateSideGradingCoeff;
 
+              if (model->BSIM4juncap == 2)
+              {   /* JUNCAP2: charge and capacitance from the junction current evaluation */
+                  *(ckt->CKTstate0 + here->BSIM4qbs) = jc2qbs;
+                  here->BSIM4capbs = jc2capbs;
+                  *(ckt->CKTstate0 + here->BSIM4qbd) = jc2qbd;
+                  here->BSIM4capbd = jc2capbd;
+              }
+              else
+              {
               /* Source Bulk Junction */
-          if (vbs_jct == 0.0)
-          {   *(ckt->CKTstate0 + here->BSIM4qbs) = 0.0;
-                  here->BSIM4capbs = czbs + czbssw + czbsswg;
-          }
-          else if (vbs_jct < 0.0)
-          {   if (czbs > 0.0)
-          {   arg = 1.0 - vbs_jct / model->BSIM4PhiBS;
-              if (MJS == 0.5)
-                          sarg = 1.0 / sqrt(arg);
-              else
-                          sarg = exp(-MJS * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbs) = model->BSIM4PhiBS * czbs
-                           * (1.0 - arg * sarg) / (1.0 - MJS);
-              here->BSIM4capbs = czbs * sarg;
-          }
-          else
-          {   *(ckt->CKTstate0 + here->BSIM4qbs) = 0.0;
-              here->BSIM4capbs = 0.0;
-          }
-          if (czbssw > 0.0)
-          {   arg = 1.0 - vbs_jct / model->BSIM4PhiBSWS;
-              if (MJSWS == 0.5)
-                          sarg = 1.0 / sqrt(arg);
-              else
-                          sarg = exp(-MJSWS * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbs) += model->BSIM4PhiBSWS * czbssw
-                       * (1.0 - arg * sarg) / (1.0 - MJSWS);
-                      here->BSIM4capbs += czbssw * sarg;
-          }
-          if (czbsswg > 0.0)
-          {   arg = 1.0 - vbs_jct / model->BSIM4PhiBSWGS;
-              if (MJSWGS == 0.5)
-                          sarg = 1.0 / sqrt(arg);
-              else
-                          sarg = exp(-MJSWGS * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbs) += model->BSIM4PhiBSWGS * czbsswg
-                       * (1.0 - arg * sarg) / (1.0 - MJSWGS);
-                      here->BSIM4capbs += czbsswg * sarg;
-          }
-
-              }
-          else
-          {   T0 = czbs + czbssw + czbsswg;
-                  T1 = vbs_jct * (czbs * MJS / model->BSIM4PhiBS + czbssw * MJSWS
-                     / model->BSIM4PhiBSWS + czbsswg * MJSWGS / model->BSIM4PhiBSWGS);
-                  *(ckt->CKTstate0 + here->BSIM4qbs) = vbs_jct * (T0 + 0.5 * T1);
-                  here->BSIM4capbs = T0 + T1;
-              }
+              BSIM4jctCapStd(vbs_jct, czbs, czbssw, czbsswg,
+                             model->BSIM4PhiBS, model->BSIM4PhiBSWS, model->BSIM4PhiBSWGS,
+                             MJS, MJSWS, MJSWGS,
+                             ckt->CKTstate0 + here->BSIM4qbs, &here->BSIM4capbs);
 
               /* Drain Bulk Junction */
-          if (vbd_jct == 0.0)
-          {   *(ckt->CKTstate0 + here->BSIM4qbd) = 0.0;
-                  here->BSIM4capbd = czbd + czbdsw + czbdswg;
-          }
-          else if (vbd_jct < 0.0)
-          {   if (czbd > 0.0)
-          {   arg = 1.0 - vbd_jct / model->BSIM4PhiBD;
-              if (MJD == 0.5)
-                          sarg = 1.0 / sqrt(arg);
-              else
-                          sarg = exp(-MJD * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbd) = model->BSIM4PhiBD* czbd
-                           * (1.0 - arg * sarg) / (1.0 - MJD);
-                      here->BSIM4capbd = czbd * sarg;
-          }
-          else
-          {   *(ckt->CKTstate0 + here->BSIM4qbd) = 0.0;
-                      here->BSIM4capbd = 0.0;
-          }
-          if (czbdsw > 0.0)
-          {   arg = 1.0 - vbd_jct / model->BSIM4PhiBSWD;
-              if (MJSWD == 0.5)
-                          sarg = 1.0 / sqrt(arg);
-              else
-                          sarg = exp(-MJSWD * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbd) += model->BSIM4PhiBSWD * czbdsw
-                           * (1.0 - arg * sarg) / (1.0 - MJSWD);
-                      here->BSIM4capbd += czbdsw * sarg;
-          }
-          if (czbdswg > 0.0)
-          {   arg = 1.0 - vbd_jct / model->BSIM4PhiBSWGD;
-              if (MJSWGD == 0.5)
-                          sarg = 1.0 / sqrt(arg);
-              else
-                          sarg = exp(-MJSWGD * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbd) += model->BSIM4PhiBSWGD * czbdswg
-                       * (1.0 - arg * sarg) / (1.0 - MJSWGD);
-                      here->BSIM4capbd += czbdswg * sarg;
-          }
-              }
-          else
-          {   T0 = czbd + czbdsw + czbdswg;
-                  T1 = vbd_jct * (czbd * MJD / model->BSIM4PhiBD + czbdsw * MJSWD
-                     / model->BSIM4PhiBSWD + czbdswg * MJSWGD / model->BSIM4PhiBSWGD);
-                  *(ckt->CKTstate0 + here->BSIM4qbd) = vbd_jct * (T0 + 0.5 * T1);
-                  here->BSIM4capbd = T0 + T1;
+              BSIM4jctCapStd(vbd_jct, czbd, czbdsw, czbdswg,
+                             model->BSIM4PhiBD, model->BSIM4PhiBSWD, model->BSIM4PhiBSWGD,
+                             MJD, MJSWD, MJSWGD,
+                             ckt->CKTstate0 + here->BSIM4qbd, &here->BSIM4capbd);
               }
           }
 
