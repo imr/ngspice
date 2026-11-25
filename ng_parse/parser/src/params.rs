@@ -199,6 +199,15 @@ pub(crate) fn parse_assignments(rest: &str) -> Vec<Assign> {
                 // `.model dm d (a=500.0, b=-500.0)` has TWO parameters, not a value
                 // of `"500.0,"`. Depth-guarded, so an unquoted `max(a, b)` keeps its
                 // internal commas.
+                //
+                // Whitespace does NOT end the value while the expression is
+                // visibly unfinished: a binary operator stands on one side of the
+                // gap. An unquoted behavioural source `i = -2m*v(a) + 1m*v(a)`
+                // is one value; cutting it at the first space silently dropped
+                // every term after the first. A following `name=value` starts
+                // with an identifier, never an operator, so it still ends the
+                // value.
+                let is_op = |c: u8| matches!(c, b'+' | b'-' | b'*' | b'/' | b'^' | b'?' | b':' | b'<' | b'>' | b'&' | b'|' | b'%');
                 let start = i;
                 let mut depth = 0;
                 while i < b.len() {
@@ -207,12 +216,28 @@ pub(crate) fn parse_assignments(rest: &str) -> Vec<Assign> {
                         depth += 1;
                     } else if c == b')' {
                         depth -= 1;
-                    } else if ((c as char).is_whitespace() || c == b',') && depth == 0 {
+                    } else if c == b',' && depth == 0 {
                         break;
+                    } else if (c as char).is_whitespace() && depth == 0 {
+                        let next = skip_ws(b, i);
+                        let before = b[i - 1];
+                        let goes_on = next < b.len()
+                            && i > start
+                            && (is_op(before)
+                                || matches!(before, b'=' | b'!')
+                                || is_op(b[next])
+                                || (matches!(b[next], b'=' | b'!')
+                                    && next + 1 < b.len()
+                                    && b[next + 1] == b'='));
+                        if !goes_on {
+                            break;
+                        }
+                        i = next;
+                        continue;
                     }
                     i += 1;
                 }
-                rest[start..i].to_string()
+                rest[start..i].trim_end().to_string()
             }
         };
 
@@ -496,6 +521,29 @@ mod tests {
 
     fn lines(src: &str) -> Vec<LogicalLine> {
         crate::reader::logical_lines(src, Arc::from("t"))
+    }
+
+    #[test]
+    fn unquoted_expression_with_spaces_is_one_value() {
+        // a behavioural source written without quotes
+        let a = parse_assignments("i = -2m*v(a) + 1m*v(a)*v(a)*v(a)");
+        assert_eq!(a.len(), 1);
+        assert_eq!(a[0].name, "i");
+        assert_eq!(a[0].rhs, "-2m*v(a) + 1m*v(a)*v(a)*v(a)");
+        // operator on the left of the gap, and a following assignment
+        let a = parse_assignments("v = 2 * v(x) -1 tc1=0.5 m=2");
+        assert_eq!(a.len(), 3);
+        assert_eq!(a[0].rhs, "2 * v(x) -1");
+        assert_eq!((a[1].name.as_str(), a[1].rhs.as_str()), ("tc1", "0.5"));
+        assert_eq!((a[2].name.as_str(), a[2].rhs.as_str()), ("m", "2"));
+        // plain lists are untouched, negative values included
+        let a = parse_assignments("a=500.0, b=-500.0 c=1e-3");
+        assert_eq!(a.len(), 3);
+        assert_eq!(a[1].rhs, "-500.0");
+        // comparison operators
+        let a = parse_assignments("r = v(a) >= 1 ? 1k : 2k");
+        assert_eq!(a.len(), 1);
+        assert_eq!(a[0].rhs, "v(a) >= 1 ? 1k : 2k");
     }
 
     #[test]
