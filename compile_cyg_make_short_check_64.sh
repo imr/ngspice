@@ -2,13 +2,13 @@
 # ngspice build script for CYGWIN console (X11), release version, 64 bit
 # compile_cyg_make_short_check.sh
 
-# short version, skipping several of the device checks
+# short make check version, skipping several of the device checks
 
 #Procedure:
 # Install CYGWIN, plus bison, flex, auto tools, perl, libiconv, libintl
 # Install gcc, activate OpenMP support
 # start compiling with
-# './compile_cyg_auto.sh'
+# './compile_cyg_make_short_check.sh'
 
 # Options:
 # CIDER may be selected at will.
@@ -16,10 +16,15 @@
 # --enable-oldapps will make ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx in addition to ngspice
 # --enable-shortcheck will provide a fast 'make check' by checking only BSIM3 and BSIM4
 
-if [ ! -d "release64_cyg" ]; then
-   mkdir release64_cyg
-   if [ $? -ne 0 ]; then  echo "mkdir release64_cyg failed"; exit 1 ; fi
+rm -r -f release64_cyg
+if [ $? -ne 0 ]; then
+  echo "removing release64_cyg failed"; exit 1 ;
+else
+  echo "release64_cyg removed";
 fi
+
+mkdir release64_cyg
+if [ $? -ne 0 ]; then  echo "mkdir release64_cyg failed"; exit 1 ; fi
 
 # If compiling sources from CVS, you may need to uncomment the following two lines:
 ./autogen.sh
