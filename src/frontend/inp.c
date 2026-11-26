@@ -60,6 +60,7 @@ static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
 static void inp_set_wnflag(const char *line);
 static void inp_set_binoutermax(const char *line);
+static struct card *rem_comments(struct card* deck);
 #ifdef REM_UNUSED
 static void rem_unused_mos_models(struct card* deck);
 #endif
@@ -1023,6 +1024,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     inp_set_wnflag(scan->line);
                     inp_set_binoutermax(scan->line);
                 }
+            }
+
+            /* for debugging and faster subcircuit expansion: remove comment lines from deck */
+            if (!cp_getvar("noremcomments", CP_BOOL, NULL, 0)) {
+                deck->nextcard = rem_comments(deck->nextcard);
             }
 
             /* Parsing the circuit 4.
@@ -2810,6 +2816,22 @@ static void inp_set_binoutermax(const char *line)
         bool t = TRUE;
         cp_vset("binoutermax", CP_BOOL, &t);
     }
+}
+
+static struct card* rem_comments(struct card* deck)
+{
+    struct card *rdeck = deck;
+    while (rdeck) {
+        if (rdeck->nextcard && *(rdeck->nextcard->line) == '*') {
+            struct card* tmpdeck = rdeck->nextcard;
+            rdeck->nextcard = rdeck->nextcard->nextcard;
+            tfree(tmpdeck->line);
+            tfree(tmpdeck);
+        }
+        else
+            rdeck = rdeck->nextcard;
+    }
+    return deck;
 }
 
 #ifdef REM_UNUSED
